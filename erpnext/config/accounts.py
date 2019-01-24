@@ -475,6 +475,7 @@ def get_data():
 			]
 		}
 	]
+
 	gst = {
 		"label": _("Goods and Services Tax (GST India)"),
 		"items": [
@@ -518,6 +519,8 @@ def get_data():
 			},
 		]
 	}
+
+
 	retail = {
 		"label": _("Retail Operations"),
 		"items": [
@@ -557,10 +560,16 @@ def get_data():
 			}
 		]
 	}
+
+
 	subscriptions = {
 		"label": _("Subscription Management"),
 		"icon": "fa fa-microchip ",
 		"items": [
+			{
+				"type": "doctype",
+				"name": "Subscriber",
+			},
 			{
 				"type": "doctype",
 				"name": "Subscription Plan",
@@ -575,6 +584,8 @@ def get_data():
 			}
 		]
 	}
+
+
 	countries = frappe.get_all("Company", fields="country")
 	countries = [country["country"] for country in countries]
 	if "India" in countries:
