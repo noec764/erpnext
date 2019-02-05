@@ -81,7 +81,7 @@ def get_stock_ledger_entries(filters):
 			company = %(company)s and
 			posting_date <= %(to_date)s
 			{sle_conditions}
-			order by posting_date, posting_time, sle.creation"""\
+			order by posting_date, posting_time, sle.name"""\
 		.format(item_conditions=get_item_conditions(filters),
 			sle_conditions=get_sle_conditions(filters)), filters, as_dict=True)
 

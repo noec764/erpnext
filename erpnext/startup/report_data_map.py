@@ -79,7 +79,7 @@ data_map = {
 			"actual_qty as qty", "voucher_type", "voucher_no", "project",
 			"incoming_rate as incoming_rate", "stock_uom", "serial_no",
 			"qty_after_transaction", "valuation_rate"],
-		"order_by": "posting_date, posting_time, creation",
+		"order_by": "posting_date, posting_time, name",
 		"links": {
 			"item_code": ["Item", "name"],
 			"warehouse": ["Warehouse", "name"],
