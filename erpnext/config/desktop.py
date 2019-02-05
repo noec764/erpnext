@@ -69,57 +69,6 @@ def get_data():
 
 		# old
 		{
-			"label": _("Accounting"),
-			"module_name": "Accounts",
-			"color": "#3498db",
-			"icon": "octicon octicon-repo",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "Stock",
-			"color": "#f39c12",
-			"icon": "octicon octicon-package",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "CRM",
-			"color": "#EF4DB6",
-			"icon": "octicon octicon-broadcast",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "Selling",
-			"color": "#1abc9c",
-			"icon": "octicon octicon-tag",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "Buying",
-			"color": "#c0392b",
-			"icon": "octicon octicon-briefcase",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "HR",
-			"color": "#2ecc71",
-			"icon": "octicon octicon-organization",
-			"label": _("Human Resources"),
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "Manufacturing",
-			"color": "#7f8c8d",
-			"icon": "octicon octicon-tools",
-			"type": "module",
-			"hidden": 1
-		},
-		{
 			"module_name": "POS",
 			"color": "#589494",
 			"icon": "octicon octicon-credit-card",
@@ -134,30 +83,6 @@ def get_data():
 			"type": "page",
 			"link": "leaderboard",
 			"label": _("Leaderboard")
-		},
-		{
-			"module_name": "Support",
-			"color": "#2c3e50",
-			"icon": "octicon octicon-issue-opened",
-			"type": "module",
-			"hidden": 1
-		},
-		{
-			"module_name": "Help",
-			"color": "#FF888B",
-			"icon": "octicon octicon-device-camera-video",
-			"type": "module",
-			"is_help": True,
-			"label": _("Help"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Maintenance",
-			"color": "#FF888B",
-			"icon": "octicon octicon-tools",
-			"type": "module",
-			"label": _("Maintenance"),
-			"hidden": 1
 		},
 		{
 			"module_name": "Student",
@@ -259,22 +184,6 @@ def get_data():
 			"type": "list",
 			"hidden": 1
 		},
-		{
-			"module_name": "Education",
-			"color": "#428B46",
-			"icon": "octicon octicon-mortar-board",
-			"type": "module",
-			"label": _("Education"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Healthcare",
-			"color": "#FF888B",
-			"icon": "fa fa-heartbeat",
-			"type": "module",
-			"label": _("Healthcare"),
-			"hidden": 1
-		},
         {
 			"module_name": "Patient",
 			"color": "#6BE273",
@@ -372,32 +281,6 @@ def get_data():
 			"label": _("Data Import"),
 			"link": "List/Data Import",
 			"type": "list"
-		},
-		{
-			"module_name": "Restaurant",
-			"color": "#EA81E8",
-			"icon": "🍔",
-			"_doctype": "Restaurant",
-			"type": "module",
-			"link": "List/Restaurant",
-			"label": _("Restaurant"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Hotels",
-			"color": "#EA81E8",
-			"icon": "fa fa-bed",
-			"type": "module",
-			"label": _("Hotels"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Agriculture",
-			"color": "#8BC34A",
-			"icon": "octicon octicon-globe",
-			"type": "module",
-			"label": _("Agriculture"),
-			"hidden": 1
 		},
 		{
 			"module_name": "Crop",
@@ -500,14 +383,6 @@ def get_data():
 			"hidden": 1
 		},
 		{
-			"module_name": "Assets",
-			"color": "#4286f4",
-			"icon": "octicon octicon-database",
-			"hidden": 1,
-			"label": _("Assets"),
-			"type": "module"
-		},
-		{
 			"module_name": "Grant Application",
 			"color": "#E9AB17",
 			"icon": "fa fa-gift",
@@ -558,19 +433,207 @@ def get_data():
 			"label": _("Chapter"),
 			"hidden": 1
 		},
+
+
+		# Modules
 		{
-			"module_name": "Non Profit",
-			"color": "#DE2B37",
-			"icon": "octicon octicon-heart",
+			"module_name": "Accounting",
+			"category": "Modules",
+			"label": _("Accounting"),
+			"color": "#3498db",
+			"icon": "octicon octicon-repo",
 			"type": "module",
-			"label": _("Non Profit"),
-			"hidden": 1
+			"hidden": 1,
+			"description": "Accounts, Banking, Ledgers and Statements, with Billings and Subscriptions."
+		},
+		{
+			"module_name": "Selling",
+			"category": "Modules",
+			"label": _("Selling"),
+			"color": "#1abc9c",
+			"icon": "octicon octicon-tag",
+			"type": "module",
+			"hidden": 1,
+			"description": "All things Sales, Customer and Products."
+		},
+		{
+			"module_name": "Buying",
+			"category": "Modules",
+			"label": _("Buying"),
+			"color": "#c0392b",
+			"icon": "octicon octicon-briefcase",
+			"type": "module",
+			"hidden": 1,
+			"description": "Purchasing, Suppliers and Products. Bluuuuu"
+		},
+		{
+			"module_name": "Stock",
+			"category": "Modules",
+			"label": _("Stock"),
+			"color": "#f39c12",
+			"icon": "octicon octicon-package",
+			"type": "module",
+			"hidden": 1,
+			"description": "Track Stock Transactions, Reports, and Serialized Items and Batches."
+		},
+		{
+			"module_name": "Assets",
+			"category": "Modules",
+			"label": _("Assets"),
+			"color": "#4286f4",
+			"icon": "octicon octicon-database",
+			"hidden": 1,
+			"type": "module",
+			"description": "Asset Maintainance and Tools."
+		},
+		{
+			"module_name": "Projects",
+			"category": "Modules",
+			"label": _("Projects"),
+			"color": "#8e44ad",
+			"icon": "octicon octicon-rocket",
+			"type": "module",
+			"hidden": 1,
+			"description": "Updates, Timesheets and Activities."
+		},
+		{
+			"module_name": "CRM",
+			"category": "Modules",
+			"label": _("CRM"),
+			"color": "#EF4DB6",
+			"icon": "octicon octicon-broadcast",
+			"type": "module",
+			"hidden": 1,
+			"description": "Everything in your sales pipeline, from Leads to Customers, to Support."
+		},
+		{
+			"module_name": "HR",
+			"category": "Modules",
+			"label": _("Human Resources"),
+			"color": "#2ecc71",
+			"icon": "octicon octicon-organization",
+			"type": "module",
+			"hidden": 1,
+			"description": "Employee Lifecycle, Payroll, Shifts and Leaves."
 		},
 		{
 			"module_name": "Quality Management",
+			"category": "Modules",
+			"label": _("Quality"),
 			"color": "#1abc9c",
 			"icon": "fa fa-check-square-o",
 			"type": "module",
-			"label": _("Quality")
-		}
+			"hidden": 1,
+			"description": "Volunteers, Memberships, Grants and Chapters."
+		},
+
+
+		# Category: "Domains"
+		{
+			"module_name": "Manufacturing",
+			"category": "Domains",
+			"label": _("Manufacturing"),
+			"color": "#7f8c8d",
+			"icon": "octicon octicon-tools",
+			"type": "module",
+			"hidden": 1,
+			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
+		},
+		{
+			"module_name": "Retail",
+			"category": "Domains",
+			"label": _("Retail"),
+			"color": "#7f8c8d",
+			"icon": "octicon octicon-credit-card",
+			"type": "module",
+			"hidden": 1,
+			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
+		},
+		{
+			"module_name": "Education",
+			"category": "Domains",
+			"label": _("Education"),
+			"color": "#428B46",
+			"icon": "octicon octicon-mortar-board",
+			"type": "module",
+			"hidden": 1,
+			"description": "Manage Student Admissions, Fees, Subjects and Score Reports."
+		},
+
+		{
+			"module_name": "Healthcare",
+			"category": "Domains",
+			"label": _("Healthcare"),
+			"color": "#FF888B",
+			"icon": "fa fa-heartbeat",
+			"type": "module",
+			"hidden": 1,
+			"description": "Patients appointments, procedures and tests, with diagnosis reports and drug prescriptions."
+		},
+		{
+			"module_name": "Agriculture",
+			"category": "Domains",
+			"label": _("Agriculture"),
+			"color": "#8BC34A",
+			"icon": "octicon octicon-globe",
+			"type": "module",
+			"hidden": 1,
+			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
+		},
+		{
+			"module_name": "Hotels",
+			"category": "Domains",
+			"label": _("Hotels"),
+			"color": "#EA81E8",
+			"icon": "fa fa-bed",
+			"type": "module",
+			"hidden": 1,
+			"description": "Manage Hotel Rooms, Pricing, Reservation and Amenities."
+		},
+
+		{
+			"module_name": "Non Profit",
+			"category": "Domains",
+			"label": _("Non Profit"),
+			"color": "#DE2B37",
+			"icon": "octicon octicon-heart",
+			"type": "module",
+			"hidden": 1,
+			"description": "Make benefiting others easier with Volunteers, Memberships, Grants and Chapters."
+		},
+		{
+			"module_name": "Restaurant",
+			"category": "Domains",
+			"label": _("Restaurant"),
+			"color": "#EA81E8",
+			"icon": "fa fa-cutlery",
+			"_doctype": "Restaurant",
+			"type": "module",
+			"link": "List/Restaurant",
+			"hidden": 1,
+			"description": "Menu, Orders and Table Reservations."
+		},
+
+
+		{
+			"module_name": "Learn",
+			"category": "Administration",
+			"label": _("Learn"),
+			"color": "#FF888B",
+			"icon": "octicon octicon-device-camera-video",
+			"type": "module",
+			"is_help": True,
+			"description": "Explore Help Articles and Videos."
+		},
+		{
+			"module_name": 'Marketplace',
+			"category": "Places",
+			"label": _('Marketplace'),
+			"icon": "octicon octicon-star",
+			"type": 'link',
+			"link": '#marketplace/home',
+			"color": '#FF4136',
+			'standard': 1,
+			"description": "Publish items to other ERPNext users and start a conversation."
+		},
 	]

@@ -497,6 +497,7 @@ def get_data():
 			]
 		}
 	]
+
 	gst = {
 		"label": _("Goods and Services Tax (GST India)"),
 		"items": [
@@ -540,49 +541,15 @@ def get_data():
 			},
 		]
 	}
-	retail = {
-		"label": _("Retail Operations"),
-		"items": [
-			{
-				"type": "page",
-				"name": "pos",
-				"label": _("POS"),
-				"description": _("Point of Sale")
-			},
-			{
-				"type": "doctype",
-				"name": "Cashier Closing",
-				"description": _("Cashier Closing")
-			},
-			{
-				"type": "doctype",
-				"name": "POS Settings",
-				"description": _("Setup mode of POS (Online / Offline)")
-			},
-			{
-				"type": "doctype",
-				"name": "POS Profile",
-				"label": _("Point-of-Sale Profile"),
-				"description": _("Setup default values for POS Invoices")
-			},
-			{
-				"type": "doctype",
-				"name": "Loyalty Program",
-				"label": _("Loyalty Program"),
-				"description": _("To make Customer based incentive schemes.")
-			},
-			{
-				"type": "doctype",
-				"name": "Loyalty Point Entry",
-				"label": _("Loyalty Point Entry"),
-				"description": _("To view logs of Loyalty Points assigned to a Customer.")
-			}
-		]
-	}
+
 	subscriptions = {
 		"label": _("Subscription Management"),
 		"icon": "fa fa-microchip ",
 		"items": [
+			{
+				"type": "doctype",
+				"name": "Subscriber",
+			},
 			{
 				"type": "doctype",
 				"name": "Subscription Plan",
@@ -597,15 +564,13 @@ def get_data():
 			}
 		]
 	}
+
+
 	countries = frappe.get_all("Company", fields="country")
 	countries = [country["country"] for country in countries]
 	if "India" in countries:
 		config.insert(7, gst)
 	domains = frappe.get_active_domains()
-	if "Retail" in domains:
-		config.insert(2, retail)
-	else:
-		config.insert(7, retail)
 	if "Services" in domains:
 		config.insert(2, subscriptions)
 	else:
