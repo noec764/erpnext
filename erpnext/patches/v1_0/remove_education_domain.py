@@ -14,6 +14,14 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
+	frappe.db.sql("""
+	DELETE
+	FROM 
+		`tabDocPerm`
+	WHERE 
+		role in ({0})
+	""".format(','.join(['%s']*len(roles))), tuple(roles))
+
 	# Standard portal items
 	titles = ["Fees", "Admission", _("Fees"), _("Admission")]
 
@@ -40,14 +48,12 @@ def execute():
 		{"document": "Web Form", "items": ["student-applicant"]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Education"]},
-		{"document": "Module Def", "items": ["Education"]},
-		{"document": "Item Group", "items": [_('Laboratory'), _('Drug')]}
+		{"document": "Module Def", "items": ["Education"]}
 	]
 
 	for element in elements:
 		for item in element["items"]:
 			try:
-				print(item)
 				frappe.delete_doc(element["document"], item)
 			except Exception as e:
 				print(e)

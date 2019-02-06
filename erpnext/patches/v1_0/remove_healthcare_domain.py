@@ -50,7 +50,6 @@ def execute():
 	for element in elements:
 		for item in element["items"]:
 			try:
-				print(item)
 				frappe.delete_doc(element["document"], item)
 			except Exception as e:
 				print(e)
