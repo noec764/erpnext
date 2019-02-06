@@ -33,10 +33,3 @@ erpnext/education/doctype/assessment_plan/test_assessment_plan.js
 erpnext/education/doctype/assessment_result/test_assessment_result.js
 erpnext/education/doctype/assessment_result_tool/test_assessment_result_tool.js
 erpnext/projects/doctype/task/tests/test_task_tree.js
-erpnext/non_profit/doctype/membership_type/test_membership_type.js
-erpnext/non_profit/doctype/member/test_member.js
-erpnext/non_profit/doctype/volunteer_type/test_volunteer_type.js
-erpnext/non_profit/doctype/volunteer/test_volunteer.js
-erpnext/non_profit/doctype/donor_type/test_donor_type.js
-erpnext/non_profit/doctype/donor/test_donor.js
-erpnext/non_profit/doctype/grant_application/test_grant_application.js
