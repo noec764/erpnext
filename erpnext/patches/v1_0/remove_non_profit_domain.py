@@ -13,6 +13,17 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
+	# Standard portal items
+	titles = ["Certification"]
+
+	frappe.db.sql("""
+	DELETE
+	FROM 
+		`tabPortal Menu Item`
+	WHERE 
+		title in ({0})
+	""".format(','.join(['%s']*len(titles))), tuple(titles))
+
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
 		{"document": "DocType", "items": ["Certification Application", "Certified Consultant", "Chapter", "Chapter Member", "Donor", "Donor Type", \

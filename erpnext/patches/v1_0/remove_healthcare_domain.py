@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 
 def execute():
 	# Delete assigned roles
@@ -13,6 +14,17 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
+	# Standard portal items
+	titles = ["Personal Details", "Prescription", "Lab Test", "Patient Appointment"]
+
+	frappe.db.sql("""
+	DELETE
+	FROM 
+		`tabPortal Menu Item`
+	WHERE 
+		title in ({0})
+	""".format(','.join(['%s']*len(titles))), tuple(titles))
+
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
 		{"document": "DocType", "items": ["Antibiotic", "Appointment Type", "Clinical Procedure", "Clinical Procedure Item", "Clinical Procedure Template", \
@@ -24,13 +36,13 @@ def execute():
 			"Sample Collection", "Sensitivity", "Sensitivity Test Items", "Special Test Items", "Special Test Template", "Vital Signs"]},
 		{"document": "Report", "items": ["Lab Test Report"]},
 		{"document": "Page", "items": ["appointment-analytic", "medical_record"]},
+		{"document": "Web Form", "items": ["lab-test", "patient-appointments", "personal-details", "prescription"]},
 		{"document": "Print Format", "items": ["Encounter Print", "Lab Test Print", "Sample ID Print"]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Healthcare"]},
 		{"document": "Module Def", "items": ["Healthcare"]},
 		{"document": "Custom Field", "items": ["Sales Invoice-patient", "Sales Invoice-patient_name", "Sales Invoice-ref_practitioner", \
 			"Sales Invoice Item-reference_dt", "Sales Invoice Item-reference_dn"]},
-		{"document": "Web Form", "items": ["lab-test", "patient-appointments", "personal-details", "prescription"]},
 		{"document": "Item Group", "items": [_('Laboratory'), _('Drug')]}
 	]
 

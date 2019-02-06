@@ -137,7 +137,6 @@ website_route_rules = [
 ]
 
 standard_portal_menu_items = [
-	{"title": _("Personal Details"), "route": "/personal-details", "reference_doctype": "Patient", "role": "Patient"},
 	{"title": _("Projects"), "route": "/project", "reference_doctype": "Project"},
 	{"title": _("Request for Quotations"), "route": "/rfq", "reference_doctype": "Request for Quotation", "role": "Supplier"},
 	{"title": _("Supplier Quotation"), "route": "/supplier-quotations", "reference_doctype": "Supplier Quotation", "role": "Supplier"},
@@ -149,13 +148,9 @@ standard_portal_menu_items = [
 	{"title": _("Addresses"), "route": "/addresses", "reference_doctype": "Address"},
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
-	{"title": _("Lab Test"), "route": "/lab-test", "reference_doctype": "Lab Test", "role":"Patient"},
-	{"title": _("Prescription"), "route": "/prescription", "reference_doctype": "Patient Encounter", "role":"Patient"},
-	{"title": _("Patient Appointment"), "route": "/patient-appointments", "reference_doctype": "Patient Appointment", "role":"Patient"},
 	{"title": _("Fees"), "route": "/fees", "reference_doctype": "Fees", "role":"Student"},
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
 	{"title": _("Admission"), "route": "/admissions", "reference_doctype": "Student Admission"},
-	{"title": _("Certification"), "route": "/certification", "reference_doctype": "Certification Application"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 ]
 
