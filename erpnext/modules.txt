@@ -18,6 +18,5 @@ Regional
 Healthcare
 Agriculture
 ERPNext Integrations
-Non Profit
 Hub Node
 Quality Management
