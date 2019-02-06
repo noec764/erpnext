@@ -382,58 +382,6 @@ def get_data():
 			"link": "List/Weather",
 			"hidden": 1
 		},
-		{
-			"module_name": "Grant Application",
-			"color": "#E9AB17",
-			"icon": "fa fa-gift",
-			"_doctype": "Grant Application",
-			"type": "list",
-			"link": "List/Grant Application",
-			"label": _("Grant Application"),
-			"hidden": 1
-
-		},
-		{
-			"module_name": "Donor",
-			"color": "#7F5A58",
-			"icon": "fa fa-tint",
-			"_doctype": "Donor",
-			"type": "list",
-			"link": "List/Donor",
-			"label": _("Donor"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Volunteer",
-			"color": "#7E587E",
-			"icon": "fa fa-angellist",
-			"_doctype": "Volunteer",
-			"type": "list",
-			"link": "List/Volunteer",
-			"label": _("Volunteer"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Member",
-			"color": "#79BAEC",
-			"icon": "fa fa-users",
-			"_doctype": "Member",
-			"type": "list",
-			"link": "List/Member",
-			"label": _("Member"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Chapter",
-			"color": "#3B9C9C",
-			"icon": "fa fa-handshake-o",
-			"_doctype": "Chapter",
-			"type": "list",
-			"link": "List/Chapter",
-			"label": _("Chapter"),
-			"hidden": 1
-		},
-
 
 		# Modules
 		{
@@ -580,40 +528,6 @@ def get_data():
 			"hidden": 1,
 			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
 		},
-		{
-			"module_name": "Hotels",
-			"category": "Domains",
-			"label": _("Hotels"),
-			"color": "#EA81E8",
-			"icon": "fa fa-bed",
-			"type": "module",
-			"hidden": 1,
-			"description": "Manage Hotel Rooms, Pricing, Reservation and Amenities."
-		},
-
-		{
-			"module_name": "Non Profit",
-			"category": "Domains",
-			"label": _("Non Profit"),
-			"color": "#DE2B37",
-			"icon": "octicon octicon-heart",
-			"type": "module",
-			"hidden": 1,
-			"description": "Make benefiting others easier with Volunteers, Memberships, Grants and Chapters."
-		},
-		{
-			"module_name": "Restaurant",
-			"category": "Domains",
-			"label": _("Restaurant"),
-			"color": "#EA81E8",
-			"icon": "fa fa-cutlery",
-			"_doctype": "Restaurant",
-			"type": "module",
-			"link": "List/Restaurant",
-			"hidden": 1,
-			"description": "Menu, Orders and Table Reservations."
-		},
-
 
 		{
 			"module_name": "Learn",

@@ -21,8 +21,5 @@ data = {
 	},
 	'Agriculture': {
 		'company_name': 'Schrute Farms'
-  },
-	'Non Profit': {
-		'company_name': 'Erpnext Foundation'
-	}
+  }
 }
