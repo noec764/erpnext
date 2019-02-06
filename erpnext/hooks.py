@@ -60,7 +60,6 @@ domains = {
 	'Agriculture': 'erpnext.domains.agriculture',
 	'Distribution': 'erpnext.domains.distribution',
 	'Education': 'erpnext.domains.education',
-	'Healthcare': 'erpnext.domains.healthcare',
 	'Manufacturing': 'erpnext.domains.manufacturing',
 	'Retail': 'erpnext.domains.retail',
 	'Services': 'erpnext.domains.services',
@@ -174,11 +173,7 @@ has_website_permission = {
 	"Material Request": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Delivery Note": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
-	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
-	"Lab Test": "erpnext.healthcare.web_form.lab_test.lab_test.has_website_permission",
-	"Patient Encounter": "erpnext.healthcare.web_form.prescription.prescription.has_website_permission",
-	"Patient Appointment": "erpnext.healthcare.web_form.patient_appointments.patient_appointments.has_website_permission",
-	"Patient": "erpnext.healthcare.web_form.personal_details.personal_details.has_website_permission"
+	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission"
 }
 
 dump_report_map = "erpnext.startup.report_data_map.data_map"
@@ -186,8 +181,7 @@ dump_report_map = "erpnext.startup.report_data_map.data_map"
 before_tests = "erpnext.setup.utils.before_tests"
 
 standard_queries = {
-	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list",
-	"Healthcare Practitioner": "erpnext.healthcare.doctype.healthcare_practitioner.healthcare_practitioner.get_practitioner_list"
+	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list"
 }
 
 doc_events = {

@@ -184,86 +184,6 @@ def get_data():
 			"type": "list",
 			"hidden": 1
 		},
-        {
-			"module_name": "Patient",
-			"color": "#6BE273",
-			"icon": "fa fa-user",
-			"doctype": "Patient",
-			"type": "link",
-			"link": "List/Patient",
-			"label": _("Patient"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Healthcare Practitioner",
-			"color": "#2ecc71",
-			"icon": "fa fa-user-md",
-			"doctype": "Healthcare Practitioner",
-			"type": "link",
-			"link": "List/Healthcare Practitioner",
-			"label": _("Healthcare Practitioner"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Patient Appointment",
-			"color": "#934F92",
-			"icon": "fa fa-calendar-plus-o",
-			"doctype": "Patient Appointment",
-			"type": "link",
-			"link": "List/Patient Appointment",
-			"label": _("Patient Appointment"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Patient Encounter",
-			"color": "#2ecc71",
-			"icon": "fa fa-stethoscope",
-			"doctype": "Patient Encounter",
-			"type": "link",
-			"link": "List/Patient Encounter",
-			"label": _("Patient Encounter"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Lab Test",
-			"color": "#7578f6",
-			"icon": "octicon octicon-beaker",
-			"doctype": "Lab Test",
-			"type": "list",
-			"link": "List/Lab Test",
-			"label": _("Lab Test"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Vital Signs",
-			"color": "#2ecc71",
-			"icon": "fa fa-thermometer-empty",
-			"doctype": "Vital Signs",
-			"type": "list",
-			"link": "List/Vital Signs",
-			"label": _("Vital Signs"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Clinical Procedure",
-			"color": "#FF888B",
-			"icon": "fa fa-medkit",
-			"doctype": "Clinical Procedure",
-			"type": "list",
-			"link": "List/Clinical Procedure",
-			"label": _("Clinical Procedure"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Inpatient Record",
-			"color": "#7578f6",
-			"icon": "fa fa-list-alt",
-			"doctype": "Inpatient Record",
-			"type": "list",
-			"link": "List/Inpatient Record",
-			"label": _("Inpatient Record"),
-			"hidden": 1
-        },
 		{
 			"module_name": "Hub",
 			"color": "#009248",
@@ -508,16 +428,6 @@ def get_data():
 			"description": "Manage Student Admissions, Fees, Subjects and Score Reports."
 		},
 
-		{
-			"module_name": "Healthcare",
-			"category": "Domains",
-			"label": _("Healthcare"),
-			"color": "#FF888B",
-			"icon": "fa fa-heartbeat",
-			"type": "module",
-			"hidden": 1,
-			"description": "Patients appointments, procedures and tests, with diagnosis reports and drug prescriptions."
-		},
 		{
 			"module_name": "Agriculture",
 			"category": "Domains",

@@ -22,6 +22,7 @@ def execute():
 		{"document": "Report", "items": ["Hotel Room Occupancy"]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Hospitality"]},
+		{"document": "Module Def", "items": ["Restaurant", "Hotels"]},
 		{"document": "Custom Field", "items": ["Sales Invoice-restaurant", "Sales Invoice-restaurant_table", "Price List-restaurant_menu"]}
 	]
 

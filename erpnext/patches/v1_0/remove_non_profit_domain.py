@@ -20,6 +20,7 @@ def execute():
 		{"document": "Report", "items": ["Expiring Memberships"]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Non Profit"]},
+		{"document": "Module Def", "items": ["Non Profit"]},
 		{"document": "Web Form", "items": ["certification-application", "certification-application-usd", "grant-application"]}
 	]
 
