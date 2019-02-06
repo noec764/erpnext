@@ -85,14 +85,6 @@ def get_data():
 			"label": _("Leaderboard")
 		},
 		{
-			"module_name": "Hub",
-			"color": "#009248",
-			"icon": "/assets/erpnext/images/hub_logo.svg",
-			"type": "page",
-			"link": "Hub/Item",
-			"label": _("Hub")
-		},
-		{
 			"module_name": "Data Import",
 			"color": "#FFF168",
 			"reverse": 1,
@@ -338,16 +330,5 @@ def get_data():
 			"type": "module",
 			"is_help": True,
 			"description": "Explore Help Articles and Videos."
-		},
-		{
-			"module_name": 'Marketplace',
-			"category": "Places",
-			"label": _('Marketplace'),
-			"icon": "octicon octicon-star",
-			"type": 'link',
-			"link": '#marketplace/home',
-			"color": '#FF4136',
-			'standard': 1,
-			"description": "Publish items to other ERPNext users and start a conversation."
-		},
+		}
 	]

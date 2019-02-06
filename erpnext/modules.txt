@@ -16,5 +16,4 @@ Maintenance
 Regional
 Agriculture
 ERPNext Integrations
-Hub Node
 Quality Management

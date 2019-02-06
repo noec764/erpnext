@@ -1,10 +1,6 @@
 {
 	"css/erpnext.css": [
 		"public/less/erpnext.less",
-		"public/less/hub.less"
-	],
-	"css/marketplace.css": [
-		"public/less/hub.less"
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",
@@ -12,9 +8,6 @@
 	],
 	"css/erpnext-web.css": [
 		"public/less/website.less"
-	],
-	"js/marketplace.min.js": [
-		"public/js/hub/marketplace.js"
 	],
 	"js/erpnext.min.js": [
 		"public/js/conf.js",
@@ -45,8 +38,7 @@
 		"public/js/agriculture/ternary_plot.js",
 		"public/js/templates/item_quick_entry.html",
 		"public/js/utils/item_quick_entry.js",
-		"public/js/utils/customer_quick_entry.js",
-		"public/js/hub/hub_factory.js"
+		"public/js/utils/customer_quick_entry.js"
 	],
 	"js/item-dashboard.min.js": [
 		"stock/dashboard/item_dashboard.html",
