@@ -85,194 +85,6 @@ def get_data():
 			"label": _("Leaderboard")
 		},
 		{
-			"module_name": "Student",
-			"color": "#c0392b",
-			"icon": "octicon octicon-person",
-			"label": _("Student"),
-			"link": "List/Student",
-			"_doctype": "Student",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Group",
-			"color": "#d59919",
-			"icon": "octicon octicon-organization",
-			"label": _("Student Group"),
-			"link": "List/Student Group",
-			"_doctype": "Student Group",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Course Schedule",
-			"color": "#fd784f",
-			"icon": "octicon octicon-calendar",
-			"label": _("Course Schedule"),
-			"link": "List/Course Schedule/Calendar",
-			"_doctype": "Course Schedule",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Attendance Tool",
-			"color": "#C0392B",
-			"icon": "octicon octicon-checklist",
-			"label": _("Student Attendance Tool"),
-			"link": "List/Student Attendance Tool",
-			"_doctype": "Student Attendance Tool",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Course",
-			"color": "#8e44ad",
-			"icon": "octicon octicon-book",
-			"label": _("Course"),
-			"link": "List/Course",
-			"_doctype": "Course",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Program",
-			"color": "#9b59b6",
-			"icon": "octicon octicon-repo",
-			"label": _("Program"),
-			"link": "List/Program",
-			"_doctype": "Program",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Applicant",
-			"color": "#4d927f",
-			"icon": "octicon octicon-clippy",
-			"label": _("Student Applicant"),
-			"link": "List/Student Applicant",
-			"_doctype": "Student Applicant",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Fees",
-			"color": "#83C21E",
-			"icon": "fa fa-money",
-			"label": _("Fees"),
-			"link": "List/Fees",
-			"_doctype": "Fees",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Instructor",
-			"color": "#a99e4c",
-			"icon": "octicon octicon-broadcast",
-			"label": _("Instructor"),
-			"link": "List/Instructor",
-			"_doctype": "Instructor",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Room",
-			"color": "#f22683",
-			"icon": "fa fa-map-marker",
-			"label": _("Room"),
-			"link": "List/Room",
-			"_doctype": "Room",
-			"type": "list",
-			"hidden": 1
-		},
-        {
-			"module_name": "Patient",
-			"color": "#6BE273",
-			"icon": "fa fa-user",
-			"doctype": "Patient",
-			"type": "link",
-			"link": "List/Patient",
-			"label": _("Patient"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Healthcare Practitioner",
-			"color": "#2ecc71",
-			"icon": "fa fa-user-md",
-			"doctype": "Healthcare Practitioner",
-			"type": "link",
-			"link": "List/Healthcare Practitioner",
-			"label": _("Healthcare Practitioner"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Patient Appointment",
-			"color": "#934F92",
-			"icon": "fa fa-calendar-plus-o",
-			"doctype": "Patient Appointment",
-			"type": "link",
-			"link": "List/Patient Appointment",
-			"label": _("Patient Appointment"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Patient Encounter",
-			"color": "#2ecc71",
-			"icon": "fa fa-stethoscope",
-			"doctype": "Patient Encounter",
-			"type": "link",
-			"link": "List/Patient Encounter",
-			"label": _("Patient Encounter"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Lab Test",
-			"color": "#7578f6",
-			"icon": "octicon octicon-beaker",
-			"doctype": "Lab Test",
-			"type": "list",
-			"link": "List/Lab Test",
-			"label": _("Lab Test"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Vital Signs",
-			"color": "#2ecc71",
-			"icon": "fa fa-thermometer-empty",
-			"doctype": "Vital Signs",
-			"type": "list",
-			"link": "List/Vital Signs",
-			"label": _("Vital Signs"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Clinical Procedure",
-			"color": "#FF888B",
-			"icon": "fa fa-medkit",
-			"doctype": "Clinical Procedure",
-			"type": "list",
-			"link": "List/Clinical Procedure",
-			"label": _("Clinical Procedure"),
-			"hidden": 1
-        },
-        {
-			"module_name": "Inpatient Record",
-			"color": "#7578f6",
-			"icon": "fa fa-list-alt",
-			"doctype": "Inpatient Record",
-			"type": "list",
-			"link": "List/Inpatient Record",
-			"label": _("Inpatient Record"),
-			"hidden": 1
-        },
-		{
-			"module_name": "Hub",
-			"color": "#009248",
-			"icon": "/assets/erpnext/images/hub_logo.svg",
-			"type": "page",
-			"link": "Hub/Item",
-			"label": _("Hub")
-		},
-		{
 			"module_name": "Data Import",
 			"color": "#FFF168",
 			"reverse": 1,
@@ -382,58 +194,6 @@ def get_data():
 			"link": "List/Weather",
 			"hidden": 1
 		},
-		{
-			"module_name": "Grant Application",
-			"color": "#E9AB17",
-			"icon": "fa fa-gift",
-			"_doctype": "Grant Application",
-			"type": "list",
-			"link": "List/Grant Application",
-			"label": _("Grant Application"),
-			"hidden": 1
-
-		},
-		{
-			"module_name": "Donor",
-			"color": "#7F5A58",
-			"icon": "fa fa-tint",
-			"_doctype": "Donor",
-			"type": "list",
-			"link": "List/Donor",
-			"label": _("Donor"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Volunteer",
-			"color": "#7E587E",
-			"icon": "fa fa-angellist",
-			"_doctype": "Volunteer",
-			"type": "list",
-			"link": "List/Volunteer",
-			"label": _("Volunteer"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Member",
-			"color": "#79BAEC",
-			"icon": "fa fa-users",
-			"_doctype": "Member",
-			"type": "list",
-			"link": "List/Member",
-			"label": _("Member"),
-			"hidden": 1
-		},
-		{
-			"module_name": "Chapter",
-			"color": "#3B9C9C",
-			"icon": "fa fa-handshake-o",
-			"_doctype": "Chapter",
-			"type": "list",
-			"link": "List/Chapter",
-			"label": _("Chapter"),
-			"hidden": 1
-		},
-
 
 		# Modules
 		{
@@ -549,27 +309,7 @@ def get_data():
 			"hidden": 1,
 			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
 		},
-		{
-			"module_name": "Education",
-			"category": "Domains",
-			"label": _("Education"),
-			"color": "#428B46",
-			"icon": "octicon octicon-mortar-board",
-			"type": "module",
-			"hidden": 1,
-			"description": "Manage Student Admissions, Fees, Subjects and Score Reports."
-		},
 
-		{
-			"module_name": "Healthcare",
-			"category": "Domains",
-			"label": _("Healthcare"),
-			"color": "#FF888B",
-			"icon": "fa fa-heartbeat",
-			"type": "module",
-			"hidden": 1,
-			"description": "Patients appointments, procedures and tests, with diagnosis reports and drug prescriptions."
-		},
 		{
 			"module_name": "Agriculture",
 			"category": "Domains",
@@ -580,40 +320,6 @@ def get_data():
 			"hidden": 1,
 			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
 		},
-		{
-			"module_name": "Hotels",
-			"category": "Domains",
-			"label": _("Hotels"),
-			"color": "#EA81E8",
-			"icon": "fa fa-bed",
-			"type": "module",
-			"hidden": 1,
-			"description": "Manage Hotel Rooms, Pricing, Reservation and Amenities."
-		},
-
-		{
-			"module_name": "Non Profit",
-			"category": "Domains",
-			"label": _("Non Profit"),
-			"color": "#DE2B37",
-			"icon": "octicon octicon-heart",
-			"type": "module",
-			"hidden": 1,
-			"description": "Make benefiting others easier with Volunteers, Memberships, Grants and Chapters."
-		},
-		{
-			"module_name": "Restaurant",
-			"category": "Domains",
-			"label": _("Restaurant"),
-			"color": "#EA81E8",
-			"icon": "fa fa-cutlery",
-			"_doctype": "Restaurant",
-			"type": "module",
-			"link": "List/Restaurant",
-			"hidden": 1,
-			"description": "Menu, Orders and Table Reservations."
-		},
-
 
 		{
 			"module_name": "Learn",
@@ -624,16 +330,5 @@ def get_data():
 			"type": "module",
 			"is_help": True,
 			"description": "Explore Help Articles and Videos."
-		},
-		{
-			"module_name": 'Marketplace',
-			"category": "Places",
-			"label": _('Marketplace'),
-			"icon": "octicon octicon-star",
-			"type": 'link',
-			"link": '#marketplace/home',
-			"color": '#FF4136',
-			'standard': 1,
-			"description": "Publish items to other ERPNext users and start a conversation."
-		},
+		}
 	]

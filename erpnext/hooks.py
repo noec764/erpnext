@@ -59,17 +59,12 @@ calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday 
 domains = {
 	'Agriculture': 'erpnext.domains.agriculture',
 	'Distribution': 'erpnext.domains.distribution',
-	'Education': 'erpnext.domains.education',
-	'Healthcare': 'erpnext.domains.healthcare',
-	'Hospitality': 'erpnext.domains.hospitality',
 	'Manufacturing': 'erpnext.domains.manufacturing',
-	'Non Profit': 'erpnext.domains.non_profit',
 	'Retail': 'erpnext.domains.retail',
 	'Services': 'erpnext.domains.services',
 }
 
-website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
-	"Job Opening", "Student Admission"]
+website_generators = ["Item Group", "Item", "BOM", "Sales Partner", "Job Opening"]
 
 website_context = {
 	"favicon": 	"/assets/erpnext/images/favicon.png",
@@ -127,7 +122,6 @@ website_route_rules = [
 		}
 	},
 	{"from_route": "/jobs", "to_route": "Job Opening"},
-	{"from_route": "/admissions", "to_route": "Student Admission"},
 	{"from_route": "/boms", "to_route": "BOM"},
 	{"from_route": "/timesheets", "to_route": "Timesheet"},
 	{"from_route": "/material-requests", "to_route": "Material Request"},
@@ -140,7 +134,6 @@ website_route_rules = [
 ]
 
 standard_portal_menu_items = [
-	{"title": _("Personal Details"), "route": "/personal-details", "reference_doctype": "Patient", "role": "Patient"},
 	{"title": _("Projects"), "route": "/project", "reference_doctype": "Project"},
 	{"title": _("Request for Quotations"), "route": "/rfq", "reference_doctype": "Request for Quotation", "role": "Supplier"},
 	{"title": _("Supplier Quotation"), "route": "/supplier-quotations", "reference_doctype": "Supplier Quotation", "role": "Supplier"},
@@ -152,20 +145,13 @@ standard_portal_menu_items = [
 	{"title": _("Addresses"), "route": "/addresses", "reference_doctype": "Address"},
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
-	{"title": _("Lab Test"), "route": "/lab-test", "reference_doctype": "Lab Test", "role":"Patient"},
-	{"title": _("Prescription"), "route": "/prescription", "reference_doctype": "Patient Encounter", "role":"Patient"},
-	{"title": _("Patient Appointment"), "route": "/patient-appointments", "reference_doctype": "Patient Appointment", "role":"Patient"},
-	{"title": _("Fees"), "route": "/fees", "reference_doctype": "Fees", "role":"Student"},
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
-	{"title": _("Admission"), "route": "/admissions", "reference_doctype": "Student Admission"},
-	{"title": _("Certification"), "route": "/certification", "reference_doctype": "Certification Application"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 ]
 
 default_roles = [
 	{'role': 'Customer', 'doctype':'Contact', 'email_field': 'email_id'},
-	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'},
-	{'role': 'Student', 'doctype':'Student', 'email_field': 'student_email_id'},
+	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'}
 ]
 
 has_website_permission = {
@@ -176,11 +162,7 @@ has_website_permission = {
 	"Material Request": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Delivery Note": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
-	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
-	"Lab Test": "erpnext.healthcare.web_form.lab_test.lab_test.has_website_permission",
-	"Patient Encounter": "erpnext.healthcare.web_form.prescription.prescription.has_website_permission",
-	"Patient Appointment": "erpnext.healthcare.web_form.patient_appointments.patient_appointments.has_website_permission",
-	"Patient": "erpnext.healthcare.web_form.personal_details.personal_details.has_website_permission"
+	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission"
 }
 
 dump_report_map = "erpnext.startup.report_data_map.data_map"
@@ -188,8 +170,7 @@ dump_report_map = "erpnext.startup.report_data_map.data_map"
 before_tests = "erpnext.setup.utils.before_tests"
 
 standard_queries = {
-	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list",
-	"Healthcare Practitioner": "erpnext.healthcare.doctype.healthcare_practitioner.healthcare_practitioner.get_practitioner_list"
+	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list"
 }
 
 doc_events = {
