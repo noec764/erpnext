@@ -13,7 +13,6 @@ Shopping Cart
 Assets
 Portal
 Maintenance
-Education
 Regional
 Agriculture
 ERPNext Integrations

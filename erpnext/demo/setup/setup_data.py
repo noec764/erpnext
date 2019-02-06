@@ -240,12 +240,6 @@ def setup_user_roles():
 		update_employee_department(user.name, 'Management')
 		frappe.db.set_global('demo_projects_user', user.name)
 
-	if not frappe.db.get_global('demo_education_user'):
-		user = frappe.get_doc('User', 'ArthurCurry@example.com')
-		user.add_roles('Academics User')
-		update_employee_department(user.name, 'Management')
-		frappe.db.set_global('demo_education_user', user.name)
-
 	#Add Expense Approver
 	user = frappe.get_doc('User', 'ClarkKent@example.com')
 	user.add_roles('Expense Approver')

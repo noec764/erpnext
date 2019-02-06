@@ -14,7 +14,7 @@ def execute():
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
 	# Standard portal items
-	titles = ["Certification"]
+	titles = ["Certification", _("Certification")]
 
 	frappe.db.sql("""
 	DELETE

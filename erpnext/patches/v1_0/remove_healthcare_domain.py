@@ -15,7 +15,8 @@ def execute():
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
 	# Standard portal items
-	titles = ["Personal Details", "Prescription", "Lab Test", "Patient Appointment"]
+	titles = ["Personal Details", "Prescription", "Lab Test", "Patient Appointment", _("Personal Details"), _("Prescription"), \
+		_("Lab Test"), _("Patient Appointment")]
 
 	frappe.db.sql("""
 	DELETE

@@ -9,3 +9,4 @@ erpnext.patches.v12_0.move_item_tax_to_item_tax_template
 erpnext.patches.v1_0.remove_hospitality_domain
 erpnext.patches.v1_0.remove_non_profit_domain
 erpnext.patches.v1_0.remove_healthcare_domain
+erpnext.patches.v1_0.remove_education_domain

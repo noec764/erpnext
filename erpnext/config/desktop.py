@@ -85,106 +85,6 @@ def get_data():
 			"label": _("Leaderboard")
 		},
 		{
-			"module_name": "Student",
-			"color": "#c0392b",
-			"icon": "octicon octicon-person",
-			"label": _("Student"),
-			"link": "List/Student",
-			"_doctype": "Student",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Group",
-			"color": "#d59919",
-			"icon": "octicon octicon-organization",
-			"label": _("Student Group"),
-			"link": "List/Student Group",
-			"_doctype": "Student Group",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Course Schedule",
-			"color": "#fd784f",
-			"icon": "octicon octicon-calendar",
-			"label": _("Course Schedule"),
-			"link": "List/Course Schedule/Calendar",
-			"_doctype": "Course Schedule",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Attendance Tool",
-			"color": "#C0392B",
-			"icon": "octicon octicon-checklist",
-			"label": _("Student Attendance Tool"),
-			"link": "List/Student Attendance Tool",
-			"_doctype": "Student Attendance Tool",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Course",
-			"color": "#8e44ad",
-			"icon": "octicon octicon-book",
-			"label": _("Course"),
-			"link": "List/Course",
-			"_doctype": "Course",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Program",
-			"color": "#9b59b6",
-			"icon": "octicon octicon-repo",
-			"label": _("Program"),
-			"link": "List/Program",
-			"_doctype": "Program",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Student Applicant",
-			"color": "#4d927f",
-			"icon": "octicon octicon-clippy",
-			"label": _("Student Applicant"),
-			"link": "List/Student Applicant",
-			"_doctype": "Student Applicant",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Fees",
-			"color": "#83C21E",
-			"icon": "fa fa-money",
-			"label": _("Fees"),
-			"link": "List/Fees",
-			"_doctype": "Fees",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Instructor",
-			"color": "#a99e4c",
-			"icon": "octicon octicon-broadcast",
-			"label": _("Instructor"),
-			"link": "List/Instructor",
-			"_doctype": "Instructor",
-			"type": "list",
-			"hidden": 1
-		},
-		{
-			"module_name": "Room",
-			"color": "#f22683",
-			"icon": "fa fa-map-marker",
-			"label": _("Room"),
-			"link": "List/Room",
-			"_doctype": "Room",
-			"type": "list",
-			"hidden": 1
-		},
-		{
 			"module_name": "Hub",
 			"color": "#009248",
 			"icon": "/assets/erpnext/images/hub_logo.svg",
@@ -416,16 +316,6 @@ def get_data():
 			"type": "module",
 			"hidden": 1,
 			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
-		},
-		{
-			"module_name": "Education",
-			"category": "Domains",
-			"label": _("Education"),
-			"color": "#428B46",
-			"icon": "octicon octicon-mortar-board",
-			"type": "module",
-			"hidden": 1,
-			"description": "Manage Student Admissions, Fees, Subjects and Score Reports."
 		},
 
 		{
