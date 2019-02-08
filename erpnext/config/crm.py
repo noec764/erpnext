@@ -11,21 +11,35 @@ def get_data():
 					"type": "doctype",
 					"name": "Lead",
 					"description": _("Database of potential customers."),
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Opportunity",
 					"description": _("Potential opportunities for selling."),
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Customer",
 					"description": _("Customer database."),
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Contact",
 					"description": _("All Contacts."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Communication",
+					"description": _("Record of all communications of type email, phone, chat, visit, etc."),
+				},
+				{
+					"type": "doctype",
+					"name": "Lead Source",
+					"description": _("Track Leads by Lead Source.")
 				},
 				{
 					"type": "doctype",
@@ -117,49 +131,57 @@ def get_data():
 					"type": "report",
 					"is_query_report": True,
 					"name": "Lead Details",
-					"doctype": "Lead"
+					"doctype": "Lead",
+					"onboard": 1,
 				},
 				{
 					"type": "page",
 					"name": "sales-funnel",
 					"label": _("Sales Funnel"),
 					"icon": "fa fa-bar-chart",
+					"onboard": 1,
 				},
 				{
 					"type": "report",
 					"name": "Prospects Engaged But Not Converted",
 					"doctype": "Lead",
-					"is_query_report": True
+					"is_query_report": True,
+					"onboard": 1,
 				},
 				{
 					"type": "report",
 					"name": "Minutes to First Response for Opportunity",
 					"doctype": "Opportunity",
-					"is_query_report": True
+					"is_query_report": True,
+					"dependencies": ["Opportunity"]
 				},
 				{
 					"type": "report",
 					"is_query_report": True,
 					"name": "Customer Addresses And Contacts",
-					"doctype": "Contact"
+					"doctype": "Contact",
+					"dependencies": ["Customer"]
 				},
 				{
 					"type": "report",
 					"is_query_report": True,
 					"name": "Inactive Customers",
-					"doctype": "Sales Order"
+					"doctype": "Sales Order",
+					"dependencies": ["Sales Order"]
 				},
 				{
 					"type": "report",
 					"is_query_report": True,
 					"name": "Campaign Efficiency",
-					"doctype": "Lead"
+					"doctype": "Lead",
+					"dependencies": ["Lead"]
 				},
 				{
 					"type": "report",
 					"is_query_report": True,
 					"name": "Lead Owner Efficiency",
-					"doctype": "Lead"
+					"doctype": "Lead",
+					"dependencies": ["Lead"]
 				}
 			]
 		},
@@ -169,16 +191,12 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
-					"name": "Campaign",
-					"description": _("Sales campaigns."),
-				},
-				{
-					"type": "doctype",
 					"label": _("Customer Group"),
 					"name": "Customer Group",
 					"icon": "fa fa-sitemap",
 					"link": "Tree/Customer Group",
 					"description": _("Manage Customer Group Tree."),
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
@@ -187,6 +205,7 @@ def get_data():
 					"icon": "fa fa-sitemap",
 					"link": "Tree/Territory",
 					"description": _("Manage Territory Tree."),
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
@@ -195,6 +214,12 @@ def get_data():
 					"icon": "fa fa-sitemap",
 					"link": "Tree/Sales Person",
 					"description": _("Manage Sales Person Tree."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Campaign",
+					"description": _("Sales campaigns."),
 				},
 				{
 					"type": "doctype",
@@ -211,6 +236,80 @@ def get_data():
 					"name": "SMS Settings",
 					"description": _("Setup SMS gateway settings")
 				}
+			]
+		},
+		{
+			"label": _("Support"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Issue",
+					"description": _("Support queries from customers."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Communication",
+					"description": _("Communication log."),
+				},
+				{
+					"type": "doctype",
+					"name": "Warranty Claim",
+					"description": _("Warranty Claim against Serial No."),
+				},
+				{
+					"type": "doctype",
+					"name": "Serial No",
+					"description": _("Single unit of an Item."),
+				},
+				{
+					"type": "page",
+					"name": "support-analytics",
+					"label": _("Support Analytics"),
+					"icon": "fa fa-bar-chart"
+				},
+				{
+					"type": "report",
+					"name": "Minutes to First Response for Issues",
+					"doctype": "Issue",
+					"is_query_report": True,
+					"dependencies": ["Issue"],
+				},
+				{
+					"type": "report",
+					"name": "Support Hours",
+					"doctype": "Issue",
+					"is_query_report": True,
+					"dependencies": ["Issue"]
+				},
+			]
+		},
+		{
+			"label": _("Maintenance"),
+			"icon": "fa fa-star",
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Maintenance Schedule",
+					"description": _("Plan for maintenance visits."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Maintenance Visit",
+					"description": _("Visit report for maintenance call."),
+				},
+				{
+					"type": "report",
+					"name": "Maintenance Schedules",
+					"is_query_report": True,
+					"doctype": "Maintenance Schedule"
+				},
+				{
+					"type": "doctype",
+					"name": "Warranty Claim",
+					"description": _("Warranty Claim against Serial No."),
+				},
 			]
 		},
 		# {

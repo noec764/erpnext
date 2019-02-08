@@ -5,194 +5,171 @@ from frappe import _
 
 def get_data():
 	return [
+		# Modules
 		{
-			"module_name": "Item",
-			"_doctype": "Item",
-			"color": "#f39c12",
-			"icon": "octicon octicon-package",
-			"type": "link",
-			"link": "List/Item"
+			"module_name": "Accounting",
+			"category": "Modules",
+			"label": _("Accounting"),
+			"color": "#3498db",
+			"icon": "octicon octicon-repo",
+			"type": "module",
+			"hidden": 1,
+			"description": "Accounts, Billing, Payments, Cost Center and Budgeting."
 		},
 		{
-			"module_name": "Customer",
-			"_doctype": "Customer",
+			"module_name": "Selling",
+			"category": "Modules",
+			"label": _("Selling"),
 			"color": "#1abc9c",
 			"icon": "octicon octicon-tag",
-			"type": "link",
-			"link": "List/Customer"
+			"type": "module",
+			"hidden": 1,
+			"description": "All things Sales, Customer and Products."
 		},
 		{
-			"module_name": "Supplier",
-			"_doctype": "Supplier",
+			"module_name": "Buying",
+			"category": "Modules",
+			"label": _("Buying"),
 			"color": "#c0392b",
 			"icon": "octicon octicon-briefcase",
-			"type": "link",
-			"link": "List/Supplier"
+			"type": "module",
+			"hidden": 1,
+			"description": "Purchasing, Suppliers and Products."
 		},
 		{
-			"_doctype": "Employee",
-			"module_name": "Employee",
-			"color": "#2ecc71",
-			"icon": "octicon octicon-organization",
-			"type": "link",
-			"link": "List/Employee"
+			"module_name": "Stock",
+			"category": "Modules",
+			"label": _("Stock"),
+			"color": "#f39c12",
+			"icon": "octicon octicon-package",
+			"type": "module",
+			"hidden": 1,
+			"description": "Track Stock Transactions, Reports, and Serialized Items and Batches."
+		},
+		{
+			"module_name": "Assets",
+			"category": "Modules",
+			"label": _("Assets"),
+			"color": "#4286f4",
+			"icon": "octicon octicon-database",
+			"hidden": 1,
+			"type": "module",
+			"description": "Asset Maintainance and Tools."
 		},
 		{
 			"module_name": "Projects",
+			"category": "Modules",
+			"label": _("Projects"),
 			"color": "#8e44ad",
 			"icon": "octicon octicon-rocket",
 			"type": "module",
+			"hidden": 1,
+			"description": "Updates, Timesheets and Activities."
 		},
 		{
-			"module_name": "Issue",
-			"color": "#2c3e50",
-			"icon": "octicon octicon-issue-opened",
-			"_doctype": "Issue",
-			"type": "link",
-			"link": "List/Issue"
-		},
-		{
-			"module_name": "Lead",
+			"module_name": "CRM",
+			"category": "Modules",
+			"label": _("CRM"),
+			"color": "#EF4DB6",
 			"icon": "octicon octicon-broadcast",
-			"_doctype": "Lead",
-			"type": "link",
-			"link": "List/Lead"
+			"type": "module",
+			"hidden": 1,
+			"description": "Everything in your sales pipeline, from Leads to Customers, to Support."
 		},
 		{
-			"module_name": "Profit and Loss Statement",
-			"_doctype": "Account",
-			"color": "#3498db",
-			"icon": "octicon octicon-repo",
-			"type": "link",
-			"link": "query-report/Profit and Loss Statement"
+			"module_name": "HR",
+			"category": "Modules",
+			"label": _("Human Resources"),
+			"color": "#2ecc71",
+			"icon": "octicon octicon-organization",
+			"type": "module",
+			"hidden": 1,
+			"description": "Employee Lifecycle, Payroll, Shifts and Leaves."
+		},
+		{
+			"module_name": "Quality Management",
+			"category": "Modules",
+			"label": _("Quality"),
+			"color": "#1abc9c",
+			"icon": "fa fa-check-square-o",
+			"type": "module",
+			"hidden": 1,
+			"description": "Volunteers, Memberships, Grants and Chapters."
 		},
 
-		# old
+
+		# Category: "Domains"
 		{
-			"module_name": "POS",
-			"color": "#589494",
+			"module_name": "Manufacturing",
+			"category": "Domains",
+			"label": _("Manufacturing"),
+			"color": "#7f8c8d",
+			"icon": "octicon octicon-tools",
+			"type": "module",
+			"hidden": 1,
+			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
+		},
+		{
+			"module_name": "Retail",
+			"category": "Domains",
+			"label": _("Retail"),
+			"color": "#7f8c8d",
 			"icon": "octicon octicon-credit-card",
-			"type": "page",
-			"link": "pos",
-			"label": _("POS")
+			"type": "module",
+			"hidden": 1,
+			"description": "Point of Sale, Cashier Closing and Loyalty Programs."
 		},
 		{
-			"module_name": "Leaderboard",
-			"color": "#589494",
-			"icon": "octicon octicon-graph",
-			"type": "page",
-			"link": "leaderboard",
-			"label": _("Leaderboard")
+			"module_name": "Education",
+			"category": "Domains",
+			"label": _("Education"),
+			"color": "#428B46",
+			"icon": "octicon octicon-mortar-board",
+			"type": "module",
+			"hidden": 1,
+			"description": "Manage Student Admissions, Fees, Subjects and Score Reports."
+		},
+
+		{
+			"module_name": "Healthcare",
+			"category": "Domains",
+			"label": _("Healthcare"),
+			"color": "#FF888B",
+			"icon": "fa fa-heartbeat",
+			"type": "module",
+			"hidden": 1,
+			"description": "Patients appointments, procedures and tests, with diagnosis reports and drug prescriptions."
 		},
 		{
-			"module_name": "Data Import",
-			"color": "#FFF168",
-			"reverse": 1,
-			"doctype": "Data Import",
-			"icon": "octicon octicon-cloud-upload",
-			"label": _("Data Import"),
-			"link": "List/Data Import",
-			"type": "list"
-		},
-		{
-			"module_name": "Crop",
-			"_doctype": "Crop",
-			"label": _("Crop"),
+			"module_name": "Agriculture",
+			"category": "Domains",
+			"label": _("Agriculture"),
 			"color": "#8BC34A",
-			"icon": "fa fa-tree",
-			"type": "list",
-			"link": "List/Crop",
-			"hidden": 1
+			"icon": "octicon octicon-globe",
+			"type": "module",
+			"hidden": 1,
+			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
 		},
 		{
-			"module_name": "Crop Cycle",
-			"_doctype": "Crop Cycle",
-			"label": _("Crop Cycle"),
-			"color": "#8BC34A",
-			"icon": "fa fa-circle-o-notch",
-			"type": "list",
-			"link": "List/Crop Cycle",
-			"hidden": 1
+			"module_name": "Hotels",
+			"category": "Domains",
+			"label": _("Hotels"),
+			"color": "#EA81E8",
+			"icon": "fa fa-bed",
+			"type": "module",
+			"hidden": 1,
+			"description": "Manage Hotel Rooms, Pricing, Reservation and Amenities."
 		},
+
 		{
-			"module_name": "Fertilizer",
-			"_doctype": "Fertilizer",
-			"label": _("Fertilizer"),
-			"color": "#8BC34A",
-			"icon": "fa fa-leaf",
-			"type": "list",
-			"link": "List/Fertilizer",
-			"hidden": 1
-		},
-		{
-			"module_name": "Location",
-			"_doctype": "Location",
-			"label": _("Location"),
-			"color": "#8BC34A",
-			"icon": "fa fa-map",
-			"type": "list",
-			"link": "List/Location",
-			"hidden": 1
-		},
-		{
-			"module_name": "Disease",
-			"_doctype": "Disease",
-			"label": _("Disease"),
-			"color": "#8BC34A",
-			"icon": "octicon octicon-bug",
-			"type": "list",
-			"link": "List/Disease",
-			"hidden": 1
-		},
-		{
-			"module_name": "Plant Analysis",
-			"_doctype": "Plant Analysis",
-			"label": _("Plant Analysis"),
-			"color": "#8BC34A",
-			"icon": "fa fa-pagelines",
-			"type": "list",
-			"link": "List/Plant Analysis",
-			"hidden": 1
-		},
-		{
-			"module_name": "Soil Analysis",
-			"_doctype": "Soil Analysis",
-			"label": _("Soil Analysis"),
-			"color": "#8BC34A",
-			"icon": "fa fa-flask",
-			"type": "list",
-			"link": "List/Soil Analysis",
-			"hidden": 1
-		},
-		{
-			"module_name": "Soil Texture",
-			"_doctype": "Soil Texture",
-			"label": _("Soil Texture"),
-			"color": "#8BC34A",
-			"icon": "octicon octicon-beaker",
-			"type": "list",
-			"link": "List/Soil Texture",
-			"hidden": 1
-		},
-		{
-			"module_name": "Water Analysis",
-			"_doctype": "Water Analysis",
-			"label": _("Water Analysis"),
-			"color": "#8BC34A",
-			"icon": "fa fa-tint",
-			"type": "list",
-			"link": "List/Water Analysis",
-			"hidden": 1
-		},
-		{
-			"module_name": "Weather",
-			"_doctype": "Weather",
-			"label": _("Weather"),
-			"color": "#8BC34A",
-			"icon": "fa fa-sun-o",
-			"type": "list",
-			"link": "List/Weather",
-			"hidden": 1
+			"module_name": "Non Profit",
+			"category": "Domains",
+			"label": _("Non Profit"),
+			"color": "#DE2B37",
+			"icon": "octicon octicon-heart",
+			"type": "module",
+			"hidden": 1,
+			"description": "Make benefiting others easier with Volunteers, Memberships, Grants and Chapters."
 		},
 
 		# Modules

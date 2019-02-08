@@ -9,6 +9,7 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Employee",
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
@@ -43,48 +44,176 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Employee Attendance Tool",
-					"hide_count": True
+					"hide_count": True,
+					"onboard": 1,
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Attendance",
+					"onboard": 1,
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Attendance Request",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Upload Attendance",
-					"hide_count": True
+					"hide_count": True,
+					"dependencies": ["Employee"]
+				},
+			]
+		},
+		{
+			"label": _("Payroll"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Salary Structure",
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
+					"name": "Salary Structure Assignment",
+					"onboard": 1,
+					"dependencies": ["Salary Structure", "Employee"],
+				},
+				{
+					"type": "doctype",
+					"name": "Salary Slip",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Payroll Entry",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Benefit Application",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Benefit Claim",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Additional Salary",
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Tax Exemption Declaration",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Tax Exemption Proof Submission",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Incentive",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Retention Bonus",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
+					"name": "Payroll Period",
+				},
+				{
+					"type": "doctype",
+					"name": "Salary Component",
+				},
+			]
+		},
+		{
+			"label": _("Setup"),
+			"icon": "fa fa-cog",
+			"items": [
+				{
+					"type": "doctype",
+					"name": "HR Settings",
+				},
+				{
+					"type": "doctype",
+					"name": "Employment Type",
+				},
+				{
+					"type": "doctype",
+					"name": "Branch",
+				},
+				{
+					"type": "doctype",
+					"name": "Department",
+				},
+				{
+					"type": "doctype",
+					"name": "Designation",
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Grade",
+				},
+				{
+					"type": "doctype",
+					"name": "Daily Work Summary Group"
+				},
+				{
+					"type": "doctype",
+					"name": "Employee Health Insurance"
+				},
+				{
+					"type": "doctype",
+					"name": "Staffing Plan",
+				}
+			]
+		},
+
+		{
+			"label": _("Leaves"),
+			"items": [
+				{
+					"type": "doctype",
 					"name": "Leave Application",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Leave Allocation",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Compensatory Leave Request",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Leave Encashment",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name": "Leave Period",
-				},
-				{
-					"type": "doctype",
-					"name": "Leave Policy",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
 					"name":"Leave Type",
+				},
+				{
+					"type": "doctype",
+					"name": "Leave Policy",
+					"dependencies": ["Leave Type"]
 				},
 				{
 					"type": "doctype",
@@ -97,68 +226,87 @@ def get_data():
 			]
 		},
 		{
-			"label": _("Payroll"),
+			"label": _("Recruitment and Training"),
 			"items": [
 				{
 					"type": "doctype",
-					"name": "Salary Structure Assignment",
+					"name": "Job Applicant",
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
-					"name": "Salary Slip",
+					"name": "Job Opening",
+					"onboard": 1,
 				},
 				{
 					"type": "doctype",
-					"name": "Payroll Entry"
+					"name": "Job Offer",
+					"onboard": 1,
+				},
+				{
+					"type": "report",
+					"name": "Employee Information",
+					"doctype": "Employee"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Salary Register",
+					"doctype": "Salary Slip"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Monthly Attendance Sheet",
+					"doctype": "Attendance"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Vehicle Expenses",
+					"doctype": "Vehicle"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Department Analytics",
+					"doctype": "Employee"
+				},
+			]
+		},
+		{
+			"label": _("Employee Lifecycle"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Employee Transfer",
+					"dependencies": ["Employee"],
 				},
 				{
 					"type": "doctype",
-					"name": "Employee Benefit Application",
+					"name": "Employee Promotion",
+					"dependencies": ["Employee"],
 				},
 				{
 					"type": "doctype",
-					"name": "Employee Benefit Claim",
+					"name": "Employee Separation",
+					"dependencies": ["Employee"],
 				},
 				{
 					"type": "doctype",
-					"name": "Additional Salary",
+					"name": "Employee Onboarding",
+					"dependencies": ["Job Applicant"],
 				},
 				{
 					"type": "doctype",
-					"name": "Employee Tax Exemption Declaration",
+					"name": "Employee Separation Template",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
-					"name": "Employee Tax Exemption Proof Submission",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Incentive",
-				},
-				{
-					"type": "doctype",
-					"name": "Retention Bonus",
-				},
-				{
-					"type": "doctype",
-					"name": "Payroll Period",
-				},
-				{
-					"type": "doctype",
-					"name": "Salary Component",
-				},
-				{
-					"type": "doctype",
-					"name": "Salary Structure",
-				},
-				# {
-				# 	"type": "doctype",
-				# 	"name": "Employee Tax Exemption Category",
-				# },
-				# {
-				# 	"type": "doctype",
-				# 	"name": "Employee Tax Exemption Sub Category"
-				# }
+					"name": "Employee Onboarding Template",
+					"dependencies": ["Employee"]
+				}
 			]
 		},
 		{
@@ -180,18 +328,7 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Employee Advance",
-				},
-				{
-					"type": "doctype",
-					"name": "Expense Claim",
-				},
-				{
-					"type": "doctype",
-					"name": "Expense Claim Type",
-				},
-				{
-					"type": "doctype",
-					"name": "Travel Request",
+					"dependencies": ["Employee"]
 				},
 				{
 					"type": "doctype",
@@ -200,43 +337,7 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Loan Application",
-				},
-				{
-					"type": "doctype",
-					"name": "Loan"
-				},
-			]
-		},
-		{
-			"label": _("Recruitment and Training"),
-			"items": [
-				{
-					"type": "doctype",
-					"name": "Job Applicant",
-				},
-				{
-					"type": "doctype",
-					"name": "Job Opening",
-				},
-				{
-					"type": "doctype",
-					"name": "Job Offer",
-				},
-				{
-					"type": "doctype",
-					"name": "Training Program"
-				},
-				{
-					"type": "doctype",
-					"name": "Training Event"
-				},
-				{
-					"type": "doctype",
-					"name": "Training Result"
-				},
-				{
-					"type": "doctype",
-					"name": "Training Feedback"
+					"dependencies": ["Employee"]
 				},
 			]
 		},
@@ -316,48 +417,6 @@ def get_data():
 					"type": "doctype",
 					"name": "Vehicle Log"
 				},
-			]
-		},
-		{
-			"label": _("Setup"),
-			"icon": "fa fa-cog",
-			"items": [
-				{
-					"type": "doctype",
-					"name": "HR Settings",
-				},
-				{
-					"type": "doctype",
-					"name": "Employment Type",
-				},
-				{
-					"type": "doctype",
-					"name": "Branch",
-				},
-				{
-					"type": "doctype",
-					"name": "Department",
-				},
-				{
-					"type": "doctype",
-					"name": "Designation",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Grade",
-				},
-				{
-					"type": "doctype",
-					"name": "Daily Work Summary Group"
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Health Insurance"
-				},
-				{
-					"type": "doctype",
-					"name": "Staffing Plan",
-				}
 			]
 		},
 		# {
