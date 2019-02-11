@@ -161,6 +161,7 @@ def get_data():
 			"description": "Explore Help Articles and Videos."
 		},
 		{
+<<<<<<< HEAD
 			"module_name": "Settings",
 			"category": "Administration",
 			"label": _("Settings"),
@@ -170,5 +171,16 @@ def get_data():
 			"type": "module",
 			"hidden": 1,
 			"description": "Global settings for all modules in ERPNext, with Email Digest and SMS."
+=======
+			"module_name": 'Marketplace',
+			"category": "Places",
+			"label": _('Marketplace'),
+			"icon": "octicon octicon-star",
+			"type": 'link',
+			"link": '#marketplace/home',
+			"color": '#FF4136',
+			'standard': 1,
+			"description": "Publish items to other ERPNext users and start a conversation."
+>>>>>>> 9d4a183074... fix(modules): Merge Settings into one, Setup --> Settings
 		},
 	]
