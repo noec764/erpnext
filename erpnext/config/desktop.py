@@ -34,7 +34,7 @@ def get_data():
 			"icon": "octicon octicon-tag",
 			"type": "module",
 			"hidden": 1,
-			"description": "Sales orders, quotations, customers and items."
+			"description": "All things Sales, Customer and Products."
 		},
 		{
 			"module_name": "Buying",
@@ -44,7 +44,7 @@ def get_data():
 			"icon": "octicon octicon-briefcase",
 			"type": "module",
 			"hidden": 1,
-			"description": "Purchasing, suppliers, material requests, and items."
+			"description": "Purchasing, Suppliers and Products."
 		},
 		{
 			"module_name": "Stock",
@@ -84,7 +84,7 @@ def get_data():
 			"icon": "octicon octicon-broadcast",
 			"type": "module",
 			"hidden": 1,
-			"description": "Sales pipeline, leads, opportunities and customers."
+			"description": "Everything in your sales pipeline, from Leads and Opportunities to Customers."
 		},
 		{
 			"module_name": "Help Desk",
@@ -104,7 +104,7 @@ def get_data():
 			"icon": "octicon octicon-organization",
 			"type": "module",
 			"hidden": 1,
-			"description": "Employees, attendance, payroll, leaves and shifts."
+			"description": "Employee Lifecycle, Payroll, Shifts and Leaves."
 		},
 		{
 			"module_name": "Quality Management",
@@ -127,7 +127,7 @@ def get_data():
 			"icon": "octicon octicon-tools",
 			"type": "module",
 			"hidden": 1,
-			"description": "BOMS, work orders, operations, and timesheets."
+			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
 		},
 		{
 			"module_name": "Retail",
@@ -137,35 +137,10 @@ def get_data():
 			"icon": "octicon octicon-credit-card",
 			"type": "module",
 			"hidden": 1,
-			"description": "Point of Sale and cashier closing."
-		},
-<<<<<<< HEAD
-
-		{
-=======
-		{
-			"module_name": "Education",
-			"category": "Domains",
-			"label": _("Education"),
-			"color": "#428B46",
-			"icon": "octicon octicon-mortar-board",
-			"type": "module",
-			"hidden": 1,
-			"description": "Student admissions, fees, courses and scores."
+			"description": "Point of Sale, Cashier Closing and Loyalty Programs."
 		},
 
 		{
-			"module_name": "Healthcare",
-			"category": "Domains",
-			"label": _("Healthcare"),
-			"color": "#FF888B",
-			"icon": "fa fa-heartbeat",
-			"type": "module",
-			"hidden": 1,
-			"description": "Patient appointments, procedures and tests."
-		},
-		{
->>>>>>> 08a6de6b41... fix(modules): shorten descriptions
 			"module_name": "Agriculture",
 			"category": "Domains",
 			"label": _("Agriculture"),
@@ -173,45 +148,8 @@ def get_data():
 			"icon": "octicon octicon-globe",
 			"type": "module",
 			"hidden": 1,
-			"description": "Crop cycles, land areas, soil and plant analysis."
+			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
 		},
-<<<<<<< HEAD
-=======
-		{
-			"module_name": "Hotels",
-			"category": "Domains",
-			"label": _("Hotels"),
-			"color": "#EA81E8",
-			"icon": "fa fa-bed",
-			"type": "module",
-			"hidden": 1,
-			"description": "Hotel rooms, pricing, reservation and amenities."
-		},
-
-		{
-			"module_name": "Non Profit",
-			"category": "Domains",
-			"label": _("Non Profit"),
-			"color": "#DE2B37",
-			"icon": "octicon octicon-heart",
-			"type": "module",
-			"hidden": 1,
-			"description": "Volunteers, memberships, grants and chapters."
-		},
-		{
-			"module_name": "Restaurant",
-			"category": "Domains",
-			"label": _("Restaurant"),
-			"color": "#EA81E8",
-			"icon": "fa fa-cutlery",
-			"_doctype": "Restaurant",
-			"type": "module",
-			"link": "List/Restaurant",
-			"hidden": 1,
-			"description": "Menu, Orders and Table Reservations."
-		},
-
->>>>>>> 08a6de6b41... fix(modules): shorten descriptions
 
 		{
 			"module_name": "Learn",
@@ -223,7 +161,6 @@ def get_data():
 			"description": "Explore Help Articles and Videos."
 		},
 		{
-<<<<<<< HEAD
 			"module_name": "Settings",
 			"category": "Administration",
 			"label": _("Settings"),
@@ -233,20 +170,5 @@ def get_data():
 			"type": "module",
 			"hidden": 1,
 			"description": "Global settings for all modules in ERPNext, with Email Digest and SMS."
-=======
-			"module_name": 'Marketplace',
-			"category": "Places",
-			"label": _('Marketplace'),
-			"icon": "octicon octicon-star",
-			"type": 'link',
-			"link": '#marketplace/home',
-			"color": '#FF4136',
-			'standard': 1,
-<<<<<<< HEAD
-			"description": "Publish items to other ERPNext users and start a conversation."
->>>>>>> 9d4a183074... fix(modules): Merge Settings into one, Setup --> Settings
-=======
-			"description": "Publish items to other ERPNext users."
->>>>>>> 08a6de6b41... fix(modules): shorten descriptions
 		},
 	]
