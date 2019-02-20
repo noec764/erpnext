@@ -141,17 +141,6 @@ def get_data():
 		},
 
 		{
-			"module_name": "Agriculture",
-			"category": "Domains",
-			"label": _("Agriculture"),
-			"color": "#8BC34A",
-			"icon": "octicon octicon-globe",
-			"type": "module",
-			"hidden": 1,
-			"description": "Crop Cycles, Land Areas and Soil and Plant Analysis."
-		},
-
-		{
 			"module_name": "Learn",
 			"category": "Administration",
 			"label": _("Learn"),

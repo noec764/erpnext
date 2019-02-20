@@ -24,7 +24,6 @@ def install(country=None):
 		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
 		{ 'doctype': 'Domain', 'domain': 'Retail'},
 		{ 'doctype': 'Domain', 'domain': 'Services'},
-		{ 'doctype': 'Domain', 'domain': 'Agriculture'},
 
 		# address template
 		{'doctype':"Address Template", "country": country},

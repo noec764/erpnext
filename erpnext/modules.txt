@@ -14,6 +14,5 @@ Assets
 Portal
 Maintenance
 Regional
-Agriculture
 ERPNext Integrations
 Quality Management

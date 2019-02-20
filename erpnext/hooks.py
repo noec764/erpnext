@@ -57,7 +57,6 @@ calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday 
 
 
 domains = {
-	'Agriculture': 'erpnext.domains.agriculture',
 	'Distribution': 'erpnext.domains.distribution',
 	'Manufacturing': 'erpnext.domains.manufacturing',
 	'Retail': 'erpnext.domains.retail',
