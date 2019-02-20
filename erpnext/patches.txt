@@ -1,3 +1,6 @@
+# ERPNext v11
+erpnext.patches.v11_0.remove_barcodes_field_from_copy_fields_to_variants
+
 # ERPNext v12
 erpnext.patches.v12_0.change_qms_icon
 erpnext.patches.v12_0.rename_learn_to_help

@@ -316,7 +316,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 				frappe.model.set_value(row_to_modify.doctype, row_to_modify.name, {
 					item_code: data.item_code,
-					qty: (row_to_modify.qty || 0) + 1
+					qty: (row_to_modify.qty || 0) + 1,
+					barcode: r.message.barcode
 				});
 
 				this.frm.refresh_field('items');
