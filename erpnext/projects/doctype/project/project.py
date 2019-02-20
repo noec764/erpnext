@@ -89,7 +89,7 @@ class Project(Document):
 						frappe.throw(_("End date of task <b>{0}</b> cannot be less than <b>{1}</b> expected start date <b>{2}</b>")
 							.format(d.title, self.name, self.expected_start_date))
 
- 				if self.expected_end_date:
+				if self.expected_end_date:
 					if d.start_date and getdate(d.start_date) > getdate(self.expected_end_date):
 						frappe.throw(_("Start date of task <b>{0}</b> cannot be greater than <b>{1}</b> expected end date <b>{2}</b>")
 							.format(d.title, self.name, self.expected_end_date))
