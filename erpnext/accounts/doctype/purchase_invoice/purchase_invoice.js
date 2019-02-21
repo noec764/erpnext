@@ -10,8 +10,11 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		this._super(doc);
 
 		// formatter for material request item
-		this.frm.set_indicator_formatter('item_code',
-			function(doc) { return (doc.qty<=doc.received_qty) ? "green" : "orange" })
+		if(this.frm.doc.update_stock) {
+			this.frm.set_indicator_formatter('item_code', function(doc) {
+				return (doc.qty<=doc.received_qty) ? "green" : "orange";
+			});
+		}
 	},
 	onload: function() {
 		this._super();

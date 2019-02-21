@@ -197,7 +197,7 @@ def get_pricing_rule_for_item(args):
 			if pricing_rule.currency == args.currency:
 				pricing_rule_rate = pricing_rule.rate
 			item_details.update({
-				"price_list_rate": pricing_rule_rate,
+				"price_list_rate": pricing_rule_rate * args.get("conversion_factor"),
 				"discount_percentage": 0.0
 			})
 		else:
