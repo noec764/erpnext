@@ -169,45 +169,43 @@ class BOM(WebsiteGenerator):
 		if arg.get('scrap_items'):
 			rate = self.get_valuation_rate(arg)
 		elif arg:
-			#Customer Provided parts will have zero rate
-			if not frappe.db.get_value('Item', arg["item_code"], 'is_customer_provided_item'):
-				if arg.get('bom_no') and self.set_rate_of_sub_assembly_item_based_on_bom:
-					rate = self.get_bom_unitcost(arg['bom_no'])
-				else:
-					if self.rm_cost_as_per == 'Valuation Rate':
-						rate = self.get_valuation_rate(arg)
-					elif self.rm_cost_as_per == 'Last Purchase Rate':
-						rate = arg.get('last_purchase_rate') \
-							or frappe.db.get_value("Item", arg['item_code'], "last_purchase_rate")
-					elif self.rm_cost_as_per == "Price List":
-						if not self.buying_price_list:
-							frappe.throw(_("Please select Price List"))
-						args = frappe._dict({
-							"doctype": "BOM",
-							"price_list": self.buying_price_list,
-							"qty": arg.get("qty"),
-							"uom": arg.get("uom") or arg.get("stock_uom"),
-							"stock_uom": arg.get("stock_uom"),
-							"transaction_type": "buying",
-							"company": self.company,
-							"currency": self.currency,
-							"conversion_rate": self.conversion_rate or 1,
-							"conversion_factor": arg.get("conversion_factor") or 1,
-							"plc_conversion_rate": 1,
-							"ignore_party": True
-						})
-						item_doc = frappe.get_doc("Item", arg.get("item_code"))
-						out = frappe._dict()
-						get_price_list_rate(args, item_doc, out)
-						rate = out.price_list_rate
+			if arg.get('bom_no') and self.set_rate_of_sub_assembly_item_based_on_bom:
+				rate = self.get_bom_unitcost(arg['bom_no'])
+			else:
+				if self.rm_cost_as_per == 'Valuation Rate':
+					rate = self.get_valuation_rate(arg)
+				elif self.rm_cost_as_per == 'Last Purchase Rate':
+					rate = arg.get('last_purchase_rate') \
+						or frappe.db.get_value("Item", arg['item_code'], "last_purchase_rate")
+				elif self.rm_cost_as_per == "Price List":
+					if not self.buying_price_list:
+						frappe.throw(_("Please select Price List"))
+					args = frappe._dict({
+						"doctype": "BOM",
+						"price_list": self.buying_price_list,
+						"qty": arg.get("qty") or 1,
+						"uom": arg.get("uom") or arg.get("stock_uom"),
+						"stock_uom": arg.get("stock_uom"),
+						"transaction_type": "buying",
+						"company": self.company,
+						"currency": self.currency,
+						"conversion_rate": self.conversion_rate or 1,
+						"conversion_factor": arg.get("conversion_factor") or 1,
+						"plc_conversion_rate": 1,
+						"ignore_party": True
+					})
+					item_doc = frappe.get_doc("Item", arg.get("item_code"))
+					out = frappe._dict()
+					get_price_list_rate(args, item_doc, out)
+					rate = out.price_list_rate
 
-					if not rate:
-						if self.rm_cost_as_per == "Price List":
-							frappe.msgprint(_("Price not found for item {0} and price list {1}")
-								.format(arg["item_code"], self.buying_price_list), alert=True)
-						else:
-							frappe.msgprint(_("{0} not found for item {1}")
-								.format(self.rm_cost_as_per, arg["item_code"]), alert=True)
+				if not rate:
+					if self.rm_cost_as_per == "Price List":
+						frappe.msgprint(_("Price not found for item {0} and price list {1}")
+							.format(arg["item_code"], self.buying_price_list), alert=True)
+					else:
+						frappe.msgprint(_("{0} not found for item {1}")
+							.format(self.rm_cost_as_per, arg["item_code"]), alert=True)
 
 		return flt(rate)
 
@@ -708,8 +706,11 @@ def get_children(doctype, parent=None, is_root=False, **filters):
 
 def get_boms_in_bottom_up_order(bom_no=None):
 	def _get_parent(bom_no):
-		return frappe.db.sql_list("""select distinct parent from `tabBOM Item`
-			where bom_no = %s and docstatus=1 and parenttype='BOM'""", bom_no)
+		return frappe.db.sql_list("""
+			select distinct bom_item.parent from `tabBOM Item` bom_item
+			where bom_item.bom_no = %s and bom_item.docstatus=1 and bom_item.parenttype='BOM'
+				and exists(select bom.name from `tabBOM` bom where bom.name=bom_item.parent and bom.is_active=1)
+		""", bom_no)
 
 	count = 0
 	bom_list = []
@@ -717,9 +718,10 @@ def get_boms_in_bottom_up_order(bom_no=None):
 		bom_list.append(bom_no)
 	else:
 		# get all leaf BOMs
-		bom_list = frappe.db.sql_list("""select name from `tabBOM` bom where docstatus=1
-			and not exists(select bom_no from `tabBOM Item`
-				where parent=bom.name and ifnull(bom_no, '')!='')""")
+		bom_list = frappe.db.sql_list("""select name from `tabBOM` bom
+			where docstatus=1 and is_active=1
+				and not exists(select bom_no from `tabBOM Item`
+					where parent=bom.name and ifnull(bom_no, '')!='')""")
 
 	while(count < len(bom_list)):
 		for child_bom in _get_parent(bom_list[count]):

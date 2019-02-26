@@ -255,11 +255,16 @@ $.extend(erpnext.utils, {
 		// get valid options for tree based on user permission & locals dict
 		let unscrub_option = frappe.model.unscrub(option);
 		let user_permission = frappe.defaults.get_user_permissions();
+		let options;
+
 		if(user_permission && user_permission[unscrub_option]) {
-			return user_permission[unscrub_option].map(perm => perm.doc);
+			options = user_permission[unscrub_option].map(perm => perm.doc);
 		} else {
-			return $.map(locals[`:${unscrub_option}`], function(c) { return c.name; }).sort();
+			options = $.map(locals[`:${unscrub_option}`], function(c) { return c.name; }).sort();
 		}
+
+		// filter unique values, as there may be multiple user permissions for any value
+		return options.filter((value, index, self) => self.indexOf(value) === index);
 	},
 	get_tree_default: function(option) {
 		// set default for a field based on user permission
@@ -425,19 +430,15 @@ erpnext.utils.select_alternate_items = function(opts) {
 
 erpnext.utils.update_child_items = function(opts) {
 	const frm = opts.frm;
-	const cannot_add_row = (typeof opts.cannot_add_row === 'undefined') ? true : opts.cannot_add_row;
-	const child_docname = (typeof opts.cannot_add_row === 'undefined') ? "items" : opts.child_docname;
+
 	this.data = [];
 	const dialog = new frappe.ui.Dialog({
 		title: __("Update Items"),
 		fields: [
 			{fieldtype:'Section Break', label: __('Items')},
 			{
-				fieldname: "trans_items",
-				fieldtype: "Table",
-				cannot_add_rows: cannot_add_row,
-				in_place_edit: true,
-				data: this.data,
+				fieldname: "trans_items", fieldtype: "Table", cannot_add_rows: true,
+				in_place_edit: true, data: this.data,
 				get_data: () => {
 					return this.data;
 				},
@@ -473,12 +474,10 @@ erpnext.utils.update_child_items = function(opts) {
 			const trans_items = this.get_values()["trans_items"];
 			frappe.call({
 				method: 'erpnext.controllers.accounts_controller.update_child_qty_rate',
-				freeze: true,
 				args: {
 					'parent_doctype': frm.doc.doctype,
 					'trans_items': trans_items,
-					'parent_doctype_name': frm.doc.name,
-					'child_docname': child_docname
+					'parent_doctype_name': frm.doc.name
 				},
 				callback: function() {
 					frm.reload_doc();
