@@ -13,8 +13,10 @@ def get_data():
 			"color": "#1abc9c",
 			"icon": "fa fa-check-square-o",
 			"type": "module",
-			"hidden": 1,
-			"description": "Dive into the basics for your organisation's needs."
+			"disable_after_onboard": 1,
+			"shortcuts": ["Import Data", "Letter Head", "Email Account", "Item", "Customer"],
+			"description": _("Dive into the basics for your organisation's needs."),
+			"onboard_present": 1
 		},
 		{
 			"module_name": "Accounting",
@@ -23,7 +25,7 @@ def get_data():
 			"color": "#3498db",
 			"icon": "octicon octicon-repo",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Item", "Customer", "Supplier", "General Ledger", "Sales Invoice"],
 			"description": "Accounts, billing, payments, cost center and budgeting."
 		},
 		{
@@ -33,7 +35,7 @@ def get_data():
 			"color": "#1abc9c",
 			"icon": "octicon octicon-tag",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Quotation", "Sales Order", "Sales Analytics", "Customer"],
 			"description": "All things Sales, Customer and Products."
 		},
 		{
@@ -43,7 +45,7 @@ def get_data():
 			"color": "#c0392b",
 			"icon": "octicon octicon-briefcase",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Purchase Order", "Items and Pricing", "Settings", "Supplier"],
 			"description": "Purchasing, Suppliers and Products."
 		},
 		{
@@ -53,7 +55,7 @@ def get_data():
 			"color": "#f39c12",
 			"icon": "octicon octicon-package",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Transactions", "Stock Reports", "Settings"],
 			"description": "Stock transactions, reports, serial numbers and batches."
 		},
 		{
@@ -62,7 +64,7 @@ def get_data():
 			"label": _("Assets"),
 			"color": "#4286f4",
 			"icon": "octicon octicon-database",
-			"hidden": 1,
+			"shortcuts": ["Assets", "Maintenance", "Reports"],
 			"type": "module",
 			"description": "Asset movement, maintainance and tools."
 		},
@@ -73,7 +75,7 @@ def get_data():
 			"color": "#8e44ad",
 			"icon": "octicon octicon-rocket",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Projects", "Time Tracking", "Reports"],
 			"description": "Updates, Timesheets and Activities."
 		},
 		{
@@ -83,7 +85,7 @@ def get_data():
 			"color": "#EF4DB6",
 			"icon": "octicon octicon-broadcast",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Sales Pipeline", "Reports", "Settings"],
 			"description": "Everything in your sales pipeline, from Leads and Opportunities to Customers."
 		},
 		{
@@ -93,7 +95,7 @@ def get_data():
 			"color": "#1abc9c",
 			"icon": "fa fa-check-square-o",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Issues", "Warranty", "Reports"],
 			"description": "User interactions, support issues and knowledge base."
 		},
 		{
@@ -103,7 +105,7 @@ def get_data():
 			"color": "#2ecc71",
 			"icon": "octicon octicon-organization",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Employee and Attendance", "Payroll", "Settings"],
 			"description": "Employee Lifecycle, Payroll, Shifts and Leaves."
 		},
 		{
@@ -113,7 +115,7 @@ def get_data():
 			"color": "#1abc9c",
 			"icon": "fa fa-check-square-o",
 			"type": "module",
-			"hidden": 1,
+			"shortcuts": ["Goal and Procedure", "Review and Action"],
 			"description": "Quality goals, procedures, reviews and action."
 		},
 
@@ -126,7 +128,6 @@ def get_data():
 			"color": "#7f8c8d",
 			"icon": "octicon octicon-tools",
 			"type": "module",
-			"hidden": 1,
 			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
 		},
 		{
@@ -136,16 +137,16 @@ def get_data():
 			"color": "#7f8c8d",
 			"icon": "octicon octicon-credit-card",
 			"type": "module",
-			"hidden": 1,
 			"description": "Point of Sale, Cashier Closing and Loyalty Programs."
 		},
 
 		{
-			"module_name": "Learn",
+			"module_name": "Help",
 			"category": "Administration",
-			"label": _("Learn"),
+			"label": _("Help"),
 			"color": "#FF888B",
 			"icon": "octicon octicon-device-camera-video",
+			"type": "module",
 			"is_help": True,
 			"description": "Explore Help Articles and Videos."
 		},
@@ -157,7 +158,6 @@ def get_data():
 			"reverse": 1,
 			"icon": "octicon octicon-settings",
 			"type": "module",
-			"hidden": 1,
 			"description": "Global settings for all modules in ERPNext, with Email Digest and SMS."
 		},
 	]
