@@ -28,11 +28,6 @@ def get_data():
                 },
                 {
                     "type": "doctype",
-                    "name": "POS Settings",
-                    "description": _("Setup mode of POS (Online / Offline)")
-                },
-                {
-                    "type": "doctype",
                     "name": "Loyalty Program",
                     "label": _("Loyalty Program"),
                     "description": _("To make Customer based incentive schemes.")

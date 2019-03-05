@@ -8,26 +8,13 @@ frappe.pages['point-of-sale'].on_page_load = function(wrapper) {
 		single_column: true
 	});
 
-	frappe.db.get_value('POS Settings', {name: 'POS Settings'}, 'is_online', (r) => {
-		if (r && !cint(r.use_pos_in_offline_mode)) {
-			// online
-			wrapper.pos = new erpnext.pos.PointOfSale(wrapper);
-			window.cur_pos = wrapper.pos;
-		} else {
-			// offline
-			frappe.flags.is_offline = true;
-			frappe.set_route('pos');
-		}
-	});
+	wrapper.pos = new erpnext.pos.PointOfSale(wrapper);
+	window.cur_pos = wrapper.pos;
 };
 
 frappe.pages['point-of-sale'].refresh = function(wrapper) {
 	if (wrapper.pos) {
 		wrapper.pos.make_new_invoice();
-	}
-
-	if (frappe.flags.is_offline) {
-		frappe.set_route('pos');
 	}
 }
 
@@ -555,10 +542,6 @@ erpnext.pos.PointOfSale = class PointOfSale {
 
 		this.page.add_menu_item(__("POS Profile"), function () {
 			frappe.set_route('List', 'POS Profile');
-		});
-
-		this.page.add_menu_item(__('POS Settings'), function() {
-			frappe.set_route('Form', 'POS Settings');
 		});
 
 		this.page.add_menu_item(__('Change POS Profile'), function() {
