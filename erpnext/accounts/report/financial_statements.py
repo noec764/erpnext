@@ -318,7 +318,7 @@ def sort_accounts(accounts, is_root=False, key="name"):
 	"""Sort root types as Asset, Liability, Equity, Income, Expense"""
 
 	def compare_accounts(a, b):
-		if is_root:
+		if is_root and not re.split('\W+', a[key])[0].isdigit():
 			if a.report_type != b.report_type and a.report_type == "Balance Sheet":
 				return -1
 			if a.root_type != b.root_type and a.root_type == "Asset":
