@@ -92,9 +92,15 @@ class ProductionPlan(Document):
 
 	def get_items(self):
 		if self.get_items_from == "Sales Order":
-			self.get_so_items()
+			if self.sales_orders:
+				self.get_so_items()
+			else:
+				frappe.msgprint(_("Please select at least one sales order first"))
 		elif self.get_items_from == "Material Request":
-			self.get_mr_items()
+			if self.material_requests:
+				self.get_mr_items()
+			else:
+				frappe.msgprint(_("Please select at least one material request first"))
 
 	def get_so_items(self):
 		so_list = [d.sales_order for d in self.sales_orders if d.sales_order]
