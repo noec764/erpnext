@@ -190,13 +190,8 @@ doc_events = {
 	"Website Settings": {
 		"validate": "erpnext.portal.doctype.products_settings.products_settings.home_page_is_products"
 	},
-	"Sales Invoice": {
-		"on_submit": "erpnext.regional.france.utils.create_transaction_log",
-		"on_trash": "erpnext.regional.check_deletion_permission"
-	},
 	"Payment Entry": {
-		"on_submit": ["erpnext.regional.france.utils.create_transaction_log", "erpnext.accounts.doctype.payment_request.payment_request.make_status_as_paid"],
-		"on_trash": "erpnext.regional.check_deletion_permission"
+		"on_submit": "erpnext.accounts.doctype.payment_request.payment_request.make_status_as_paid"
 	},
 	'Address': {
 		'validate': 'erpnext.regional.india.utils.validate_gstin_for_india'
