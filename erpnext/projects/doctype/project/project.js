@@ -4,13 +4,13 @@ frappe.ui.form.on("Project", {
 	setup: function (frm) {
 		frm.set_indicator_formatter('title',
 			function (doc) {
-				let indicator = 'orange';
+				let indicator = 'green';
 				if (doc.status == 'Overdue') {
-					indicator = 'red';
+					indicator = 'orange';
 				} else if (doc.status == 'Cancelled') {
+					indicator = 'grey';
+				} else if (doc.status == 'Completed') {
 					indicator = 'dark grey';
-				} else if (doc.status == 'Closed') {
-					indicator = 'green';
 				}
 				return indicator;
 			}
