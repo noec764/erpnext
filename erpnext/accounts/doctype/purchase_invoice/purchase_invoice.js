@@ -46,43 +46,41 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 					function() {me.change_release_date()},
 					__('Hold Invoice')
 				);
-				this.frm.add_custom_button(
-					__('Unblock Invoice'),
-					function() {me.unblock_invoice()},
-					__('Create')
-				);
+				me.frm.page.add_action_item(__('Unblock Invoice'), function() {
+					me.unblock_invoice();
+				});
 			} else if (!doc.on_hold) {
-				this.frm.add_custom_button(
-					__('Block Invoice'),
-					function() {me.block_invoice()},
-					__('Create')
-				);
+				me.frm.page.add_action_item(__('Block Invoice'), function() {
+					me.block_invoice();
+				});
 			}
 		}
 
 		if(doc.docstatus == 1 && doc.outstanding_amount != 0
 			&& !(doc.is_return && doc.return_against)) {
-			this.frm.add_custom_button(__('Payment'), this.make_payment_entry, __('Create'));
-			cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
+				me.frm.page.add_action_item(__('Payment'), function() {
+					me.make_payment_entry();
+				});
 		}
 
 		if(!doc.is_return && doc.docstatus==1) {
 			if(doc.outstanding_amount >= 0 || Math.abs(flt(doc.outstanding_amount)) < flt(doc.grand_total)) {
-				cur_frm.add_custom_button(__('Return / Debit Note'),
-					this.make_debit_note, __('Create'));
+				me.frm.page.add_action_item(__('Return / Debit Note'), function() {
+					me.make_debit_note();
+				});
 			}
 
 			if(!doc.auto_repeat) {
-				cur_frm.add_custom_button(__('Subscription'), function() {
-					erpnext.utils.make_subscription(doc.doctype, doc.name)
-				}, __('Create'))
+				me.frm.page.add_action_item(__('Repetition'), function() {
+					erpnext.utils.make_repetition(doc.doctype, doc.name);
+				});
 			}
 		}
 
 		if (doc.outstanding_amount > 0 && !cint(doc.is_return)) {
-			cur_frm.add_custom_button(__('Payment Request'), function() {
-				me.make_payment_request()
-			}, __('Create'));
+			me.frm.page.add_action_item(__('Payment Request'), function() {
+				me.make_payment_request();
+			});
 		}
 
 		if(doc.docstatus===0) {
@@ -129,9 +127,9 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 				var internal = supplier.is_internal_supplier;
 				var disabled = supplier.disabled;
 				if (internal == 1 && disabled == 0) {
-					me.frm.add_custom_button("Inter Company Invoice", function() {
+					me.frm.page.add_action_item(__("Inter Company Invoice"), function() {
 						me.make_inter_company_invoice(me.frm);
-					}, __('Create'));
+					});
 				}
 			});
 		}

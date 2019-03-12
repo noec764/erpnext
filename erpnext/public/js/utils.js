@@ -197,7 +197,7 @@ $.extend(erpnext.utils, {
 		})
 	},
 
-	make_subscription: function(doctype, docname) {
+	make_repetition: function(doctype, docname) {
 		frappe.call({
 			method: "frappe.desk.doctype.auto_repeat.auto_repeat.make_auto_repeat",
 			args: {

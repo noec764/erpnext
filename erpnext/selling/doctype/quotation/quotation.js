@@ -63,7 +63,7 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 
 			if(!doc.auto_repeat) {
 				cur_frm.add_custom_button(__('Subscription'), function() {
-					erpnext.utils.make_subscription(doc.doctype, doc.name)
+					erpnext.utils.make_repetition(doc.doctype, doc.name)
 				}, __('Create'))
 			}
 
