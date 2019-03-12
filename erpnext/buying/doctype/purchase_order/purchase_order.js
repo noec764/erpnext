@@ -120,34 +120,41 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 
 		if(doc.docstatus == 1 && doc.status != "Closed") {
 			if(flt(doc.per_received, 2) < 100 && allow_receipt) {
-				cur_frm.add_custom_button(__('Receipt'), this.make_purchase_receipt, __('Create'));
+				me.frm.page.add_action_item(__('Receipt'), function() {
+					me.make_purchase_receipt();
+				});
 
 				if(doc.is_subcontracted==="Yes") {
-					cur_frm.add_custom_button(__('Material to Supplier'),
-						function() { me.make_stock_entry(); }, __("Transfer"));
+					me.frm.page.add_action_item(__('Material to Supplier'), function() {
+						me.make_stock_entry();
+					});
 				}
 			}
 
-			if(flt(doc.per_billed, 2) < 100)
-				cur_frm.add_custom_button(__('Invoice'),
-					this.make_purchase_invoice, __('Create'));
+			if(flt(doc.per_billed, 2) < 100) {
+				me.frm.page.add_action_item(__('Invoice'), function() {
+					me.make_purchase_invoice();
+				});
+			}
 
 			if(flt(doc.per_billed)==0 && doc.status != "Delivered") {
-				cur_frm.add_custom_button(__('Payment'), cur_frm.cscript.make_payment_entry, __('Create'));
+				me.frm.page.add_action_item(__('Payment'), function() {
+					cur_frm.cscript.make_payment_entry();
+				});
 			}
 
 			if(!doc.auto_repeat) {
-				cur_frm.add_custom_button(__('Subscription'), function() {
-					erpnext.utils.make_repetition(doc.doctype, doc.name)
-				}, __('Create'))
+				me.frm.page.add_action_item(__('Repetition'), function() {
+					erpnext.utils.make_repetition(doc.doctype, doc.name);
+				});
 			}
 
 			if(flt(doc.per_billed)==0) {
-				this.frm.add_custom_button(__('Payment Request'),
-					function() { me.make_payment_request() }, __('Create'));
+				me.frm.page.add_action_item(__('Payment Request'), function() {
+					me.make_payment_request();
+				});
 			}
 
-			cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 	},
 

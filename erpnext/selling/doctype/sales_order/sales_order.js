@@ -146,62 +146,71 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 
 				// delivery note
 				if(flt(doc.per_delivered, 6) < 100 && ["Sales", "Shopping Cart"].indexOf(doc.order_type)!==-1 && allow_delivery) {
-					this.frm.add_custom_button(__('Delivery'),
-						function() { me.make_delivery_note_based_on_delivery_date(); }, __('Create'));
-					this.frm.add_custom_button(__('Work Order'),
-						function() { me.make_work_order() }, __('Create'));
-
-					this.frm.page.set_inner_btn_group_as_primary(__('Create'));
+					me.frm.page.add_action_item(__('Delivery'), function() {
+						me.make_delivery_note_based_on_delivery_date();
+					});
+					me.frm.page.add_action_item(__('Work Order'), function() {
+						me.make_work_order();
+					});
 				}
 
 				// sales invoice
 				if(flt(doc.per_billed, 6) < 100) {
-					this.frm.add_custom_button(__('Invoice'),
-						function() { me.make_sales_invoice() }, __('Create'));
+					me.frm.page.add_action_item(__('Invoice'), function() {
+						me.make_sales_invoice();
+					});
 				}
 
 				// material request
 				if(!doc.order_type || ["Sales", "Shopping Cart"].indexOf(doc.order_type)!==-1
 					&& flt(doc.per_delivered, 6) < 100) {
-					this.frm.add_custom_button(__('Material Request'),
-						function() { me.make_material_request() }, __('Create'));
-					this.frm.add_custom_button(__('Request for Raw Materials'),
-						function() { me.make_raw_material_request() }, __('Create'));
+						me.frm.page.add_action_item(__('Material Request'), function() {
+							me.make_material_request();
+						});
+						me.frm.page.add_action_item(__('Request for Raw Materials'), function() {
+							me.make_raw_material_request();
+						});
 				}
 
 				// make purchase order
 				if(flt(doc.per_delivered, 6) < 100 && allow_purchase) {
-					this.frm.add_custom_button(__('Purchase Order'),
-						function() { me.make_purchase_order() }, __('Create'));
+					me.frm.page.add_action_item(__('Purchase Order'), function() {
+						me.make_purchase_order();
+					});
 				}
 
 				// payment request
 				if(flt(doc.per_billed)==0) {
-					this.frm.add_custom_button(__('Payment Request'),
-						function() { me.make_payment_request() }, __('Create'));
-					this.frm.add_custom_button(__('Payment'),
-						function() { me.make_payment_entry() }, __('Create'));
+					me.frm.page.add_action_item(__('Payment Request'), function() {
+						me.make_payment_request();
+					});
+					me.frm.page.add_action_item(__('Payment'), function() {
+						me.make_payment_entry()
+					});
 				}
 
 				// maintenance
 				if(flt(doc.per_delivered, 2) < 100 &&
-						["Sales", "Shopping Cart"].indexOf(doc.order_type)===-1) {
-					this.frm.add_custom_button(__('Maintenance Visit'),
-						function() { me.make_maintenance_visit() }, __('Create'));
-					this.frm.add_custom_button(__('Maintenance Schedule'),
-						function() { me.make_maintenance_schedule() }, __('Create'));
+					["Sales", "Shopping Cart"].indexOf(doc.order_type)===-1) {
+						me.frm.page.add_action_item(__('Maintenance Visit'), function() {
+							me.make_maintenance_visit();
+						});
+						me.frm.page.add_action_item(__('Maintenance Schedule'), function() {
+							me.make_maintenance_schedule();
+						});
 				}
 
 				// project
 				if(flt(doc.per_delivered, 2) < 100 && ["Sales", "Shopping Cart"].indexOf(doc.order_type)!==-1 && allow_delivery) {
-						this.frm.add_custom_button(__('Project'),
-							function() { me.make_project() }, __('Create'));
+					me.frm.page.add_action_item(__('Project'), function() {
+						me.make_project();
+					});
 				}
 
 				if(!doc.auto_repeat) {
-					this.frm.add_custom_button(__('Subscription'), function() {
-						erpnext.utils.make_repetition(doc.doctype, doc.name)
-					}, __('Create'))
+					me.frm.page.add_action_item(__('Repetition'), function() {
+						erpnext.utils.make_repetition(doc.doctype, doc.name);
+					});
 				}
 
 			} else {

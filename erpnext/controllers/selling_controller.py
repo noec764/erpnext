@@ -262,7 +262,8 @@ class SellingController(StockController):
 			if d.get(ref_fieldname):
 				status = frappe.db.get_value("Sales Order", d.get(ref_fieldname), "status")
 				if status == "Closed":
-					frappe.throw(_("Sales Order {0} is {1}").format(d.get(ref_fieldname), status))
+					frappe.throw(_("Sales Order {0} is closed.<br>\
+						Please re-open it before cancelling this document.").format(d.get(ref_fieldname), status))
 
 	def update_reserved_qty(self):
 		so_map = {}
