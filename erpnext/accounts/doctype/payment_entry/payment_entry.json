@@ -2142,10 +2142,11 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2019-03-07 12:39:28.520343",
+ "modified": "2019-03-12 11:35:34.466022",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
+ "name_after_submit": 1,
  "name_case": "",
  "owner": "Administrator",
  "permissions": [

@@ -5678,10 +5678,11 @@
  "istable": 0,
  "max_attachments": 0,
  "menu_index": 0,
- "modified": "2019-03-07 12:39:15.859676",
+ "modified": "2019-03-12 11:00:42.380058",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
+ "name_after_submit": 1,
  "name_case": "Title Case",
  "owner": "Administrator",
  "permissions": [
