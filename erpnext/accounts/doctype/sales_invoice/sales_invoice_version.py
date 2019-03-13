@@ -18,6 +18,7 @@ def get_data():
 					'base_rate', 'base_amount', 'income_account', 'cost_center'],
 				"taxes": ["charge_type", "account_head", "description"],
 				"advances": ["reference_type", "reference_name", "advance_amount", "allocated_amount"]
-			}
+			},
+			"sanitize": False
 		}
 	]

@@ -17,6 +17,7 @@ def get_data():
 			"tables": {
 				"references": ["reference_doctype", "reference_name"],
 				"deductions": ["account", "cost_center", "amount"]
-			}
+			},
+			"sanitize": False
 		}
 	]

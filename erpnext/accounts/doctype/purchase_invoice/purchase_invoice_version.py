@@ -14,6 +14,7 @@ def get_data():
 			"tables": {
 				"items": ['item_name', 'qty', 'uom', 'conversion_factor', 'stock_qty', 'rate',\
 					'amount', 'base_rate', 'base_amount']
-			}
+			},
+			"sanitize": False
 		}
 	]

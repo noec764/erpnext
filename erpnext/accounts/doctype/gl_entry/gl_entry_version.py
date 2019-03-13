@@ -15,6 +15,7 @@ def get_data():
 				'credit_in_account_currency', 'against', 'against_voucher_type', 'against_voucher',\
 				'voucher_type', 'voucher_no', 'voucher_detail_no', 'project', 'remarks', 'is_opening',\
 				'is_advance', 'fiscal_year', 'company', 'finance_book'],
-			"tables": {}
+			"tables": {},
+			"sanitize": True
 		}
 	]
