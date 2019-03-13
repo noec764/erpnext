@@ -53,7 +53,7 @@ class SalesInvoice(SellingController):
 	def set_indicator(self):
 		"""Set indicator for portal"""
 		if cint(self.is_return) == 1:
-			self.indicator_title = _("Return")
+			self.indicator_title = _("Credit Note")
 			self.indicator_color = "darkgrey"
 		elif self.outstanding_amount > 0 and getdate(self.due_date) >= getdate(nowdate()):
 			self.indicator_color = "orange"
@@ -62,8 +62,11 @@ class SalesInvoice(SellingController):
 			self.indicator_color = "red"
 			self.indicator_title = _("Overdue")
 		elif self.outstanding_amount < 0:
-			self.indicator_title = _("Credit Note Issued")
+			self.indicator_title = _("Credit Note Unpaid")
 			self.indicator_color = "darkgrey"
+		elif self.status == "Cancelled":
+			self.indicator_color = "darkgrey"
+			self.indicator_title = _("Cancelled")
 		else:
 			self.indicator_color = "green"
 			self.indicator_title = _("Paid")
@@ -146,10 +149,6 @@ class SalesInvoice(SellingController):
 
 		self.check_prev_docstatus()
 
-		if self.is_return and not self.update_billed_amount_in_sales_order:
-			# NOTE status updating bypassed for is_return
-			self.status_updater = []
-
 		self.update_status_updater_args()
 		self.update_prevdoc_status()
 		self.update_billing_status_in_dn()
@@ -167,12 +166,12 @@ class SalesInvoice(SellingController):
 			self.update_billing_status_for_zero_amount_refdoc("Sales Order")
 			self.check_credit_limit()
 
-		self.update_serial_no()
+		self.update_serial_no(in_cancel=True if not (self.is_return and self.return_against) else False)
 
 		if not cint(self.is_pos) == 1 and not self.is_return:
 			self.update_against_document_in_jv()
 
-		self.update_time_sheet(self.name)
+		self.update_time_sheet(self.name if not (self.is_return and self.return_against) else None)
 
 		if frappe.db.get_single_value('Selling Settings', 'sales_update_frequency') == "Each Transaction":
 			update_company_current_month_sales(self.company)
@@ -193,47 +192,26 @@ class SalesInvoice(SellingController):
 		if len(self.payments) == 0 and self.is_pos:
 			frappe.throw(_("At least one mode of payment is required for POS invoice."))
 
-	def before_cancel(self):
-		self.update_time_sheet(None)
-
 	def on_cancel(self):
+		frappe.throw(_("Cancel is not permitted for Sales Invoices"))
+
+	def on_sales_invoice_cancel(self):
 		self.check_close_sales_order("sales_order")
 
-		from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
-		if frappe.db.get_single_value('Accounts Settings', 'unlink_payment_on_cancellation_of_invoice'):
-			unlink_ref_doc_from_payment_entries(self)
+		if self.is_return:
+			frappe.throw(_("Returns/Credit Notes cannot be cancelled.<br>Please create a new invoice instead."))
 
-		if self.is_return and not self.update_billed_amount_in_sales_order:
-			# NOTE status updating bypassed for is_return
-			self.status_updater = []
-
-		self.update_status_updater_args()
-		self.update_prevdoc_status()
-		self.update_billing_status_in_dn()
-
-		if not self.is_return:
-			self.update_billing_status_for_zero_amount_refdoc("Sales Order")
-			self.update_serial_no(in_cancel=True)
+		grand_total = self.rounded_total if (self.rounding_adjustment and self.rounded_total) else self.grand_total
+		if not self.is_return and (self.outstanding_amount == 0 or self.outstanding_amount != grand_total):
+			frappe.throw(_("Paid invoices cannot be cancelled.<br>Please create a partial return/credit note instead."))
 
 		self.validate_c_form_on_cancel()
 
-		# Updating stock ledger should always be called after updating prevdoc status,
-		# because updating reserved qty in bin depends upon updated delivered qty in SO
-		if self.update_stock == 1:
-			self.update_stock_ledger()
+		credit_note = make_sales_return(source_name=self.name)
+		credit_note.insert()
+		credit_note.submit()
 
-		self.make_gl_entries_on_cancel()
 		frappe.db.set(self, 'status', 'Cancelled')
-
-		if frappe.db.get_single_value('Selling Settings', 'sales_update_frequency') == "Each Transaction":
-			update_company_current_month_sales(self.company)
-			self.update_project()
-		if not self.is_return and self.loyalty_program:
-			self.delete_loyalty_point_entry()
-		elif self.is_return and self.return_against and self.loyalty_program:
-			against_si_doc = frappe.get_doc("Sales Invoice", self.return_against)
-			against_si_doc.delete_loyalty_point_entry()
-			against_si_doc.make_loyalty_point_entry()
 
 		unlink_inter_company_invoice(self.doctype, self.name, self.inter_company_invoice_reference)
 
@@ -327,8 +305,11 @@ class SalesInvoice(SellingController):
 		for data in timesheet.time_logs:
 			if (self.project and args.timesheet_detail == data.name) or \
 				(not self.project and not data.sales_invoice) or \
-				(not sales_invoice and data.sales_invoice == self.name):
+				(not sales_invoice and data.sales_invoice == self.name) or \
+				(not sales_invoice and data.sales_invoice == self.return_against):
+				print("Sales Invoice before", sales_invoice)
 				data.sales_invoice = sales_invoice
+				print("Sales INvoice", data.sales_invoice)
 
 	def on_update(self):
 		self.set_paid_amount()
@@ -548,7 +529,7 @@ class SalesInvoice(SellingController):
 			frappe.db.set(self, 'c_form_no', '')
 
 	def validate_c_form_on_cancel(self):
-		""" Display message if C-Form no exists on cancellation of Sales Invoice"""
+		""" Display message if C-Form number exists on cancellation of Sales Invoice"""
 		if self.c_form_applicable == 'Yes' and self.c_form_no:
 			msgprint(_("Please remove this Invoice {0} from C-Form {1}")
 				.format(self.name, self.c_form_no), raise_exception = 1)
@@ -676,8 +657,8 @@ class SalesInvoice(SellingController):
 					update_gl_entries_after(self.posting_date, self.posting_time, warehouses, items)
 		elif self.docstatus == 2 and cint(self.update_stock) \
 			and cint(auto_accounting_for_stock):
-				from erpnext.accounts.general_ledger import delete_gl_entries
-				delete_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
+				from erpnext.accounts.general_ledger import reverse_gl_entries
+				reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 
 	def get_gl_entries(self, warehouse_account=None):
 		from erpnext.accounts.general_ledger import merge_similar_entries

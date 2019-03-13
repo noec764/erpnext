@@ -745,29 +745,18 @@ class PurchaseInvoice(BuyingController):
 				}
 			))
 
-	def on_cancel(self):
+	def on_purchase_invoice_cancel(self):
 		super(PurchaseInvoice, self).on_cancel()
 
 		self.check_for_closed_status()
 
-		self.update_status_updater_args()
+		debit_note = make_debit_note(source_name=self.name)
+		debit_note.insert()
+		debit_note.submit()
 
-		if not self.is_return:
-			from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
-			if frappe.db.get_single_value('Accounts Settings', 'unlink_payment_on_cancellation_of_invoice'):
-				unlink_ref_doc_from_payment_entries(self)
-
-			self.update_prevdoc_status()
-			self.update_billing_status_for_zero_amount_refdoc("Purchase Order")
-			self.update_billing_status_in_pr()
-
-		# Updating stock ledger should always be called after updating prevdoc status,
-		# because updating ordered qty in bin depends upon updated ordered qty in PO
-		if self.update_stock == 1:
-			self.update_stock_ledger()
-
-		self.make_gl_entries_on_cancel()
+		# TODO Check
 		self.update_project()
+
 		frappe.db.set(self, 'status', 'Cancelled')
 
 		unlink_inter_company_invoice(self.doctype, self.name, self.inter_company_invoice_reference)

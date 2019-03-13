@@ -37,6 +37,8 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 	refresh: function(doc, dt, dn) {
 		const me = this;
 		this._super();
+		this.frm.page.clear_actions_menu();
+
 		if(cur_frm.msgbox && cur_frm.msgbox.$wrapper.is(":visible")) {
 			// hide new msgbox
 			cur_frm.msgbox.hide();
@@ -46,7 +48,29 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 
 		this.show_general_ledger();
 
-		if(doc.update_stock) this.show_stock_ledger();
+		if (doc.docstatus == 1) {
+			me.frm.page.set_secondary_action(__("Cancel"), () => {
+				frappe.confirm(__(`Permanently Cancel {0}`, [me.frm.doc.name]),
+				function() {
+					me.frm.call({
+						freeze: true,
+						doc: me.frm.doc,
+						method: "on_sales_invoice_cancel",
+						callback: function(r) {
+							me.frm.reload_doc();
+							frappe.show_alert({
+								message: __("Credit note created successfully"),
+								indicator: 'green'
+							});
+						}
+					});
+				});
+			})
+		}
+
+		if(doc.update_stock) {
+			this.show_stock_ledger();
+		}
 
 		if (doc.docstatus == 1 && doc.outstanding_amount!=0
 			&& !(cint(doc.is_return) && doc.return_against)) {

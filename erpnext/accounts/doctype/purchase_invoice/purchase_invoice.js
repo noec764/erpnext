@@ -30,10 +30,31 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 	refresh: function(doc) {
 		const me = this;
 		this._super();
+		this.frm.page.clear_actions_menu();
 
 		hide_fields(this.frm.doc);
 		// Show / Hide button
 		this.show_general_ledger();
+
+		if (doc.docstatus == 1) {
+			me.frm.page.set_secondary_action(__("Cancel"), () => {
+				frappe.confirm(__(`Permanently Cancel {0}`, [me.frm.doc.name]),
+				function() {
+					me.frm.call({
+						freeze: true,
+						doc: me.frm.doc,
+						method: "on_purchase_invoice_cancel",
+						callback: function(r) {
+							me.frm.reload_doc();
+							frappe.show_alert({
+								message: __("Debit note created successfully"),
+								indicator: 'green'
+							});
+						}
+					});
+				});
+			})
+		}
 
 		if(doc.update_stock==1 && doc.docstatus==1) {
 			this.show_stock_ledger();
@@ -78,9 +99,16 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		}
 
 		if (doc.outstanding_amount > 0 && !cint(doc.is_return)) {
-			me.frm.page.add_action_item(__('Payment Request'), function() {
-				me.make_payment_request();
-			});
+			if (doc.docstatus==0) {
+				me.frm.add_custom_button(__('Payment Request'), function() {
+					me.make_payment_request();
+				});
+			} else {
+				me.frm.page.add_action_item(__('Payment Request'), function() {
+					me.make_payment_request();
+				});
+			}
+			
 		}
 
 		if(doc.docstatus===0) {
