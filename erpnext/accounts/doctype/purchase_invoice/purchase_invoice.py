@@ -754,9 +754,6 @@ class PurchaseInvoice(BuyingController):
 		debit_note.insert()
 		debit_note.submit()
 
-		# TODO Check
-		self.update_project()
-
 		frappe.db.set(self, 'status', 'Cancelled')
 
 		unlink_inter_company_invoice(self.doctype, self.name, self.inter_company_invoice_reference)
