@@ -741,7 +741,8 @@ class PurchaseInvoice(BuyingController):
 				}
 			))
 
-	def on_purchase_invoice_cancel(self):
+	def cancel(self):
+		# TODO check asset handling
 		super(PurchaseInvoice, self).on_cancel()
 
 		self.check_for_closed_status()
