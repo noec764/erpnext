@@ -7,7 +7,7 @@ from frappe.utils import cint, flt, cstr
 from frappe import _
 import frappe.defaults
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries, process_gl_map
+from erpnext.accounts.general_ledger import make_gl_entries, reverse_gl_entries, process_gl_map
 from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.stock.stock_ledger import get_valuation_rate
 from erpnext.stock import get_warehouse_account_map
@@ -23,7 +23,7 @@ class StockController(AccountsController):
 
 	def make_gl_entries(self, gl_entries=None, repost_future_gle=True, from_repost=False):
 		if self.docstatus == 2:
-			delete_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
+			reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 
 		if cint(erpnext.is_perpetual_inventory_enabled(self.company)):
 			warehouse_account = get_warehouse_account_map()
