@@ -861,7 +861,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2019-03-12 16:21:30.962848",
+ "modified": "2019-03-14 10:34:29.429538",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "GL Entry",
@@ -936,5 +936,6 @@
  "track_changes": 0,
  "track_print": 0,
  "track_seen": 0,
- "track_views": 0
+ "track_views": 0,
+ "valid_on_cancel": 1
 }

@@ -178,7 +178,7 @@ frappe.ui.form.on("Expense Claim", {
 	refresh: function(frm) {
 		frm.trigger("toggle_fields");
 
-		if(frm.doc.docstatus == 1) {
+		if(frm.doc.docstatus > 0) {
 			frm.add_custom_button(__('Accounting Ledger'), function() {
 				frappe.route_options = {
 					voucher_no: frm.doc.name,

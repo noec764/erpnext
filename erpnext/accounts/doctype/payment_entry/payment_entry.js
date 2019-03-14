@@ -200,7 +200,7 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	show_general_ledger: function(frm) {
-		if(frm.doc.docstatus==1) {
+		if(frm.doc.docstatus>0) {
 			frm.add_custom_button(__('Ledger'), function() {
 				frappe.route_options = {
 					"voucher_no": frm.doc.name,

@@ -58,7 +58,6 @@ def before_tests():
 @frappe.whitelist()
 def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=None):
 	if not (from_currency and to_currency):
-		# manqala 19/09/2016: Should this be an empty return or should it throw and exception?
 		return
 	if from_currency == to_currency:
 		return 1
@@ -93,7 +92,7 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 
 	try:
 		cache = frappe.cache()
-		key = "currency_exchange_rate:{0}:{1}".format(from_currency, to_currency)
+		key = "currency_exchange_rate_{0}:{1}:{2}".format(transaction_date,from_currency, to_currency)
 		value = cache.get(key)
 
 		if not value:

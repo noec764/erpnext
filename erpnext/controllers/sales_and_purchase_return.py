@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import flt, get_datetime, format_datetime
+from frappe.utils import flt, get_datetime, format_datetime, today, nowtime
 
 class StockOverReturnError(frappe.ValidationError): pass
 
@@ -205,6 +205,10 @@ def make_return_doc(doctype, source_name, target_doc=None):
 		doc.is_return = 1
 		doc.return_against = source.name
 		doc.ignore_pricing_rule = 1
+		doc.set_posting_time = 1
+		doc.posting_date = today()
+		doc.posting_time = nowtime()
+		doc.due_date = today()
 		if doctype == "Sales Invoice":
 			doc.is_pos = source.is_pos
 
