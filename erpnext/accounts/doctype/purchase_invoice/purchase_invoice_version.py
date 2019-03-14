@@ -10,10 +10,10 @@ def get_data():
 	return [
 		{
 			"version": "1.0.0",
-			"fields": ['naming_series', 'posting_date', 'items', 'credit_to'],
+			"fields": ["naming_series", "supplier_name", "posting_date", "items", "credit_to"],
 			"tables": {
-				"items": ['item_name', 'qty', 'uom', 'conversion_factor', 'stock_qty', 'rate',\
-					'amount', 'base_rate', 'base_amount']
+				"items": ["item_name", "qty", "uom", "conversion_factor", "stock_qty", "rate",\
+					"amount", "base_rate", "base_amount"]
 			},
 			"sanitize": False
 		}
