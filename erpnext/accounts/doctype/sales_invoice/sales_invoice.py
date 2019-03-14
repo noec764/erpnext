@@ -192,10 +192,7 @@ class SalesInvoice(SellingController):
 		if len(self.payments) == 0 and self.is_pos:
 			frappe.throw(_("At least one mode of payment is required for POS invoice."))
 
-	def on_cancel(self):
-		frappe.throw(_("Cancel is not permitted for Sales Invoices"))
-
-	def on_sales_invoice_cancel(self):
+	def cancel(self):
 		self.check_close_sales_order("sales_order")
 
 		if self.is_return:
@@ -643,8 +640,7 @@ class SalesInvoice(SellingController):
 			update_outstanding = "No" if (cint(self.is_pos) or self.write_off_account or
 				cint(self.redeem_loyalty_points)) else "Yes"
 
-			make_gl_entries(gl_entries, cancel=(self.docstatus == 2),
-				update_outstanding=update_outstanding, merge_entries=False)
+			make_gl_entries(gl_entries, update_outstanding=update_outstanding, merge_entries=False)
 
 			if update_outstanding == "No":
 				from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt

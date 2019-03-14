@@ -36,26 +36,6 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		// Show / Hide button
 		this.show_general_ledger();
 
-		if (doc.docstatus == 1) {
-			me.frm.page.set_secondary_action(__("Cancel"), () => {
-				frappe.confirm(__(`Permanently Cancel {0}`, [me.frm.doc.name]),
-				function() {
-					me.frm.call({
-						freeze: true,
-						doc: me.frm.doc,
-						method: "on_purchase_invoice_cancel",
-						callback: function(r) {
-							me.frm.reload_doc();
-							frappe.show_alert({
-								message: __("Debit note created successfully"),
-								indicator: 'green'
-							});
-						}
-					});
-				});
-			})
-		}
-
 		if(doc.update_stock==1 && doc.docstatus==1) {
 			this.show_stock_ledger();
 		}

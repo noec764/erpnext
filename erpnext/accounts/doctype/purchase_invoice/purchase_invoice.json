@@ -4792,7 +4792,7 @@
  "istable": 0,
  "max_attachments": 0,
  "menu_index": 0,
- "modified": "2019-03-13 12:21:10.277567",
+ "modified": "2019-03-14 10:03:46.860620",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
@@ -4840,7 +4840,7 @@
   },
   {
    "amend": 1,
-   "cancel": 0,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,

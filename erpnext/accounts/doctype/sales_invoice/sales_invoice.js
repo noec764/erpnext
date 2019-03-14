@@ -48,26 +48,6 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 
 		this.show_general_ledger();
 
-		if (doc.docstatus == 1) {
-			me.frm.page.set_secondary_action(__("Cancel"), () => {
-				frappe.confirm(__(`Permanently Cancel {0}`, [me.frm.doc.name]),
-				function() {
-					me.frm.call({
-						freeze: true,
-						doc: me.frm.doc,
-						method: "on_sales_invoice_cancel",
-						callback: function(r) {
-							me.frm.reload_doc();
-							frappe.show_alert({
-								message: __("Credit note created successfully"),
-								indicator: 'green'
-							});
-						}
-					});
-				});
-			})
-		}
-
 		if(doc.update_stock) {
 			this.show_stock_ledger();
 		}
