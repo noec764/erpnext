@@ -6,6 +6,9 @@ def get_data():
 		'heatmap': True,
 		'heatmap_message': _('This is based on transactions against this Supplier. See timeline below for details'),
 		'fieldname': 'supplier',
+		'non_standard_fieldnames': {
+			'Payment Entry': 'party_name'
+		},
 		'transactions': [
 			{
 				'label': _('Procurement'),
@@ -14,6 +17,10 @@ def get_data():
 			{
 				'label': _('Orders'),
 				'items': ['Purchase Order', 'Purchase Receipt', 'Purchase Invoice']
+			},
+			{
+				'label': _('Payments'),
+				'items': ['Payment Entry']
 			},
 			{
 				'label': _('Pricing'),
