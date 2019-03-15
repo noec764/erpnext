@@ -2,7 +2,8 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Selling Settings', {
-	refresh: function(frm) {
-
+	setup: function(frm) {
+		frm.set_query('customer_group', {'is_group': 0});
+		frm.set_query('territory', {'is_group': 0});
 	}
 });

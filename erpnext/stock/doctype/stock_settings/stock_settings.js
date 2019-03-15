@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Stock Settings', {
-	refresh: function(frm) {
-
+	setup: function(frm) {
+		frm.set_query('item_group', {'is_group': 0});
 	}
 });
