@@ -26,6 +26,14 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 			return erpnext.queries.warehouse(me.frm.doc);
 		});
 
+		this.frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: "Sale"
+				}
+			}
+		});
+
 		if(this.frm.doc.__islocal && this.frm.doc.is_pos) {
 			//Load pos profile data on the invoice if the default value of Is POS is 1
 

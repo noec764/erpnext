@@ -93,6 +93,7 @@ class PurchaseInvoice(BuyingController):
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.set_expense_account(for_validate=True)
 		self.set_against_expense_account()
+		self.select_accounting_journal("Purchase")
 		self.validate_write_off_account()
 		self.validate_multiple_billing("Purchase Receipt", "pr_detail", "amount", "items")
 		self.validate_fixed_asset()
@@ -404,7 +405,8 @@ class PurchaseInvoice(BuyingController):
 						if self.party_account_currency==self.company_currency else grand_total,
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, self.party_account_currency)
 			)
 
@@ -437,7 +439,8 @@ class PurchaseInvoice(BuyingController):
 							"debit": warehouse_debit_amount,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"cost_center": item.cost_center,
-							"project": item.project
+							"project": item.project,
+							"accounting_journal": self.accounting_journal
 						}, account_currency)
 					)
 
@@ -449,7 +452,8 @@ class PurchaseInvoice(BuyingController):
 							"cost_center": item.cost_center,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"credit": flt(item.landed_cost_voucher_amount),
-							"project": item.project
+							"project": item.project,
+							"accounting_journal": self.accounting_journal
 						}))
 
 					# sub-contracting warehouse
@@ -463,7 +467,8 @@ class PurchaseInvoice(BuyingController):
 							"against": item.expense_account,
 							"cost_center": item.cost_center,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
-							"credit": flt(item.rm_supp_cost)
+							"credit": flt(item.rm_supp_cost),
+							"accounting_journal": self.accounting_journal
 						}, warehouse_account[self.supplier_warehouse]["account_currency"]))
 				elif not item.is_fixed_asset:
 					gl_entries.append(
@@ -475,7 +480,8 @@ class PurchaseInvoice(BuyingController):
 								item.precision("base_net_amount")) if account_currency==self.company_currency
 								else flt(item.net_amount, item.precision("net_amount"))),
 							"cost_center": item.cost_center,
-							"project": item.project
+							"project": item.project,
+							"accounting_journal": self.accounting_journal
 						}, account_currency)
 					)
 
@@ -494,7 +500,8 @@ class PurchaseInvoice(BuyingController):
 									"against": self.supplier,
 									"debit": flt(item.item_tax_amount, item.precision("item_tax_amount")),
 									"remarks": self.remarks or "Accounting Entry for Stock",
-									"cost_center": self.cost_center
+									"cost_center": self.cost_center,
+									"accounting_journal": self.accounting_journal
 								})
 							)
 
@@ -523,7 +530,8 @@ class PurchaseInvoice(BuyingController):
 						"debit": base_asset_amount,
 						"debit_in_account_currency": (base_asset_amount
 							if asset_rbnb_currency == self.company_currency else asset_amount),
-						"cost_center": item.cost_center
+						"cost_center": item.cost_center,
+						"accounting_journal": self.accounting_journal
 					}))
 
 					if item.item_tax_amount:
@@ -536,7 +544,8 @@ class PurchaseInvoice(BuyingController):
 							"credit": item.item_tax_amount,
 							"credit_in_account_currency": (item.item_tax_amount
 								if asset_eiiav_currency == self.company_currency else
-									item.item_tax_amount / self.conversion_rate)
+									item.item_tax_amount / self.conversion_rate),
+							"accounting_journal": self.accounting_journal
 						}))
 				else:
 					cwip_account = get_asset_account("capital_work_in_progress_account",
@@ -550,7 +559,8 @@ class PurchaseInvoice(BuyingController):
 						"debit": base_asset_amount,
 						"debit_in_account_currency": (base_asset_amount
 							if cwip_account_currency == self.company_currency else asset_amount),
-						"cost_center": self.cost_center
+						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal
 					}))
 
 					if item.item_tax_amount and not cint(erpnext.is_perpetual_inventory_enabled(self.company)):
@@ -563,7 +573,8 @@ class PurchaseInvoice(BuyingController):
 							"credit": item.item_tax_amount,
 							"credit_in_account_currency": (item.item_tax_amount
 								if asset_eiiav_currency == self.company_currency else
-									item.item_tax_amount / self.conversion_rate)
+									item.item_tax_amount / self.conversion_rate),
+							"accounting_journal": self.accounting_journal
 						}))
 
 		return gl_entries
@@ -590,7 +601,8 @@ class PurchaseInvoice(BuyingController):
 					"debit": stock_adjustment_amt,
 					"remarks": self.get("remarks") or _("Stock Adjustment"),
 					"cost_center": item.cost_center,
-					"project": item.project
+					"project": item.project,
+					"accounting_journal": self.accounting_journal
 				}, account_currency)
 			)
 
@@ -615,7 +627,8 @@ class PurchaseInvoice(BuyingController):
 						dr_or_cr + "_in_account_currency": tax.base_tax_amount_after_discount_amount \
 							if account_currency==self.company_currency \
 							else tax.tax_amount_after_discount_amount,
-						"cost_center": tax.cost_center
+						"cost_center": tax.cost_center,
+						"accounting_journal": self.accounting_journal
 					}, account_currency)
 				)
 			# accumulate valuation tax
@@ -646,7 +659,8 @@ class PurchaseInvoice(BuyingController):
 						"cost_center": cost_center,
 						"against": self.supplier,
 						"credit": applicable_amount,
-						"remarks": self.remarks or "Accounting Entry for Stock"
+						"remarks": self.remarks or "Accounting Entry for Stock",
+						"accounting_journal": self.accounting_journal
 					})
 				)
 
@@ -660,7 +674,8 @@ class PurchaseInvoice(BuyingController):
 						"cost_center": cost_center,
 						"against": self.supplier,
 						"credit": amount,
-						"remarks": self.remarks or "Accounting Entry for Stock"
+						"remarks": self.remarks or "Accounting Entry for Stock",
+						"accounting_journal": self.accounting_journal
 					})
 				)
 
@@ -680,7 +695,8 @@ class PurchaseInvoice(BuyingController):
 						if self.party_account_currency==self.company_currency else self.paid_amount,
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, self.party_account_currency)
 			)
 
@@ -691,7 +707,8 @@ class PurchaseInvoice(BuyingController):
 					"credit": self.base_paid_amount,
 					"credit_in_account_currency": self.base_paid_amount \
 						if bank_account_currency==self.company_currency else self.paid_amount,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, bank_account_currency)
 			)
 
@@ -712,7 +729,8 @@ class PurchaseInvoice(BuyingController):
 						if self.party_account_currency==self.company_currency else self.write_off_amount,
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, self.party_account_currency)
 			)
 			gl_entries.append(
@@ -722,7 +740,8 @@ class PurchaseInvoice(BuyingController):
 					"credit": flt(self.base_write_off_amount),
 					"credit_in_account_currency": self.base_write_off_amount \
 						if write_off_account_currency==self.company_currency else self.write_off_amount,
-					"cost_center": self.cost_center or self.write_off_cost_center
+					"cost_center": self.cost_center or self.write_off_cost_center,
+					"accounting_journal": self.accounting_journal
 				})
 			)
 
@@ -738,6 +757,7 @@ class PurchaseInvoice(BuyingController):
 					"debit_in_account_currency": self.rounding_adjustment,
 					"debit": self.base_rounding_adjustment,
 					"cost_center": self.cost_center or round_off_cost_center,
+					"accounting_journal": self.accounting_journal
 				}
 			))
 

@@ -12,7 +12,6 @@ from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.doctype.sales_invoice.pos import update_multi_mode_option
 
 from erpnext.controllers.selling_controller import SellingController
-from erpnext.accounts.utils import get_account_currency
 from erpnext.stock.doctype.delivery_note.delivery_note import update_billed_amount_based_on_so
 from erpnext.projects.doctype.timesheet.timesheet import get_projectwise_timesheet_data
 from erpnext.assets.doctype.asset.depreciation \
@@ -117,6 +116,7 @@ class SalesInvoice(SellingController):
 			self.loyalty_redemption_cost_center = lp.cost_center if not self.loyalty_redemption_cost_center else self.loyalty_redemption_cost_center
 
 		self.set_against_income_account()
+		self.select_accounting_journal("Sale")
 		self.validate_c_form()
 		self.validate_time_sheets_are_submitted()
 		self.validate_multiple_billing("Delivery Note", "dn_detail", "amount", "items")
@@ -699,7 +699,8 @@ class SalesInvoice(SellingController):
 						if self.party_account_currency==self.company_currency else grand_total,
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, self.party_account_currency)
 			)
 
@@ -716,7 +717,8 @@ class SalesInvoice(SellingController):
 						"credit_in_account_currency": (flt(tax.base_tax_amount_after_discount_amount,
 							tax.precision("base_tax_amount_after_discount_amount")) if account_currency==self.company_currency else
 							flt(tax.tax_amount_after_discount_amount, tax.precision("tax_amount_after_discount_amount"))),
-						"cost_center": tax.cost_center
+						"cost_center": tax.cost_center,
+						"accounting_journal": self.accounting_journal
 					}, account_currency)
 				)
 
@@ -744,7 +746,8 @@ class SalesInvoice(SellingController):
 							"credit_in_account_currency": (flt(item.base_net_amount, item.precision("base_net_amount"))
 								if account_currency==self.company_currency
 								else flt(item.net_amount, item.precision("net_amount"))),
-							"cost_center": item.cost_center
+							"cost_center": item.cost_center,
+							"accounting_journal": self.accounting_journal
 						}, account_currency)
 					)
 
@@ -764,7 +767,8 @@ class SalesInvoice(SellingController):
 					"credit": self.loyalty_amount,
 					"against_voucher": self.return_against if cint(self.is_return) else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				})
 			)
 			gl_entries.append(
@@ -773,7 +777,8 @@ class SalesInvoice(SellingController):
 					"cost_center": self.cost_center or self.loyalty_redemption_cost_center,
 					"against": self.customer,
 					"debit": self.loyalty_amount,
-					"remark": "Loyalty Points redeemed by the customer"
+					"remark": "Loyalty Points redeemed by the customer",
+					"accounting_journal": self.accounting_journal
 				})
 			)
 
@@ -794,7 +799,8 @@ class SalesInvoice(SellingController):
 								else payment_mode.amount,
 							"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 							"against_voucher_type": self.doctype,
-							"cost_center": self.cost_center
+							"cost_center": self.cost_center,
+							"accounting_journal": self.accounting_journal
 						}, self.party_account_currency)
 					)
 
@@ -807,7 +813,8 @@ class SalesInvoice(SellingController):
 							"debit_in_account_currency": payment_mode.base_amount \
 								if payment_mode_account_currency==self.company_currency \
 								else payment_mode.amount,
-							"cost_center": self.cost_center
+							"cost_center": self.cost_center,
+							"accounting_journal": self.accounting_journal
 						}, payment_mode_account_currency)
 					)
 
@@ -825,7 +832,8 @@ class SalesInvoice(SellingController):
 							if self.party_account_currency==self.company_currency else flt(self.change_amount),
 						"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 						"against_voucher_type": self.doctype,
-						"cost_center": self.cost_center
+						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal
 					}, self.party_account_currency)
 				)
 
@@ -834,7 +842,8 @@ class SalesInvoice(SellingController):
 						"account": self.account_for_change_amount,
 						"against": self.customer,
 						"credit": self.base_change_amount,
-						"cost_center": self.cost_center
+						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal
 					})
 				)
 			else:
@@ -858,7 +867,8 @@ class SalesInvoice(SellingController):
 						else flt(self.write_off_amount, self.precision("write_off_amount"))),
 					"against_voucher": self.return_against if cint(self.is_return) else self.name,
 					"against_voucher_type": self.doctype,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				}, self.party_account_currency)
 			)
 			gl_entries.append(
@@ -869,7 +879,8 @@ class SalesInvoice(SellingController):
 					"debit_in_account_currency": (flt(self.base_write_off_amount,
 						self.precision("base_write_off_amount")) if write_off_account_currency==self.company_currency
 						else flt(self.write_off_amount, self.precision("write_off_amount"))),
-					"cost_center": self.cost_center or self.write_off_cost_center or default_cost_center
+					"cost_center": self.cost_center or self.write_off_cost_center or default_cost_center,
+					"accounting_journal": self.accounting_journal
 				}, write_off_account_currency)
 			)
 
@@ -887,6 +898,7 @@ class SalesInvoice(SellingController):
 					"credit": flt(self.base_rounding_adjustment,
 						self.precision("base_rounding_adjustment")),
 					"cost_center": self.cost_center or round_off_cost_center,
+					"accounting_journal": self.accounting_journal
 				}
 			))
 

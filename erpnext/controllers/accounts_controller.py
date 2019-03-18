@@ -8,7 +8,7 @@ from frappe import _, throw
 from frappe.utils import today, flt, cint, fmt_money, formatdate, getdate, add_days, add_months, get_last_day, nowdate
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.setup.utils import get_exchange_rate
-from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency
+from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency, get_accounting_journal
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.buying.utils import update_last_purchase_rate
 from erpnext.controllers.sales_and_purchase_return import validate_return
@@ -816,6 +816,11 @@ class AccountsController(TransactionBase):
 			return self.disable_rounded_total
 		else:
 			return frappe.db.get_single_value("Global Defaults", "disable_rounded_total")
+
+	def select_accounting_journal(self, journal_type):
+		if not self.accounting_journal:
+			aj = get_accounting_journal(self, journal_type)
+			self.accounting_journal = aj.name if aj else None
 
 @frappe.whitelist()
 def get_tax_rate(account_head):

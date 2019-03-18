@@ -864,5 +864,32 @@ def get_coa(doctype, parent, is_root, chart=None):
 
 def get_allow_cost_center_in_entry_of_bs_account():
 	def generator():
-		return cint(frappe.db.get_value('Accounts Settings', None, 'allow_cost_center_in_entry_of_bs_account'))
-	return frappe.local_cache("get_allow_cost_center_in_entry_of_bs_account", (), generator, regenerate_if_none=True)
+		return cint(frappe.db.get_value('Accounts Settings', None,\
+			'allow_cost_center_in_entry_of_bs_account'))
+	return frappe.local_cache("get_allow_cost_center_in_entry_of_bs_account",\
+		(), generator, regenerate_if_none=True)
+
+def get_accounting_journal(doc, journal_type=None):
+	import json
+	from frappe.email.doctype.notification.notification import get_context
+
+	filtered_journals = None
+
+	if not journal_type:
+		journal_type = "Miscellaneous"
+
+	journals = frappe.get_all("Accounting Journal", filters={"type": journal_type})
+
+	for journal in journals:
+		if journal.name:
+			jdoc = frappe.get_doc("Accounting Journal", journal.name)
+			if jdoc.conditions:
+				for condition in jdoc.conditions:
+					if condition.document_type == doc.doctype and frappe.safe_eval(condition.condition, None, get_context(doc)):
+						filtered_journals = journal
+
+			elif filtered_journals is None:
+				filtered_journals = journal
+			print(filtered_journals)
+
+	return filtered_journals

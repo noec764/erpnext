@@ -25,6 +25,14 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 				this.frm.set_df_property("credit_to", "print_hide", 0);
 			}
 		}
+
+		this.frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: "Sale"
+				}
+			}
+		});
 	},
 
 	refresh: function(doc) {
