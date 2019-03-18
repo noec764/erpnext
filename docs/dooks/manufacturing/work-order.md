@@ -85,7 +85,7 @@ If this is the case, you can select the Skip Material Transfer check box, which 
 
 ### Making Time Logs
 
-* Progress in the Work Order can be tracked using [Timesheet](/dooks/projects/timesheet/timesheet-against-work-order.md)
+* Progress in the Work Order can be tracked using [Timesheet](/dokie/projects/timesheet/timesheet-against-work-order.md)
 * Timesheet's time slots are created against Work Order Operations.
 * Drafts of Timesheet are created based on the scheduled operations when an Work Order is Submitted.
 * To create more Timesheets against an operation click 'Make Timesheet' button.

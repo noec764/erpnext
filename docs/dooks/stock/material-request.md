@@ -19,7 +19,7 @@ A Material Request can be generated:
   * Automatically from a Sales Order.
   * Automatically when the Projected Quantity of an Item in stores reaches a particular level.
   * Automatically from your Bill of Materials if you use Production Plan to plan your manufacturing activities.
-  * If your Items are inventory items, you must also mention the Warehouse where you expect these Items to be delivered. This helps to keep track of the [Projected Quantity](/dooks/stock/projected-quantity.md) for this Item.
+  * If your Items are inventory items, you must also mention the Warehouse where you expect these Items to be delivered. This helps to keep track of the [Projected Quantity](/dokie/stock/projected-quantity.md) for this Item.
 
 A Material Request can be of type:
 
@@ -29,7 +29,7 @@ A Material Request can be of type:
 * Manufacture - If the requested material is to be Produced.
 * Customer Provided - If the requested material is to be provided by Customer.
 
-The User can also raise a [Request For Quotation](/dooks/buying/request-for-quotation.md) against a Material Request. To create a Request For Quotation the user can click on 'Make'.
+The User can also raise a [Request For Quotation](/dokie/buying/request-for-quotation.md) against a Material Request. To create a Request For Quotation the user can click on 'Make'.
 
 > Info: Material Request is not mandatory. It is ideal if you have centralized
 buying so that you can collect this information from various departments.

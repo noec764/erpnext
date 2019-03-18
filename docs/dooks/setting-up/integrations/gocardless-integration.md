@@ -5,7 +5,7 @@ To setup GoCardless, go to `Explore > Integrations > GoCardless Settings`
 
 ## Setup GoCardless
 
-To enable GoCardless in your Dooks account, you need to configure the following parameters and Access Token and optionally (but highly recommended), a Webhooks Secret key.
+To enable GoCardless in your Dokie account, you need to configure the following parameters and Access Token and optionally (but highly recommended), a Webhooks Secret key.
 
 
 You can setup several GoCardless payment gateways if needed. The choice of payment gateway account will determine which GoCardless account is used for the payment.
@@ -34,11 +34,11 @@ The customer will only receive a confirmation email from GoCardless informing hi
 
 ## Mandate cancellation
 
-You can setup a Webhook in GoCardless to automatically disabled cancelled or expired mandates in Dooks.
+You can setup a Webhook in GoCardless to automatically disabled cancelled or expired mandates in Dokie.
 
-The Endpoint URL of your webhook should be: https://yoursite.com/api/method/dooks.erpnext_integrations.doctype.gocardless_settings.webhooks
+The Endpoint URL of your webhook should be: https://yoursite.com/api/method/dokie.erpnext_integrations.doctype.gocardless_settings.webhooks
 
-In this case do not forget to configure your Webhooks Secret Key in your GoCardless account settings in Dooks.
+In this case do not forget to configure your Webhooks Secret Key in your GoCardless account settings in Dokie.
 
 
 ## Supported transaction currencies

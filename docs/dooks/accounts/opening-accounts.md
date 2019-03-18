@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 # Updating Opening Balance in Accounts
 
-If you are a new company you can start using Dooks accounting module by going to chart of accounts. However, if you are migrating from a legacy accounting system like Tally or a Fox Pro based software we recommend that you start using accounting in a new financial year, but you could start midway too. To setup your accounts, you will need the following for the “day” you start using accounting in Dooks:
+If you are a new company you can start using Dokie accounting module by going to chart of accounts. However, if you are migrating from a legacy accounting system like Tally or a Fox Pro based software we recommend that you start using accounting in a new financial year, but you could start midway too. To setup your accounts, you will need the following for the “day” you start using accounting in Dokie:
 
 * Opening capital accounts - like your shareholder’s (or owner’) capital, loans, bank balances on that day.
 
 * List of outstanding sales and purchase invoices (Payables and Receivables).
 
-If you were using another accounting software before, firstly you should close financial statements in that software. The closing balance of the accounts should be updated as an opening balance in the Dooks. Before starting to update opening balance, ensure that your [Chart of Accounts](/dooks/accounts/chart-of-accounts.md) has all the Accounts required.
+If you were using another accounting software before, firstly you should close financial statements in that software. The closing balance of the accounts should be updated as an opening balance in the Dokie. Before starting to update opening balance, ensure that your [Chart of Accounts](/dokie/accounts/chart-of-accounts.md) has all the Accounts required.
 
 > Opening entry is only for Balance Sheet accounts and not for the Accounts in the Profit and Loss statement.
 
@@ -79,7 +79,7 @@ To track stock balance in the Chart of Account, an Account is created for each W
 
 <img class="screenshot" alt="Opening Account" src="./assets/opening-5.png">
 
-To update stock opening balance, create [Stock Reconciliation entry](/dooks/stock/opening-stock.md). Based on the valuation of items's update in the Warehouse, balance will be updated in the Warehouse account.
+To update stock opening balance, create [Stock Reconciliation entry](/dokie/stock/opening-stock.md). Based on the valuation of items's update in the Warehouse, balance will be updated in the Warehouse account.
 
 ###Fixed Asset Opening
 

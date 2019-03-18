@@ -16,8 +16,8 @@ Renaming document affects existing transaction where this record is selected. Co
 
 ###See Also
 
-1. [Bulk Renaming](/dooks/collaboration/articles/bulk-rename.md)
-2. [Document Merging](/dooks/collaboration/articles/merging-documents.md)
+1. [Bulk Renaming](/dokie/collaboration/articles/bulk-rename.md)
+2. [Document Merging](/dokie/collaboration/articles/merging-documents.md)
 
 **List of Renamable Documents**
 

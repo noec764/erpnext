@@ -17,7 +17,7 @@ Content of Terms and Condition can be formatted as per your preference, and also
 
 <img class="screenshot" alt="Terms and Conditions, Edit HTML" src="../assets/print/terms-2.png">
 
-This also allows you to use Terms and Condition master for footer, which otherwise is not available in Dooks as dedicated functionality. Since contents of Terms and Condition is always the last to appear in the print format, details of footer should be inserted at the end of the content, so that it actually appears as footer in the print format.
+This also allows you to use Terms and Condition master for footer, which otherwise is not available in Dokie as dedicated functionality. Since contents of Terms and Condition is always the last to appear in the print format, details of footer should be inserted at the end of the content, so that it actually appears as footer in the print format.
 
 ### 3. Select in Transaction
 

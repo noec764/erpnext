@@ -14,7 +14,7 @@ You can either directly create your Customers via
 
 <img class="screenshot" alt="Create Customer" src="./assets/create-customer.gif">
 
-or upload it via the [Data Import Tool](/dooks/setting-up/data/data-import.md).
+or upload it via the [Data Import Tool](/dokie/setting-up/data/data-import.md).
 
 A Customer can avail the features (operations) in the selling process. The general flow can be summarised as:
 
@@ -25,7 +25,7 @@ have multiple Contacts and Addresses.
 
 ### Contacts and Addresses
 
-[Contacts and Addresses](/dooks/crm/contact.md) in Dooks are stored separately so that you can
+[Contacts and Addresses](/dokie/crm/contact.md) in Dokie are stored separately so that you can
 attach multiple Contacts or Addresses to Customers and Suppliers
 
 Thus we may have identical Customer Names that are uniquely identified by the ID. Since the email address is not part of the
@@ -33,10 +33,10 @@ customer information, the linking of Customer and User is through Contacts.
 
 ### Integration with Accounts
 
-In Dooks, there is a separate Account record for each Customer, for each
+In Dokie, there is a separate Account record for each Customer, for each
 Company.
 
-When you create a new Customer, Dooks will automatically create an Account
+When you create a new Customer, Dokie will automatically create an Account
 Ledger for the Customer under “Accounts Receivable” in the Company set in the
 Customer record.
 
@@ -48,7 +48,7 @@ to create an Account in another Company, just change the Company value and
 By default, the system does not generate an account for every customer. All
 Customers can be booked in one account called Debitors. In order to manage a
 separate account for each customer, you have to first create the account under
-Accounts Receivable in the [Chart of Accounts](/dooks/accounts/chart-of-accounts.md) and then add it on the customer's
+Accounts Receivable in the [Chart of Accounts](/dokie/accounts/chart-of-accounts.md) and then add it on the customer's
 form accounts table.
 
 ### Customer Settings
@@ -63,12 +63,12 @@ You can set how much credit you want to allow for a Customer by adding the
 “Credit Limit”. You can also set a global “Credit Limit” in the Company
 master. Classifying Customers
 
-Dooks allows you to group your Customers using [Customer Group](/dooks/crm/setup/customer-group.md)
-and also divide them into [Territories](/dooks/setting-up/territory.md)
+Dokie allows you to group your Customers using [Customer Group](/dokie/crm/setup/customer-group.md)
+and also divide them into [Territories](/dokie/setting-up/territory.md)
 Grouping will help you get better analysis of your data and
 identify which Customers are profitable and which are not. Territories will
 help you set sales targets for the respective territories.
-You can also mention [Sales Person](/dooks/crm/setup/sales-person.md) against a customer.
+You can also mention [Sales Person](/dokie/crm/setup/sales-person.md) against a customer.
 
 
 ### Sales Partner

@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 #Difference Entry
 
-As per accounting standards, debit in a accounting entry must be equal to credit. If not, system does allow submission of accounting transaction, thereby stops ledger posting. In Dooks, on saving accounting entry, system validates if debit and credit is tallying.
+As per accounting standards, debit in a accounting entry must be equal to credit. If not, system does allow submission of accounting transaction, thereby stops ledger posting. In Dokie, on saving accounting entry, system validates if debit and credit is tallying.
 
 <img alt="Debit Credit Not Equal" class="screenshot" src="../assets/difference-entry-1.png">
 

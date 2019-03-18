@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Itemised Taxation
 
-In the sales and purchase transactions, you can apply taxes and other charges on the items. For the ease of applying taxes, you can fetch values from the [Sales Taxes and Charges master](/dooks/setting-up/setting-up-taxes). Taxes and charges are applied equally on all the items. For example, if tax GST 16% is added in the Taxes and Charges table in Sales Order, then it will be applied on all the items in that Sales Order. However, if you need to have different tax rate applied on some of the items, following is how you should setup Items and Sales Taxes and Charges Template master in your Dooks account. 
+In the sales and purchase transactions, you can apply taxes and other charges on the items. For the ease of applying taxes, you can fetch values from the [Sales Taxes and Charges master](/dokie/setting-up/setting-up-taxes). Taxes and charges are applied equally on all the items. For example, if tax GST 16% is added in the Taxes and Charges table in Sales Order, then it will be applied on all the items in that Sales Order. However, if you need to have different tax rate applied on some of the items, following is how you should setup Items and Sales Taxes and Charges Template master in your Dokie account. 
 
 Let's assume that we are creating a Sales Order. We have Sales Taxes and Charges Template master for GST 16%. Out of all the Sales Items, on one item, only 5% GST will be applied, while one more item is exempted from the tax.
 

@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 #Restore Deleted Documents
 
-In Dooks, you can delete a records if not needed. They can be masters like Items, Customer or transactions like Sales Order, Payment Entries etc.
+In Dokie, you can delete a records if not needed. They can be masters like Items, Customer or transactions like Sales Order, Payment Entries etc.
 
 <img class="screenshot" alt="Delete a Docuemnt" src="./assets/delete-a-doc.png">
 
-If you have deleted an entry by mistake and wish to restore it back into your Dooks account.
+If you have deleted an entry by mistake and wish to restore it back into your Dokie account.
 
 > Only User having System Manager role assigned can restore deleted documents.
 
@@ -25,7 +25,7 @@ Open the document to be restored from the list. Click on Restore button.
 
 ####Step 3: Restored
 
-Once a document is restored, you will be able to use it for creating entries in your Dooks account. 
+Once a document is restored, you will be able to use it for creating entries in your Dokie account. 
 
 <img class="screenshot" alt="Restored Doc" src="./assets/restored-doc.png">
 

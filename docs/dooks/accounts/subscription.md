@@ -2,7 +2,7 @@
 
 If you offer a service which requires renewal in the certain time period (yearly, monthly, quarterly etc.), you can use Subscription feature to track them. Subscription master captures all the details required for the auto-creation of Sales Invoice on subscription expiry.
 
-Let's consider a use-case of Dooks subscription itself. Our hosting plans are available on yearly basis. Each customer's account has subscription expiry date, after which customer must renew their subscription with us.
+Let's consider a use-case of Dokie subscription itself. Our hosting plans are available on yearly basis. Each customer's account has subscription expiry date, after which customer must renew their subscription with us.
 
 To manage client's subscription expiry and auto-generation of Sales Invoice for the renewal, we use Subscription feature.
 
@@ -30,7 +30,7 @@ Mention discounts if any which will be applied on this particular subscription.
 
 ### Difference Between Subscription and Auto-Repeat
 
-Before Subscription feature was added in Dooks, the current Auto-Repeat feature was available as a Subscription only.
+Before Subscription feature was added in Dokie, the current Auto-Repeat feature was available as a Subscription only.
 
 The Auto-Repeat feature which is applicable for multiple transactions like Sales Order, Purchase Order, Invoices, Journal Entry etc. Whereas based on Subscription, only Sales Invoices are auto-created.
 

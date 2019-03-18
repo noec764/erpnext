@@ -3,7 +3,7 @@
 
 In each document, you can group fields by "levels". Each group of field is denoted by a unique number (0, 1, 2, 3 etc.). A separate set of permission rules can be applied to each field group. By default all fields are of level 0.
 
-Perm Level for a field can be defined in the [Customize Form](/dooks/customize-dooks/customize-form.md).
+Perm Level for a field can be defined in the [Customize Form](/dokie/customize-dokie/customize-form.md).
 
 <img alt="Perm Level Field" class="screenshot" src="../assets/perm-level-1.gif">
 

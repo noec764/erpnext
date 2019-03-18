@@ -1,8 +1,8 @@
 <!-- add-breadcrumbs -->
 # Asset Maintenance Management
-Dooks provides features to track the details of individual maintenance/calibration tasks for an asset by date, the person responsible for the maintenance and future maintenance due date.
+Dokie provides features to track the details of individual maintenance/calibration tasks for an asset by date, the person responsible for the maintenance and future maintenance due date.
 
-To perform Asset Maintenance in Dooks,
+To perform Asset Maintenance in Dokie,
 
   1. Enable Asset Maintenance.
   2. Create Asset Maintenance Team.

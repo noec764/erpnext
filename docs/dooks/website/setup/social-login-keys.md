@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 # Social Login Keys
 
-Social Login enables users to login to Dooks via their Google, Facebook or GitHub account.
+Social Login enables users to login to Dokie via their Google, Facebook or GitHub account.
 
 ### Enabling Social Logins.
 
-Checkout the following Video Tutorials to understand how to enable social logins on Dooks
+Checkout the following Video Tutorials to understand how to enable social logins on Dokie
 
 * for FaceBook: 
 

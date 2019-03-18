@@ -14,7 +14,7 @@ Wouldn't it be nice if there was a way to update your product catalog on your
 site automatically from your ERP?
 
 We thought exactly the same and hence built a small Website Development app
-right inside Dooks! Using Dooks’s Website module, you can
+right inside Dokie! Using Dokie’s Website module, you can
 
   1. Create Web Pages
   2. Write a Blog

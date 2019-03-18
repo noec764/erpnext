@@ -12,6 +12,6 @@
 For Purchase Item, it is defined based on charges entered in the Purchase Receipt. If you don't have any Purchase Receipt
 made for an item or a Stock Reconciliation, then there won't be any Valuation Rate for that item.
 
-**Price List Rate:** This option allows to pull item rates from [Price List.](/dooks/stock/item/item-price.md) 
+**Price List Rate:** This option allows to pull item rates from [Price List.](/dokie/stock/item/item-price.md) 
 
 **Last Purchase Rate:** It will be the last Purchase (Order) Rate of an item.

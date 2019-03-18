@@ -1,6 +1,6 @@
 #Change User Password
 
-Each Dooks user can customize password for his/her Dooks account. Also user with System Manager role will be able to reset password for himself as well as for other users. Following are the steps to go about changing your password.
+Each Dokie user can customize password for his/her Dokie account. Also user with System Manager role will be able to reset password for himself as well as for other users. Following are the steps to go about changing your password.
 
 
 ####Step 1: Go to My Setting

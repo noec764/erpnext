@@ -11,8 +11,8 @@ day can be created manually by:
 You can get a monthly report of your Attendance data by going to the _Monthly
 Attendance Details_ report.
 
-You can easily set attendance for Employees using the [Employee Attendance Tool](/dooks/human-resources/employee_and_attendance/employee-attendance-tool.md)
+You can easily set attendance for Employees using the [Employee Attendance Tool](/dokie/human-resources/employee_and_attendance/employee-attendance-tool.md)
 
-You can also bulk upload attendance using the [Upload Attendence Tool](/dooks/human-resources/employee_and_attendance/upload-attendance.md)
+You can also bulk upload attendance using the [Upload Attendence Tool](/dokie/human-resources/employee_and_attendance/upload-attendance.md)
 
 {next}

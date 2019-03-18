@@ -25,4 +25,4 @@ User can sale the particular products to the particular customers from the POS b
 
 > Important : If you specify a particular User, the POS setting will be
 applied only to that User. If the User option is left blank, the setting will
-be set for all users. To understand POS in detail visit [Point of Sale](/dooks/accounts/point-of-sale-pos-invoice.md)
+be set for all users. To understand POS in detail visit [Point of Sale](/dokie/accounts/point-of-sale-pos-invoice.md)

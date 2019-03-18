@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Purchase Return
 
-Dooks has an option for products that are need to be returned to the
+Dokie has an option for products that are need to be returned to the
 supplier. This may be on account of a number of reasons like defects in goods,
 quality not matching, the buyer not needing the stock, etc.
 

@@ -1,4 +1,4 @@
 <!-- add-breadcrumbs -->
-# Dooks Integrations
+# Dokie Integrations
 
 {index}

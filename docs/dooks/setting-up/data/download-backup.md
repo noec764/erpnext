@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Download Backup
 
-In the Dooks, you can manually download database backup. To get the latest database backup, go to:
+In the Dokie, you can manually download database backup. To get the latest database backup, go to:
 
 `Setup > Data > Download Backup`
 

@@ -3,7 +3,7 @@
 
 **Question:** A Fixed Asset Item has been purchased and stored in a warehouse. How to create a depreciation for a Fixed Asset Item?
 
-**Answer:**You can post asset depreciation entry for the fixed asset item via [Stock Reconciliation](/dooks/stock/opening-stock.md) Entry.
+**Answer:**You can post asset depreciation entry for the fixed asset item via [Stock Reconciliation](/dokie/stock/opening-stock.md) Entry.
 
 ####Step 1:
 

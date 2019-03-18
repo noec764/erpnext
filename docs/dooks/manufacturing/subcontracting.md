@@ -10,7 +10,7 @@ components and package them at their facilities.
 
 If your business involves outsourcing certain processes to a third party
 Supplier, where you buy the raw material from, you can track this by using the
-sub-contracting feature of Dooks.  
+sub-contracting feature of Dokie.  
 
 ### Setup Sub-Contracting:
 
@@ -48,10 +48,10 @@ correct stock is maintained at the Supplier’s end.
 > Note 1: Make sure that the “Rate” of processed Item is the processing rate
 (excluding the raw material rate).
 
-> Note 2: Dooks will automatically add the raw material rate for your
+> Note 2: Dokie will automatically add the raw material rate for your
 valuation purpose when you receive the finished Item in your stock.
 
-> Note 3: Dooks will automatically default the Reserve Warehouse in the PO
+> Note 3: Dokie will automatically default the Reserve Warehouse in the PO
 from the BOM. If not found in the BOM, it would default it from the default
 warehouse setup in the Item.
 

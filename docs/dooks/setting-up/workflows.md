@@ -2,8 +2,8 @@
 # Workflows
 
 In order to allow multiple people to submit multiple requests, for approvals,
-by multiple users, Dooks requires you to fill the workflow conditions.
-Dooks tracks the multiple permissions before submission.
+by multiple users, Dokie requires you to fill the workflow conditions.
+Dokie tracks the multiple permissions before submission.
 
 Example of a leave application workflow is given below:
 

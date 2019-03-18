@@ -13,7 +13,7 @@ The report is based on the table GL Entry and can be filtered by many pre-define
 ### Trial Balance
 
 A Trial Balance is an accounting report which lists account balances for all your Accounts
-(“Ledger” and “Group”) for any given reporting period. A company prepares a trial balance periodically, usually at the end of every reporting period. The general purpose of producing a trial balance is to ensure the entries in a company's bookkeeping system are mathematically correct. The totals of Debit and Credit columns must be same for any given period, to ensure the entries are correct. In Dooks, the report shows following columns:
+(“Ledger” and “Group”) for any given reporting period. A company prepares a trial balance periodically, usually at the end of every reporting period. The general purpose of producing a trial balance is to ensure the entries in a company's bookkeeping system are mathematically correct. The totals of Debit and Credit columns must be same for any given period, to ensure the entries are correct. In Dokie, the report shows following columns:
 
   * Opening (Dr): Opening debit balance as on From Date
   * Opening (Cr): Opening credit balance as on From Date
@@ -37,7 +37,7 @@ Usually you might need to see the trail balance for your customesrs and supplier
 
 A Balance Sheet is the financial statement of a company which states assets, liabilities and equity at a particular point in time.
 
-The Balance Sheet in Dooks gives you more flexibility to analysis your financial position. You can run the report across multiple year to compare values. You can check values for a specific Finance Book or Cost Center. You can also choose any other currency to display the balances.
+The Balance Sheet in Dokie gives you more flexibility to analysis your financial position. You can run the report across multiple year to compare values. You can check values for a specific Finance Book or Cost Center. You can also choose any other currency to display the balances.
 
 ![Balance Sheet](./assets/reports/balance-sheet.png)
 
@@ -46,7 +46,7 @@ The Balance Sheet in Dooks gives you more flexibility to analysis your financial
 
 A Profit and Loss Statement is a financial statement which summarizes all the revenues and expenses in a given period. The report is also known as P&L Statement.
 
-In Dooks, you can run the report across multiple year / period to compare the values. You can also check values for a specific Finance Book, Project or Cost Center. You can also choose any other currency to display the balances. If you are running the report to see quarterly / monthly balances, you can choose whether you want to show accumulated balances or only for each period.
+In Dokie, you can run the report across multiple year / period to compare the values. You can also check values for a specific Finance Book, Project or Cost Center. You can also choose any other currency to display the balances. If you are running the report to see quarterly / monthly balances, you can choose whether you want to show accumulated balances or only for each period.
 
 ![Profit and Loss Statement](./assets/reports/profit-and-loss.png)
 
@@ -90,7 +90,7 @@ The Item Wise Sales and Purchase Register report shows all the Sales and Purchas
 
 ### Budget Variance
 
-In Dooks, you can assign expense budget for an expense account against any specific cost center. This report gives a comparison between budgeted and actual expenses and the variance (the difference between the two) in monthly / quarterly / yearly view.
+In Dokie, you can assign expense budget for an expense account against any specific cost center. This report gives a comparison between budgeted and actual expenses and the variance (the difference between the two) in monthly / quarterly / yearly view.
 
 ![Budget Variance](./assets/reports/budget-variance.png)
 

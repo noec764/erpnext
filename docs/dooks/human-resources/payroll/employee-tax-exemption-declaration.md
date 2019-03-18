@@ -17,6 +17,6 @@ For the current fiscal year, in India, House Rent Allowance (HRA) exemption from
 * Actual rent paid less 10% of the basic salary.
 * 50% of the basic salary, if the employee is staying in a metro city (40% for a non-metro city).
 
-As part of the Employee Tax Exemption Declaration, employees shall also fill out the HRA Exemption. Dooks will calculate the exemption eligible for HRA and exempt it while calculating the taxable earnings.
+As part of the Employee Tax Exemption Declaration, employees shall also fill out the HRA Exemption. Dokie will calculate the exemption eligible for HRA and exempt it while calculating the taxable earnings.
 
 > Note: HRA component shall be configured in Company for HRA exemption to work

@@ -17,7 +17,7 @@ Setup tax code in the item master, system will fetch same code in the sales/purc
 <img class="screenshot" alt="Tax Code in Item" src="../assets/uae/tax-code-item.png">
 ### 3. Default Tax Templates
 
-Dooks provides you default tax template for vat(5%, zero, exempted) and excise(50%, 100%). You can create your own [tax template](/dooks/setting-up/setting-up-taxes.md).
+Dokie provides you default tax template for vat(5%, zero, exempted) and excise(50%, 100%). You can create your own [tax template](/dokie/setting-up/setting-up-taxes.md).
 
 <img class="screenshot" alt="Default Tax Template" src="../assets/uae/uae-tax-templates.png">
 
@@ -37,7 +37,7 @@ For **Sales Invoice**,
 
 ### 4. Print Tax Invoice
 
-Dooks provides 2 default print foramt
+Dokie provides 2 default print foramt
 
 1. Simplified Tax Invoice
 <img class="screenshot" alt="Simplified Tax Invoice" src="../assets/uae/simplified-invoice.png">

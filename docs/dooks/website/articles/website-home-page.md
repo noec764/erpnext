@@ -1,6 +1,6 @@
 # Wesite Home Page
 
-It is very much possible in Dooks to setup certain standard page as default website Home Page. Following are steps to setup default website home page.
+It is very much possible in Dokie to setup certain standard page as default website Home Page. Following are steps to setup default website home page.
 
 #### **Step 1: Create a Web Page**
 To create a web page go to: `Website > Web Site > Web Page` and then click on the `New` button in the upper right.
@@ -16,7 +16,7 @@ To Open website settings page go to: `Website > Setup > Website Settings`
 
 #### **Step 3: Set Home page**
 
-Enter the same value you entered for the `route` field in the previous section to the `Home Page` field. Dooks will set this route to be the same as /index for your page.      
+Enter the same value you entered for the `route` field in the previous section to the `Home Page` field. Dokie will set this route to be the same as /index for your page.      
 
 ![Website Setting Home](../assets/Selection_021.png)
 

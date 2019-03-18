@@ -1,18 +1,18 @@
 const getIntroductionSidebar = require('./sidebar/quickstart.js')
 
 module.exports = {
-	title: 'Dooks',
-	description: 'Documentation for Dooks',
+	title: 'Dokie',
+	description: 'Documentation for Dokie',
 	locales: {
 	  '/': {
 		lang: 'en-US',
-		title: 'Dooks',
-		description: 'Dooks'
+		title: 'Dokie',
+		description: 'Dokie'
 	  },
 	  '/fr/': {
 		lang: 'fr-FR',
-		title: 'Dooks',
-		description: 'Dooks'
+		title: 'Dokie',
+		description: 'Dokie'
 	  }
 	},
 	head: [
@@ -27,7 +27,7 @@ module.exports = {
 		['meta', { name: 'msapplication-TileColor', content: '#000000' }]
 	],
 	themeConfig: {
-		repo: 'https://gitlab.com/dooks/dooks',
+		repo: 'https://gitlab.com/dokie/dokie',
 		editLinks: true,
 		locales: {
 			'/': {
@@ -38,7 +38,7 @@ module.exports = {
 				lastUpdated: 'Last Updated',
 				nav: require('./nav/en'),
 				sidebar: {
-				'/dooks/': getIntroductionSidebar('Dooks')
+				'/dokie/': getIntroductionSidebar('Dokie')
 				}
 			},
 			'/fr/': {
@@ -49,7 +49,7 @@ module.exports = {
 				lastUpdated: 'Dernière mise à jour',
 				nav: require('./nav/fr'),
 				sidebar: {
-				'/fr/dooks/': getIntroductionSidebar('Dooks')
+				'/fr/dokie/': getIntroductionSidebar('Dokie')
 				}
 			}
 		}

@@ -3,7 +3,7 @@
 
 At the heart of the Manufacturing system is the **Bill of Materials** (BOM).
 The **BOM** is a list of all materials (either bought or made) and operations
-that go into a finished product or sub-Item. In Dooks, the component could
+that go into a finished product or sub-Item. In Dokie, the component could
 have its own BOM hence forming a tree of Items with multiple levels.
 
 <div class="embed-container">

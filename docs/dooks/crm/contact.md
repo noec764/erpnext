@@ -12,7 +12,7 @@ Contacts can, but do not have to be linked, to:  User, Customer, Supplier, and S
 
 A Contact can be linked to the (web) user. If that user is also a Customer, it is linked to the Customer by the Customer ID
 
-Contacts and Addresses in Dooks are stored separately so that you can
+Contacts and Addresses in Dokie are stored separately so that you can
 attach multiple Contacts or Addresses to Customers and Suppliers.
 
 To create a new Contact go to,

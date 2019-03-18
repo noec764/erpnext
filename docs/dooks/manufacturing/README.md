@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 # Manufacturing
 
-Dooks comes batteries included for all requirements of a manufacturing business like Bill of Materials tracking, Production Order planning and execution, procurement and lot more.
+Dokie comes batteries included for all requirements of a manufacturing business like Bill of Materials tracking, Production Order planning and execution, procurement and lot more.
 
 <img class="screenshot" alt="BOM" src="./assets/BOM-hero.png">
 
 ### Bill of Material, Production Order and More
 
-The Manufacturing module in Dooks helps you to maintain multi-level Bill of Materials (BOMs) for your Items.  It helps in product costing, production planning, creating work orders for your manufacturing shop floors and planning inventory by getting your material requirement via BOMs (also called Material Requirements Planning MRP).
+The Manufacturing module in Dokie helps you to maintain multi-level Bill of Materials (BOMs) for your Items.  It helps in product costing, production planning, creating work orders for your manufacturing shop floors and planning inventory by getting your material requirement via BOMs (also called Material Requirements Planning MRP).
 
 <img class="screenshot" alt="BOM" src="./assets/manufacturing-hero.png">
 
@@ -20,7 +20,7 @@ You can also effectively track operations like:
 * Despatched manufactured items to the Customers.
 * View reports
 
-### Dooks Manufacturing Demo
+### Dokie Manufacturing Demo
 
 Check the following video to educate yourself on each feature in the manufacturing module.
 

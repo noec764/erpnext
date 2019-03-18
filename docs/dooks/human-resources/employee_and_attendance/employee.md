@@ -3,7 +3,7 @@
 
 An individual who works part-time or full-time under a contract of employment, and has recognized rights and duties is your Employee.
 
-In Dooks, you can manage Employee master. The Employee master captures demographics, personal and professional details.
+In Dokie, you can manage Employee master. The Employee master captures demographics, personal and professional details.
 
 <img class="screenshot" alt="Employee" src="../assets/employee-view.gif">
 

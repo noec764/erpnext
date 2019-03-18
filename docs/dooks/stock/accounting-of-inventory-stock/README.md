@@ -11,7 +11,7 @@ accounting for inventory:
 
 In this process, for each stock transactions, the system posts relevant
 accounting entries to sync stock balance and accounting balance. This is the
-default setting in Dooks for new accounts.
+default setting in Dokie for new accounts.
 
 When you buy and receive items, those items are booked as the company’s assets
 (stock-in-hand / fixed-assets). When you sell and deliver those items, an
@@ -22,7 +22,7 @@ balance. This improves accuracy of Balance Sheet and Profit and Loss
 statement.
 
 To check accounting entries for a particular stock transaction, please check
-[examples](/dooks/stock/accounting-of-inventory-stock/perpetual-inventory.md)
+[examples](/dokie/stock/accounting-of-inventory-stock/perpetual-inventory.md)
 
 #### **Advantages**
 
@@ -67,6 +67,6 @@ This complete process is called Periodic Inventory.
 
 If you are an existing user using Periodic Inventory and want to use Perpetual
 Inventory, you have to follow some steps to migrate. For details, check
-[Migration From Periodic Inventory](/dooks/stock/accounting-of-inventory-stock/migrate-to-perpetual-inventory.md).
+[Migration From Periodic Inventory](/dokie/stock/accounting-of-inventory-stock/migrate-to-perpetual-inventory.md).
 
 {next}

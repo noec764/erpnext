@@ -29,12 +29,12 @@ To create a Lead, go to:
 
 <img class="screenshot" alt="Lead" src="./assets/lead.png">
 
-Dooks gives you a lot of options you may want to store about your Leads. For
+Dokie gives you a lot of options you may want to store about your Leads. For
 example what is the source, how likely are they to give you business etc. If
 you have a healthy number of leads, this information will help you prioritize
 who you want to work with.
 
-> **Tip:** Dooks makes it easy to follow-up on leads by updating the “Next
+> **Tip:** Dokie makes it easy to follow-up on leads by updating the “Next
 Contact” details. This will add a new event in the Calendar for the User who
 has to contact the lead next.
 

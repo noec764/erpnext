@@ -1,9 +1,9 @@
 <!-- add-breadcrumbs -->
 # Budgeting
 
-In Dooks, you can set and manage budgets against a cost center or a project. This is useful in controlling your expenses.
+In Dokie, you can set and manage budgets against a cost center or a project. This is useful in controlling your expenses.
 
-For example, if you are doing online sales, you can set a budget for search ads, and configure Dooks to stop or warn you from over spending beyond the budget set.
+For example, if you are doing online sales, you can set a budget for search ads, and configure Dokie to stop or warn you from over spending beyond the budget set.
 
 Budgets are also great for planning purposes. When you are making plans for the next financial year, you would typically target a revenue based on which you would set your expenses. Setting a budget will ensure that your expenses do not get out of hand, at any point.
 
@@ -41,7 +41,7 @@ In the Budgets table, select Income / Expense account for which budget is to be 
 
 #### Step 4: Monthly Distribution
 
-If you have seasonal business, you can also define a Monthly Distribution record, to distribute the budget between months. If you don't set the monthly distribution, Dooks will calculate the budget on yearly
+If you have seasonal business, you can also define a Monthly Distribution record, to distribute the budget between months. If you don't set the monthly distribution, Dokie will calculate the budget on yearly
 basis or in equal proportion for every month.
 
 ![Monthly distribution](./assets/monthly-budget-distribution.png)

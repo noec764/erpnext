@@ -6,16 +6,16 @@ For retail operations, the delivery of goods, accrual of sale and payment all ha
 
 ###Offline POS
 
-In the retails business, invoicing needs to done very quickly, hence should less dependency. In the Dooks, you can create POS Invoices, even when not connected to the internet.
+In the retails business, invoicing needs to done very quickly, hence should less dependency. In the Dokie, you can create POS Invoices, even when not connected to the internet.
 
-POS Invoices created in the offline mode will be saved locally in the browser. If internet connection is lost which creating POS Invoice, you will still be able can proceed forward. Once internet connection is available again, offline invoices will be synced, and pushed onto your Dooks account.
+POS Invoices created in the offline mode will be saved locally in the browser. If internet connection is lost which creating POS Invoice, you will still be able can proceed forward. Once internet connection is available again, offline invoices will be synced, and pushed onto your Dokie account.
 
 #### POS Profile
 
-In Dooks all Sales and Purchase transactions, like Sales Invoice, Quotation, Sales Order, Purchase Order etc. can be edited via the POS. There two steps to Setup POS:
+In Dokie all Sales and Purchase transactions, like Sales Invoice, Quotation, Sales Order, Purchase Order etc. can be edited via the POS. There two steps to Setup POS:
 
 1. Enable POS View via (Setup > Customize > Feature Setup)
-2. Create a [POS Profile](/dooks/setting-up/pos-setting.md) record
+2. Create a [POS Profile](/dokie/setting-up/pos-setting.md) record
 
 #### Different sections of the POS
 

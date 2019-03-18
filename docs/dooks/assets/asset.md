@@ -10,7 +10,7 @@ For the existing asset, you can create the asset record directly checking "Is Ex
 
 <img class="screenshot" alt="Existing Asset" src="./assets/existing-asset.png">
 
-For new asset, you cannot create the asset record directly from Asset master. Asset record will be created automatically on submission of Purchase Receipt / Purchase Invoice for the Asset. And later you can modify the details of the asset record. Find more details in [Purchasing Asset.](/dooks/assets/purchasing-asset.md)
+For new asset, you cannot create the asset record directly from Asset master. Asset record will be created automatically on submission of Purchase Receipt / Purchase Invoice for the Asset. And later you can modify the details of the asset record. Find more details in [Purchasing Asset.](/dokie/assets/purchasing-asset.md)
 
 <img class="screenshot" alt="Asset" src="./assets/asset.png">
 

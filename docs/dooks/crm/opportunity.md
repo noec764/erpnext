@@ -28,7 +28,7 @@ Communication, you can also add the Items for which the Lead or Contact is
 looking for.
 
 #### Make Supplier Quotation
-In some businesses, users collect the rates from their supplier against the customer requirement and based on the supplier rates they prepare the quotation for the customer. With Dooks, you can make a supplier quotation from the opportunity itself.
+In some businesses, users collect the rates from their supplier against the customer requirement and based on the supplier rates they prepare the quotation for the customer. With Dokie, you can make a supplier quotation from the opportunity itself.
 
 <img class="screenshot" alt="Opportunity" src="./assets/make-sq-from-opportunity.png">
 

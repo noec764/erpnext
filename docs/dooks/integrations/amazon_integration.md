@@ -5,7 +5,7 @@
 
 ### How to Setup Amazon MWS Connector?
 
-#### Setting Up Credentials  in Dooks
+#### Setting Up Credentials  in Dokie
 
 You can request the developer credentials from Amazon MWS once you are a registered seller on their website. For more details on the same, click [here](https://docs.developer.amazonservices.com/en_ES/dev_guide/DG_Registering.md).
 
@@ -14,7 +14,7 @@ You can request the developer credentials from Amazon MWS once you are a registe
 
  2. Setup Company, Warehouse, Item Group, Price List, Customer Group, Territory, Customer Type and Account Group.
    The Account Group is used to hold Commission, taxes etc. that Amazon charges.
-<img class="screenshot" alt="Dooks Configurations" src="./assets/amazon_mws_settings_2.png">
+<img class="screenshot" alt="Dokie Configurations" src="./assets/amazon_mws_settings_2.png">
  
  3. Setup Sync Configurations.
    Using the After Date, you can sync products and orders created after a particular date. In case you are importing a lot of historic data, it is suggested to start in the reverse chronological order of the After Date and import data in small chunks.
@@ -24,15 +24,15 @@ integration.
  
  4. Sync Products
    Click on this button to sync products. Once this is successful you should see your Amazon products
-   as Items in Dooks.
+   as Items in Dokie.
 <img class="screenshot" alt="Sync Configurations" src="./assets/amazon_mws_settings_4.png">
 <img class="screenshot" alt="Sync Configurations" src="./assets/amazon_mws_settings_5.png">
  
  5. Sync Orders
    Click on this button to sync sales orders. Once this is successful you should see your Amazon Orders
-   as Sales Orders in Dooks. You can also set up scheduler to sync orders automatically.
+   as Sales Orders in Dokie. You can also set up scheduler to sync orders automatically.
 <img class="screenshot" alt="Sync Configurations" src="./assets/amazon_mws_settings_6.png">
 
 ### Note
  
-The connector won't handle Order cancellation. If you cancelled any order in Amazon then manually you have to cancel respective Sales Order and other documents in Dooks.
+The connector won't handle Order cancellation. If you cancelled any order in Amazon then manually you have to cancel respective Sales Order and other documents in Dokie.

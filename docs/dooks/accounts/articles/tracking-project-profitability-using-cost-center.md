@@ -26,7 +26,7 @@ To create new Cost Center, go to:
 
 `Accounts > Setup > Cost Center`
 
-[Click here to learn how to manage Cost Centers.](/dooks/accounts/setup/cost-center.md)
+[Click here to learn how to manage Cost Centers.](/dokie/accounts/setup/cost-center.md)
 
 #### 1.3 Update Cost Center in the Project
 
@@ -76,7 +76,7 @@ To check Budget Variance report, go to:
 
 `Accounts > Budget and Cost Center > Budget Variance Report`
 
-[Click here to learn how to do budgeting from Cost Center](/dooks/accounts/budgeting.md).
+[Click here to learn how to do budgeting from Cost Center](/dokie/accounts/budgeting.md).
 
 <!-- markdown -->
 

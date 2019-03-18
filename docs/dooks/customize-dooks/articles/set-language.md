@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 #Change the Language
 
-Dooks is an multi-lingual application. It allows each user to select preferred lannguage. Following is how User can customize language in one's account.
+Dokie is an multi-lingual application. It allows each user to select preferred lannguage. Following is how User can customize language in one's account.
 
 ### 1. Setting Language in User's Account
 
-Following are the steps to set language in your Dooks account.
+Following are the steps to set language in your Dokie account.
 
 #### 1.1 Go to My Setting
 
@@ -19,7 +19,7 @@ Following are the steps to set language in your Dooks account.
 
 #### 1.3 Save User
 
-On saving User after selecting language, your Dooks account will be refresh automatically. Then you will see Dooks translated in your selected language.
+On saving User after selecting language, your Dokie account will be refresh automatically. Then you will see Dokie translated in your selected language.
 
 Being a System Manager, you can set language in other user's master as well.
 
@@ -35,11 +35,11 @@ Being a System Manager, you can set language in other user's master as well.
 
 #### Save
 
-Save System Settings, and refresh your EPRNext account. On refreshing, you should language in your Dooks account changed as per your preference.
+Save System Settings, and refresh your EPRNext account. On refreshing, you should language in your Dokie account changed as per your preference.
 
 <img alt="Select Language" class="screenshot" src="../assets/set-language-2.gif">
 
-Note: For now, we have translation available only for few languages. You can contribute to make translation better, and add new languages from [here](https://translate.dooks.com).
+Note: For now, we have translation available only for few languages. You can contribute to make translation better, and add new languages from [here](https://translate.dokie.com).
 
 {next}
 <!-- markdown -->

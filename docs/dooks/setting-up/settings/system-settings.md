@@ -1,9 +1,9 @@
 <!-- add-breadcrumbs -->
 # System Settings
 
-You can localize Dooks to use particular timezone, date, number or currency format and also set global session expiry via System Settings.
+You can localize Dokie to use particular timezone, date, number or currency format and also set global session expiry via System Settings.
 
-By checking the 'Allow Login using Mobile Number' checkbox, you can login to Dooks using a valid mobile number set in your User account. 
+By checking the 'Allow Login using Mobile Number' checkbox, you can login to Dokie using a valid mobile number set in your User account. 
 
 To open System Settings, go to:
 

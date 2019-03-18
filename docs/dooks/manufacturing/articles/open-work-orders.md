@@ -1,6 +1,6 @@
 # Open Work Order Report
 
-We can easily identify the progress of manufacturing of certain items in our organizations using Open Work Orders in Dooks.
+We can easily identify the progress of manufacturing of certain items in our organizations using Open Work Orders in Dokie.
 
 <img class="screenshot" alt="Sales Funnel" src="/docs/assets/img/manufacturing/open-work-order.png">
 

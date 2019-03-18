@@ -25,7 +25,7 @@ In the fields section, click on the Custom field and check the **Allow On Submit
 
 <img alt="Update" class="screenshot" src="../assets/allow-on-submit-3.png">
 
-After updating Customize Form, you should reload your Dooks account. Then check form, and field to confirm its editable in submitted form as well.
+After updating Customize Form, you should reload your Dokie account. Then check form, and field to confirm its editable in submitted form as well.
 
 {next}
 

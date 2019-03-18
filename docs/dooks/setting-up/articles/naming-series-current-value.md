@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 #Setting the Current Value for Naming Series
 
-Naming Series feature allows you to define prefix for naming of a documents. For example, if a Sales Order has prefix "SO", then the series will be generated as SO-00001, SO-00002... and so on. Click [here](/dooks/setting-up/settings/naming-series.md) to learn how you can customize Number Series for a transaction/master in Dooks.
+Naming Series feature allows you to define prefix for naming of a documents. For example, if a Sales Order has prefix "SO", then the series will be generated as SO-00001, SO-00002... and so on. Click [here](/dokie/setting-up/settings/naming-series.md) to learn how you can customize Number Series for a transaction/master in Dokie.
 
 ### 1. Setting the Current Value
 
-Naming Series feature also offers a tool where you can set Current Value for specific prefix. This is generally required if you have recently started using Dooks, and have old transactions in the previous system, and you want the numbering series to start in from where it ended in the old system. Let's consider a scenario to learn this better.
+Naming Series feature also offers a tool where you can set Current Value for specific prefix. This is generally required if you have recently started using Dokie, and have old transactions in the previous system, and you want the numbering series to start in from where it ended in the old system. Let's consider a scenario to learn this better.
 
-For example, you have 322 Sales Orders created in your old system with SO00322 as highest Sales Order Id. In Dooks, you need the first Sales Order to pick up #323 when it is saved. To enable this, you should set Current Value for SO series in following steps.
+For example, you have 322 Sales Orders created in your old system with SO00322 as highest Sales Order Id. In Dokie, you need the first Sales Order to pick up #323 when it is saved. To enable this, you should set Current Value for SO series in following steps.
 
 #### Go to Naming Series Tool
 
@@ -45,7 +45,7 @@ To confirm actual Current Value for particular Series, you should check report f
 
 Let's assume we find that actual Current Value for Item price is 22, then you go Naming Series, and set Current Value for the Prefix/Series of Item Price to 22, and Update Series Number.
 
-These instructions is applicable for all the documents in Dooks for which user can customize Series and its Current Value.
+These instructions is applicable for all the documents in Dokie for which user can customize Series and its Current Value.
 
 Let's consider another scenario to learn this better. On assigning a document to another user, error message says:
 

@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Assignment
 
-Assign To feature in Dooks allows you to allocate particular document to specific user, whom needs to further work on that document.
+Assign To feature in Dokie allows you to allocate particular document to specific user, whom needs to further work on that document.
 
 For example, if Sales Order needs to be approved/submitted by Sales Manager, first draft user can allocate that Sales Order to Sales Manager. On allocating document to Sales Manager, it will be added to that user's ToDo list. Same way, allocation can also be done to Material User and Account user who needs to create Delivery Note and Sales Invoice respectively against this Sales Note.
 

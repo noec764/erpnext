@@ -5,7 +5,7 @@
 
 **Answer:**
 
-There are two type of Users in Dooks.
+There are two type of Users in Dokie.
 
 * **System User**: They are Employees of your company. Example of Roles assigned to System Users are Account User, Sales Manager, Purchase User, Support Team etc.
 

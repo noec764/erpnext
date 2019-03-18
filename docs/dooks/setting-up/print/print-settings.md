@@ -12,7 +12,7 @@ There is various other configuration available in the Print Settings. Let's lear
 
 #### PDF or HTML
 
-When you email any document (like order or invoice) from Dooks, it is sent in the PDF or HTML format. The file is sent in the PDF by default. If you wish to send a document in the HTML format, just uncheck field "Send Print as PDF".
+When you email any document (like order or invoice) from Dokie, it is sent in the PDF or HTML format. The file is sent in the PDF by default. If you wish to send a document in the HTML format, just uncheck field "Send Print as PDF".
 
 #### Repeat Header and Footer in PDF
 
@@ -40,9 +40,9 @@ The documents (mostly transactions) has two stage of authentication, Save and Su
 
 #### Send document web view link in the email
 
-Dooks has a portal view available from where parties like Customer and Suppliers can signup and view their order history.
+Dokie has a portal view available from where parties like Customer and Suppliers can signup and view their order history.
 
-When you email a transaction to your party, you can also send a web link to view the same document on the portal of your Dooks account.
+When you email a transaction to your party, you can also send a web link to view the same document on the portal of your Dokie account.
 
 #### Always add "Draft" Heading for printing draft documents
 

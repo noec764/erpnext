@@ -2,7 +2,7 @@
 # Tasks
 
 Project is divided into Tasks. 
-In Dooks, you can also create a Task independently.
+In Dokie, you can also create a Task independently.
 
 <img class="screenshot" alt="Task" src="./assets/task.png">
 
@@ -28,7 +28,7 @@ You can specify a list of dependent tasks under the 'Depends On' section.
 
 ### Managing Time
 
-Dooks uses [Time Log](/dooks/projects/timesheet/) to track the progress of a Task.
+Dokie uses [Time Log](/dokie/projects/timesheet/) to track the progress of a Task.
 You can create multiple Time Logs against each task.
 The Actual Start and End Time along with the costing is updated based on the Time Log.
 
@@ -44,7 +44,7 @@ The Actual Start and End Time along with the costing is updated based on the Tim
 
 ### Managing Expenses
 
-You can book [Expense Claim](/dooks/human-resources/travel_and_expense_claim/expense-claim.md) against a task.
+You can book [Expense Claim](/dokie/human-resources/travel_and_expense_claim/expense-claim.md) against a task.
 The system shall update the total amount from expense claims in the costing section.
 
 * To view Expense Claims made against a Task click on 'Expense Claims'

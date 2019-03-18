@@ -39,11 +39,11 @@ Manufacture is created from Work Order. In this entry, both raw-material item as
 
 #### 5.Purpose: Repack
 
-Repack Entry is created when items purchases in bulk is repacked under smaller packs. ![Check this page to know more about Repack entry.](/dooks/stock/articles/repack-entry.md)
+Repack Entry is created when items purchases in bulk is repacked under smaller packs. ![Check this page to know more about Repack entry.](/dokie/stock/articles/repack-entry.md)
 
 #### 6.Purpose: Subcontract
 
-Subcontracting transaction involves company transfer raw-material items to the sub-contractors warehouse. This requires adding a warehouse for the sub-contractor as well. Sub-contract entry transfers stock from the companies warehouse to the sub-contractors warehouse.![Check this page to know more about Subcontracting](/dooks/manufacturing/subcontracting.md).
+Subcontracting transaction involves company transfer raw-material items to the sub-contractors warehouse. This requires adding a warehouse for the sub-contractor as well. Sub-contract entry transfers stock from the companies warehouse to the sub-contractors warehouse.![Check this page to know more about Subcontracting](/dokie/manufacturing/subcontracting.md).
 
 <img alt="Subcontract" class="screenshot" src="../assets/stock-entry-subcontract.gif">
 

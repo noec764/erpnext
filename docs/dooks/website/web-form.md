@@ -1,8 +1,8 @@
 # Web Forms
 
-> Context: There two types of in-built interfaces available in Dooks. The 'Desk View' and the 'Web View'. Desk view is for users who regularly interact with Dooks instance, like employees. It is feature rich and needs a bit of familiarisation. 'Web View' is for users who need to interact with Dooks instance occasionally. Webforms are similar to the forms you generally fill in various websites on internet. Webforms are part of 'Web View' interface in Dooks.
+> Context: There two types of in-built interfaces available in Dokie. The 'Desk View' and the 'Web View'. Desk view is for users who regularly interact with Dokie instance, like employees. It is feature rich and needs a bit of familiarisation. 'Web View' is for users who need to interact with Dokie instance occasionally. Webforms are similar to the forms you generally fill in various websites on internet. Webforms are part of 'Web View' interface in Dokie.
 
-Stakeholders who are not part of your organisation may need to interact with your Dooks instance. You can authorise customers, suppliers, job applicants, students, and guardians to access certain information or even create certain transactions. For example, you can let anyone create an account on your website (created with Dooks) and apply for job. You can let your customers see the details of complaints they have registered.
+Stakeholders who are not part of your organisation may need to interact with your Dokie instance. You can authorise customers, suppliers, job applicants, students, and guardians to access certain information or even create certain transactions. For example, you can let anyone create an account on your website (created with Dokie) and apply for job. You can let your customers see the details of complaints they have registered.
 
 This can be done using the Webforms.
 

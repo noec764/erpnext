@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Custom Field
 
-Every form in the Dooks has standard set of fields. If you need to capture some information, but there is no standard field available for it, you can insert Custom Field in a form as per your requirement.
+Every form in the Dokie has standard set of fields. If you need to capture some information, but there is no standard field available for it, you can insert Custom Field in a form as per your requirement.
 
 Following are the steps to insert Custom Field in the existing form.
 
@@ -35,13 +35,13 @@ There are various types of Field like Data, Date, Link, Select, Text and so on. 
 
 <img alt="Select Document Type" class="screenshot" src="./assets/custom-field-4.png">
 
-Click [here](/dooks/customize-dooks/articles/field-types.md) to learn more about types of field you can set for your Custom Field.
+Click [here](/dokie/customize-dokie/articles/field-types.md) to learn more about types of field you can set for your Custom Field.
 
 ####Set Option
 
 Based on the Field Type, value will be entered in the Options field.
 
-If you are creating a Link field, then in the Options, enter Doctype name with which this field will be linked. Click [here](/dooks/customize-dooks/articles/creating-custom-link-field.md) to learn more about creating custom link field.
+If you are creating a Link field, then in the Options, enter Doctype name with which this field will be linked. Click [here](/dokie/customize-dokie/articles/creating-custom-link-field.md) to learn more about creating custom link field.
 
 If field type is set as Select (drop down field), then all he possible result for this field should be listed in the Options field. Each possible result should be separate by row.
 
@@ -64,7 +64,7 @@ You can set properties as:
 
 ####Update Customize Form
 
-After inserting required details for the Custom Field, Update Customize Form. On update, Custom Field will be inserting in the form, Employee master in this case. Before checking Employee form, reload your Dooks account. After reload, check Employee form to see Custom Field in a form.
+After inserting required details for the Custom Field, Update Customize Form. On update, Custom Field will be inserting in the form, Employee master in this case. Before checking Employee form, reload your Dokie account. After reload, check Employee form to see Custom Field in a form.
 
 <img alt="Select Document Type" class="screenshot" src="./assets/custom-field-6.png">
 

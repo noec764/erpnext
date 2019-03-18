@@ -17,7 +17,7 @@ It will be a check box field.
 
 - Column Break
 
-Since Dooks has multiple column layout, using Column Breaks, you can divide set of fields side-by-side.
+Since Dokie has multiple column layout, using Column Breaks, you can divide set of fields side-by-side.
 
 - Currency
 
@@ -33,7 +33,7 @@ This field will give you date and time picker. Current date and time (as provide
 
 - Dynamic Link
 
-Click [here](/dooks/customize-dooks/articles/managing-dynamic-link-fields.md) to learn how Dynamic Link Field function.
+Click [here](/dokie/customize-dokie/articles/managing-dynamic-link-fields.md) to learn how Dynamic Link Field function.
 
 - Float
 
@@ -98,7 +98,7 @@ This is a combination of 'Link' type and 'Table' type fields. Instead of a child
 
 - Text Editor
 
-Text Editor is text field. It has text-formatting options. In Dooks, this field is generally used for defining Terms and Conditions.
+Text Editor is text field. It has text-formatting options. In Dokie, this field is generally used for defining Terms and Conditions.
 
 {next}
 

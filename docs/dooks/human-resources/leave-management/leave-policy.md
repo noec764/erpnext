@@ -2,7 +2,7 @@
 
 > Human Resources > Leaves and Holiday > Leave Policy > New Leave Policy
 
-It is a practice for many enterprises to enforce a general Leave Policy to effectively track and manage Employee leaves. Dooks allows you to create and manage multiple Leave Policies and allocate leaves to Employees as defined by the policy.
+It is a practice for many enterprises to enforce a general Leave Policy to effectively track and manage Employee leaves. Dokie allows you to create and manage multiple Leave Policies and allocate leaves to Employees as defined by the policy.
 
 <img class="screenshot" alt="Leave Policy" src="../assets/leave-policy.png">
 

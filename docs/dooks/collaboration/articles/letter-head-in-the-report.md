@@ -11,6 +11,6 @@ In a Company master, if no Letter Head is set as default, then in the reports, L
 
 <img class="screenshot" alt="Default Letter Head" src="../assets/report-header-2.png">
 
-If you are managing multiple companies in a single Dooks account, then ensure that for each Company, default Letter Head is set in the Company master.
+If you are managing multiple companies in a single Dokie account, then ensure that for each Company, default Letter Head is set in the Company master.
 
-After updating Letter Head in the Company master, refresh your Dooks account, and then check the print format of a report.
+After updating Letter Head in the Company master, refresh your Dokie account, and then check the print format of a report.

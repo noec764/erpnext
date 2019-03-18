@@ -1,15 +1,15 @@
 <!-- add-breadcrumbs -->
 # SMS Setting
 
-To integrate SMS in Dooks, approach a SMS Gateway Provider who provides HTTP
+To integrate SMS in Dokie, approach a SMS Gateway Provider who provides HTTP
 API. They will create an account for you and will provide an unique username
 and password.
 
-To configure SMS Settings in Dooks, find out their HTTP API (a document
+To configure SMS Settings in Dokie, find out their HTTP API (a document
 which describes the method of accessing their SMS interface from 3rd party
 applications). In this document, you will get an URL which is used to send the
 SMS using HTTP request. Using this URL, you can configure SMS Settings in
-Dooks.
+Dokie.
 
 Example URL:  
 

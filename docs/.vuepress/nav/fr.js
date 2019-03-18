@@ -4,7 +4,7 @@ module.exports = [
 		link: '/framework/',
 	},
 	{
-		text: 'Dooks',
-		link: '/dooks/',
+		text: 'Dokie',
+		link: '/dokie/',
 	}
 ]

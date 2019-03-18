@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Item Valuation Methods and Transactions
 
-In Dooks, Item's stock valuation is updated on the creation of one of the following transaction.
+In Dokie, Item's stock valuation is updated on the creation of one of the following transaction.
 
 1.  Purchase Receipt
 2.  Stock Entry of type Material Receipt

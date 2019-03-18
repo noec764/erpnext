@@ -3,7 +3,7 @@
 
 The project is an individual or collaborative enterprise, possibly involving research or design, that is carefully planned, usually by a project team, to achieve a particular aim
 
-In Dooks, Project management in is Task driven. You can a create Project and divide into multiple and assignable Tasks.
+In Dokie, Project management in is Task driven. You can a create Project and divide into multiple and assignable Tasks.
 
 <img class="screenshot" alt="Project" src="./assets/project-1.1.png">
 
@@ -11,7 +11,7 @@ In Dooks, Project management in is Task driven. You can a create Project and div
 
 The project is generally has a broader scope, and hence not assignable to an individual. Hence, you can divide the Project into multiple Tasks. These can be assigned to an individual and tracked better. 
 
-These Tasks can be created from a Project itself or a [Task](/dooks/projects/tasks.md) can be created separately as well.
+These Tasks can be created from a Project itself or a [Task](/dokie/projects/tasks.md) can be created separately as well.
 
 <img class="screenshot" alt="Project" src="./assets/project-1.png">
 
@@ -41,7 +41,7 @@ The Project Costing section helps you track the time, expenses and purchases inc
 
 ### Gantt Chart
 
-Dooks gives you an illustrated view of tasks scheduled for that project in Gantt Chart View.
+Dokie gives you an illustrated view of tasks scheduled for that project in Gantt Chart View.
 
 * To view Gantt chart against a project, go to the Task list and Apply filter on the Project.
 
@@ -49,7 +49,7 @@ Dooks gives you an illustrated view of tasks scheduled for that project in Gantt
 
 ### Project Help Video
 
-This is a tutorial video on how to manage Project and associate Tasks in Dooks.
+This is a tutorial video on how to manage Project and associate Tasks in Dokie.
 
 <div class="embed-container">
   <iframe src="https://www.youtube.com/embed/gCzShu9Niu4?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>

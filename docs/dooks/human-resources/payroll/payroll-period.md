@@ -1,6 +1,6 @@
 <!-- add-breadcrumbs -->
 #Payroll Period
-A payroll period, in Dooks, is a period for which Employees get paid for their occupation with the Company. Payroll period helps you define Tax slabs applicable for the period, making it easier to manage changing laws.
+A payroll period, in Dokie, is a period for which Employees get paid for their occupation with the Company. Payroll period helps you define Tax slabs applicable for the period, making it easier to manage changing laws.
 
 You can create Payroll Period by going to:
 > Human Resources > Payroll Setup > Payroll Period > New Payroll Period

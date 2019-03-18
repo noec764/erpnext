@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Sign Up
 
-Your Customer and Suppliers can signup to your Dooks account by following Signup option on the Login Page.
+Your Customer and Suppliers can signup to your Dokie account by following Signup option on the Login Page.
 
 #### Step 1: Signup
 

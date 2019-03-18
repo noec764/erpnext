@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 # Email Accounts
 
-You can manage multiple incoming and outgoing Email Accounts in Dooks. There has to be at-least one default outgoing account and one default incoming account. If you are on the Dooks cloud, the default outgoing email is set by us.
+You can manage multiple incoming and outgoing Email Accounts in Dokie. There has to be at-least one default outgoing account and one default incoming account. If you are on the Dokie cloud, the default outgoing email is set by us.
 
 > **Note for self implementers:** For outgoing emails, you should setup your own SMTP server or sign up with an SMTP relay service like mandrill.com or sendgrid.com that allows a larger number of transactional emails to be sent. Regular email services like Gmail will restrict you to a limited number of emails per day.
 
 ### Default Email Accounts
 
-Dooks will create templates for a bunch of email accounts by default. Not all of them are enabled. To enable them, you must set your account details.
+Dokie will create templates for a bunch of email accounts by default. Not all of them are enabled. To enable them, you must set your account details.
 
 There are 2 types of email accounts, outgoing and incoming. Outgoing email accounts use an SMTP service to send emails and emails are retrived from your inbox using a IMAP or POP service. Most email providers such as GMail, Outlook or Yahoo provide these services.
 
@@ -29,17 +29,17 @@ To setup an incoming Email Account, check on **Enable Incoming** and set your PO
 
 ### Setting Import Conditions for Email Import
 
-Email Accounts allows you to set conditions according to the data of the incoming emails. The email will be imported to Dooks only if the all conditions are true. For example if you want to import an email if the subject is "Some important email", you put doc.subject == "Some important email" in the conditions textbox. You can also set more complex conditions by combining them, as shown on the following screenshot.
+Email Accounts allows you to set conditions according to the data of the incoming emails. The email will be imported to Dokie only if the all conditions are true. For example if you want to import an email if the subject is "Some important email", you put doc.subject == "Some important email" in the conditions textbox. You can also set more complex conditions by combining them, as shown on the following screenshot.
 
 <img class="screenshot" alt="Incoming EMail Conditions" src="../assets/email/email-account-incoming-conditions.png">
 
-### How Dooks handles replies
+### How Dokie handles replies
 
-In Dooks when you send an email to a contact like a customer, the sender will be the user who sent the email. In the **Reply-To** property, the Email Address will be of the default incoming account (like `replies@yourcompany.com`). Dooks will automatically extract these emails from the incoming account and tag it to the relevant communication
+In Dokie when you send an email to a contact like a customer, the sender will be the user who sent the email. In the **Reply-To** property, the Email Address will be of the default incoming account (like `replies@yourcompany.com`). Dokie will automatically extract these emails from the incoming account and tag it to the relevant communication
 
 ### Notification for unreplied messages
 
-If you would like Dooks to notify you if an email is unreplied for a certain amount of time, then you can set **Notify if Unreplied**. Here you can set the number of minutes to wait before notifications are sent and whom the notifications must go to.
+If you would like Dokie to notify you if an email is unreplied for a certain amount of time, then you can set **Notify if Unreplied**. Here you can set the number of minutes to wait before notifications are sent and whom the notifications must go to.
 
 <img class="screenshot" alt="Incoming EMail" src="../assets/email/email-account-unreplied.png">
 

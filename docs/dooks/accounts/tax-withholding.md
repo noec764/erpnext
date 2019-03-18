@@ -5,7 +5,7 @@ The withholding tax sounds similar to Tax deducted at source (TDS).
 
  tax withholding can be setup based on Supplier.
 
-To use Tax Withholding feature in Dooks, first, you need to create Tax Withholding Category record. Here, you can mention percent of tax withheld and threshold amount (if any). Here, the threshold amount means tax will be deducted only if the order value is greater than or equal to the threshold value. You also need to link related accounts to the Tax Withholding Category record.
+To use Tax Withholding feature in Dokie, first, you need to create Tax Withholding Category record. Here, you can mention percent of tax withheld and threshold amount (if any). Here, the threshold amount means tax will be deducted only if the order value is greater than or equal to the threshold value. You also need to link related accounts to the Tax Withholding Category record.
 
 <img class="screenshot" alt="Tax Withholding Category" src="./assets/tax-withholding-category.png">
 

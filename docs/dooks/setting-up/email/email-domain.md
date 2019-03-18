@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 # Email Domains
 
-You can configure your Email Domain in Dooks for easy setup of all Email Accounts. You can find Email Domain settings under Setup-->Email Domain.
+You can configure your Email Domain in Dokie for easy setup of all Email Accounts. You can find Email Domain settings under Setup-->Email Domain.
 
-> **What is my Email Domain?:** You might have purchased Email service from your internet service provider or your IT services provider. For example, if you access your business mailbox with URL like http://mail.yourcompany.com, then yourcompany.com is your email domain. Without setting up email domain correctly, your Dooks instance may not be able to receive mails. You may be using free mail services like gmail or yahoo. In this case google.com or yahoo.com is your email domain. However you might have to allow access to Dooks for your gmail account.
+> **What is my Email Domain?:** You might have purchased Email service from your internet service provider or your IT services provider. For example, if you access your business mailbox with URL like http://mail.yourcompany.com, then yourcompany.com is your email domain. Without setting up email domain correctly, your Dokie instance may not be able to receive mails. You may be using free mail services like gmail or yahoo. In this case google.com or yahoo.com is your email domain. However you might have to allow access to Dokie for your gmail account.
 
 ### Default Email Domain
 
-Dooks creates a template email domain using example.com for your reference. You should add your new domain as well.
+Dokie creates a template email domain using example.com for your reference. You should add your new domain as well.
 
 <img class="screenshot" alt="Email Domain" src="../assets/email/email-domain.png">
 
@@ -31,7 +31,7 @@ If your mail server uses SSL (Secure Socket Layer) communication leave this chec
 
 ### Attachment Limit (MB)
 
-If you want to limit the size of file attachments for emails sent from within Dooks, you can set that up here. You can enter the max size of attachments in MB.
+If you want to limit the size of file attachments for emails sent from within Dokie, you can set that up here. You can enter the max size of attachments in MB.
 
 ### SMTP Server
 
@@ -47,8 +47,8 @@ SMTP service is usually set on port 25. If your email server is setup on a separ
 
 ### Save entered domain
 
-Once you click on save, these settings are validated by Dooks and the Email Domain gets saved. Sometimes this could take a few seconds and you might have to wait. This email domain is then available in a dropdown called Domain under Email Accounts screen.
+Once you click on save, these settings are validated by Dokie and the Email Domain gets saved. Sometimes this could take a few seconds and you might have to wait. This email domain is then available in a dropdown called Domain under Email Accounts screen.
 
 ### Entered everything but still unable to setup Email Domain?
 
-If you've entered and verified the above settings and are still unable to setup Email Domain, you can contact Dooks support for help.
+If you've entered and verified the above settings and are still unable to setup Email Domain, you can contact Dokie support for help.

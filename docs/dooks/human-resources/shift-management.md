@@ -3,7 +3,7 @@
 
 Shift Management section of Human Resources helps your Organization manage shifts of your employees.
 
-To use Shift Management in Dooks,
+To use Shift Management in Dokie,
 
   1. Set Up a Shift Type.
   2. Enter Shift Request.

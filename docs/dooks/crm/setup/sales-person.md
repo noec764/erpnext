@@ -11,7 +11,7 @@ Group.
 ####Sales Person in Transactions
 
 You can use this Sales Person in Customer and sales transactions like Sales Order, Delivery Note and Sales Invoice.
-Click [here](/dooks/selling/articles/sales-persons-in-the-sales-transactions) to learn more 
+Click [here](/dokie/selling/articles/sales-persons-in-the-sales-transactions) to learn more 
 about how Sales Persons are used in the transactions of Sales Cycle.
 
 {next}

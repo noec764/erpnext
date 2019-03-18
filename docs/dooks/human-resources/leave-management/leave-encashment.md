@@ -9,6 +9,6 @@ As you select Employee and Leave Type, Leave Balance and Encashable Days (which 
 
 <img class="screenshot" alt="Leave Encashment" src="../assets/leave-encashment.png">
 
-On submitting a Leave Encashment for an Employee, Dooks automatically creates an [Additional Salary](/dooks/human-resources/payroll/additional-salary.md) which will get added to the Salary Slip of the Employee when processing the next payroll
+On submitting a Leave Encashment for an Employee, Dokie automatically creates an [Additional Salary](/dokie/human-resources/payroll/additional-salary.md) which will get added to the Salary Slip of the Employee when processing the next payroll
 
 {next}

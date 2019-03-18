@@ -4,8 +4,8 @@ module.exports = function getIntroductionSidebar (groupA) {
 			title: groupA,
 			collapsable: false,
 			children: [
-				'/dooks/introduction/',
-				'/dooks/setting-up/'
+				'/dokie/introduction/',
+				'/dokie/setting-up/'
 			]
 		}
 	]

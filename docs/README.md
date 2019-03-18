@@ -2,7 +2,7 @@
 home: true
 heroImage: /img/hero.png
 actionText: Get Started →
-actionLink: /dooks/
+actionLink: /dokie/
 footer: GPLv3 Licenced | Copyright © 2019-present Dokos
 ---
 <div class="features">

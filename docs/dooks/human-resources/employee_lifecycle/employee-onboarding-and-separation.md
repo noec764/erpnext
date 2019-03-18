@@ -18,7 +18,7 @@ Same way, you can have a different set of activities to be performed when reliev
 - Update employee master
 - Perform full and final payment process in the payroll
 
-In Dooks, these standard activities can be tracked in the Employee Onboarding and Separation Template.
+In Dokie, these standard activities can be tracked in the Employee Onboarding and Separation Template.
 
 ### Employee Onboarding Template
 

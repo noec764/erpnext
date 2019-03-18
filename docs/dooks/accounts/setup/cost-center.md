@@ -27,7 +27,7 @@ sales as either "Walk-in" or "Online". Mark your all your purchases in the
 same way.
 
 Thus when you do your analysis you get a better understanding as to which side
-of your business is doing better. Since Dooks has an option to add multiple
+of your business is doing better. Since Dokie has an option to add multiple
 Companies, you can create Cost Centers for each Company and manage it
 separately.
 

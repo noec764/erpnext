@@ -5,7 +5,7 @@ Scrap means waste that either has no economic value or only the value of its bas
 
 Scrap is generally availed at the end of the manufacture process. Also you can find some products that are damaged or that are unusable due to expiry or for some other reason, which needs to be scraped.
 
-In Dooks, at the end of manufacturing process, scrap items are accounted in the scrap warehouse.s
+In Dokie, at the end of manufacturing process, scrap items are accounted in the scrap warehouse.s
 
 ### Scrap in Bill of Materials
 

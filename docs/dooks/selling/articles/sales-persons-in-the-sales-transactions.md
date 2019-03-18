@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 #Sales Persons in the Sales Transactions
 
-In Dooks, Sales Person master is maintained in [tree structure](/dooks/setting-up/articles/managing-tree-structure-masters.md). Sales Person is selectable in all the sales transactions.
+In Dokie, Sales Person master is maintained in [tree structure](/dokie/setting-up/articles/managing-tree-structure-masters.md). Sales Person is selectable in all the sales transactions.
 
 Sales Persons can be updated in the Customer master as well. On selection of Customer in the transactions, Sales Persons as updated in the Customer will fetch into sales transaction.
 
@@ -29,7 +29,7 @@ This report can be generated based on Sales Order, Delivery Note and Sales Invoi
 
 ####Sales Person wise Commission
 
-Dooks only provide total amount of sale made by a Sales Person. If you offer commission to Sales Person, you should add Sales Person as Sales Partners in Dooks. For Sales Partners, you can define Commission (%). On selected on Sales Partner in a sales transction, based on Net Total, Commission Amount is calculated as well. You can check Sales Partner's commission report from:
+Dokie only provide total amount of sale made by a Sales Person. If you offer commission to Sales Person, you should add Sales Person as Sales Partners in Dokie. For Sales Partners, you can define Commission (%). On selected on Sales Partner in a sales transction, based on Net Total, Commission Amount is calculated as well. You can check Sales Partner's commission report from:
 
 `Accounts > Standard Reports > Sales Partners Commission`
 

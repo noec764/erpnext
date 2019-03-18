@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # How to see Accounts Receivable report based on payment terms
 
-This report shows all the account receivables based on payment terms. For more information on **Payment Terms** in Dooks <a href="accounts-receivable.md">click here</a>
+This report shows all the account receivables based on payment terms. For more information on **Payment Terms** in Dokie <a href="accounts-receivable.md">click here</a>
 
 Accounts Receivable report based on payment terms can be seen by navigating to page shown below and click the checkbox ```Based On Payment Terms``` as shown in the image below.
 >Accounts>Accounting Statements>Accounts Receivable

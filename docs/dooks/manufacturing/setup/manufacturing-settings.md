@@ -23,7 +23,7 @@ As per the standard validation, if Operation cannot be completed within working 
 
 ####Allow Production on Holidays
 
-Holiday of a company can be recorded in the [Holiday List](/dooks/human-resources/) master. While scheduling production job on workstation, system doesn't consider a day listed in the Holiday list. If you want production job to be scheduled on holidays as well, `Allow Production on Holidays` field should be checked.
+Holiday of a company can be recorded in the [Holiday List](/dokie/human-resources/) master. While scheduling production job on workstation, system doesn't consider a day listed in the Holiday list. If you want production job to be scheduled on holidays as well, `Allow Production on Holidays` field should be checked.
 
 <img class="screenshot" alt="Manufacturing Settings" src="../assets/manufacturing-settings-3.png">
 

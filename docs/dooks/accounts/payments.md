@@ -8,7 +8,7 @@ Payment can be made against following transactions.
   3. Sales Order (Advance Payment)
   4. Purchase Order (Advance Payment)
   
-In Dooks, there is two options through which user can capture the payment
+In Dokie, there is two options through which user can capture the payment
 
   1. Payment Entry(Default).
   2. Journal Entry.
@@ -25,7 +25,7 @@ On submitting a document against which Payment Entry can be made, you will find 
 
 <img class="screenshot" alt="Making Payment" src="./assets/payment-entry-9.png">
 
-For more details about payment entry [check here.](/dooks/accounts/payment-entry)
+For more details about payment entry [check here.](/dokie/accounts/payment-entry)
 
 ## Journal Entry
 
@@ -48,6 +48,6 @@ On submitting a document against which Journal Entry can be made, you will find 
 Save and submit the journal entry to record the payament against the invoice
 <img class="screenshot" alt="Making Payment" src="./assets/journal-entry.png">
 
-For more details about journal entry [check here.](/dooks/accounts/journal-entry)
+For more details about journal entry [check here.](/dokie/accounts/journal-entry)
 
 {next}

@@ -1,9 +1,9 @@
 <!-- add-breadcrumbs -->
 # Email Inbox
 
-Business involves many transactional emails exchanges with parties like Customers and Suppliers, and within a company. Email Inbox feature allows you pull all your business emails into your Dooks account. Accessing all the business emails with other transactions details makes Dooks a single platform for accessing complete business information in one place.
+Business involves many transactional emails exchanges with parties like Customers and Suppliers, and within a company. Email Inbox feature allows you pull all your business emails into your Dokie account. Accessing all the business emails with other transactions details makes Dokie a single platform for accessing complete business information in one place.
 
-In Dooks, you can configure Email Inbox for each System User. Following are the detailed steps to configure Email Inbox for a User.
+In Dokie, you can configure Email Inbox for each System User. Following are the detailed steps to configure Email Inbox for a User.
 
 #### Step 1: Create User
 
@@ -17,7 +17,7 @@ To add new User, go to:
 
 #### Step 2: Create Email Domain
 
-To be able to send and receive emails into your Dooks from other email service (like WebMail or Gmail), you should setup an Email Domain master. In this master, email gateway details like SMTP Address, Port No., IMAP/POP3 address details are captured. If you have ever configured a local email client (like Outlook), Email Domain master requires details to be fed in the similar way.
+To be able to send and receive emails into your Dokie from other email service (like WebMail or Gmail), you should setup an Email Domain master. In this master, email gateway details like SMTP Address, Port No., IMAP/POP3 address details are captured. If you have ever configured a local email client (like Outlook), Email Domain master requires details to be fed in the similar way.
 
 To add new Email Domain, go to:
 
@@ -25,9 +25,9 @@ To add new Email Domain, go to:
 
 <img class="screenshot" alt="Email Domain" src="../assets/email/email-domain.png">
 
-Once you have configured an Email Domain for your Email Service, it will be used for creating Email Accounts for all the Users in your Dooks account.
+Once you have configured an Email Domain for your Email Service, it will be used for creating Email Accounts for all the Users in your Dokie account.
 
-<div>If you use one of the following Email Service, then you need not create Email Domain in your Dooks account. In Dooks, Email Domain for the following Services is available out-of-the-box and you can directly proceed to creating Email Account.
+<div>If you use one of the following Email Service, then you need not create Email Domain in your Dokie account. In Dokie, Email Domain for the following Services is available out-of-the-box and you can directly proceed to creating Email Account.
 <ul>
 <li>Gmail</li>
 <li>Yahoo</li>
@@ -40,9 +40,9 @@ Once you have configured an Email Domain for your Email Service, it will be used
 
 #### Step 3: Email Account
 
-Create an Email Account based on the Email ID of the User. For each User who's email account is to be integrated with Dooks, an Email Account master should be created for it. 
+Create an Email Account based on the Email ID of the User. For each User who's email account is to be integrated with Dokie, an Email Account master should be created for it. 
 
-If you are creating an Email Account for your colleague who's Email Password is unknown to you, then check field "Awaiting Password". As per this setting, a User (for whom Email Account is created) will get a prompt to enter email password when accessing his/her Dooks Account.
+If you are creating an Email Account for your colleague who's Email Password is unknown to you, then check field "Awaiting Password". As per this setting, a User (for whom Email Account is created) will get a prompt to enter email password when accessing his/her Dokie Account.
 
 <img class="screenshot" alt="Email Password" src="../assets/email/email-password.png">
 
@@ -52,23 +52,23 @@ In the Email Account, select Email Domain only if you are using Email Service ot
 
 >If you are creating an Email Account for Email Inbox of a User, then leave Append To field as blank.
 
-For more details on how to setup Email Account, [click here](/dooks/setting-up/email/email-account.html").
+For more details on how to setup Email Account, [click here](/dokie/setting-up/email/email-account.html").
 
 #### Step 4: Linking Email Account in User master
 
-Once an Email Account is created for an User, select that Email Account in the User. This will ensure that emails pulled from the said Email ID will accessible only to this User in your Dooks account.
+Once an Email Account is created for an User, select that Email Account in the User. This will ensure that emails pulled from the said Email ID will accessible only to this User in your Dokie account.
 
 <img class="screenshot" alt="Email User Link" src="../assets/email/email-user-link.png">
 
 ## Email Inbox
 
-If you have correctly configured Email Inbox as instructed above, then on the login of a User, Email Inbox icon will be visible. This will navigate user to Email Inbox view within the Dooks account. All the Emails received on that email will be fetch and listed in the Email Inbox view. User will be able to open emails and take various actions against it.
+If you have correctly configured Email Inbox as instructed above, then on the login of a User, Email Inbox icon will be visible. This will navigate user to Email Inbox view within the Dokie account. All the Emails received on that email will be fetch and listed in the Email Inbox view. User will be able to open emails and take various actions against it.
 
 <img class="screenshot" alt="Email Inbox" src="../assets/email/email-inbox.png">
 
 #### Folders
 
-In Dooks, you can link multiple Email Accounts with the single User. To switch to Inbox of different email account and access other folders like Sent Emails, Spam, Trash, check Email Inbox option in the left bar.
+In Dokie, you can link multiple Email Accounts with the single User. To switch to Inbox of different email account and access other folders like Sent Emails, Spam, Trash, check Email Inbox option in the left bar.
 
 <img class="screenshot" alt="Email Folders" src="../assets/email/email-folders.png">
 
@@ -80,7 +80,7 @@ On the emails in your inbox, you can take various actions like Reply, Forward, M
 
 #### Make Options
 
-The Email Inbox within Dooks also allow you to quickly create Dooks transaction based on email received. From an Email itself, you can a Issue, Lead or Opportunity based on the context of the email.
+The Email Inbox within Dokie also allow you to quickly create Dokie transaction based on email received. From an Email itself, you can a Issue, Lead or Opportunity based on the context of the email.
 
 <img class="screenshot" alt="Make from Email" src="../assets/email/make-from-email.png">
 

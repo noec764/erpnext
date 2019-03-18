@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 # Collaborating Around Forms
 
-Following are the tools in each document using which you can collaborate with other Users in your Dooks account.
+Following are the tools in each document using which you can collaborate with other Users in your Dokie account.
 
 ### Assigned to
 
-If some document requires an action from User, you can Assign that document to that User. On assignment, User to whom document is assigned is intimated via email. To learn about Assign To feature, [click here.](/dooks/collaboration/assignment.md)
+If some document requires an action from User, you can Assign that document to that User. On assignment, User to whom document is assigned is intimated via email. To learn about Assign To feature, [click here.](/dokie/collaboration/assignment.md)
 
 ### Comments
 
@@ -22,6 +22,6 @@ You can share document with the specific User. If Document is shared with the sp
 
 ### Tags
 
-[Read more about Tags](/dooks/collaboration/tags.md)
+[Read more about Tags](/dokie/collaboration/tags.md)
 
 {next}

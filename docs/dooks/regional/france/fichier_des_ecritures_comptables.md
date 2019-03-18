@@ -3,7 +3,7 @@
 
 Since 2014, a legal requirement makes it mandatory for companies operating in France to provide a file of their general accounting postings by fiscal year corresponding to an electronic accounting journal.
 
-For Dooks users this file can be generated using a report available if you system's country is France.
+For Dokie users this file can be generated using a report available if you system's country is France.
 
 
 ### Requirements

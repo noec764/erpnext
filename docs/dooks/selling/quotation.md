@@ -37,9 +37,9 @@ A Quotation contains details about:
 
 The rates you quote may depend on two things.
 
-  * The Price List: If you have multiple Price Lists, you can select a Price List or tag it to the Customer (so that it is auto-selected). Your Item prices will automatically be updated from the Price List. For details refer [Price List](/dooks/setting-up/price-lists.md)
+  * The Price List: If you have multiple Price Lists, you can select a Price List or tag it to the Customer (so that it is auto-selected). Your Item prices will automatically be updated from the Price List. For details refer [Price List](/dokie/setting-up/price-lists.md)
 
-  * The Currency: If you are quoting to a Customer in a different currency, you will have to update the conversion rates to enable Dooks to save the information in your standard Currency. This will help you to analyze the value of your Quotations in standard Currency.
+  * The Currency: If you are quoting to a Customer in a different currency, you will have to update the conversion rates to enable Dokie to save the information in your standard Currency. This will help you to analyze the value of your Quotations in standard Currency.
 
 ### Taxes
 
@@ -49,7 +49,7 @@ For e.g
 
 <img class="screenshot" alt="Taxes and Charges" src="./assets/taxes-and-charges.gif">
 
-To understand taxes in detail visit [Taxes](/dooks/setting-up/setting-up-taxes.md).
+To understand taxes in detail visit [Taxes](/dokie/setting-up/setting-up-taxes.md).
 
 ### Terms and Conditions
 
@@ -86,4 +86,4 @@ Print Heading.
 
 While making your sales transactions like a Quotation (or Sales Order) you
 can also give discounts to your customers. In the Discount section, add
-the discount in percentage or fixed amount. Read [Discount](/dooks/selling/articles/applying-discount.md) for more explanation.
+the discount in percentage or fixed amount. Read [Discount](/dokie/selling/articles/applying-discount.md) for more explanation.

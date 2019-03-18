@@ -16,6 +16,6 @@ Depending on the domain(s) selected in Step 4, there will be more screens to fil
 
 ---
 
-Translations are contributed by the Dooks Community. If you want to contribute, [please checkout the translator portal](https://translate.dooks.com).
+Translations are contributed by the Dokie Community. If you want to contribute, [please checkout the translator portal](https://translate.dokie.com).
 
 {next}

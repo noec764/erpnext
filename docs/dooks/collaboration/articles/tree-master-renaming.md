@@ -1,6 +1,6 @@
 #Tree Master Renaming
 
-There are various master which are maintained in tree structure. Click [here](/dooks/setting-up/articles/managing-tree-structure-masters.md) to learn more about tree structured masters in Dooks.
+There are various master which are maintained in tree structure. Click [here](/dokie/setting-up/articles/managing-tree-structure-masters.md) to learn more about tree structured masters in Dokie.
 
 Following are the steps to be followed for renaming ID of a master which is maintained in tree structure. Let's rename an Account for the instance.
 

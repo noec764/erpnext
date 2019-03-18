@@ -5,7 +5,7 @@ To setup Braintree, go to `Explore > Integrations > Braintree Settings`
 
 ## Setup Braintree
 
-To enable Braintree in your Dooks account, you need to configure the following parameters:
+To enable Braintree in your Dokie account, you need to configure the following parameters:
 
 - Merchant ID
 - Public Key

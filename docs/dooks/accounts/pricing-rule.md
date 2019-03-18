@@ -105,7 +105,7 @@ System apply the margin rate on the item price on selection of an item.
 
 <img alt="Disable" class="screenshot" src="./assets/pricing-rule-invoice.png">
 
-For more details about pricing rule [Click Here](/dooks/selling/articles/adding-margin.md)
+For more details about pricing rule [Click Here](/dokie/selling/articles/adding-margin.md)
 
 
 {next}

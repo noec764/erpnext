@@ -4,7 +4,7 @@
 <!--markdown-->
 It shall help you in using Customize Form tool more efficiently.
 
-Customize Form is the tool which allows user to customize property of the standard fields, and insert [custom fields](/dooks/customize-dooks/custom-field.md) as per the requirement. Let's assume we need to set Project Name field as a mandatory field in the Sales Order form. Following are the steps which shall be followed to achieve this.
+Customize Form is the tool which allows user to customize property of the standard fields, and insert [custom fields](/dokie/customize-dokie/custom-field.md) as per the requirement. Let's assume we need to set Project Name field as a mandatory field in the Sales Order form. Following are the steps which shall be followed to achieve this.
 
 ####Step 1: Go to Customize Form
 
@@ -34,7 +34,7 @@ To customized Project field, click on the respective row, and check "Mandatory".
 
 Like setting setting field Mandatory, following are the other customization options in the Customize Form tool.
 
-* Change [Field Type](/dooks/customize-dooks/articles/field-types.md).
+* Change [Field Type](/dokie/customize-dokie/articles/field-types.md).
 * Edit Field Labels to suit your industry/language.
 * Set field precision for the Currency field.
 * To hide field, check Hidden.
@@ -44,15 +44,15 @@ Like setting setting field Mandatory, following are the other customization opti
 
 To save your customizations, Update Customize Form.
 
-To have customizations take effect, reload your Dooks account once.
+To have customizations take effect, reload your Dokie account once.
 
 ####Other Customizations
 
 From Customize Form, you can also do following customizations:
 
-* Max Attachment Limit: Define [maximum no. of files](/dooks/customize-dooks/articles/increase-max-attachments.md) which can attached on a document.
+* Max Attachment Limit: Define [maximum no. of files](/dokie/customize-dokie/articles/increase-max-attachments.md) which can attached on a document.
 * Default Print Format: For one document type, you can have multiple print formats. In the Customize Form, you can also set default Print Format for a document.
-* Set [Title Field](/dooks/customize-dooks/document-title.md)
+* Set [Title Field](/dokie/customize-dokie/document-title.md)
 * Sort Field and Sort Order: Define field based on which documents in the list view will be sorted.
 
 >Note: Though we want you to do everything you can to customize your ERP based on your business needs, we recommend that you do not make “wild” changes to the forms. This is because, these changes may affect certain operations and may mess up your forms. Make small changes and see its effect before doing some more.
@@ -95,7 +95,7 @@ table, th, td {
     </tr>
     <tr>
       <td>Field Type</td>
-      <td>Click <a href="/dooks/customize-dooks/articles/field-types.html">here</a> to learn about of fields types.</td>
+      <td>Click <a href="/dokie/customize-dokie/articles/field-types.html">here</a> to learn about of fields types.</td>
     </tr>
     <tr>
       <td>Options</td>

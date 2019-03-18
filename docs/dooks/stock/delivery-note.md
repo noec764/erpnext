@@ -25,7 +25,7 @@ details are carried over from your Sales Order.
 
 ### Shipping Packets or Items with Product Bundle
 
-If you are shipping Items that have a [Product Bundle](/dooks/selling/setup/product-bundle.md), Dooks will automatically
+If you are shipping Items that have a [Product Bundle](/dokie/selling/setup/product-bundle.md), Dokie will automatically
 create a “Packing List” table for you based on the sub-Items in that Item.
 
 If your Items are serialized, then for Product Bundle type of Items, you will have
@@ -39,7 +39,7 @@ go to:
 
 > Stock > Packing Slip > New Packing Slip
 
-You can create multiple Packing Slips for your Delivery Note and Dooks will
+You can create multiple Packing Slips for your Delivery Note and Dokie will
 ensure that the quantities in the Packing Slip do not exceed the quantities in
 the Delivery Note.
 

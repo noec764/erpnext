@@ -1,18 +1,18 @@
 module.exports = [
 	{
-		text: 'Dooks',
-		link: '/dooks/',
+		text: 'Dokie',
+		link: '/dokie/',
 		items: [
 			{
 				text: 'Quick Start',
 				items: [
 					{
 						text: 'introduction',
-						link: '/dooks/introduction/'
+						link: '/dokie/introduction/'
 					},
 					{
 						text: 'setting-up',
-						link: '/dooks/setting-up/'
+						link: '/dokie/setting-up/'
 					}
 				]
 			},
@@ -21,15 +21,15 @@ module.exports = [
 				items: [
 					{
 						text: 'Customer Relationship Management',
-						link: '/dooks/crm/'
+						link: '/dokie/crm/'
 					},
 					{
 						text: 'Selling',
-						link: '/dooks/selling/'
+						link: '/dokie/selling/'
 					},
 					{
 						text: 'Buying',
-						link: '/dooks/buying/'
+						link: '/dokie/buying/'
 					}
 				]
 			},
@@ -37,8 +37,8 @@ module.exports = [
 				text: 'Advanced',
 				items: [
 					{
-						text: 'Customize Dooks',
-						link: '/dooks/customize-dooks/'
+						text: 'Customize Dokie',
+						link: '/dokie/customize-dokie/'
 					}
 				]
 			}

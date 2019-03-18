@@ -3,11 +3,11 @@
 
 Kanban is a Japanese manufacturing system in which the supply of components is regulated through the use of an instruction card sent along the production line.
 
-In Dooks Kanban board can be an alternative for the list views. It helps you in visualizing various documents (like Task, Projects, Quotatio etc.) based on some status on a virtual board. Also, you can easily update card status by dragging and dropping to required status column. Kanban Board helps to visualize, control and optimize workflow and collaborate in real-time with the entire team.
+In Dokie Kanban board can be an alternative for the list views. It helps you in visualizing various documents (like Task, Projects, Quotatio etc.) based on some status on a virtual board. Also, you can easily update card status by dragging and dropping to required status column. Kanban Board helps to visualize, control and optimize workflow and collaborate in real-time with the entire team.
 
 ###Create new Kanban Board
 
-To  create a Kanban board in Dooks click the Kanban dropdown on the sidebar, and select New Kanban Board.
+To  create a Kanban board in Dokie click the Kanban dropdown on the sidebar, and select New Kanban Board.
 
 <img class="screenshot" alt="Add New Kanban Board" src="./assets/kanban-board-1.png">
 

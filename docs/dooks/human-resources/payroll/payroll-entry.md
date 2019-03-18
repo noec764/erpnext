@@ -7,7 +7,7 @@ Payroll Entry enables bulk processing of payroll for employees company wide or e
 
 <img class="screenshot" alt="Payroll Entry" src="/docs/assets/img/human-resources/payroll-entry.png">
 
-> Note: Read [Payroll Setup](/dooks/human-resources/payroll/payroll-setup.md) to know how you can configure Payroll to take the full advantage of Dooks Human Resources.
+> Note: Read [Payroll Setup](/dokie/human-resources/payroll/payroll-setup.md) to know how you can configure Payroll to take the full advantage of Dokie Human Resources.
 
 In Payroll Entry,
 
@@ -17,7 +17,7 @@ In Payroll Entry,
 4. Click on _Get Employee Details_ to get a list of Employees for which the Salary Slips will be created based on the selected criteria.
 5. Enter the Start and End dates for the payroll period.
 6. You can check _Deduct Tax For Unclaimed Employee Benefits_ if you want to deduct taxes for all benefits (Salary Components which are _Is Flexible Benefit_) paid to employees till the current payroll
-7. Similarly, _Deduct Tax For Unsubmitted Tax Exemption Proof_ allows you to deduct taxes for the earnings which were exempted in the previous payrolls as declared in [Employee Tax Exemption Declaration](/dooks/human-resources/payroll/employee-tax-exemption-declaration.md) but the Employee has not submitted sufficient proof [Employee Tax Exemption Proof Submission](/dooks/human-resources/payroll/employee-tax-exemption-proof-submission.md)
+7. Similarly, _Deduct Tax For Unsubmitted Tax Exemption Proof_ allows you to deduct taxes for the earnings which were exempted in the previous payrolls as declared in [Employee Tax Exemption Declaration](/dokie/human-resources/payroll/employee-tax-exemption-declaration.md) but the Employee has not submitted sufficient proof [Employee Tax Exemption Proof Submission](/dokie/human-resources/payroll/employee-tax-exemption-proof-submission.md)
 8. Select the Cost Center and Payment Account.
 9. Save the form and Submit it to create Salary Slip records for each active Employee for the time period selected. If the Salary Slips are already created, the system will not create any more Salary Slips. You can also just save the form as Draft and create the Salary Slips later.
 
@@ -44,7 +44,7 @@ To generate your salary payment voucher from Payroll Entry, click on -
 
 Payroll Entry will route you to Journal Entry with relevant filters to view the draft Journal Vouchers created. You shall set reference number and date for the transactions and Submit the Journal Entries.
 
->Note: For Salary Components which are Flexible Benefits and has _Create Separate Payment Entry Against Benefit Claim_ checked, Dooks will book separate draft Journal Entries.
+>Note: For Salary Components which are Flexible Benefits and has _Create Separate Payment Entry Against Benefit Claim_ checked, Dokie will book separate draft Journal Entries.
 
 <img class="screenshot" alt="Payroll Entry" src="/docs/assets/img/human-resources/payroll-journal-entry.png">
 

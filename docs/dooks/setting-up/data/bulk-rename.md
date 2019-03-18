@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Bulk Renaming of Records
 
-You can rename a document in Dooks (if it is allowed) by going to **Menu > Rename** in the document.
+You can rename a document in Dokie (if it is allowed) by going to **Menu > Rename** in the document.
 
 Alternatively, if you want to rename a whole bunch of records, just go to:
 

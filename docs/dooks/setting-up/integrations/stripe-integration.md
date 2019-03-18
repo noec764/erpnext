@@ -32,7 +32,7 @@ Afterwards, when you create your payment request, click the check field "Is a su
 
 <img class="screenshot" alt="Payment Request" src="../assets/integrations/subscription_payment_request.png">
 
-Dooks will automatically create a new subscription for this customer in Stripe.
+Dokie will automatically create a new subscription for this customer in Stripe.
 
 
 ####Supporting transaction currencies

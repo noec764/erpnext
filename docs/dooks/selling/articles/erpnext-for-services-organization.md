@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
-#Dooks for Service Organization
+#Dokie for Service Organization
 
-**Question:** Dooks looks primarily designed for the traders and manufacturers. Is Dooks used by companies offering servies?
+**Question:** Dokie looks primarily designed for the traders and manufacturers. Is Dokie used by companies offering servies?
 
 **Answer:**
 
-About 30% of Dooks customers are companies into services. These are companies into software development, certification services, individual consultants and many more. Being into service business ourselves, we use Dooks to manage our sales, accounting, support and HR operations. Check following video to learn how Dooks uses Dooks.
+About 30% of Dokie customers are companies into services. These are companies into software development, certification services, individual consultants and many more. Being into service business ourselves, we use Dokie to manage our sales, accounting, support and HR operations. Check following video to learn how Dokie uses Dokie.
 
 <iframe width="640" height="360" src="//www.youtube.com/embed/b6r7WxJMfFA" frameborder="0" allowfullscreen=""></iframe>
 
@@ -33,13 +33,13 @@ Modules unchecked here will be hidden from all the User.
 
 Within the form, there are many fields only needed for companies into trading and manufacturing businesses. These fields can be hidden for the service company. Feature Setup is a tool where you can enable/disable specific feature. If a feature is disabled, then fields relevant to that feature is hidden from all the forms. For example, if Serial No. feature is disabled, then Serial. No. field from Item as well as from all the sales and purchase transaction will be hidden.
 
-[To learn more about Feature Setup, click here.](/dooks/customize-dooks/hiding-modules-and-features.md).
+[To learn more about Feature Setup, click here.](/dokie/customize-dokie/hiding-modules-and-features.md).
 
 ####Permissions
 
-Dooks is the permission controlled system. Users access system based on permissions assigned to them. So, if user is not assigned Role related to Stock and Manufacturing module, it will be hidden from that User. [Click here to learn more about permission management.](/dooks/setting-up/users-and-permissions/).
+Dokie is the permission controlled system. Users access system based on permissions assigned to them. So, if user is not assigned Role related to Stock and Manufacturing module, it will be hidden from that User. [Click here to learn more about permission management.](/dokie/setting-up/users-and-permissions/).
 
-You can also refer to help video on User and Permissions setting in Dooks.
+You can also refer to help video on User and Permissions setting in Dokie.
 
 <div class="embed-container">
     <iframe src="https://www.youtube.com/embed/8Slw1hsTmUI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>

@@ -22,7 +22,7 @@ figure this out) it's a good opportunity to start learning about this. It will
 be worth the effort. You can also take the help of your accountant to setup
 your Chart of Accounts.
 
-Financial statements for your company are easily viewable in Dooks. You can view financial statements
+Financial statements for your company are easily viewable in Dokie. You can view financial statements
 such as  Balance Sheet, Profit and Loss statement and Cash flow statement.
 
 An Example of various financial statement are given below:
@@ -36,12 +36,12 @@ An Example of various financial statement are given below:
 #### Balance Sheet Report
 ![Balance sheet report](./assets/balance_sheet_report.png)
 
-To edit your Chart of Accounts in Dooks go to:
+To edit your Chart of Accounts in Dokie go to:
 
 >  Accounts > Setup > Chart of Accounts
 
 Chart of Accounts is a tree view of the names of the Accounts (Ledgers and
-Groups) that a Company requires to manage its books of accounts. Dooks sets
+Groups) that a Company requires to manage its books of accounts. Dokie sets
 up a simple chart of accounts for each Company you create, but you have to
 modify it according to your needs and legal requirements. For each company,
 Chart of Accounts signifies the way to classify the accounting entries, mostly
@@ -84,7 +84,7 @@ not represent net worth (/assets), but rather represent the amount of money
 spent and collected in servicing customers during the period. Hence at the
 beginning and end of your Fiscal Year, they become zero.
 
-In Dooks it is easy to create a Profit and Loss analysis chart. An example
+In Dokie it is easy to create a Profit and Loss analysis chart. An example
 of a Profit and Loss analysis chart is given below:
 
 ![Financial analytics profit and loss statement](./assets/financial-analytics-pl.png)
@@ -95,7 +95,7 @@ beginning or end of a period)
 
 ### Groups and Ledgers
 
-There are two main kinds of Accounts in Dooks - Group and Ledger. Groups can
+There are two main kinds of Accounts in Dokie - Group and Ledger. Groups can
 have sub-groups and ledgers within them, whereas ledgers are the leaf nodes of
 your chart and cannot be further classified.
 
@@ -116,7 +116,7 @@ You can assign a number while creating an account from Chart of Accounts page. Y
 
 ### Other Account Types
 
-In Dooks, you can also specify more information when you create a new
+In Dokie, you can also specify more information when you create a new
 Account, this is there to help you select that particular account in a
 scenario like Bank Account or a Tax Account and has no effect on the Chart
 itself.
@@ -179,7 +179,7 @@ Option to create will only appear if you click on a Group (folder) type
 Account. There you need to enter account name, account number and some more
 optional details.
 
-Dooks creates a standard structure for you when the Company is created but
+Dokie creates a standard structure for you when the Company is created but
 it is up to you to modify or add or remove accounts.
 
 Typically, you might want to create Accounts for

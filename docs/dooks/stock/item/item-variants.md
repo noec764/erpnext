@@ -16,7 +16,7 @@ Variants can be based on two things
 
 ### Variants Based on Item Attributes
 
-To use Item Variants in Dooks, create an Item and check 'Has Variants'.
+To use Item Variants in Dokie, create an Item and check 'Has Variants'.
 
 * The Item shall then be referred to as a so called 'Template'. Such a Template is not identical to a regular 'Item' any longer. For example it (the Template) can not be used directly in any Transactions (Sales Order, Delivery Note, Purchase Invoice) itself. Only the Variants of an Item (_blue_ t-shirt in size _small)_ can be practically used in such. Therefore it would be ideal to decide whether an item 'Has Variants' or not directly when creating it.
 
@@ -35,7 +35,7 @@ To create 'Item Variants' against a 'Template' select 'Make Variants'
 
 <img class="screenshot" alt="Make Variants" src="../assets/make-variant-1.png">
 
-To learn more about setting Attributes Master check [Item Attributes](/dooks/stock/setup/item-attribute.md)
+To learn more about setting Attributes Master check [Item Attributes](/dokie/stock/setup/item-attribute.md)
 
 ### Variants Based on Manufacturers
 

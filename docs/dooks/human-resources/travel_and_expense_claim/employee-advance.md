@@ -15,7 +15,7 @@ Set the Employee ID, date, purpose and requested amount and “Save” the recor
 
 Employee Advance record can be created by any employee but they cannot submit the record.
 
-After saving Employee Advance, Employee should [Assign document to Approver](/dooks/collaboration/assignment.md). On assignment, approving user will also receive email notification.
+After saving Employee Advance, Employee should [Assign document to Approver](/dokie/collaboration/assignment.md). On assignment, approving user will also receive email notification.
 
 After verification, approver can submit the Employee Advance form or reject the request.
 

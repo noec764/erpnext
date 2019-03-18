@@ -63,7 +63,7 @@ For outgoing payment:
 
 ###Multi Currency Payment Entry
 
-Dooks allows you maintain accounts and invoicing in the [multiple currency](/dooks/accounts/multi-currency-accounting.md). If invoice is made in the party currency, Currency Exchange Rate between companies base currency and party currency is also entered in the invoice. When creating Payment Entry against that invoice, you will again have to mention the Currency Exchange Rate at the time of payment.
+Dokie allows you maintain accounts and invoicing in the [multiple currency](/dokie/accounts/multi-currency-accounting.md). If invoice is made in the party currency, Currency Exchange Rate between companies base currency and party currency is also entered in the invoice. When creating Payment Entry against that invoice, you will again have to mention the Currency Exchange Rate at the time of payment.
 
 <img class="screenshot" alt="Making Payment" src="./assets/payment-entry-6.png">
 
@@ -105,7 +105,7 @@ In most cases, apart from retail sales, billing and payments are separate activi
   * Payments can be made together for a bunch of invoices.
   * Advances can be given together for a bunch of invoices (and can be split across invoices).
 
-Dooks allows you to manage all these scenarios. All accounting entries (GL Entry) can be made against a Sales Invoice, Purchase Invoice or Payment Entry of advance payment (in special cases, an invoice can be made via a Sales Invoice too).
+Dokie allows you to manage all these scenarios. All accounting entries (GL Entry) can be made against a Sales Invoice, Purchase Invoice or Payment Entry of advance payment (in special cases, an invoice can be made via a Sales Invoice too).
 
 The total outstanding amount against an invoice is the sum of all the accounting entries that are made “against” (or are linked to) that invoice. This way you can combine or split payments in Payment Entry to manage the
 scenarios.

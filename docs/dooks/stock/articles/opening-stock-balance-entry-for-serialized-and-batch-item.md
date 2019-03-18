@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 #Opening Stock Balance Entry for Serialized and Batch Item
 
-Items for which Serial No. and Batch No. is maintained, opening stock balance entry for them is update via Stock Entry. [Click here to learn how serialized inventory is managed in Dooks](/dooks/stock/serial-no.md).
+Items for which Serial No. and Batch No. is maintained, opening stock balance entry for them is update via Stock Entry. [Click here to learn how serialized inventory is managed in Dokie](/dokie/stock/serial-no.md).
 
 **Question:** Why Opening Balance entry for the Serialized and Batch Item cannot be updated via Stock Reconciliation?
 
-In the Dooks, stock level of a serialized item is derived based on the count of Serial Nos for that item. Hence, unless Serial Nos. are created for the serialized item, its stock level will not be updated. In the Stock Reconciliation Tool, you can only update opening quantity of an item, but not the Serial No. and Batch No.
+In the Dokie, stock level of a serialized item is derived based on the count of Serial Nos for that item. Hence, unless Serial Nos. are created for the serialized item, its stock level will not be updated. In the Stock Reconciliation Tool, you can only update opening quantity of an item, but not the Serial No. and Batch No.
 
 ### Opening Balance for the Serialized Item
 
@@ -35,13 +35,13 @@ Select Items for which opening balance is to be updated.
 
 For the serialized item, update quantity as many Serial Nos are their.
 
-For the serialized item, mention Serial Nos. equivalent to it's Qty. Or if Serial Nos. are configured to be created based on Prefix, then no need to mention Serial Nos. manually. Click [here](/dooks/stock/articles/serial-no-naming.md) to learn more about Serial No. naming.
+For the serialized item, mention Serial Nos. equivalent to it's Qty. Or if Serial Nos. are configured to be created based on Prefix, then no need to mention Serial Nos. manually. Click [here](/dokie/stock/articles/serial-no-naming.md) to learn more about Serial No. naming.
 
 For a batch item, provide Batch ID in which opening balance will be updated. Keep batch master ready, and updated it for the Batch Item. To create new Batch, go to:
 
 `Stock > Setup > Batch > New`
 
-[Click here to learn how Batchwise inventory is managed in Dooks.](/dooks/stock/articles/managing-batch-wise-inventory.md)
+[Click here to learn how Batchwise inventory is managed in Dokie.](/dokie/stock/articles/managing-batch-wise-inventory.md)
 
 #### Step 7: Update Item Valuation Rate 
 

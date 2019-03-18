@@ -11,12 +11,12 @@ You can directly create your Shareholders via
 
 <img class="screenshot" alt="Create Shareholder" src="/docs/assets/img/accounts/shareholder/shareholder_tonystark.png">
 
-A Shareholder can avail the features (operations) in the [Share Transfer](/dooks/accounts/share/share_transfer.md) process.
+A Shareholder can avail the features (operations) in the [Share Transfer](/dokie/accounts/share/share_transfer.md) process.
 
 > Note: Shareholders are separate from Contacts and Addresses. A Shareholder can
 have multiple Contacts and Addresses.
 
 ### Contacts and Addresses
 
-[Contacts and Addresses](/dooks/crm/contact.md) in Dooks are stored separately so that you can
+[Contacts and Addresses](/dokie/crm/contact.md) in Dokie are stored separately so that you can
 attach multiple Contacts or Addresses to Shareholders, Customers and Suppliers

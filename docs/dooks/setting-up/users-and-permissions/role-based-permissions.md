@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Role Based Permissions
 
-Dooks has a role-based permission system. It means that you can assign Roles to Users, and set Permissions on Roles. The permission structure also allows you to define different permission rules for different fields, using a concept called **Permission "Level"** of a field. Once roles are assigned to a user, it gives you the ability to limit access for a user to only specific documents.
+Dokie has a role-based permission system. It means that you can assign Roles to Users, and set Permissions on Roles. The permission structure also allows you to define different permission rules for different fields, using a concept called **Permission "Level"** of a field. Once roles are assigned to a user, it gives you the ability to limit access for a user to only specific documents.
 
 To start with, go to:
 > Setup > Permissions > Role Permissions Manager
@@ -27,7 +27,7 @@ Permissions are applied on a combination of:
   * **User Permissions:** There is a concept of user permission using which a user can be restricted to access only specific Documents for that Document Type. Such specific Document access is defined in the list of User Permissions. Additionally, User Permissions defined for other Document Types also get applied if they are related to the current Document Type through Link Fields.
 
 	To set, User Permissions go to:
-    > Setup > Permissions > [User Permissions](/dooks/setting-up/users-and-permissions/user-permissions.md)
+    > Setup > Permissions > [User Permissions](/dokie/setting-up/users-and-permissions/user-permissions.md)
 
 ---
 

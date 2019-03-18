@@ -5,7 +5,7 @@ Like Assignments and Comments, you can also add your own tags to each type of tr
 
 <img class="screenshot" alt="Assign" src="./assets/tags-1.png">
 
-Dooks will also show you all the important tags in the document list.
+Dokie will also show you all the important tags in the document list.
 
 <img class="screenshot" alt="Assign" src="./assets/tags-2.png">
 

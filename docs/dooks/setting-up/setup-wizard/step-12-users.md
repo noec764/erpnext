@@ -11,6 +11,6 @@ If users are not known, then clicking **Mark as Done** will complete the step.
 
 ---
 
-Translations are contributed by the Dooks Community. If you want to contribute, [please checkout the translator portal](https://translate.dooks.com).
+Translations are contributed by the Dokie Community. If you want to contribute, [please checkout the translator portal](https://translate.dokie.com).
 
 {next}

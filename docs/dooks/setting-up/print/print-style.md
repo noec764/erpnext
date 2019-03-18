@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Print Style
 
-Frappe/Dooks comes with pre-set styles for your printed documents. You can also create new styles using CSS that can be applied to all your print formats.
+Frappe/Dokie comes with pre-set styles for your printed documents. You can also create new styles using CSS that can be applied to all your print formats.
 
 To create a new **Print Style** go to **Setup > Printing and Branding > Print Style**, or just type "print style" in the search bar.
 

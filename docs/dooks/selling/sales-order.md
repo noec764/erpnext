@@ -44,7 +44,7 @@ The “Packing List” table will be automatically updated when you “Save” t
 
 ### Reservation and Warehouses
 
-If your Sales Order contains Items for which inventory is tracked (Is Stock Item is “Yes”) then, Dooks will ask you for “Reservation Warehouse”. If you have set a default Warehouse for the Item, it will automatically set this Warehouse here.
+If your Sales Order contains Items for which inventory is tracked (Is Stock Item is “Yes”) then, Dokie will ask you for “Reservation Warehouse”. If you have set a default Warehouse for the Item, it will automatically set this Warehouse here.
 
 This “reserved” quantity will help you project what is the quantity you need to purchase based on all your commitments.
 
@@ -56,13 +56,13 @@ For e.g
 
 <img class="screenshot" alt="Taxes and Charges" src="./assets/taxes-and-charges.gif">
 
-To understand taxes in detail visit [Taxes](/dooks/setting-up/setting-up-taxes.md).
+To understand taxes in detail visit [Taxes](/dokie/setting-up/setting-up-taxes.md).
 
 ### Sales Team
 
 **Sales Partner:** If this Sale was booked via a Sales Partner, you can update the Sales Partner’s details with commission and other info that you can aggregate.
 
-**Sales Persons:** Dooks allows you to tag multiple Sales Persons who may have worked on this deal. You can also split the amount in targets of different Sales Persons and track how much incentives they earned on this deal.
+**Sales Persons:** Dokie allows you to tag multiple Sales Persons who may have worked on this deal. You can also split the amount in targets of different Sales Persons and track how much incentives they earned on this deal.
 
 ### Next Steps
 

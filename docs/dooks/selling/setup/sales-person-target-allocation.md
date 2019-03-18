@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Sales Person Target Allocation
 
-With management of Sales Person, Dooks also allow you to assign target to Sales Persons based on Item Group and Territory. Based on target allocated and actual sales booked by Sales Person, you will get target variance report for the Sales Person.
+With management of Sales Person, Dokie also allow you to assign target to Sales Persons based on Item Group and Territory. Based on target allocated and actual sales booked by Sales Person, you will get target variance report for the Sales Person.
 
 ###1. Sales Person - Item Groupwise Target Allocation
 
@@ -84,7 +84,7 @@ You can link Monthly Distribution while allocating targets in Sales Person as we
 
 ###See Also
 
-1. [Sales Person Target Allocation](/dooks/selling/setup/sales-person-target-allocation)
-2. [Using Sales Person in transactions](/dooks/selling/articles/sales-persons-in-the-sales-transactions)
+1. [Sales Person Target Allocation](/dokie/selling/setup/sales-person-target-allocation)
+2. [Using Sales Person in transactions](/dokie/selling/articles/sales-persons-in-the-sales-transactions)
 
 {next}

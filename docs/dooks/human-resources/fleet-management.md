@@ -3,7 +3,7 @@
 
 Fleet Management section of Human Resources helps your Organization manage their fleet of vehicles and track their expenses.
 
-To use Fleet Management in Dooks,
+To use Fleet Management in Dokie,
 
   1. Set Up a Vehicle.
   2. Enter Vehicle Logs regularly.

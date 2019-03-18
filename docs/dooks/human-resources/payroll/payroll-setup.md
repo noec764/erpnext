@@ -5,16 +5,16 @@ Salary is a fixed amount of money or compensation paid to an employee by an empl
 
 Payroll is the administration of financial records of employees' salaries, wages, bonuses, net pay, and deductions.
 
-To process Payroll in Dooks,
+To process Payroll in Dokie,
 
-1. Define [Payroll Period](/dooks/human-resources/payroll/payroll-period.md) (optional)
+1. Define [Payroll Period](/dokie/human-resources/payroll/payroll-period.md) (optional)
 2. Create Salary Structure with Salary Components (Earnings and Deductions)
 3. Assign Salary Structures to each Employee via Salary Structure Assignment
-4. Generate Salary Slips via [Payroll Entry](/dooks/human-resources/payroll/payroll-entry.md).
+4. Generate Salary Slips via [Payroll Entry](/dokie/human-resources/payroll/payroll-entry.md).
 5. Book the Salary in your Accounts.
 
 ## Payroll Period
-[Payroll Period](/dooks/human-resources/payroll/payroll-period.md), in Dooks, is a period for which Employees get paid for their occupation with the Company. Payroll period helps you define Tax slabs applicable for the period, making it easier to manage changing laws.
+[Payroll Period](/dokie/human-resources/payroll/payroll-period.md), in Dokie, is a period for which Employees get paid for their occupation with the Company. Payroll period helps you define Tax slabs applicable for the period, making it easier to manage changing laws.
 
 > Note: Configuring Payroll Period is optional if you do not intend to use Flexible Benefits or Tax Slabs
 
@@ -22,10 +22,10 @@ To process Payroll in Dooks,
 This document allows you to define each Earning and Deduction component which can be used to create a Salary Structure and subsequently create Salary Slip or Additional Salary. You can also configure the type, condition and formula as well as other settings which are discussed below. You should be able to enable various combinations of the following options to configure each component as it fits your Company / Regional policies.
 
 * Depends on Leave Without Pay: Leave Without Pay (LWP) happens when an Employee runs out of allocated leaves
-or takes a leave without an approval (via Leave Application). If enabled, Dooks will automatically deduct the
+or takes a leave without an approval (via Leave Application). If enabled, Dokie will automatically deduct the
 pay in proportion of LWP days divided by the total working days for the month (based on the Holiday List).
 
-	> Note: If you don’t want Dooks to manage LWP, don’t turn on this flag in any of the Salary Components
+	> Note: If you don’t want Dokie to manage LWP, don’t turn on this flag in any of the Salary Components
 
 * Do not include in total: If this option is enabled, the component wont be added to the total of the Earnings or Deductions of the Salary Slip
 
@@ -39,11 +39,11 @@ pay in proportion of LWP days divided by the total working days for the month (b
 
 * Is Payable: Such components can be booked against separate payable accounts and the Accounts shall be configured in the Accounts table
 
-* Flexible Benefits: Flexible Benefits are earning components which Employees can choose to receive on a pro-rata basis or annually when they claim for. These are mostly tax exempted, unless the Employee fail to file the claim with adequate bills / documents. If turned on, you can specify the maximum benefit allowed for an employee in a year. Employees can create [Employee Benefit Application](/dooks/human-resources/payroll/employee-benefit-application.md) with the ones they opt for.
+* Flexible Benefits: Flexible Benefits are earning components which Employees can choose to receive on a pro-rata basis or annually when they claim for. These are mostly tax exempted, unless the Employee fail to file the claim with adequate bills / documents. If turned on, you can specify the maximum benefit allowed for an employee in a year. Employees can create [Employee Benefit Application](/dokie/human-resources/payroll/employee-benefit-application.md) with the ones they opt for.
 
 	>Note: Employee Benefit Application will only allow Employees to only choose from the flexible components which are present in the Salary Structure assigned to the Employee
 
-	- Pay Against Benefit Claim: Employees can opt to receive flexible benefits annually via Employee Benefit Claim or along with their salary every month. If you enable this, the amount allocated for the component will be paid as the Employee submits an [Employee Benefit Claim](/dooks/human-resources/payroll/employee-benefit-claim.md). Else the amount will be dispersed as part of the Employee's salary on a pro-rata basis.
+	- Pay Against Benefit Claim: Employees can opt to receive flexible benefits annually via Employee Benefit Claim or along with their salary every month. If you enable this, the amount allocated for the component will be paid as the Employee submits an [Employee Benefit Claim](/dokie/human-resources/payroll/employee-benefit-claim.md). Else the amount will be dispersed as part of the Employee's salary on a pro-rata basis.
 
  - Only Tax Impact (Cannot Claim But Part of Taxable Income): Such components are those which the company has already paid to the Employee in cash or by some other means, for example a car purchased for the Employee's use. The Employee cannot claim but is liable to pay tax. The amount allocated for this component will be considered while calculating the taxable income of the Employee.
 
@@ -142,10 +142,10 @@ Finally, *Save* the Salary Structure.
 
 ### Leave Without Pay (LWP)
 
-Leave Without Pay (LWP) happens when an Employee runs out of allocated leaves or takes a leave without an approval (via Leave Application). If you want Dooks to automatically deduct salary in case of LWP, then you must check on
+Leave Without Pay (LWP) happens when an Employee runs out of allocated leaves or takes a leave without an approval (via Leave Application). If you want Dokie to automatically deduct salary in case of LWP, then you must check on
 the “Apply LWP” column in the Earning Type and Deduction Type masters. The amount of pay cut is the proportion of LWP days divided by the total working days for the month (based on the Holiday List).
 
-If you don’t want Dooks to manage LWP, leave the LWP unchecked in all of the Earning Types and Deduction Types.
+If you don’t want Dokie to manage LWP, leave the LWP unchecked in all of the Earning Types and Deduction Types.
 
 ## Salary Structure Assignment
 
@@ -179,7 +179,7 @@ In Payroll Entry,
 4. Click on "Get Employee Details" to get a list of Employees for which the Salary Slips will be created based on the selected criteria.
 5. Enter the Start and End dates for the payroll period.
 6. You can check _Deduct Tax For Unclaimed Employee Benefits_ if you want to deduct taxes for all benefits (Salary Components which are _Is Flexible Benefit_) paid to employees till the current payroll
-7. Similarly, _Deduct Tax For Unsubmitted Tax Exemption Proof_ allows you to deduct taxes for the earnings which were exempted in the previous payrolls as declared in [Employee Tax Exemption Declaration](/dooks/human-resources/payroll/employee-tax-exemption-declaration.md) but the Employee has not submitted sufficient proof [Employee Tax Exemption Proof Submission](/dooks/human-resources/payroll/employee-tax-exemption-proof-submission.md)
+7. Similarly, _Deduct Tax For Unsubmitted Tax Exemption Proof_ allows you to deduct taxes for the earnings which were exempted in the previous payrolls as declared in [Employee Tax Exemption Declaration](/dokie/human-resources/payroll/employee-tax-exemption-declaration.md) but the Employee has not submitted sufficient proof [Employee Tax Exemption Proof Submission](/dokie/human-resources/payroll/employee-tax-exemption-proof-submission.md)
 8. Select the Cost Center and Payment Account.
 9. Save the form and Submit it to create Salary Slip records for each active Employee for the time period selected. If the Salary Slips are already created, the system will not create any more Salary Slips. You can also just save the form as Draft and create the Salary Slips later.
 
@@ -206,7 +206,7 @@ To generate your salary payment voucher from Payroll Entry, click on -
 
 Payroll Entry will route you to Journal Entry with relevant filters to view the draft Journal Vouchers created. You shall set reference number and date for the transactions and Submit the Journal Entries.
 
->Note: For Salary Components which are Flexible Benefits and has _Create Separate Payment Entry Against Benefit Claim_ checked, Dooks will book separate draft Journal Entries.
+>Note: For Salary Components which are Flexible Benefits and has _Create Separate Payment Entry Against Benefit Claim_ checked, Dokie will book separate draft Journal Entries.
 
 <img class="screenshot" alt="Payroll Entry" src="/docs/assets/img/human-resources/payroll-journal-entry.png">
 

@@ -3,8 +3,8 @@
 
 Global search is a word-processing operation in which a complete computer file or set of files is searched for every occurrence of a particular word or other sequence of characters.
 
-We have made the Awesome Bar of Dooks lot more powerful by adding Global Search feature. 
-Global Search helps users find information quickly. It’s located in the upper right-hand corner in Dooks.  Simply entering a few characters in the Search will show results from several different record types (Contact, Customer, Issues etc.) related to that keyword. You can also customise the fields based on which search will be shown.
+We have made the Awesome Bar of Dokie lot more powerful by adding Global Search feature. 
+Global Search helps users find information quickly. It’s located in the upper right-hand corner in Dokie.  Simply entering a few characters in the Search will show results from several different record types (Contact, Customer, Issues etc.) related to that keyword. You can also customise the fields based on which search will be shown.
 
 From v11, multi search term/keywords separated by & operator is supported, refer to the following use cases:
 

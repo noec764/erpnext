@@ -1,8 +1,8 @@
 <!-- add-breadcrumbs -->
 # Quality Inspection
 
-In Dooks, you can mark your incoming or outgoing products for Quality
-Inspection. To enable Dooks to perform this function, go to :
+In Dokie, you can mark your incoming or outgoing products for Quality
+Inspection. To enable Dokie to perform this function, go to :
 
 > Stock > Quality Inspection > New
 

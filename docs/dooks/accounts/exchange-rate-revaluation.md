@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Exchange Rate Revaluation
 
-In Dooks, you can make accounting entries in multiple currency. For example, if you have a bank account in foreign currency, you can make transactions in that currency and system will show bank balance in that specific currency only.
+In Dokie, you can make accounting entries in multiple currency. For example, if you have a bank account in foreign currency, you can make transactions in that currency and system will show bank balance in that specific currency only.
 
 ## Setup
 

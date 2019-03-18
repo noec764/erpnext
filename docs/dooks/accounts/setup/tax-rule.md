@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Tax Rule
 
-You can define which [Tax Template](/dooks/setting-up/setting-up-taxes.md) must be applied on a Sales / Purchase transaction using Tax Rule.
+You can define which [Tax Template](/dokie/setting-up/setting-up-taxes.md) must be applied on a Sales / Purchase transaction using Tax Rule.
 
 <img class="screenshot" alt="Tax Rule" src="../assets/tax-rule.png">
 

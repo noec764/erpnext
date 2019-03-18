@@ -54,20 +54,20 @@ monthly, quarterly, half-yearly or annual basis, you can check the “Recurring
 Invoice” box. Here you can fill in the details of how frequently you want to
 bill this Invoice and the period for which the contract is valid.
 
-Dooks will automatically create new Invoices and mail it to the Email Addresses
+Dokie will automatically create new Invoices and mail it to the Email Addresses
 you set.
 
 #### Automatically Fetching Item Batch Numbers
 
-If you are selling an item from a [Batch](/dooks/stock/batch),
-Dooks will automatically fetch a batch number for you if "Update Stock" 
+If you are selling an item from a [Batch](/dokie/stock/batch),
+Dokie will automatically fetch a batch number for you if "Update Stock" 
 is checked. The batch number will be fetched on a First Expiring First Out 
 (FEFO) basis. This is a variant of First In First Out (FIFO) that gives 
 highest priority to the soonest to expire Items. 
 
 Note that if the first batch in the queue cannot satisfy the order on the invoice, 
 the next batch in the queue that can satisfy the order will be selected. If there is 
-no batch that can satisfy the order, Dooks will cancel its attempt to automatically 
+no batch that can satisfy the order, Dokie will cancel its attempt to automatically 
 fetch a suitable batch number.
 
 #### POS Invoices
@@ -100,7 +100,7 @@ the Print Heading feature.
 Invoice it will show up in your “Accounts Receivable” and “Income”. This is
 not ideal as your Customer may or may not decide to pay up. But since your
 Customer wants an “Invoice”, you could give the Customer a Quotation (in
-Dooks) titled as “Pro Forma Invoice”. This way everyone is happy.
+Dokie) titled as “Pro Forma Invoice”. This way everyone is happy.
 
 This is a fairly common practice. We follow this at Frappe too.
 {next}

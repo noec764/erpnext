@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 #Managing Tree Structure Masters
 
-Some of the masters in Dooks are maintained in tree structure. Tree structured masters allow you to set Parent master, and Child masters under those Parents. Setting up this structure allows you creating intelligent report, and track growth at each level in the hierarchy. 
+Some of the masters in Dokie are maintained in tree structure. Tree structured masters allow you to set Parent master, and Child masters under those Parents. Setting up this structure allows you creating intelligent report, and track growth at each level in the hierarchy. 
 
 Following is the partial list of masters which are maintained in the tree structure.
 
@@ -49,6 +49,6 @@ Following is how Child Territories will be listed under a Parent Territory.
 
 <img alt="Adding new Territories" class="screenshot" src="../assets/territory-3.png">
 
-Following this steps, you can manage other tree masters as well in Dooks.
+Following this steps, you can manage other tree masters as well in Dokie.
 
 <!-- markdown -->

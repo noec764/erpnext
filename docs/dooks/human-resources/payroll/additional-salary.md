@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Additional Salary
 
-Dooks allows you to add additional Salary Components (_Is Additional Component_) to Salary Slips while processing the payroll. Some examples of Additional Salary could be Performance Bonus, Deputation Allowance, Arrears or other adjustments etc. To create Additional Salary, you can go to -
+Dokie allows you to add additional Salary Components (_Is Additional Component_) to Salary Slips while processing the payroll. Some examples of Additional Salary could be Performance Bonus, Deputation Allowance, Arrears or other adjustments etc. To create Additional Salary, you can go to -
 
 > Human resources > Payroll > Additional Salary > New Additional Salary
 

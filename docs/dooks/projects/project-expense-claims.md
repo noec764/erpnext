@@ -1,6 +1,6 @@
 # Project and Managing Expenses
 
-The Employees working on the Project incur various expenses, sometimes from their own pocket. In Dooks, then can claim such expenses using [Expense Claim](/dooks/human-resources/travel_and_expense_claim/expense-claim.md)
+The Employees working on the Project incur various expenses, sometimes from their own pocket. In Dokie, then can claim such expenses using [Expense Claim](/dokie/human-resources/travel_and_expense_claim/expense-claim.md)
 
 In this Expense Claim, they can also select a Project for which that expense was incurred.
 

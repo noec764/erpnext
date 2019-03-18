@@ -21,7 +21,7 @@ In the Employee field, only ones having active Salary Structure will be selectab
 
 Employee will have to select an Activity Type (like planning, site visit, repairing etc. ). Costing and Billing Rate for each Activity can be different for each Employee. These cost can be tracked in the Activity Cost. On selection of Activity Type, Activity Cost is fetched from that Employee. Based on total Activity Cost and total no. of hours, Total Billing Amount (to the Customer) is calculated.
 
-To learn more on how to setup Activity Type and Activity Cost, click [here](/dooks/projects/articles/project-costing).
+To learn more on how to setup Activity Type and Activity Cost, click [here](/dokie/projects/articles/project-costing).
 
 <img class="screenshot" alt="Sales Invoice" src="../assets/timesheet/timesheet-cost.png">
 

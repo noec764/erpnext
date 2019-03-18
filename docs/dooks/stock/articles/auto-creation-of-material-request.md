@@ -3,7 +3,7 @@
 
 To prevent stockouts, you can track item's reorder level. When stock level goes below reorder level, purchase manager is notified and instructed to initiate purchase process for the item.
 
-In Dooks, you can update item's Reorder Level and Reorder Qty in the Item master. If same item has different reorder level, you can also update warehouse-wise reorder level and reorder qty.
+In Dokie, you can update item's Reorder Level and Reorder Qty in the Item master. If same item has different reorder level, you can also update warehouse-wise reorder level and reorder qty.
 
 <img alt="reorder level" class="screenshot" src="../assets/reorder-request-1.png">
 
@@ -24,5 +24,5 @@ If auto creation of Material Request is failed, User with Purchase Manager role 
 **An error occurred for certain Items while creating Material Requests based on Re-order level.**
 **Date 01-04-2016 not in any Fiscal Year.**
 
-One of the reason of error could be Fiscal Year as well. Click [here](/dooks/accounts/articles/fiscal-year-error.md) to learn more about it.
+One of the reason of error could be Fiscal Year as well. Click [here](/dokie/accounts/articles/fiscal-year-error.md) to learn more about it.
 <!-- markdown -->

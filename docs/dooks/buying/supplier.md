@@ -19,7 +19,7 @@ Each Supplier can have a default price list so that every time when you buy a ne
 
 ### Contacts and Addresses
 
-Contacts and Addresses in Dooks are stored separately so that you can create multiple Contacts and Addresses for a Supplier. Once Supplier is saved, you will find the option to create Contact and Address for that Supplier.
+Contacts and Addresses in Dokie are stored separately so that you can create multiple Contacts and Addresses for a Supplier. Once Supplier is saved, you will find the option to create Contact and Address for that Supplier.
 
 <img class="screenshot" alt="Supplier Master" src="./assets/supplier-new-address-contact.png">
 
@@ -37,7 +37,7 @@ If you don't want to customize payable account, and proceed with default payable
 
 > Advanced Tip: Default Payable Account is set in the Company master. If you want to set another account as Account as default for payable instead of Creditors Account, go to Company master, and set that account as "Default Payable Account".
 
-You can add multiple companies in your Dooks instance, and one Supplier can be used across multiple companies. In this case, you should define Companywise Payable Account for the Supplier in the "Default Payable Accounts" table.
+You can add multiple companies in your Dokie instance, and one Supplier can be used across multiple companies. In this case, you should define Companywise Payable Account for the Supplier in the "Default Payable Accounts" table.
 
 <div>
     <div class='embed-container'>
@@ -50,14 +50,14 @@ You can add multiple companies in your Dooks instance, and one Supplier can be u
 In the Supplier form, check the "Block Supplier" checkbox. Next, choose the "Hold Type".
 
 The hold types are as follows:
-- Invoices: Dooks will not allow Purchase Invoices or Purchase Orders to be created for the supplier
-- Payments: Dooks will not allow Payment Entries to be created for the Supplier
-- All: Dooks will apply both hold types above
+- Invoices: Dokie will not allow Purchase Invoices or Purchase Orders to be created for the supplier
+- Payments: Dokie will not allow Payment Entries to be created for the Supplier
+- All: Dokie will apply both hold types above
 
 After selecting the hold type, you can optionally set a release date in the "Release Date" field.
 
 Take note of the following:
-- If you do not select a hold type, Dooks will set it to "All"
-- If you do not set a release date, Dooks will hold the Supplier indefinitely 
+- If you do not select a hold type, Dokie will set it to "All"
+- If you do not set a release date, Dokie will hold the Supplier indefinitely 
 
 {next}

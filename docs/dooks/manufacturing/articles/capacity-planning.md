@@ -5,7 +5,7 @@ Capacity Planning functionality helps you in tracking production jobs allocated 
 
 <img alt="Role Desk Permission" class="screenshot" src="../assets/capacity-1.png">
 
-Follow are the steps to use Capacity Planning Feature in your Dooks account.
+Follow are the steps to use Capacity Planning Feature in your Dokie account.
 
 1.  Operations  
 
@@ -15,7 +15,7 @@ Follow are the steps to use Capacity Planning Feature in your Dooks account.
 
 2.  Workstation  
 
-    Add each Workstation in your Dooks account from:  
+    Add each Workstation in your Dokie account from:  
 
     `Manufacturing > Bill of Materials > Workstation` 
 

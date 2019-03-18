@@ -5,11 +5,11 @@ Serial Nos. is unique value assigned on each unit of an item. Serial no. helps i
 
 To make item Serialized, in the Item master, check **Has Serial No**.
 
-There are two ways Serial no. can be generated in Dooks.
+There are two ways Serial no. can be generated in Dokie.
 
 ###1. Serializing Purchase Items
 
-If purchased items are received with Serial Nos. applied by OEM (original equipment manufacturer), you can follow same Serial No in Dooks as well. While creating Purchase Receipt, you shall scan or manually enter Serial nos. for an item. On submitting Purchase Receipt, Serial Nos. will be created in the backend as per Serial Nos. provided for an item. If using OEM' Serial No., then in the Item master, Prefix should not be mentioned for serializalization. As per this scenaio, Prefix field should be left blank.
+If purchased items are received with Serial Nos. applied by OEM (original equipment manufacturer), you can follow same Serial No in Dokie as well. While creating Purchase Receipt, you shall scan or manually enter Serial nos. for an item. On submitting Purchase Receipt, Serial Nos. will be created in the backend as per Serial Nos. provided for an item. If using OEM' Serial No., then in the Item master, Prefix should not be mentioned for serializalization. As per this scenaio, Prefix field should be left blank.
 
 If received items already has its Serial No. barcoded, you can simply scan that barcode for entering Serial No. in the Purchase Receipt.
 

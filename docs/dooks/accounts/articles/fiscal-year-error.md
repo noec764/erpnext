@@ -13,7 +13,7 @@ Only User with System Manager's Role Assigned has permission to create new Fisca
 
 `Accounts > Setup > Fiscal Year`
 
-Click [here](/dooks/accounts/setup/fiscal-year.md) to learn more about Fiscal Year.
+Click [here](/dokie/accounts/setup/fiscal-year.md) to learn more about Fiscal Year.
 
 #### Set Fiscal Year as Default
 
@@ -27,7 +27,7 @@ Default Fiscal Year will be updated in the Global Default setting as well. You c
 
 <img alt="Debit Credit Not Equal" class="screenshot" src="../assets/fiscal-year-error-2.png">
 
-Save Global Default, and Reload your Dooks account. Then, default Fiscal Year will be auto-updated in your transactions.
+Save Global Default, and Reload your Dokie account. Then, default Fiscal Year will be auto-updated in your transactions.
 
 Note: In transactions, you can manually select required Fiscal Year, from More Info section.
 

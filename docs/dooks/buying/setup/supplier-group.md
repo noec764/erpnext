@@ -6,7 +6,7 @@ commonly adds specialized input to deliverables. A supplier is also known as a
 vendor. There are different types of suppliers based on their goods and
 products.
 
-Dooks allows you to create your own categories of suppliers. These
+Dokie allows you to create your own categories of suppliers. These
 categories are known as Supplier Groups. For example, if your suppliers are
 mainly pharmaceutical companies and FMCG distributors, you can create a new
 type for them and name them accordingly.
@@ -18,7 +18,7 @@ Supplier Groups. You can create your own category of Supplier Group.
 
 <img class="screenshot" alt="Supplier Group" src="../assets/supplier-group.png">
 
-You can classify your suppliers from a range of choices available in Dooks.
+You can classify your suppliers from a range of choices available in Dokie.
 Choose from a set of given options like Distributor, Electrical, Hardware,
 Local, Pharmaceutical, Raw material, Services etc.
 
@@ -37,7 +37,7 @@ list view, simply select `Menu > View List`.
 
 <img class="screenshot" alt="Supplier Group" src="../assets/supplier-group-tree.png">
 
-With the new [User Permission](/dooks/setting-up/users-and-permissions/)
+With the new [User Permission](/dokie/setting-up/users-and-permissions/)
 in place, you can now apply hierarchy based permissions.
 That is, if a User is permitted to view parent node of Supplier Group,
 he/she automatically qualifies to view the child nodes of that parent node.

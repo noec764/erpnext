@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Material Transfer from Delivery Note
 
-In Dooks, you can create Material Transfer entry from [Stock Entry](/dooks/stock/stock-entry.md) document. However, there are some scenarios in the Material Transfer where it needs to be presented as a Delivery Note. 
+In Dokie, you can create Material Transfer entry from [Stock Entry](/dokie/stock/stock-entry.md) document. However, there are some scenarios in the Material Transfer where it needs to be presented as a Delivery Note. 
 
 ### Scenarios
 
@@ -15,7 +15,7 @@ Considering these scenarios, the provision of Material Transfer has been added i
 
 #### Enable Customer Warehouse
 
-Delivery Note Item doctype as a hidden field of Customer Warehouse. You can enable it from [Customize Form](/dooks/customize-dooks/customize-form.md). Here is the quick demonstration of the same.
+Delivery Note Item doctype as a hidden field of Customer Warehouse. You can enable it from [Customize Form](/dokie/customize-dokie/customize-form.md). Here is the quick demonstration of the same.
 
 <img class="screenshot" alt="Delivery Note Material Transfer" src="../assets/customer-warehouse.gif">
 

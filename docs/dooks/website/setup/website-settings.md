@@ -6,7 +6,7 @@ Most of the website related settings can be defined here.
 
 ####Landing Page
 
-* Home Page: You can specify which [Web Page](/dooks/website/web-page.md) must be the homepage of the website
+* Home Page: You can specify which [Web Page](/dokie/website/web-page.md) must be the homepage of the website
 
 * Home Page is Products: if Checked, the Home page will be the default Item Group for the website.
 
@@ -41,5 +41,5 @@ You can integrate the website using Google Analytics and enable social media sha
 
 <img class="screenshot" alt="Integrations" src="../assets/integrations.png">
 
-* You can disable public signup to your Dooks account by checking 'disable signup'
+* You can disable public signup to your Dokie account by checking 'disable signup'
 

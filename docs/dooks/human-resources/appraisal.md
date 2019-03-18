@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Appraisal
 
-In Dooks, you can manage Employee Appraisals by creating an Appraisal
+In Dokie, you can manage Employee Appraisals by creating an Appraisal
 Template for each role with the parameters that define the performance by
 giving appropriate weightage to each parameter.
 

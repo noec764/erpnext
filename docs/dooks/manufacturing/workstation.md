@@ -17,7 +17,7 @@ In workstation specify the workstation working hours under the 'working hour' se
 You can also specify the working hours based on shifts.
 While scheduling Work Order, system will check for the availability of the workstation based on the working hours specified.	
 
-> Note : You can enable overtime for your workstation in [Manufacturing Settings](/dooks/manufacturing/setup/manufacturing-settings.md)
+> Note : You can enable overtime for your workstation in [Manufacturing Settings](/dokie/manufacturing/setup/manufacturing-settings.md)
 
 
 <div class="embed-container">

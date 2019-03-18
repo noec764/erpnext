@@ -10,8 +10,8 @@ To begin importing the Data, go to either setup, or to the Transaction you want 
 
 ## 1\. Downloading The Template
 
-Data in Dooks is stored in tables, much like a spreadsheet with columns and
-rows of data. Each entity in Dooks can have multiple child tables associated
+Data in Dokie is stored in tables, much like a spreadsheet with columns and
+rows of data. Each entity in Dokie can have multiple child tables associated
 with it too. The child tables are linked to the parent tables and are
 implemented where there are multiple values for any property. For example an
 Item can have multiple prices, An Invoice has multiple Items and so on.
@@ -74,7 +74,7 @@ row. See the example:
 
 ### 5. Overwriting
 
-Dooks also allows you to overwrite all / certain columns. If you want to
+Dokie also allows you to overwrite all / certain columns. If you want to
 update certain columns, you can download the template with data. Remember to
 check on the “Update Records” box before uploading.
 
@@ -86,7 +86,7 @@ child records of that parent.
 You can only upload upto 5000 records in one go. (may be less in some cases).
 
 Why is this? Uploading a lot of data can cause your system to crash, specially
-if there are other users doing things in parallel. Hence Dooks restricts the
+if there are other users doing things in parallel. Hence Dokie restricts the
 number of “writes” you can process in one request.
 
 ***
@@ -120,7 +120,7 @@ files. Click on “Add” and select the file you want to attach. Click on
 #### What is a CSV file?
 
 A CSV (Comma Separated Value) file is a data file that you can upload into
-Dooks to update various data. Any spreadsheet file from popular spreadsheet
+Dokie to update various data. Any spreadsheet file from popular spreadsheet
 applications like MS Excel or Open Office Spreadsheet can be saved as a CSV
 file.
 
@@ -129,7 +129,7 @@ to save your file encoded as UTF-8. For older versions of Excel, there is no
 clear way of saving as UTF-8. So save your file as a CSV, then open it in
 Notepad, and save as “UTF-8”. (Sorry blame Microsoft for this!)
 
-####Help Video on Importing Data in Dooks from Spreadsheet file
+####Help Video on Importing Data in Dokie from Spreadsheet file
 
 
 <div class="embed-container">

@@ -1,10 +1,10 @@
-# Disable Signup on Dooks Website
+# Disable Signup on Dokie Website
 
-Dooks has portal feature available which allows third parties like Customers and Suppliers sign, place new orders and track updates on the previous orders. 
+Dokie has portal feature available which allows third parties like Customers and Suppliers sign, place new orders and track updates on the previous orders. 
 
 <img class="screenshot" alt="Website signup" src="../assets/website-signup.png">
 
-To allow new Customer and Supplier to Signup, the login page of your Dooks account has Signup link avaiable. However, if you wish to disbale this feature, you can achieve it by following the steps given below.
+To allow new Customer and Supplier to Signup, the login page of your Dokie account has Signup link avaiable. However, if you wish to disbale this feature, you can achieve it by following the steps given below.
 
 ### Steps
 

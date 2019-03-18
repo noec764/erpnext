@@ -21,7 +21,7 @@ requirement.
 
 * Include holidays within leaves as leaves: Check this option if you wish to count holidays within leaves as a ‘leave’. Such holidays will be deducted from the total number of leaves.
 
-* Is Compensatory: Compensatory leaves are leaves granted for working overtime or on holidays, normally compensated as an encashable leave. You can check this option to mark the Leave Type as compensatory. An Employee can request for compensatory leaves using [Compensatory Leave Request](/dooks/human-resources/leave-management/compensatory-leave-request.md) and on approval of such requests, Leave Allocation for this leave type is updated allowing her to apply for leaves of this type later on.
+* Is Compensatory: Compensatory leaves are leaves granted for working overtime or on holidays, normally compensated as an encashable leave. You can check this option to mark the Leave Type as compensatory. An Employee can request for compensatory leaves using [Compensatory Leave Request](/dokie/human-resources/leave-management/compensatory-leave-request.md) and on approval of such requests, Leave Allocation for this leave type is updated allowing her to apply for leaves of this type later on.
 
 * Is Optional: Check this Optional Leaves are holidays which Employees can choose to avail from a list of holidays published by the company. The Holiday List for optional leaves can have any number of holidays but you can restrict the number of such leaves granted to an Employee in a Leave Period by setting the Max Days Leave Allowed field.
 
@@ -31,9 +31,9 @@ requirement.
 
 	You can set the _Encashment Threshold Days_ field so that the Employees wont be able to encash that many days. These days should be carry forwarded to the next Leave Period so that it can be either encashed or availed. You may also want to set the _Earning Component_ for use in Salary Slip while paying out the encashed amount to Employees as part of their Salary.
 
-	>Note: On submitting a [Leave Encashment](/dooks/human-resources/leave-management/leave-encashment.md) for an Employee, Dooks automatically creates an [Additional Salary](/dooks/human-resources/payroll/additional-salary.md) which will get added to the Salary Slip of the Employee when processing the next payroll
+	>Note: On submitting a [Leave Encashment](/dokie/human-resources/leave-management/leave-encashment.md) for an Employee, Dokie automatically creates an [Additional Salary](/dokie/human-resources/payroll/additional-salary.md) which will get added to the Salary Slip of the Employee when processing the next payroll
 
-* Earned Leave: Earned Leaves are leaves earned by an employee after working with the company for a certain amount of time. Checking "Is Earned Leave" will allot leaves pro rata by automatically updating Leave Allocation for leaves of this type at intervals set by _Earned Leave Frequency_. For example, if an employee earns 2 leaves of type Paid Leaves monthly, Dooks automatically increments the Leave Allocation for Paid Leave at the end of every month by 2. The leave allotment process (background job) will only allot leaves considering the max leaves for the leave type, and will round to _Rounding_ for fractions.
+* Earned Leave: Earned Leaves are leaves earned by an employee after working with the company for a certain amount of time. Checking "Is Earned Leave" will allot leaves pro rata by automatically updating Leave Allocation for leaves of this type at intervals set by _Earned Leave Frequency_. For example, if an employee earns 2 leaves of type Paid Leaves monthly, Dokie automatically increments the Leave Allocation for Paid Leave at the end of every month by 2. The leave allotment process (background job) will only allot leaves considering the max leaves for the leave type, and will round to _Rounding_ for fractions.
 
 	<img class="screenshot" alt="Earned Leave" src="../assets/earned-leave.png">
 

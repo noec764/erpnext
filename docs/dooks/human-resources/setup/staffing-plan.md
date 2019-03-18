@@ -1,6 +1,6 @@
 <!-- add-breadcrumbs -->
 # Staffing Plan
-Staffing Plan helps you to plan human resource recruitments for your Company. Dooks allows you to do this at a group company level helping you efficiently plan and budget new hirings for a period. Job Openings can only be created as per the number of vacancies and budget as per the active Staffing Plan.
+Staffing Plan helps you to plan human resource recruitments for your Company. Dokie allows you to do this at a group company level helping you efficiently plan and budget new hirings for a period. Job Openings can only be created as per the number of vacancies and budget as per the active Staffing Plan.
 
 > Human Resources > Setup > Staffing Plan > New Staffing Plan
 

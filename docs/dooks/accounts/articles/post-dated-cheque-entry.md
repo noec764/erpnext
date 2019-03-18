@@ -3,7 +3,7 @@
 
 Post Dated Cheque is a cheque dated on future date. Party generally give post dated cheque, as advance payment. This cheque would be cleared only when cheque date arrives.
 
-In Dooks, create Payment Entry for post dated cheque.
+In Dokie, create Payment Entry for post dated cheque.
 
 ####New Payment Entry
 
@@ -25,9 +25,9 @@ After entering required details, Save and Submit the Payment Entry.
 
 ####Adjusting Post Dated  Cheque Entry
 
-You can adjust Post Dated Payment Entry against an invoice via [Payment Reconciliation Tool](/dooks/accounts/tools/payment-reconciliation.md).
+You can adjust Post Dated Payment Entry against an invoice via [Payment Reconciliation Tool](/dokie/accounts/tools/payment-reconciliation.md).
 
-When cheque is cleared, i.e. on actual date on the cheque, you can update its Clearance Date via [Bank Reconciliation Tool](/dooks/accounts/tools/bank-reconciliation.md).
+When cheque is cleared, i.e. on actual date on the cheque, you can update its Clearance Date via [Bank Reconciliation Tool](/dokie/accounts/tools/bank-reconciliation.md).
 
 In the Chart of Accounts, you might find value of this Payment Entry already reflecting against bank Account. You should check **Bank Reconciliation Statement**, a report in the account module to know difference of bank balance as per system, and actual balance in the bank's statement.
 <!-- markdown -->

@@ -2,9 +2,9 @@
 # Users And Permissions
 
 
-In Dooks, you can create multiple users and assign them different roles. There are some users which can only access the public facing part of Dooks (i.e. the website). Such users are called "Website Users".
+In Dokie, you can create multiple users and assign them different roles. There are some users which can only access the public facing part of Dokie (i.e. the website). Such users are called "Website Users".
 
-Dooks implements permission control at the User and Role level. Each user in the system can be assigned multiple
+Dokie implements permission control at the User and Role level. Each user in the system can be assigned multiple
 roles and permissions.
 
 The most important role is the "System Manager". Any user having this role can add other users and set roles to all users.

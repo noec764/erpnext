@@ -1,11 +1,11 @@
 <!-- add-breadcrumbs -->
 # Project from Customer Portal
 
-If you are doing a Project for a Customer, then Customer will need to be updated on its progress on timely bases. In Dooks, since it is a Customer Portal feature, you can let Customer update oneself on the Project's progress via Customer Portal.
+If you are doing a Project for a Customer, then Customer will need to be updated on its progress on timely bases. In Dokie, since it is a Customer Portal feature, you can let Customer update oneself on the Project's progress via Customer Portal.
 
 ### Add User as a Website User
 
-For a Customer to be able to access Project from the portal, should be added as a Website User. A Customer can also sign up from the Login Page of your Dooks account, using the same Email ID as mentioned in the Contact master. Or you can invite that User from the Contact master.
+For a Customer to be able to access Project from the portal, should be added as a Website User. A Customer can also sign up from the Login Page of your Dokie account, using the same Email ID as mentioned in the Contact master. Or you can invite that User from the Contact master.
 
 <img class="screenshot" alt="Customer in Project" src="./assets/project-portal-2.png">
 

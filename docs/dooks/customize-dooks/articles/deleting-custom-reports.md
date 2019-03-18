@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 #Deleting Custom Reports
 
-Dooks has several [types of reports](/dooks/customize-dooks/articles/making-custom-reports-in-dooks) which can be customize as per the companies/users requirement.
+Dokie has several [types of reports](/dokie/customize-dokie/articles/making-custom-reports-in-dokie) which can be customize as per the companies/users requirement.
 
 If there is a report custom report which needs to be deleted, it can be achieved by following steps. Please note that its applicable only for the Custom Reports, and not for the standard reports.
 

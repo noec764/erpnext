@@ -1,8 +1,8 @@
 <!-- add-breadcrumbs -->
-# How To Manage Subscriptions With Dooks
+# How To Manage Subscriptions With Dokie
 
-Dooks now allows you to manage your subscriptions easily. A single subscription can contain multiple plans. At 
-the same time, A single subscriber can also have multiple subscriptions. Dooks also automatically manages your 
+Dokie now allows you to manage your subscriptions easily. A single subscription can contain multiple plans. At 
+the same time, A single subscriber can also have multiple subscriptions. Dokie also automatically manages your 
 subscriptions for you by generating new invoices when due and changing the subscription status for you.
 
 ## Related Doctypes
@@ -59,16 +59,16 @@ Fill the relevant fields in the 'Discounts' section if you need to add discounts
 Click Save.
 
 ### Subscription Status
-Dooks Subscription has five status values:
+Dokie Subscription has five status values:
 - **Trialling** - A subscription that is in trial period
 - **Active** - A subscription that does not have any unpaid invoice
 - **Past Due** -  A subscription whose most recent invoice is unpaid but is still within the grace period
 - **Unpaid** - A subscription whose most recent invoice is unpaid and past the grace period
-- **Canceled** - A subscription whose most recent invoice is unpaid and past the grace period. In this state, Dooks no longer monitors the subscription.
+- **Canceled** - A subscription whose most recent invoice is unpaid and past the grace period. In this state, Dokie no longer monitors the subscription.
 
 ### Subscription Processing In The Background
-Every one hour interval, Dooks processes all Subscriptions and updates each for any change in status. It will 
-create new invoices if need be. When an outstanding invoice is paid, Dooks updates the subscription accordingly.
+Every one hour interval, Dokie processes all Subscriptions and updates each for any change in status. It will 
+create new invoices if need be. When an outstanding invoice is paid, Dokie updates the subscription accordingly.
 
 ### Manually Updating Subscriptions
 Once you have saved a subscription, you can change the 'Days Until Due', 'Quantity', 'Plans', 'Sales Taxes and Charges 
@@ -82,7 +82,7 @@ To cancel a Subscription, simply click the 'Cancel Subscription' button. The sub
 Date' field and the subscription will no longer be monitored.
 
 If you are cancelling an active subscription, an invoice will immediately be generated. The generated invoice will be on 
-pro-rata basis by default. If you want Dooks always create an invoice for the full amount, uncheck the 'Prorate' field 
+pro-rata basis by default. If you want Dokie always create an invoice for the full amount, uncheck the 'Prorate' field 
 in Subsciption Settings.
 
 ### Restarting Subscriptions
@@ -93,15 +93,15 @@ cycle will also be set to the date the Subscription is restarted.
 
 ### Recalculating Subscriptions
 Some times, a Subscription's status might have changed but might not yet be reflected in the Subscription. You can force 
-Dooks to update the subscription by clicking 'Fetch Subscription Updates'.
+Dokie to update the subscription by clicking 'Fetch Subscription Updates'.
 
 ### Subscription Settings
-**Grace Period** represents the number of days after a subscriber's invoice becomes overdue that Dooks should delay 
+**Grace Period** represents the number of days after a subscriber's invoice becomes overdue that Dokie should delay 
 before changing the Subscription status to 'Canceled' or 'Unpaid'.
 
-**Cancel Invoice After Grace Period** would cause Dooks to automatically cancel a subscription if it is not paid before the grace period elapses. This setting is off by default.
+**Cancel Invoice After Grace Period** would cause Dokie to automatically cancel a subscription if it is not paid before the grace period elapses. This setting is off by default.
 
-**Prorate** would cause Dooks to generate a prorated invoice when an active subscription is canceled by default. 
+**Prorate** would cause Dokie to generate a prorated invoice when an active subscription is canceled by default. 
 If you would prefer a full invoice, uncheck the setting.
 
 {next}

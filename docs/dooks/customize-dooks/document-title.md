@@ -7,7 +7,7 @@ For example the default title on **Quotation** is the customer name, but if you 
 
 #### Setting Title Fields
 
-From Dooks Version 6.0 onwards, all transactions have a `title` property. If there is not a title property, you can add a **Custom Field** as title and set the **Title Field** via **Customize Form**.
+From Dokie Version 6.0 onwards, all transactions have a `title` property. If there is not a title property, you can add a **Custom Field** as title and set the **Title Field** via **Customize Form**.
 
 You can set the default value of that property by using Python style string formatting in **Default** or **Options**
 

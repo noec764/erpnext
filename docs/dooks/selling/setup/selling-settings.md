@@ -24,7 +24,7 @@ Just like for Customer, you can also configure naming methodology for the Campai
 
 ####3. Default Customer Group and Territory
 
-Select a default [Customer Group](/dooks/crm/setup/customer-group.md) which will be auto-updated when creating a new Customer.
+Select a default [Customer Group](/dokie/crm/setup/customer-group.md) which will be auto-updated when creating a new Customer.
 
 Quotations can be created for the Customers as well as for the Leads. When converting a Quotation into Sales Order, which is created for a Lead, the system attempts to convert that Lead into Customer. While creating Customer in the backend, values for Customer Group and Territory is picked from Selling Settings. If no default values are found for Customer Group or Territory, then you will receive a validation message asking for Customer Group or Territory. Or you can manually convert a Lead into Customer.
 

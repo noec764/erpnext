@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 #Adding File as a Attachment
 
-Dooks allows to attach files with documents. User with a read permission on particular document will also be able to access files attached with it.
+Dokie allows to attach files with documents. User with a read permission on particular document will also be able to access files attached with it.
 
 ###Attach New File
 
@@ -25,11 +25,11 @@ If you use separate server for files, or use online service like Dropbox, you ca
 
 `For hosted users, limit of 5 MB is applied on file size.`
 
-To ensure there are not many files attached to a document, which can affect your accounts performance, you can set limit as how many files can be attached to a particular document. Click [here](/dooks/customize-dooks/articles/increase-max-attachments.md) to learn more about it.
+To ensure there are not many files attached to a document, which can affect your accounts performance, you can set limit as how many files can be attached to a particular document. Click [here](/dokie/customize-dokie/articles/increase-max-attachments.md) to learn more about it.
 
 ####File Manager
 
-Check following link to learn how files are managed in Dooks.
+Check following link to learn how files are managed in Dokie.
 
 <iframe width="660" height="371" src="https://www.youtube.com/embed/4-osLW3E_Rk" frameborder="0" allowfullscreen></iframe>
 

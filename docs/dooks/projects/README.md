@@ -1,13 +1,13 @@
 <!-- add-breadcrumbs -->
 # Projects
 
-For a services business, which doesn't have a tangible product to showcase their value, needs to get many things right to stay afloat and grow in the industry. Dooks helps services company effectively manage business aspects like Projects Management, Customer Support, Sales and Purchase Management to list a few.
+For a services business, which doesn't have a tangible product to showcase their value, needs to get many things right to stay afloat and grow in the industry. Dokie helps services company effectively manage business aspects like Projects Management, Customer Support, Sales and Purchase Management to list a few.
 
 <img class="screenshot" alt="Gannt" src="./assets/services-hero.png">
 
-### Project Management in Dooks
+### Project Management in Dokie
 
-Dooks helps you manage your Projects by breaking them into Tasks and
+Dokie helps you manage your Projects by breaking them into Tasks and
 allocating them to different people.
 
 <img class="screenshot" alt="Project" src="./assets/projects.png">
@@ -21,9 +21,9 @@ Purchasing and selling can also be tracked against Projects and this can help th
 
 <img class="screenshot" alt="Non Profit" src="./assets/support.png">
 
-### Demo on Dooks for the Service Business
+### Demo on Dokie for the Service Business
 
-Check the following video to educate yourself on the Dooks features for services business.
+Check the following video to educate yourself on the Dokie features for services business.
 
 <div>
     <div class='embed-container'>
@@ -34,10 +34,10 @@ Check the following video to educate yourself on the Dooks features for services
 
 ### User Manual
 
-A services company needs lots more than projects module to operate efficiently. Dooks has all of it available built-in.
+A services company needs lots more than projects module to operate efficiently. Dokie has all of it available built-in.
 
-- You track your books of accounts using [Accounts module](/dooks/accounts/).
-- Manage payroll, leaves and claims of your support staff in the [HR module](/dooks/human-resources/).
-- Attend customer's support queries better with [Support](/dooks/support/) module of Dooks.
+- You track your books of accounts using [Accounts module](/dokie/accounts/).
+- Manage payroll, leaves and claims of your support staff in the [HR module](/dokie/human-resources/).
+- Attend customer's support queries better with [Support](/dokie/support/) module of Dokie.
 
 {index}

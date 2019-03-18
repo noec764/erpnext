@@ -1,6 +1,6 @@
 <!-- add-breadcrumbs -->
 #Daily Work Summary Group
-In order to facilitate daily reporting of employees, you can configure Dooks to request employees email to send their work summary. To configure a new Daily Work Summary Group go to
+In order to facilitate daily reporting of employees, you can configure Dokie to request employees email to send their work summary. To configure a new Daily Work Summary Group go to
 
 > Human Resources > Setup > Daily Work Summary Group
 

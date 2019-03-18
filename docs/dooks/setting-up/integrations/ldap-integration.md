@@ -3,7 +3,7 @@
 
 Lightweight Directory Access Protocol is a centralised access controll system used by many small and medium scale organisations.
 
-By settings up LDAP service, you able to login to Dooks account by using LDAP credentials.
+By settings up LDAP service, you able to login to Dokie account by using LDAP credentials.
 
 To setup LDAP, go to
 `Explore > Integrations > LDAP Settings`
@@ -32,4 +32,4 @@ The default role of a new LDAP user is `Blogger`. You might want to adapt the pe
 
 In the LDAP Settings area, there are two dropdowns.
 1. SSL/TLS Mode - set this to **StartTLS** to connect to your LDAP server using StartTLS. If your LDAP server does not support StartTLS, setting this to StartTLS will result in an error `StartTLS is not supported`. Check the configuration on your LDAP server if you receive this error.
-2. Require Trusted Certificate - if you change this to **Yes** then the certificate provided by the LDAP server must be trusted by the Frappe/Dooks server. If you would rather use StartTLS with a self-signed (untrusted) certificate, set this to **No**. If you do not use StartTLS, this setting is ignored.
+2. Require Trusted Certificate - if you change this to **Yes** then the certificate provided by the LDAP server must be trusted by the Frappe/Dokie server. If you would rather use StartTLS with a self-signed (untrusted) certificate, set this to **No**. If you do not use StartTLS, this setting is ignored.

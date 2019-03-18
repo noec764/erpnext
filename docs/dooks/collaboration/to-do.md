@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # To Do
 
-To Do is a simple tool where all the activities [assigned](/dooks/collaboration/assignment.md) to you and assigned by you are listed. You can also add your own to-do items in the list.
+To Do is a simple tool where all the activities [assigned](/dokie/collaboration/assignment.md) to you and assigned by you are listed. You can also add your own to-do items in the list.
 
 <img class="screenshot" alt="Assign" src="./assets/assign-3.png">
 

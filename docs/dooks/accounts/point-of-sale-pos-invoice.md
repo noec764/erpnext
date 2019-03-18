@@ -8,13 +8,13 @@ to purchasing, to customer relationship management.
 
 ### Offline POS
 
-In the retails business, invoicing needs to done very quickly, hence should less dependency. In the Dooks, you can create POS Invoices, even when not connected to the internet.
+In the retails business, invoicing needs to done very quickly, hence should less dependency. In the Dokie, you can create POS Invoices, even when not connected to the internet.
 
 <img class="screenshot" alt="POS Invoice" src="./assets/invoice.jpg">
 
 ### POS Demo
 
-Here is the quick demonstration on the Point of Sale feature of Dooks.
+Here is the quick demonstration on the Point of Sale feature of Dokie.
 
 <div class="embed-container">
     <iframe src="https://www.youtube.com/embed/4WkelWkbP_c" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>

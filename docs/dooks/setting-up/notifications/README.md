@@ -107,7 +107,7 @@ In order to generate webhook URLs, you need to create a new Slack App:
 	Once your app is created, go to the "Incoming Webhooks" section and add a new Webhook to Workspace.  
 	<img class="screenshot" alt="Set Message" src="../assets/notifications/slack_notification_2.png">
 
-4. Copy the created link, go back to Dooks and use it to create a new Slack Webhook URL in Integrations > Slack Webhook URL.
+4. Copy the created link, go back to Dokie and use it to create a new Slack Webhook URL in Integrations > Slack Webhook URL.
 	<img class="screenshot" alt="Set Message" src="../assets/notifications/slack_notification_3.png">
 
 5. Select Slack and your Slack channel in the channel and Slack channel fields within your notification

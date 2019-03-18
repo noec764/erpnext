@@ -1,7 +1,7 @@
 <!-- add-breadcrumbs -->
 # Job Applicant
 
-You can maintain a list of People who have applied for a [Job Opening](/dooks/human-resources/recruitment/job-opening.md).
+You can maintain a list of People who have applied for a [Job Opening](/dokie/human-resources/recruitment/job-opening.md).
 
 To create a new Job Applicant go to
 

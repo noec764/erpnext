@@ -7,7 +7,7 @@ geographical area, to achieve specified objectives.
 
 <img class="screenshot" alt="Campaign" src="../assets/campaign.png">
 
-You can track [Lead](/dooks/crm/lead.md), [Opportunity](/dooks/crm/opportunity.md), [Quotation](/dooks/selling/quotation.md) against a campaign.
+You can track [Lead](/dokie/crm/lead.md), [Opportunity](/dokie/crm/opportunity.md), [Quotation](/dokie/selling/quotation.md) against a campaign.
 
 ###Track Leads against Campaign
 

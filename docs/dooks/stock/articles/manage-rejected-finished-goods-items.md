@@ -3,7 +3,7 @@
 
 There could be manufactured Items which would not pass quality test, hence rejected.
 
-Standard manufacturing process in Dooks doesn't cover managing rejected items. Hence you should create finished goods entry for both accepted as well as rejected items. With this, you will have rejected items also received in the finished goods warehouse.
+Standard manufacturing process in Dokie doesn't cover managing rejected items. Hence you should create finished goods entry for both accepted as well as rejected items. With this, you will have rejected items also received in the finished goods warehouse.
 
 To move rejected items from the finished goods warehouse, you should create Material Transfer entry. Steps below to create Material Transfer entry.
 

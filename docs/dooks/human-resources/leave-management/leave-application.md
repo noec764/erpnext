@@ -22,11 +22,11 @@ _Basic Workflow:_
 
 ### Setting Leave Approver
 
-* A leave approver is a user who can approve an leave application for an employee. Leave Approvers for each department can be configured in the [Department](/dooks/human-resources/setup/department.md) master.
+* A leave approver is a user who can approve an leave application for an employee. Leave Approvers for each department can be configured in the [Department](/dokie/human-resources/setup/department.md) master.
 
 > Tip : If you want all users to create their own Leave Applications, you can set
 their “Employee ID” as a match rule in the Leave Application Permission
-settings. See the earlier discussion on [Setting Up Permissions](/dooks/setting-up/users-and-permissions/user-permissions.md)
+settings. See the earlier discussion on [Setting Up Permissions](/dokie/setting-up/users-and-permissions/user-permissions.md)
 for more info.
 
 _Notes:_
@@ -35,7 +35,7 @@ _Notes:_
 * Application period must be in the latest Allocation period.
 * Employee can't apply for leave on the dates which are added in the "Leave Block List".
 
-To understand how Dooks allows you configure leaves for employees, check [Leaves - Setup](/dooks/human-resources/leave-management/)
+To understand how Dokie allows you configure leaves for employees, check [Leaves - Setup](/dokie/human-resources/leave-management/)
 
 <div class="embed-container">
     <iframe src="https://www.youtube.com/embed/fc0p_AXebc8?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
