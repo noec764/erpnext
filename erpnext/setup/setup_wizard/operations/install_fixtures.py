@@ -323,7 +323,7 @@ def add_market_segments():
 	make_records(records)
 
 def add_sale_stages():
-	# Sale Stages
+	# Sales Stages
 	records = [
 		{"doctype": "Sales Stage", "stage_name": _("Prospecting")},
 		{"doctype": "Sales Stage", "stage_name": _("Qualification")},

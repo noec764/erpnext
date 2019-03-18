@@ -116,7 +116,7 @@ class SalesInvoice(SellingController):
 			self.loyalty_redemption_cost_center = lp.cost_center if not self.loyalty_redemption_cost_center else self.loyalty_redemption_cost_center
 
 		self.set_against_income_account()
-		self.select_accounting_journal("Sale")
+		self.select_accounting_journal("Sales")
 		self.validate_c_form()
 		self.validate_time_sheets_are_submitted()
 		self.validate_multiple_billing("Delivery Note", "dn_detail", "amount", "items")

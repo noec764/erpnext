@@ -29,7 +29,7 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		this.frm.set_query("accounting_journal", function() {
 			return {
 				filters: {
-					type: "Sale"
+					type: "Purchase"
 				}
 			}
 		});

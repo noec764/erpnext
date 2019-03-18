@@ -29,7 +29,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		this.frm.set_query("accounting_journal", function() {
 			return {
 				filters: {
-					type: "Sale"
+					type: "Sales"
 				}
 			}
 		});

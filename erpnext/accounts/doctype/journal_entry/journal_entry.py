@@ -33,6 +33,7 @@ class JournalEntry(AccountsController):
 		self.validate_against_jv()
 		self.validate_reference_doc()
 		self.set_against_account()
+		self.select_accounting_journal("Miscellaneous")
 		self.create_remarks()
 		self.set_print_format_fields()
 		self.validate_expense_claim()
@@ -474,7 +475,8 @@ class JournalEntry(AccountsController):
 						"remarks": remarks,
 						"cost_center": d.cost_center,
 						"project": d.project,
-						"finance_book": self.finance_book
+						"finance_book": self.finance_book,
+						"accounting_journal": self.accounting_journal
 					})
 				)
 

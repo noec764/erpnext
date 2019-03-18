@@ -72,6 +72,7 @@ class StockEntry(StockController):
 		self.set_incoming_rate()
 		self.set_actual_qty()
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
+		self.select_accounting_journal("Miscellaneous")
 
 	def on_submit(self):
 
@@ -587,7 +588,8 @@ class StockEntry(StockController):
 					"against": d.expense_account,
 					"cost_center": d.cost_center,
 					"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
-					"credit": additional_cost
+					"credit": additional_cost,
+					"accounting_journal": self.accounting_journal
 				}))
 
 				gl_entries.append(self.get_gl_dict({
@@ -595,7 +597,8 @@ class StockEntry(StockController):
 					"against": expenses_included_in_valuation,
 					"cost_center": d.cost_center,
 					"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
-					"credit": -1 * additional_cost # put it as negative credit instead of debit purposefully
+					"credit": -1 * additional_cost, # put it as negative credit instead of debit purposefully
+					"accounting_journal": self.accounting_journal
 				}))
 
 		return gl_entries

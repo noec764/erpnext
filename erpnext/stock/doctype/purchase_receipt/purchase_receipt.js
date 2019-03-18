@@ -24,6 +24,14 @@ frappe.ui.form.on("Purchase Receipt", {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
 		});
+
+		frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: ["in", ["Purchase", "Miscellaneous"]]
+				}
+			}
+		});
 	},
 
 	onload_post_render: function(frm) {

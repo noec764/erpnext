@@ -8,6 +8,14 @@ frappe.ui.form.on('Payment Entry', {
 			if (!frm.doc.paid_from) frm.set_value("paid_from_account_currency", null);
 			if (!frm.doc.paid_to) frm.set_value("paid_to_account_currency", null);
 		}
+
+		frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: ["in", ["Bank", "Cash"]]
+				}
+			}
+		});
 	},
 
 	setup: function(frm) {

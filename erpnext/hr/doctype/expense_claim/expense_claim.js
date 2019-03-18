@@ -173,6 +173,7 @@ frappe.ui.form.on("Expense Claim", {
 				}
 			});
 		}
+
 	},
 
 	refresh: function(frm) {
@@ -195,6 +196,14 @@ frappe.ui.form.on("Expense Claim", {
 			frm.add_custom_button(__('Payment'),
 				function() { frm.events.make_payment_entry(frm); }, __('Create'));
 		}
+
+		frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: "Miscellaneous"
+				}
+			}
+		});
 	},
 
 	make_payment_entry: function(frm) {

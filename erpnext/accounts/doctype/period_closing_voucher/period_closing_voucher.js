@@ -32,6 +32,14 @@ frappe.ui.form.on('Period Closing Voucher', {
 				frappe.set_route("query-report", "General Ledger");
 			}, "fa fa-table");
 		}
+
+		frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: "Miscellaneous"
+				}
+			}
+		});
 	}
 	
 })

@@ -61,6 +61,7 @@ class PurchaseReceipt(BuyingController):
 		self.validate_with_previous_doc()
 		self.validate_uom_is_integer("uom", ["qty", "received_qty"])
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
+		self.select_accounting_journal("Purchase")
 
 		self.check_for_closed_status()
 
@@ -203,6 +204,7 @@ class PurchaseReceipt(BuyingController):
 						"account": stock_rbnb,
 						"against": warehouse_account[d.warehouse]["account"],
 						"cost_center": d.cost_center,
+						"accounting_journal": self.accounting_journal,
 						"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 						"credit": flt(d.base_net_amount, d.precision("base_net_amount")),
 						"credit_in_account_currency": flt(d.base_net_amount, d.precision("base_net_amount")) \
@@ -217,6 +219,7 @@ class PurchaseReceipt(BuyingController):
 							"account": expenses_included_in_valuation,
 							"against": warehouse_account[d.warehouse]["account"],
 							"cost_center": d.cost_center,
+							"accounting_journal": self.accounting_journal,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"credit": flt(d.landed_cost_voucher_amount),
 							"project": d.project
@@ -228,6 +231,7 @@ class PurchaseReceipt(BuyingController):
 							"account": warehouse_account[self.supplier_warehouse]["account"],
 							"against": warehouse_account[d.warehouse]["account"],
 							"cost_center": d.cost_center,
+							"accounting_journal": self.accounting_journal,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"credit": flt(d.rm_supp_cost)
 						}, warehouse_account[self.supplier_warehouse]["account_currency"]))
@@ -249,6 +253,7 @@ class PurchaseReceipt(BuyingController):
 							"account": loss_account,
 							"against": warehouse_account[d.warehouse]["account"],
 							"cost_center": d.cost_center,
+							"accounting_journal": self.accounting_journal,
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"debit": divisional_loss,
 							"project": d.project
@@ -298,6 +303,7 @@ class PurchaseReceipt(BuyingController):
 					self.get_gl_dict({
 						"account": expenses_included_in_valuation,
 						"cost_center": cost_center,
+						"accounting_journal": self.accounting_journal,
 						"credit": applicable_amount,
 						"remarks": self.remarks or _("Accounting Entry for Stock"),
 						"against": against_account
@@ -329,6 +335,7 @@ class PurchaseReceipt(BuyingController):
 					"account": cwip_account,
 					"against": arbnb_account,
 					"cost_center": d.cost_center,
+					"accounting_journal": self.accounting_journal,
 					"remarks": self.get("remarks") or _("Accounting Entry for Asset"),
 					"debit": base_asset_amount,
 					"debit_in_account_currency": (base_asset_amount
@@ -341,6 +348,7 @@ class PurchaseReceipt(BuyingController):
 					"account": arbnb_account,
 					"against": cwip_account,
 					"cost_center": d.cost_center,
+					"accounting_journal": self.accounting_journal,
 					"remarks": self.get("remarks") or _("Accounting Entry for Asset"),
 					"credit": base_asset_amount,
 					"credit_in_account_currency": (base_asset_amount

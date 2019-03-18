@@ -61,6 +61,7 @@ class PaymentEntry(AccountsController):
 		self.validate_duplicate_entry()
 		self.validate_allocated_amount()
 		self.ensure_supplier_is_not_blocked()
+		self.set_accounting_journal()
 
 	def on_submit(self):
 		self.setup_party_account_field()
@@ -432,7 +433,8 @@ class PaymentEntry(AccountsController):
 				"party": self.party,
 				"against": against_account,
 				"account_currency": self.party_account_currency,
-				"cost_center": self.cost_center
+				"cost_center": self.cost_center,
+				"accounting_journal": self.accounting_journal
 			})
 
 			dr_or_cr = "credit" if erpnext.get_party_account_type(self.party_type) == 'Receivable' else "debit"
@@ -476,7 +478,8 @@ class PaymentEntry(AccountsController):
 					"against": self.party if self.payment_type=="Pay" else self.paid_to,
 					"credit_in_account_currency": self.paid_amount,
 					"credit": self.base_paid_amount,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				})
 			)
 		if self.payment_type in ("Receive", "Internal Transfer"):
@@ -487,7 +490,8 @@ class PaymentEntry(AccountsController):
 					"against": self.party if self.payment_type=="Receive" else self.paid_from,
 					"debit_in_account_currency": self.received_amount,
 					"debit": self.base_received_amount,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.accounting_journal
 				})
 			)
 
@@ -505,7 +509,8 @@ class PaymentEntry(AccountsController):
 						"against": self.party or self.paid_from,
 						"debit_in_account_currency": d.amount,
 						"debit": d.amount,
-						"cost_center": d.cost_center
+						"cost_center": d.cost_center,
+						"accounting_journal": self.accounting_journal
 					})
 				)
 
@@ -533,6 +538,13 @@ class PaymentEntry(AccountsController):
 			"cost_center": frappe.get_cached_value('Company',  self.company,  "cost_center"),
 			"amount": self.total_allocated_amount * (tax_details['tax']['rate'] / 100)
 		}
+
+	def set_accounting_journal(self):
+		payment_type = "Bank"
+		if self.mode_of_payment:
+			payment_type = frappe.db.get_value("Mode of Payment", self.mode_of_payment, "type")
+
+		self.select_accounting_journal(payment_type)
 
 @frappe.whitelist()
 def get_outstanding_reference_documents(args):

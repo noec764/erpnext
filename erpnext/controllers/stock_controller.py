@@ -80,6 +80,7 @@ class StockController(AccountsController):
 							"cost_center": item_row.cost_center,
 							"remarks": self.get("remarks") or "Accounting Entry for Stock",
 							"debit": flt(sle.stock_value_difference, 2),
+							"accounting_journal": self.accounting_journal
 						}, warehouse_account[sle.warehouse]["account_currency"]))
 
 						# to target warehouse / expense account
@@ -89,6 +90,7 @@ class StockController(AccountsController):
 							"cost_center": item_row.cost_center,
 							"remarks": self.get("remarks") or "Accounting Entry for Stock",
 							"credit": flt(sle.stock_value_difference, 2),
+							"accounting_journal": self.accounting_journal,
 							"project": item_row.get("project") or self.get("project")
 						}))
 					elif sle.warehouse not in warehouse_with_no_account:
@@ -214,6 +216,7 @@ class StockController(AccountsController):
 						"against": stock_adjustment_account,
 						"debit": diff,
 						"remarks": "Adjustment Accounting Entry for Stock",
+						"accounting_journal": self.accounting_journal
 					}),
 
 					# account against stock in hand
@@ -223,6 +226,7 @@ class StockController(AccountsController):
 						"credit": diff,
 						"cost_center": cost_center or None,
 						"remarks": "Adjustment Accounting Entry for Stock",
+						"accounting_journal": self.accounting_journal
 					}),
 				])
 

@@ -75,6 +75,14 @@ frappe.ui.form.on("Delivery Note", {
 			}
 		});
 
+		frm.set_query("accounting_journal", function() {
+			return {
+				filters: {
+					type: ["in", ["Sales", "Miscellaneous"]]
+				}
+			}
+		});
+
 
 	},
 	print_without_amount: function(frm) {
