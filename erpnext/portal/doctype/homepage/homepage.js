@@ -17,7 +17,7 @@ frappe.ui.form.on('Homepage', {
 		frm.add_custom_button(__('Customize Homepage Sections'), () => {
 			frappe.set_route('List', 'Homepage Section', 'List');
 		});
-	},
+	}
 });
 
 frappe.ui.form.on('Homepage Featured Product', {
