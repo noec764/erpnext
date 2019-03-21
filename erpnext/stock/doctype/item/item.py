@@ -9,11 +9,11 @@ import erpnext
 import frappe
 import copy
 from erpnext.controllers.item_variant import (ItemVariantExistsError,
-		copy_attributes_to_variant, get_variant, make_variant_item_code, validate_item_variant_attributes)
+	copy_attributes_to_variant, get_variant, make_variant_item_code, validate_item_variant_attributes)
 from erpnext.setup.doctype.item_group.item_group import (get_parent_item_groups, invalidate_cache_for)
 from frappe import _, msgprint
 from frappe.utils import (cint, cstr, flt, formatdate, get_timestamp, getdate,
-						  now_datetime, random_string, strip)
+	now_datetime, random_string, strip)
 from frappe.utils.html_utils import clean_html
 from frappe.website.doctype.website_slideshow.website_slideshow import \
 	get_slideshow
@@ -40,7 +40,7 @@ class Item(WebsiteGenerator):
 	website = frappe._dict(
 		page_title_field="item_name",
 		condition_field="show_in_website",
-		template="templates/generators/item.html",
+		template="templates/generators//item/item.html",
 		no_cache=1
 	)
 
@@ -160,7 +160,7 @@ class Item(WebsiteGenerator):
 		'''Add a new price'''
 		if not price_list:
 			price_list = (frappe.db.get_single_value('Selling Settings', 'selling_price_list')
-						or frappe.db.get_value('Price List', _('Standard Selling')))
+				or frappe.db.get_value('Price List', _('Standard Selling')))
 		if price_list:
 			item_price = frappe.get_doc({
 				"doctype": "Item Price",
@@ -192,14 +192,14 @@ class Item(WebsiteGenerator):
 
 			if default_warehouse:
 				stock_entry = make_stock_entry(item_code=self.name, target=default_warehouse, qty=self.opening_stock,
-												rate=self.valuation_rate, company=default.company)
+					rate=self.valuation_rate, company=default.company)
 
 				stock_entry.add_comment("Comment", _("Opening Stock"))
 
 	def make_route(self):
 		if not self.route:
 			return cstr(frappe.db.get_value('Item Group', self.item_group,
-					'route')) + '/' + self.scrub((self.item_name if self.item_name else self.item_code) + '-' + random_string(5))
+				'route')) + '/' + self.scrub((self.item_name if self.item_name else self.item_code) + '-' + random_string(5))
 
 	def validate_website_image(self):
 		"""Validate if the website image is a public file"""
@@ -222,7 +222,7 @@ class Item(WebsiteGenerator):
 		if not file_doc:
 			if not auto_set_website_image:
 				frappe.msgprint(_("Website Image {0} attached to Item {1} cannot be found")
-									.format(self.website_image, self.name))
+					.format(self.website_image, self.name))
 
 			self.website_image = None
 
@@ -313,6 +313,8 @@ class Item(WebsiteGenerator):
 		self.set_variant_context(context)
 		self.set_attribute_context(context)
 		self.set_disabled_attributes(context)
+		self.set_metatags(context)
+		self.set_shopping_cart_data(context)
 
 		return context
 
@@ -358,8 +360,12 @@ class Item(WebsiteGenerator):
 			# load attributes
 			for v in context.variants:
 				v.attributes = frappe.get_all("Item Variant Attribute",
-					  fields=["attribute", "attribute_value"],
-					  filters={"parent": v.name})
+					fields=["attribute", "attribute_value"],
+					filters={"parent": v.name})
+				# make a map for easier access in templates
+				v.attribute_map = frappe._dict({})
+				for attr in v.attributes:
+					v.attribute_map[attr.attribute] = attr.attribute_value
 
 				for attr in v.attributes:
 					values = attribute_values_available.setdefault(attr.attribute, [])
@@ -430,6 +436,31 @@ class Item(WebsiteGenerator):
 			for combination in itertools.product(*combination_source):
 				if not find_variant(combination):
 					context.disabled_attributes.setdefault(attr.attribute, []).append(combination[-1])
+
+	def set_metatags(self, context):
+		context.metatags = frappe._dict({})
+
+		safe_description = frappe.utils.to_markdown(self.description)
+
+		context.metatags.url = frappe.utils.get_url() + '/' + context.route
+
+		if context.website_image:
+			if context.website_image.startswith('http'):
+				url = context.website_image
+			else:
+				url = frappe.utils.get_url() + context.website_image
+			context.metatags.image = url
+
+		context.metatags.description = safe_description[:300]
+
+		context.metatags.title = self.item_name or self.item_code
+
+		context.metatags['og:type'] = 'product'
+		context.metatags['og:site_name'] = 'ERPNext'
+
+	def set_shopping_cart_data(self, context):
+		from erpnext.shopping_cart.product_info import get_product_info_for_website
+		context.shopping_cart = get_product_info_for_website(self.name)
 
 	def add_default_uom_in_conversion_factor_table(self):
 		uom_conv_list = [d.uom for d in self.get("uoms")]
@@ -787,6 +818,9 @@ class Item(WebsiteGenerator):
 
 			validate_item_variant_attributes(self, args)
 
+			# copy variant_of value for each attribute row
+			for d in self.attributes:
+				d.variant_of = self.variant_of
 
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''
@@ -915,6 +949,20 @@ def invalidate_cache_for_item(doc):
 	if doc.get("old_item_group") and doc.get("old_item_group") != doc.item_group:
 		invalidate_cache_for(doc, doc.old_item_group)
 
+	invalidate_item_variants_cache_for_website(doc)
+
+def invalidate_item_variants_cache_for_website(doc):
+	from erpnext.portal.product_configurator.item_variants_cache import ItemVariantsCacheManager
+
+	item_code = None
+	if doc.has_variants and doc.show_in_website:
+		item_code = doc.name
+	elif doc.variant_of and frappe.db.get_value('Item', doc.variant_of, 'show_in_website'):
+		item_code = doc.variant_of
+
+	if item_code:
+		item_cache = ItemVariantsCacheManager(item_code)
+		item_cache.clear_cache()
 
 def check_stock_uom_with_bin(item, stock_uom):
 	if stock_uom == frappe.db.get_value("Item", item, "stock_uom"):
