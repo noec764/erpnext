@@ -5,6 +5,7 @@ erpnext.patches.v11_0.make_job_card_time_logs
 # ERPNext v12
 erpnext.patches.v12_0.move_item_tax_to_item_tax_template
 erpnext.patches.v12_0.set_task_status
+erpnext.patches.v12_0.set_default_homepage_type
 
 # Dokie v1
 erpnext.patches.v1_0.remove_hospitality_domain

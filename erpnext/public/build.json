@@ -7,7 +7,7 @@
 		"public/js/shopping_cart.js"
 	],
 	"css/erpnext-web.css": [
-		"public/less/website.less"
+		"public/scss/website.scss"
 	],
 	"js/erpnext.min.js": [
 		"public/js/conf.js",
