@@ -168,13 +168,13 @@ def create_lead_for_item_inquiry(lead, subject, message):
 	lead_doc.update(lead)
 	lead_doc.set('lead_owner', '')
 
- 	try:
+	try:
 		lead_doc.save(ignore_permissions=True)
 	except frappe.exceptions.DuplicateEntryError:
 		frappe.clear_messages()
 		lead_doc = frappe.get_doc('Lead', {'email_id': lead['email_id']})
 
- 	lead_doc.add_comment('Comment', text='''
+	lead_doc.add_comment('Comment', text='''
 		<div>
 			<h5>{subject}</h5>
 			<p>{message}</p>
