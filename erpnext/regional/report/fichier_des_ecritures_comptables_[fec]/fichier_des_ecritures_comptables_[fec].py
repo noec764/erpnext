@@ -80,15 +80,19 @@ def get_gl_entries(filters):
 			jnl.cheque_no as JnlRef, jnl.posting_date as JnlPostDate, jnl.title as JnlTitle,
 			pay.name as PayName, pay.posting_date as PayPostDate, pay.title as PayTitle,
 			cus.customer_name, cus.name as cusName,
-			sup.supplier_name, sup.name as supName
+			sup.supplier_name, sup.name as supName,
+			emp.employee_name, emp.name as empName,
+			shr.title as shareholder_name, shr.name as shrName
  
 		from `tabGL Entry` gl
 			left join `tabSales Invoice` inv on gl.voucher_no = inv.name
 			left join `tabPurchase Invoice` pur on gl.voucher_no = pur.name
 			left join `tabJournal Entry` jnl on gl.voucher_no = jnl.name
 			left join `tabPayment Entry` pay on gl.voucher_no = pay.name
-			left join `tabCustomer` cus on gl.party = cus.customer_name
-			left join `tabSupplier` sup on gl.party = sup.supplier_name
+			left join `tabCustomer` cus on gl.party = cus.name
+			left join `tabSupplier` sup on gl.party = sup.name
+			left join `tabEmployee` emp on gl.party = emp.name
+			left join `tabShareholder` shr on gl.party = shr.name
 		where gl.company=%(company)s and gl.fiscal_year=%(fiscal_year)s
 		{group_by_condition}
 		order by GlPostDate, voucher_no"""\
@@ -116,9 +120,9 @@ def get_result_as_list(data, filters):
 
 		account_number = [account.account_number for account in accounts if account.name == d.get("account")]
 		if account_number[0] is not None:
-			CompteNum =  account_number[0]
+			CompteNum = account_number[0]
 		else:
-			frappe.throw(_("Account number for account {0} is not available.<br> Please setup your Chart of Accounts correctly.").format(account.name))
+			frappe.throw(_("Account number are not available for all accounts.<br> Please setup your Chart of Accounts correctly."))
 
 		if d.get("party_type") == "Customer":
 			CompAuxNum = d.get("cusName")
@@ -127,6 +131,14 @@ def get_result_as_list(data, filters):
 		elif d.get("party_type") == "Supplier":
 			CompAuxNum = d.get("supName")
 			CompAuxLib = d.get("supplier_name")
+
+		elif d.get("party_type") == "Employee":
+			CompAuxNum = d.get("empName")
+			CompAuxLib = d.get("employee_name")
+
+		elif d.get("party_type") == "Shareholder":
+			CompAuxNum = d.get("shrName")
+			CompAuxLib = d.get("shareholder_name")
 
 		else:
 			CompAuxNum = ""
