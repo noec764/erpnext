@@ -253,7 +253,7 @@ def get_basic_details(args, item):
 		"warehouse": warehouse,
 		"income_account": get_default_income_account(args, item_defaults, item_group_defaults, brand_defaults),
 		"expense_account": get_default_expense_account(args, item_defaults, item_group_defaults, brand_defaults),
-		"cost_center": get_default_cost_center(args, item_defaults, item_group_defaults),
+		"cost_center": get_default_cost_center(args, item_defaults, item_group_defaults, brand_defaults),
 		'has_serial_no': item.has_serial_no,
 		'has_batch_no': item.has_batch_no,
 		"batch_no": None,
