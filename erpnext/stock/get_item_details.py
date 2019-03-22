@@ -427,7 +427,7 @@ def get_default_cost_center(args, item, item_group, brand):
 
 def get_default_supplier(args, item, item_group, brand):
 	return (item.get("default_supplier")
-		or item_group.get("default_supplier"))
+		or item_group.get("default_supplier")
 		or brand.get("default_supplier"))
 
 def get_price_list_rate(args, item_doc, out):
