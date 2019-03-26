@@ -20,7 +20,18 @@ frappe.ui.form.on('Subscription', {
 					() => frm.events.renew_this_subscription(frm)
 				);
 			}
+
+			frm.set_df_property("start", "read_only", 1);
+			frm.set_df_property("trial_period_start", "read_only", 1);
+			frm.set_df_property("trial_period_end", "read_only", 1);
 		}
+
+		frappe.xcall("erpnext.accounts.doctype.subscription.subscription.subscription_headline", {
+			'name': frm.doc.name
+		})
+		.then(r => {
+			frm.dashboard.set_headline_alert(r);
+		})
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -74,5 +85,11 @@ frappe.ui.form.on('Subscription', {
 				}
 			}
 		});
+	},
+
+	change_start_trial: function(frm) {
+		frm.set_df_property("start", "read_only", 0);
+		frm.set_df_property("trial_period_start", "read_only", 0);
+		frm.set_df_property("trial_period_end", "read_only", 0);
 	}
 });
