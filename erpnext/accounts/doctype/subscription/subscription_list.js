@@ -1,7 +1,7 @@
 frappe.listview_settings['Subscription'] = {
 	get_indicator: function(doc) {
-		if(doc.status === 'Trialling') {
-			return [__("Trialling"), "green"];
+		if(doc.status === 'Trial') {
+			return [__("Trial"), "green"];
 		} else if(doc.status === 'Active') {
 			return [__("Active"), "green"];
 		} else if(doc.status === 'Past Due Date') {
