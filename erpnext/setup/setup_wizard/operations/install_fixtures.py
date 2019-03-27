@@ -26,6 +26,12 @@ def install(country=None):
 		# { 'doctype': 'Domain', 'domain': 'Retail'},
 		{ 'doctype': 'Domain', 'domain': 'Services'},
 
+		{'doctype': 'Company Type', 'company_type': 'SAS/SASU', 'country': _("France")},
+		{'doctype': 'Company Type', 'company_type': 'EURL/SARL', 'country': _("France")},
+		{'doctype': 'Company Type', 'company_type': 'SA', 'country': _("France")},
+		{'doctype': 'Company Type', 'company_type': 'SNC', 'country': _("France")},
+		{'doctype': 'Company Type', 'company_type': 'Libéral/Micro-entreprise', 'country': _("France")},
+
 		# address template
 		{'doctype':"Address Template", "country": country},
 
