@@ -22,6 +22,12 @@ frappe.ui.form.on("Company", {
 				filters: {"is_group": 1}
 			}
 		});
+
+		frm.set_query("company_type", function(){
+			return {
+				filters: {"country": frm.doc.country}
+			}
+		});
 	},
 
 	company_name: function(frm) {

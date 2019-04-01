@@ -346,7 +346,10 @@ def set_gl_entries_by_account(
 	additional_conditions += " and account in ({})"\
 		.format(", ".join([frappe.db.escape(d) for d in accounts]))
 
-	gl_entries = frappe.db.sql("""select posting_date, account, debit, credit, is_opening, fiscal_year, debit_in_account_currency, credit_in_account_currency, account_currency from `tabGL Entry`
+	gl_entries = frappe.db.sql("""select posting_date, account, debit, credit, is_opening, \
+		fiscal_year, debit_in_account_currency, credit_in_account_currency, account_currency, \
+		voucher_type, voucher_no
+		from `tabGL Entry`
 		where company=%(company)s
 		{additional_conditions}
 		and posting_date <= %(to_date)s
