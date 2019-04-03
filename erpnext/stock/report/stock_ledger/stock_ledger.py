@@ -77,7 +77,7 @@ def get_stock_ledger_entries(filters, items):
 			posting_date between %(from_date)s and %(to_date)s
 			{sle_conditions}
 			{item_conditions_sql}
-			order by posting_date asc, posting_time asc, name asc"""\
+			order by posting_date asc, posting_time asc, creation asc"""\
 		.format(
 			sle_conditions=get_sle_conditions(filters),
 			item_conditions_sql = item_conditions_sql
@@ -113,7 +113,6 @@ def get_item_details(items, sl_entries, include_uom):
 		cf_join = "left join `tabUOM Conversion Detail` ucd on ucd.parent=item.name and ucd.uom='%s'" \
 			% frappe.db.escape(include_uom)
 
-	item_codes = ', '.join([frappe.db.escape(i, percent=False) for i in items])
 	res = frappe.db.sql("""
 		select
 			item.name, item.item_name, item.description, item.item_group, item.brand, item.stock_uom {cf_field}
@@ -122,7 +121,7 @@ def get_item_details(items, sl_entries, include_uom):
 			{cf_join}
 		where
 			item.name in ({item_codes})
-	""".format(cf_field=cf_field, cf_join=cf_join, item_codes=item_codes), as_dict=1)
+	""".format(cf_field=cf_field, cf_join=cf_join, item_codes=','.join(['%s'] *len(items))), items, as_dict=1)
 
 	for item in res:
 		item_details.setdefault(item.name, item)

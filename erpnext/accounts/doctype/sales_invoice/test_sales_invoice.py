@@ -14,8 +14,9 @@ from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import set_per
 from erpnext.exceptions import InvalidAccountCurrency, InvalidCurrency
 from erpnext.stock.doctype.serial_no.serial_no import SerialNoWarehouseError
 from frappe.model.naming import make_autoname
-from erpnext.accounts.doctype.account.test_account import get_inventory_account
+from erpnext.accounts.doctype.account.test_account import get_inventory_account, create_account
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
+from erpnext.stock.doctype.item.test_item import create_item
 from six import iteritems
 class TestSalesInvoice(unittest.TestCase):
 	def make(self):
@@ -543,6 +544,7 @@ class TestSalesInvoice(unittest.TestCase):
 		si.get("taxes")[6].tax_amount = 2
 
 		si.insert()
+		print(si.name)
 
 		expected_values = [
 			{
@@ -708,6 +710,72 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertEqual(si.grand_total, 630.0)
 		self.assertEqual(si.write_off_amount, -5)
 
+	def test_make_pos_invoice(self):
+		from erpnext.accounts.doctype.sales_invoice.pos import make_invoice
+
+		set_perpetual_inventory()
+
+		make_pos_profile()
+		self._insert_purchase_receipt()
+
+		pos = copy.deepcopy(test_records[1])
+		pos["is_pos"] = 1
+		pos["update_stock"] = 1
+		pos["payments"] = [{'mode_of_payment': 'Bank Draft', 'account': '_Test Bank - _TC', 'amount': 300},
+							{'mode_of_payment': 'Cash', 'account': 'Cash - _TC', 'amount': 330}]
+
+		invoice_data = [{'09052016142': pos}]
+		si = make_invoice(invoice_data).get('invoice')
+		self.assertEqual(si[0], '09052016142')
+
+		sales_invoice = frappe.get_all('Sales Invoice', fields =["*"], filters = {'offline_pos_name': '09052016142', 'docstatus': 1})
+		si = frappe.get_doc('Sales Invoice', sales_invoice[0].name)
+		self.assertEqual(si.grand_total, 630.0)
+
+		self.pos_gl_entry(si, pos, 330)
+
+	def test_make_pos_invoice_in_draft(self):
+		from erpnext.accounts.doctype.sales_invoice.pos import make_invoice
+		from erpnext.stock.doctype.item.test_item import make_item
+
+		set_perpetual_inventory()
+
+		allow_negative_stock = frappe.db.get_single_value('Stock Settings', 'allow_negative_stock')
+		if allow_negative_stock:
+			frappe.db.set_value('Stock Settings', None, 'allow_negative_stock', 0)
+
+		make_pos_profile()
+		timestamp = cint(time.time())
+
+		item = make_item("_Test POS Item")
+		pos = copy.deepcopy(test_records[1])
+		pos['items'][0]['item_code'] = item.name
+		pos['items'][0]['warehouse'] = "_Test Warehouse - _TC"
+		pos["is_pos"] = 1
+		pos["offline_pos_name"] = timestamp
+		pos["update_stock"] = 1
+		pos["payments"] = [{'mode_of_payment': 'Bank Draft', 'account': '_Test Bank - _TC', 'amount': 300},
+							{'mode_of_payment': 'Cash', 'account': 'Cash - _TC', 'amount': 330}]
+
+		invoice_data = [{timestamp: pos}]
+		si = make_invoice(invoice_data).get('invoice')
+		self.assertEqual(si[0], timestamp)
+
+		sales_invoice = frappe.get_all('Sales Invoice', fields =["*"], filters = {'offline_pos_name': timestamp})
+		self.assertEqual(sales_invoice[0].docstatus, 0)
+
+		timestamp = cint(time.time())
+		pos["offline_pos_name"] = timestamp
+		invoice_data = [{timestamp: pos}]
+		si1 = make_invoice(invoice_data).get('invoice')
+		self.assertEqual(si1[0], timestamp)
+
+		sales_invoice1 = frappe.get_all('Sales Invoice', fields =["*"], filters = {'offline_pos_name': timestamp})
+		self.assertEqual(sales_invoice1[0].docstatus, 0)
+
+		if allow_negative_stock:
+			frappe.db.set_value('Stock Settings', None, 'allow_negative_stock', 1)
+
 	def pos_gl_entry(self, si, pos, cash_amount):
 		# check stock ledger entries
 		sle = frappe.db.sql("""select * from `tabStock Ledger Entry`
@@ -720,7 +788,7 @@ class TestSalesInvoice(unittest.TestCase):
 		# check gl entries
 		gl_entries = frappe.db.sql("""select account, debit, credit
 			from `tabGL Entry` where voucher_type='Sales Invoice' and voucher_no=%s
-			order by account asc, debit asc""", si.name, as_dict=1)
+			order by account asc, debit asc, credit asc""", si.name, as_dict=1)
 		self.assertTrue(gl_entries)
 
 		stock_in_hand = get_inventory_account('_Test Company')
@@ -753,7 +821,7 @@ class TestSalesInvoice(unittest.TestCase):
 		set_perpetual_inventory(0)
 
 		frappe.db.sql("delete from `tabPOS Profile`")
-	
+
 	def test_pos_si_without_payment(self):
 		set_perpetual_inventory()
 		make_pos_profile()
@@ -1505,6 +1573,56 @@ class TestSalesInvoice(unittest.TestCase):
 		accounts_settings.allow_cost_center_in_entry_of_bs_account = 0
 		accounts_settings.save()
 
+	def test_deferred_revenue(self):
+		deferred_account = create_account(account_name="Deferred Revenue",
+			parent_account="Current Liabilities - _TC", company="_Test Company")
+
+		item = create_item("_Test Item for Deferred Accounting")
+		item.enable_deferred_revenue = 1
+		item.deferred_revenue_account = deferred_account
+		item.no_of_months = 12
+		item.save()
+
+		si = create_sales_invoice(item=item.name, posting_date="2019-01-10", do_not_submit=True)
+		si.items[0].enable_deferred_revenue = 1
+		si.items[0].service_start_date = "2019-01-10"
+		si.items[0].service_end_date = "2019-03-15"
+		si.items[0].deferred_revenue_account = deferred_account
+		si.save()
+		si.submit()
+
+		from erpnext.accounts.deferred_revenue import convert_deferred_revenue_to_income
+		convert_deferred_revenue_to_income(start_date="2019-01-01", end_date="2019-01-31")
+
+		expected_gle = [
+			[deferred_account, 33.85, 0.0, "2019-01-31"],
+			["Sales - _TC", 0.0, 33.85, "2019-01-31"]
+		]
+
+		self.check_gl_entries(si.name, expected_gle, "2019-01-10")
+
+		convert_deferred_revenue_to_income(start_date="2019-01-01", end_date="2019-03-31")
+
+		expected_gle = [
+			[deferred_account, 43.08, 0.0, "2019-02-28"],
+			["Sales - _TC", 0.0, 43.08, "2019-02-28"],
+			[deferred_account, 23.07, 0.0, "2019-03-15"],
+			["Sales - _TC", 0.0, 23.07, "2019-03-15"]
+		]
+
+		self.check_gl_entries(si.name, expected_gle, "2019-01-31")
+
+	def check_gl_entries(self, voucher_no, expected_gle, posting_date):
+		gl_entries = frappe.db.sql("""select account, debit, credit, posting_date
+			from `tabGL Entry`
+			where voucher_type='Sales Invoice' and voucher_no=%s and posting_date > %s
+			order by posting_date asc, account asc""", (voucher_no, posting_date), as_dict=1)
+
+		for i, gle in enumerate(gl_entries):
+			self.assertEqual(expected_gle[i][0], gle.account)
+			self.assertEqual(expected_gle[i][1], gle.debit)
+			self.assertEqual(expected_gle[i][2], gle.credit)
+			self.assertEqual(getdate(expected_gle[i][3]), gle.posting_date)
 
 def create_sales_invoice(**args):
 	si = frappe.new_doc("Sales Invoice")
