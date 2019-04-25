@@ -11,9 +11,9 @@ erpnext.patches.v12_0.move_target_distribution_from_parent_to_child
 
 # Dokie v1
 erpnext.patches.v1_0.remove_hospitality_domain
-erpnext.patches.v1_0.remove_non_profit_domain
 erpnext.patches.v1_0.remove_healthcare_domain
 erpnext.patches.v1_0.remove_education_domain
+erpnext.patches.v1_0.remove_non_profit_domain
 erpnext.patches.v1_0.remove_hub
 erpnext.patches.v1_0.remove_agriculture_domain #17-02-2019
 execute:frappe.delete_doc("Page", "pos")

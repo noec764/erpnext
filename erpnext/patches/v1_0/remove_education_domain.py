@@ -47,8 +47,8 @@ def execute():
 			"Student and Guardian Contact Details", "Student Batch-Wise Attendance", "Student Fee Collection", "Student Monthly Attendance Sheet"]},
 		{"document": "Web Form", "items": ["student-applicant"]},
 		{"document": "Role", "items": roles},
-		{"document": "Domain", "items": ["Education"]},
-		{"document": "Module Def", "items": ["Education"]}
+		{"document": "Module Def", "items": ["Education"]},
+		{"document": "Domain", "items": ["Education"]}
 	]
 
 	for element in elements:

@@ -21,7 +21,7 @@ def execute():
 			'Detected Disease', 'Agriculture Analysis Criteria', 'Disease', 'Crop', \
 			'Weather Parameter', 'Soil Texture Criteria', 'Fertilizer', 'Linked Soil Texture', \
 			'Water Analysis Criteria', 'Soil Analysis Criteria', 'Plant Analysis Criteria', \
-			'Linked Soil Analysis', 'Linked Plant Analysis', 'Fertilizer Content']},
+			'Linked Soil Analysis', 'Linked Plant Analysis', 'Fertilizer Content', 'Land Unit']},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Agriculture"]},
 		{"document": "Module Def", "items": ["Agriculture"]},
@@ -31,7 +31,6 @@ def execute():
 	for element in elements:
 		for item in element["items"]:
 			try:
-				print(item)
 				frappe.delete_doc(element["document"], item)
 			except Exception as e:
 				print(e)

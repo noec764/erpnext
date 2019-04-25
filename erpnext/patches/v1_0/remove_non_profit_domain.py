@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import frappe
 
 def execute():
+	frappe.reload_doc('website', 'doctype', 'portal_settings')
 	# Delete assigned roles
 	roles = ["Non Profit Manager", "Non Profit Member", "Non Profit Portal User"]
 

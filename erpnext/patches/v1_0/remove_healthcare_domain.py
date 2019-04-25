@@ -34,7 +34,7 @@ def execute():
 			"Lab Prescription", "Lab Test", "Lab Test Groups", "Lab Test Sample", "Lab Test Template", "Lab Test UOM", "Medical Code", "Medical Code Standard", \
 			"Medical Department", "Normal Test Items", "Normal Test Template", "Patient", "Patient Appointment", "Patient Encounter", "Patient Medical Record", \
 			"Patient Relation", "Practitioner Schedule", "Practitioner Service Unit Schedule", "Prescription Dosage", "Prescription Duration", "Procedure Prescription", \
-			"Sample Collection", "Sensitivity", "Sensitivity Test Items", "Special Test Items", "Special Test Template", "Vital Signs"]},
+			"Sample Collection", "Sensitivity", "Sensitivity Test Items", "Special Test Items", "Special Test Template", "Vital Signs", "Physician", "Physician Schedule"]},
 		{"document": "Report", "items": ["Lab Test Report"]},
 		{"document": "Page", "items": ["appointment-analytic", "medical_record"]},
 		{"document": "Web Form", "items": ["lab-test", "patient-appointments", "personal-details", "prescription"]},
