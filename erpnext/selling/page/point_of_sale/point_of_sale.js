@@ -54,13 +54,37 @@ erpnext.pos.PointOfSale = class PointOfSale {
 				this.prepare_menu();
 				this.set_online_status();
 			},
-			() => this.setup_company(),
 			() => this.make_new_invoice(),
+			() => {
+				if(!this.frm.doc.company) {
+					this.setup_company()
+						.then((company) => {
+							this.frm.doc.company = company;
+							this.get_pos_profile();
+						});
+				}
+			},
 			() => {
 				frappe.dom.unfreeze();
 			},
 			() => this.page.set_title(__('Point of Sale'))
 		]);
+	}
+
+	get_pos_profile() {
+		return frappe.xcall("erpnext.stock.get_item_details.get_pos_profile",
+			{'company': this.frm.doc.company})
+			.then((r) => {
+				if(r) {
+					this.frm.doc.pos_profile = r.name;
+					this.set_pos_profile_data()
+						.then(() => {
+							this.on_change_pos_profile();
+						});
+				} else {
+					this.raise_exception_for_pos_profile();
+				}
+		});
 	}
 
 	set_online_status() {
@@ -75,6 +99,11 @@ erpnext.pos.PointOfSale = class PointOfSale {
 				}
 			}
 		});
+	}
+
+	raise_exception_for_pos_profile() {
+		setTimeout(() => frappe.set_route('List', 'POS Profile'), 2000);
+		frappe.throw(__("POS Profile is required to use Point-of-Sale"));
 	}
 
 	prepare_dom() {
@@ -488,16 +517,15 @@ erpnext.pos.PointOfSale = class PointOfSale {
 	}
 
 	setup_company() {
-		this.company = frappe.sys_defaults.company;
 		return new Promise(resolve => {
-			if(!this.company) {
+			if(!this.frm.doc.company) {
 				frappe.prompt({fieldname:"company", options: "Company", fieldtype:"Link",
 					label: __("Select Company"), reqd: 1}, (data) => {
 						this.company = data.company;
 						resolve(this.company);
 				}, __("Select Company"));
 			} else {
-				resolve(this.company);
+				resolve();
 			}
 		})
 	}
@@ -530,6 +558,10 @@ erpnext.pos.PointOfSale = class PointOfSale {
 		return new Promise(resolve => {
 			if (this.frm) {
 				this.frm = get_frm(this.frm);
+				if(this.company) {
+					this.frm.doc.company = this.company;
+				}
+
 				resolve();
 			} else {
 				frappe.model.with_doctype(doctype, () => {
@@ -546,12 +578,19 @@ erpnext.pos.PointOfSale = class PointOfSale {
 			frm.refresh(name);
 			frm.doc.items = [];
 			frm.doc.is_pos = 1;
+
 			return frm;
 		}
 	}
 
 	set_pos_profile_data() {
-		this.frm.doc.company = this.company;
+		if (this.company) {
+			this.frm.doc.company = this.company;
+		}
+
+		if (!this.frm.doc.company) {
+			return;
+		}
 
 		return new Promise(resolve => {
 			return this.frm.call({
@@ -561,8 +600,7 @@ erpnext.pos.PointOfSale = class PointOfSale {
 				if(!r.exc) {
 					if (!this.frm.doc.pos_profile) {
 						frappe.dom.unfreeze();
-						setTimeout(() => frappe.set_route('List', 'POS Profile'), 2000);
-						frappe.throw(__("POS Profile is required to use Point-of-Sale"));
+						this.raise_exception_for_pos_profile();
 					}
 					this.frm.script_manager.trigger("update_stock");
 					frappe.model.set_default_values(this.frm.doc);
@@ -1247,7 +1285,10 @@ class POSItems {
 			clearTimeout(this.last_search);
 			this.last_search = setTimeout(() => {
 				const search_term = e.target.value;
-				this.filter_items({ search_term });
+				const item_group = this.item_group_field ?
+					this.item_group_field.get_value() : '';
+
+				this.filter_items({ search_term:search_term,  item_group: item_group});
 			}, 300);
 		});
 

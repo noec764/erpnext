@@ -28,7 +28,6 @@ class ExpenseClaim(AccountsController):
 		set_employee_name(self)
 		self.set_expense_account(validate=True)
 		self.set_payable_account()
-		self.select_accounting_journal("Miscellaneous")
 		self.set_cost_center()
 		self.set_status()
 		if self.task and not self.project:
@@ -116,8 +115,7 @@ class ExpenseClaim(AccountsController):
 					"party_type": "Employee",
 					"party": self.employee,
 					"against_voucher_type": self.doctype,
-					"against_voucher": self.name,
-					"accounting_journal": self.accounting_journal
+					"against_voucher": self.name
 				})
 			)
 
@@ -129,8 +127,7 @@ class ExpenseClaim(AccountsController):
 					"debit": data.sanctioned_amount,
 					"debit_in_account_currency": data.sanctioned_amount,
 					"against": self.employee,
-					"cost_center": self.cost_center,
-					"accounting_journal": self.accounting_journal
+					"cost_center": self.cost_center
 				})
 			)
 
@@ -144,8 +141,7 @@ class ExpenseClaim(AccountsController):
 					"party_type": "Employee",
 					"party": self.employee,
 					"against_voucher_type": self.doctype,
-					"against_voucher": self.name,
-					"accounting_journal": self.accounting_journal
+					"against_voucher": self.name
 				})
 			)
 
@@ -157,8 +153,7 @@ class ExpenseClaim(AccountsController):
 					"account": payment_account,
 					"credit": payable_amount,
 					"credit_in_account_currency": payable_amount,
-					"against": self.employee,
-					"accounting_journal": self.accounting_journal
+					"against": self.employee
 				})
 			)
 
@@ -172,7 +167,6 @@ class ExpenseClaim(AccountsController):
 					"debit_in_account_currency": payable_amount,
 					"against_voucher": self.name,
 					"against_voucher_type": self.doctype,
-					"accounting_journal": self.accounting_journal
 				})
 			)
 

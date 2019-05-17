@@ -12,33 +12,33 @@ from frappe.utils import add_days, nowdate, now_datetime, getdate
 test_dependencies = ["Leave Allocation", "Leave Block List"]
 
 _test_records = [
-	{
-		"company": "_Test Company",
-		"doctype": "Leave Application",
-		"employee": "_T-Employee-00001",
-		"from_date": "2013-05-01",
-		"leave_type": "_Test Leave Type",
-		"posting_date": "2013-01-02",
-		"to_date": "2013-05-05"
-	},
-	{
-		"company": "_Test Company",
-		"doctype": "Leave Application",
-		"employee": "_T-Employee-00002",
-		"from_date": "2013-05-01",
-		"leave_type": "_Test Leave Type",
-		"posting_date": "2013-01-02",
-		"to_date": "2013-05-05"
-	},
-	{
-		"company": "_Test Company",
-		"doctype": "Leave Application",
-		"employee": "_T-Employee-00001",
-		"from_date": "2013-01-15",
-		"leave_type": "_Test Leave Type LWP",
-		"posting_date": "2013-01-02",
-		"to_date": "2013-01-15"
-	}
+ {
+  "company": "_Test Company",
+  "doctype": "Leave Application",
+  "employee": "_T-Employee-00001",
+  "from_date": "2013-05-01",
+  "leave_type": "_Test Leave Type",
+  "posting_date": "2013-01-02",
+  "to_date": "2013-05-05"
+ },
+ {
+  "company": "_Test Company",
+  "doctype": "Leave Application",
+  "employee": "_T-Employee-00002",
+  "from_date": "2013-05-01",
+  "leave_type": "_Test Leave Type",
+  "posting_date": "2013-01-02",
+  "to_date": "2013-05-05"
+ },
+ {
+  "company": "_Test Company",
+  "doctype": "Leave Application",
+  "employee": "_T-Employee-00001",
+  "from_date": "2013-01-15",
+  "leave_type": "_Test Leave Type LWP",
+  "posting_date": "2013-01-02",
+  "to_date": "2013-01-15"
+ }
 ]
 
 
@@ -308,7 +308,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 2),
 			company = "_Test Company",
 			docstatus = 1,
-			status = "Approved"
+            status = "Approved"
 		))
 
 		self.assertTrue(leave_application.insert())
@@ -321,7 +321,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 7),
 			company = "_Test Company",
 			docstatus = 1,
-			status = "Approved"
+            status = "Approved"
 		))
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
 
@@ -346,7 +346,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-			status = "Approved"
+            status = "Approved"
 		))
 
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
@@ -367,7 +367,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-			status = "Approved"
+            status = "Approved"
 		))
 
 		self.assertTrue(leave_application.insert())
@@ -396,7 +396,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-			status = "Approved"
+            status = "Approved"
 		))
 
 		self.assertRaises(frappe.ValidationError, leave_application.insert)

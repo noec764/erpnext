@@ -29,8 +29,8 @@ erpnext.hr.EmployeeController = frappe.ui.form.Controller.extend({
 	salutation: function() {
 		if(this.frm.doc.salutation) {
 			this.frm.set_value("gender", {
-				"Mr": _("Male"),
-				"Ms": _("Female")
+				"Mr": "Male",
+				"Ms": "Female"
 			}[this.frm.doc.salutation]);
 		}
 	},

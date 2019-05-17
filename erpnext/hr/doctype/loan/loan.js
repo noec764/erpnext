@@ -53,7 +53,7 @@ frappe.ui.form.on('Loan', {
 			});
 			frm.set_value("total_amount_paid", total_amount_paid);
 ;		}
-		if (frm.doc.docstatus == 1 && frm.doc.repayment_start_date && frm.doc.repay_from_salary == 0) {
+		if (frm.doc.docstatus == 1 && frm.doc.repayment_start_date && (frm.doc.applicant_type == 'Member' || frm.doc.repay_from_salary == 0)) {
 			frm.add_custom_button(__('Create Repayment Entry'), function() {
 				frm.trigger("make_repayment_entry");
 			})
@@ -172,18 +172,20 @@ frappe.ui.form.on('Loan', {
 	},
 
 	mode_of_payment: function (frm) {
-		frappe.call({
-			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.get_bank_cash_account",
-			args: {
-				"mode_of_payment": frm.doc.mode_of_payment,
-				"company": frm.doc.company
-			},
-			callback: function (r, rt) {
-				if (r.message) {
-					frm.set_value("payment_account", r.message.account);
+		if (frm.doc.mode_of_payment && frm.doc.company) {
+			frappe.call({
+				method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.get_bank_cash_account",
+				args: {
+					"mode_of_payment": frm.doc.mode_of_payment,
+					"company": frm.doc.company
+				},
+				callback: function (r, rt) {
+					if (r.message) {
+						frm.set_value("payment_account", r.message.account);
+					}
 				}
-			}
-		});
+			});
+		}
 	},
 
 	loan_application: function (frm) {

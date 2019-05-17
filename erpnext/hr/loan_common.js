@@ -3,8 +3,10 @@
 
 frappe.ui.form.on(cur_frm.doctype, {
 	refresh: function(frm) {
-		frm.set_df_property('applicant_type', 'options', ['Employee']);
-		frm.refresh_field('applicant_type');
+		if (!frappe.boot.active_domains.includes("Non Profit")) {
+			frm.set_df_property('applicant_type', 'options', ['Employee']);
+			frm.refresh_field('applicant_type');
+		}
 	},
 	applicant_type: function(frm) {
 		frm.set_value("applicant", null);

@@ -49,9 +49,6 @@ class Item(WebsiteGenerator):
 
 		self.set_onload('stock_exists', self.stock_ledger_created())
 		self.set_asset_naming_series()
-		if self.is_fixed_asset:
-			asset = self.asset_exists()
-			self.set_onload("asset_exists", True if asset else False)
 
 	def set_asset_naming_series(self):
 		if not hasattr(self, '_asset_naming_series'):
@@ -127,8 +124,9 @@ class Item(WebsiteGenerator):
 		self.validate_retain_sample()
 		self.validate_uom_conversion_factor()
 		self.validate_item_defaults()
-		self.update_defaults_from_item_group()
 		self.validate_customer_provided_part()
+		self.update_defaults_from_item_group()
+		self.validate_stock_for_has_batch_and_has_serial()
 
 		if not self.get("__islocal"):
 			self.old_item_group = frappe.db.get_value(self.doctype, self.name, "item_group")
@@ -563,7 +561,7 @@ class Item(WebsiteGenerator):
 			if d.get("warehouse") and d.get("warehouse") not in warehouse:
 				warehouse += [d.get("warehouse")]
 			else:
-				frappe.throw(_("Row {0}: An Reorder entry already exists for this warehouse {1}")
+				frappe.throw(_("Row {0}: Reorder entry already exists for the warehouse {1}")
 									.format(d.idx, d.warehouse), DuplicateReorderRows)
 
 			if d.warehouse_reorder_level and not d.warehouse_reorder_qty:
@@ -760,12 +758,6 @@ class Item(WebsiteGenerator):
 					frappe.throw(
 						_('Cannot change Attributes after stock transaction. Make a new Item and transfer stock to the new Item'))
 
-	def validate_asset_exists_for_serialized_asset(self):
-		if (not self.get("__islocal") and self.asset_exists() and
-			cint(self.has_serial_no) != cint(frappe.db.get_value('Item', self.name, 'has_serial_no'))):
-			frappe.throw(_("Asset is already exists against the item {0}, you cannot change the has serial no value")
-				.format(self.name))
-
 	def asset_exists(self):
 		if not hasattr(self, '_asset_created'):
 			self._asset_created = frappe.db.get_all("Asset",
@@ -792,6 +784,9 @@ class Item(WebsiteGenerator):
 					d.conversion_factor = value
 
 	def validate_attributes(self):
+		if not self.variant_based_on:
+			self.variant_based_on = 'Item Attribute'
+
 		if (self.has_variants or self.variant_of) and self.variant_based_on == 'Item Attribute':
 			attributes = []
 			if not self.attributes:
@@ -814,13 +809,19 @@ class Item(WebsiteGenerator):
 			variant = get_variant(self.variant_of, args, self.name)
 			if variant:
 				frappe.throw(_("Item variant {0} exists with same attributes")
-									.format(variant), ItemVariantExistsError)
+					.format(variant), ItemVariantExistsError)
 
 			validate_item_variant_attributes(self, args)
 
 			# copy variant_of value for each attribute row
 			for d in self.attributes:
 				d.variant_of = self.variant_of
+
+	def validate_stock_for_has_batch_and_has_serial(self):
+		if self.stock_ledger_created():
+			for value in ["has_batch_no", "has_serial_no"]:
+				if frappe.db.get_value("Item", self.name, value) != self.get_value(value):
+					frappe.throw(_("Cannot change {0} as Stock Transaction for Item {1} exist.".format(value, self.name)))
 
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''

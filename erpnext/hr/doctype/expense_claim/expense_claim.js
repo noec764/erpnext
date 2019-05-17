@@ -173,13 +173,12 @@ frappe.ui.form.on("Expense Claim", {
 				}
 			});
 		}
-
 	},
 
 	refresh: function(frm) {
 		frm.trigger("toggle_fields");
 
-		if(frm.doc.docstatus > 0) {
+		if(frm.doc.docstatus == 1) {
 			frm.add_custom_button(__('Accounting Ledger'), function() {
 				frappe.route_options = {
 					voucher_no: frm.doc.name,
@@ -196,14 +195,6 @@ frappe.ui.form.on("Expense Claim", {
 			frm.add_custom_button(__('Payment'),
 				function() { frm.events.make_payment_entry(frm); }, __('Create'));
 		}
-
-		frm.set_query("accounting_journal", function() {
-			return {
-				filters: {
-					type: "Miscellaneous"
-				}
-			}
-		});
 	},
 
 	make_payment_entry: function(frm) {
@@ -297,11 +288,7 @@ frappe.ui.form.on("Expense Claim Detail", {
 	claim_amount: function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 		var doc = frm.doc;
-
-		if(!child.sanctioned_amount){
-			frappe.model.set_value(cdt, cdn, 'sanctioned_amount', child.claim_amount);
-		}
-
+		frappe.model.set_value(cdt, cdn, 'sanctioned_amount', child.claim_amount);
 		cur_frm.cscript.calculate_total(doc,cdt,cdn);
 	},
 
