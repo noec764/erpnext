@@ -15,8 +15,7 @@ def execute():
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": ["Hotel Room", "Hotel Room Amenity", "Hotel Room Package", "Hotel Room Pricing", "Hotel Room Pricing Item", "Hotel Room Pricing Package", \
-			"Hotel Room Reservation", "Hotel Room Reservation Item", "Hotel Room Type", "Hotel Settings"]},
+		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": ["in", ["Restaurant", "Hotels"]]})]},
 		{"document": "DocType", "items": ["Restaurant", "Restaurant Menu", "Restaurant Menu Item", "Restaurant Order Entry", "Restaurant Order Entry Item", \
 			"Restaurant Reservation", "Restaurant Table"]},
 		{"document": "Report", "items": ["Hotel Room Occupancy"]},

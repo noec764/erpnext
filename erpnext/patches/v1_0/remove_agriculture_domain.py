@@ -16,12 +16,7 @@ def execute():
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": ['Crop Cycle', 'Weather', 'Soil Texture', 'Water Analysis', \
-			'Soil Analysis', 'Plant Analysis', 'Agriculture Task', 'Linked Location', \
-			'Detected Disease', 'Agriculture Analysis Criteria', 'Disease', 'Crop', \
-			'Weather Parameter', 'Soil Texture Criteria', 'Fertilizer', 'Linked Soil Texture', \
-			'Water Analysis Criteria', 'Soil Analysis Criteria', 'Plant Analysis Criteria', \
-			'Linked Soil Analysis', 'Linked Plant Analysis', 'Fertilizer Content', 'Land Unit']},
+		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Agriculture"})]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Agriculture"]},
 		{"document": "Module Def", "items": ["Agriculture"]},

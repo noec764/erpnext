@@ -28,13 +28,7 @@ def execute():
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": ["Antibiotic", "Appointment Type", "Clinical Procedure", "Clinical Procedure Item", "Clinical Procedure Template", \
-			"Codification Table", "Complaint", "Diagnosis", "Dosage Form", "Dosage Strength", "Drug Prescription", "Fee Validity", "Healthcare Practitioner", \
-			"Healthcare Schedule Time Slot", "Healthcare Service Unit", "Healthcare Service Unit Type", "Healthcare Settings", "Inpatient Occupancy", "Inpatient Record", \
-			"Lab Prescription", "Lab Test", "Lab Test Groups", "Lab Test Sample", "Lab Test Template", "Lab Test UOM", "Medical Code", "Medical Code Standard", \
-			"Medical Department", "Normal Test Items", "Normal Test Template", "Patient", "Patient Appointment", "Patient Encounter", "Patient Medical Record", \
-			"Patient Relation", "Practitioner Schedule", "Practitioner Service Unit Schedule", "Prescription Dosage", "Prescription Duration", "Procedure Prescription", \
-			"Sample Collection", "Sensitivity", "Sensitivity Test Items", "Special Test Items", "Special Test Template", "Vital Signs", "Physician", "Physician Schedule"]},
+		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Healthcare"})]},
 		{"document": "Report", "items": ["Lab Test Report"]},
 		{"document": "Page", "items": ["appointment-analytic", "medical_record"]},
 		{"document": "Web Form", "items": ["lab-test", "patient-appointments", "personal-details", "prescription"]},

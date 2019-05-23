@@ -35,16 +35,7 @@ def execute():
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": ["Academic Term", "Academic Year", "Assessment Criteria", "Assessment Criteria Group", "Assessment Group", "Assessment Plan", \
-			"Assessment Plan Criteria", "Assessment Result", "Assessment Result Detail", "Assessment Result Tool", "Course", "Course Assessment Criteria", \
-			"Course Schedule", "Course Scheduling Tool", "Education Settings", "Fee Category", "Fee Component", "Fee Schedule", "Fee Schedule Program", "Fee Schedule Student Group", \
-			"Fee Structure", "Fees", "Grading Scale", "Grading Scale Interval", "Guardian", "Guardian Interest", "Guardian Student", "Instructor", "Instructor Log", \
-			"Program", "Program Course", "Program Enrollment", "Program Enrollment Course", "Program Enrollment Fee", "Program Enrollment Tool", "Program Enrollment Tool Student", \
-			"Program Fee", "Room", "School House", "Student", "Student Admission", "Student Admission Program", "Student Applicant", "Student Attendance", "Student Attendance Tool", \
-			"Student Batch Name", "Student Category", "Student Group", "Student Group Creation Tool", "Student Group Creation Tool Course", "Student Group Instructor", \
-			"Student Group Student", "Student Guardian", "Student Language", "Student Leave Application", "Student Log", "Student Report Generation Tool", "Student Sibling", "Student Siblings"]},
-		{"document": "Report", "items": ["Absent Student Report", "Assessment Plan Status", "Course wise Assessment Report", "Final Assessment Grades", \
-			"Student and Guardian Contact Details", "Student Batch-Wise Attendance", "Student Fee Collection", "Student Monthly Attendance Sheet"]},
+		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Education"})]},
 		{"document": "Web Form", "items": ["student-applicant"]},
 		{"document": "Role", "items": roles},
 		{"document": "Module Def", "items": ["Education"]},
