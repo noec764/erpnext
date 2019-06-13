@@ -11,4 +11,4 @@ def execute():
 		SET
 			wo.item_name = item.item_name
 	""")
-	frappe.db.commit() 
+	frappe.db.commit()
