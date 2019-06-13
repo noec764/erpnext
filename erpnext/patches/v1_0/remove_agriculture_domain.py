@@ -5,6 +5,7 @@ def execute():
 	frappe.reload_doc("Assets", "DocType", "Location")
 	# Delete assigned roles
 	roles = ["Agriculture Manager", "Agriculture User"]
+	doctypes = [x["name"] for x in frappe.get_all("DocType", filters={"module": "Agriculture"})]
 
 	frappe.db.sql("""
 	DELETE
@@ -14,9 +15,19 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
+	# Standard portal items
+	frappe.db.sql("""
+	DELETE
+	FROM 
+		`tabPortal Menu Item`
+	WHERE 
+		reference_doctype in ({0})
+	""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
+
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Agriculture"})]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Agriculture"]},
 		{"document": "Module Def", "items": ["Agriculture"]},

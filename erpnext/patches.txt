@@ -4,7 +4,6 @@ erpnext.patches.v8_9.set_print_zero_amount_taxes
 erpnext.patches.v11_0.rename_production_order_to_work_order
 erpnext.patches.v11_0.refactor_naming_series
 erpnext.patches.v11_0.refactor_autoname_naming
-erpnext.patches.v10_0.rename_schools_to_education
 erpnext.patches.v4_0.validate_v3_patch
 erpnext.patches.v4_0.fix_employee_user_id
 erpnext.patches.v4_0.remove_employee_role_if_no_employee
@@ -300,7 +299,6 @@ execute:frappe.delete_doc_if_exists("Report", "Employee Holiday Attendance")
 execute:frappe.delete_doc_if_exists("DocType", "Payment Tool")
 execute:frappe.delete_doc_if_exists("DocType", "Payment Tool Detail")
 erpnext.patches.v7_0.setup_account_table_for_expense_claim_type_if_exists
-erpnext.patches.v7_0.migrate_schools_to_erpnext
 erpnext.patches.v7_1.update_lead_source
 erpnext.patches.v6_20x.remove_customer_supplier_roles
 erpnext.patches.v7_0.remove_administrator_role_in_doctypes
@@ -308,11 +306,8 @@ erpnext.patches.v7_0.rename_fee_amount_to_fee_component
 erpnext.patches.v7_0.calculate_total_costing_amount
 erpnext.patches.v7_0.fix_nonwarehouse_ledger_gl_entries_for_transactions
 erpnext.patches.v7_0.remove_old_earning_deduction_doctypes
-erpnext.patches.v7_0.make_guardian
 erpnext.patches.v7_0.update_refdoc_in_landed_cost_voucher
 erpnext.patches.v7_0.set_material_request_type_in_item
-erpnext.patches.v7_0.rename_examination_to_assessment
-erpnext.patches.v7_0.set_portal_settings
 erpnext.patches.v7_0.update_change_amount_account
 erpnext.patches.v7_0.repost_future_gle_for_purchase_invoice
 erpnext.patches.v7_0.fix_duplicate_icons
@@ -323,7 +318,6 @@ erpnext.patches.v7_0.repost_gle_for_pos_sales_return
 erpnext.patches.v7_0.update_missing_employee_in_timesheet
 erpnext.patches.v7_0.update_status_for_timesheet
 erpnext.patches.v7_0.set_party_name_in_payment_entry
-erpnext.patches.v7_1.set_student_guardian
 erpnext.patches.v7_0.update_conversion_factor_in_supplier_quotation_item
 erpnext.patches.v7_1.move_sales_invoice_from_parent_to_child_timesheet
 execute:frappe.db.sql("update `tabTimesheet` ts, `tabEmployee` emp set ts.employee_name = emp.employee_name where emp.name = ts.employee and ts.employee_name is null and ts.employee is not null")
@@ -363,23 +357,17 @@ erpnext.patches.v7_1.set_currency_exchange_date
 erpnext.patches.v7_1.set_sales_person_status
 erpnext.patches.v7_1.repost_stock_for_deleted_bins_for_merging_items
 erpnext.patches.v7_2.update_website_for_variant
-erpnext.patches.v7_2.update_assessment_modules
 erpnext.patches.v7_2.update_doctype_status
 erpnext.patches.v7_2.update_salary_slips
 erpnext.patches.v7_2.delete_fleet_management_module_def
 erpnext.patches.v7_2.contact_address_links
-erpnext.patches.v7_2.mark_students_active
 erpnext.patches.v7_2.set_null_value_to_fields
-erpnext.patches.v7_2.update_guardian_name_in_student_master
 erpnext.patches.v7_2.update_abbr_in_salary_slips
-erpnext.patches.v7_2.rename_evaluation_criteria
 erpnext.patches.v7_2.update_party_type
 erpnext.patches.v7_2.setup_auto_close_settings
 erpnext.patches.v7_2.empty_supplied_items_for_non_subcontracted
 erpnext.patches.v7_2.arrear_leave_encashment_as_salary_component
 erpnext.patches.v7_2.rename_att_date_attendance
-erpnext.patches.v7_2.update_attendance_docstatus
-erpnext.patches.v7_2.make_all_assessment_group
 erpnext.patches.v8_0.repost_reserved_qty_for_multiple_sales_uom
 erpnext.patches.v8_0.addresses_linked_to_lead
 execute:frappe.delete_doc('DocType', 'Purchase Common')
@@ -392,8 +380,6 @@ erpnext.patches.v8_0.set_project_copied_from
 erpnext.patches.v8_0.update_status_as_paid_for_completed_expense_claim
 erpnext.patches.v7_2.stock_uom_in_selling
 erpnext.patches.v8_0.revert_manufacturers_table_from_item
-erpnext.patches.v8_0.disable_instructor_role
-erpnext.patches.v8_0.merge_student_batch_and_student_group
 erpnext.patches.v8_0.rename_total_margin_to_rate_with_margin # 11-05-2017
 erpnext.patches.v8_0.fix_status_for_invoices_with_negative_outstanding
 erpnext.patches.v8_0.make_payments_table_blank_for_non_pos_invoice
@@ -449,19 +435,15 @@ erpnext.patches.v8_9.update_billing_gstin_for_indian_account
 erpnext.patches.v8_9.set_member_party_type
 erpnext.patches.v9_0.add_user_to_child_table_in_pos_profile
 erpnext.patches.v9_0.set_schedule_date_for_material_request_and_purchase_order
-erpnext.patches.v9_0.student_admission_childtable_migrate
 erpnext.patches.v9_0.fix_subscription_next_date #2017-10-23
-erpnext.patches.v9_0.add_healthcare_domain
 erpnext.patches.v9_0.set_variant_item_description
 erpnext.patches.v9_0.set_uoms_in_variant_field
-erpnext.patches.v9_0.copy_old_fees_field_data
 execute:frappe.delete_doc_if_exists("DocType", "Program Fee")
 erpnext.patches.v9_0.set_pos_profile_name
 erpnext.patches.v9_0.remove_non_existing_warehouse_from_stock_settings
 execute:frappe.delete_doc_if_exists("DocType", "Program Fee")
 erpnext.patches.v8_10.change_default_customer_credit_days
 erpnext.patches.v9_0.update_employee_loan_details
-erpnext.patches.v9_2.delete_healthcare_domain_default_items
 erpnext.patches.v9_1.create_issue_opportunity_type
 erpnext.patches.v9_2.rename_translated_domains_in_en
 erpnext.patches.v9_0.set_shipping_type_for_existing_shipping_rules
@@ -472,19 +454,14 @@ erpnext.patches.v9_2.set_item_name_in_production_order
 erpnext.patches.v10_0.update_lft_rgt_for_employee
 erpnext.patches.v9_2.rename_net_weight_in_item_master
 erpnext.patches.v9_2.delete_process_payroll
-erpnext.patches.v10_0.add_agriculture_domain
-erpnext.patches.v10_0.add_non_profit_domain
 erpnext.patches.v10_0.setup_vat_for_uae_and_saudi_arabia #2017-12-28
 erpnext.patches.v10_0.set_primary_contact_for_customer
 erpnext.patches.v10_0.copy_projects_renamed_fields
 erpnext.patches.v10_0.enabled_regional_print_format_based_on_country
 erpnext.patches.v10_0.update_asset_calculate_depreciation
-erpnext.patches.v10_0.add_guardian_role_for_parent_portal
 erpnext.patches.v10_0.set_numeric_ranges_in_template_if_blank
 erpnext.patches.v10_0.update_reserved_qty_for_purchase_order
 erpnext.patches.v10_0.fichier_des_ecritures_comptables_for_france
-erpnext.patches.v10_0.update_assessment_plan
-erpnext.patches.v10_0.update_assessment_result
 erpnext.patches.v10_0.set_default_payment_terms_based_on_company
 erpnext.patches.v10_0.update_sales_order_link_to_purchase_order
 erpnext.patches.v10_0.rename_price_to_rate_in_pricing_rule
@@ -505,7 +482,6 @@ erpnext.patches.v10_0.update_hub_connector_domain
 erpnext.patches.v10_0.set_student_party_type
 erpnext.patches.v10_0.update_project_in_sle
 erpnext.patches.v10_0.fix_reserved_qty_for_sub_contract
-erpnext.patches.v11_0.merge_land_unit_with_location
 erpnext.patches.v11_0.add_index_on_nestedset_doctypes
 erpnext.patches.v11_0.remove_modules_setup_page
 erpnext.patches.v11_0.rename_employee_loan_to_loan
@@ -517,12 +493,10 @@ erpnext.patches.v11_0.set_default_email_template_in_hr #08-06-2018
 erpnext.patches.v11_0.uom_conversion_data #30-06-2018
 erpnext.patches.v10_0.taxes_issue_with_pos
 erpnext.patches.v11_0.update_account_type_in_party_type
-erpnext.patches.v11_0.rename_healthcare_doctype_and_fields
 erpnext.patches.v11_0.rename_supplier_type_to_supplier_group
 erpnext.patches.v10_1.transfer_subscription_to_auto_repeat
 erpnext.patches.v11_0.update_brand_in_item_price
 erpnext.patches.v11_0.create_default_success_action
-erpnext.patches.v11_0.add_healthcare_service_unit_tree_root
 erpnext.patches.v10_0.set_qty_in_transactions_based_on_serial_no_input
 erpnext.patches.v10_0.show_leaves_of_all_department_members_in_calendar
 erpnext.patches.v11_0.rename_field_max_days_allowed
@@ -559,9 +533,7 @@ erpnext.patches.v11_0.update_hub_url # 2018-08-31  # 2018-09-03
 erpnext.patches.v10_0.set_discount_amount
 erpnext.patches.v10_0.recalculate_gross_margin_for_project
 erpnext.patches.v11_0.make_job_card
-erpnext.patches.v11_0.redesign_healthcare_billing_work_flow
 erpnext.patches.v10_0.delete_hub_documents # 12-08-2018
-erpnext.patches.v11_0.rename_healthcare_fields
 erpnext.patches.v11_0.add_default_dispatch_notification_template
 erpnext.patches.v11_0.add_market_segments
 erpnext.patches.v11_0.add_sales_stages
@@ -582,7 +554,6 @@ erpnext.patches.v12_0.set_default_homepage_type
 erpnext.patches.v11_0.rename_additional_salary_component_additional_salary
 erpnext.patches.v11_0.renamed_from_to_fields_in_project
 erpnext.patches.v11_0.add_permissions_in_gst_settings
-erpnext.patches.v11_1.setup_guardian_role
 execute:frappe.delete_doc('DocType', 'Notification Control')
 erpnext.patches.v12_0.set_gst_category
 erpnext.patches.v11_0.remove_barcodes_field_from_copy_fields_to_variants

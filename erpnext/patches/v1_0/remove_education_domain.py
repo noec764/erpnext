@@ -4,7 +4,8 @@ from frappe import _
 
 def execute():
 	# Delete assigned roles
-	roles = ["Student", "Instructor", "Academics User", "Education Manager"]
+	roles = ["Student", "Instructor", "Academics User", "Education Manager", "Guardian"]
+	doctypes = [x["name"] for x in frappe.get_all("DocType", filters={"module": "Education"})]
 
 	frappe.db.sql("""
 	DELETE
@@ -23,20 +24,21 @@ def execute():
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
 	# Standard portal items
-	titles = ["Fees", "Admission", _("Fees"), _("Admission")]
-
 	frappe.db.sql("""
 	DELETE
 	FROM 
 		`tabPortal Menu Item`
 	WHERE 
-		title in ({0})
-	""".format(','.join(['%s']*len(titles))), tuple(titles))
+		reference_doctype in ({0})
+	""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
+
 	elements = [
-		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Education"})]},
-		{"document": "Web Form", "items": ["student-applicant"]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Education"})]},
+		{"document": "Web Form", "items": [x["name"] for x in frappe.get_all("Web Form", filters={"module": "Education"})]},
 		{"document": "Role", "items": roles},
 		{"document": "Module Def", "items": ["Education"]},
 		{"document": "Domain", "items": ["Education"]}

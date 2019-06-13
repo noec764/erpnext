@@ -13,13 +13,6 @@ Shopping Cart
 Assets
 Portal
 Maintenance
-Education
 Regional
-Healthcare
-Restaurant
-Agriculture
 ERPNext Integrations
-Non Profit
-Hotels
-Hub Node
 Quality Management

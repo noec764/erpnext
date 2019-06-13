@@ -5,6 +5,7 @@ from frappe import _
 def execute():
 	# Delete assigned roles
 	roles = ["Healthcare Administrator", "LabTest Approver", "Laboratory User", "Nursing User", "Physician", "Patient"]
+	doctypes = [x["name"] for x in frappe.get_all("DocType", filters={"module": "Healthcare"})]
 
 	frappe.db.sql("""
 	DELETE
@@ -15,29 +16,26 @@ def execute():
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
 	# Standard portal items
-	titles = ["Personal Details", "Prescription", "Lab Test", "Patient Appointment", _("Personal Details"), _("Prescription"), \
-		_("Lab Test"), _("Patient Appointment")]
-
 	frappe.db.sql("""
 	DELETE
 	FROM 
 		`tabPortal Menu Item`
 	WHERE 
-		title in ({0})
-	""".format(','.join(['%s']*len(titles))), tuple(titles))
+		reference_doctype in ({0})
+	""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
+	
 	elements = [
-		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Healthcare"})]},
-		{"document": "Report", "items": ["Lab Test Report"]},
-		{"document": "Page", "items": ["appointment-analytic", "medical_record"]},
-		{"document": "Web Form", "items": ["lab-test", "patient-appointments", "personal-details", "prescription"]},
-		{"document": "Print Format", "items": ["Encounter Print", "Lab Test Print", "Sample ID Print"]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Healthcare"})]},
+		{"document": "Web Form", "items": [x["name"] for x in frappe.get_all("Web Form", filters={"module": "Healthcare"})]},
+		{"document": "Print Format", "items": [x["name"] for x in frappe.get_all("Print Format", filters={"doc_type": ["in", doctypes]})]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Healthcare"]},
 		{"document": "Module Def", "items": ["Healthcare"]},
-		{"document": "Custom Field", "items": ["Sales Invoice-patient", "Sales Invoice-patient_name", "Sales Invoice-ref_practitioner", \
-			"Sales Invoice Item-reference_dt", "Sales Invoice Item-reference_dn"]},
+		{"document": "Custom Field", "items": [x["name"] for x in frappe.get_all("Custom Field", filters={"dt": ["in", doctypes]})]},
 		{"document": "Item Group", "items": [_('Laboratory'), _('Drug')]}
 	]
 

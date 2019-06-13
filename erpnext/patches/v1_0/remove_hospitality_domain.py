@@ -4,6 +4,7 @@ import frappe
 def execute():
 	# Delete assigned roles
 	roles = ["Hotel Manager", "Hotel Reservation User", "Restaurant Manager"]
+	doctypes = [x["name"] for x in frappe.get_all("DocType", filters={"module": ["in", ["Restaurant", "Hotels"]]})]
 
 	frappe.db.sql("""
 	DELETE
@@ -13,12 +14,20 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
+	# Standard portal items
+	frappe.db.sql("""
+	DELETE
+	FROM 
+		`tabPortal Menu Item`
+	WHERE 
+		reference_doctype in ({0})
+	""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
+
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": [x["name"] for x in frappe.get_all("DocType", filters={"module": ["in", ["Restaurant", "Hotels"]]})]},
-		{"document": "DocType", "items": ["Restaurant", "Restaurant Menu", "Restaurant Menu Item", "Restaurant Order Entry", "Restaurant Order Entry Item", \
-			"Restaurant Reservation", "Restaurant Table"]},
-		{"document": "Report", "items": ["Hotel Room Occupancy"]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": ["in", ["Restaurant", "Hotels"]]})]},
 		{"document": "Role", "items": roles},
 		{"document": "Domain", "items": ["Hospitality"]},
 		{"document": "Module Def", "items": ["Restaurant", "Hotels"]},

@@ -9,7 +9,6 @@ def execute():
 		'hr': ['Appraisal', 'Leave Allocation', 'Expense Claim', 'Salary Slip',
 			'Attendance', 'Training Feedback', 'Training Result Employee','Leave Application',
 			'Employee Advance', 'Training Event Employee', 'Payroll Employee Detail'],
-		'education': ['Instructor'],
 		'projects': ['Activity Cost', 'Timesheet'],
 		'setup': ['Sales Person']
 	}
