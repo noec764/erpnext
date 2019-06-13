@@ -150,6 +150,7 @@ def get_shopping_cart_menu(context=None):
 
 	return frappe.render_template('templates/includes/cart/cart_dropdown.html', context)
 
+
 @frappe.whitelist()
 def add_new_address(doc):
 	doc = frappe.parse_json(doc)
@@ -182,6 +183,7 @@ def create_lead_for_item_inquiry(lead, subject, message):
 	'''.format(subject=subject, message=message))
 
 	return lead_doc
+
 
 @frappe.whitelist()
 def get_terms_and_conditions(terms_name):

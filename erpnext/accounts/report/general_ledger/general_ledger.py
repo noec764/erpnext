@@ -10,6 +10,7 @@ from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
 from six import iteritems
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 
 def execute(filters=None):
 	if not filters:
@@ -97,7 +98,7 @@ def set_account_currency(filters):
 			if gle_currency:
 				account_currency = gle_currency
 			else:
-				account_currency = (None if filters.party_type in ["Employee"] else
+				account_currency = (None if filters.party_type in ["Employee", "Student", "Shareholder", "Member"] else
 					frappe.db.get_value(filters.party_type, filters.party[0], "default_currency"))
 
 		filters["account_currency"] = account_currency or filters.company_currency
@@ -127,7 +128,7 @@ def get_gl_entries(filters):
 		order_by_statement = "order by posting_date, voucher_type, voucher_no"
 
 	if filters.get("group_by") == _("Group by Voucher (Consolidated)"):
-		group_by_statement = "group by voucher_type, voucher_no, account, cost_center"
+		group_by_statement = "group by voucher_type, voucher_no, account, cost_center, against_voucher"
 		select_fields = """, sum(debit) as debit, sum(credit) as credit,
 			sum(debit_in_account_currency) as debit_in_account_currency,
 			sum(credit_in_account_currency) as  credit_in_account_currency"""
@@ -186,18 +187,21 @@ def get_conditions(filters):
 	if filters.get("project"):
 		conditions.append("project in %(project)s")
 
-	company_finance_book = erpnext.get_default_finance_book(filters.get("company"))
-	if not filters.get("finance_book") or (filters.get("finance_book") == company_finance_book):
-		filters['finance_book'] = company_finance_book
+	if filters.get("finance_book"):
 		conditions.append("ifnull(finance_book, '') in (%(finance_book)s, '')")
-	elif filters.get("finance_book"):
-		conditions.append("ifnull(finance_book, '') = %(finance_book)s")
 
 	from frappe.desk.reportview import build_match_conditions
 	match_conditions = build_match_conditions("GL Entry")
 
 	if match_conditions:
 		conditions.append(match_conditions)
+
+	accounting_dimensions = get_accounting_dimensions()
+
+	if accounting_dimensions:
+		for dimension in accounting_dimensions:
+			if filters.get(dimension):
+				conditions.append("{0} in (%({0})s)".format(dimension))
 
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 
@@ -287,7 +291,8 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 
 	from_date, to_date = getdate(filters.from_date), getdate(filters.to_date)
 	for gle in gl_entries:
-		if gle.posting_date < from_date or cstr(gle.is_opening) == "Yes":
+		if (gle.posting_date < from_date or
+			(cstr(gle.is_opening) == "Yes" and not filters.get("show_opening_entries"))):
 			update_value_in_dict(gle_map[gle.get(group_by)].totals, 'opening', gle)
 			update_value_in_dict(totals, 'opening', gle)
 

@@ -11,9 +11,8 @@ app_email = "info@erpnext.com"
 app_license = "GNU General Public License (v3)"
 source_link = "https://github.com/frappe/erpnext"
 
-develop_version = '12.x.x-develop'
 
-error_report_email = "help@dokie.io"
+develop_version = '12.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
@@ -23,7 +22,8 @@ web_include_css = "assets/css/erpnext-web.css"
 doctype_js = {
 	"Communication": "public/js/communication.js",
 	"Event": "public/js/event.js",
-	"Website Theme": "public/js/website_theme.js"
+	"Website Theme": "public/js/website_theme.js",
+	"Newsletter": "public/js/newsletter.js"
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
@@ -48,7 +48,7 @@ on_logout = "erpnext.shopping_cart.utils.clear_cart_count"
 treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Group', 'Sales Person', 'Territory', 'Assessment Group']
 
 # website
-update_website_context = "erpnext.shopping_cart.utils.update_website_context"
+update_website_context = ["erpnext.shopping_cart.utils.update_website_context", "erpnext.education.doctype.education_settings.education_settings.update_website_context"]
 my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
 
 email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
@@ -58,13 +58,19 @@ calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday 
 
 
 domains = {
+	'Agriculture': 'erpnext.domains.agriculture',
 	'Distribution': 'erpnext.domains.distribution',
+	'Education': 'erpnext.domains.education',
+	'Healthcare': 'erpnext.domains.healthcare',
+	'Hospitality': 'erpnext.domains.hospitality',
 	'Manufacturing': 'erpnext.domains.manufacturing',
+	'Non Profit': 'erpnext.domains.non_profit',
 	'Retail': 'erpnext.domains.retail',
 	'Services': 'erpnext.domains.services',
 }
 
-website_generators = ["Item Group", "Item", "BOM", "Sales Partner", "Job Opening"]
+website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
+	"Job Opening", "Student Admission"]
 
 website_context = {
 	"favicon": 	"/assets/erpnext/images/favicon.png",
@@ -122,6 +128,7 @@ website_route_rules = [
 		}
 	},
 	{"from_route": "/jobs", "to_route": "Job Opening"},
+	{"from_route": "/admissions", "to_route": "Student Admission"},
 	{"from_route": "/boms", "to_route": "BOM"},
 	{"from_route": "/timesheets", "to_route": "Timesheet"},
 	{"from_route": "/material-requests", "to_route": "Material Request"},
@@ -134,6 +141,7 @@ website_route_rules = [
 ]
 
 standard_portal_menu_items = [
+	{"title": _("Personal Details"), "route": "/personal-details", "reference_doctype": "Patient", "role": "Patient"},
 	{"title": _("Projects"), "route": "/project", "reference_doctype": "Project"},
 	{"title": _("Request for Quotations"), "route": "/rfq", "reference_doctype": "Request for Quotation", "role": "Supplier"},
 	{"title": _("Supplier Quotation"), "route": "/supplier-quotations", "reference_doctype": "Supplier Quotation", "role": "Supplier"},
@@ -144,14 +152,20 @@ standard_portal_menu_items = [
 	{"title": _("Issues"), "route": "/issues", "reference_doctype": "Issue", "role":"Customer"},
 	{"title": _("Addresses"), "route": "/addresses", "reference_doctype": "Address"},
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
-	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
+	{"title": _("Lab Test"), "route": "/lab-test", "reference_doctype": "Lab Test", "role":"Patient"},
+	{"title": _("Prescription"), "route": "/prescription", "reference_doctype": "Patient Encounter", "role":"Patient"},
+	{"title": _("Patient Appointment"), "route": "/patient-appointments", "reference_doctype": "Patient Appointment", "role":"Patient"},
+	{"title": _("Fees"), "route": "/fees", "reference_doctype": "Fees", "role":"Student"},
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
+	{"title": _("Admission"), "route": "/admissions", "reference_doctype": "Student Admission"},
+	{"title": _("Certification"), "route": "/certification", "reference_doctype": "Certification Application"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 ]
 
 default_roles = [
 	{'role': 'Customer', 'doctype':'Contact', 'email_field': 'email_id'},
-	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'}
+	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'},
+	{'role': 'Student', 'doctype':'Student', 'email_field': 'student_email_id'},
 ]
 
 has_website_permission = {
@@ -162,7 +176,11 @@ has_website_permission = {
 	"Material Request": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Delivery Note": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
-	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission"
+	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
+	"Lab Test": "erpnext.healthcare.web_form.lab_test.lab_test.has_website_permission",
+	"Patient Encounter": "erpnext.healthcare.web_form.prescription.prescription.has_website_permission",
+	"Patient Appointment": "erpnext.healthcare.web_form.patient_appointments.patient_appointments.has_website_permission",
+	"Patient": "erpnext.healthcare.web_form.personal_details.personal_details.has_website_permission"
 }
 
 dump_report_map = "erpnext.startup.report_data_map.data_map"
@@ -170,7 +188,8 @@ dump_report_map = "erpnext.startup.report_data_map.data_map"
 before_tests = "erpnext.setup.utils.before_tests"
 
 standard_queries = {
-	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list"
+	"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list",
+	"Healthcare Practitioner": "erpnext.healthcare.doctype.healthcare_practitioner.healthcare_practitioner.get_practitioner_list"
 }
 
 doc_events = {
@@ -191,11 +210,17 @@ doc_events = {
 	"Website Settings": {
 		"validate": "erpnext.portal.doctype.products_settings.products_settings.home_page_is_products"
 	},
+	"Sales Invoice": {
+		"on_submit": ["erpnext.regional.france.utils.create_transaction_log", "erpnext.regional.italy.utils.sales_invoice_on_submit"],
+		"on_cancel": "erpnext.regional.italy.utils.sales_invoice_on_cancel",
+		"on_trash": "erpnext.regional.check_deletion_permission"
+	},
 	"Payment Entry": {
-		"on_submit": "erpnext.accounts.doctype.payment_request.payment_request.make_status_as_paid"
+		"on_submit": ["erpnext.regional.france.utils.create_transaction_log", "erpnext.accounts.doctype.payment_request.payment_request.make_status_as_paid"],
+		"on_trash": "erpnext.regional.check_deletion_permission"
 	},
 	'Address': {
-		'validate': 'erpnext.regional.india.utils.validate_gstin_for_india'
+		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code']
 	},
 	('Sales Invoice', 'Purchase Invoice', 'Delivery Note'): {
 		'validate': 'erpnext.regional.india.utils.set_place_of_supply'
@@ -213,7 +238,7 @@ scheduler_events = {
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
 		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.erpnext_integrations.doctype.amazon_mws_settings.amazon_mws_settings.schedule_get_order_details",
-		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
+		"erpnext.accounts.doctype.gl_entry.gl_entry.rename_gle_sle_docs",
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status"
 	],
@@ -236,12 +261,13 @@ scheduler_events = {
 		"erpnext.crm.doctype.contract.contract.update_status_for_contracts",
 		"erpnext.projects.doctype.project.project.update_project_sales_billing",
 		"erpnext.projects.doctype.project.project.send_project_status_email_to_users",
-		"erpnext.quality_management.doctype.quality_review.quality_review.review"
+		"erpnext.quality_management.doctype.quality_review.quality_review.review",
+		"erpnext.support.doctype.service_level_agreement.service_level_agreement.check_agreement_status"
 	],
 	"daily_long": [
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms"
 	],
-	"monthly": [
+	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",
 		"erpnext.accounts.deferred_revenue.convert_deferred_expense_to_expense",
 		"erpnext.hr.utils.allocate_earned_leaves"
@@ -288,5 +314,21 @@ regional_overrides = {
 	},
 	'Saudi Arabia': {
 		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data'
+	},
+	'Italy': {
+		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.italy.utils.update_itemised_tax_data',
+		'erpnext.controllers.accounts_controller.validate_regional': 'erpnext.regional.italy.utils.sales_invoice_validate',
 	}
 }
+user_privacy_documents = [
+	{
+		'doctype': 'Lead',
+		'match_field': 'email_id',
+		'personal_fields': ['phone', 'mobile_no', 'fax', 'website', 'lead_name'],
+	},
+	{
+		'doctype': 'Opportunity',
+		'match_field': 'contact_email',
+		'personal_fields': ['contact_mobile', 'contact_display', 'customer_name'],
+	}
+]

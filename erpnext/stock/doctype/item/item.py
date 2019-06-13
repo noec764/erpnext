@@ -9,11 +9,11 @@ import erpnext
 import frappe
 import copy
 from erpnext.controllers.item_variant import (ItemVariantExistsError,
-	copy_attributes_to_variant, get_variant, make_variant_item_code, validate_item_variant_attributes)
+		copy_attributes_to_variant, get_variant, make_variant_item_code, validate_item_variant_attributes)
 from erpnext.setup.doctype.item_group.item_group import (get_parent_item_groups, invalidate_cache_for)
 from frappe import _, msgprint
 from frappe.utils import (cint, cstr, flt, formatdate, get_timestamp, getdate,
-	now_datetime, random_string, strip)
+						  now_datetime, random_string, strip)
 from frappe.utils.html_utils import clean_html
 from frappe.website.doctype.website_slideshow.website_slideshow import \
 	get_slideshow
@@ -40,7 +40,7 @@ class Item(WebsiteGenerator):
 	website = frappe._dict(
 		page_title_field="item_name",
 		condition_field="show_in_website",
-		template="templates/generators//item/item.html",
+		template="templates/generators/item/item.html",
 		no_cache=1
 	)
 
@@ -90,8 +90,6 @@ class Item(WebsiteGenerator):
 			self.set_opening_stock()
 
 	def validate(self):
-		self.get_doc_before_save()
-
 		super(Item, self).validate()
 
 		if not self.item_name:
@@ -115,9 +113,9 @@ class Item(WebsiteGenerator):
 
 		self.validate_has_variants()
 		self.validate_stock_exists_for_template_item()
-		self.validate_asset_exists_for_serialized_asset()
 		self.validate_attributes()
 		self.validate_variant_attributes()
+		self.validate_variant_based_on_change()
 		self.validate_website_image()
 		self.make_thumbnail()
 		self.validate_fixed_asset()
@@ -158,7 +156,7 @@ class Item(WebsiteGenerator):
 		'''Add a new price'''
 		if not price_list:
 			price_list = (frappe.db.get_single_value('Selling Settings', 'selling_price_list')
-				or frappe.db.get_value('Price List', _('Standard Selling')))
+						or frappe.db.get_value('Price List', _('Standard Selling')))
 		if price_list:
 			item_price = frappe.get_doc({
 				"doctype": "Item Price",
@@ -190,14 +188,14 @@ class Item(WebsiteGenerator):
 
 			if default_warehouse:
 				stock_entry = make_stock_entry(item_code=self.name, target=default_warehouse, qty=self.opening_stock,
-					rate=self.valuation_rate, company=default.company)
+												rate=self.valuation_rate, company=default.company)
 
 				stock_entry.add_comment("Comment", _("Opening Stock"))
 
 	def make_route(self):
 		if not self.route:
 			return cstr(frappe.db.get_value('Item Group', self.item_group,
-				'route')) + '/' + self.scrub((self.item_name if self.item_name else self.item_code) + '-' + random_string(5))
+					'route')) + '/' + self.scrub((self.item_name if self.item_name else self.item_code) + '-' + random_string(5))
 
 	def validate_website_image(self):
 		"""Validate if the website image is a public file"""
@@ -220,7 +218,7 @@ class Item(WebsiteGenerator):
 		if not file_doc:
 			if not auto_set_website_image:
 				frappe.msgprint(_("Website Image {0} attached to Item {1} cannot be found")
-					.format(self.website_image, self.name))
+									.format(self.website_image, self.name))
 
 			self.website_image = None
 
@@ -358,8 +356,8 @@ class Item(WebsiteGenerator):
 			# load attributes
 			for v in context.variants:
 				v.attributes = frappe.get_all("Item Variant Attribute",
-					fields=["attribute", "attribute_value"],
-					filters={"parent": v.name})
+					  fields=["attribute", "attribute_value"],
+					  filters={"parent": v.name})
 				# make a map for easier access in templates
 				v.attribute_map = frappe._dict({})
 				for attr in v.attributes:
@@ -561,7 +559,7 @@ class Item(WebsiteGenerator):
 			if d.get("warehouse") and d.get("warehouse") not in warehouse:
 				warehouse += [d.get("warehouse")]
 			else:
-				frappe.throw(_("Row {0}: Reorder entry already exists for the warehouse {1}")
+				frappe.throw(_("Row {0}: An Reorder entry already exists for this warehouse {1}")
 									.format(d.idx, d.warehouse), DuplicateReorderRows)
 
 			if d.warehouse_reorder_level and not d.warehouse_reorder_qty:
@@ -725,7 +723,18 @@ class Item(WebsiteGenerator):
 						'income_account': item.income_account
 					})
 			else:
-				self.append("item_defaults", {"company": frappe.defaults.get_defaults().company})
+				warehouse = ''
+				defaults = frappe.defaults.get_defaults() or {}
+
+				# To check default warehouse is belong to the default company
+				if defaults.get("default_warehouse") and frappe.db.exists("Warehouse",
+					{'name': defaults.default_warehouse, 'company': defaults.company}):
+					warehouse = defaults.default_warehouse
+
+				self.append("item_defaults", {
+					"company": defaults.get("company"),
+					"default_warehouse": warehouse
+				})
 
 	def update_variants(self):
 		if self.flags.dont_update_variants or \
@@ -758,11 +767,10 @@ class Item(WebsiteGenerator):
 					frappe.throw(
 						_('Cannot change Attributes after stock transaction. Make a new Item and transfer stock to the new Item'))
 
-	def asset_exists(self):
-		if not hasattr(self, '_asset_created'):
-			self._asset_created = frappe.db.get_all("Asset",
-				filters={"item_code": self.name, "docstatus": 1}, limit=1)
-		return self._asset_created
+	def validate_variant_based_on_change(self):
+		if not self.is_new() and (self.variant_of or (self.has_variants and frappe.get_all("Item", {"variant_of": self.name}))):
+			if self.variant_based_on != frappe.db.get_value("Item", self.name, "variant_based_on"):
+				frappe.throw(_("Variant Based On cannot be changed"))
 
 	def validate_uom(self):
 		if not self.get("__islocal"):
@@ -784,10 +792,13 @@ class Item(WebsiteGenerator):
 					d.conversion_factor = value
 
 	def validate_attributes(self):
+		if not (self.has_variants or self.variant_of):
+			return
+
 		if not self.variant_based_on:
 			self.variant_based_on = 'Item Attribute'
 
-		if (self.has_variants or self.variant_of) and self.variant_based_on == 'Item Attribute':
+		if self.variant_based_on == 'Item Attribute':
 			attributes = []
 			if not self.attributes:
 				frappe.throw(_("Attribute table is mandatory"))
@@ -799,11 +810,13 @@ class Item(WebsiteGenerator):
 					attributes.append(d.attribute)
 
 	def validate_variant_attributes(self):
-		if self.variant_of and self.variant_based_on == 'Item Attribute':
+		if self.is_new() and self.variant_of and self.variant_based_on == 'Item Attribute':
+			# remove attributes with no attribute_value set
+			self.attributes = [d for d in self.attributes if cstr(d.attribute_value).strip()]
+
 			args = {}
-			for d in self.attributes:
-				if cstr(d.attribute_value).strip() == '':
-					frappe.throw(_("Please specify Attribute Value for attribute {0}").format(d.attribute))
+			for i, d in enumerate(self.attributes):
+				d.idx = i + 1
 				args[d.attribute] = d.attribute_value
 
 			variant = get_variant(self.variant_of, args, self.name)
@@ -952,6 +965,7 @@ def invalidate_cache_for_item(doc):
 
 	invalidate_item_variants_cache_for_website(doc)
 
+
 def invalidate_item_variants_cache_for_website(doc):
 	from erpnext.portal.product_configurator.item_variants_cache import ItemVariantsCacheManager
 
@@ -963,7 +977,8 @@ def invalidate_item_variants_cache_for_website(doc):
 
 	if item_code:
 		item_cache = ItemVariantsCacheManager(item_code)
-		item_cache.clear_cache()
+		item_cache.rebuild_cache()
+
 
 def check_stock_uom_with_bin(item, stock_uom):
 	if stock_uom == frappe.db.get_value("Item", item, "stock_uom"):
@@ -1057,4 +1072,8 @@ def update_variants(variants, template, publish_progress=True):
 		variant.save()
 		count+=1
 		if publish_progress:
-			frappe.publish_progress(count*100/len(variants), title = _("Updating Variants..."))
+				frappe.publish_progress(count*100/len(variants), title = _("Updating Variants..."))
+
+def on_doctype_update():
+	# since route is a Text column, it needs a length for indexing
+	frappe.db.add_index("Item", ["route(500)"])

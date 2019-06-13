@@ -46,20 +46,6 @@ frappe.ui.form.on('Asset', {
 		frm.toggle_display("next_depreciation_date", frm.doc.docstatus < 1);
 		frm.events.make_schedules_editable(frm);
 
-		if (frm.doc.docstatus>0) {
-			if (frm.doc.purchase_receipt || !frm.doc.is_existing_asset) {
-				frm.add_custom_button("General Ledger", function() {
-					frappe.route_options = {
-						"voucher_no": frm.doc.name,
-						"from_date": frm.doc.available_for_use_date,
-						"to_date": frm.doc.available_for_use_date,
-						"company": frm.doc.company
-					};
-					frappe.set_route("query-report", "General Ledger");
-				});
-			}
-		}
-
 		if (frm.doc.docstatus==1) {
 			if (in_list(["Submitted", "Partially Depreciated", "Fully Depreciated"], frm.doc.status)) {
 				frm.add_custom_button("Transfer Asset", function() {
@@ -77,6 +63,18 @@ frappe.ui.form.on('Asset', {
 			} else if (frm.doc.status=='Scrapped') {
 				frm.add_custom_button("Restore Asset", function() {
 					erpnext.asset.restore_asset(frm);
+				});
+			}
+
+			if (frm.doc.purchase_receipt || !frm.doc.is_existing_asset) {
+				frm.add_custom_button("General Ledger", function() {
+					frappe.route_options = {
+						"voucher_no": frm.doc.name,
+						"from_date": frm.doc.available_for_use_date,
+						"to_date": frm.doc.available_for_use_date,
+						"company": frm.doc.company
+					};
+					frappe.set_route("query-report", "General Ledger");
 				});
 			}
 
@@ -208,12 +206,10 @@ frappe.ui.form.on('Asset', {
 		erpnext.asset.set_accululated_depreciation(frm);
 	},
 
-	depreciation_method: function(frm) {
-		frm.events.make_schedules_editable(frm);
-	},
-
 	make_schedules_editable: function(frm) {
-		var is_editable = frm.doc.depreciation_method==="Manual" ? true : false;
+		var is_editable = frm.doc.finance_books.filter(d => d.depreciation_method == "Manual").length > 0
+			? true : false;
+
 		frm.toggle_enable("schedules", is_editable);
 		frm.fields_dict["schedules"].grid.toggle_enable("schedule_date", is_editable);
 		frm.fields_dict["schedules"].grid.toggle_enable("depreciation_amount", is_editable);
@@ -298,6 +294,50 @@ frappe.ui.form.on('Asset', {
 		})
 
 		frm.toggle_reqd("finance_books", frm.doc.calculate_depreciation);
+	},
+
+	gross_purchase_amount: function(frm) {
+		frm.doc.finance_books.forEach(d => {
+			frm.events.set_depreciation_rate(frm, d);
+		})
+	},
+
+	set_depreciation_rate: function(frm, row) {
+		if (row.total_number_of_depreciations && row.frequency_of_depreciation) {
+			frappe.call({
+				method: "get_depreciation_rate",
+				doc: frm.doc,
+				args: row,
+				callback: function(r) {
+					if (r.message) {
+						frappe.model.set_value(row.doctype, row.name, "rate_of_depreciation", r.message);
+					}
+				}
+			});
+		}
+	}
+});
+
+frappe.ui.form.on('Asset Finance Book', {
+	depreciation_method: function(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.events.set_depreciation_rate(frm, row);
+		frm.events.make_schedules_editable(frm);
+	},
+
+	expected_value_after_useful_life: function(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.events.set_depreciation_rate(frm, row);
+	},
+
+	frequency_of_depreciation: function(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.events.set_depreciation_rate(frm, row);
+	},
+
+	total_number_of_depreciations: function(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.events.set_depreciation_rate(frm, row);
 	}
 });
 

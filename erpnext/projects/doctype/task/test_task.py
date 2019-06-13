@@ -83,7 +83,7 @@ class TestTask(unittest.TestCase):
 
 		# assignment should be
 		task.load_from_db()
-		task.status = "Closed"
+		task.status = "Completed"
 		task.save()
 		todo = get_owner_and_status()
 		self.assertEqual(todo.owner, "test@example.com")
@@ -96,8 +96,6 @@ class TestTask(unittest.TestCase):
 		set_tasks_as_overdue()
 
 		self.assertEqual(frappe.db.get_value("Task", task.name, "status"), "Overdue")
-
-
 
 def create_task(subject, start=None, end=None, depends_on=None, project=None, save=True):
 	if not frappe.db.exists("Task", subject):

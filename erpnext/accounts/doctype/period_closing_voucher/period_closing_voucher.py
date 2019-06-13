@@ -12,7 +12,6 @@ class PeriodClosingVoucher(AccountsController):
 	def validate(self):
 		self.validate_account_head()
 		self.validate_posting_date()
-		self.select_accounting_journal("Miscellaneous")
 
 	def on_submit(self):
 		self.make_gl_entries()

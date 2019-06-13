@@ -10,7 +10,7 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.custom_make_buttons = {
 			'Stock Entry': 'Return',
 			'Purchase Invoice': 'Invoice'
-		}
+		};
 
 		frm.set_query("asset", "items", function() {
 			return {
@@ -18,24 +18,20 @@ frappe.ui.form.on("Purchase Receipt", {
 					"purchase_receipt": frm.doc.name
 				}
 			}
-		})
+		});
+
+		frm.set_query("expense_account", "items", function() {
+			return {
+				query: "erpnext.controllers.queries.get_expense_account",
+				filters: {'company': frm.doc.company}
+			}
+		});
+
 	},
 	onload: function(frm) {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
 		});
-
-		frm.set_query("accounting_journal", function() {
-			return {
-				filters: {
-					type: ["in", ["Purchase", "Miscellaneous"]]
-				}
-			}
-		});
-	},
-
-	onload_post_render: function(frm) {
-		frm.get_field("items").grid.set_multiple_add("item_code", "qty");
 	},
 
 	refresh: function(frm) {
@@ -96,7 +92,7 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 							},
 							get_query_filters: {
 								docstatus: 1,
-								status: ["!=", "Closed"],
+								status: ["not in", ["Closed", "On Hold"]],
 								per_received: ["<", 99.99],
 								company: me.frm.doc.company
 							}
@@ -118,7 +114,7 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 
 				if(!this.frm.doc.auto_repeat) {
 					cur_frm.add_custom_button(__('Subscription'), function() {
-						erpnext.utils.make_repetition(me.frm.doc.doctype, me.frm.doc.name)
+						erpnext.utils.make_subscription(me.frm.doc.doctype, me.frm.doc.name)
 					}, __('Create'))
 				}
 

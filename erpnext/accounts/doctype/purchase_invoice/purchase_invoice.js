@@ -9,7 +9,7 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		this.setup_posting_date_time_check();
 		this._super(doc);
 
-		// formatter for material request item
+		// formatter for purchase invoice item
 		if(this.frm.doc.update_stock) {
 			this.frm.set_indicator_formatter('item_code', function(doc) {
 				return (doc.qty<=doc.received_qty) ? "green" : "orange";
@@ -25,20 +25,11 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 				this.frm.set_df_property("credit_to", "print_hide", 0);
 			}
 		}
-
-		this.frm.set_query("accounting_journal", function() {
-			return {
-				filters: {
-					type: "Purchase"
-				}
-			}
-		});
 	},
 
 	refresh: function(doc) {
 		const me = this;
 		this._super();
-		this.frm.page.clear_actions_menu();
 
 		hide_fields(this.frm.doc);
 		// Show / Hide button
@@ -55,48 +46,43 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 					function() {me.change_release_date()},
 					__('Hold Invoice')
 				);
-				me.frm.page.add_action_item(__('Unblock Invoice'), function() {
-					me.unblock_invoice();
-				});
+				this.frm.add_custom_button(
+					__('Unblock Invoice'),
+					function() {me.unblock_invoice()},
+					__('Create')
+				);
 			} else if (!doc.on_hold) {
-				me.frm.page.add_action_item(__('Block Invoice'), function() {
-					me.block_invoice();
-				});
+				this.frm.add_custom_button(
+					__('Block Invoice'),
+					function() {me.block_invoice()},
+					__('Create')
+				);
 			}
 		}
 
 		if(doc.docstatus == 1 && doc.outstanding_amount != 0
 			&& !(doc.is_return && doc.return_against)) {
-				me.frm.page.add_action_item(__('Payment'), function() {
-					me.make_payment_entry();
-				});
+			this.frm.add_custom_button(__('Payment'), this.make_payment_entry, __('Create'));
+			cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 
 		if(!doc.is_return && doc.docstatus==1) {
 			if(doc.outstanding_amount >= 0 || Math.abs(flt(doc.outstanding_amount)) < flt(doc.grand_total)) {
-				me.frm.page.add_action_item(__('Return / Debit Note'), function() {
-					me.make_debit_note();
-				});
+				cur_frm.add_custom_button(__('Return / Debit Note'),
+					this.make_debit_note, __('Create'));
 			}
 
 			if(!doc.auto_repeat) {
-				me.frm.page.add_action_item(__('Repetition'), function() {
-					erpnext.utils.make_repetition(doc.doctype, doc.name);
-				});
+				cur_frm.add_custom_button(__('Subscription'), function() {
+					erpnext.utils.make_subscription(doc.doctype, doc.name)
+				}, __('Create'))
 			}
 		}
 
 		if (doc.outstanding_amount > 0 && !cint(doc.is_return)) {
-			if (doc.docstatus==0) {
-				me.frm.add_custom_button(__('Payment Request'), function() {
-					me.make_payment_request();
-				});
-			} else {
-				me.frm.page.add_action_item(__('Payment Request'), function() {
-					me.make_payment_request();
-				});
-			}
-			
+			cur_frm.add_custom_button(__('Payment Request'), function() {
+				me.make_payment_request()
+			}, __('Create'));
 		}
 
 		if(doc.docstatus===0) {
@@ -110,7 +96,7 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 					},
 					get_query_filters: {
 						docstatus: 1,
-						status: ["!=", "Closed"],
+						status: ["not in", ["Closed", "On Hold"]],
 						per_billed: ["<", 99.99],
 						company: me.frm.doc.company
 					}
@@ -143,9 +129,9 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 				var internal = supplier.is_internal_supplier;
 				var disabled = supplier.disabled;
 				if (internal == 1 && disabled == 0) {
-					me.frm.page.add_action_item(__("Inter Company Invoice"), function() {
+					me.frm.add_custom_button("Inter Company Invoice", function() {
 						me.make_inter_company_invoice(me.frm);
-					});
+					}, __('Create'));
 				}
 			});
 		}
@@ -299,6 +285,7 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 	is_paid: function() {
 		hide_fields(this.frm.doc);
 		if(cint(this.frm.doc.is_paid)) {
+			this.frm.set_value("allocate_advances_automatically", 0);
 			if(!this.frm.doc.company) {
 				this.frm.set_value("is_paid", 0)
 				frappe.msgprint(__("Please specify Company to proceed"));

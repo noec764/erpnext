@@ -30,6 +30,6 @@ frappe.query_reports["Customer Credit Balance"] = {
 					}
 				}
 			}
-		}
+		},
 	]
 }

@@ -14,11 +14,11 @@ def get_data():
 			"icon": "fa fa-check-square-o",
 			"type": "module",
 			"disable_after_onboard": 1,
-			"description": _("Dive into the basics for your organisation's needs."),
+			"description": "Dive into the basics for your organisation's needs.",
 			"onboard_present": 1
 		},
 		{
-			"module_name": "Accounts",
+			"module_name": "Accounting",
 			"category": "Modules",
 			"label": _("Accounting"),
 			"color": "#3498db",
@@ -33,7 +33,7 @@ def get_data():
 			"color": "#1abc9c",
 			"icon": "octicon octicon-tag",
 			"type": "module",
-			"description": "All things Sales, Customer and Products."
+			"description": "Sales orders, quotations, customers and items."
 		},
 		{
 			"module_name": "Buying",
@@ -42,7 +42,7 @@ def get_data():
 			"color": "#c0392b",
 			"icon": "octicon octicon-briefcase",
 			"type": "module",
-			"description": "Purchasing, Suppliers and Products."
+			"description": "Purchasing, suppliers, material requests, and items."
 		},
 		{
 			"module_name": "Stock",
@@ -78,12 +78,12 @@ def get_data():
 			"color": "#EF4DB6",
 			"icon": "octicon octicon-broadcast",
 			"type": "module",
-			"description": "Everything in your sales pipeline, from Leads and Opportunities to Customers."
+			"description": "Sales pipeline, leads, opportunities and customers."
 		},
 		{
-			"module_name": "Help Desk",
+			"module_name": "Support",
 			"category": "Modules",
-			"label": _("Help Desk"),
+			"label": _("Support"),
 			"color": "#1abc9c",
 			"icon": "fa fa-check-square-o",
 			"type": "module",
@@ -96,7 +96,7 @@ def get_data():
 			"color": "#2ecc71",
 			"icon": "octicon octicon-organization",
 			"type": "module",
-			"description": "Employee Lifecycle, Payroll, Shifts and Leaves."
+			"description": "Employees, attendance, payroll, leaves and shifts."
 		},
 		{
 			"module_name": "Quality Management",
@@ -117,7 +117,7 @@ def get_data():
 			"color": "#7f8c8d",
 			"icon": "octicon octicon-tools",
 			"type": "module",
-			"description": "Streamline your production with BOMS, Work Orders and Timesheets."
+			"description": "BOMS, work orders, operations, and timesheets."
 		},
 		{
 			"module_name": "Retail",
@@ -126,13 +126,71 @@ def get_data():
 			"color": "#7f8c8d",
 			"icon": "octicon octicon-credit-card",
 			"type": "module",
-			"description": "Point of Sale, Cashier Closing and Loyalty Programs."
+			"description": "Point of Sale and cashier closing."
+		},
+		{
+			"module_name": "Education",
+			"category": "Domains",
+			"label": _("Education"),
+			"color": "#428B46",
+			"icon": "octicon octicon-mortar-board",
+			"type": "module",
+			"description": "Student admissions, fees, courses and scores."
+		},
+
+		{
+			"module_name": "Healthcare",
+			"category": "Domains",
+			"label": _("Healthcare"),
+			"color": "#FF888B",
+			"icon": "fa fa-heartbeat",
+			"type": "module",
+			"description": "Patient appointments, procedures and tests."
+		},
+		{
+			"module_name": "Agriculture",
+			"category": "Domains",
+			"label": _("Agriculture"),
+			"color": "#8BC34A",
+			"icon": "octicon octicon-globe",
+			"type": "module",
+			"description": "Crop cycles, land areas, soil and plant analysis."
+		},
+		{
+			"module_name": "Hotels",
+			"category": "Domains",
+			"label": _("Hotels"),
+			"color": "#EA81E8",
+			"icon": "fa fa-bed",
+			"type": "module",
+			"description": "Hotel rooms, pricing, reservation and amenities."
+		},
+
+		{
+			"module_name": "Non Profit",
+			"category": "Domains",
+			"label": _("Non Profit"),
+			"color": "#DE2B37",
+			"icon": "octicon octicon-heart",
+			"type": "module",
+			"description": "Volunteers, memberships, grants and chapters."
+		},
+		{
+			"module_name": "Restaurant",
+			"category": "Domains",
+			"label": _("Restaurant"),
+			"color": "#EA81E8",
+			"icon": "fa fa-cutlery",
+			"_doctype": "Restaurant",
+			"type": "module",
+			"link": "List/Restaurant",
+			"description": "Menu, Orders and Table Reservations."
 		},
 
 		{
 			"module_name": "Help",
 			"category": "Administration",
-			"label": _("Help"),
+			"label": _("Learn"),
 			"color": "#FF888B",
 			"icon": "octicon octicon-device-camera-video",
 			"type": "module",
@@ -140,13 +198,14 @@ def get_data():
 			"description": "Explore Help Articles and Videos."
 		},
 		{
-			"module_name": "Settings",
-			"category": "Administration",
-			"label": _("Settings"),
-			"color": "#bdc3c7",
-			"reverse": 1,
-			"icon": "octicon octicon-settings",
-			"type": "module",
-			"description": "Global settings for all modules in ERPNext, with Email Digest and SMS."
+			"module_name": 'Marketplace',
+			"category": "Places",
+			"label": _('Marketplace'),
+			"icon": "octicon octicon-star",
+			"type": 'link',
+			"link": '#marketplace/home',
+			"color": '#FF4136',
+			'standard': 1,
+			"description": "Publish items to other ERPNext users."
 		},
 	]

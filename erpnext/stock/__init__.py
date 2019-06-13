@@ -20,9 +20,9 @@ def get_warehouse_account_map(company=None):
 		if company:
 			filters['company'] = company
 
-		for d in frappe.get_all('Warehouse', \
-			fields=["name", "account", "parent_warehouse", "company"], \
-			filters=filters, \
+		for d in frappe.get_all('Warehouse',
+			fields = ["name", "account", "parent_warehouse", "company"],
+			filters = filters,
 			order_by="lft, rgt"):
 			if not d.account:
 				d.account = get_warehouse_account(d, warehouse_account)
@@ -59,9 +59,9 @@ def get_warehouse_account(warehouse, warehouse_account=None):
 		account = get_company_default_inventory_account(warehouse.company)
 
 	if not account and warehouse.company:
-		frappe.throw(_("Please set Account in Warehouse {0} or Default Inventory Account in Company {1}") \
+		frappe.throw(_("Please set Account in Warehouse {0} or Default Inventory Account in Company {1}")
 			.format(warehouse.name, warehouse.company))
 	return account
 
 def get_company_default_inventory_account(company):
-	return frappe.get_cached_value('Company', company, 'default_inventory_account')
+	return frappe.get_cached_value('Company',  company,  'default_inventory_account')

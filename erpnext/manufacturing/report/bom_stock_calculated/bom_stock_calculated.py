@@ -62,7 +62,7 @@ def get_bom_stock(filters):
 				where wh.lft >= %s and wh.rgt <= %s and ledger.warehouse = wh.name)" % (warehouse_details.lft,
 				warehouse_details.rgt)
 		else:
-			conditions += " and ledger.warehouse = '%s'" % frappe.db.escape(filters.get("warehouse"))
+			conditions += " and ledger.warehouse = %s" % frappe.db.escape(filters.get("warehouse"))
 
 	else:
 		conditions += ""
@@ -79,8 +79,10 @@ def get_bom_stock(filters):
 				LEFT JOIN `tabBin` AS ledger
 				ON bom_item.item_code = ledger.item_code
 				{conditions}
+
 			WHERE
 				bom_item.parent = '{bom}' and bom_item.parenttype='BOM'
+
 			GROUP BY bom_item.item_code""".format(qty_field=qty_field, table=table, conditions=conditions, bom=bom), as_dict=1)
 
 def get_item_details(item_code):

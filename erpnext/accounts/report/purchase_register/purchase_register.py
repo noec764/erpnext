@@ -66,7 +66,7 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 				total_tax += tax_amount
 				row.append(tax_amount)
 
-		# total tax, grand total, rounded total & outstanding amount
+		# total tax, grand total, rounded total & outstanding amount 
 		row += [total_tax, inv.base_grand_total, flt(inv.base_grand_total, 0), inv.outstanding_amount]
 		data.append(row)
 

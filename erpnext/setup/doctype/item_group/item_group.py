@@ -113,8 +113,9 @@ def get_product_list_for_group(product_group=None, start=0, limit=10, search=Non
 	data = frappe.db.sql(query, {"product_group": product_group,"search": search, "today": nowdate()}, as_dict=1)
 	data = adjust_qty_for_expired_items(data)
 
-	for item in data:
-		set_product_info_for_website(item)
+	if cint(frappe.db.get_single_value("Shopping Cart Settings", "enabled")):
+		for item in data:
+			set_product_info_for_website(item)
 
 	return data
 
@@ -189,6 +190,7 @@ def get_parent_item_groups(item_group_name):
 	]
 	if not item_group_name:
 		return base_parents
+
 	item_group = frappe.get_doc("Item Group", item_group_name)
 	parent_groups = frappe.db.sql("""select name, route from `tabItem Group`
 		where lft <= %s and rgt >= %s

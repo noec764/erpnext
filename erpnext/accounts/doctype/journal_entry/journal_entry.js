@@ -6,11 +6,15 @@ frappe.provide("erpnext.journal_entry");
 
 
 frappe.ui.form.on("Journal Entry", {
+	setup: function(frm) {
+		frm.add_fetch("bank_account_no", "account", "account");
+	},
+
 	refresh: function(frm) {
 		erpnext.toggle_naming_series();
 		frm.cscript.voucher_type(frm.doc);
 
-		if(frm.doc.docstatus>0) {
+		if(frm.doc.docstatus==1) {
 			frm.add_custom_button(__('Ledger'), function() {
 				frappe.route_options = {
 					"voucher_no": frm.doc.name,
@@ -21,7 +25,13 @@ frappe.ui.form.on("Journal Entry", {
 					"group_by_voucher": 0
 				};
 				frappe.set_route("query-report", "General Ledger");
-			}, "fa fa-table");
+			}, __('View'));
+		}
+
+		if(frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Reverse Journal Entry'), function() {
+				return erpnext.journal_entry.reverse_journal_entry(frm);
+			}, __('Make'));
 		}
 
 		if (frm.doc.__islocal) {
@@ -37,8 +47,7 @@ frappe.ui.form.on("Journal Entry", {
 			frm.add_custom_button(__("Create Inter Company Journal Entry"),
 				function() {
 					frm.trigger("make_inter_company_journal_entry");
-				}
-			);
+				}, __('Make'));
 		}
 	},
 
@@ -228,7 +237,7 @@ erpnext.accounts.JournalEntry = frappe.ui.form.Controller.extend({
 
 				out.filters.push([jvd.reference_type, "per_billed", "<", 100]);
 			}
-			
+
 			if(jvd.party_type && jvd.party) {
 				var party_field = "";
 				if(jvd.reference_type.indexOf("Sales")===0) {
@@ -344,9 +353,7 @@ cur_frm.cscript.update_totals = function(doc) {
 
 cur_frm.cscript.get_balance = function(doc,dt,dn) {
 	cur_frm.cscript.update_totals(doc);
-	return $c_obj(cur_frm.doc, 'get_balance', '', function(r, rt){
-		cur_frm.refresh();
-	});
+	cur_frm.call('get_balance', null, () => { cur_frm.refresh(); });
 }
 
 cur_frm.cscript.validate = function(doc,cdt,cdn) {
@@ -610,6 +617,21 @@ $.extend(erpnext.journal_entry, {
 			});
 		}
 		return { filters: filters };
+	},
+
+	reverse_journal_entry: function(frm) {
+		var me = frm.doc;
+		for(var i=0; i<me.accounts.length; i++) {
+			me.accounts[i].credit += me.accounts[i].debit;
+			me.accounts[i].debit = me.accounts[i].credit - me.accounts[i].debit;
+			me.accounts[i].credit -= me.accounts[i].debit;
+			me.accounts[i].credit_in_account_currency = me.accounts[i].credit;
+			me.accounts[i].debit_in_account_currency = me.accounts[i].debit;
+			me.accounts[i].reference_type = "Journal Entry";
+			me.accounts[i].reference_name = me.name
+		}
+		frm.copy_doc();
+		cur_frm.reload_doc();
 	}
 });
 

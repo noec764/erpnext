@@ -20,7 +20,7 @@ frappe.ui.form.on('Period Closing Voucher', {
 	},
 	
 	refresh: function(frm) {
-		if(frm.doc.docstatus>0) {
+		if(frm.doc.docstatus==1) {
 			frm.add_custom_button(__('Ledger'), function() {
 				frappe.route_options = {
 					"voucher_no": frm.doc.name,
@@ -32,14 +32,6 @@ frappe.ui.form.on('Period Closing Voucher', {
 				frappe.set_route("query-report", "General Ledger");
 			}, "fa fa-table");
 		}
-
-		frm.set_query("accounting_journal", function() {
-			return {
-				filters: {
-					type: "Miscellaneous"
-				}
-			}
-		});
 	}
 	
 })

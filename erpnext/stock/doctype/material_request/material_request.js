@@ -38,6 +38,10 @@ frappe.ui.form.on('Material Request', {
 		};
 	},
 
+	onload_post_render: function(frm) {
+		frm.get_field("items").grid.set_multiple_add("item_code", "qty");
+	},
+
 	refresh: function(frm) {
 		frm.events.make_custom_buttons(frm);
 		frm.toggle_reqd('customer', frm.doc.material_request_type=="Customer Provided");
@@ -128,7 +132,7 @@ frappe.ui.form.on('Material Request', {
 			},
 			get_query_filters: {
 				docstatus: 1,
-				status: ["!=", "Closed"],
+				status: ["not in", ["Closed", "On Hold"]],
 				per_delivered: ["<", 99.99],
 			}
 		});

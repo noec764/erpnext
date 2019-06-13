@@ -8,16 +8,17 @@ from frappe import _, throw
 from frappe.utils import today, flt, cint, fmt_money, formatdate, getdate, add_days, add_months, get_last_day, nowdate
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.setup.utils import get_exchange_rate
-from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency, get_accounting_journal
+from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.buying.utils import update_last_purchase_rate
 from erpnext.controllers.sales_and_purchase_return import validate_return
 from erpnext.accounts.party import get_party_account_currency, validate_party_frozen_disabled
+from erpnext.accounts.doctype.pricing_rule.utils import validate_pricing_rules
 from erpnext.exceptions import InvalidCurrency
 from six import text_type
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 
-force_item_fields = ("item_group", "brand", "stock_uom", "is_fixed_asset", "item_tax_rate")
-
+force_item_fields = ("item_group", "brand", "stock_uom", "is_fixed_asset", "item_tax_rate", "pricing_rules")
 
 class AccountsController(TransactionBase):
 	def __init__(self, *args, **kwargs):
@@ -89,11 +90,16 @@ class AccountsController(TransactionBase):
 			self.validate_paid_amount()
 
 		if self.doctype in ['Purchase Invoice', 'Sales Invoice']:
-			if cint(self.allocate_advances_automatically):
+			pos_check_field = "is_pos" if self.doctype=="Sales Invoice" else "is_paid"
+			if cint(self.allocate_advances_automatically) and not cint(self.get(pos_check_field)):
 				self.set_advances()
 
 			if self.is_return:
 				self.validate_qty()
+
+		validate_regional(self)
+		if self.doctype != 'Material Request':
+			validate_pricing_rules(self)
 
 	def validate_invoice_documents_schedule(self):
 		self.validate_payment_schedule_dates()
@@ -115,12 +121,6 @@ class AccountsController(TransactionBase):
 			self.validate_non_invoice_documents_schedule()
 
 	def before_print(self):
-		if self.doctype in ['Journal Entry', 'Payment Entry', 'Sales Invoice', 'Purchase Invoice']:
-			self.gl_entries = frappe.get_list("GL Entry", filters={
-				"voucher_type": self.doctype,
-				"voucher_no": self.name
-			}, fields=["account", "party_type", "party", "debit", "credit", "remarks"])
-
 		if self.doctype in ['Purchase Order', 'Sales Order', 'Sales Invoice', 'Purchase Invoice',
 							'Supplier Quotation', 'Purchase Receipt', 'Delivery Note', 'Quotation']:
 			if self.get("group_same_items"):
@@ -241,6 +241,7 @@ class AccountsController(TransactionBase):
 				document_type = "{} Item".format(self.doctype)
 				parent_dict.update({"document_type": document_type})
 
+			self.set('pricing_rules', [])
 			for item in self.get("items"):
 				if item.get("item_code"):
 					args = parent_dict.copy()
@@ -248,13 +249,16 @@ class AccountsController(TransactionBase):
 
 					args["doctype"] = self.doctype
 					args["name"] = self.name
+					args["child_docname"] = item.name
 
 					if not args.get("transaction_date"):
 						args["transaction_date"] = args.get("posting_date")
 
 					if self.get("is_subcontracted"):
 						args["is_subcontracted"] = self.is_subcontracted
-					ret = get_item_details(args)
+
+					ret = get_item_details(args, self)
+
 					for fieldname, value in ret.items():
 						if item.meta.get_field(fieldname) and value is not None:
 							if (item.get(fieldname) is None or fieldname in force_item_fields):
@@ -274,16 +278,20 @@ class AccountsController(TransactionBase):
 					if self.doctype in ["Purchase Invoice", "Sales Invoice"] and item.meta.get_field('is_fixed_asset'):
 						item.set('is_fixed_asset', ret.get('is_fixed_asset', 0))
 
-					if ret.get("pricing_rule"):
+					if ret.get("pricing_rules") and not ret.get("validate_applied_rule", 0):
 						# if user changed the discount percentage then set user's discount percentage ?
-						item.set("pricing_rule", ret.get("pricing_rule"))
+						item.set("pricing_rules", ret.get("pricing_rules"))
 						item.set("discount_percentage", ret.get("discount_percentage"))
+						item.set("discount_amount", ret.get("discount_amount"))
 						if ret.get("pricing_rule_for") == "Rate":
 							item.set("price_list_rate", ret.get("price_list_rate"))
 
-						if item.price_list_rate:
+						if item.get("price_list_rate"):
 							item.rate = flt(item.price_list_rate *
-											(1.0 - (flt(item.discount_percentage) / 100.0)), item.precision("rate"))
+								(1.0 - (flt(item.discount_percentage) / 100.0)), item.precision("rate"))
+
+							if item.get('discount_amount'):
+								item.rate = item.price_list_rate - item.discount_amount
 
 			if self.doctype == "Purchase Invoice":
 				self.set_expense_account(for_validate)
@@ -331,7 +339,7 @@ class AccountsController(TransactionBase):
 					frappe.throw(_("Row #{0}: Account {1} does not belong to company {2}")
 								 .format(d.idx, d.account_head, self.company))
 
-	def get_gl_dict(self, args, account_currency=None):
+	def get_gl_dict(self, args, account_currency=None, item=None):
 		"""this method populates the common properties of a gl entry record"""
 
 		posting_date = args.get('posting_date') or self.get('posting_date')
@@ -348,7 +356,7 @@ class AccountsController(TransactionBase):
 			'fiscal_year': fiscal_year,
 			'voucher_type': self.doctype,
 			'voucher_no': self.name,
-			'remarks': self.get("remarks"),
+			'remarks': self.get("remarks") or self.get("remark"),
 			'debit': 0,
 			'credit': 0,
 			'debit_in_account_currency': 0,
@@ -358,6 +366,16 @@ class AccountsController(TransactionBase):
 			'party': None,
 			'project': self.get("project")
 		})
+
+		accounting_dimensions = get_accounting_dimensions()
+		dimension_dict = frappe._dict()
+
+		for dimension in accounting_dimensions:
+			dimension_dict[dimension] = self.get(dimension)
+			if item and item.get(dimension):
+				dimension_dict[dimension] = item.get(dimension)
+
+		gl_dict.update(dimension_dict)
 		gl_dict.update(args)
 
 		if not account_currency:
@@ -539,6 +557,19 @@ class AccountsController(TransactionBase):
 		if lst:
 			from erpnext.accounts.utils import reconcile_against_document
 			reconcile_against_document(lst)
+
+	def on_cancel(self):
+		from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
+
+		if self.doctype in ["Sales Invoice", "Purchase Invoice"]:
+			if self.is_return: return
+
+			if frappe.db.get_single_value('Accounts Settings', 'unlink_payment_on_cancellation_of_invoice'):
+				unlink_ref_doc_from_payment_entries(self)
+
+		elif self.doctype in ["Sales Order", "Purchase Order"]:
+			if frappe.db.get_single_value('Accounts Settings', 'unlink_advance_payment_on_cancelation_of_order'):
+				unlink_ref_doc_from_payment_entries(self)
 
 	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on, parentfield):
 		from erpnext.controllers.status_updater import get_tolerance_for
@@ -767,6 +798,9 @@ class AccountsController(TransactionBase):
 		if self.doctype in ("Sales Invoice", "Purchase Invoice"):
 			grand_total = grand_total - flt(self.write_off_amount)
 
+		if self.get("total_advance"):
+			grand_total -= self.get("total_advance")
+
 		if not self.get("payment_schedule"):
 			if self.get("payment_terms_template"):
 				data = get_payment_terms(self.payment_terms_template, posting_date, grand_total)
@@ -812,6 +846,9 @@ class AccountsController(TransactionBase):
 			total = flt(total, self.precision("grand_total"))
 
 			grand_total = flt(self.get("rounded_total") or self.grand_total, self.precision('grand_total'))
+			if self.get("total_advance"):
+				grand_total -= self.get("total_advance")
+
 			if self.doctype in ("Sales Invoice", "Purchase Invoice"):
 				grand_total = grand_total - flt(self.write_off_amount)
 			if total != grand_total:
@@ -822,11 +859,6 @@ class AccountsController(TransactionBase):
 			return self.disable_rounded_total
 		else:
 			return frappe.db.get_single_value("Global Defaults", "disable_rounded_total")
-
-	def select_accounting_journal(self, journal_type):
-		if not self.accounting_journal:
-			aj = get_accounting_journal(self, journal_type)
-			self.accounting_journal = aj.name if aj else None
 
 @frappe.whitelist()
 def get_tax_rate(account_head):
@@ -1191,3 +1223,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 	parent.update_blanket_order()
 	parent.update_billing_percentage()
 	parent.set_status()
+
+@erpnext.allow_regional
+def validate_regional(doc):
+	pass

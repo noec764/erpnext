@@ -136,7 +136,7 @@ class SerialNo(StockController):
 		sle_dict = {}
 		for sle in frappe.db.sql("""select * from `tabStock Ledger Entry`
 			where serial_no like %s and item_code=%s and ifnull(is_cancelled, 'No')='No'
-			order by posting_date desc, posting_time desc, name desc""",
+			order by posting_date desc, posting_time desc, creation desc""",
 			("%%%s%%" % self.name, self.item_code), as_dict=1):
 				if self.name.upper() in get_serial_nos(sle.serial_no):
 					if cint(sle.actual_qty) > 0:
@@ -459,3 +459,13 @@ def get_delivery_note_serial_no(item_code, qty, delivery_note):
 		serial_nos = '\n'.join(dn_serial_nos)
 
 	return serial_nos
+
+@frappe.whitelist()
+def auto_fetch_serial_number(qty, item_code, warehouse):
+	serial_numbers = frappe.get_list("Serial No", filters={
+		"item_code": item_code,
+		"warehouse": warehouse,
+		"delivery_document_no": "",
+		"sales_invoice": ""
+	}, limit=qty, order_by="creation")
+	return [item['name'] for item in serial_numbers]

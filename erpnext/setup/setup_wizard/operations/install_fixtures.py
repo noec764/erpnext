@@ -22,15 +22,12 @@ def install(country=None):
 		# domains
 		{ 'doctype': 'Domain', 'domain': 'Distribution'},
 		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
-		# Already created via POS
-		# { 'doctype': 'Domain', 'domain': 'Retail'},
+		{ 'doctype': 'Domain', 'domain': 'Retail'},
 		{ 'doctype': 'Domain', 'domain': 'Services'},
-
-		{'doctype': 'Company Type', 'company_type': 'SAS/SASU', 'country': _("France")},
-		{'doctype': 'Company Type', 'company_type': 'EURL/SARL', 'country': _("France")},
-		{'doctype': 'Company Type', 'company_type': 'SA', 'country': _("France")},
-		{'doctype': 'Company Type', 'company_type': 'SNC', 'country': _("France")},
-		{'doctype': 'Company Type', 'company_type': 'Libéral/Micro-entreprise', 'country': _("France")},
+		{ 'doctype': 'Domain', 'domain': 'Education'},
+		{ 'doctype': 'Domain', 'domain': 'Healthcare'},
+		{ 'doctype': 'Domain', 'domain': 'Agriculture'},
+		{ 'doctype': 'Domain', 'domain': 'Non Profit'},
 
 		# address template
 		{'doctype':"Address Template", "country": country},
@@ -84,6 +81,19 @@ def install(country=None):
 		{'doctype': 'Employment Type', 'employee_type_name': _('Piecework')},
 		{'doctype': 'Employment Type', 'employee_type_name': _('Intern')},
 		{'doctype': 'Employment Type', 'employee_type_name': _('Apprentice')},
+
+
+		# Stock Entry Type
+		{'doctype': 'Stock Entry Type', 'name': 'Material Issue', 'purpose': 'Material Issue'},
+		{'doctype': 'Stock Entry Type', 'name': 'Material Receipt', 'purpose': 'Material Receipt'},
+		{'doctype': 'Stock Entry Type', 'name': 'Material Transfer', 'purpose': 'Material Transfer'},
+		{'doctype': 'Stock Entry Type', 'name': 'Manufacture', 'purpose': 'Manufacture'},
+		{'doctype': 'Stock Entry Type', 'name': 'Repack', 'purpose': 'Repack'},
+		{'doctype': 'Stock Entry Type', 'name': 'Send to Subcontractor', 'purpose': 'Send to Subcontractor'},
+		{'doctype': 'Stock Entry Type', 'name': 'Material Transfer for Manufacture', 'purpose': 'Material Transfer for Manufacture'},
+		{'doctype': 'Stock Entry Type', 'name': 'Material Consumption for Manufacture', 'purpose': 'Material Consumption for Manufacture'},
+		{'doctype': 'Stock Entry Type', 'name': 'Send to Warehouse', 'purpose': 'Send to Warehouse'},
+		{'doctype': 'Stock Entry Type', 'name': 'Receive at Warehouse', 'purpose': 'Receive at Warehouse'},
 
 		# Designation
 		{'doctype': 'Designation', 'designation_name': _('CEO')},
@@ -176,8 +186,11 @@ def install(country=None):
 		{'doctype': "Party Type", "party_type": "Customer", "account_type": "Receivable"},
 		{'doctype': "Party Type", "party_type": "Supplier", "account_type": "Payable"},
 		{'doctype': "Party Type", "party_type": "Employee", "account_type": "Payable"},
+		{'doctype': "Party Type", "party_type": "Member", "account_type": "Receivable"},
 		{'doctype': "Party Type", "party_type": "Shareholder", "account_type": "Payable"},
+		{'doctype': "Party Type", "party_type": "Student", "account_type": "Receivable"},
 
+		{'doctype': "Opportunity Type", "name": "Hub"},
 		{'doctype': "Opportunity Type", "name": _("Sales")},
 		{'doctype': "Opportunity Type", "name": _("Support")},
 		{'doctype': "Opportunity Type", "name": _("Maintenance")},
@@ -201,6 +214,10 @@ def install(country=None):
 
 		{'doctype': "Print Heading", 'print_heading': _("Credit Note")},
 		{'doctype': "Print Heading", 'print_heading': _("Debit Note")},
+
+		# Assessment Group
+		{'doctype': 'Assessment Group', 'assessment_group_name': _('All Assessment Groups'),
+			'is_group': 1, 'parent_assessment_group': ''},
 
 		# Share Management
 		{"doctype": "Share Type", "title": _("Equity")},
@@ -329,7 +346,7 @@ def add_market_segments():
 	make_records(records)
 
 def add_sale_stages():
-	# Sales Stages
+	# Sale Stages
 	records = [
 		{"doctype": "Sales Stage", "stage_name": _("Prospecting")},
 		{"doctype": "Sales Stage", "stage_name": _("Qualification")},
@@ -346,7 +363,12 @@ def add_sale_stages():
 def install_company(args):
 	records = [
 		# Fiscal Year
-		{ "doctype": "Fiscal Year", 'year': get_fy_details(args.fy_start_date, args.fy_end_date), 'year_start_date': args.fy_start_date, 'year_end_date': args.fy_end_date },
+		{
+			'doctype': "Fiscal Year",
+			'year': get_fy_details(args.fy_start_date, args.fy_end_date),
+			'year_start_date': args.fy_start_date,
+			'year_end_date': args.fy_end_date
+		},
 
 		# Company
 		{

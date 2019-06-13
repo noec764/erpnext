@@ -13,36 +13,6 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Employee Transfer",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Promotion",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Separation",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Onboarding"
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Separation Template",
-				},
-				{
-					"type": "doctype",
-					"name": "Employee Onboarding Template"
-				}
-			]
-		},
-
-		{
-			"label": _("Attendance and Leaves"),
-			"items": [
-				{
-					"type": "doctype",
 					"name": "Employee Attendance Tool",
 					"hide_count": True,
 					"onboard": 1,
@@ -244,33 +214,20 @@ def get_data():
 					"onboard": 1,
 				},
 				{
-					"type": "report",
-					"name": "Employee Information",
-					"doctype": "Employee"
+					"type": "doctype",
+					"name": "Training Program"
 				},
 				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Salary Register",
-					"doctype": "Salary Slip"
+					"type": "doctype",
+					"name": "Training Event"
 				},
 				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Monthly Attendance Sheet",
-					"doctype": "Attendance"
+					"type": "doctype",
+					"name": "Training Result"
 				},
 				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Vehicle Expenses",
-					"doctype": "Vehicle"
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Department Analytics",
-					"doctype": "Employee"
+					"type": "doctype",
+					"name": "Training Feedback"
 				},
 			]
 		},
@@ -332,6 +289,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Expense Claim",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
 					"name": "Loan Type",
 				},
 				{
@@ -339,6 +301,10 @@ def get_data():
 					"name": "Loan Application",
 					"dependencies": ["Employee"]
 				},
+				{
+					"type": "doctype",
+					"name": "Loan"
+				}
 			]
 		},
 		{

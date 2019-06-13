@@ -40,7 +40,10 @@ frappe.query_reports["Stock Balance"] = {
 			"options": "Item",
 			"get_query": function() {
 				return {
-					query: "erpnext.controllers.queries.item_query"
+					query: "erpnext.controllers.queries.item_query",
+					filters: {
+						"item_group": frappe.query_report.get_filter_value("item_group")
+					}
 				}
 			}
 		},
@@ -49,7 +52,24 @@ frappe.query_reports["Stock Balance"] = {
 			"label": __("Warehouse"),
 			"fieldtype": "Link",
 			"width": "80",
-			"options": "Warehouse"
+			"options": "Warehouse",
+			get_query: () => {
+				var warehouse_type = frappe.query_report.get_filter_value('warehouse_type');
+				if(warehouse_type){
+					return {
+						filters: {
+							'warehouse_type': warehouse_type
+						}
+					}
+				}
+			}
+		},
+		{
+			"fieldname": "warehouse_type",
+			"label": __("Warehouse Type"),
+			"fieldtype": "Link",
+			"width": "80",
+			"options": "Warehouse Type"
 		},
 		{
 			"fieldname":"include_uom",

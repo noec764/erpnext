@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
+
 from frappe import _
+
 
 def get_data():
 	return {
@@ -17,6 +19,10 @@ def get_data():
 			{
 				'label': _('Orders'),
 				'items': ['Sales Order', 'Delivery Note', 'Sales Invoice']
+			},
+			{
+				'label': _('Service Level Agreement'),
+				'items': ['Service Level Agreement']
 			},
 			{
 				'label': _('Payments'),

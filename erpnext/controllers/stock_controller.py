@@ -7,7 +7,7 @@ from frappe.utils import cint, flt, cstr
 from frappe import _
 import frappe.defaults
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.accounts.general_ledger import make_gl_entries, reverse_gl_entries, process_gl_map
+from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries, process_gl_map
 from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.stock.stock_ledger import get_valuation_rate
 from erpnext.stock import get_warehouse_account_map
@@ -23,7 +23,7 @@ class StockController(AccountsController):
 
 	def make_gl_entries(self, gl_entries=None, repost_future_gle=True, from_repost=False):
 		if self.docstatus == 2:
-			reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
+			delete_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 
 		if cint(erpnext.is_perpetual_inventory_enabled(self.company)):
 			warehouse_account = get_warehouse_account_map(self.company)
@@ -80,8 +80,8 @@ class StockController(AccountsController):
 							"cost_center": item_row.cost_center,
 							"remarks": self.get("remarks") or "Accounting Entry for Stock",
 							"debit": flt(sle.stock_value_difference, 2),
-							"accounting_journal": self.accounting_journal
-						}, warehouse_account[sle.warehouse]["account_currency"]))
+							"is_opening": item_row.get("is_opening") or self.get("is_opening") or "No",
+						}, warehouse_account[sle.warehouse]["account_currency"], item=item_row))
 
 						# to target warehouse / expense account
 						gl_list.append(self.get_gl_dict({
@@ -90,9 +90,9 @@ class StockController(AccountsController):
 							"cost_center": item_row.cost_center,
 							"remarks": self.get("remarks") or "Accounting Entry for Stock",
 							"credit": flt(sle.stock_value_difference, 2),
-							"accounting_journal": self.accounting_journal,
-							"project": item_row.get("project") or self.get("project")
-						}))
+							"project": item_row.get("project") or self.get("project"),
+							"is_opening": item_row.get("is_opening") or self.get("is_opening") or "No"
+						}, item=item_row))
 					elif sle.warehouse not in warehouse_with_no_account:
 						warehouse_with_no_account.append(sle.warehouse)
 
@@ -125,8 +125,17 @@ class StockController(AccountsController):
 
 	def get_voucher_details(self, default_expense_account, default_cost_center, sle_map):
 		if self.doctype == "Stock Reconciliation":
-			return [frappe._dict({ "name": voucher_detail_no, "expense_account": default_expense_account,
-				"cost_center": default_cost_center }) for voucher_detail_no, sle in sle_map.items()]
+			reconciliation_purpose = frappe.db.get_value(self.doctype, self.name, "purpose")
+			is_opening = "Yes" if reconciliation_purpose == "Opening Stock" else "No"
+			details = []
+			for voucher_detail_no, sle in sle_map.items():
+				details.append(frappe._dict({
+					"name": voucher_detail_no,
+					"expense_account": default_expense_account,
+					"cost_center": default_cost_center,
+					"is_opening": is_opening
+				}))
+			return details
 		else:
 			details = self.get("items")
 
@@ -201,7 +210,7 @@ class StockController(AccountsController):
 	def make_adjustment_entry(self, expected_gle, voucher_obj):
 		from erpnext.accounts.utils import get_stock_and_account_difference
 		account_list = [d.account for d in expected_gle]
-		acc_diff = get_stock_and_account_difference(account_list, \
+		acc_diff = get_stock_and_account_difference(account_list,
 			expected_gle[0].posting_date, self.company)
 
 		cost_center = self.get_company_default("cost_center")
@@ -217,7 +226,6 @@ class StockController(AccountsController):
 						"against": stock_adjustment_account,
 						"debit": diff,
 						"remarks": "Adjustment Accounting Entry for Stock",
-						"accounting_journal": self.accounting_journal
 					}),
 
 					# account against stock in hand
@@ -227,7 +235,6 @@ class StockController(AccountsController):
 						"credit": diff,
 						"cost_center": cost_center or None,
 						"remarks": "Adjustment Accounting Entry for Stock",
-						"accounting_journal": self.accounting_journal
 					}),
 				])
 
@@ -421,7 +428,7 @@ def get_future_stock_vouchers(posting_date, posting_time, for_warehouses=None, f
 	for d in frappe.db.sql("""select distinct sle.voucher_type, sle.voucher_no
 		from `tabStock Ledger Entry` sle
 		where timestamp(sle.posting_date, sle.posting_time) >= timestamp(%s, %s) {condition}
-		order by timestamp(sle.posting_date, sle.posting_time) asc, name asc""".format(condition=condition),
+		order by timestamp(sle.posting_date, sle.posting_time) asc, creation asc""".format(condition=condition),
 		tuple([posting_date, posting_time] + values), as_dict=True):
 			future_stock_vouchers.append([d.voucher_type, d.voucher_no])
 

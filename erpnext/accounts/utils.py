@@ -333,6 +333,9 @@ def reconcile_against_document(args):
 		doc = frappe.get_doc(d.voucher_type, d.voucher_no)
 		doc.make_gl_entries(cancel = 0, adv_adj =1)
 
+		if d.voucher_type in ('Payment Entry', 'Journal Entry'):
+			doc.update_expense_claim()
+
 def check_if_advance_entry_modified(args):
 	"""
 		check if there is already a voucher reference
@@ -375,9 +378,9 @@ def check_if_advance_entry_modified(args):
 
 def validate_allocated_amount(args):
 	if args.get("allocated_amount") < 0:
-		throw(_("Allocated amount can not be negative"))
+		throw(_("Allocated amount cannot be negative"))
 	elif args.get("allocated_amount") > args.get("unadjusted_amount"):
-		throw(_("Allocated amount can not greater than unadjusted amount"))
+		throw(_("Allocated amount cannot be greater than unadjusted amount"))
 
 def update_reference_in_journal_entry(d, jv_obj):
 	"""
@@ -864,32 +867,5 @@ def get_coa(doctype, parent, is_root, chart=None):
 
 def get_allow_cost_center_in_entry_of_bs_account():
 	def generator():
-		return cint(frappe.db.get_value('Accounts Settings', None,\
-			'allow_cost_center_in_entry_of_bs_account'))
-	return frappe.local_cache("get_allow_cost_center_in_entry_of_bs_account",\
-		(), generator, regenerate_if_none=True)
-
-def get_accounting_journal(doc, journal_type=None):
-	import json
-	from frappe.email.doctype.notification.notification import get_context
-
-	filtered_journals = None
-
-	if not journal_type:
-		journal_type = "Miscellaneous"
-
-	journals = frappe.get_all("Accounting Journal", filters={"type": journal_type})
-
-	for journal in journals:
-		if journal.name:
-			jdoc = frappe.get_doc("Accounting Journal", journal.name)
-			if jdoc.conditions:
-				for condition in jdoc.conditions:
-					if condition.document_type == doc.doctype and frappe.safe_eval(condition.condition, None, get_context(doc)):
-						filtered_journals = journal
-
-			elif filtered_journals is None:
-				filtered_journals = journal
-			print(filtered_journals)
-
-	return filtered_journals
+		return cint(frappe.db.get_value('Accounts Settings', None, 'allow_cost_center_in_entry_of_bs_account'))
+	return frappe.local_cache("get_allow_cost_center_in_entry_of_bs_account", (), generator, regenerate_if_none=True)

@@ -58,36 +58,6 @@ class Account(NestedSet):
 				throw(_("Account {0}: Parent account {1} does not belong to company: {2}")
 					.format(self.name, self.parent_account, self.company))
 
-	def validate_root_company_and_sync_account_to_children(self):
-		# ignore validation while creating new compnay or while syncing to child companies
-		if frappe.local.flags.ignore_root_company_validation or self.flags.ignore_root_company_validation:
-			return
-
-		ancestors = get_root_company(self.company)
-		if ancestors:
-			frappe.throw(_("Please add the account to root level Company - %s" % ancestors[0]))
-		else:
-			descendants = get_descendants_of('Company', self.company)
-			if not descendants: return
-
-			acc_name_map = {}
-			acc_name = frappe.db.get_value('Account', self.parent_account, "account_name")
-			for d in frappe.db.get_values('Account',
-				{"company": ["in", descendants], "account_name": acc_name},
-				["company", "name"], as_dict=True):
-				acc_name_map[d["company"]] = d["name"]
-
-			if not acc_name_map: return
-
-			for company in descendants:
-				doc = frappe.copy_doc(self)
-				doc.flags.ignore_root_company_validation = True
-				doc.update({"company": company, "account_currency": None,
-					"parent": acc_name_map[company], "parent_account": acc_name_map[company]})
-				doc.save()
-				frappe.msgprint(_("Account {0} is added in the child company {1}")
-					.format(doc.name, company))
-
 	def set_root_and_report_type(self):
 		if self.parent_account:
 			par = frappe.db.get_value("Account", self.parent_account,
@@ -120,6 +90,45 @@ class Account(NestedSet):
 
 		if not self.parent_account and not self.is_group:
 			frappe.throw(_("Root Account must be a group"))
+
+	def validate_root_company_and_sync_account_to_children(self):
+		# ignore validation while creating new compnay or while syncing to child companies
+		if frappe.local.flags.ignore_root_company_validation or self.flags.ignore_root_company_validation:
+			return
+
+		ancestors = get_root_company(self.company)
+		if ancestors:
+			if frappe.get_value("Company", self.company, "allow_account_creation_against_child_company"):
+				return
+			frappe.throw(_("Please add the account to root level Company - %s" % ancestors[0]))
+		else:
+			descendants = get_descendants_of('Company', self.company)
+			if not descendants: return
+
+			parent_acc_name_map = {}
+			parent_acc_name = frappe.db.get_value('Account', self.parent_account, "account_name")
+			for d in frappe.db.get_values('Account',
+				{"company": ["in", descendants], "account_name": parent_acc_name},
+				["company", "name"], as_dict=True):
+				parent_acc_name_map[d["company"]] = d["name"]
+
+			if not parent_acc_name_map: return
+
+			for company in descendants:
+				if not parent_acc_name_map.get(company):
+					frappe.throw(_("While creating account for child Company {0}, parent account {1} not found. Please create the parent account in corresponding COA")
+						.format(company, parent_acc_name))
+
+				doc = frappe.copy_doc(self)
+				doc.flags.ignore_root_company_validation = True
+				doc.update({
+					"company": company,
+					"account_currency": None,
+					"parent_account": parent_acc_name_map[company]
+				})
+				doc.save()
+				frappe.msgprint(_("Account {0} is added in the child company {1}")
+					.format(doc.name, company))
 
 	def validate_group_or_ledger(self):
 		if self.get("__islocal"):
@@ -259,7 +268,7 @@ def update_account_number(name, account_name, account_number=None):
 
 	new_name = get_account_autoname(account_number, account_name, account.company)
 	if name != new_name:
-		frappe.rename_doc("Account", name, new_name, ignore_permissions=1)
+		frappe.rename_doc("Account", name, new_name, force=1)
 		return new_name
 
 @frappe.whitelist()
@@ -278,7 +287,7 @@ def merge_account(old, new, is_group, root_type, company):
 		frappe.db.set_value("Account", new, "parent_account",
 			frappe.db.get_value("Account", old, "parent_account"))
 
-	frappe.rename_doc("Account", old, new, merge=1, ignore_permissions=1)
+	frappe.rename_doc("Account", old, new, merge=1, force=1)
 
 	return new
 

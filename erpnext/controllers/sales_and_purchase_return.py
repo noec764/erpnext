@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe, erpnext
 from frappe import _
 from frappe.model.meta import get_field_precision
-from frappe.utils import flt, get_datetime, format_datetime, today, nowtime
+from frappe.utils import flt, get_datetime, format_datetime
 
 class StockOverReturnError(frappe.ValidationError): pass
 
@@ -118,7 +118,8 @@ def validate_quantity(doc, args, ref, valid_items, already_returned_items):
 	already_returned_data = already_returned_items.get(args.item_code) or {}
 
 	company_currency = erpnext.get_company_currency(doc.company)
-	stock_qty_precision = get_field_precision(frappe.get_meta(doc.doctype + " Item").get_field("stock_qty"), company_currency)
+	stock_qty_precision = get_field_precision(frappe.get_meta(doc.doctype + " Item")
+			.get_field("stock_qty"), company_currency)
 
 	for column in fields:
 		returned_qty = flt(already_returned_data.get(column, 0)) if len(already_returned_data) > 0 else 0
@@ -209,10 +210,6 @@ def make_return_doc(doctype, source_name, target_doc=None):
 		doc.is_return = 1
 		doc.return_against = source.name
 		doc.ignore_pricing_rule = 1
-		doc.set_posting_time = 1
-		doc.posting_date = today()
-		doc.posting_time = nowtime()
-		doc.due_date = today()
 		if doctype == "Sales Invoice":
 			doc.is_pos = source.is_pos
 
@@ -246,6 +243,10 @@ def make_return_doc(doctype, source_name, target_doc=None):
 			elif doc.doctype == 'Purchase Invoice':
 				doc.paid_amount = -1 * source.paid_amount
 				doc.base_paid_amount = -1 * source.base_paid_amount
+
+		if doc.get("is_return") and hasattr(doc, "packed_items"):
+			for d in doc.get("packed_items"):
+				d.qty = d.qty * -1
 
 		doc.discount_amount = -1 * source.discount_amount
 		doc.run_method("calculate_taxes_and_totals")

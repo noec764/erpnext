@@ -8,14 +8,6 @@ frappe.ui.form.on('Payment Entry', {
 			if (!frm.doc.paid_from) frm.set_value("paid_from_account_currency", null);
 			if (!frm.doc.paid_to) frm.set_value("paid_to_account_currency", null);
 		}
-
-		frm.set_query("accounting_journal", function() {
-			return {
-				filters: {
-					type: ["in", ["Bank", "Cash"]]
-				}
-			}
-		});
 	},
 
 	setup: function(frm) {
@@ -35,6 +27,20 @@ frappe.ui.form.on('Payment Entry', {
 			return{
 				"filters": {
 					"name": ["in", Object.keys(frappe.boot.party_account_types)],
+				}
+			}
+		});
+		frm.set_query("party_bank_account", function() {
+			return {
+				filters: {
+					"is_company_account":0
+				}
+			}
+		});
+		frm.set_query("bank_account", function() {
+			return {
+				filters: {
+					"is_company_account":1
 				}
 			}
 		});
@@ -208,7 +214,7 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	show_general_ledger: function(frm) {
-		if(frm.doc.docstatus>0) {
+		if(frm.doc.docstatus==1) {
 			frm.add_custom_button(__('Ledger'), function() {
 				frappe.route_options = {
 					"voucher_no": frm.doc.name,
@@ -240,11 +246,13 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	party_type: function(frm) {
+
 		let party_types = Object.keys(frappe.boot.party_account_types);
-		if(frm.doc.party_type && !party_types.includes(frm.doc.party_type)) {
+		if(frm.doc.party_type && !party_types.includes(frm.doc.party_type)){
 			frm.set_value("party_type", "");
 			frappe.throw(__("Party can only be one of "+ party_types.join(", ")));
 		}
+
 		if(frm.doc.party) {
 			$.each(["party", "party_balance", "paid_from", "paid_to",
 				"paid_from_account_currency", "paid_from_account_balance",

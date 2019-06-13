@@ -7,6 +7,7 @@ from frappe.utils import flt, cstr, cint
 from frappe import _
 from frappe.model.meta import get_field_precision
 from erpnext.accounts.doctype.budget.budget import validate_expense_against_budget
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 
 
 class StockAccountInvalidTransaction(frappe.ValidationError): pass
@@ -20,7 +21,7 @@ def make_gl_entries(gl_map, cancel=False, adv_adj=False, merge_entries=True, upd
 			else:
 				frappe.throw(_("Incorrect number of General Ledger Entries found. You might have selected a wrong Account in the transaction."))
 		else:
-			reverse_gl_entries(gl_map, adv_adj=adv_adj, update_outstanding=update_outstanding)
+			delete_gl_entries(gl_map, adv_adj=adv_adj, update_outstanding=update_outstanding)
 
 def process_gl_map(gl_map, merge_entries=True):
 	if merge_entries:
@@ -49,10 +50,11 @@ def process_gl_map(gl_map, merge_entries=True):
 
 def merge_similar_entries(gl_map):
 	merged_gl_map = []
+	accounting_dimensions = get_accounting_dimensions()
 	for entry in gl_map:
 		# if there is already an entry in this account then just add it
 		# to that entry
-		same_head = check_if_in_list(entry, merged_gl_map)
+		same_head = check_if_in_list(entry, merged_gl_map, accounting_dimensions)
 		if same_head:
 			same_head.debit	= flt(same_head.debit) + flt(entry.debit)
 			same_head.debit_in_account_currency	= \
@@ -69,16 +71,24 @@ def merge_similar_entries(gl_map):
 
 	return merged_gl_map
 
-def check_if_in_list(gle, gl_map):
+def check_if_in_list(gle, gl_map, dimensions=None):
+	account_head_fieldnames = ['party_type', 'party', 'against_voucher', 'against_voucher_type',
+		'cost_center', 'project']
+
+	if dimensions:
+		account_head_fieldnames = account_head_fieldnames + dimensions
+
 	for e in gl_map:
-		if e.account == gle.account \
-			and cstr(e.get('party_type'))==cstr(gle.get('party_type')) \
-			and cstr(e.get('party'))==cstr(gle.get('party')) \
-			and cstr(e.get('against_voucher'))==cstr(gle.get('against_voucher')) \
-			and cstr(e.get('against_voucher_type')) == cstr(gle.get('against_voucher_type')) \
-			and cstr(e.get('cost_center')) == cstr(gle.get('cost_center')) \
-			and cstr(e.get('project')) == cstr(gle.get('project')):
-				return e
+		same_head = True
+		if e.account != gle.account:
+			same_head = False
+
+		for fieldname in account_head_fieldnames:
+			if cstr(e.get(fieldname)) != cstr(gle.get(fieldname)):
+				same_head = False
+
+		if same_head:
+			return e
 
 def save_entries(gl_map, adv_adj, update_outstanding, from_repost=False):
 	if not from_repost:
@@ -172,7 +182,7 @@ def make_round_off_gle(gl_map, debit_credit_diff):
 		gl_map.append(round_off_gle)
 
 def get_round_off_account_and_cost_center(company):
-	round_off_account, round_off_cost_center = frappe.get_cached_value('Company', company,\
+	round_off_account, round_off_cost_center = frappe.get_cached_value('Company',  company,
 		["round_off_account", "round_off_cost_center"]) or [None, None]
 	if not round_off_account:
 		frappe.throw(_("Please mention Round Off Account in Company"))
@@ -182,8 +192,8 @@ def get_round_off_account_and_cost_center(company):
 
 	return round_off_account, round_off_cost_center
 
-def reverse_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,\
-	adv_adj=False, update_outstanding="Yes"):
+def delete_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,
+		adv_adj=False, update_outstanding="Yes"):
 
 	from erpnext.accounts.doctype.gl_entry.gl_entry import validate_balance_type, \
 		check_freezing_date, update_outstanding_amt, validate_frozen_account
@@ -198,9 +208,8 @@ def reverse_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,\
 	if gl_entries:
 		check_freezing_date(gl_entries[0]["posting_date"], adv_adj)
 
-	if gl_entries:
-		reversed_gl_entries = get_reversed_entries(gl_entries)
-		make_gl_entries(reversed_gl_entries)
+	frappe.db.sql("""delete from `tabGL Entry` where voucher_type=%s and voucher_no=%s""",
+		(voucher_type or gl_entries[0]["voucher_type"], voucher_no or gl_entries[0]["voucher_no"]))
 
 	for entry in gl_entries:
 		validate_frozen_account(entry["account"], adv_adj)
@@ -209,20 +218,5 @@ def reverse_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,\
 			validate_expense_against_budget(entry)
 
 		if entry.get("against_voucher") and update_outstanding == 'Yes' and not adv_adj:
-			update_outstanding_amt(entry["account"], entry.get("party_type"), entry.get("party"),\
-			entry.get("against_voucher_type"), entry.get("against_voucher"), on_cancel=True)
-
-
-def get_reversed_entries(gl_entries):
-	for entry in gl_entries:
-		glmap = {
-			"credit": entry["debit"],
-			"debit": entry["credit"],
-			"credit_in_account_currency": entry["debit_in_account_currency"],
-			"debit_in_account_currency": entry["credit_in_account_currency"]
-		}
-
-		for k in glmap:
-			entry[k] = glmap[k]
-
-	return gl_entries
+			update_outstanding_amt(entry["account"], entry.get("party_type"), entry.get("party"), entry.get("against_voucher_type"),
+				entry.get("against_voucher"), on_cancel=True)

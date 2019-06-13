@@ -62,6 +62,13 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Chart of Accounts Importer",
+					"labe": _("Chart Of Accounts Importer"),
+					"description": _("Import Chart Of Accounts from CSV / Excel files"),
+					"onboard": 1
+				},
+				{
+					"type": "doctype",
 					"name": "Letter Head",
 					"description": _("Letter Heads for print templates."),
 					"onboard": 1,
@@ -148,6 +155,112 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Salary Structure",
+					"onboard": 1,
+				},
+			]
+		},
+		{
+			"label": _("Education"),
+			"condition": "Education" in active_domains,
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Student",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Course",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Instructor",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Room",
+					"onboard": 1,
+				},
+			]
+		},
+		{
+			"label": _("Healthcare"),
+			"condition": "Healthcare" in active_domains,
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Patient",
+					"label": _("Patient"),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Physician",
+					"label": _("Physician"),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Diagnosis",
+					"label": _("Diagnosis"),
+					"onboard": 1,
+				}
+			]
+		},
+		{
+			"label": _("Agriculture"),
+			"condition": "Agriculture" in active_domains,
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Crop",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Crop Cycle",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Location",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Fertilizer",
+					"onboard": 1,
+				}
+			]
+		},
+		{
+			"label": _("Non Profit"),
+			"condition": "Non Profit" in active_domains,
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Member",
+					"description": _("Member information."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Volunteer",
+					"description": _("Volunteer information."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Chapter",
+					"description": _("Chapter information."),
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Donor",
+					"description": _("Donor information."),
 					"onboard": 1,
 				},
 			]

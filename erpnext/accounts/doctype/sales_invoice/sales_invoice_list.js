@@ -7,15 +7,11 @@ frappe.listview_settings['Sales Invoice'] = {
 		"currency", "is_return"],
 	get_indicator: function(doc) {
 		if(cint(doc.is_return)==1) {
-			return [__("Credit Note"), "darkgrey", "is_return,=,Yes"];
+			return [__("Return"), "darkgrey", "is_return,=,Yes"];
 		} else if(flt(doc.outstanding_amount)==0) {
-			if (doc.status == "Cancelled") {
-				return [__("Cancelled"), "darkgrey", "outstanding_amount,=,0"]
-			} else {
-				return [__("Paid"), "green", "outstanding_amount,=,0"]
-			}
+			return [__("Paid"), "green", "outstanding_amount,=,0"]
 		} else if(flt(doc.outstanding_amount) < 0) {
-			return [__("Credit Note Unpaid"), "red", "outstanding_amount,<,0"]
+			return [__("Credit Note Issued"), "darkgrey", "outstanding_amount,<,0"]
 		}else if (flt(doc.outstanding_amount) > 0 && doc.due_date >= frappe.datetime.get_today()) {
 			return [__("Unpaid"), "orange", "outstanding_amount,>,0|due_date,>,Today"]
 		} else if (flt(doc.outstanding_amount) > 0 && doc.due_date < frappe.datetime.get_today()) {

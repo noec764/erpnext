@@ -11,21 +11,10 @@ frappe.ui.form.on("Company", {
 				filters: {"type": "Earning"}
 			}
 		});
-		frm.set_query("arrear_component", function(){
-			return {
-				filters: {"is_additional_component": 1}
-			}
-		});
 
 		frm.set_query("parent_company", function() {
 			return {
 				filters: {"is_group": 1}
-			}
-		});
-
-		frm.set_query("company_type", function(){
-			return {
-				filters: {"country": frm.doc.country}
 			}
 		});
 	},
@@ -41,9 +30,10 @@ frappe.ui.form.on("Company", {
 	},
 
 	parent_company: function(frm) {
-		if(!frm.doc.parent_company) return;
-		frm.set_value("create_chart_of_accounts_based_on", "Existing Company");
-		frm.set_value("existing_company", frm.doc.parent_company);
+		var bool = frm.doc.parent_company ? true : false;
+		frm.set_value('create_chart_of_accounts_based_on', bool ? "Existing Company" : "");
+		frm.set_value('existing_company', bool ? frm.doc.parent_company : "");
+		disbale_coa_fields(frm, bool);
 	},
 
 	date_of_commencement: function(frm) {
@@ -277,8 +267,9 @@ erpnext.company.set_custom_query = function(frm, v) {
 	});
 }
 
-let disbale_coa_fields = function(frm, bool=true) {
+var disbale_coa_fields = function(frm, bool=true) {
 	frm.set_df_property("create_chart_of_accounts_based_on", "read_only", bool);
 	frm.set_df_property("chart_of_accounts", "read_only", bool);
 	frm.set_df_property("existing_company", "read_only", bool);
-}; 
+}
+

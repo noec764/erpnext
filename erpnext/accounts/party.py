@@ -463,8 +463,8 @@ def get_timeline_data(doctype, name):
 	after = add_years(None, -1).strftime('%Y-%m-%d')
 	group_by='group by date(creation)'
 
-	data = get_communication_data(doctype, name,
-		fields=fields, after=after, group_by=group_by, as_dict=False)
+	data = get_communication_data(doctype, name, after=after, group_by='group by date(creation)',
+		fields='date(C.creation) as creation, count(C.name)',as_dict=False)
 
 	# fetch and append data from Activity Log
 	data += frappe.db.sql("""select {fields}
@@ -592,13 +592,17 @@ def get_party_shipping_address(doctype, name):
 	else:
 		return ''
 
-def get_partywise_advanced_payment_amount(party_type="Customer"):
+def get_partywise_advanced_payment_amount(party_type, posting_date = None):
+	cond = "1=1"
+	if posting_date:
+		cond = "posting_date <= '{0}'".format(posting_date)
+
 	data = frappe.db.sql(""" SELECT party, sum({0}) as amount
 		FROM `tabGL Entry`
-		WHERE 
+		WHERE
 			party_type = %s and against_voucher is null
-			GROUP BY party"""
-		.format(("credit") if party_type == "Customer" else "debit") , party_type)
+			and {1} GROUP BY party"""
+		.format(("credit") if party_type == "Customer" else "debit", cond) , party_type)
 
 	if data:
 		return frappe._dict(data)

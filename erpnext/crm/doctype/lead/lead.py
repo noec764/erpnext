@@ -10,6 +10,7 @@ from frappe.model.mapper import get_mapped_doc
 from erpnext.controllers.selling_controller import SellingController
 from frappe.contacts.address_and_contact import load_address_and_contact
 from erpnext.accounts.party import set_taxes
+from frappe.email.inbox import link_communication_to_document
 
 sender_field = "email_id"
 
@@ -108,7 +109,11 @@ class Lead(SellingController):
 
 	def set_lead_name(self):
 		if not self.lead_name:
-			frappe.db.set_value("Lead", self.name, "lead_name", self.company_name)
+			# Check for leads being created through data import
+			if not self.company_name and not self.flags.ignore_mandatory:
+				frappe.throw(_("A Lead requires either a person's name or an organization's name"))
+
+			self.lead_name = self.company_name
 
 @frappe.whitelist()
 def make_customer(source_name, target_doc=None):
@@ -199,3 +204,29 @@ def get_lead_details(lead, posting_date=None, company=None):
 		out['taxes_and_charges'] = taxes_and_charges
 
 	return out
+
+@frappe.whitelist()
+def make_lead_from_communication(communication, ignore_communication_links=False):
+	""" raise a issue from email """
+
+	doc = frappe.get_doc("Communication", communication)
+	lead_name = None
+	if doc.sender:
+		lead_name = frappe.db.get_value("Lead", {"email_id": doc.sender})
+	if not lead_name and doc.phone_no:
+		lead_name = frappe.db.get_value("Lead", {"mobile_no": doc.phone_no})
+	if not lead_name:
+		lead = frappe.get_doc({
+			"doctype": "Lead",
+			"lead_name": doc.sender_full_name,
+			"email_id": doc.sender,
+			"mobile_no": doc.phone_no
+		})
+		lead.flags.ignore_mandatory = True
+		lead.flags.ignore_permissions = True
+		lead.insert()
+
+		lead_name = lead.name
+
+	link_communication_to_document(doc, "Lead", lead_name, ignore_communication_links)
+	return lead_name

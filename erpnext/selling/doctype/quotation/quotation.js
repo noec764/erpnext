@@ -51,9 +51,8 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 
 		if(doc.docstatus == 1 && doc.status!=='Lost') {
 			if(!doc.valid_till || frappe.datetime.get_diff(doc.valid_till, frappe.datetime.get_today()) >= 0) {
-				me.frm.page.add_action_item(__('Sales Order'), function() {
-					me.make_sales_order();
-				});
+				cur_frm.add_custom_button(__('Sales Order'),
+					cur_frm.cscript['Make Sales Order'], __('Create'));
 			}
 
 			if(doc.status!=="Ordered") {
@@ -63,10 +62,12 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 				}
 
 			if(!doc.auto_repeat) {
-				me.frm.page.add_action_item(__('Repetition'), function() {
-					erpnext.utils.make_repetition(doc.doctype, doc.name);
-				});
+				cur_frm.add_custom_button(__('Subscription'), function() {
+					erpnext.utils.make_subscription(doc.doctype, doc.name)
+				}, __('Create'))
 			}
+
+			cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 
 		if (this.frm.doc.docstatus===0) {
@@ -158,13 +159,6 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 				}
 			}
 		})
-	},
-
-	make_sales_order: function() {
-		frappe.model.open_mapped_doc({
-			method: "erpnext.selling.doctype.quotation.quotation.make_sales_order",
-			frm: cur_frm
-		})
 	}
 });
 
@@ -172,6 +166,13 @@ cur_frm.script_manager.make(erpnext.selling.QuotationController);
 
 cur_frm.fields_dict.lead.get_query = function(doc,cdt,cdn) {
 	return{	query: "erpnext.controllers.queries.lead_query" }
+}
+
+cur_frm.cscript['Make Sales Order'] = function() {
+	frappe.model.open_mapped_doc({
+		method: "erpnext.selling.doctype.quotation.quotation.make_sales_order",
+		frm: cur_frm
+	})
 }
 
 frappe.ui.form.on("Quotation Item", "items_on_form_rendered", "packed_items_on_form_rendered", function(frm, cdt, cdn) {

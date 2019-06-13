@@ -21,7 +21,7 @@
 	<section class="hero-section">
 		{% include "templates/includes/slideshow.html" %}
 	</section>
-	{% elif homepage.hero_section_based_on == 'Homepage Section' and homepage.hero_section_doc %}
+	{% elif homepage.hero_section_based_on == 'Homepage Section' %}
 		{{ render_homepage_section(homepage.hero_section_doc) }}
 	{% endif %}
 
