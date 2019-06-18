@@ -17,11 +17,11 @@ def upload_bank_statement():
 		from frappe.utils.file_manager import get_uploaded_content
 		fname, fcontent = get_uploaded_content()
 
-	if frappe.safe_encode(fname).lower().endswith("csv"):
+	if frappe.safe_encode(fname).lower().endswith('csv'.encode('utf-8')):
 		from frappe.utils.csvutils import read_csv_content
 		rows = read_csv_content(fcontent, False)
 
-	elif frappe.safe_encode(fname).lower().endswith("xlsx"):
+	elif frappe.safe_encode(fname).lower().endswith('xlsx'.encode('utf-8')):
 		from frappe.utils.xlsxutils import read_xlsx_file_from_attached_file
 		rows = read_xlsx_file_from_attached_file(fcontent=fcontent)
 
@@ -40,7 +40,7 @@ def create_bank_entries(columns, data, bank_account):
 		if all(item is None for item in d) is True:
 			continue
 		fields = {}
-		for key, value in header_map.iteritems():
+		for key, value in header_map.items():
 			fields.update({key: d[int(value)-1]})
 
 

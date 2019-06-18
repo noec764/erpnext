@@ -65,7 +65,7 @@ domains = {
 }
 
 website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
-	"Job Opening", "Student Admission"]
+	"Job Opening"]
 
 website_context = {
 	"favicon": 	"/assets/erpnext/images/favicon.png",
@@ -123,7 +123,6 @@ website_route_rules = [
 		}
 	},
 	{"from_route": "/jobs", "to_route": "Job Opening"},
-	{"from_route": "/admissions", "to_route": "Student Admission"},
 	{"from_route": "/boms", "to_route": "BOM"},
 	{"from_route": "/timesheets", "to_route": "Timesheet"},
 	{"from_route": "/material-requests", "to_route": "Material Request"},
