@@ -197,6 +197,13 @@
    "search_index": 1
   },
   {
+   "default": "0",
+   "fieldname": "is_item_from_hub",
+   "fieldtype": "Check",
+   "label": "Is Item from Hub",
+   "read_only": 1
+  },
+  {
    "fieldname": "stock_uom",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
@@ -979,6 +986,40 @@
    "hidden": 1,
    "label": "Total Projected Qty",
    "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:(!doc.is_item_from_hub)",
+   "fieldname": "hub_publishing_sb",
+   "fieldtype": "Section Break",
+   "label": "Hub Publishing Details"
+  },
+  {
+   "default": "0",
+   "description": "Publish Item to hub.erpnext.com",
+   "fieldname": "publish_in_hub",
+   "fieldtype": "Check",
+   "label": "Publish in Hub"
+  },
+  {
+   "fieldname": "hub_category_to_publish",
+   "fieldtype": "Data",
+   "label": "Hub Category to Publish",
+   "read_only": 1
+  },
+  {
+   "description": "Publish \"In Stock\" or \"Not in Stock\" on Hub based on stock available in this warehouse.",
+   "fieldname": "hub_warehouse",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Hub Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "default": "0",
+   "fieldname": "synced_with_hub",
+   "fieldtype": "Check",
+   "label": "Synced With Hub",
    "read_only": 1
   },
   {
