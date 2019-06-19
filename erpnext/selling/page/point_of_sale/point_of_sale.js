@@ -624,10 +624,6 @@ erpnext.pos.PointOfSale = class PointOfSale {
 			frappe.set_route('List', 'POS Profile');
 		});
 
-		this.page.add_menu_item(__('POS Settings'), function() {
-			frappe.set_route('Form', 'POS Settings');
-		});
-
 		this.page.add_menu_item(__('Change POS Profile'), function() {
 			me.change_pos_profile();
 		});
@@ -1336,7 +1332,8 @@ class POSItems {
 		for (let i=0; i < all_items.length; i++) {
 			// wrap 4 items in a div to emulate
 			// a row for clusterize
-			if(i % 4 === 0 && i !== 0) {
+			const columns = $(window).width() > 990 ? 4 : 3
+			if(i % columns === 0 && i !== 0) {
 				curr_row += '</div>';
 				row_items.push(curr_row);
 				curr_row = row_container;

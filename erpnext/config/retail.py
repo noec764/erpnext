@@ -21,16 +21,7 @@ def get_data():
 					"onboard": 1,
 					"dependencies": ["POS Profile"]
                 },
-                {
-                    "type": "doctype",
-                    "name": "Cashier Closing",
-                    "description": _("Cashier Closing"),
-                },
-                {
-                    "type": "doctype",
-                    "name": "POS Settings",
-                    "description": _("Setup mode of POS (Online / Offline)")
-                },
+
                 {
                     "type": "doctype",
                     "name": "Loyalty Program",
