@@ -67,8 +67,6 @@ class Item(WebsiteGenerator):
 				from frappe.model.naming import set_name_by_naming_series
 				set_name_by_naming_series(self)
 				self.item_code = self.name
-		elif not self.item_code:
-			msgprint(_("Item Code is mandatory because Item is not automatically numbered"), raise_exception=1)
 
 		self.item_code = strip(self.item_code)
 		self.name = self.item_code
@@ -124,7 +122,7 @@ class Item(WebsiteGenerator):
 		self.validate_item_defaults()
 		self.validate_customer_provided_part()
 		self.update_defaults_from_item_group()
-		self.validate_stock_for_has_batch_and_has_serial()
+		self.cant_change()
 
 		if not self.get("__islocal"):
 			self.old_item_group = frappe.db.get_value(self.doctype, self.name, "item_group")
@@ -830,11 +828,21 @@ class Item(WebsiteGenerator):
 			for d in self.attributes:
 				d.variant_of = self.variant_of
 
-	def validate_stock_for_has_batch_and_has_serial(self):
-		if self.stock_ledger_created():
-			for value in ["has_batch_no", "has_serial_no"]:
-				if frappe.db.get_value("Item", self.name, value) != self.get_value(value):
-					frappe.throw(_("Cannot change {0} as Stock Transaction for Item {1} exist.".format(value, self.name)))
+	def cant_change(self):
+		if not self.get("__islocal"):
+			fields = ("has_serial_no", "is_stock_item", "valuation_method", "has_batch_no")
+
+			values = frappe.db.get_value("Item", self.name, fields, as_dict=True)
+			if not values.get('valuation_method') and self.get('valuation_method'):
+				values['valuation_method'] = frappe.db.get_single_value("Stock Settings", "valuation_method") or "FIFO"
+
+			if values:
+				for field in fields:
+					if cstr(self.get(field)) != cstr(values.get(field)):
+						if not self.check_if_linked_document_exists(field):
+							break # no linked document, allowed
+						else:
+							frappe.throw(_("As there are existing transactions against item {0}, you can not change the value of {1}").format(self.name, frappe.bold(self.meta.get_label(field))))
 
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''
