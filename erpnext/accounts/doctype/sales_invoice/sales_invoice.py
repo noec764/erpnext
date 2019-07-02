@@ -1374,3 +1374,17 @@ def get_loyalty_programs(customer):
 		return []
 	else:
 		return lp_details
+
+@frappe.whitelist()
+def create_invoice_discounting(source_name, target_doc=None):
+	invoice = frappe.get_doc("Sales Invoice", source_name)
+	invoice_discounting = frappe.new_doc("Invoice Discounting")
+	invoice_discounting.company = invoice.company
+	invoice_discounting.append("invoices", {
+		"sales_invoice": source_name,
+		"customer": invoice.customer,
+		"posting_date": invoice.posting_date,
+		"outstanding_amount": invoice.outstanding_amount
+	})
+
+	return invoice_discounting
