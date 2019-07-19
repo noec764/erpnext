@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe import _
 
 class AccountingPeriod(Document):
 	def validate(self):
@@ -33,7 +34,7 @@ class AccountingPeriod(Document):
 			}, as_dict=True)
 
 		if len(existing_accounting_period) > 0:
-			frappe.throw("Accounting Period overlaps with {0}".format(existing_accounting_period[0].get("name")))
+			frappe.throw(_("Accounting Period overlaps with {0}".format(existing_accounting_period[0].get("name"))))
 
 	def get_doctypes_for_closing(self):
 		docs_for_closing = []
