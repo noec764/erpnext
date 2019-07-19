@@ -154,6 +154,8 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 
 		if (item.discount_amount) {
 			item.rate = flt((item.price_list_rate) - (item.discount_amount), precision('rate', item));
+		} else {
+			item.rate = item_rate;
 		}
 
 		this.calculate_taxes_and_totals();

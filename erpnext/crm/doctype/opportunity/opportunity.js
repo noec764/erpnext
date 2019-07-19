@@ -19,6 +19,10 @@ frappe.ui.form.on("Opportunity", {
 				}
 			}
 		});
+
+		if (frm.doc.opportunity_from && frm.doc.party_name){
+			frm.trigger('set_contact_link');
+		}
 	},
 
 	onload_post_render: function(frm) {
@@ -38,10 +42,6 @@ frappe.ui.form.on("Opportunity", {
 				frm: frm
 			});
 		}
-	},
-
-	onload_post_render: function(frm) {
-		frm.get_field("items").grid.set_multiple_add("item_code", "qty");
 	},
 
 	party_name: function(frm) {
