@@ -1129,6 +1129,7 @@ class SalesInvoice(SellingController):
 			if points_to_redeem < 1: # since points_to_redeem is integer
 				break
 
+
 	def get_discounting_status(self):
 		status = None
 		if self.is_discounted:

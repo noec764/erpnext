@@ -22,7 +22,8 @@
    "default_holiday_list",
    "default_finance_book",
    "standard_working_hours",
-   "default_terms",
+   "default_selling_terms",
+   "default_buying_terms",
    "default_warehouse_for_sales_return",
    "column_break_10",
    "country",
@@ -239,12 +240,6 @@
     "fieldname": "standard_working_hours",
     "fieldtype": "Float",
     "label": "Standard Working Hours"
-   },
-   {
-    "fieldname": "default_terms",
-    "fieldtype": "Link",
-    "label": "Default Terms",
-    "options": "Terms and Conditions"
    },
    {
     "fieldname": "default_warehouse_for_sales_return",
@@ -713,12 +708,24 @@
     "label": "old_parent",
     "print_hide": 1,
     "read_only": 1
+   },
+   {
+    "fieldname": "default_selling_terms",
+    "fieldtype": "Link",
+    "label": "Default Selling Terms",
+    "options": "Terms and Conditions"
+   },
+   {
+    "fieldname": "default_buying_terms",
+    "fieldtype": "Link",
+    "label": "Default Buying Terms",
+    "options": "Terms and Conditions"
    }
   ],
   "icon": "fa fa-building",
   "idx": 1,
   "image_field": "company_logo",
-  "modified": "2019-06-14 14:36:11.363309",
+  "modified": "2019-07-04 22:20:45.104307",
   "modified_by": "Administrator",
   "module": "Setup",
   "name": "Company",
