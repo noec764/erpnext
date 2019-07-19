@@ -83,9 +83,13 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				}
 			}
 
-			if (doc.outstanding_amount>0 && !cint(doc.is_return)) {
+			if (doc.outstanding_amount>0) {
 				cur_frm.add_custom_button(__('Payment Request'), function() {
 					me.make_payment_request();
+				}, __('Create'));
+
+				cur_frm.add_custom_button(__('Invoice Discounting'), function() {
+					cur_frm.events.create_invoice_discounting(cur_frm);
 				}, __('Create'));
 			}
 
