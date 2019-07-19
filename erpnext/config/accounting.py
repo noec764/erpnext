@@ -376,10 +376,6 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
-					"name": "Subscriber",
-				},
-				{
-					"type": "doctype",
 					"name": "Subscription Plan",
 				},
 				{

@@ -6,7 +6,7 @@ def get_data():
 		'graph': True,
 		'graph_method': "erpnext.accounts.doctype.subscription.subscription.get_chart_data",
 		'graph_method_args': {
-			'title': _('Subscription Invoices')
+			'title': _('Subscription invoices')
 		},
 		'fieldname': 'subscription',
 		'transactions': [

@@ -4,22 +4,36 @@
 frappe.ui.form.on('Subscription', {
 	refresh: function(frm) {
 		if(!frm.is_new()){
+			frm.page.clear_actions_menu();
 			if(frm.doc.status !== 'Cancelled'){
-				frm.add_custom_button(
+				frm.page.add_action_item(
 					__('Cancel Subscription'),
 					() => frm.events.cancel_this_subscription(frm)
 				);
-				frm.add_custom_button(
+				frm.page.add_action_item(
 					__('Fetch Subscription Updates'),
 					() => frm.events.get_subscription_updates(frm)
 				);
 			}
 			else if(frm.doc.status === 'Cancelled'){
-				frm.add_custom_button(
+				frm.page.add_action_item(
 					__('Restart Subscription'),
 					() => frm.events.renew_this_subscription(frm)
 				);
 			}
+
+			frm.set_df_property("start", "read_only", 1);
+			frm.set_df_property("trial_period_start", "read_only", 1);
+			frm.set_df_property("trial_period_end", "read_only", 1);
+
+			frappe.xcall("erpnext.accounts.doctype.subscription.subscription.subscription_headline", {
+				'name': frm.doc.name
+			})
+			.then(r => {
+				frm.dashboard.set_headline_alert(r);
+			})
+		} else {
+			frm.set_df_property("change_start_trial", "hidden", 1);
 		}
 	},
 
@@ -74,5 +88,11 @@ frappe.ui.form.on('Subscription', {
 				}
 			}
 		});
+	},
+
+	change_start_trial: function(frm) {
+		frm.set_df_property("start", "read_only", 0);
+		frm.set_df_property("trial_period_start", "read_only", 0);
+		frm.set_df_property("trial_period_end", "read_only", 0);
 	}
 });
