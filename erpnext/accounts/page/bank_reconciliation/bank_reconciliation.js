@@ -1,7 +1,7 @@
 frappe.provide("erpnext.accounts");
 
 frappe.pages['bank-reconciliation'].on_page_load = function(wrapper) {
-	new erpnext.accounts.bankReconciliation(wrapper);	
+	new erpnext.accounts.bankReconciliation(wrapper);
 }
 
 erpnext.accounts.bankReconciliation = class BankReconciliation {
@@ -23,13 +23,40 @@ erpnext.accounts.bankReconciliation = class BankReconciliation {
 
 		me.$main_section = $(`<div class="reconciliation page-main-content"></div>`).appendTo(me.page.main);
 		const empty_state = __("Upload a bank statement, link or reconcile a bank account")
-		me.$main_section.append(`<div class="flex justify-center align-center text-muted" style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
+		me.$main_section.append(`<div class="flex justify-center align-center text-muted"
+			style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
 
+		me.page.add_field({
+			fieldtype: 'Link',
+			label: __('Company'),
+			fieldname: 'company',
+			options: "Company",
+			onchange: function() {
+				if (this.value) {
+					me.company = this.value;
+				} else {
+					me.company = null;
+					me.bank_account = null;
+				}
+			}
+		})
 		me.page.add_field({
 			fieldtype: 'Link',
 			label: __('Bank Account'),
 			fieldname: 'bank_account',
 			options: "Bank Account",
+			get_query: function() {
+				if(!me.company) {
+					frappe.throw(__("Please select company first"));
+					return
+				}
+
+				return {
+					filters: {
+						"company": me.company
+					}
+				}
+			},
 			onchange: function() {
 				if (this.value) {
 					me.bank_account = this.value;
@@ -149,7 +176,6 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 						<br>The headers should be in the first row.`)
 			frappe.throw(msg)
 		}
-		
 	}
 
 	add_primary_action() {
@@ -164,7 +190,7 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 		frappe.xcall('erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.create_bank_entries',
 			{columns: this.datatable.datamanager.columns, data: this.datatable.datamanager.data, bank_account: me.parent.bank_account}
 		).then((result) => {
-			let result_title = __("{0} bank transaction(s) created", [result])
+			let result_title = result.errors == 0 ? __("{0} bank transaction(s) created", [result.success]) : __("{0} bank transaction(s) created and {1} errors", [result.success, result.errors])
 			let result_msg = `
 				<div class="flex justify-center align-center text-muted" style="height: 50vh; display: flex;">
 					<h5 class="text-muted">${result_title}</h5>
@@ -172,7 +198,11 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 			me.parent.page.clear_primary_action();
 			me.parent.$main_section.empty();
 			me.parent.$main_section.append(result_msg);
-			frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
+			if (result.errors == 0) {
+				frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
+			} else {
+				frappe.show_alert({message:__("Please check the error log for details about the import errors"), indicator:'red'});
+			}
 		})
 	}
 }
@@ -256,7 +286,6 @@ erpnext.accounts.ReconciliationTool = class ReconciliationTool extends frappe.vi
 			...args.filters.push(["Bank Transaction", "docstatus", "=", 1],
 				["Bank Transaction", "unallocated_amount", ">", 0])
 		});
-		
 	}
 
 	update_data(r) {
@@ -344,7 +373,7 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 		frappe.new_doc(invoice_type)
 	}
 
-	new_invoice() {
+	new_expense() {
 		frappe.new_doc("Expense Claim")
 	}
 
@@ -356,7 +385,7 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 			me.gl_account = r.account;
 		})
 
-		frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_linked_payments', 
+		frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_linked_payments',
 			{bank_transaction: data, freeze:true, freeze_message:__("Finding linked payments")}
 		).then((result) => {
 			me.make_dialog(result)
@@ -393,7 +422,7 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 							"name": ["in", ["Payment Entry", "Journal Entry", "Sales Invoice", "Purchase Invoice", "Expense Claim"]]
 						}
 					}
-				}
+				},
 			},
 			{
 				fieldtype: 'Column Break',
@@ -408,16 +437,18 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 					let dt = this.dialog.fields_dict.payment_doctype.value;
 					if (dt === "Payment Entry") {
 						return {
-							filters : [
-								["Payment Entry", "ifnull(clearance_date, '')", "=", ""],
-								["Payment Entry", "docstatus", "=", 1]
-							]
+							query: "erpnext.accounts.page.bank_reconciliation.bank_reconciliation.payment_entry_query",
+							filters : {
+								"bank_account": this.data.bank_account,
+								"company": this.data.company
+							}
 						}
 					} else if (dt === "Journal Entry") {
 						return {
 							query: "erpnext.accounts.page.bank_reconciliation.bank_reconciliation.journal_entry_query",
 							filters : {
-								"bank_account": this.data.bank_account
+								"bank_account": this.data.bank_account,
+								"company": this.data.company
 							}
 						}
 					} else if (dt === "Sales Invoice") {
@@ -428,14 +459,16 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 						return {
 							filters : [
 								["Purchase Invoice", "ifnull(clearance_date, '')", "=", ""],
-								["Purchase Invoice", "docstatus", "=", 1]
+								["Purchase Invoice", "docstatus", "=", 1],
+								["Purchase Invoice", "company", "=", this.data.company]
 							]
 						}
 					} else if (dt === "Expense Claim") {
 						return {
 							filters : [
 								["Expense Claim", "ifnull(clearance_date, '')", "=", ""],
-								["Expense Claim", "docstatus", "=", 1]
+								["Expense Claim", "docstatus", "=", 1],
+								["Expense Claim", "company", "=", this.data.company]
 							]
 						}
 					}
@@ -456,11 +489,11 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 				fieldname: 'payment_details'
 			},
 		];
-	
+
 		me.dialog = new frappe.ui.Dialog({
 			title: __("Choose a corresponding payment"),
 			fields: fields,
-			size: "large" 
+			size: "large"
 		});
 
 		const proposals_wrapper = me.dialog.fields_dict.payment_proposals.$wrapper;
@@ -499,11 +532,13 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 			.then(doc => {
 				let displayed_docs = []
 				if (dt === "Payment Entry") {
-					doc.currency = doc.payment_type == "Receive" ? doc.paid_to_account_currency : doc.paid_from_account_currency;
-					displayed_docs.push(doc);
+					payment.currency = doc.payment_type == "Receive" ? doc.paid_to_account_currency : doc.paid_from_account_currency;
+					payment.doctype = dt
+					displayed_docs.push(payment);
 				} else if (dt === "Journal Entry") {
 					doc.accounts.forEach(payment => {
 						if (payment.account === me.gl_account) {
+							payment.doctype = dt;
 							payment.posting_date = doc.posting_date;
 							payment.party = doc.pay_to_recd_from;
 							payment.reference_no = doc.cheque_no;
@@ -517,6 +552,7 @@ erpnext.accounts.ReconciliationRow = class ReconciliationRow {
 				} else if (dt === "Sales Invoice") {
 					doc.payments.forEach(payment => {
 						if (payment.clearance_date === null || payment.clearance_date === "") {
+							payment.doctype = dt;
 							payment.posting_date = doc.posting_date;
 							payment.party = doc.customer;
 							payment.reference_no = doc.remarks;
