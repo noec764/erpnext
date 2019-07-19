@@ -122,6 +122,7 @@ class Item(WebsiteGenerator):
 		self.validate_item_defaults()
 		self.validate_customer_provided_part()
 		self.update_defaults_from_item_group()
+		self.validate_auto_reorder_enabled_in_stock_settings()
 		self.cant_change()
 
 		if not self.get("__islocal"):
@@ -844,6 +845,27 @@ class Item(WebsiteGenerator):
 						else:
 							frappe.throw(_("As there are existing transactions against item {0}, you can not change the value of {1}").format(self.name, frappe.bold(self.meta.get_label(field))))
 
+	def check_if_linked_document_exists(self, field):
+		linked_doctypes = ["Delivery Note Item", "Sales Invoice Item", "Purchase Receipt Item",
+			"Purchase Invoice Item", "Stock Entry Detail", "Stock Reconciliation Item"]
+
+		# For "Is Stock Item", following doctypes is important
+		# because reserved_qty, ordered_qty and requested_qty updated from these doctypes
+		if field == "is_stock_item":
+			linked_doctypes += ["Sales Order Item", "Purchase Order Item", "Material Request Item"]
+
+		for doctype in linked_doctypes:
+			if frappe.db.get_value(doctype, filters={"item_code": self.name, "docstatus": 1}) or \
+				frappe.db.get_value("Production Order",
+					filters={"production_item": self.name, "docstatus": 1}):
+				return True
+
+	def validate_auto_reorder_enabled_in_stock_settings(self):
+		if self.reorder_levels:
+			enabled = frappe.db.get_single_value('Stock Settings', 'auto_indent')
+			if not enabled:
+				frappe.msgprint(msg=_("You have to enable auto re-order in Stock Settings to maintain re-order levels."), title=_("Enable Auto Re-Order"), indicator="orange")
+
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''
 	out = {}
@@ -985,7 +1007,7 @@ def invalidate_item_variants_cache_for_website(doc):
 
 	if item_code:
 		item_cache = ItemVariantsCacheManager(item_code)
-		item_cache.rebuild_cache()
+		item_cache.clear_cache()
 
 
 def check_stock_uom_with_bin(item, stock_uom):
