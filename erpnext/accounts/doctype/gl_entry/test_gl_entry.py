@@ -1,11 +1,10 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
+# Copyright (c) 2019, Dokos and Contributors
+# License: See license.txt
 
 from __future__ import unicode_literals
 import frappe, unittest
 from frappe.model.naming import parse_naming_series
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
-from erpnext.accounts.doctype.gl_entry.gl_entry import rename_gle_sle_docs
 
 class TestGLEntry(unittest.TestCase):
 	def test_round_off_entry(self):
@@ -28,7 +27,6 @@ class TestGLEntry(unittest.TestCase):
 
 	def test_rename_entries(self):
 		je = make_journal_entry("_Test Account Cost for Goods Sold - _TC", "_Test Bank - _TC", 100, submit=True)
-		rename_gle_sle_docs()
 		naming_series = parse_naming_series(parts=frappe.get_meta("GL Entry").autoname.split(".")[:-1])
 
 		je = make_journal_entry("_Test Account Cost for Goods Sold - _TC", "_Test Bank - _TC", 100, submit=True)
@@ -41,7 +39,6 @@ class TestGLEntry(unittest.TestCase):
 		self.assertTrue(all(entry.to_rename == 1 for entry in gl_entries))
 		old_naming_series_current_value = frappe.db.sql("SELECT current from tabSeries where name = %s", naming_series)[0][0]
 
-		rename_gle_sle_docs()
 
 		new_gl_entries = frappe.get_all("GL Entry",
 			fields=["name", "to_rename"],

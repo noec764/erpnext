@@ -1,5 +1,5 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
+# Copyright (c) 2019, Dokos and Contributors
+# License: See license.txt
 
 from __future__ import unicode_literals
 import frappe, erpnext
@@ -16,13 +16,6 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import g
 
 exclude_from_linked_with = True
 class GLEntry(Document):
-	def autoname(self):
-		"""
-		Temporarily name doc for fast insertion
-		name will be changed using autoname options (in a scheduled job)
-		"""
-		self.name = frappe.generate_hash(txt="", length=10)
-
 	def validate(self):
 		self.flags.ignore_submit_comment = True
 		self.check_mandatory()
@@ -273,17 +266,3 @@ def update_against_account(voucher_type, voucher_no):
 
 		if d.against != new_against:
 			frappe.db.set_value("GL Entry", d.name, "against", new_against)
-
-
-def rename_gle_sle_docs():
-	for doctype in ["GL Entry", "Stock Ledger Entry"]:
-		rename_temporarily_named_docs(doctype)
-
-def rename_temporarily_named_docs(doctype):
-	"""Rename temporarily named docs using autoname options"""
-	docs_to_rename = frappe.get_all(doctype, {"to_rename": "1"}, order_by="creation", limit=50000)
-	for doc in docs_to_rename:
-		oldname = doc.name
-		set_name_from_naming_options(frappe.get_meta(doctype).autoname, doc)
-		newname = doc.name
-		frappe.db.sql("""UPDATE `tab{}` SET name = %s, to_rename = 0 where name = %s""".format(doctype), (newname, oldname))
