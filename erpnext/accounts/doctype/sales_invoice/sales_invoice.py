@@ -189,6 +189,7 @@ class SalesInvoice(SellingController):
 		if self.redeem_loyalty_points and self.loyalty_points:
 			self.apply_loyalty_points()
 
+
 	def validate_pos_paid_amount(self):
 		if len(self.payments) == 0 and self.is_pos:
 			frappe.throw(_("At least one mode of payment is required for POS invoice."))
@@ -235,6 +236,7 @@ class SalesInvoice(SellingController):
 			against_si_doc.make_loyalty_point_entry()
 
 		unlink_inter_company_doc(self.doctype, self.name, self.inter_company_invoice_reference)
+
 
 	def update_status_updater_args(self):
 		if cint(self.update_stock):
@@ -379,13 +381,17 @@ class SalesInvoice(SellingController):
 			if pos.get('account_for_change_amount'):
 				self.account_for_change_amount = pos.get('account_for_change_amount')
 
-			for fieldname in ('territory', 'naming_series', 'currency', 'taxes_and_charges', 'letter_head', 'tc_name',
-				'company', 'select_print_heading', 'cash_bank_account', 'company_address',
-				'write_off_account', 'write_off_cost_center', 'apply_discount_on', 'cost_center'):
+			for fieldname in ('territory', 'naming_series', 'currency', 'letter_head', 'tc_name',
+				'company', 'select_print_heading', 'cash_bank_account', 'write_off_account',
+				'write_off_cost_center', 'apply_discount_on', 'cost_center'):
 					if (not for_validate) or (for_validate and not self.get(fieldname)):
 						self.set(fieldname, pos.get(fieldname))
 
 			customer_price_list = frappe.get_value("Customer", self.customer, 'default_price_list')
+
+			for field in ['taxes_and_charges', 'company_address']:
+				if pos.get(field):
+					self.set(field, pos.get(fieldname))
 
 			if not customer_price_list:
 				self.set('selling_price_list', pos.get('selling_price_list'))
@@ -718,6 +724,7 @@ class SalesInvoice(SellingController):
 					"account": self.debit_to,
 					"party_type": "Customer",
 					"party": self.customer,
+					"due_date": self.due_date,
 					"against": self.against_income_account,
 					"debit": grand_total_in_company_currency,
 					"debit_in_account_currency": grand_total_in_company_currency \
@@ -767,10 +774,13 @@ class SalesInvoice(SellingController):
 					asset.db_set("disposal_date", self.posting_date)
 					asset.set_status("Sold" if self.docstatus==1 else None)
 				else:
-					account_currency = get_account_currency(item.income_account)
+					income_account = (item.income_account
+						if (not item.enable_deferred_revenue or self.is_return) else item.deferred_revenue_account)
+
+					account_currency = get_account_currency(income_account)
 					gl_entries.append(
 						self.get_gl_dict({
-							"account": item.income_account if not item.enable_deferred_revenue else item.deferred_revenue_account,
+							"account": income_account,
 							"against": self.customer,
 							"credit": flt(item.base_net_amount, item.precision("base_net_amount")),
 							"credit_in_account_currency": (flt(item.base_net_amount, item.precision("base_net_amount"))
@@ -1118,6 +1128,56 @@ class SalesInvoice(SellingController):
 			points_to_redeem -= redeemed_points
 			if points_to_redeem < 1: # since points_to_redeem is integer
 				break
+
+	def get_discounting_status(self):
+		status = None
+		if self.is_discounted:
+			invoice_discounting_list = frappe.db.sql("""
+				select status
+				from `tabInvoice Discounting` id, `tabDiscounted Invoice` d
+				where
+					id.name = d.parent
+					and d.sales_invoice=%s
+					and id.docstatus=1
+					and status in ('Disbursed', 'Settled')
+			""", self.name)
+			for d in invoice_discounting_list:
+				status = d[0]
+				if status == "Disbursed":
+					break
+		return status
+
+	def set_status(self, update=False, status=None, update_modified=True):
+		if self.is_new():
+			if self.get('amended_from'):
+				self.status = 'Draft'
+			return
+
+		if not status:
+			if self.docstatus == 2:
+				status = "Cancelled"
+			elif self.docstatus == 1:
+				if flt(self.outstanding_amount) > 0 and getdate(self.due_date) < getdate(nowdate()) and self.is_discounted and self.get_discounting_status()=='Disbursed':
+					self.status = "Overdue and Discounted"
+				elif flt(self.outstanding_amount) > 0 and getdate(self.due_date) < getdate(nowdate()):
+					self.status = "Overdue"
+				elif flt(self.outstanding_amount) > 0 and getdate(self.due_date) >= getdate(nowdate()) and self.is_discounted and self.get_discounting_status()=='Disbursed':
+					self.status = "Unpaid and Discounted"
+				elif flt(self.outstanding_amount) > 0 and getdate(self.due_date) >= getdate(nowdate()):
+					self.status = "Unpaid"
+				elif flt(self.outstanding_amount) < 0 and self.is_return==0 and frappe.db.get_value('Sales Invoice', {'is_return': 1, 'return_against': self.name, 'docstatus': 1}):
+					self.status = "Credit Note Issued"
+				elif self.is_return == 1:
+					self.status = "Return"
+				elif flt(self.outstanding_amount)<=0:
+					self.status = "Paid"
+				else:
+					self.status = "Submitted"
+			else:
+				self.status = "Draft"
+
+		if update:
+			self.db_set('status', self.status, update_modified = update_modified)
 
 def validate_inter_company_party(doctype, party, company, inter_company_reference):
 	if not party:
