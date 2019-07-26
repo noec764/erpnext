@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019, Dokos and contributors
+# Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -94,16 +94,9 @@ class ProductionPlan(Document):
 
 	def get_items(self):
 		if self.get_items_from == "Sales Order":
-			if self.sales_orders:
-				self.get_so_items()
-			else:
-				frappe.msgprint(_("Please select at least one sales order first"))
+			self.get_so_items()
 		elif self.get_items_from == "Material Request":
-			if self.material_requests:
-				self.get_mr_items()
-			else:
-				frappe.msgprint(_("Please select at least one material request first"))
-
+			self.get_mr_items()
 
 	def get_so_items(self):
 		so_list = [d.sales_order for d in self.sales_orders if d.sales_order]

@@ -294,7 +294,9 @@ class TallyMigration(Document):
 				if voucher.VOUCHERTYPENAME.string not in ["Journal", "Receipt", "Payment", "Contra"] and inventory_entries:
 					function = voucher_to_invoice
 				else:
-					function = voucher_to_journal_entry
+					processed_voucher = function(voucher)
+					if processed_voucher:
+						vouchers.append(processed_voucher)
 				try:
 					vouchers.append(function(voucher))
 				except:
@@ -342,6 +344,10 @@ class TallyMigration(Document):
 				account_field = "credit_to"
 				account_name = encode_company_abbr(self.tally_creditors_account, self.erpnext_company)
 				price_list_field = "buying_price_list"
+			else:
+				# Do not handle vouchers other than "Purchase", "Debit Note", "Sales" and "Credit Note"
+				# Do not handle Custom Vouchers either
+				return
 
 			invoice = {
 				"doctype": doctype,
