@@ -12,7 +12,7 @@ def get_data():
 			"version": "1.0.0",
 			"fields": ["naming_series", "customer_name", "company", "posting_date", "currency", "conversion_rate", \
 				"selling_price_list", "price_list_currency", "plc_conversion_rate", "items", "base_net_total", \
-				"base_grand_total", "grand_total", "debit_to", "accounting_journal", "taxes", "advances"],
+				"base_grand_total", "grand_total", "debit_to", "taxes", "advances"],
 			"tables": {
 				"items": ['item_name', 'description', 'uom', 'conversion_factor', 'rate', 'amount', \
 					'base_rate', 'base_amount', 'income_account', 'cost_center'],
