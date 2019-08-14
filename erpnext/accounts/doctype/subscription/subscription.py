@@ -10,6 +10,7 @@ from frappe.model.document import Document
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, \
 	get_last_day, add_to_date, flt, global_date_format
 from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_plan_rate
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 import numpy as np
 
 
@@ -261,6 +262,15 @@ class Subscription(Document):
 		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		invoice.customer = self.customer
 		invoice.subscription = self.name
+
+		## Add dimesnions in invoice for subscription:
+		accounting_dimensions = get_accounting_dimensions()
+
+		for dimension in accounting_dimensions:
+			if self.get(dimension):
+				invoice.update({
+					dimension: self.get(dimension)
+				})
 
 		# Subscription is better suited for service items. I won't update `update_stock`
 		# for that reason

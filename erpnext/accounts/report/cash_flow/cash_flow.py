@@ -188,7 +188,7 @@ def get_chart_data(columns, data):
 		},
 		"type": "bar"
 	}
-	
+
 	chart["fieldtype"] = "Currency"
 
 	return chart
