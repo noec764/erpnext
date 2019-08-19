@@ -37,16 +37,16 @@ class GoCardlessSettings(Document):
 			customer_data = frappe.db.get_value(data.reference_doctype, data.reference_name, ["company", "customer_name"], as_dict=1)
 
 		data = {
-					"amount": flt(data.grand_total, data.precision("grand_total")),
-					"title": customer_data.company.encode("utf-8"),
-					"description": data.subject.encode("utf-8"),
-					"reference_doctype": data.doctype,
-					"reference_docname": data.name,
-					"payer_email": data.email_to or frappe.session.user,
-					"payer_name": customer_data.customer_name,
-					"order_id": data.name,
-					"currency": data.currency
-				}
+			"amount": flt(data.grand_total, data.precision("grand_total")),
+			"title": customer_data.company.encode("utf-8"),
+			"description": data.subject.encode("utf-8"),
+			"reference_doctype": data.doctype,
+			"reference_docname": data.name,
+			"payer_email": data.email_to or frappe.session.user,
+			"payer_name": customer_data.customer_name,
+			"order_id": data.name,
+			"currency": data.currency
+		}
 
 		valid_mandate = self.check_mandate_validity(data)
 		if valid_mandate is not None:

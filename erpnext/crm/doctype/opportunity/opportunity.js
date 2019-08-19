@@ -31,9 +31,9 @@ frappe.ui.form.on("Opportunity", {
 
 	party_name: function(frm) {
 		frm.toggle_display("contact_info", frm.doc.party_name);
+		frm.trigger('set_contact_link');
 
 		if (frm.doc.opportunity_from == "Customer") {
-			frm.trigger('set_contact_link');
 			erpnext.utils.get_party_details(frm);
 		} else if (frm.doc.opportunity_from == "Lead") {
 			erpnext.utils.map_current_doc({
@@ -41,13 +41,6 @@ frappe.ui.form.on("Opportunity", {
 				source_name: frm.doc.party_name,
 				frm: frm
 			});
-		}
-	},
-
-	party_name: function(frm) {
-		if (frm.doc.opportunity_from == "Customer") {
-			frm.trigger('set_contact_link');
-			erpnext.utils.get_party_details(frm);
 		}
 	},
 
