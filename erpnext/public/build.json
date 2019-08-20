@@ -44,5 +44,8 @@
         "stock/dashboard/item_dashboard.html",
         "stock/dashboard/item_dashboard_list.html",
         "stock/dashboard/item_dashboard.js"
+    ],
+    "js/portal-payments.min.js": [
+        "public/js/portal_payments/portal_payments.js"
     ]
 }

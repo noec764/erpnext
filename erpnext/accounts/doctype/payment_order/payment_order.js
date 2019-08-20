@@ -13,10 +13,6 @@ frappe.ui.form.on('Payment Order', {
 	},
 	refresh: function(frm) {
 		if (frm.doc.docstatus == 0) {
-			frm.add_custom_button(__('Payment Request'), function() {
-				frm.trigger("get_from_payment_request");
-			}, __("Get from"));
-
 			frm.add_custom_button(__('Payment Entry'), function() {
 				frm.trigger("get_from_payment_entry");
 			}, __("Get from"));
@@ -69,23 +65,6 @@ frappe.ui.form.on('Payment Order', {
 				bank_account: frm.doc.company_bank_account,
 				paid_from: frm.doc.account,
 				payment_order_status: ["=", "Initiated"],
-			}
-		});
-	},
-
-	get_from_payment_request: function(frm) {
-		frm.trigger("remove_row_if_empty");
-		erpnext.utils.map_current_doc({
-			method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_order",
-			source_doctype: "Payment Request",
-			target: frm,
-			setters: {
-				party: frm.doc.supplier || ""
-			},
-			get_query_filters: {
-				bank: frm.doc.bank,
-				docstatus: 1,
-				status: ["=", "Initiated"],
 			}
 		});
 	},

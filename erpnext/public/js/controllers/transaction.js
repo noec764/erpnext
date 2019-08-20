@@ -235,8 +235,6 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	make_payment_request: function() {
 		var me = this;
-		const payment_request_type = (in_list(['Sales Order', 'Sales Invoice'], this.frm.doc.doctype))
-			? "Inward" : "Outward";
 
 		frappe.call({
 			method:"erpnext.accounts.doctype.payment_request.payment_request.make_payment_request",
@@ -244,9 +242,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				dt: me.frm.doc.doctype,
 				dn: me.frm.doc.name,
 				recipient_id: me.frm.doc.contact_email,
-				payment_request_type: payment_request_type,
-				party_type: payment_request_type == 'Outward' ? "Supplier" : "Customer",
-				party: payment_request_type == 'Outward' ? me.frm.doc.supplier : me.frm.doc.customer
+				party_type: "Customer",
+				party: me.frm.doc.customer
 			},
 			callback: function(r) {
 				if(!r.exc){
