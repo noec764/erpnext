@@ -49,5 +49,6 @@ def get_payment_details(link):
 def get_payment_url(link, gateway):
 	payment_request = frappe.get_doc("Payment Request", dict(payment_key=link))
 	payment_request.db_set("payment_gateway", gateway)
+	payment_request.run_method("set_gateway_account")
 
 	return payment_request.get_payment_url(gateway)

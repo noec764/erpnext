@@ -18,7 +18,10 @@
   "section_break_7",
   "payment_gateways_template",
   "payment_gateways",
+  "section_break_15",
   "payment_gateway",
+  "column_break_17",
+  "payment_gateway_account",
   "recipient_and_message",
   "email_to",
   "column_break_9",
@@ -210,12 +213,31 @@
    "fieldname": "payment_gateway",
    "fieldtype": "Link",
    "label": "Selected Payment Gateway",
+   "no_copy": 1,
    "options": "Payment Gateway",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_gateway_account",
+   "fieldtype": "Link",
+   "label": "Payment Gateway Account",
+   "no_copy": 1,
+   "options": "Payment Gateway Account",
+   "print_hide": 1,
    "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-08-20 17:07:37.661670",
+ "modified": "2019-08-20 17:43:22.390894",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

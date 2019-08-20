@@ -5,13 +5,13 @@ frappe.provide('erpnext');
 
 // add toolbar icon
 $(document).bind('toolbar_setup', function() {
-	frappe.app.name = "ERPNext";
+	frappe.app.name = "dokos";
 
 	frappe.help_feedback_link = '<p><a class="text-muted" \
 		href="https://discuss.erpnext.com">Feedback</a></p>'
 
-	$('[data-link="docs"]').attr("href", "https://erpnext.com/docs")
-	$('[data-link="issues"]').attr("href", "https://github.com/frappe/erpnext/issues")
+	$('[data-link="docs"]').attr("href", "https://doc.dokos.io")
+	$('[data-link="issues"]').attr("href", "https://gitlab.com/dokos/dokos/issues")
 
 
 	// default documentation goes to erpnext
@@ -19,11 +19,9 @@ $(document).bind('toolbar_setup', function() {
 
 	// additional help links for erpnext
 	var $help_menu = $('.dropdown-help ul .documentation-links');
-	$('<li><a data-link-type="forum" href="https://erpnext.com/docs/user/manual" \
+	$('<li><a data-link-type="doc" href="https://doc.dokos.io" \
 		target="_blank">'+__('Documentation')+'</a></li>').insertBefore($help_menu);
-	$('<li><a data-link-type="forum" href="https://discuss.erpnext.com" \
-		target="_blank">'+__('User Forum')+'</a></li>').insertBefore($help_menu);
-	$('<li><a href="https://github.com/frappe/erpnext/issues" \
+	$('<li><a href="https://gitlab.com/dokos/dokos/issues" \
 		target="_blank">'+__('Report an Issue')+'</a></li>').insertBefore($help_menu);
 
 });

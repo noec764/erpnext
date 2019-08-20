@@ -20,6 +20,7 @@ class PaymentRequest(Document):
 			self.status = 'Draft'
 		self.validate_reference_document()
 		self.validate_payment_request()
+		self.validate_payment_gateways()
 		self.validate_default_gateway()
 		self.validate_currency()
 
@@ -39,9 +40,15 @@ class PaymentRequest(Document):
 				frappe.msgprint(_("No payment gateway account found for payment gateway {0} and currency {1}."\
 					.format(gateway.payment_gateway, currency)))
 
+	def validate_payment_gateways(self):
+		if self.payment_gateways_template:
+			if not self.payment_gateways:
+				template = frappe.get_doc("Portal Payment Gateways Template", self.payment_gateways_template)
+				self.payment_gateways = template.payment_gateways
+
 	def validate_default_gateway(self):
 		if self.payment_gateways:
-			default_gateway = [d.default_gateway for d in self.payment_gateways if d.default_gateway]
+			default_gateway = [d for d in self.payment_gateways if d.default]
 			if not default_gateway:
 				frappe.throw(_("Please define a default payment gateway"))
 
@@ -54,6 +61,22 @@ class PaymentRequest(Document):
 			if default_gateway:
 				print(default_gateway)
 				return default_gateway[0]
+
+	def set_gateway_account(self):
+		accounts = frappe.get_all("Payment Gateway Account",\
+			filters={"payment_gateway": self.payment_gateway, "currency": self.currency},\
+			fields=["name", "is_default"])
+
+		default_accounts = [x["name"] for x in accounts if x["is_default"]]
+		if default_accounts:
+			self.db_set("payment_gateway_account", default_accounts[0])
+		elif accounts:
+			self.db_set("payment_gateway_account", accounts[0]["name"])
+
+	def get_payment_account(self):
+		if self.payment_gateway_account:
+			return frappe.db.get_value("Payment Gateway Account",\
+				self.payment_gateway_account, "payment_account")
 
 	def on_submit(self):
 		send_mail = self.payment_gateways_validation()
@@ -138,8 +161,6 @@ class PaymentRequest(Document):
 
 		if self.reference_doctype == "Sales Invoice":
 			party_account = ref_doc.debit_to
-		elif self.reference_doctype == "Purchase Invoice":
-			party_account = ref_doc.credit_to
 		else:
 			party_account = get_party_account("Customer", ref_doc.get("customer"), ref_doc.company)
 
@@ -152,12 +173,13 @@ class PaymentRequest(Document):
 			party_amount = self.grand_total
 
 		payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
-			party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
+			party_amount=party_amount, bank_account=self.get_payment_account(), bank_amount=bank_amount)
 
 		payment_entry.update({
 			"reference_no": self.name,
 			"reference_date": nowdate(),
-			"remarks": "Payment Entry against {0} {1} via Payment Request {2}".format(self.reference_doctype,
+			"mode_of_payment": frappe.db.get_value("Payment Gateway", self.payment_gateway, "mode_of_payment"),
+			"remarks": _("Payment Entry against {0} {1} via Payment Request {2}").format(self.reference_doctype,
 				self.reference_name, self.name)
 		})
 
@@ -273,8 +295,6 @@ def make_payment_request(**args):
 		frappe.db.set_value("Sales Order", args.dn, "loyalty_amount", loyalty_amount, update_modified=False)
 		grand_total = grand_total - loyalty_amount
 
-	gateway_account = get_gateway_details(args) or frappe._dict()
-
 	existing_payment_request = frappe.db.get_value("Payment Request",
 		{"reference_doctype": args.dt, "reference_name": args.dn, "docstatus": ["!=", 2]})
 
@@ -285,20 +305,22 @@ def make_payment_request(**args):
 	else:
 		pr = frappe.new_doc("Payment Request")
 		pr.update({
-			"payment_gateway_account": gateway_account.get("name"),
-			"payment_gateway": gateway_account.get("payment_gateway"),
-			"payment_account": gateway_account.get("payment_account"),
 			"currency": ref_doc.currency,
 			"grand_total": grand_total,
 			"email_to": args.recipient_id or "",
 			"subject": _("Payment Request for {0}").format(args.dn),
-			"message": gateway_account.get("message") or get_dummy_message(ref_doc),
 			"reference_doctype": args.dt,
 			"reference_name": args.dn
 		})
 
 		if args.order_type == "Shopping Cart" or args.mute_email:
 			pr.flags.mute_email = True
+
+			gateway_account = get_gateway_details(args) or frappe._dict()
+			pr.update({
+				"payment_gateway_account": gateway_account.get("name"),
+				"payment_gateway": gateway_account.get("payment_gateway")
+			})
 
 		if args.submit_doc:
 			pr.insert(ignore_permissions=True)
@@ -346,7 +368,7 @@ def get_gateway_details(args):
 
 def get_payment_gateway_account(args):
 	return frappe.db.get_value("Payment Gateway Account", args,
-		["name", "payment_gateway", "payment_account", "message"],
+		["name", "payment_gateway", "message"],
 			as_dict=1)
 
 @frappe.whitelist()

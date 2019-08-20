@@ -2,18 +2,16 @@ from __future__ import unicode_literals
 from frappe import _
 
 app_name = "erpnext"
-app_title = "ERPNext"
+app_title = "dokos"
 app_publisher = "Frappe Technologies Pvt. Ltd."
 app_description = """ERP made simple"""
-app_icon = "fa fa-th"
-app_color = "#e74c3c"
-app_email = "info@erpnext.com"
+app_email = "hello@dokos.io"
 app_license = "GNU General Public License (v3)"
 source_link = "https://github.com/frappe/erpnext"
-app_logo_url = '/assets/erpnext/images/erp-icon.svg'
+app_logo_url = '/assets/erpnext/images/dokos_logo.svg'
 
 
-develop_version = '12.x.x-develop'
+develop_version = '1.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
@@ -69,8 +67,8 @@ website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
 	"Job Opening"]
 
 website_context = {
-	"favicon": 	"/assets/erpnext/images/favicon.png",
-	"splash_image": "/assets/erpnext/images/erp-icon.svg"
+	"favicon": 	"/assets/erpnext/images/favicon.ico",
+	"splash_image": "/assets/erpnext/images/dokos_logo.svg"
 }
 
 website_route_rules = [
@@ -272,13 +270,13 @@ scheduler_events = {
 	]
 }
 
-email_brand_image = "assets/erpnext/images/erpnext-logo.jpg"
+email_brand_image = "assets/erpnext/images/dokos_logo.svg"
 
 default_mail_footer = """
 	<span>
 		Sent via
-		<a class="text-muted" href="https://erpnext.com?source=via_email_footer" target="_blank">
-			ERPNext
+		<a class="text-muted" href="https://dokos.io?source=via_email_footer" target="_blank">
+			dokos
 		</a>
 	</span>
 """

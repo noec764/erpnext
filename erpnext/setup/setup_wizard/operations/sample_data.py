@@ -90,12 +90,12 @@ def make_projects(domains):
 	current_date = frappe.utils.nowdate()
 	project = frappe.get_doc({
 		"doctype": "Project",
-		"project_name": "ERPNext Implementation",
+		"project_name": "dokos Implementation",
 	})
 
 	tasks = [
 		{
-			"title": "Explore ERPNext",
+			"title": "Explore dokos",
 			"start_date": current_date,
 			"end_date": current_date,
 			"file": "explore.md"
