@@ -778,6 +778,13 @@ frappe.ui.form.on('Sales Invoice', {
 			}
 			frm.set_value("loyalty_amount", loyalty_amount);
 		}
+	},
+
+	create_invoice_discounting: function(frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.create_invoice_discounting",
+			frm: frm
+		});
 	}
 })
 

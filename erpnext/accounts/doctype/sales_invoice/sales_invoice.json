@@ -178,6 +178,7 @@
   "from_date",
   "to_date",
   "column_break_140",
+  "subscription",
   "auto_repeat",
   "update_auto_repeat_reference",
   "against_income_account",
@@ -1562,13 +1563,19 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "subscription",
+   "fieldtype": "Link",
+   "label": "Subscription",
+   "options": "Subscription"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-07-19 19:08:29.573275",
+ "modified": "2019-08-20 19:23:57.627403",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

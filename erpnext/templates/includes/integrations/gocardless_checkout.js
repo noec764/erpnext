@@ -1,24 +1,20 @@
 $(document).ready(function() {
-	var data = {{ frappe.form_dict | json }};
-	var doctype = "{{ reference_doctype }}"
-	var docname = "{{ reference_docname }}"
+	const data = {{ frappe.form_dict | json }};
 
 	frappe.call({
-		method: "erpnext.templates.pages.integrations.gocardless_checkout.check_mandate",
+		method: "erpnext.templates.pages.integrations.gocardless_checkout.redirect_to_gocardless",
 		freeze: true,
 		headers: {
 			"X-Requested-With": "XMLHttpRequest"
 		},
 		args: {
-			"data": JSON.stringify(data),
-			"reference_doctype": doctype,
-			"reference_docname": docname
-		},
-		callback: function(r) {
-			if (r.message) {
-				window.location.href = r.message.redirect_to
-			}
+			"data": JSON.stringify(data)
+		}
+	}).then(r => {
+		if (r.message) {
+			window.location.href = r.message.redirect_to
 		}
 	})
 
-})
+});
+

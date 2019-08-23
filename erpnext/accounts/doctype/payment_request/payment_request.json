@@ -13,10 +13,14 @@
   "reference_name",
   "transaction_details",
   "grand_total",
-  "column_break_18",
   "currency",
+  "column_break_18",
+  "base_amount",
+  "exchange_rate",
+  "fee_amount",
   "section_break_7",
   "payment_gateways_template",
+  "column_break_14",
   "payment_gateways",
   "section_break_15",
   "payment_gateway",
@@ -82,10 +86,10 @@
    "label": "Transaction Details"
   },
   {
-   "description": "Amount in customer's currency",
+   "description": "Amount in transaction currency",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
-   "label": "Amount",
+   "label": "Amount in transaction currency",
    "options": "currency"
   },
   {
@@ -169,8 +173,6 @@
    "read_only": 1
   },
   {
-   "collapsible": 1,
-   "collapsible_depends_on": "doc.payment_gateway_account",
    "fieldname": "section_break_7",
    "fieldtype": "Section Break",
    "label": "Payment Gateways"
@@ -188,8 +190,10 @@
    "fieldname": "payment_key",
    "fieldtype": "Data",
    "label": "Payment Key",
+   "no_copy": 1,
    "read_only": 1,
-   "set_only_once": 1
+   "set_only_once": 1,
+   "unique": 1
   },
   {
    "fieldname": "email_template",
@@ -199,7 +203,7 @@
   },
   {
    "fieldname": "payment_gateways",
-   "fieldtype": "Table",
+   "fieldtype": "Table MultiSelect",
    "label": "Payment Gateways",
    "options": "Portal Payment Gateways"
   },
@@ -234,10 +238,32 @@
    "options": "Payment Gateway Account",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Fees included in the total amount",
+   "fieldname": "fee_amount",
+   "fieldtype": "Currency",
+   "label": "Fee Amount"
+  },
+  {
+   "fieldname": "base_amount",
+   "fieldtype": "Currency",
+   "label": "Amount in company currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-08-20 17:43:22.390894",
+ "modified": "2019-08-23 15:26:59.582382",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

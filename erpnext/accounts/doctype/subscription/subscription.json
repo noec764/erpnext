@@ -102,12 +102,14 @@
    "fieldname": "current_invoice_start",
    "fieldtype": "Date",
    "label": "Current Invoicing Period Start Date",
+   "no_copy": 1,
    "read_only": 1
   },
   {
    "fieldname": "current_invoice_end",
    "fieldtype": "Date",
    "label": "Current Invoicing Period End Date",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -223,17 +225,17 @@
    "label": "Prorate invoice"
   },
   {
-    "collapsible": 1,
-    "fieldname": "accounting_dimensions_section",
-    "fieldtype": "Section Break",
-    "label": "Accounting Dimensions"
-   },
-   {
-    "fieldname": "dimension_col_break",
-    "fieldtype": "Column Break"
-   }
+   "collapsible": 1,
+   "fieldname": "accounting_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Dimensions"
+  },
+  {
+   "fieldname": "dimension_col_break",
+   "fieldtype": "Column Break"
+  }
  ],
- "modified": "2019-07-25 14:59:01.525539",
+ "modified": "2019-08-21 09:33:37.809798",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

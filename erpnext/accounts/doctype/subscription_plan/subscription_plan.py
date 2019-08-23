@@ -11,10 +11,16 @@ from erpnext.utilities.product import get_price
 class SubscriptionPlan(Document):
 	def validate(self):
 		self.validate_interval_count()
+		self.validate_gateway_plans()
 
 	def validate_interval_count(self):
 		if self.billing_interval_count < 1:
 			frappe.throw(_('Billing Interval Count cannot be less than 1'))
+
+	def validate_gateway_plans(self):
+		for plan in self.payment_plans:
+			gateway = frappe.get_doc("Payment Gateway", plan.payment_gateway)
+			gateway.validate_subscription_plan(self.currency, plan.payment_plan)
 
 @frappe.whitelist()
 def get_plan_rate(plan, quantity=1, customer=None):

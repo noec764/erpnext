@@ -11,17 +11,21 @@ from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry, get_company_defaults
 from frappe.integrations.utils import get_payment_gateway_controller
 from frappe.utils.background_jobs import enqueue
-from erpnext.erpnext_integrations.stripe_integration import create_stripe_subscription
-from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_plan_rate
 
 class PaymentRequest(Document):
+	def before_insert(self):
+		self.payment_key = None
+		self.payment_gateway = None
+		self.payment_gateway_account = None
+
 	def validate(self):
 		if self.get("__islocal"):
 			self.status = 'Draft'
 		self.validate_reference_document()
 		self.validate_payment_request()
 		self.validate_payment_gateways()
-		self.validate_default_gateway()
+		self.validate_subscription_gateways()
+		self.validate_existing_gateway()
 		self.validate_currency()
 
 	def validate_reference_document(self):
@@ -36,31 +40,33 @@ class PaymentRequest(Document):
 	def validate_currency(self):
 		currency = frappe.db.get_value(self.reference_doctype, self.reference_name, "currency")
 		for gateway in self.payment_gateways:
-			if not frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway.payment_gateway, currency=currency)):
+			if not frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway.get("payment_gateway"), currency=currency)):
 				frappe.msgprint(_("No payment gateway account found for payment gateway {0} and currency {1}."\
-					.format(gateway.payment_gateway, currency)))
+					.format(gateway.get("payment_gateway"), currency)))
 
 	def validate_payment_gateways(self):
-		if self.payment_gateways_template:
-			if not self.payment_gateways:
-				template = frappe.get_doc("Portal Payment Gateways Template", self.payment_gateways_template)
-				self.payment_gateways = template.payment_gateways
+		if self.payment_gateways_template and not self.payment_gateways:
+			template = frappe.get_doc("Portal Payment Gateways Template", self.payment_gateways_template)
+			self.payment_gateways = template.payment_gateways
 
-	def validate_default_gateway(self):
-		if self.payment_gateways:
-			default_gateway = [d for d in self.payment_gateways if d.default]
-			if not default_gateway:
-				frappe.throw(_("Please define a default payment gateway"))
+	def validate_existing_gateway(self):
+		if not self.payment_gateways:
+			frappe.throw(_("Please add at least one payment gateway"))
 
-			if len(default_gateway) > 1:
-				frappe.throw(_("Please define only one default gateway"))
+	def validate_subscription_gateways(self):
+		gateways = self.get_subscription_payment_gateways()
+		if gateways:
+			pr_gateways = set([x.payment_gateway for x in self.payment_gateways])
+			if not pr_gateways:
+				for gateway in gateways:
+					self.append("payment_gateways", {
+						"payment_gateway": gateway
+					})
 
-	def get_defaut_gateway(self):
-		if self.payment_gateways:
-			default_gateway = [d.default_gateway for d in self.payment_gateways if d.default_gateway]
-			if default_gateway:
-				print(default_gateway)
-				return default_gateway[0]
+			if not gateways >= pr_gateways:
+				frappe.throw(_("Payment gateways must be defined in one the payment plan \
+					registered in the subscription attached to this reference doctype.\
+					<br><br>It can only be one of the following: {0}").format(', '.join(gateways)))
 
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\
@@ -79,11 +85,15 @@ class PaymentRequest(Document):
 				self.payment_gateway_account, "payment_account")
 
 	def on_submit(self):
-		send_mail = self.payment_gateways_validation()
+		send_mail = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
 		if (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart") \
 			or self.flags.mute_email or self.mute_email:
+			send_mail = False
+
+		if not self.message:
+			self.mute_email = True
 			send_mail = False
 
 		if send_mail:
@@ -91,6 +101,7 @@ class PaymentRequest(Document):
 			self.make_communication_entry()
 
 		self.generate_payment_key()
+		self.db_set('status', 'Initiated')
 
 	def on_cancel(self):
 		self.check_if_payment_entry_exists()
@@ -104,29 +115,35 @@ class PaymentRequest(Document):
 			si = si.insert(ignore_permissions=True)
 			si.submit()
 
-	def payment_gateways_validation(self):
+	@frappe.whitelist()
+	def check_if_immediate_payment_is_autorized(self):
 		try:
-			result = True
+			output = []
 			for gateway in self.payment_gateways:
-				controller = get_payment_gateway_controller(gateway.payment_gateway)
-				if hasattr(controller, 'on_payment_request_submission'):
-					result = controller.on_payment_request_submission(self)
+				result = self.check_immediate_payment_for_gateway(gateway.payment_gateway)
+				if result:
+					output.append(result)
 
-			return result
+			return output or False
 
 		except Exception:
+			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
 			return False
+
+	def check_immediate_payment_for_gateway(self, gateway):
+		controller = get_payment_gateway_controller(gateway)
+		if hasattr(controller, 'on_payment_request_submission'):
+			return controller.on_payment_request_submission(self)
 
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
-		self.db_set('status', 'Initiated')
 
 	def get_payment_url(self, payment_gateway=None):
 		data = frappe.db.get_value(self.reference_doctype, self.reference_name,\
 			["company", "customer_name"], as_dict=1)
 
 		controller = get_payment_gateway_controller(\
-			payment_gateway or self.get_defaut_gateway())
+			payment_gateway)
 		controller.validate_transaction_currency(self.currency)
 
 		if hasattr(controller, 'validate_minimum_transaction_amount'):
@@ -158,6 +175,8 @@ class PaymentRequest(Document):
 		frappe.flags.ignore_account_permission = True
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
+				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
 		if self.reference_doctype == "Sales Invoice":
 			party_account = ref_doc.debit_to
@@ -178,10 +197,30 @@ class PaymentRequest(Document):
 		payment_entry.update({
 			"reference_no": self.name,
 			"reference_date": nowdate(),
-			"mode_of_payment": frappe.db.get_value("Payment Gateway", self.payment_gateway, "mode_of_payment"),
+			"mode_of_payment": gateway_defaults.get("mode_of_payment"),
 			"remarks": _("Payment Entry against {0} {1} via Payment Request {2}").format(self.reference_doctype,
 				self.reference_name, self.name)
 		})
+
+		if self.exchange_rate:
+			payment_entry.update({
+				"target_exchange_rate": self.exchange_rate,
+			})
+
+		if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
+			fees = flt(self.fee_amount) * flt(self.get("target_exchange_rate", 1))
+			payment_entry.update({
+				"paid_amount": flt(self.base_amount or self.grand_total) - fees,
+				"received_amount": flt(self.grand_total) - fees
+			})
+
+			payment_entry.append("deductions", {
+				"account": gateway_defaults.get("fee_account"),
+				"cost_center": gateway_defaults.get("cost_center"),
+				"amount": self.fee_amount
+			})
+
+			payment_entry.set_amounts()
 
 		if payment_entry.difference_amount:
 			company_details = get_company_defaults(ref_doc.company)
@@ -276,9 +315,50 @@ class PaymentRequest(Document):
 
 			return redirect_to
 
-	def create_subscription(self, payment_provider, gateway_controller, data):
-		if payment_provider == "stripe":
-			return create_stripe_subscription(gateway_controller, data)
+	@frappe.whitelist()
+	def get_subscription_payment_gateways(self):
+		result = set()
+		if self.get_subscription_payment_plans():
+			for plan in self.get_subscription_payment_plans():
+				subscription_plan = frappe.get_doc("Subscription Plan", plan.plan)
+				for payment_plan in subscription_plan.payment_plans:
+					result.add(payment_plan.payment_gateway)
+
+		return result
+
+	def get_subscription_plans_details(self, gateway):
+		result = []
+		if self.get_subscription_payment_plans():
+			for plan in self.get_subscription_payment_plans():
+				subscription_plan = frappe.get_doc("Subscription Plan", plan.plan)
+				for payment_plan in [x for x in subscription_plan.payment_plans if x.payment_gateway == gateway]:
+					result.append({"quantity": plan.qty, "plan": payment_plan.payment_plan})
+
+		return result
+
+	def get_subscription_payment_plans(self):
+		subscription_name = self.is_linked_to_a_subscription()
+		if subscription_name:
+			subscription = frappe.get_doc("Subscription", subscription_name)
+			return subscription.plans
+
+	def is_linked_to_a_subscription(self):
+		return frappe.db.get_value(self.reference_doctype, self.reference_name, "subscription")
+
+	@frappe.whitelist()
+	def process_payment_immediately(self):
+		try:
+			result = []
+			for gateway in self.payment_gateways:
+				controller = get_payment_gateway_controller(gateway.payment_gateway)
+				if hasattr(controller, 'immediate_payment_processing'):
+					result.append(controller.immediate_payment_processing(self))
+
+			return result
+
+		except Exception as e:
+			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
+			frappe.throw(e, _("Payment gateways validation error"))
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):

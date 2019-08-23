@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import erpnext
 from frappe.utils import flt, fmt_money
 from frappe import _
 from frappe.integrations.utils import get_payment_gateway_controller
@@ -17,8 +18,11 @@ def get_payment_gateways(link):
 	payment_gateways = []
 
 	for gateway in payment_request.payment_gateways:
-		if frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway.payment_gateway, currency=payment_request.currency)):
-			payment_gateways.append(gateway)
+		if frappe.db.exists("Payment Gateway Account",\
+			dict(payment_gateway=gateway.payment_gateway, currency=payment_request.currency))\
+			and not payment_request.check_immediate_payment_for_gateway(gateway.payment_gateway):
+			payment_gateways.append(frappe.db.get_value("Payment Gateway",\
+				gateway.payment_gateway, ["name", "title", "icon"], as_dict=True))
 
 	return payment_gateways
 
@@ -34,7 +38,8 @@ def get_payment_details(link):
 		or reference_document.get("grand_total")):
 		error = _("This invoice has already been fully paid")
 
-	elif flt(reference_document.get("outstanding_amount")) < payment_request.grand_total:
+	elif erpnext.get_company_currency(reference_document.get("company")) == payment_request.currency and\
+		flt(reference_document.get("outstanding_amount")) < payment_request.grand_total:
 		error = _("The outstanding amount for this document is lower than the current payment request.")
 
 	return {

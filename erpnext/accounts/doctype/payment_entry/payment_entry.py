@@ -44,6 +44,7 @@ class PaymentEntry(AccountsController):
 			self.party_account_currency = self.paid_to_account_currency
 
 	def validate(self):
+		print("VALIDATE", self.name)
 		self.setup_party_account_field()
 		self.set_missing_values()
 		self.validate_payment_type()
@@ -357,7 +358,7 @@ class PaymentEntry(AccountsController):
 
 			if not total_negative_outstanding:
 				frappe.throw(_("Cannot {0} {1} {2} without any negative outstanding invoice")
-					.format(self.payment_type, ("to" if self.party_type=="Customer" else "from"),
+					.format(self.payment_type, (_("to") if self.party_type=="Customer" else _("from")),
 						self.party_type), InvalidPaymentEntry)
 
 			elif paid_amount - additional_charges > total_negative_outstanding:

@@ -3,8 +3,9 @@
 
 frappe.ui.form.on('Subscription', {
 	refresh: function(frm) {
+		frm.dashboard.clear_headline();
+		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
-			frm.page.clear_actions_menu();
 			if(frm.doc.status !== 'Cancelled'){
 				frm.page.add_action_item(
 					__('Cancel Subscription'),
@@ -30,6 +31,7 @@ frappe.ui.form.on('Subscription', {
 				'name': frm.doc.name
 			})
 			.then(r => {
+				console.log(r)
 				frm.dashboard.set_headline_alert(r);
 			})
 		} else {

@@ -14,11 +14,13 @@ frappe.ui.form.on("Payment Request", {
 				}
 			})
 		}
-		if (!frm.is_new() && frm.doc.payment_key) {
-			frm.add_web_link(`/payments?link=${frm.doc.payment_key}`);
-		}
 	},
 	refresh(frm) {
+		if (!frm.is_new() && frm.doc.payment_key) {
+			frm.web_link && frm.web_link.remove();
+			frm.add_web_link(`/payments?link=${frm.doc.payment_key}`, __("See payment link"));
+		}
+
 		if(frm.doc.status !== "Paid" && !frm.is_new() && frm.doc.docstatus==1){
 			frm.add_custom_button(__('Resend Payment Email'), function(){
 				frappe.call({
@@ -32,7 +34,7 @@ frappe.ui.form.on("Payment Request", {
 						}
 					}
 				});
-			});
+			}, __("Actions"));
 		}
 
 		if(!frm.doc.payment_gateway_account && frm.doc.status == "Initiated") {
@@ -49,6 +51,42 @@ frappe.ui.form.on("Payment Request", {
 					}
 				});
 			}).addClass("btn-primary");
+
+			frappe.call({
+				method: "check_if_immediate_payment_is_autorized",
+				doc: frm.doc,
+			}).then(r => {
+				if (r.message && r.message.length) {
+					frm.trigger("process_payment_immediately");
+				}
+			})
+		}
+	},
+	process_payment_immediately(frm) {
+		frm.add_custom_button(__('Process payment immediately'), function(){
+			frappe.call({
+				method: "process_payment_immediately",
+				doc: frm.doc,
+			}).then(r => {
+					frm.reload_doc()
+			})
+		}, __("Actions"))
+	},
+	reference_name(frm) {
+		if (frm.doc.reference_name) {
+			frappe.call({
+				method: "get_subscription_payment_gateways",
+				doc: frm.doc,
+			}).then(r => {
+				if (r.message && r.message.length) {
+					frm.doc.payment_gateways = []
+					r.message.forEach(value => {
+						const c = frm.add_child("payment_gateways");
+						c.payment_gateway = value;
+					})
+					frm.refresh_fields("payment_gateways")
+				}
+			})
 		}
 	},
 	email_template(frm) {

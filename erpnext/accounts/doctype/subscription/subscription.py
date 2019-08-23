@@ -8,7 +8,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, \
-	get_last_day, add_to_date, flt, global_date_format
+	get_last_day, add_to_date, flt, global_date_format, add_years, today
 from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_plan_rate
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 import numpy as np
@@ -104,18 +104,34 @@ class Subscription(Document):
 		1. Generate a new invoice
 		2. Change the `Subscription` status to 'Cancelled'
 		"""
-		if self.generate_at_period_end():
-			if not self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
+		if self.generate_at_period_end() and self.period_has_passed(self.current_invoice_end):
+			if not self.has_invoice_for_period() :
 				self.generate_invoice()
+				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+			else:
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 
 		elif self.generate_at_period_start():
-			if not self.has_invoice_for_period()or self.period_has_passed(self.current_invoice_end):
-				self.generate_invoice()
+			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.generate_invoice()
+
+			elif not self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_start):
+				self.generate_invoice()
 
 		if self.cancel_at_period_end and getdate(nowdate()) >= getdate(self.current_invoice_end):
 			self.cancel_subscription_at_period_end()
+
+	@staticmethod
+	def period_has_passed(end_date):
+		"""
+		Returns true if the given `end_date` has passed
+		"""
+		if not end_date:
+			return False
+
+		end_date = getdate(end_date)
+		return getdate(nowdate()) > getdate(end_date)
 
 	@staticmethod
 	def validate_plans_billing_cycle(billing_cycle_data):
@@ -189,18 +205,6 @@ class Subscription(Document):
 			return not self.period_has_passed(self.trial_period_end) and self.is_new_subscription()
 		else:
 			return False
-
-	@staticmethod
-	def period_has_passed(end_date):
-		"""
-		Returns true if the given `end_date` has passed
-		"""
-		# todo: test for illegal time
-		if not end_date:
-			return True
-
-		end_date = getdate(end_date)
-		return getdate(nowdate()) > getdate(end_date)
 
 
 	def current_invoice_is_past_due(self, current_invoice=None):
@@ -499,7 +503,7 @@ def get_subscription_updates(name):
 
 @frappe.whitelist()
 def get_chart_data(title, doctype, docname):
-	invoices = frappe.get_all("Sales Invoice", filters={"subscription": docname}, \
+	invoices = frappe.get_all("Sales Invoice", filters={"subscription": docname,}, \
 		fields=["name", "outstanding_amount", "total", "posting_date", "currency"], group_by="posting_date")
 
 	if len(invoices) < 1:
@@ -511,12 +515,12 @@ def get_chart_data(title, doctype, docname):
 	dates = []
 	total = []
 	outstanding = []
-	for invoice in invoices:
+	for invoice in invoices[:20]:
 		dates.insert(0, invoice.posting_date)
 		total.insert(0, invoice.total)
 		outstanding.insert(0, invoice.outstanding_amount)
 
-	mean_value = np.mean(np.array(total))
+	mean_value = np.mean(np.array([x.total for x in invoices]))
 
 	data = {
 		'title': title + " (" + symbol + ")",

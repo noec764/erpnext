@@ -20,9 +20,7 @@
   "column_break_13",
   "billing_interval_count",
   "payment_plan_section",
-  "payment_plan_id",
-  "column_break_16",
-  "payment_gateway",
+  "payment_plans",
   "accounting_dimensions_section",
   "dimension_col_break"
  ],
@@ -108,37 +106,29 @@
    "reqd": 1
   },
   {
+   "collapsible": 1,
    "fieldname": "payment_plan_section",
    "fieldtype": "Section Break",
-   "label": "Payment Plan"
+   "label": "Payment Plans"
   },
   {
-   "fieldname": "payment_plan_id",
-   "fieldtype": "Data",
-   "label": "Payment Plan"
+   "collapsible": 1,
+   "fieldname": "accounting_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Dimensions"
   },
   {
-   "fieldname": "column_break_16",
+   "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "payment_gateway",
-   "fieldtype": "Link",
-   "label": "Payment Gateway",
-   "options": "Payment Gateway Account"
-  },
-  {
-    "collapsible": 1,
-    "fieldname": "accounting_dimensions_section",
-    "fieldtype": "Section Break",
-    "label": "Accounting Dimensions"
-   },
-   {
-    "fieldname": "dimension_col_break",
-    "fieldtype": "Column Break"
-   }
+   "fieldname": "payment_plans",
+   "fieldtype": "Table",
+   "label": "Gateways Payment Plans",
+   "options": "Subscription Gateway Plans"
+  }
  ],
- "modified": "2019-08-05 12:09:16.473297",
+ "modified": "2019-08-21 11:18:26.235365",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan",

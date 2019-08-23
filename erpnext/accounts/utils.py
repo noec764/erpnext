@@ -805,7 +805,7 @@ def create_payment_gateway_account(gateway):
 
 	except frappe.DuplicateEntryError:
 		# already exists, due to a reinstall?
-		pass
+		return
 
 @frappe.whitelist()
 def update_number_field(doctype_name, name, field_name, number_value, company):

@@ -12,7 +12,7 @@
  "fields": [
   {
    "fieldname": "payment_gateways",
-   "fieldtype": "Table",
+   "fieldtype": "Table MultiSelect",
    "label": "Payment Gateways",
    "options": "Portal Payment Gateways",
    "reqd": 1
@@ -26,7 +26,7 @@
    "unique": 1
   }
  ],
- "modified": "2019-08-20 14:36:30.858025",
+ "modified": "2019-08-21 12:20:40.078820",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Portal Payment Gateways Template",
