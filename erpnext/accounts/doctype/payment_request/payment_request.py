@@ -108,9 +108,10 @@ class PaymentRequest(Document):
 		self.set_as_cancelled()
 
 	def make_invoice(self):
-		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
-		if (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart"):
+		if self.reference_doctype == "Sales Order":
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+			ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+
 			si = make_sales_invoice(self.reference_name, ignore_permissions=True)
 			si = si.insert(ignore_permissions=True)
 			si.submit()
@@ -162,9 +163,6 @@ class PaymentRequest(Document):
 		})
 
 	def set_as_paid(self):
-		if frappe.session.user == "Guest":
-			frappe.set_user("Administrator")
-
 		payment_entry = self.create_payment_entry()
 		self.make_invoice()
 
@@ -293,27 +291,34 @@ class PaymentRequest(Document):
 		if not status:
 			return
 
-		shopping_cart_settings = frappe.get_doc("Shopping Cart Settings")
-
 		if status in ["Authorized", "Completed"]:
-			redirect_to = None
 			self.run_method("set_as_paid")
+		elif status in ["Pending"]:
+			self.run_method("make_invoice")
 
-			# if shopping cart enabled and in session
-			if (shopping_cart_settings.enabled and hasattr(frappe.local, "session")
-				and frappe.local.session.user != "Guest"):
+		return self.get_redirection()
 
-				success_url = shopping_cart_settings.payment_success_url
-				if success_url:
-					redirect_to = ({
-						"Orders": "/orders",
-						"Invoices": "/invoices",
-						"My Account": "/me"
-					}).get(success_url, "/me")
-				else:
-					redirect_to = get_url("/orders/{0}".format(self.reference_name))
+	def get_redirection(self):
+		redirect_to = None
 
-			return redirect_to
+		# if shopping cart enabled and in session
+		shopping_cart_settings = frappe.db.get_value("Shopping Cart Settings",\
+			None, ["enabled", "payment_success_url"], as_dict=1)
+
+		if (shopping_cart_settings.get("enabled") and hasattr(frappe.local, "session")\
+			and frappe.local.session.user != "Guest"):
+
+			success_url = shopping_cart_settings.get("payment_success_url")
+			if success_url:
+				redirect_to = ({
+					"Orders": "/orders",
+					"Invoices": "/invoices",
+					"My Account": "/me"
+				}).get(success_url, "/me")
+			else:
+				redirect_to = get_url("/orders/{0}".format(self.reference_name))
+
+		return redirect_to
 
 	@frappe.whitelist()
 	def get_subscription_payment_gateways(self):

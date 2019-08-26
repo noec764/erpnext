@@ -8,7 +8,7 @@ from frappe.model.document import Document
 import gocardless_pro
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint
+from frappe.utils import get_url, call_hook_method, flt, cint, nowdate
 from frappe.integrations.utils import create_request_log, create_payment_gateway, finalize_request
 import json
 
@@ -20,6 +20,10 @@ class GoCardlessSettings(Document):
 		"Month": "monthy",
 		"Year": "yearly"
 	}
+
+	def __init__(self, *args, **kwargs):
+		super(GoCardlessSettings, self).__init__(*args, **kwargs)
+		self.initialize_client()
 
 	def validate(self):
 		self.initialize_client()
@@ -83,7 +87,6 @@ class GoCardlessSettings(Document):
 	def check_mandate_validity(self, data):
 		if frappe.db.exists("GoCardless Mandate", dict(customer=data.get('payer_name'),\
 			status=["not in", ["Cancelled", "Expired", "Failed"]])):
-			self.initialize_client()
 
 			registered_mandate = frappe.db.get_value("GoCardless Mandate",\
 				dict(customer=data.get('payer_name'), status=["not in", ["Cancelled", "Expired", "Failed"]]), 'mandate')
@@ -96,7 +99,6 @@ class GoCardlessSettings(Document):
 				}
 
 	def create_new_mandate(self):
-		self.initialize_client()
 		mandate = self.client.mandates.get(registered_mandate)
 
 	def get_environment(self):
@@ -120,17 +122,15 @@ class GoCardlessSettings(Document):
 			if hasattr(self.reference_document, 'is_linked_to_a_subscription'):
 				self.subscription = self.reference_document.is_linked_to_a_subscription()
 
-			self.initialize_client()
 			if self.subscription:
-				return self.create_new_subscription()
+				self.create_new_subscription()
 			else:
-				return self.create_charge_on_gocardless()
+				self.create_charge_on_gocardless()
 
+			return finalize_request(self)
 		except Exception as e:
-			self.integration_request.db_set('status', 'Failed', update_modified=True)
-			self.integration_request.db_set('error', str(e), update_modified=True)
-			frappe.log_error(frappe.get_traceback(), "GoCardless payment creation error")
-			return self.error_message(402)
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("GoCardless payment creation error"))
 
 	def create_new_subscription(self):
 		subscription = frappe.get_doc("Subscription", self.subscription)
@@ -162,13 +162,29 @@ class GoCardlessSettings(Document):
 					}
 				)
 
-				self.process_output()
+				return self.process_output('subscription')
 
 			except Exception as e:
-				self.integration_request.db_set('error', str(e), update_modified=True)
-				frappe.log_error(frappe.get_traceback(), _("GoCardless subscription creation error"))
+				self.change_integration_request_status("Failed", "error", str(e))
+				return self.error_message(402, _("GoCardless subscription creation error"))
 
-			return finalize_request(self)
+	def get_payments_on_gocardless(self, id=None, params=None):
+		if id:
+			return self.get_payment_by_id(id)
+		else:
+			return self.get_payment_list(params)
+
+	def get_payment_by_id(self, id):
+		try:
+			return self.client.payments.get(id)
+		except Exception as e:
+			frappe.log_error(e, _("GoCardless payment retrieval error"))
+
+	def get_payment_list(self, params=None):
+		try:
+			return self.client.payments.list(params=params).records
+		except Exception as e:
+			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
 	def create_charge_on_gocardless(self):
 		try:
@@ -189,40 +205,47 @@ class GoCardlessSettings(Document):
 				}
 			)
 
-			self.process_output()
+			return self.process_output('payment')
 
 		except Exception as e:
-			self.integration_request.db_set('error', str(e), update_modified=True)
-			frappe.log_error(frappe.get_traceback(), "GoCardless Payment Error")
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("GoCardless Payment Error"))
 
-		return finalize_request(self)
-
-	def process_output(self):
-		print(self.output.status)
+	def process_output(self, service):
 		if self.output.status == "pending_submission" or self.output.status == "pending_customer_approval"\
 			or self.output.status == "submitted":
-			self.integration_request.db_set('status', 'Authorized', update_modified=True)
-			self.flags.status_changed_to = "Completed"
-			self.integration_request.db_set('output', str(self.output.__dict__), update_modified=True)
+			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
+			self.reference_document.db_set("status", "Pending", update_modified=True)
+			self.add_service_link_to_integration_request(service, self.output.id)
 
 		elif self.output.status == "confirmed" or self.output.status == "paid_out":
-			self.integration_request.db_set('status', 'Completed', update_modified=True)
-			self.flags.status_changed_to = "Completed"
-			self.integration_request.db_set('output', str(self.output.__dict__), update_modified=True)
+			self.change_integration_request_status("Completed", "output", str(self.output.__dict__))
+			self.add_service_link_to_integration_request(service, self.output.id)
 
 		elif self.output.status == "cancelled" or self.output.status == "customer_approval_denied"\
 			or self.output.status == "charged_back":
-			self.integration_request.db_set('status', 'Cancelled', update_modified=True)
-			self.flags.status_changed_to = "Failed"
-			frappe.log_error(_("Payment Cancelled. Please check your GoCardless Account for more details"), "GoCardless Payment Error")
-			self.integration_request.db_set('error', str(self.output.__dict__), update_modified=True)
+			self.change_integration_request_status("Cancelled", "error", str(self.output.__dict__))
+			return self.error_message(402, _("GoCardless Payment Error"),\
+				_("Payment Cancelled. Please check your GoCardless Account for more details"))
 		else:
-			self.integration_request.db_set('status', 'Failed', update_modified=True)
-			self.flags.status_changed_to = "Failed"
-			frappe.log_error(_("Payment Failed. Please check your GoCardless Account for more details"), "GoCardless Payment Error")
-			self.integration_request.db_set('error', str(self.output.__dict__), update_modified=True)
+			self.change_integration_request_status("Failed", "error", str(self.output.__dict__))
+			return self.error_message(402, _("GoCardless Payment Error"),\
+				_("Payment Failed. Please check your GoCardless Account for more details"))
 
-	def error_message(self, error_number=500):
+	def change_integration_request_status(self, status, type, error):
+		self.flags.status_changed_to = status
+		self.integration_request.db_set('status', status, update_modified=True)
+		self.integration_request.db_set(type, error, update_modified=True)
+		self.integration_request.db_set('service_status', self.output.status, update_modified=True)
+
+	def add_service_link_to_integration_request(self, document, id):
+		self.integration_request.db_set('service_document', document, update_modified=True)
+		self.integration_request.db_set('service_id', id, update_modified=True)
+
+	def error_message(self, error_number=500, title=None, error=None):
+		if error is None:
+			error = frappe.get_traceback()
+		frappe.log_error(error, title)
 		if error_number == 402:
 			return {
 					"redirect_to": frappe.redirect_to_message(_('Server Error'),\
@@ -244,19 +267,63 @@ def get_gateway_controller(doctype, docname):
 		payment_request.payment_gateway, "gateway_controller")
 	return gateway_controller
 
-def check_mandate_validity_daily():
-	settings_documents = frappe.get_all("GoCardless Settings", filters={"mandate_validity_check": 1})
+def check_integrated_documents():
+	settings_documents = frappe.get_all("GoCardless Settings", filters={"check_for_updates": 1})
 	for settings in settings_documents:
-		customers = frappe.get_all("Integration References",\
-			filters={"gocardless_settings": settings.name}, fields=["customer"])
-		if customers:
-			provider = frappe.get_doc("GoCardless Settings", settings.name)
-			provider.initialize_client()
-			for customer in customers:
-				mandates = frappe.get_all("GoCardless Mandate", filters={"customer": customer.customer})
-				if mandates:
-					for mandate in mandates:
-						result = provider.client.mandates.get(mandate.name)
-						frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
-							result.status.replace("_", " ").capitalize())
+		provider = frappe.get_doc("GoCardless Settings", settings.name)
+		check_mandate_status(provider)
+		check_payment_status(provider)
+		fetch_existing_payments(provider)
 
+def check_mandate_status(provider):
+	customers = frappe.get_all("Integration References",\
+		filters={"gocardless_settings": provider.name}, fields=["customer"])
+	if customers:
+
+		for customer in customers:
+			mandates = frappe.get_all("GoCardless Mandate", filters={"customer": customer.customer})
+			if mandates:
+				for mandate in mandates:
+					result = provider.client.mandates.get(mandate.name)
+					frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
+						result.status.replace("_", " ").capitalize())
+
+
+def check_payment_status(provider):
+	pending_requests = frappe.get_all("Integration Request",\
+		filters={"integration_request_service": "GoCardless",\
+		"status": ["in", ["Pending", "Queued"]]}, fields=["name", "service_document", "service_id"])
+
+	if pending_requests:
+		for request in pending_requests:
+			if request["service_id"]:
+				payments = []
+				if request["service_document"] == "payment":
+					payments.append(provider.get_payments_on_gocardless(id=request["service_id"]))
+				else:
+					payments = provider.get_payments_on_gocardless(params={request["service_document"]: request["service_id"]})
+
+				for payment in payments:
+					frappe.db.set_value("Integration Request", request["name"],\
+						"service_status", payment.status.replace("_", " ").capitalize())
+
+					if payment.status == "confirmed" or payment.status == "paid_out":
+						frappe.db.set_value("Integration Request", request["name"], "status", "Completed")
+
+def fetch_existing_payments(provider):
+	existing_requests = [x["service_id"] for x in frappe.get_all("Integration Request",\
+		filters={"integration_request_service": "GoCardless"}, fields=["service_id"])]
+	payments = provider.get_payments_on_gocardless(params={"charge_date[gte]": nowdate()})
+
+	for payment in payments:
+		if payment.id not in existing_requests:
+			missing_request = frappe.get_doc({
+				"doctype": "Integration Request",
+				"integration_type": "Payment",
+				"integration_request_service": "GoCardless",
+				"data": str(payment.__dict__),
+				"service_document": "payment",
+				"service_id": payment.id,
+				"service_status": payment.status,
+				"status": "Confirmed" if (payment.status == "confirmed" or payment.status == "paid_out") else "Pending"
+			}).insert(ignore_permissions=True)

@@ -232,6 +232,7 @@ scheduler_events = {
 		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.erpnext_integrations.doctype.amazon_mws_settings.amazon_mws_settings.schedule_get_order_details",
 		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
+		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_integrated_documents"
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts"
@@ -261,8 +262,7 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status"
 	],
 	"daily_long": [
-		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
-		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_mandate_validity_daily"
+		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",

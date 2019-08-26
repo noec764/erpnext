@@ -69,6 +69,7 @@ frappe.ui.form.on("Payment Request", {
 				doc: frm.doc,
 			}).then(r => {
 					frm.reload_doc()
+					frappe.show_alert({message:__("Payment successfully initialized"), indicator:'green'});
 			})
 		}, __("Actions"))
 	},

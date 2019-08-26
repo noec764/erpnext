@@ -22,6 +22,7 @@ def webhooks():
 		set_status(event)
 
 	return 200
+
 def set_status(event):
 	resource_type = event.get("resource_type", {})
 
@@ -36,13 +37,9 @@ def set_mandate_status(event):
 	else:
 		mandates.append(event["links"]["mandate"])
 
-	if event["action"] == "pending_customer_approval" or event["action"] == "pending_submission" or event["action"] == "submitted" or event["action"] == "active":
-		disabled = 0
-	else:
-		disabled = 1
-
 	for mandate in mandates:
-		frappe.db.set_value("GoCardless Mandate", mandate, "disabled", disabled)
+		frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
+			event["action"].replace("_", " ").capitalize())
 
 def authenticate_signature(r):
 	"""Returns True if the received signature matches the generated signature"""

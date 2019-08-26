@@ -136,7 +136,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nDraft\nInitiated\nPaid\nFailed\nCancelled",
+   "options": "\nDraft\nInitiated\nPending\nPaid\nFailed\nCancelled",
    "read_only": 1
   },
   {
@@ -252,18 +252,20 @@
   {
    "fieldname": "base_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Amount in company currency",
    "read_only": 1
   },
   {
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Exchange Rate",
    "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-08-23 15:26:59.582382",
+ "modified": "2019-08-26 11:16:44.832749",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",
