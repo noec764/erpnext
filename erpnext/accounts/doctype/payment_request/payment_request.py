@@ -171,6 +171,7 @@ class PaymentRequest(Document):
 	def create_payment_entry(self, submit=True):
 		"""create entry"""
 		frappe.flags.ignore_account_permission = True
+		frappe.flags.ignore_permissions = True
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 		gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
@@ -299,7 +300,7 @@ class PaymentRequest(Document):
 		return self.get_redirection()
 
 	def get_redirection(self):
-		redirect_to = None
+		redirect_to = "no-redirection"
 
 		# if shopping cart enabled and in session
 		shopping_cart_settings = frappe.db.get_value("Shopping Cart Settings",\

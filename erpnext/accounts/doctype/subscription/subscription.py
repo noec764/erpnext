@@ -116,7 +116,7 @@ class Subscription(Document):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_invoice()
 
-			elif not self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_start):
+			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
 				self.generate_invoice()
 
 		if self.cancel_at_period_end and getdate(nowdate()) >= getdate(self.current_invoice_end):
