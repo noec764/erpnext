@@ -1,7 +1,7 @@
 <div align="center">
 	<h1>
-		<a href="https://dokie.io">
-			dokie
+		<a href="https://dokos.io">
+			dokos
 		</a>
 	</h1>
 </div>
@@ -19,7 +19,7 @@ Full-stack web application framework that uses Python and MariaDB on the server 
 ### Website
 
 For details and documentation, see the website
-[https://dokie.io](https://dokie.io)
+[https://dokos.io](https://dokos.io)
 
 ### License
 This repository has been released under the [GNU-GPLv3](LICENSE).

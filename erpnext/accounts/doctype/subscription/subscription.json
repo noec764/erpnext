@@ -11,16 +11,18 @@
   "status",
   "subscription_period",
   "start",
-  "cancelation_date",
   "trial_period_start",
   "trial_period_end",
-  "change_start_trial",
+  "cancellation_date",
   "column_break_11",
   "current_invoice_start",
   "current_invoice_end",
   "days_until_due",
+  "settings_section",
   "cancel_at_period_end",
   "prorate_invoice",
+  "column_break_18",
+  "create_sales_order",
   "generate_invoice_at_period_start",
   "submit_invoice",
   "sb_4",
@@ -69,30 +71,21 @@
   {
    "fieldname": "start",
    "fieldtype": "Date",
-   "label": "Subscription Start Date"
-  },
-  {
-   "fieldname": "cancelation_date",
-   "fieldtype": "Date",
-   "label": "Cancelation Date",
-   "read_only": 1
+   "label": "Subscription Start Date",
+   "set_only_once": 1
   },
   {
    "allow_on_submit": 1,
    "fieldname": "trial_period_start",
    "fieldtype": "Date",
-   "label": "Trial Period Start Date"
+   "label": "Trial Period Start Date",
+   "set_only_once": 1
   },
   {
    "depends_on": "eval:doc.trial_period_start",
    "fieldname": "trial_period_end",
    "fieldtype": "Date",
    "label": "Trial Period End Date"
-  },
-  {
-   "fieldname": "change_start_trial",
-   "fieldtype": "Button",
-   "label": "Change the start or trial dates "
   },
   {
    "fieldname": "column_break_11",
@@ -121,15 +114,17 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.prorate_invoice",
    "fieldname": "cancel_at_period_end",
    "fieldtype": "Check",
-   "label": "Cancel At End Of Period"
+   "label": "Cancel At End Of Period",
+   "no_copy": 1
   },
   {
    "default": "0",
    "fieldname": "generate_invoice_at_period_start",
    "fieldtype": "Check",
-   "label": "Generate Invoice At Beginning Of Period"
+   "label": "Generate the invoice at beginning of period"
   },
   {
    "default": "0",
@@ -219,10 +214,11 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.cancel_at_period_end",
    "fieldname": "prorate_invoice",
    "fieldtype": "Check",
-   "label": "Prorate invoice"
+   "label": "Prorate last invoice",
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -233,9 +229,31 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "settings_section",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "create_sales_order",
+   "fieldtype": "Check",
+   "label": "Generate a sales order at beginning Of period"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cancellation_date",
+   "fieldtype": "Date",
+   "label": "Cancellation Date",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
- "modified": "2019-08-21 09:33:37.809798",
+ "modified": "2019-08-28 11:46:13.991712",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

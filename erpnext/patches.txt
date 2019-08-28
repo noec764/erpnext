@@ -599,24 +599,25 @@ erpnext.patches.v12_0.remove_bank_remittance_custom_fields
 erpnext.patches.v12_0.generate_leave_ledger_entries
 
 
-# Dokie v1
+# Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
 erpnext.patches.dokos.v1_0.remove_healthcare_domain
 erpnext.patches.dokos.v1_0.remove_education_domain
 erpnext.patches.dokos.v1_0.remove_non_profit_domain
 erpnext.patches.dokos.v1_0.remove_hub
-erpnext.patches.dokos.v1_0.remove_agriculture_domain #17-02-2019
-execute:frappe.delete_doc("Page", "pos")
-execute:frappe.delete_doc("Page", "welcome-to-erpnext")
-execute:frappe.delete_doc("DocType", "POS Settings")
-execute:frappe.delete_doc("DocType", "Cashier Closing")
-execute:frappe.delete_doc("DocType", "Cashier Closing Payments")
-execute:frappe.delete_doc("DocType", "Bank Statement Settings")
-execute:frappe.delete_doc("DocType", "Bank Statement Settings Item")
-execute:frappe.delete_doc("DocType", "Bank Statement Transaction Entry")
-execute:frappe.delete_doc("DocType", "Bank Statement Transaction Invoice Item")
-execute:frappe.delete_doc("DocType", "Bank Statement Transaction Payment Item")
-execute:frappe.delete_doc("DocType", "Bank Statement Transaction Settings")
-execute:frappe.delete_doc("DocType", "Bank Statement Transaction Settings Item")
-#execute:frappe.delete_doc("DocType", "Subscription Invoice")
-#execute:frappe.delete_doc("DocType", "Subscription Settings")
+erpnext.patches.dokos.v1_0.remove_agriculture_domain
+execute:frappe.delete_doc_if_exists("Page", "pos")
+execute:frappe.delete_doc_if_exists("Page", "welcome-to-erpnext")
+execute:frappe.delete_doc_if_exists("DocType", "POS Settings")
+execute:frappe.delete_doc_if_exists("DocType", "Cashier Closing")
+execute:frappe.delete_doc_if_exists("DocType", "Cashier Closing Payments")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Settings")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Settings Item")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Transaction Entry")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Transaction Invoice Item")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Transaction Payment Item")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Transaction Settings")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Statement Transaction Settings Item")
+execute:frappe.delete_doc_if_exists("DocType", "Subscription Invoice")
+execute:frappe.delete_doc_if_exists("DocType", "Subscription Settings")
+execute:frappe.delete_doc_if_exists("DocType", "Subscriber")

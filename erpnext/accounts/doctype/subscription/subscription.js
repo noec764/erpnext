@@ -3,18 +3,20 @@
 
 frappe.ui.form.on('Subscription', {
 	refresh: function(frm) {
-		frm.dashboard.clear_headline();
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
 			if(frm.doc.status !== 'Cancelled'){
-				frm.page.add_action_item(
-					__('Cancel Subscription'),
-					() => frm.events.cancel_this_subscription(frm)
-				);
+				if(!frm.doc.generate_invoice_at_period_start || !frm.doc.cancel_at_period_end){
+					frm.page.add_action_item(
+						__('Cancel Subscription'),
+						() => frm.events.cancel_this_subscription(frm)
+					);
+				}
 				frm.page.add_action_item(
 					__('Fetch Subscription Updates'),
 					() => frm.events.get_subscription_updates(frm)
 				);
+
 			}
 			else if(frm.doc.status === 'Cancelled'){
 				frm.page.add_action_item(
@@ -23,31 +25,37 @@ frappe.ui.form.on('Subscription', {
 				);
 			}
 
-			frm.set_df_property("start", "read_only", 1);
-			frm.set_df_property("trial_period_start", "read_only", 1);
-			frm.set_df_property("trial_period_end", "read_only", 1);
-
 			frappe.xcall("erpnext.accounts.doctype.subscription.subscription.subscription_headline", {
 				'name': frm.doc.name
 			})
 			.then(r => {
-				console.log(r)
+				frm.dashboard.clear_headline();
 				frm.dashboard.set_headline_alert(r);
 			})
-		} else {
-			frm.set_df_property("change_start_trial", "hidden", 1);
 		}
 	},
 
 	cancel_this_subscription: function(frm) {
-		const doc = frm.doc;
-		frappe.confirm(
-			__('This action will stop future billing. Are you sure you want to cancel this subscription?'),
-			function() {
+		const dialog = new frappe.ui.Dialog({
+			title: __("Cancel subscription"),
+			fields: [
+				{"fieldtype": "Date",
+				"label": __("Cancellation date"),
+				"fieldname": "cancellation_date",
+				},
+				{"fieldtype": "Check",
+				"label": __("Prorate last invoice"),
+				"fieldname": "prorate_invoice"
+				}
+			],
+			primary_action: function() {
+				const values = dialog.get_values();
+				values["name"] = frm.doc.name
+				dialog.hide()
 				frappe.call({
 					method:
 					"erpnext.accounts.doctype.subscription.subscription.cancel_subscription",
-					args: {name: doc.name},
+					args: values,
 					callback: function(data){
 						if(!data.exc){
 							frm.reload_doc();
@@ -55,13 +63,14 @@ frappe.ui.form.on('Subscription', {
 					}
 				});
 			}
-		);
+		})
+		dialog.show()
 	},
 
 	renew_this_subscription: function(frm) {
 		const doc = frm.doc;
 		frappe.confirm(
-			__('You will lose records of previously generated invoices. Are you sure you want to restart this subscription?'),
+			__('Are you sure you want to restart this subscription?'),
 			function() {
 				frappe.call({
 					method:
@@ -90,11 +99,5 @@ frappe.ui.form.on('Subscription', {
 				}
 			}
 		});
-	},
-
-	change_start_trial: function(frm) {
-		frm.set_df_property("start", "read_only", 0);
-		frm.set_df_property("trial_period_start", "read_only", 0);
-		frm.set_df_property("trial_period_end", "read_only", 0);
 	}
 });
