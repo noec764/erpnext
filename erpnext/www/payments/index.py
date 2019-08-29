@@ -18,13 +18,24 @@ def get_payment_gateways(link):
 	payment_gateways = []
 
 	for gateway in payment_request.payment_gateways:
-		if frappe.db.exists("Payment Gateway Account",\
-			dict(payment_gateway=gateway.payment_gateway, currency=payment_request.currency))\
-			and not payment_request.check_immediate_payment_for_gateway(gateway.payment_gateway):
-			payment_gateways.append(frappe.db.get_value("Payment Gateway",\
-				gateway.payment_gateway, ["name", "title", "icon"], as_dict=True))
+		result = check_and_add_gateway(payment_request, gateway.payment_gateway)
+		if result:
+			payment_gateways.append(result)
+
+	if not payment_gateways:
+		result = check_and_add_gateway(payment_request, payment_request.payment_gateway)
+		if result:
+			payment_gateways.append(result)
 
 	return payment_gateways
+
+def check_and_add_gateway(payment_request, gateway):
+	if frappe.db.exists("Payment Gateway Account",\
+		dict(payment_gateway=gateway, currency=payment_request.currency))\
+		and not payment_request.check_immediate_payment_for_gateway(gateway):
+		return frappe.db.get_value("Payment Gateway",\
+			gateway, ["name", "title", "icon"], as_dict=True)
+	return
 
 @frappe.whitelist(allow_guest=True)
 def get_payment_details(link):

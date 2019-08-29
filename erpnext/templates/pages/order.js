@@ -3,12 +3,14 @@
 
 frappe.ready(function(){
 
-	var loyalty_points_input = document.getElementById("loyalty-point-to-redeem");
-	var loyalty_points_status = document.getElementById("loyalty-points-status");
-	loyalty_points_input.onblur = apply_loyalty_points;
+	const loyalty_points_input = document.getElementById("loyalty-point-to-redeem");
+	const loyalty_points_status = document.getElementById("loyalty-points-status");
+	if (loyalty_points_input) {
+		loyalty_points_input.onblur = apply_loyalty_points;
+	}
 
 	function apply_loyalty_points() {
-		var loyalty_points = parseInt(loyalty_points_input.value);
+		const loyalty_points = parseInt(loyalty_points_input.value);
 		if (loyalty_points) {
 			frappe.call({
 				method: "erpnext.accounts.doctype.loyalty_program.loyalty_program.get_redeemption_factor",

@@ -257,7 +257,6 @@ def _get_cart_quotation(party=None):
 			"naming_series": get_shopping_cart_settings().quotation_series or "QTN-CART-",
 			"quotation_to": party.doctype,
 			"company": company,
-			"selling_price_list": price_list,
 			"order_type": "Shopping Cart",
 			"status": "Draft",
 			"docstatus": 0,

@@ -15,8 +15,6 @@ from frappe.utils.background_jobs import enqueue
 class PaymentRequest(Document):
 	def before_insert(self):
 		self.payment_key = None
-		self.payment_gateway = None
-		self.payment_gateway_account = None
 
 	def validate(self):
 		if self.get("__islocal"):
@@ -50,7 +48,7 @@ class PaymentRequest(Document):
 			self.payment_gateways = template.payment_gateways
 
 	def validate_existing_gateway(self):
-		if not self.payment_gateways:
+		if not self.payment_gateways and not self.payment_gateway:
 			frappe.throw(_("Please add at least one payment gateway"))
 
 	def validate_subscription_gateways(self):
@@ -139,7 +137,7 @@ class PaymentRequest(Document):
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
 
-	def get_payment_url(self, payment_gateway=None):
+	def get_payment_url(self, payment_gateway):
 		data = frappe.db.get_value(self.reference_doctype, self.reference_name,\
 			["company", "customer_name"], as_dict=1)
 
@@ -415,7 +413,7 @@ def make_payment_request(**args):
 	if args.order_type == "Shopping Cart":
 		frappe.db.commit()
 		frappe.local.response["type"] = "redirect"
-		frappe.local.response["location"] = pr.get_payment_url()
+		frappe.local.response["location"] = pr.get_payment_url(pr.payment_gateway)
 
 	if args.return_doc:
 		return pr
