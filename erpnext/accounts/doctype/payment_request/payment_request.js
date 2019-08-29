@@ -37,29 +37,33 @@ frappe.ui.form.on("Payment Request", {
 			}, __("Actions"));
 		}
 
-		if(!frm.doc.payment_gateway_account && frm.doc.status == "Initiated") {
-			frm.add_custom_button(__('Create Payment Entry'), function(){
-				frappe.call({
-					method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_entry",
-					args: {"docname": frm.doc.name},
-					freeze: true,
-					callback: function(r){
-						if(!r.exc) {
-							var doc = frappe.model.sync(r.message);
-							frappe.set_route("Form", r.message.doctype, r.message.name);
+		if(frm.doc.status == "Initiated") {
+			if (!frm.doc.payment_gateway_account) {
+				frm.add_custom_button(__('Create Payment Entry'), function(){
+					frappe.call({
+						method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_entry",
+						args: {"docname": frm.doc.name},
+						freeze: true,
+						callback: function(r){
+							if(!r.exc) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", r.message.doctype, r.message.name);
+							}
 						}
-					}
-				});
-			}).addClass("btn-primary");
+					});
+				}).addClass("btn-primary");
+			}
 
-			frappe.call({
-				method: "check_if_immediate_payment_is_autorized",
-				doc: frm.doc,
-			}).then(r => {
-				if (r.message && r.message.length) {
-					frm.trigger("process_payment_immediately");
-				}
-			})
+			if (!frm.doc.payment_gateway || frm.doc.payment_gateway_account.toLowerCase().includes("gocardless")) {
+				frappe.call({
+					method: "check_if_immediate_payment_is_autorized",
+					doc: frm.doc,
+				}).then(r => {
+					if (r.message && r.message.length) {
+						frm.trigger("process_payment_immediately");
+					}
+				})
+			}
 		}
 	},
 	process_payment_immediately(frm) {

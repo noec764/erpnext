@@ -4,26 +4,27 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.model.document import Document
 import gocardless_pro
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint, nowdate
-from frappe.integrations.utils import create_request_log, create_payment_gateway, finalize_request
+from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day
+from frappe.integrations.utils import PaymentGatewayController,\
+	create_request_log, create_payment_gateway
 import json
 
-class GoCardlessSettings(Document):
+class GoCardlessSettings(PaymentGatewayController):
 	supported_currencies = ["EUR", "DKK", "GBP", "SEK"]
 
 	interval_map = {
 		"Week": "weekly",
-		"Month": "monthy",
+		"Month": "monthly",
 		"Year": "yearly"
 	}
 
 	def __init__(self, *args, **kwargs):
 		super(GoCardlessSettings, self).__init__(*args, **kwargs)
-		self.initialize_client()
+		if not self.is_new():
+			self.initialize_client()
 
 	def validate(self):
 		self.initialize_client()
@@ -37,14 +38,14 @@ class GoCardlessSettings(Document):
 				)
 			return self.client
 		except Exception as e:
-			frappe.throw(e)
+			frappe.throw(str(e))
 
 	def on_update(self):
 		create_payment_gateway('GoCardless-' + self.gateway_name, settings='GoCardLess Settings', controller=self.gateway_name)
 		call_hook_method('payment_gateway_enabled', gateway='GoCardless-' + self.gateway_name)
 
 	def validate_subscription_plan(self, currency, plan=None):
-		if currency in supported_currencies:
+		if currency in self.supported_currencies:
 			return self.initialize_client()
 		else:
 			frappe.throw("The currency {0} is not supported by GoCardless").format(currency)
@@ -63,7 +64,7 @@ class GoCardlessSettings(Document):
 				["company", "customer_name"], as_dict=1)
 
 			data = {
-				"amount": flt(data.grand_total, data.precision("grand_total")),
+				"amount": cint(flt(data.grand_total, data.precision("grand_total")) * 100),
 				"title": customer_data.company.encode("utf-8"),
 				"description": data.subject.encode("utf-8"),
 				"reference_doctype": data.doctype,
@@ -127,7 +128,7 @@ class GoCardlessSettings(Document):
 			else:
 				self.create_charge_on_gocardless()
 
-			return finalize_request(self)
+			return self.finalize_request()
 		except Exception as e:
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("GoCardless payment creation error"))
@@ -143,12 +144,12 @@ class GoCardlessSettings(Document):
 			try:
 				self.output = self.client.subscriptions.create(
 					params={
-						"amount": flt(self.reference_document.grand_total) * 100,
+						"amount": cint(flt(self.reference_document.grand_total, self.reference_document.precision("grand_total")) * 100),
 						"currency": self.reference_document.currency,
 						"name": subscription.name,
-						"interval_unit": interval_map[plan_details.billing_interval],
+						"interval_unit": self.interval_map[plan_details.billing_interval],
 						"interval": plan_details.billing_interval_count,
-						"day_of_month":  self.reference_document.transaction_date\
+						"day_of_month": self.get_day_of_month()\
 							if plan_details.billing_interval == "Month" else "",
 						"metadata": {
 							"order_no": self.reference_document.reference_name
@@ -167,6 +168,13 @@ class GoCardlessSettings(Document):
 			except Exception as e:
 				self.change_integration_request_status("Failed", "error", str(e))
 				return self.error_message(402, _("GoCardless subscription creation error"))
+
+	def get_day_of_month(self):
+		if self.reference_document.transaction_date\
+			!= get_last_day(self.reference_document.transaction_date):
+			return self.reference_document.transaction_date.strftime("%d")
+		else:
+			return -1
 
 	def get_payments_on_gocardless(self, id=None, params=None):
 		if id:
@@ -212,15 +220,41 @@ class GoCardlessSettings(Document):
 			return self.error_message(402, _("GoCardless Payment Error"))
 
 	def process_output(self, service):
-		if self.output.status == "pending_submission" or self.output.status == "pending_customer_approval"\
-			or self.output.status == "submitted":
+		if service == "subscription":
+			self.process_subscription()
+		elif service == "payment":
+			self.process_payment()
+
+	def process_subscription(self):
+		if self.output.status == "pending_customer_approval":
 			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
 			self.reference_document.db_set("status", "Pending", update_modified=True)
-			self.add_service_link_to_integration_request(service, self.output.id)
+			self.add_service_link_to_integration_request("subscription", self.output.id)
+
+		elif self.output.status == "active" or self.output.status == "finished":
+			self.change_integration_request_status("Completed", "output", str(self.output.__dict__))
+			self.add_service_link_to_integration_request("subscription", self.output.id)
+
+		elif self.output.status == "cancelled" or self.output.status == "customer_approval_denied":
+			self.change_integration_request_status("Cancelled", "error", str(self.output.__dict__))
+			return self.error_message(402, _("GoCardless Payment Error"),\
+				_("Payment Cancelled. Please check your GoCardless Account for more details"))
+
+		else:
+			self.change_integration_request_status("Failed", "error", str(self.output.__dict__))
+			return self.error_message(402, _("GoCardless Payment Error"),\
+				_("Payment Failed. Please check your GoCardless Account for more details"))
+
+	def process_payment(self):
+		if self.output.status == "pending_submission"\
+			or self.output.status == "pending_customer_approval" or self.output.status == "submitted":
+			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
+			self.reference_document.db_set("status", "Pending", update_modified=True)
+			self.add_service_link_to_integration_request("payment", self.output.id)
 
 		elif self.output.status == "confirmed" or self.output.status == "paid_out":
 			self.change_integration_request_status("Completed", "output", str(self.output.__dict__))
-			self.add_service_link_to_integration_request(service, self.output.id)
+			self.add_service_link_to_integration_request("payment", self.output.id)
 
 		elif self.output.status == "cancelled" or self.output.status == "customer_approval_denied"\
 			or self.output.status == "charged_back":
@@ -236,7 +270,8 @@ class GoCardlessSettings(Document):
 		self.flags.status_changed_to = status
 		self.integration_request.db_set('status', status, update_modified=True)
 		self.integration_request.db_set(type, error, update_modified=True)
-		self.integration_request.db_set('service_status', self.output.status, update_modified=True)
+		if hasattr(self, "output"):
+			self.integration_request.db_set('service_status', self.output.status, update_modified=True)
 
 	def add_service_link_to_integration_request(self, document, id):
 		self.integration_request.db_set('service_document', document, update_modified=True)
@@ -245,6 +280,7 @@ class GoCardlessSettings(Document):
 	def error_message(self, error_number=500, title=None, error=None):
 		if error is None:
 			error = frappe.get_traceback()
+
 		frappe.log_error(error, title)
 		if error_number == 402:
 			return {
@@ -260,12 +296,6 @@ class GoCardlessSettings(Document):
 						<br>In case of failure, the amount will get refunded to your account.")),
 					"status": 500
 				}
-
-def get_gateway_controller(doctype, docname):
-	payment_request = frappe.get_doc(doctype, docname)
-	gateway_controller = frappe.db.get_value("Payment Gateway",\
-		payment_request.payment_gateway, "gateway_controller")
-	return gateway_controller
 
 def check_integrated_documents():
 	settings_documents = frappe.get_all("GoCardless Settings", filters={"check_for_updates": 1})

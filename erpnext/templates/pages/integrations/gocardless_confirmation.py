@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings import get_gateway_controller
+from frappe.integrations.utils import get_gateway_controller
 
 EXPECTED_KEYS = ('redirect_flow_id', 'reference_doctype', 'reference_docname')
 
@@ -95,7 +95,7 @@ def add_gocardless_customer_id(reference_doc, customer_id):
 				"doctype": "Integration References",
 				"customer": origin_transaction.get("customer"),
 				"gocardless_customer_id": customer_id,
-				"gocardless_settings": reference_doc.get("payment_gateway")
+				"gocardless_settings": frappe.db.get_value("Payment Gateway", reference_doc.get("payment_gateway"), "gateway_controller")
 			}).insert(ignore_permissions=True)
 	except Exception as e:
 		frappe.log_error(e, "GoCardless Customer ID Registration Error")

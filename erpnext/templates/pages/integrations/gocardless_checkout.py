@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt, fmt_money
 import json
-from erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings import get_gateway_controller
+from frappe.integrations.utils import get_gateway_controller
 from frappe.utils import get_url
 
 EXPECTED_KEYS = ('amount', 'title', 'description', 'reference_doctype', 'reference_docname',\
@@ -31,12 +31,16 @@ def get_context(context):
 
 @frappe.whitelist(allow_guest=True)
 def redirect_to_gocardless(data):
-	data = json.loads(data)
+	data = frappe.parse_json(data)
 
 	gateway_controller = get_gateway_controller(data["reference_doctype"], data["reference_docname"])
 	client = frappe.get_doc("GoCardless Settings", gateway_controller).initialize_client()
-	success_url = get_url("./integrations/gocardless_confirmation?reference_doctype="\
-		+ data["reference_doctype"] + "&reference_docname=" + data["reference_docname"])
+
+	success_url = data.get("success_url")
+	if not success_url:
+		success_url = get_url("./integrations/gocardless_confirmation?reference_doctype="\
+			+ data["reference_doctype"] + "&reference_docname=" + data["reference_docname"])
+
 
 	try:
 		redirect_flow = client.redirect_flows.create(params={
