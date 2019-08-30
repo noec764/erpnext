@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019, Dokos and contributors
+# Copyright (c) 2019, Dokos SAS and Contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
