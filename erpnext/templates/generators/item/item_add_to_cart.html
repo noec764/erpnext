@@ -2,6 +2,7 @@
 
 {% set cart_settings = shopping_cart.cart_settings %}
 {% set product_info = shopping_cart.product_info %}
+{% set enable_item_booking = frappe.db.get_value('Item', item_code, 'enable_item_booking') %}
 
 <div class="item-cart row mt-2" data-variant-item-code="{{ item_code }}">
 	<div class="col-md-12">
@@ -38,8 +39,16 @@
 				data-item-code="{{item_code}}"
 				class="btn btn-outline-primary btn-add-to-cart {% if product_info.qty %}hidden{% endif %}"
 			>
-				{{ _("Add to Cart") }}
+			{% if enable_item_booking %}{{ _("Buy units") }}{% else %}{{ _("Add to Cart") }}{% endif %}
 			</button>
+			{% if enable_item_booking %}
+			<button
+				data-item-code="{{item_code}}"
+				class="btn btn-primary item-booking-btn"
+			>
+				{{ _("Select a slot") }}
+			</button>
+			{% endif %}
 		</div>
 	</div>
 </div>
@@ -60,6 +69,13 @@
 					}
 				}
 			});
+		});
+
+		$('.page_content').on('click', '.item-booking-btn', function() {
+			const item_code = $(this).attr("data-item-code");
+			new erpnext.booking_dialog({
+				item: item_code
+			})
 		});
 	});
 </script>

@@ -15,7 +15,7 @@ develop_version = '1.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
-web_include_js = "assets/js/erpnext-web.min.js"
+web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/booking-dialog.min.js"]
 web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
@@ -52,7 +52,7 @@ my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
 
 email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
 
-calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule"]
+calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
 
 
 
@@ -218,12 +218,17 @@ doc_events = {
 	},
 	"Email Unsubscribe": {
 		"after_insert": "erpnext.crm.doctype.email_campaign.email_campaign.unsubscribe_recipient"
+	},
+	"Quotation": {
+		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
+		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.submit_linked_item_bookings"
 	}
 }
 
 scheduler_events = {
 	"all": [
-		"erpnext.projects.doctype.project.project.project_status_update_reminder"
+		"erpnext.projects.doctype.project.project.project_status_update_reminder",
+		"erpnext.stock.doctype.item_booking.item_booking.clear_draft_bookings"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',

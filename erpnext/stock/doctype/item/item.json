@@ -115,6 +115,7 @@
   "website_section",
   "show_in_website",
   "show_variant_in_website",
+  "enable_item_booking",
   "route",
   "weightage",
   "slideshow",
@@ -129,9 +130,11 @@
   "website_specifications",
   "web_long_description",
   "website_content",
-  "total_projected_qty",
+  "item_booking",
+  "item_booking_calendar",
   "manufacturers_section",
-  "manufacturers"
+  "manufacturers",
+  "total_projected_qty"
  ],
  "fields": [
   {
@@ -999,6 +1002,24 @@
    "fieldname": "manufacturers_section",
    "fieldtype": "Section Break",
    "label": "Manufacturers"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_item_booking",
+   "fieldtype": "Check",
+   "label": "Enable Item Booking"
+  },
+  {
+   "collapsible_depends_on": "eval:doc.enable_item_booking",
+   "fieldname": "item_booking",
+   "fieldtype": "Section Break",
+   "label": "Item Booking"
+  },
+  {
+   "fieldname": "item_booking_calendar",
+   "fieldtype": "Table",
+   "label": "Item Booking Calendar",
+   "options": "Item Booking Calendar"
   }
  ],
  "has_web_view": 1,
@@ -1006,7 +1027,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-08-29 14:30:47.026382",
+ "modified": "2019-08-30 09:22:00.786580",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

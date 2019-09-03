@@ -137,6 +137,6 @@ $.extend(shopping_cart, {
 			return false;
 		});
 
-	},
+	}
 
 });

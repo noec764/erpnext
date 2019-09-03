@@ -47,5 +47,8 @@
     ],
     "js/portal-payments.min.js": [
         "public/js/portal_payments/portal_payments.js"
+    ],
+    "js/booking-dialog.min.js": [
+        "public/js/booking_dialog/booking_dialog.js"
     ]
 }

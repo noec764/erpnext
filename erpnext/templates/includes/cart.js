@@ -20,6 +20,7 @@ $.extend(shopping_cart, {
 		shopping_cart.bind_change_qty();
 		shopping_cart.bind_change_notes();
 		shopping_cart.bind_dropdown_cart_buttons();
+		shopping_cart.bind_change_booking()
 	},
 
 	bind_address_select: function() {
@@ -95,6 +96,15 @@ $.extend(shopping_cart, {
 				qty,
 				additional_notes: notes
 			});
+		});
+	},
+
+	bind_change_booking: function() {
+		$('.cart-items').on('click', '.item-booking-btn', function() {
+			const item_code = $(this).attr("data-item-code");
+			new erpnext.booking_dialog({
+				item: item_code
+			})
 		});
 	},
 
