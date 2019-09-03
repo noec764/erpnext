@@ -96,6 +96,7 @@ def request_for_quotation():
 
 @frappe.whitelist()
 def update_cart(item_code, qty, additional_notes=None, with_items=False):
+	print(qty, with_items)
 	quotation = _get_cart_quotation()
 
 	empty_card = False
@@ -125,7 +126,7 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False):
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		quotation.save()
+		_save_quotation(quotation, item_code, qty, additional_notes=None, with_items=False)
 	else:
 		quotation.delete()
 		quotation = None
@@ -146,6 +147,13 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False):
 			'name': quotation.name,
 			'shopping_cart_menu': get_shopping_cart_menu(context)
 		}
+
+def _save_quotation(quotation, item_code, qty, additional_notes=None, with_items=False):
+	try:
+		quotation.save()
+	except frappe.TimestampMismatchError:
+		quotation.reload()
+		update_cart(item_code, qty, additional_notes=None, with_items=False)
 
 @frappe.whitelist()
 def get_shopping_cart_menu(context=None):

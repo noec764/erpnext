@@ -1,0 +1,267 @@
+<template>
+	<div class="row" style="min-height: 50vh;">
+		<div v-if="error" class="col-12 text-center justify-content-center align-self-center">
+			<h2 class="text-muted">{{ error }}</h2>
+		</div>
+		<div v-else-if="loading" class="col-12 text-center justify-content-center align-self-center">
+			<div class="fulfilling-square-spinner mx-auto">
+				<div class="spinner-inner"></div>
+			</div>
+		</div>
+		<div v-else class="col-12">
+			<FullCalendar
+				eventClassName='booking-calendar'
+				ref="fullCalendar"
+				defaultView="listDay"
+				:header="{
+					left: 'listWeek, listDay',
+					center: 'title',
+					right: 'prev,next today',
+				}"
+				:plugins="calendarPlugins"
+				:weekends="calendarWeekends"
+				:events="getAvailableSlots"
+				:locale="locale"
+				:buttonText="buttonText"
+				:noEventsMessage="noEventsMessage"
+				:selectAllow="selectAllow"
+				@eventClick="eventClick"
+				:defaultDate="defaultDate"
+				:validRange="validRange"
+			/>
+		</div>
+	</div>
+</template>
+
+<script>
+import FullCalendar from '@fullcalendar/vue';
+import listPlugin from '@fullcalendar/list';
+
+export default {
+	components: {
+		FullCalendar
+	},
+	props: {
+		item: {
+			default: null
+		}
+	},
+	data() {
+		return {
+			error: null,
+			reference: "Item Booking",
+			calendarWeekends: true,
+			buttonText: {
+				today: __("Today"),
+				listWeek: __("Week"),
+				listDay: __("Day")
+
+			},
+			calendarPlugins: [
+				listPlugin
+			],
+			noEventsMessage: __("No events to display"),
+			locale: frappe.boot.lang || 'en',
+			slots: [],
+			selectedSlots: [],
+			quotation: null,
+			defaultDate: moment().add(1,'d').format("YYYY-MM-DD"),
+			loading: false
+		}
+	},
+	computed: {
+		selectAllow: function(selectInfo) {
+			return moment().diff(selectInfo.start) <= 0
+		},
+		validRange: function() {
+			return { start: moment().add(1,'d').format("YYYY-MM-DD") }
+		},
+		readOnly: function() {
+			return frappe.session.user === "Guest"
+		}
+	},
+	created() {
+		this.getQuotation()
+		erpnext.booking_dialog_update.on("refresh", () => {
+			this.$refs.fullCalendar.getApi().refetchEvents();
+		})
+	},
+	methods: {
+		getAvailableSlots(parameters, callback) {
+			if (this.item) {
+				frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_availabilities", {
+					start: moment(parameters.start).format("YYYY-MM-DD"),
+					end: moment(parameters.end).format("YYYY-MM-DD"),
+					item: this.item,
+					quotation: this.quotation
+				}).then(result => {
+					this.slots = result.message || []
+
+					callback(this.slots);
+					if (!this.slots.length) {
+						this.$refs.fullCalendar.getApi().updateSize()
+					}
+				})
+			}
+		},
+		getQuotation() {
+			if (!this.readOnly) {
+				frappe.call("erpnext.shopping_cart.cart.get_cart_quotation")
+				.then(r => {
+					this.quotation = r.message.doc.name
+				})
+			}
+		},
+		eventClick(event) {
+			if (!this.readOnly) {
+				this.loading = true;
+				if (event.event.classNames.includes("available")) {
+					this.bookNewSlot(event)
+				} else {
+					this.removeBookedSlot(event)
+				}
+			} else {
+				if(localStorage) {
+					localStorage.setItem("last_visited", window.location.pathname);
+				}
+				window.location.href = "/login"
+			}
+		},
+		bookNewSlot(event) {
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.book_new_slot", {
+				start: moment(event.event.start).format("YYYY-MM-DD H:mm:SS"),
+				end: moment(event.event.end).format("YYYY-MM-DD H:mm:SS"),
+				item: this.item,
+				quotation: this.quotation
+			}).then(r => {
+				this.getQuotation()
+				this.updateShoppingCart()
+			})
+		},
+		removeBookedSlot(event) {
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.remove_booked_slot", {
+				name: event.event.id,
+			}).then(r => {
+				this.getQuotation()
+				this.updateShoppingCart()
+			})
+		},
+		updateShoppingCart() {
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_booked_slots", {
+				quotation: this.quotation
+			}).then(r => {
+				this.updateCart(r.message.length)
+			})
+		},
+		updateCart(qty) {
+			new Promise((resolve) => {
+				resolve(
+					erpnext.shopping_cart.shopping_cart_update({
+						item_code: this.item,
+						qty: qty,
+					})
+				)
+			}).then(r => {
+				this.loading = false;
+			})
+		}
+	}
+}
+</script>
+
+<style lang='scss'>
+@import 'node_modules/@fullcalendar/core/main';
+@import 'node_modules/@fullcalendar/list/main';
+@import 'frappe/public/scss/variables.scss';
+
+.fc button {
+	height: auto !important;
+	font-size: $text-small !important;
+	outline: none !important;
+	line-height: 10pt !important;
+	.fc-icon {
+		top: -1px !important;
+		font-size: $text-small !important;
+	}
+}
+
+.fc-list-item {
+	cursor: pointer;
+	&.unavailable {
+		background-color: #f5f5f5;
+	}
+}
+
+.fc-unthemed .fc-list-empty {
+	background-color: #fff;
+}
+
+.fc-unthemed .fc-list-view {
+	border-color: #fff;
+}
+
+.fulfilling-square-spinner , .fulfilling-square-spinner * {
+	box-sizing: border-box;
+	}
+
+	.fulfilling-square-spinner {
+	height: 50px;
+	width: 50px;
+	position: relative;
+	border: 4px solid #6195FF;
+	animation: fulfilling-square-spinner-animation 4s infinite ease;
+	}
+
+	.fulfilling-square-spinner .spinner-inner {
+	vertical-align: top;
+	display: inline-block;
+	background-color: #6195FF;
+	width: 100%;
+	opacity: 1;
+	animation: fulfilling-square-spinner-inner-animation 4s infinite ease-in;
+	}
+
+	@keyframes fulfilling-square-spinner-animation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	25% {
+		transform: rotate(180deg);
+	}
+
+	50% {
+		transform: rotate(180deg);
+	}
+
+	75% {
+		transform: rotate(360deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+	}
+
+	@keyframes fulfilling-square-spinner-inner-animation {
+	0% {
+		height: 0%;
+	}
+
+	25% {
+		height: 0%;
+	}
+
+	50% {
+		height: 100%;
+	}
+
+	75% {
+		height: 100%;
+	}
+
+	100% {
+		height: 0%;
+	}
+	}
+</style>
