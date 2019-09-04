@@ -39,7 +39,11 @@
   "terms_section",
   "terms_and_conditions",
   "accounting_dimensions_section",
-  "dimension_col_break"
+  "dimension_col_break",
+  "payment_gateways_section",
+  "payment_gateway_reference",
+  "column_break_38",
+  "payment_gateway_lifecycle"
  ],
  "fields": [
   {
@@ -251,9 +255,31 @@
    "label": "Cancellation Date",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "payment_gateways_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Gateways"
+  },
+  {
+   "fieldname": "payment_gateway_reference",
+   "fieldtype": "Data",
+   "label": "Payment Gateway Reference"
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.payment_gateway_reference",
+   "fieldname": "payment_gateway_lifecycle",
+   "fieldtype": "Check",
+   "label": "Use Payment Gateway Lifecycle"
   }
  ],
- "modified": "2019-08-28 11:46:13.991712",
+ "modified": "2019-09-04 12:03:29.337778",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

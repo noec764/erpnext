@@ -116,7 +116,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		self.data = frappe._dict(data)
 
 		try:
-			self.integration_request = create_request_log(self.data, "Payment", "GoCardless")
+			self.integration_request = create_request_log(self.data, "Request", "GoCardless")
 			self.reference_document = frappe.get_doc(self.data.reference_doctype, self.data.reference_docname)
 
 			self.subscription = False
@@ -349,7 +349,7 @@ def fetch_existing_payments(provider):
 		if payment.id not in existing_requests:
 			missing_request = frappe.get_doc({
 				"doctype": "Integration Request",
-				"integration_type": "Payment",
+				"integration_type": "Request",
 				"integration_request_service": "GoCardless",
 				"data": str(payment.__dict__),
 				"service_document": "payment",

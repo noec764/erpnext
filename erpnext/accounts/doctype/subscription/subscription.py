@@ -66,7 +66,8 @@ class Subscription(Document):
 
 	def process(self):
 		if self.status == 'Active':
-			self.process_active_subscription()
+			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_subscription_status()
 
@@ -202,6 +203,7 @@ class Subscription(Document):
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 
 		sales_order.flags.ignore_mandatory = True
+		sales_order.flags.ignore_permissions = True
 		sales_order.save()
 		sales_order.submit()
 
@@ -232,6 +234,7 @@ class Subscription(Document):
 				})
 
 		invoice.flags.ignore_mandatory = True
+		invoice.flags.ignore_permissions = True
 		invoice.save()
 
 		if self.submit_invoice:
@@ -373,6 +376,7 @@ class Subscription(Document):
 		prorata_factor = consumed / plan_days
 
 		return prorata_factor
+
 
 def process_all():
 	subscriptions = get_all_subscriptions()
