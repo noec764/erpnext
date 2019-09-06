@@ -12,7 +12,7 @@ def get_level():
 	sales_data = []
 	min_count = 0
 	doctypes = {"Item": 5, "Customer": 5, "Sales Order": 2, "Sales Invoice": 2, "Purchase Order": 2, "Employee": 3, "Lead": 3, "Quotation": 3,
-					"Payment Entry": 2, "User": 5, "Student": 5, "Instructor": 5, "BOM": 3, "Journal Entry": 3, "Stock Entry": 3}
+					"Payment Entry": 2, "User": 5, "BOM": 3, "Journal Entry": 3, "Stock Entry": 3}
 	for doctype, min_count in iteritems(doctypes):
 		count = frappe.db.count(doctype)
 		if count > min_count:
