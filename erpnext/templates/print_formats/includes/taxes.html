@@ -1,5 +1,5 @@
 {%- macro render_discount_amount(doc) -%}
-	{%- if doc.discount_amount -%}
+	{%- if doc.discount_amount and not doc.meta.get_field('discount_amount').print_hide -%}
 		<div class="row">
 			<div class="col-xs-5 {%- if doc.align_labels_right %} text-right{%- endif -%}">
 				<label>{{ _(doc.meta.get_label('discount_amount')) }}</label></div>
