@@ -47,6 +47,8 @@ def get_data(filters, conditions):
 	posting_date = 't1.transaction_date'
 	if conditions.get('trans') in ['Sales Invoice', 'Purchase Invoice', 'Purchase Receipt', 'Delivery Note']:
 		posting_date = 't1.posting_date'
+		if filters.period_based_on:
+			posting_date = 't1.'+filters.period_based_on
 
 	if conditions["based_on_select"] in ["t1.project,", "t2.project,"]:
 		cond = ' and '+ conditions["based_on_select"][:-1] +' IS Not NULL'
