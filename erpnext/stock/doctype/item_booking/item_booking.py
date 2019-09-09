@@ -16,6 +16,14 @@ from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
 class ItemBooking(Document):
 	pass
 
+@frappe.whitelist(allow_guest=True)
+def get_item_uoms(item_code):
+	return {
+		"uoms": frappe.get_all('UOM Conversion Detail',\
+		filters={'parent': item_code}, fields=["distinct uom"], as_list=1),
+		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
+	}
+
 @frappe.whitelist()
 def book_new_slot(**kwargs):
 	quotation = kwargs.get("quotation")
@@ -32,6 +40,7 @@ def book_new_slot(**kwargs):
 			"item": kwargs.get("item"),
 			"starts_on": kwargs.get("start"),
 			"ends_on": kwargs.get("end"),
+			"sales_uom": kwargs.get("uom"),
 			"reference_doctype": "Quotation",
 			"reference_name": quotation
 		}).insert(ignore_permissions=True)
@@ -49,15 +58,18 @@ def remove_booked_slot(name):
 		remove_booked_slot(name)
 
 @frappe.whitelist()
-def get_booked_slots(quotation=None):
+def get_booked_slots(quotation=None, uom=None):
 	if not quotation and not frappe.session.user == "Guest":
 		quotation = _get_cart_quotation().get("name")
 
 	if not quotation:
 		return []
 
-	return frappe.get_all("Item Booking", dict(reference_doctype="Quotation",\
-		reference_name=quotation, docstatus=0))
+	filters = dict(reference_doctype="Quotation", reference_name=quotation, docstatus=0)
+	if uom:
+		filters["sales_uom"] = uom
+
+	return frappe.get_all("Item Booking", filters=filters)
 
 @frappe.whitelist()
 def reset_all_booked_slots():
@@ -68,12 +80,15 @@ def reset_all_booked_slots():
 	return slots
 
 @frappe.whitelist(allow_guest=True)
-def get_availabilities(item, start, end, quotation=None):
+def get_availabilities(item, start, end, uom=None, quotation=None):
 	item_doc = frappe.get_doc("Item", item)
 	if not item_doc.enable_item_booking:
 		return []
 
-	duration = get_uom_in_minutes(item_doc)
+	duration = get_uom_in_minutes(item_doc, uom)
+	if not duration:
+		return
+
 	init = datetime.datetime.strptime(start, '%Y-%m-%d')
 	finish = datetime.datetime.strptime(end, '%Y-%m-%d')
 
@@ -98,8 +113,8 @@ def _check_availability(item, date, duration, quotation=None):
 
 		for line in schedule_for_the_day:
 			start = now_datetime()
-			if(datetime.datetime.combine(date, get_time(line.end_time)) > start):
-				if (datetime.datetime.combine(date, get_time(line.start_time)) > start):
+			if datetime.datetime.combine(date, get_time(line.end_time)) > start:
+				if datetime.datetime.combine(date, get_time(line.start_time)) > start:
 					start = datetime.datetime.combine(date, get_time(line.start_time))
 
 				schedules.append({
@@ -233,8 +248,8 @@ def get_item_calendar(item):
 	else:
 		return item.item_booking_calendar
 
-def get_uom_in_minutes(item):
-	return frappe.db.get_value("UOM", item.sales_uom, "conversion_in_minutes")
+def get_uom_in_minutes(item, uom=None):
+	return frappe.db.get_value("UOM", uom if uom else item.sales_uom, "conversion_in_minutes") or 0
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():

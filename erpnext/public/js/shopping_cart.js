@@ -49,7 +49,8 @@ $.extend(shopping_cart, {
 					item_code: opts.item_code,
 					qty: opts.qty,
 					additional_notes: opts.additional_notes !== undefined ? opts.additional_notes : undefined,
-					with_items: opts.with_items || 0
+					with_items: opts.with_items || 0,
+					uom: opts.uom
 				},
 				btn: opts.btn,
 				callback: function(r) {
@@ -95,13 +96,14 @@ $.extend(shopping_cart, {
 		}
 	},
 
-	shopping_cart_update: function({item_code, qty, cart_dropdown, additional_notes}) {
+	shopping_cart_update: function({item_code, qty, cart_dropdown, additional_notes, uom}) {
 		frappe.freeze();
 		shopping_cart.update_cart({
 			item_code,
 			qty,
 			additional_notes,
 			with_items: 1,
+			uom: uom,
 			btn: this,
 			callback: function(r) {
 				frappe.unfreeze();
