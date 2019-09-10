@@ -13,7 +13,6 @@ from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_pla
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 import numpy as np
 
-
 class Subscription(Document):
 	def before_insert(self):
 		self.update_subscription_period(self.start)

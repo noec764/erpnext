@@ -3,7 +3,6 @@ frappe.provide("erpnext.booking_dialog");
 frappe.provide("erpnext.booking_dialog_update")
 frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 
-
 erpnext.booking_dialog = class BookingDialog {
 	constructor(opts) {
 		Object.assign(this, opts);
@@ -11,12 +10,12 @@ erpnext.booking_dialog = class BookingDialog {
 	}
 
 	show() {
-		this.build_dialog()
 		frappe.require([
 			'/assets/js/frappe-vue.min.js',
 			'/assets/js/moment-bundle.min.js',
-			'/assets/js/booking-dialog.min.js'
+			'/assets/js/control.min.js'
 		], () => {
+			this.build_dialog()
 			this.build_calendar()
 		});
 	}
@@ -48,18 +47,11 @@ erpnext.booking_dialog = class BookingDialog {
 			}
 		})
 
-		if (!this.read_only()) {
-			const footer = this.dialog.$wrapper.find(".modal-footer")
-			this.secondary_action = footer.prepend(`
-				<button type="button" class="btn btn-sm btn-secondary">${__("Reset")}</button>
-			`)
-			this.secondary_action.on('click', () => {
-				frappe.call("erpnext.stock.doctype.item_booking.item_booking.reset_all_booked_slots")
-				.then(r => {
-					erpnext.booking_dialog_update.trigger('refresh');
-				})
-			})
-		}
+		this.header = this.dialog.$wrapper.find(".modal-header")
+		this.footer = this.dialog.$wrapper.find(".modal-footer")
+
+		this.add_secondary_action()
+		this.add_uom_selector()
 
 		this.dialog.show()
 	}
@@ -72,6 +64,66 @@ erpnext.booking_dialog = class BookingDialog {
 			render: h => h(BookingForm, {
 				props: { item: this.item }
 			})
+		})
+	}
+
+	add_secondary_action() {
+		if (!this.read_only()) {
+			this.secondary_action = $(`
+				<button type="button" class="btn btn-sm btn-secondary">${__("Reset")}</button>
+			`).prependTo(this.footer)
+			this.secondary_action.on('click', () => {
+				frappe.call("erpnext.stock.doctype.item_booking.item_booking.reset_all_booked_slots")
+				.then(r => {
+					erpnext.booking_dialog_update.trigger('refresh');
+					erpnext.shopping_cart.shopping_cart_update({
+						item_code: this.item,
+						qty: 0
+					})
+				})
+			})
+		}
+	}
+
+	add_uom_selector() {
+		this.uoms = []
+		this.uoms_btns = {}
+		this.get_selling_uoms()
+		.then(() => {
+			this.show_uom_selector()
+		})
+	}
+
+	show_uom_selector() {
+		if (this.header_btns_wrapper) {
+			this.header_btns_wrapper.remove()
+		}
+
+		if (this.uoms.length) {
+			this.header_btns_wrapper = $(`<div class="cart-uom-selector"></div>`).prependTo(this.header)
+			this.uoms.forEach(value => {
+				const disabled = (value === this.sales_uom) ? "disabled": ""
+				const btnStyle = (value === this.sales_uom) ? "btn-outline-secondary": "btn-outline-primary"
+				this.uoms_btns[value] = $(`<button type="button" class="btn btn-sm ${btnStyle}" ${disabled}>${__(value)}</button>`).prependTo(this.header_btns_wrapper)
+
+				this.uoms_btns[value].on('click', () => {
+					erpnext.booking_dialog_update.trigger('uom_change', value);
+					this.sales_uom = value;
+					this.show_uom_selector();
+				})
+			})
+		}
+	}
+
+	get_selling_uoms() {
+		return frappe.call(
+			'erpnext.stock.doctype.item_booking.item_booking.get_item_uoms',
+			{ item_code: this.item }
+		).then(r => {
+			if (r.message) {
+				this.uoms = r.message.uoms.flat()
+				this.sales_uom = r.message.sales_uom
+			}
 		})
 	}
 }

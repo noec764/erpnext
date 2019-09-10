@@ -10,6 +10,8 @@ from urllib.parse import urlencode
 from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day
 from frappe.integrations.utils import PaymentGatewayController,\
 	create_request_log, create_payment_gateway
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.mandate import GoCardlessMandateWebhookHandler
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.payment import GoCardlessPaymentWebhookHandler
 import json
 
 class GoCardlessSettings(PaymentGatewayController):
@@ -357,3 +359,14 @@ def fetch_existing_payments(provider):
 				"service_status": payment.status,
 				"status": "Confirmed" if (payment.status == "confirmed" or payment.status == "paid_out") else "Pending"
 			}).insert(ignore_permissions=True)
+
+def handle_webhooks(**kwargs):
+	integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
+
+	if integration_request.get("service_document") == "mandates":
+		GoCardlessMandateWebhookHandler(**kwargs)
+	elif integration_request.get("service_document") == "payments":
+		GoCardlessPaymentWebhookHandler(**kwargs)
+	else:
+		integration_request.db_set("error", _("This type of event is not handled by ERPNext"))
+		integration_request.update_status({}, "Completed")

@@ -26,7 +26,6 @@
 				:noEventsMessage="noEventsMessage"
 				:selectAllow="selectAllow"
 				@eventClick="eventClick"
-				:defaultDate="defaultDate"
 				:validRange="validRange"
 			/>
 		</div>
@@ -66,7 +65,8 @@ export default {
 			selectedSlots: [],
 			quotation: null,
 			defaultDate: moment().add(1,'d').format("YYYY-MM-DD"),
-			loading: false
+			loading: false,
+			uom: this.item.sales_uom
 		}
 	},
 	computed: {
@@ -85,6 +85,11 @@ export default {
 		erpnext.booking_dialog_update.on("refresh", () => {
 			this.$refs.fullCalendar.getApi().refetchEvents();
 		})
+
+		erpnext.booking_dialog_update.on("uom_change", (value) => {
+			this.uom = value;
+			this.$refs.fullCalendar.getApi().refetchEvents();
+		})
 	},
 	methods: {
 		getAvailableSlots(parameters, callback) {
@@ -93,7 +98,8 @@ export default {
 					start: moment(parameters.start).format("YYYY-MM-DD"),
 					end: moment(parameters.end).format("YYYY-MM-DD"),
 					item: this.item,
-					quotation: this.quotation
+					quotation: this.quotation,
+					uom: this.uom
 				}).then(result => {
 					this.slots = result.message || []
 
@@ -132,7 +138,8 @@ export default {
 				start: moment(event.event.start).format("YYYY-MM-DD H:mm:SS"),
 				end: moment(event.event.end).format("YYYY-MM-DD H:mm:SS"),
 				item: this.item,
-				quotation: this.quotation
+				quotation: this.quotation,
+				uom: this.uom
 			}).then(r => {
 				this.getQuotation()
 				this.updateShoppingCart()
@@ -148,7 +155,8 @@ export default {
 		},
 		updateShoppingCart() {
 			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_booked_slots", {
-				quotation: this.quotation
+				quotation: this.quotation,
+				uom: this.uom
 			}).then(r => {
 				this.updateCart(r.message.length)
 			})
@@ -159,6 +167,7 @@ export default {
 					erpnext.shopping_cart.shopping_cart_update({
 						item_code: this.item,
 						qty: qty,
+						uom: this.uom
 					})
 				)
 			}).then(r => {
@@ -173,6 +182,12 @@ export default {
 @import 'node_modules/@fullcalendar/core/main';
 @import 'node_modules/@fullcalendar/list/main';
 @import 'frappe/public/scss/variables.scss';
+
+.cart-uom-selector {
+	>:not(:last-child) {
+		margin-right: .25rem;
+	}
+}
 
 .fc button {
 	height: auto !important;
