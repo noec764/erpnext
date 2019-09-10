@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from frappe.utils import nowdate
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.utils import GoCardlessWebhookHandler
 
 EVENT_MAP = {
 	'customer_approval_granted': 'change_status',
@@ -35,11 +35,9 @@ STATUS_MAP = {
 	'replaced': 'Cancelled'
 }
 
-class GoCardlessMandateWebhookHandler():
+class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
 	def __init__(self, **kwargs):
-		self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
-		self.data = json.loads(self.integration_request.get("data"))
-		self.get_mandates()
+		super(GoCardlessMandateWebhookHandler, self).__init__(**kwargs)
 
 		target = EVENT_MAP.get(self.data.get("action"))
 		if not target:
@@ -50,41 +48,21 @@ class GoCardlessMandateWebhookHandler():
 			method = getattr(self, target)
 			method()
 
-		self.add_mandate_to_integration_request(self.mandates[0])
+		self.add_mandate_to_integration_request()
 
 	def create_mandates(self):
-		existing_mandates, non_existing_mandates = self.check_existing_mandates()
-		for mandate in existing_mandates:
-			self.set_status(mandate, STATUS_MAP.get(self.data.get("action")))
-		
-		for mandate in non_existing_mandates:
+		mandate_exists = self.check_existing_mandate()
+		if mandate_exists:
+			self.set_status(self.mandate, STATUS_MAP.get(self.data.get("action")))
+		else:
 			#TODO: Handle mandate creation through API (only for GoCardless Pro accounts)
 			self.integration_request.update_status({}, "Completed")
 
-	def check_existing_mandates(self):
-		if frappe.get_all("GoCardless Mandate", filters={"mandate": ["in", self.mandates]}):
-			existing_list = []
-			non_existing_list = []
-			for mandate in self.mandates:
-				if frappe.db.exists("GoCardless Mandate", dict(mandate=mandate)):
-					existing_list.append(mandate)
-				else:
-					non_existing_list.append(mandate)
-			return existing_list, non_existing_list
-		else:
-			return [], self.mandates
+	def check_existing_mandate(self):
+		return False if frappe.db.exists("GoCardless Mandate", dict(mandate=mandate)) else True
 
 	def change_status(self):
-		for mandate in self.mandates:
-			self.set_status(mandate, STATUS_MAP.get(self.data.get("action")))
-
-	def get_mandates(self):
-		self.mandates = []
-		if isinstance(self.data.get("links"), list):
-			for link in self.data.get("links"):
-				self.mandates.append(link.get("mandate"))
-		else:
-			self.mandates.append(self.data.get("links").get("mandate"))
+		self.set_status(self.mandate, STATUS_MAP.get(self.data.get("action")))
 
 	def set_status(self, mandate, status):
 		try:
@@ -94,6 +72,6 @@ class GoCardlessMandateWebhookHandler():
 			self.integration_request.db_set("error", e)
 			self.integration_request.update_status({}, "Failed")
 
-	def add_mandate_to_integration_request(self, mandate):
+	def add_mandate_to_integration_request(self):
 		self.integration_request.db_set("reference_doctype", "GoCardless Mandate")
-		self.integration_request.db_set("reference_docname", mandate)
+		self.integration_request.db_set("reference_docname", self.mandate)
