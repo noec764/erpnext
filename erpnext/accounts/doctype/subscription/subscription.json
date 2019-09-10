@@ -265,7 +265,8 @@
   {
    "fieldname": "payment_gateway_reference",
    "fieldtype": "Data",
-   "label": "Payment Gateway Reference"
+   "label": "Payment Gateway Reference",
+   "no_copy": 1
   },
   {
    "fieldname": "column_break_38",
@@ -276,10 +277,11 @@
    "depends_on": "eval:doc.payment_gateway_reference",
    "fieldname": "payment_gateway_lifecycle",
    "fieldtype": "Check",
-   "label": "Use Payment Gateway Lifecycle"
+   "label": "Use Payment Gateway Lifecycle",
+   "no_copy": 1
   }
  ],
- "modified": "2019-09-04 12:03:29.337778",
+ "modified": "2019-09-10 12:21:07.463577",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

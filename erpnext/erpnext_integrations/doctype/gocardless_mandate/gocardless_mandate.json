@@ -22,21 +22,18 @@
    "fieldname": "mandate",
    "fieldtype": "Data",
    "label": "Mandate",
-   "read_only": 1,
    "reqd": 1,
    "unique": 1
   },
   {
-   "default": "Created",
    "fieldname": "status",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "Status",
-   "options": "Pending customer approval\nPending submission\nSubmitted\nActive\nCancelled\nExpired\nFailed\nCreated",
+   "options": "\nPending Customer Approval\nPending Submission\nActive\nCancelled\nFailed\nExpired\nSubmitted",
    "reqd": 1
   }
  ],
- "modified": "2019-08-22 19:29:49.890226",
+ "modified": "2019-09-10 16:05:44.696187",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "GoCardless Mandate",
