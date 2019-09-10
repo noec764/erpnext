@@ -901,7 +901,7 @@
    "description": "Item Image (if not slideshow)",
    "fieldname": "website_image",
    "fieldtype": "Attach",
-   "label": "Image"
+   "label": "Website Image"
   },
   {
    "fieldname": "thumbnail",
@@ -1029,7 +1029,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-09-09 15:21:03.304054",
+ "modified": "2019-09-10 15:21:03.304054",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
