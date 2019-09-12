@@ -3,11 +3,11 @@ from frappe import _
 
 app_name = "erpnext"
 app_title = "dokos"
-app_publisher = "Frappe Technologies Pvt. Ltd."
+app_publisher = "Dokos SAS"
 app_description = """ERP made simple"""
 app_email = "hello@dokos.io"
 app_license = "GNU General Public License (v3)"
-source_link = "https://github.com/frappe/erpnext"
+source_link = "https://gitlab.com/dokos/dokos"
 app_logo_url = '/assets/erpnext/images/dokos_logo.svg'
 
 
