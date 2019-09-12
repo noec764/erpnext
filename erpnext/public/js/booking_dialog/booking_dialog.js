@@ -1,7 +1,6 @@
 import BookingForm from './BookingForm.vue';
 frappe.provide("erpnext.booking_dialog");
 frappe.provide("erpnext.booking_dialog_update")
-frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 
 erpnext.booking_dialog = class BookingDialog {
 	constructor(opts) {
@@ -15,6 +14,7 @@ erpnext.booking_dialog = class BookingDialog {
 			'/assets/js/moment-bundle.min.js',
 			'/assets/js/control.min.js'
 		], () => {
+			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 			this.build_dialog()
 			this.build_calendar()
 		});
