@@ -1,4 +1,4 @@
-{% if doc.status=="Open" %}
+{% if doc.status!="Cancelled" %}
 <div class="web-list-item">
 	<a class="no-decoration" href="/projects?project={{ doc.name }}">
 		<div class="row">
