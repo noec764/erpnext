@@ -256,7 +256,6 @@ scheduler_events = {
 		"erpnext.assets.doctype.asset.asset.update_maintenance_status",
 		"erpnext.assets.doctype.asset.asset.make_post_gl_entry",
 		"erpnext.crm.doctype.contract.contract.update_status_for_contracts",
-		"erpnext.projects.doctype.project.project.update_project_sales_billing",
 		"erpnext.projects.doctype.project.project.send_project_status_email_to_users",
 		"erpnext.quality_management.doctype.quality_review.quality_review.review",
 		"erpnext.support.doctype.service_level_agreement.service_level_agreement.check_agreement_status",
@@ -266,7 +265,8 @@ scheduler_events = {
 	"daily_long": [
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
-		"erpnext.hr.utils.generate_leave_encashment"
+		"erpnext.hr.utils.generate_leave_encashment",
+		"erpnext.projects.doctype.project.project.update_project_sales_billing"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",
