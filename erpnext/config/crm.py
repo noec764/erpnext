@@ -41,6 +41,11 @@ def get_data():
 					"name": "Lead Source",
 					"description": _("Track Leads by Lead Source.")
 				},
+				{
+					"type": "doctype",
+					"name": "Contract",
+					"description": _("Helps you keep tracks of Contracts based on Supplier, Customer and Employee"),
+				},
 			]
 		},
 		{
@@ -143,6 +148,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Email Campaign",
+					"description": _("Sends Mails to lead or contact based on a Campaign schedule"),
+				},
+				{
+					"type": "doctype",
 					"name": "SMS Center",
 					"description":_("Send mass SMS to your contacts"),
 				},
@@ -185,20 +195,5 @@ def get_data():
 					"description": _("Warranty Claim against Serial No."),
 				},
 			]
-		},
-		# {
-		# 	"label": _("Help"),
-		# 	"items": [
-		# 		{
-		# 			"type": "help",
-		# 			"label": _("Lead to Quotation"),
-		# 			"youtube_id": "TxYX4r4JAKA"
-		# 		},
-		# 		{
-		# 			"type": "help",
-		# 			"label": _("Newsletters"),
-		# 			"youtube_id": "muLKsCrrDRo"
-		# 		},
-		# 	]
-		# },
+		}
 	]

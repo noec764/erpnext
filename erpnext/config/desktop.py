@@ -127,15 +127,5 @@ def get_data():
 			"icon": "octicon octicon-credit-card",
 			"type": "module",
 			"description": "Point of Sale and cashier closing."
-		},
-		{
-			"module_name": "Help",
-			"category": "Administration",
-			"label": _("Learn"),
-			"color": "#FF888B",
-			"icon": "octicon octicon-device-camera-video",
-			"type": "module",
-			"is_help": True,
-			"description": "Explore Help Articles and Videos."
 		}
 	]

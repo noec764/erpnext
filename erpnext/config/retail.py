@@ -21,7 +21,6 @@ def get_data():
 					"onboard": 1,
 					"dependencies": ["POS Profile"]
                 },
-
                 {
                     "type": "doctype",
                     "name": "Loyalty Program",
