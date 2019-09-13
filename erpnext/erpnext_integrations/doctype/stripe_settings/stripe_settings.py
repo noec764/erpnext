@@ -49,6 +49,7 @@ class StripeSettings(PaymentGatewayController):
 
 	def validate_stripe_credentials(self):
 		try:
+			self.configure_stripe()
 			balance = self.stripe.Balance.retrieve()
 			return balance
 		except Exception as e:
