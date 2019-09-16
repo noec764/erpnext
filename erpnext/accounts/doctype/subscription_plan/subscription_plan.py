@@ -8,6 +8,7 @@ from frappe import _
 from frappe.model.document import Document
 from erpnext.accounts.party import get_default_price_list
 from erpnext.stock.get_item_details import get_price_list_rate_for
+from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
 from frappe.utils import nowdate
 
 class SubscriptionPlan(Document):
@@ -25,7 +26,7 @@ class SubscriptionPlan(Document):
 			gateway.validate_subscription_plan(self.currency, plan.payment_plan)
 
 @frappe.whitelist()
-def get_plan_rate(customer, plan, quantity=1, date=nowdate()):
+def get_plan_rate(company, customer, plan, quantity=1, date=nowdate()):
 	plan = frappe.get_doc("Subscription Plan", plan)
 	if plan.price_determination == "Fixed rate":
 		return plan.cost
@@ -37,10 +38,31 @@ def get_plan_rate(customer, plan, quantity=1, date=nowdate()):
 			price_list = frappe.db.get_value("Price List", {"selling": 1})
 
 		price_list_rate = get_price_list_rate_for({
+			"company": company,
+			"uom": plan.uom,
 			"customer": customer,
 			"price_list": price_list,
+			"currency": plan.currency,
 			"min_qty": quantity,
 			"transaction_date": date
 		}, plan.item)
+
+		rule = get_pricing_rule_for_item(frappe._dict({
+			"company": company,
+			"uom": plan.uom,
+			"item_code": plan.item,
+			"stock_qty": quantity,
+			"transaction_type": "selling",
+			"price_list_rate": price_list_rate,
+			"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
+			"price_list": price_list,
+			"customer": customer,
+			"currency": plan.currency,
+			"transaction_date": date,
+			"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse=''))
+		}))
+
+		if rule.get("price_list_rate"):
+			price_list_rate = rule.get("price_list_rate")
 
 		return price_list_rate or 0

@@ -33,6 +33,7 @@ frappe.ui.form.on('Subscription', {
 				frm.dashboard.set_headline_alert(r);
 			})
 		}
+		frm.set_value("company", frappe.defaults.get_user_default("Company"));
 	},
 
 	cancel_this_subscription: function(frm) {

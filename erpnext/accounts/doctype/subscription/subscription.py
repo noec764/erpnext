@@ -322,10 +322,10 @@ class Subscription(Document):
 			item_code = frappe.db.get_value("Subscription Plan", plan.plan, "item")
 			if not prorate:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': get_plan_rate(self.customer, plan.plan, plan.qty, getdate(date))})
+					'rate': get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date))})
 			else:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': (get_plan_rate(self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor)})
+					'rate': (get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor)})
 
 		return items
 
@@ -396,10 +396,12 @@ class Subscription(Document):
 	def get_subscription_rates(self):
 		total = 0
 		for plan in self.plans:
-			plan.rate = get_plan_rate(self.customer, plan.plan, plan.qty)
-			total += plan.rate
+			plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
+			total += (plan.qty * plan.rate)
 
-		self.total = total
+		if total != self.total:
+			self.total = total
+			self.reload()
 
 
 def process_all():

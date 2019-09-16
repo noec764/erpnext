@@ -10,6 +10,7 @@
   "currency",
   "column_break_3",
   "item",
+  "uom",
   "section_break_5",
   "price_determination",
   "column_break_7",
@@ -118,9 +119,17 @@
    "fieldtype": "Table",
    "label": "Gateways Payment Plans",
    "options": "Subscription Gateway Plans"
+  },
+  {
+   "depends_on": "eval:doc.item",
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM",
+   "reqd": 1
   }
  ],
- "modified": "2019-09-13 19:25:24.813791",
+ "modified": "2019-09-16 16:18:32.255867",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan",
