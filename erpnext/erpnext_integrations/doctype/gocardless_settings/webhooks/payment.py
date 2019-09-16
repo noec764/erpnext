@@ -54,7 +54,8 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			self.subscription.flags.ignore_permissions = True
 			self.subscription.process()
 			self.invoice = self.subscription.get_current_invoice()
-			self.invoice.flags.ignore_permissions = True
+			if self.invoice:
+				self.invoice.flags.ignore_permissions = True
 
 	def handle_invoice_update(self):
 		target = target = EVENT_MAP.get(self.data.get("action"))

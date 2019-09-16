@@ -14,6 +14,9 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import g
 import numpy as np
 
 class Subscription(Document):
+	def onload(self):
+		self.get_subscription_rates()
+
 	def before_insert(self):
 		self.update_subscription_period(self.start)
 
@@ -22,6 +25,7 @@ class Subscription(Document):
 		self.process()
 
 	def validate(self):
+		self.get_subscription_rates()
 		self.validate_trial_period()
 		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
 		self.validate_subscription_period()
@@ -197,9 +201,9 @@ class Subscription(Document):
 
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
-		sales_order = self.set_subscription_invoicing_details(sales_order)
 		sales_order.transaction_date = self.current_invoice_start
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		sales_order = self.set_subscription_invoicing_details(sales_order)
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.flags.ignore_permissions = True
@@ -213,9 +217,9 @@ class Subscription(Document):
 
 	def create_invoice(self, prorate):
 		invoice = frappe.new_doc('Sales Invoice')
-		invoice = self.set_subscription_invoicing_details(invoice, prorate)
 		invoice.set_posting_time = 1
 		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		invoice = self.set_subscription_invoicing_details(invoice, prorate)
 
 		#Add link to sales order
 		current_sales_order = self.get_current_documents("Sales Order")
@@ -248,7 +252,8 @@ class Subscription(Document):
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
-		items_list = self.get_items_from_plans(self.plans, prorate)
+		items_list = self.get_items_from_plans(self.plans,\
+			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date, prorate)
 		for item in items_list:
 			document.append('items', item)
 
@@ -295,20 +300,19 @@ class Subscription(Document):
 
 		return document
 
-	def get_items_from_plans(self, plans, prorate=0):
+	def get_items_from_plans(self, plans, date, prorate=0):
 		if prorate:
 			prorata_factor = self.get_prorata_factor()
 
 		items = []
-		customer = self.customer
 		for plan in plans:
 			item_code = frappe.db.get_value("Subscription Plan", plan.plan, "item")
 			if not prorate:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': get_plan_rate(plan.plan, plan.qty, customer)})
+					'rate': get_plan_rate(self.customer, plan.plan, plan.qty, getdate(date))})
 			else:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': (get_plan_rate(plan.plan, plan.qty, customer) * prorata_factor)})
+					'rate': (get_plan_rate(self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor)})
 
 		return items
 
@@ -375,6 +379,14 @@ class Subscription(Document):
 		prorata_factor = consumed / plan_days
 
 		return prorata_factor
+
+	def get_subscription_rates(self):
+		total = 0
+		for plan in self.plans:
+			plan.rate = get_plan_rate(self.customer, plan.plan, plan.qty)
+			total += plan.rate
+
+		self.total = total
 
 
 def process_all():

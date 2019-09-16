@@ -6,7 +6,9 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from erpnext.utilities.product import get_price
+from erpnext.accounts.party import get_default_price_list
+from erpnext.stock.get_item_details import get_price_list_rate_for
+from frappe.utils import nowdate
 
 class SubscriptionPlan(Document):
 	def validate(self):
@@ -23,19 +25,22 @@ class SubscriptionPlan(Document):
 			gateway.validate_subscription_plan(self.currency, plan.payment_plan)
 
 @frappe.whitelist()
-def get_plan_rate(plan, quantity=1, customer=None):
+def get_plan_rate(customer, plan, quantity=1, date=nowdate()):
 	plan = frappe.get_doc("Subscription Plan", plan)
 	if plan.price_determination == "Fixed rate":
 		return plan.cost
 
 	elif plan.price_determination == "Based on price list":
-		if customer:
-			customer_group = frappe.db.get_value("Customer", customer, "customer_group")
-		else:
-			customer_group = None
+		customer_doc = frappe.get_doc("Customer", customer)
+		price_list = get_default_price_list(customer_doc)
+		if not price_list:
+			price_list = frappe.db.get_value("Price List", {"selling": 1})
 
-		price = get_price(item_code=plan.item, price_list=plan.price_list, customer_group=customer_group, company=None, qty=quantity)
-		if not price:
-			return 0
-		else:
-			return price.price_list_rate
+		price_list_rate = get_price_list_rate_for({
+			"customer": customer,
+			"price_list": price_list,
+			"min_qty": quantity,
+			"transaction_date": date
+		}, plan.item)
+
+		return price_list_rate or 0

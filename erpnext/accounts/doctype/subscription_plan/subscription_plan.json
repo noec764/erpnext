@@ -14,7 +14,6 @@
   "price_determination",
   "column_break_7",
   "cost",
-  "price_list",
   "section_break_11",
   "billing_interval",
   "column_break_13",
@@ -74,13 +73,6 @@
    "label": "Cost"
   },
   {
-   "depends_on": "eval:doc.price_determination==\"Based on price list\"",
-   "fieldname": "price_list",
-   "fieldtype": "Link",
-   "label": "Price List",
-   "options": "Price List"
-  },
-  {
    "fieldname": "section_break_11",
    "fieldtype": "Section Break"
   },
@@ -128,7 +120,7 @@
    "options": "Subscription Gateway Plans"
   }
  ],
- "modified": "2019-08-21 11:18:26.235365",
+ "modified": "2019-09-13 19:25:24.813791",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan",

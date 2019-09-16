@@ -38,7 +38,8 @@ class StripeInvoiceWebhookHandler():
 			self.subscription.flags.ignore_permissions = True
 			self.subscription.process()
 			self.invoice = self.subscription.get_current_invoice()
-			self.invoice.flags.ignore_permissions = True
+			if self.invoice:
+				self.invoice.flags.ignore_permissions = True
 
 	def get_linked_subscription(self):
 		self.subscriptions = frappe.get_all("Subscription",\
