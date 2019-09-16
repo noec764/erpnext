@@ -297,7 +297,7 @@ class StripeSettings(PaymentGatewayController):
 
 	@staticmethod
 	def get_fee_amount(charge):
-		return flt(charge.balance.balance_transaction.get("fee")) / 100
+		return flt(charge.balance_transaction.get("fee")) / 100
 
 	def process_charge_output(self):
 		try:
