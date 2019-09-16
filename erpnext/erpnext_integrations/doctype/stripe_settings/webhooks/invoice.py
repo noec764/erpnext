@@ -20,7 +20,10 @@ class StripeInvoiceWebhookHandler():
 	def __init__(self, **kwargs):
 		self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
 		self.integration_request.db_set("error", None)
+		self.stripe_settings = frappe.get_doc("Stripe Settings", self.integration_request.get("payment_gateway_controller"))
 		self.data = json.loads(self.integration_request.get("data"))
+		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
+			dict(gateway_settings="Stripe Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 		self.invoice = None
 		self.subscription = None
 
@@ -71,12 +74,12 @@ class StripeInvoiceWebhookHandler():
 
 	def create_invoice(self):
 		try:
-			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.service_id)):
+			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
 				self.integration_request.db_set("error",\
 					_("Subscription {0} has already invoice {1} for the current period").format(\
 					self.subscription.name, self.invoice.name))
 				self.integration_request.update_status({}, "Failed")
-			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.service_id)):
+			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
 				self.integration_request.db_set("error",\
 					_("Subscription {0} has already invoice {1} for the current period, but the invoice references don't match. Please check your subscription.").format(\
 					self.subscription.name, self.invoice.name))
@@ -87,7 +90,7 @@ class StripeInvoiceWebhookHandler():
 				self.invoice.external_reference = self.integration_request.get("service_id")
 				self.integration_request.update_status({}, "Completed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def delete_invoice(self):
@@ -101,7 +104,7 @@ class StripeInvoiceWebhookHandler():
 					self.subscription.name, self.invoice.name))
 				self.integration_request.update_status({}, "Failed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def finalize_invoice(self):
@@ -115,7 +118,7 @@ class StripeInvoiceWebhookHandler():
 
 			self.integration_request.update_status({}, "Completed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def fail_invoice(self):
@@ -126,18 +129,22 @@ class StripeInvoiceWebhookHandler():
 		from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 		try:
 			if self.invoice.docstatus == 1:
-				pe = get_payment_entry("Sales Invoice", self.invoice.name)
-				pe.reference_no = self.subscription.name
-				pe.reference_date = nowdate()
-				pe.flags.ignore_permissions = True
-				pe.insert()
-				pe.submit()
+				self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
+				self.payment_entry.reference_no = self.subscription.name
+				self.payment_entry.reference_date = nowdate()
+				self.add_fees()
+				self.payment_entry.flags.ignore_permissions = True
+				self.payment_entry.insert()
+				self.payment_entry.submit()
 				self.integration_request.update_status({}, "Completed")
 			else:
-				self.integration_request.db_set("error", _("Current invoice is not submitted"))
+				if self.invoice.docstatus == 2:
+					self.integration_request.db_set("error", _("Current invoice {0} is cancelled").format(self.invoice.name))
+				else:
+					self.integration_request.db_set("error", _("Current invoice {0} is not submitted").format(self.invoice.name))
 				self.integration_request.update_status({}, "Failed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def void_invoice(self):
@@ -145,7 +152,7 @@ class StripeInvoiceWebhookHandler():
 			self.invoice.cancel()
 			self.integration_request.update_status({}, "Completed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def check_and_finalize_invoice(self):
@@ -160,3 +167,35 @@ class StripeInvoiceWebhookHandler():
 			self.integration_request.db_set("error", _("The total amount in this document and in the sales invoice don't match"))
 			self.integration_request.update_status({}, "Failed")
 			return False
+
+	def add_fees(self):
+		charge_id = self.data.get("data", {}).get("object", {}).get("charge")
+		if charge_id:
+			self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
+			self.base_amount = self.stripe_settings.get_base_amount(self.charge)
+			self.exchange_rate = self.stripe_settings.get_exchange_rate(self.charge)
+			self.fee_amount = self.stripe_settings.get_fee_amount(self.charge)
+
+			#TODO: Commonify with payment request
+			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
+				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
+
+			if self.exchange_rate:
+				payment_entry.update({
+					"target_exchange_rate": self.exchange_rate,
+				})
+
+			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
+				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
+				payment_entry.update({
+					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
+					"received_amount": flt(self.payment_entry.received_amount) - fees
+				})
+
+				payment_entry.append("deductions", {
+					"account": gateway_defaults.get("fee_account"),
+					"cost_center": gateway_defaults.get("cost_center"),
+					"amount": self.fee_amount
+				})
+
+				payment_entry.set_amounts()

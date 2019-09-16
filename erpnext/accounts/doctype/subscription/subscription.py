@@ -186,8 +186,16 @@ class Subscription(Document):
 		current_invoices = self.get_current_documents("Sales Invoice")
 
 		if current_invoices:
-			doc = frappe.get_doc('Sales Invoice', current_invoices[0].name)
-			return doc
+			validated_invoices = [x for x in current_invoices if x.get("docstatus") == 1]
+			draft_invoices = [x for x in current_invoices if x.get("docstatus") == 0]
+			if validated_invoices:
+				current_invoice = validated_invoices[0].get("name")
+			elif draft_invoices:
+				current_invoice = draft_invoices[0].get("name")
+			else:
+				current_invoice = current_invoices[0].name
+
+			return frappe.get_doc('Sales Invoice', current_invoice)
 
 	def is_new_subscription(self):
 		return False if frappe.get_all("Sales Invoice", filters={"subscription": self.name}) \
@@ -346,7 +354,7 @@ class Subscription(Document):
 
 		billing_cycle_info = self.get_billing_cycle_data()
 		documents = frappe.get_all(doctype, filters={"subscription": self.name}, \
-			fields=[transaction_date, "name"])
+			fields=[transaction_date, "name", "docstatus"])
 		for document in documents:
 			if billing_cycle_info:
 				calculated_end = add_to_date(document.get(transaction_date), **billing_cycle_info)

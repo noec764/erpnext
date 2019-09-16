@@ -19,7 +19,7 @@ def webhooks():
 		frappe.response.message = "Missing payload"
 		frappe.response.http_status_code = 400
 
-	stripe_key = get_api_key(r)
+	account, stripe_key = get_api_key(r)
 	webhook_secret = frappe.get_request_header("HTTP_STRIPE_SIGNATURE")
 
 	event = None
@@ -32,7 +32,7 @@ def webhooks():
 		frappe.response.http_status_code = 400
 
 	# Handle the event
-	doc = create_new_integration_log(event)
+	doc = create_new_integration_log(event, account)
 
 	frappe.enqueue(method='erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.handle_webhooks',\
 		queue='long', timeout=600, is_async=True, **{"doctype": "Integration Request",\
@@ -51,7 +51,7 @@ def get_api_key(request):
 			account = account[0]
 
 	if account:
-		return frappe.get_doc("Stripe Settings", account).get_password(\
+		return account, frappe.get_doc("Stripe Settings", account).get_password(\
 			fieldname="secret_key", raise_exception=False)
 	else:
 		stripe_accounts = frappe.get_all("Stripe Settings")
@@ -59,10 +59,10 @@ def get_api_key(request):
 			frappe.log_error(_("Please define your Stripe account in the webhook URL's query string"),\
 				_("Stripe webhook error"))
 		else:
-			return frappe.get_doc("Stripe Settings", stripe_accounts[0].get("name")).get_password(\
+			return stripe_accounts[0].get("name"), frappe.get_doc("Stripe Settings", stripe_accounts[0].get("name")).get_password(\
 				fieldname="secret_key", raise_exception=False)
 
-def create_new_integration_log(event):
+def create_new_integration_log(event, account):
 	integration_request = frappe.get_doc({
 		"doctype": "Integration Request",
 		"integration_type": "Webhook",
@@ -70,7 +70,8 @@ def create_new_integration_log(event):
 		"service_document": event.data.object.get("object"),
 		"service_status": event.data.object.get("status"),
 		"service_id": event.data.object.get("id"),
-		"data": json.dumps(event)
+		"data": json.dumps(event),
+		"payment_gateway_controller": account
 	})
 
 	if event.id != TEST_EVENT_ID:

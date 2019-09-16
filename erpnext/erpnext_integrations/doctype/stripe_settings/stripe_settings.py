@@ -229,16 +229,19 @@ class StripeSettings(PaymentGatewayController):
 
 	def retrieve_charge_on_stripe(self):
 		try:
-			self.charge = self.stripe.Charge.retrieve(
-				self.charge_id,
-				expand=[
-					"balance_transaction"
-				]
-			)
+			self.charge = self.get_charge_on_stripe(self.charge_id)
 			return self.process_charge_output()
 		except Exception as e:
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe charge creation error"))
+
+	def get_charge_on_stripe(self, charge_id):
+		return self.stripe.Charge.retrieve(
+			charge_id,
+			expand=[
+				"balance_transaction"
+			]
+		)
 
 	def create_payment_intent_on_stripe(self, amount, currency):
 		try:
@@ -273,21 +276,28 @@ class StripeSettings(PaymentGatewayController):
 	def add_base_amount(self):
 		if self.charge.balance_transaction.get("currency").casefold()\
 			== frappe.db.get_value('Company', self.origin_transaction.get("company"), 'default_currency', cache=True).casefold():
-			self.reference_document.db_set('base_amount',\
-				self.charge.balance_transaction.get("amount") / 100, update_modified=True)
-			self.reference_document.db_set('exchange_rate',\
-				self.charge.balance_transaction.get("exchange_rate") or 1, update_modified=True)
+			self.reference_document.db_set('base_amount', self.get_base_amount(self.charge), update_modified=True)
+			self.reference_document.db_set('exchange_rate', self.get_exchange_rate(self.charge), update_modified=True)
 
 	def add_stripe_charge_fee(self):
 		if not self.reference_document.get("fee_amount"):
-			fee_amount = self.get_fee_amount(self.charge.balance_transaction)
+			fee_amount = self.get_fee_amount(self.charge)
 			self.reference_document.db_set('fee_amount', fee_amount, update_modified=True)
 
 		self.change_integration_request_status("Completed", "output", json.dumps(self.charge))
 		return self.charge
 
-	def get_fee_amount(self, balance):
-		return flt(balance["fee"]) / 100
+	@staticmethod
+	def get_base_amount(charge):
+		return charge.balance_transaction.get("amount") / 100
+
+	@staticmethod
+	def get_exchange_rate(charge):
+		return charge.balance_transaction.get("exchange_rate") or 1
+
+	@staticmethod
+	def get_fee_amount(charge):
+		return flt(balance.balance_transaction.get("fee")) / 100
 
 	def process_charge_output(self):
 		try:
