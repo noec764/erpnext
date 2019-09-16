@@ -16,7 +16,6 @@
   "variant_of",
   "item_name",
   "item_group",
-  "is_item_from_hub",
   "stock_uom",
   "column_break0",
   "disabled",
@@ -195,13 +194,6 @@
    "options": "Item Group",
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "is_item_from_hub",
-   "fieldtype": "Check",
-   "label": "Is Item from Hub",
-   "read_only": 1
   },
   {
    "fieldname": "stock_uom",
@@ -1029,7 +1021,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-09-10 15:21:03.304054",
+ "modified": "2019-09-16 08:58:36.853337",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

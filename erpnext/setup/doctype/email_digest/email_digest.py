@@ -58,7 +58,7 @@ class EmailDigest(Document):
 				if msg_for_this_recipient:
 					frappe.sendmail(
 						recipients=user_id,
-						subject=_("{0} Digest").format(self.frequency),
+						subject=_("{0} Digest").format(_(self.frequency)),
 						message=msg_for_this_recipient,
 						reference_doctype = self.doctype,
 						reference_name = self.name,
