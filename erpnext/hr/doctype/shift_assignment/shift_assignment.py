@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from frappe.utils import cint, cstr, date_diff, flt, formatdate, getdate, now_datetime, nowdate
 from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
 from erpnext.hr.doctype.holiday_list.holiday_list import is_holiday
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, time
 
 class OverlapError(frappe.ValidationError): pass
 
@@ -71,13 +71,17 @@ def add_assignments(events, start, end, conditions=None):
 		query += conditions
 
 	for d in frappe.db.sql(query, {"date":start, "date":end}, as_dict=True):
+		shift_type = frappe.db.get_value("Shift Assignment", d.name, "shift_type")
+		shift = frappe.db.get_value("Shift Type", shift_type, ["start_time", "end_time"], as_dict=True)
 		e = {
 			"name": d.name,
 			"doctype": "Shift Assignment",
-			"date": d.date,
+			"start": datetime.combine(getdate(d.date), time(0,0)) + shift.get("start_time"),
+			"end": datetime.combine(getdate(d.date), time(0,0)) + shift.get("end_time"),
 			"title": cstr(d.employee_name) + \
 				cstr(d.shift_type),
-			"docstatus": d.docstatus
+			"docstatus": d.docstatus,
+			"color": "#ddddf0" if d.docstatus == 0 else "#4d4da8"
 		}
 		if e not in events:
 			events.append(e)
