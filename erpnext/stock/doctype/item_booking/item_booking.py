@@ -29,10 +29,10 @@ def book_new_slot(**kwargs):
 	quotation = kwargs.get("quotation")
 	if not frappe.session.user == "Guest":
 		if not quotation:
-			quotation = _get_cart_quotation()
+			quotation = _get_cart_quotation().get("name")
 
 		if not quotation or not frappe.db.exists("Quotation", quotation):
-			quotation = update_cart(kwargs.get("item"), 1)
+			quotation = update_cart(kwargs.get("item"), 1).get("name")
 
 	try:
 		doc = frappe.get_doc({
@@ -40,10 +40,11 @@ def book_new_slot(**kwargs):
 			"item": kwargs.get("item"),
 			"starts_on": kwargs.get("start"),
 			"ends_on": kwargs.get("end"),
-			"sales_uom": kwargs.get("uom"),
+			"billing_qty": 1,
+			"sales_uom": kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom"),
 			"reference_doctype": "Quotation",
-			"reference_name": quotation.get("name"),
-			"party": quotation.get("party_name"),
+			"reference_name": quotation,
+			"party": frappe.db.get_value("Quotation", quotation, "party_name"),
 			"user": frappe.session.user
 		}).insert(ignore_permissions=True)
 

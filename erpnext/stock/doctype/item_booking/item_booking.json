@@ -9,16 +9,17 @@
  "field_order": [
   "item",
   "item_name",
+  "user",
   "column_break_2",
   "starts_on",
   "ends_on",
   "reference_section",
+  "billing_qty",
   "reference_doctype",
-  "sales_uom",
   "party_name",
   "column_break_7",
+  "sales_uom",
   "reference_name",
-  "user",
   "naming_series",
   "amended_from"
  ],
@@ -106,10 +107,8 @@
   {
    "fieldname": "sales_uom",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Sales UOM",
-   "options": "UOM",
-   "read_only": 1
+   "options": "UOM"
   },
   {
    "fieldname": "user",
@@ -118,10 +117,15 @@
    "in_standard_filter": 1,
    "label": "User",
    "options": "User"
+  },
+  {
+   "fieldname": "billing_qty",
+   "fieldtype": "Float",
+   "label": "Billing Qty"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-09-16 09:43:10.529743",
+ "modified": "2019-09-16 10:18:31.637084",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
