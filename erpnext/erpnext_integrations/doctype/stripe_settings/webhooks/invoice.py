@@ -181,21 +181,21 @@ class StripeInvoiceWebhookHandler():
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
 			if self.exchange_rate:
-				payment_entry.update({
+				self.payment_entry.update({
 					"target_exchange_rate": self.exchange_rate,
 				})
 
 			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
 				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
-				payment_entry.update({
+				self.payment_entry.update({
 					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
 					"received_amount": flt(self.payment_entry.received_amount) - fees
 				})
 
-				payment_entry.append("deductions", {
+				self.payment_entry.append("deductions", {
 					"account": gateway_defaults.get("fee_account"),
 					"cost_center": gateway_defaults.get("cost_center"),
 					"amount": self.fee_amount
 				})
 
-				payment_entry.set_amounts()
+				self.payment_entry.set_amounts()
