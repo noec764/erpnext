@@ -12,12 +12,13 @@
   "column_break_2",
   "starts_on",
   "ends_on",
-  "sales_uom",
   "reference_section",
   "reference_doctype",
+  "sales_uom",
   "party_name",
   "column_break_7",
   "reference_name",
+  "user",
   "naming_series",
   "amended_from"
  ],
@@ -37,17 +38,18 @@
   {
    "fieldname": "starts_on",
    "fieldtype": "Datetime",
+   "in_list_view": 1,
    "label": "Starts On"
   },
   {
    "fieldname": "ends_on",
    "fieldtype": "Datetime",
-   "label": "Ends_on"
+   "label": "Ends on"
   },
   {
    "fieldname": "reference_section",
    "fieldtype": "Section Break",
-   "label": "Reference"
+   "label": "Billing"
   },
   {
    "fieldname": "reference_doctype",
@@ -78,6 +80,8 @@
    "fetch_from": "item.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Item Name",
    "read_only": 1
   },
@@ -94,6 +98,8 @@
    "fetch_from": "reference_name.party_name",
    "fieldname": "party_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Party",
    "read_only": 1
   },
@@ -104,10 +110,18 @@
    "label": "Sales UOM",
    "options": "UOM",
    "read_only": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "User",
+   "options": "User"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-09-09 17:55:03.502361",
+ "modified": "2019-09-16 09:43:10.529743",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",

@@ -29,10 +29,10 @@ def book_new_slot(**kwargs):
 	quotation = kwargs.get("quotation")
 	if not frappe.session.user == "Guest":
 		if not quotation:
-			quotation = _get_cart_quotation().get("name")
+			quotation = _get_cart_quotation()
 
 		if not quotation or not frappe.db.exists("Quotation", quotation):
-			quotation = update_cart(kwargs.get("item"), 1).get("name")
+			quotation = update_cart(kwargs.get("item"), 1)
 
 	try:
 		doc = frappe.get_doc({
@@ -42,7 +42,9 @@ def book_new_slot(**kwargs):
 			"ends_on": kwargs.get("end"),
 			"sales_uom": kwargs.get("uom"),
 			"reference_doctype": "Quotation",
-			"reference_name": quotation
+			"reference_name": quotation.get("name"),
+			"party": quotation.get("party_name"),
+			"user": frappe.session.user
 		}).insert(ignore_permissions=True)
 
 		return doc
@@ -249,7 +251,9 @@ def get_item_calendar(item):
 		return item.item_booking_calendar
 
 def get_uom_in_minutes(item, uom=None):
-	return frappe.db.get_value("UOM", uom if uom else item.sales_uom, "conversion_in_minutes") or 0
+	minute_uom = frappe.db.get_value("Stock Settings", None, "minute_uom")
+	return frappe.db.get_value("UOM Conversion Factor",\
+		dict(from_uom=uom if uom else item.sales_uom, to_uom=minute_uom), "value") or 0
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():
