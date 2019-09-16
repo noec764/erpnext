@@ -28,6 +28,7 @@ class Subscription(Document):
 		self.get_subscription_rates()
 		self.validate_trial_period()
 		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
+		self.validate_plans_pricing_rule()
 		self.validate_subscription_period()
 
 	def on_update(self):
@@ -118,6 +119,18 @@ class Subscription(Document):
 	def validate_plans_billing_cycle(billing_cycle_data):
 		if billing_cycle_data and len(billing_cycle_data) != 1:
 			frappe.throw(_('You can only have Plans with the same billing cycle in a Subscription'))
+
+	def validate_plans_pricing_rule(self):
+		rules = self.get_plans_pricing_rules()
+		if len(rules) > 1:
+			frappe.throw(_("Please select plans with the same price determination rule"))
+
+	def get_plans_pricing_rules(self):
+		rules = set()
+		for plan in self.plans:
+			rules.add(frappe.db.get_value("Subscription Plan", plan.plan, "price_determination"))
+
+		return rules
 
 	def get_billing_cycle_and_interval(self):
 		plan_names = [plan.plan for plan in self.plans]
@@ -248,7 +261,7 @@ class Subscription(Document):
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
 		document.subscription = self.name
-		document.ignore_pricing_rule = 1
+		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules.pop() == "Fixed rate" else 0
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason

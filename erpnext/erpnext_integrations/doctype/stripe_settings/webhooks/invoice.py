@@ -19,6 +19,7 @@ EVENT_MAP = {
 class StripeInvoiceWebhookHandler():
 	def __init__(self, **kwargs):
 		self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
+		self.integration_request.db_set("error", None)
 		self.data = json.loads(self.integration_request.get("data"))
 		self.invoice = None
 		self.subscription = None
@@ -70,14 +71,20 @@ class StripeInvoiceWebhookHandler():
 
 	def create_invoice(self):
 		try:
-			if self.invoice:
+			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.service_id)):
 				self.integration_request.db_set("error",\
 					_("Subscription {0} has already invoice {1} for the current period").format(\
+					self.subscription.name, self.invoice.name))
+				self.integration_request.update_status({}, "Failed")
+			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.service_id)):
+				self.integration_request.db_set("error",\
+					_("Subscription {0} has already invoice {1} for the current period, but the invoice references don't match. Please check your subscription.").format(\
 					self.subscription.name, self.invoice.name))
 				self.integration_request.update_status({}, "Failed")
 			else:
 				self.subscription.process_active_subscription()
 				self.invoice = self.subscription.get_current_invoice()
+				self.invoice.external_reference = self.integration_request.get("service_id")
 				self.integration_request.update_status({}, "Completed")
 		except Exception as e:
 			self.integration_request.db_set("error", e)
@@ -85,8 +92,14 @@ class StripeInvoiceWebhookHandler():
 
 	def delete_invoice(self):
 		try:
-			self.invoice.cancel()
-			self.integration_request.update_status({}, "Completed")
+			if self.invoice.name == frappe.db.get_value("Sales Invoice", dict(external_reference=self.service_id), "name"):
+				self.invoice.cancel()
+				self.integration_request.update_status({}, "Completed")
+			else:
+				self.integration_request.db_set("error",\
+					_("There is a mismatch between the reference in this document and the current invoice {1} linked to subscription {0}").format(\
+					self.subscription.name, self.invoice.name))
+				self.integration_request.update_status({}, "Failed")
 		except Exception as e:
 			self.integration_request.db_set("error", e)
 			self.integration_request.update_status({}, "Failed")
@@ -94,7 +107,7 @@ class StripeInvoiceWebhookHandler():
 	def finalize_invoice(self):
 		try:
 			if self.invoice.docstatus == 0:
-				self.invoice.submit()
+				self.check_and_finalize_invoice()
 			elif self.invoice.docstatus == 2:
 				self.integration_request.db_set("error",\
 					_("Sales invoice {0} is already cancelled").format(self.invoice.name))
@@ -112,13 +125,17 @@ class StripeInvoiceWebhookHandler():
 	def pay_invoice(self):
 		from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 		try:
-			pe = get_payment_entry("Sales Invoice", self.invoice.name)
-			pe.reference_no = self.subscription.name
-			pe.reference_date = nowdate()
-			pe.flags.ignore_permissions = True
-			pe.insert()
-			pe.submit()
-			self.integration_request.update_status({}, "Completed")
+			if self.invoice.docstatus == 1:
+				pe = get_payment_entry("Sales Invoice", self.invoice.name)
+				pe.reference_no = self.subscription.name
+				pe.reference_date = nowdate()
+				pe.flags.ignore_permissions = True
+				pe.insert()
+				pe.submit()
+				self.integration_request.update_status({}, "Completed")
+			else:
+				self.integration_request.db_set("error", _("Current invoice is not submitted"))
+				self.integration_request.update_status({}, "Failed")
 		except Exception as e:
 			self.integration_request.db_set("error", e)
 			self.integration_request.update_status({}, "Failed")
@@ -130,3 +147,16 @@ class StripeInvoiceWebhookHandler():
 		except Exception as e:
 			self.integration_request.db_set("error", e)
 			self.integration_request.update_status({}, "Failed")
+
+	def check_and_finalize_invoice(self):
+		submit = self.check_total_amount()
+		if submit:
+			self.invoice.submit()
+
+	def check_total_amount(self):
+		if (self.invoice.grand_total * 100) == self.data.get("data", {}).get("object", {}).get("amount_due"):
+			return True
+		else:
+			self.integration_request.db_set("error", _("The total amount in this document and in the sales invoice don't match"))
+			self.integration_request.update_status({}, "Failed")
+			return False
