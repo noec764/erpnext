@@ -401,7 +401,6 @@ class Subscription(Document):
 
 		if total != self.total:
 			self.total = total
-			self.reload()
 
 
 def process_all():
