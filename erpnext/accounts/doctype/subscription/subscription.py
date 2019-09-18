@@ -22,7 +22,6 @@ class Subscription(Document):
 
 	def after_insert(self):
 		self.set_subscription_status()
-		self.process()
 
 	def validate(self):
 		self.get_subscription_rates()

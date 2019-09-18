@@ -30,14 +30,14 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Sales Invoice",
-					"description": _("Invoices for Costumers."),
+					"description": _("Invoices for Customers."),
 					"onboard": 1,
 					"dependencies": ["Item", "Customer"],
 				},
 				{
 					"type": "doctype",
 					"name": "Blanket Order",
-					"description": _("Blanket Orders from Costumers."),
+					"description": _("Blanket Orders from Customers."),
 					"onboard": 1,
 					"dependencies": ["Item", "Customer"],
 				},

@@ -33,7 +33,7 @@ class PaymentRequest(Document):
 	def validate_payment_request(self):
 		if frappe.db.get_value("Payment Request", {"reference_name": self.reference_name,
 			"name": ("!=", self.name), "status": "Paid", "docstatus": 1}, "name"):
-			frappe.throw(_("A paid payment request is already paid for {0}".format(self.reference_name)))
+			frappe.throw(_("A paid payment request exists already for {0}".format(self.reference_name)))
 
 	def validate_currency(self):
 		currency = frappe.db.get_value(self.reference_doctype, self.reference_name, "currency")
@@ -62,9 +62,7 @@ class PaymentRequest(Document):
 					})
 
 			if not gateways >= pr_gateways:
-				frappe.throw(_("Payment gateways must be defined in one the payment plan \
-					registered in the subscription attached to this reference doctype.\
-					<br><br>It can only be one of the following: {0}").format(', '.join(gateways)))
+				frappe.throw(_("Payment gateways must be defined in all the payment plans registered in the subscription attached to this reference doctype.<br><br>It can only be one of the following: {0}").format(', '.join(gateways)))
 
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\
