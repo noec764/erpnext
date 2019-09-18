@@ -1004,7 +1004,7 @@
   },
   {
    "collapsible": 1,
-   "collapsible_depends_on": "eval:doc.enable_item_booking",
+   "depends_on": "eval:doc.show_in_website&&doc.enable_item_booking",
    "fieldname": "item_booking",
    "fieldtype": "Section Break",
    "label": "Item Booking"
@@ -1021,7 +1021,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-09-16 08:58:36.853337",
+ "modified": "2019-09-17 16:25:36.118488",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

@@ -755,6 +755,18 @@
 		"value": "0.000001653439"
 	},
 	{
+		"category": "Time",
+		"from_uom": "Hour",
+		"to_uom": "Minute",
+		"value": "60"
+	},
+	{
+		"category": "Time",
+		"from_uom": "Day",
+		"to_uom": "Minute",
+		"value": "1440"
+	},
+	{
 		"category": "Pressure",
 		"from_uom": "Pascal",
 		"to_uom": "Atmosphere",

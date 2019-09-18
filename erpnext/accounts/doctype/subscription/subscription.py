@@ -269,7 +269,7 @@ class Subscription(Document):
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
 		document.subscription = self.name
-		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules.pop() == "Fixed rate" else 0
+		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
@@ -330,10 +330,12 @@ class Subscription(Document):
 			item_code = frappe.db.get_value("Subscription Plan", plan.plan, "item")
 			if not prorate:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date))})
+					'rate': get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)),\
+					'description': plan.description})
 			else:
 				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': (get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor)})
+					'rate': (get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor),\
+					'description': plan.description})
 
 		return items
 

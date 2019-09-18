@@ -172,6 +172,7 @@ class StripeInvoiceWebhookHandler():
 		charge_id = self.data.get("data", {}).get("object", {}).get("charge")
 		if charge_id:
 			self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
+			self.integration_request.db_set("output", json.dumps(self.charge))
 			self.base_amount = self.stripe_settings.get_base_amount(self.charge)
 			self.exchange_rate = self.stripe_settings.get_exchange_rate(self.charge)
 			self.fee_amount = self.stripe_settings.get_fee_amount(self.charge)

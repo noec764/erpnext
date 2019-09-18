@@ -102,3 +102,18 @@ frappe.ui.form.on('Subscription', {
 		});
 	}
 });
+
+frappe.ui.form.on('Subscription Plan Detail', {
+	plan: function(frm, cdt, cdn) {
+		const row = locals[cdt][cdn]
+		frappe.db.get_value("Subscription Plan", row.plan, "item", r => {
+			if (r&&r.item) {
+				frappe.db.get_value("Item", r.item, "description", r => {
+					if (r&&r.description) {
+						frappe.model.set_value(cdt, cdn, "description", r.description);
+					}
+				})
+			}
+		})
+	}
+})

@@ -6,7 +6,8 @@
  "field_order": [
   "qty",
   "plan",
-  "rate"
+  "rate",
+  "description"
  ],
  "fields": [
   {
@@ -30,10 +31,15 @@
    "in_list_view": 1,
    "label": "Rate",
    "read_only": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
   }
  ],
  "istable": 1,
- "modified": "2019-09-16 17:10:59.948873",
+ "modified": "2019-09-18 08:40:16.370759",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan Detail",
