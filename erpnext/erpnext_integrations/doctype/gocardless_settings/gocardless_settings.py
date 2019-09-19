@@ -109,7 +109,7 @@ class GoCardlessSettings(PaymentGatewayController):
 
 	def validate_transaction_currency(self, currency):
 		if currency not in self.supported_currencies:
-			frappe.throw(_("Please select another payment method. Stripe does not support transactions in currency '{0}'").format(currency))
+			frappe.throw(_("Please select another payment method. GoCardless does not support transactions in currency '{0}'").format(currency))
 
 	def get_payment_url(self, **kwargs):
 		return get_url("./integrations/gocardless_checkout?{0}".format(urlencode(kwargs)))
@@ -368,5 +368,5 @@ def handle_webhooks(**kwargs):
 	elif integration_request.get("service_document") == "payments":
 		GoCardlessPaymentWebhookHandler(**kwargs)
 	else:
-		integration_request.db_set("error", _("This type of event is not handled by ERPNext"))
+		integration_request.db_set("error", _("This type of event is not handled by dokos"))
 		integration_request.update_status({}, "Completed")

@@ -37,7 +37,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": "Income",
+				"chart_name": _("Income"),
 				"timespan": "Last Year",
 				"color": None,
 				"filters_json": json.dumps({"company": company.name, "account": income_account}),
@@ -51,7 +51,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": "Expenses",
+				"chart_name": _("Expenses"),
 				"timespan": "Last Year",
 				"color": None,
 				"filters_json": json.dumps({"company": company.name, "account": expense_account}),
@@ -65,7 +65,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": "Bank Balance",
+				"chart_name": _("Bank Balance"),
 				"timespan": "Last Year",
 				"color": "#ffb868",
 				"filters_json": json.dumps({"company": company.name, "account": bank_account}),
@@ -79,7 +79,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Monthly",
-				"chart_name": "Incoming Bills (Purchase Invoice)",
+				"chart_name": _("Incoming Bills (Purchase Invoice)"),
 				"timespan": "Last Year",
 				"color": "#a83333",
 				"value_based_on": "base_grand_total",
@@ -95,7 +95,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Monthly",
-				"chart_name": "Outgoing Bills (Sales Invoice)",
+				"chart_name": _("Outgoing Bills (Sales Invoice)"),
 				"timespan": "Last Year",
 				"color": "#7b933d",
 				"value_based_on": "base_grand_total",

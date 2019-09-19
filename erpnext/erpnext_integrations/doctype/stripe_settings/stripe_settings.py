@@ -366,24 +366,21 @@ class StripeSettings(PaymentGatewayController):
 		if error_number == 201:
 			return {
 				"redirect_to": frappe.redirect_to_message(_('Payment error'),\
-					_("It seems that your payment has not been fully accepted by your bank.\
-						<br>We will get in touch with you as soon as possible.")),
+					_("It seems that your payment has not been fully accepted by your bank.<br>We will get in touch with you as soon as possible.")),
 				"status": 201,
 				"error": error
 			}
 		elif error_number == 402:
 			return {
 				"redirect_to": frappe.redirect_to_message(_('Server Error'),\
-					_("It seems that there is an issue with our Stripe integration.\
-					<br>In case of failure, the amount will get refunded to your account.")),
+					_("It seems that there is an issue with our Stripe integration.<br>In case of failure, the amount will get refunded to your account.")),
 				"status": 402,
 				"error": error
 			}
 		else:
 			return {
-				"redirect_to": frappe.redirect_to_message(_('Server Error'),\
-					_("It seems that there is an issue with our Stripe integration.\
-					<br>In case of failure, the amount will get refunded to your account.")),
+				"redirect_to": frappe.redirect_to_message(_('Server Error'),
+					_("It seems that there is an issue with our Stripe integration.<br>In case of failure, the amount will get refunded to your account.")),
 				"status": 500,
 				"error": error
 			}
