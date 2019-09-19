@@ -123,7 +123,7 @@ def get_profit(gross_income, gross_expense, period_list, company, profit_type, c
 
 	for period in period_list:
 		key = period if consolidated else period.key
-		profit_loss[key] = flt(gross_income[0].get(key, 0)) - flt(gross_expense[0].get(key, 0))
+		profit_loss[key] = flt(gross_income[0].get(key, 0)) if gross_income else 0 - flt(gross_expense[0].get(key, 0)) if gross_expense else 0
 
 		if profit_loss[key]:
 			has_value=True
@@ -143,8 +143,8 @@ def get_net_profit(non_gross_income, gross_income, gross_expense, non_gross_expe
 
 	for period in period_list:
 		key = period if consolidated else period.key
-		total_income = flt(gross_income[0].get(key, 0)) + flt(non_gross_income[0].get(key, 0))
-		total_expense = flt(gross_expense[0].get(key, 0)) + flt(non_gross_expense[0].get(key, 0))
+		total_income = (flt(gross_income[0].get(key, 0)) + flt(non_gross_income[0].get(key, 0))) if gross_income else 0
+		total_expense = flt(gross_expense[0].get(key, 0)) + flt(non_gross_expense[0].get(key, 0)) if gross_expense else 0
 		profit_loss[key] = flt(total_income) - flt(total_expense)
 
 		if profit_loss[key]:
