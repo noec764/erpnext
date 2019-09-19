@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from frappe.utils import nowdate
+from frappe.utils import nowdate, flt
 
 EVENT_MAP = {
 	'invoice.created': 'create_invoice',
