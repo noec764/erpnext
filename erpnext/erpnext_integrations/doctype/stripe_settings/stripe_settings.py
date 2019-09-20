@@ -255,6 +255,37 @@ class StripeSettings(PaymentGatewayController):
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe payment intent creation error"))
 
+	def get_payment_methods(self, customer, type='card'):
+		try:
+			self.payment_methods = stripe.PaymentMethod.list(
+				customer=customer,
+				type=type
+			)
+			return self.payment_methods
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe payment methods listing error"))
+
+	def delete_source(self, customer, source):
+		try:
+			return stripe.Customer.delete_source(
+				customer,
+				source
+			)
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe source deletion error"))
+
+	def attach_source(self, customer, source):
+		try:
+			return stripe.Customer.create_source(
+				customer,
+				source=source
+			)
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe source attachment error"))
+
 	def fetch_charges_after_intent(self, payment_intent):
 		try:
 			self.payment_intent = self.stripe.PaymentIntent.retrieve(payment_intent)
