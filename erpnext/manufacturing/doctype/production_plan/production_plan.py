@@ -309,15 +309,16 @@ class ProductionPlan(Document):
 		else :
 			msgprint(_("No Work Orders created"))
 
+
 	def make_work_order_for_sub_assembly_items(self, item):
 		work_orders = []
 		bom_data = {}
 
-		get_sub_assembly_items(item.get("bom_no"), bom_data)
+		get_sub_assembly_items(item.get("bom_no"), bom_data, item.get("qty"))
 
 		for key, data in bom_data.items():
 			data.update({
-				'qty': data.get("stock_qty") * item.get("qty"),
+				'qty': data.get("stock_qty"),
 				'production_plan': self.name,
 				'company': self.company,
 				'fg_warehouse': item.get("fg_warehouse"),
@@ -708,7 +709,7 @@ def get_item_data(item_code):
 		"description": item_details.get("description")
 	}
 
-def get_sub_assembly_items(bom_no, bom_data):
+def get_sub_assembly_items(bom_no, bom_data, qty):
 	data = get_children('BOM', parent = bom_no)
 	for d in data:
 		if d.expandable:
@@ -725,6 +726,6 @@ def get_sub_assembly_items(bom_no, bom_data):
 				})
 
 			bom_item = bom_data.get(key)
-			bom_item["stock_qty"] += d.stock_qty
+			bom_item["stock_qty"] += ((d.stock_qty * qty) / d.parent_bom_qty)
 
-			get_sub_assembly_items(bom_item.get("bom_no"), bom_data)
+			get_sub_assembly_items(bom_item.get("bom_no"), bom_data, bom_item["stock_qty"])

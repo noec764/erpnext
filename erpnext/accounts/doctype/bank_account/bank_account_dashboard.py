@@ -8,13 +8,12 @@ def get_data():
 		'fieldname': 'bank_account',
 		'non_standard_fieldnames': {
 			'Customer': 'default_bank_account',
-			'Supplier': 'default_bank_account',
-			'Journal Entry': 'bank_account_no'
+			'Supplier': 'default_bank_account'
 		},
 		'transactions': [
 			{
 				'label': _('Payments'),
-				'items': ['Payment Entry', 'Payment Request', 'Payment Order']
+				'items': ['Payment Entry', 'Payment Request', 'Payment Order', 'Payroll Entry']
 			},
 			{
 				'label': _('Party'),
