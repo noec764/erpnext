@@ -253,6 +253,9 @@ def get_item_calendar(item):
 
 def get_uom_in_minutes(item, uom=None):
 	minute_uom = frappe.db.get_value("Stock Settings", None, "minute_uom")
+	if uom == minute_uom:
+		return 1
+
 	return frappe.db.get_value("UOM Conversion Factor",\
 		dict(from_uom=uom if uom else item.sales_uom, to_uom=minute_uom), "value") or 0
 
