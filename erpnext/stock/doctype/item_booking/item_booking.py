@@ -83,6 +83,10 @@ def reset_all_booked_slots():
 
 	return slots
 
+@frappe.whitelist()
+def get_locale():
+	return frappe.local.lang
+
 @frappe.whitelist(allow_guest=True)
 def get_availabilities(item, start, end, uom=None, quotation=None):
 	item_doc = frappe.get_doc("Item", item)
