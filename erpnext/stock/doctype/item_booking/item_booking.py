@@ -27,12 +27,13 @@ def get_item_uoms(item_code):
 @frappe.whitelist()
 def book_new_slot(**kwargs):
 	quotation = kwargs.get("quotation")
+	uom = kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom")
 	if not frappe.session.user == "Guest":
 		if not quotation:
 			quotation = _get_cart_quotation().get("name")
 
 		if not quotation or not frappe.db.exists("Quotation", quotation):
-			quotation = update_cart(kwargs.get("item"), 1).get("name")
+			quotation = update_cart(item_code=kwargs.get("item"), qty=1, uom=uom).get("name")
 
 	try:
 		doc = frappe.get_doc({
@@ -41,7 +42,7 @@ def book_new_slot(**kwargs):
 			"starts_on": kwargs.get("start"),
 			"ends_on": kwargs.get("end"),
 			"billing_qty": 1,
-			"sales_uom": kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom"),
+			"sales_uom": uom,
 			"reference_doctype": "Quotation",
 			"reference_name": quotation,
 			"party": frappe.db.get_value("Quotation", quotation, "party_name"),

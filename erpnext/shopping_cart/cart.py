@@ -95,7 +95,7 @@ def request_for_quotation():
 	return quotation.name
 
 @frappe.whitelist()
-def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=None):
+def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=None, reset=False):
 	quotation = _get_cart_quotation()
 
 	empty_card = False
@@ -108,6 +108,9 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 			empty_card = True
 
 	else:
+		if reset:
+			quotation.set("items", [])
+
 		quotation_items = quotation.get("items", {"item_code": item_code, "uom": uom}) if uom\
 			else quotation.get("items", {"item_code": item_code})
 		if not quotation_items:

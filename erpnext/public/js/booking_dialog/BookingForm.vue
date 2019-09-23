@@ -158,16 +158,23 @@ export default {
 				quotation: this.quotation,
 				uom: this.uom
 			}).then(r => {
-				this.updateCart(r.message.length)
+				if (r.message) {
+					if (r.message.length == 1) {
+						this.updateCart(r.message.length, true)
+					} else {
+						this.updateCart(r.message.length, false)
+					}
+				}
 			})
 		},
-		updateCart(qty) {
+		updateCart(qty, reset) {
 			new Promise((resolve) => {
 				resolve(
 					erpnext.shopping_cart.shopping_cart_update({
 						item_code: this.item,
 						qty: qty,
-						uom: this.uom
+						uom: this.uom,
+						reset: reset
 					})
 				)
 			}).then(r => {
