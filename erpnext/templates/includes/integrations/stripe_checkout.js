@@ -90,7 +90,7 @@ cardElement.on('change', function(event) {
 
 const submit_payment_intent = result => {
 	frappe.call({
-		method:"frappe.templates.pages.integrations.stripe_checkout.make_payment_intent",
+		method:"erpnext.templates.pages.integrations.stripe_checkout.make_payment_intent",
 		freeze:true,
 		headers: {"X-Requested-With": "XMLHttpRequest"},
 		args: {
@@ -105,7 +105,7 @@ const submit_payment_intent = result => {
 const submit_payment_token = result => {
 	if (result.token) {
 		frappe.call({
-			method:"frappe.templates.pages.integrations.stripe_checkout.make_subscription",
+			method:"erpnext.templates.pages.integrations.stripe_checkout.make_subscription",
 			freeze:true,
 			headers: {"X-Requested-With": "XMLHttpRequest"},
 			args: {
