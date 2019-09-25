@@ -20,7 +20,7 @@ class ItemBooking(Document):
 def get_item_uoms(item_code):
 	return {
 		"uoms": frappe.get_all('UOM Conversion Detail',\
-		filters={'parent': item_code}, fields=["distinct uom"], as_list=1),
+		filters={'parent': item_code}, fields=["distinct uom"], order_by='idx desc', as_list=1),
 		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
 	}
 
@@ -83,7 +83,7 @@ def reset_all_booked_slots():
 
 	return slots
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_locale():
 	return frappe.local.lang
 
@@ -93,7 +93,10 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 	if not item_doc.enable_item_booking:
 		return []
 
-	duration = get_uom_in_minutes(item_doc, uom)
+	if not uom:
+		uom = item_doc.sales_uom
+
+	duration = get_uom_in_minutes(uom)
 	if not duration:
 		return
 
@@ -102,17 +105,18 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 
 	output = []
 	for dt in daterange(init, finish):
-		calendar_availability = _check_availability(item_doc, dt, duration, quotation)
+		calendar_availability = _check_availability(item_doc, dt, duration, quotation, uom)
 		if calendar_availability:
 			output.extend(calendar_availability)
 
 	return output
 
-def _check_availability(item, date, duration, quotation=None):
+def _check_availability(item, date, duration, quotation=None, uom=None):
 	date = getdate(date)
 	day = calendar.day_name[date.weekday()]
 
-	schedule = get_item_calendar(item)
+
+	schedule = get_item_calendar(item.name, uom)
 
 	availability = []
 	schedules = []
@@ -250,19 +254,22 @@ def get_unavailable_dict(event):
 		"title": _("Already booked")
 	}
 
-def get_item_calendar(item):
-	if not item.item_booking_calendar:
-		return frappe.get_doc("Stock Settings", None).default_calendar
-	else:
-		return item.item_booking_calendar
+def get_item_calendar(item, uom):
+	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
+	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
+		dict(item=None, uom=uom), dict(item=None, uom=None)]:
+		filtered_calendars = [x.get("name") for x in calendars if x.get("item") == filters.get("item") and x.get("uom") == filters.get("uom")]
+		if filtered_calendars:
+			return frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+	return []
 
-def get_uom_in_minutes(item, uom=None):
+def get_uom_in_minutes(uom=None):
 	minute_uom = frappe.db.get_value("Stock Settings", None, "minute_uom")
 	if uom == minute_uom:
 		return 1
 
 	return frappe.db.get_value("UOM Conversion Factor",\
-		dict(from_uom=uom if uom else item.sales_uom, to_uom=minute_uom), "value") or 0
+		dict(from_uom=uom, to_uom=minute_uom), "value") or 0
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():

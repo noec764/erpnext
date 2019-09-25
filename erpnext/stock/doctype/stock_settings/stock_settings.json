@@ -32,8 +32,7 @@
   "use_naming_series",
   "naming_series_prefix",
   "item_booking_column",
-  "minute_uom",
-  "default_calendar"
+  "minute_uom"
  ],
  "fields": [
   {
@@ -200,12 +199,6 @@
    "label": "Item Booking"
   },
   {
-   "fieldname": "default_calendar",
-   "fieldtype": "Table",
-   "label": "Item Booking Default Calendar",
-   "options": "Item Booking Calendar"
-  },
-  {
    "description": "Used for slots calculation.<br>Please add an UOM conversion factor between each UOM used in booked items and this UOM.",
    "fieldname": "minute_uom",
    "fieldtype": "Link",
@@ -216,7 +209,7 @@
  "icon": "icon-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2019-09-16 09:58:16.481675",
+ "modified": "2019-09-25 09:36:11.586161",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",
