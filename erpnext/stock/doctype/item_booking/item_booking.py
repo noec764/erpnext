@@ -270,7 +270,7 @@ def get_unavailable_dict(event):
 		"id": event.name,
 		"backgroundColor": "#69eb94",
 		"classNames": "unavailable",
-		"title": _("Already booked")
+		"title": _("Booked")
 	}
 
 def get_item_calendar(item, uom):
