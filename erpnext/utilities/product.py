@@ -67,16 +67,32 @@ def qty_from_all_warehouses(batch_info):
 
 	return qty
 
-def get_price(item_code, price_list, customer_group, company, qty=1):
+def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 	template_item_code = frappe.db.get_value("Item", item_code, "variant_of")
+	uom_condition = ""
+
+	if uom:
+		uom_condition = " AND uom = '{0}'".format(uom)
 
 	if price_list:
-		price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"],
-			filters={"price_list": price_list, "item_code": item_code})
+		price = frappe.db.sql("""
+			SELECT price_list_rate, currency, uom
+			FROM `tabItem Price`
+			WHERE price_list=%s
+			AND item_code = %s
+			{conditions}
+			AND CURDATE() BETWEEN
+			IFNULL(valid_from, '2000-01-01') AND IFNULL(valid_upto, '2500-12-31')""".format(conditions=uom_condition), (price_list, item_code), as_dict=True)
 
 		if template_item_code and not price:
-			price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"],
-				filters={"price_list": price_list, "item_code": template_item_code})
+			price = frappe.db.sql("""
+				SELECT price_list_rate, currency
+				FROM `tabItem Price`
+				WHERE price_list=%s
+				AND item_code = %s
+				{conditions}
+				AND CURDATE() BETWEEN
+				IFNULL(valid_from, '2000-01-01') AND IFNULL(valid_upto, '2500-12-31')""".format(conditions=uom_condition), (price_list, template_item_code), as_dict=True)
 
 		if price:
 			pricing_rule = get_pricing_rule_for_item(frappe._dict({
@@ -87,7 +103,6 @@ def get_price(item_code, price_list, customer_group, company, qty=1):
 				"customer_group": customer_group,
 				"company": company,
 				"conversion_rate": 1,
-				"for_shopping_cart": True,
 				"currency": frappe.db.get_value("Price List", price_list, "currency")
 			}))
 

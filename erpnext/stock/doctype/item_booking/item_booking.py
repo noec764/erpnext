@@ -12,6 +12,8 @@ from datetime import timedelta, date
 import calendar
 import json
 from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
+from erpnext.utilities.product import get_price
+from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
 
 class ItemBooking(Document):
 	pass
@@ -23,6 +25,23 @@ def get_item_uoms(item_code):
 		filters={'parent': item_code}, fields=["distinct uom"], order_by='idx desc', as_list=1),
 		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
 	}
+
+@frappe.whitelist(allow_guest=True)
+def get_item_price(item_code, uom):
+	cart_settings = get_shopping_cart_settings()
+
+	if not cart_settings.enabled:
+		return frappe._dict()
+
+	cart_quotation = _get_cart_quotation()
+
+	return get_price(
+		item_code=item_code,
+		price_list=cart_quotation.selling_price_list,
+		customer_group=cart_settings.default_customer_group,
+		company=cart_settings.company,
+		uom=uom
+	)
 
 @frappe.whitelist()
 def book_new_slot(**kwargs):

@@ -47,6 +47,8 @@ erpnext.booking_dialog = class BookingDialog {
 			}
 		})
 
+		this.dialog.$wrapper.find(".modal-title").css("text-align", "center")
+		this.dialog.$wrapper.find(".modal-title").css("margin", "auto")
 		this.header = this.dialog.$wrapper.find(".modal-header")
 		this.footer = this.dialog.$wrapper.find(".modal-footer")
 
@@ -110,6 +112,7 @@ erpnext.booking_dialog = class BookingDialog {
 					erpnext.booking_dialog_update.trigger('uom_change', value);
 					this.sales_uom = value;
 					this.show_uom_selector();
+					this.get_item_price();
 				})
 			})
 		}
@@ -126,7 +129,20 @@ erpnext.booking_dialog = class BookingDialog {
 					this.uoms.unshift(r.message.sales_uom)
 				}
 				this.sales_uom = r.message.sales_uom
+				this.get_item_price()
 			}
 		})
+	}
+
+	get_item_price() {
+		return frappe.call(
+			'erpnext.stock.doctype.item_booking.item_booking.get_item_price',
+			{ item_code: this.item, uom: this.sales_uom }
+		).then(r => {
+			if (r && r.message) {
+				this.dialog.set_title(`${this.item}<h4>${r.message.formatted_price}</h4>`)
+			}
+		})
+		
 	}
 }
