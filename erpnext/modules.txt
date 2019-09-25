@@ -16,3 +16,4 @@ Maintenance
 Regional
 ERPNext Integrations
 Quality Management
+Communication
