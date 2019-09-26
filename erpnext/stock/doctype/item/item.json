@@ -115,6 +115,7 @@
   "show_in_website",
   "show_variant_in_website",
   "enable_item_booking",
+  "disable_unit_purchasing",
   "route",
   "weightage",
   "slideshow",
@@ -999,6 +1000,13 @@
    "fieldname": "enable_item_booking",
    "fieldtype": "Check",
    "label": "Enable Item Booking"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_item_booking",
+   "fieldname": "disable_unit_purchasing",
+   "fieldtype": "Check",
+   "label": "Disable unit purchasing"
   }
  ],
  "has_web_view": 1,
@@ -1006,7 +1014,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-09-25 09:35:55.342299",
+ "modified": "2019-09-26 10:22:18.008733",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
