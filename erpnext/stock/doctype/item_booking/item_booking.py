@@ -14,6 +14,8 @@ import json
 from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
 from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
+from frappe.model.mapper import get_mapped_doc
+from erpnext.accounts.party import get_party_account_currency
 
 class ItemBooking(Document):
 	def before_save(self):
@@ -39,13 +41,18 @@ def get_item_price(item_code, uom):
 
 	cart_quotation = _get_cart_quotation()
 
-	return get_price(
+	price = get_price(
 		item_code=item_code,
 		price_list=cart_quotation.selling_price_list,
 		customer_group=cart_settings.default_customer_group,
 		company=cart_settings.company,
 		uom=uom
 	)
+
+	return {
+		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
+		"price": price
+	}
 
 @frappe.whitelist()
 def book_new_slot(**kwargs):
@@ -68,7 +75,8 @@ def book_new_slot(**kwargs):
 			"sales_uom": uom,
 			"reference_doctype": "Quotation",
 			"reference_name": quotation,
-			"party": frappe.db.get_value("Quotation", quotation, "party_name"),
+			"party_type": frappe.db.get_value("Quotation", quotation, "quotation_to"),
+			"party_name": frappe.db.get_value("Quotation", quotation, "party_name"),
 			"user": frappe.session.user
 		}).insert(ignore_permissions=True)
 
@@ -328,3 +336,57 @@ def clear_draft_bookings():
 	for draft in drafts:
 		if now_datetime() > draft.get("modified") + datetime.timedelta(minutes=15):
 			remove_booked_slot(draft.get("name"))
+
+@frappe.whitelist()
+def make_quotation(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
+		quotation = frappe.get_doc(target)
+		quotation.order_type = "Maintenance"
+		company_currency = frappe.get_cached_value('Company',  quotation.company,  "default_currency")
+
+		if quotation.quotation_to == 'Customer' and quotation.party_name:
+			party_account_currency = get_party_account_currency("Customer", quotation.party_name, quotation.company)
+		else:
+			party_account_currency = company_currency
+
+		quotation.currency = party_account_currency or company_currency
+
+		if company_currency == quotation.currency:
+			exchange_rate = 1
+		else:
+			exchange_rate = get_exchange_rate(quotation.currency, company_currency,
+				quotation.transaction_date, args="for_selling")
+
+		quotation.conversion_rate = exchange_rate
+
+		# add item
+		quotation.append('items', {
+			'item_code': source.item,
+			'qty': source.billing_qty,
+			'uom': source.sales_uom
+		})
+
+		# get default taxes
+		taxes = get_default_taxes_and_charges("Sales Taxes and Charges Template", company=quotation.company)
+		if taxes.get('taxes'):
+			quotation.update(taxes)
+
+		quotation.run_method("set_missing_values")
+		quotation.run_method("calculate_taxes_and_totals")
+
+	doclist = get_mapped_doc("Item Booking", source_name, {
+		"Item Booking": {
+			"doctype": "Quotation",
+			"field_map": {
+				"party_type": "quotation_to"
+			}
+		}
+	}, target_doc, set_missing_values)
+
+	doc = frappe.get_doc(doclist).insert()
+	frappe.db.set_value("Item Booking", source_name, "reference_doctype", doc.doctype)
+	frappe.db.set_value("Item Booking", source_name, "reference_name", doc.name)
+
+	return doc
+

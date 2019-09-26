@@ -125,7 +125,7 @@ erpnext.booking_dialog = class BookingDialog {
 		).then(r => {
 			if (r.message) {
 				this.uoms = r.message.uoms.flat()
-				if (!this.uoms.includes(r.message.sales_uom)) {
+				if (!this.uoms.includes(r.message.sales_uom) && r.message.sales_uom !== null) {
 					this.uoms.unshift(r.message.sales_uom)
 				}
 				this.sales_uom = r.message.sales_uom
@@ -140,7 +140,7 @@ erpnext.booking_dialog = class BookingDialog {
 			{ item_code: this.item, uom: this.sales_uom }
 		).then(r => {
 			if (r && r.message) {
-				this.dialog.set_title(`${this.item}<h4>${r.message.formatted_price}</h4>`)
+				this.dialog.set_title(`${r.message.item_name}<h4>${r.message.price.formatted_price}</h4>`)
 			}
 		})
 		
