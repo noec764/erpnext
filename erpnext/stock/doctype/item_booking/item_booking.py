@@ -16,7 +16,11 @@ from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
 
 class ItemBooking(Document):
-	pass
+	def before_save(self):
+		if self.party_name or self.user:
+			self.title = self.item_name + " - " + self.party_name if self.party_name else self.user
+		else:
+			self.title = self.item_name
 
 @frappe.whitelist(allow_guest=True)
 def get_item_uoms(item_code):
@@ -322,5 +326,5 @@ def clear_draft_bookings():
 	drafts = frappe.get_all("Item Booking", filters={"docstatus": 0}, fields=["name", "modified"])
 
 	for draft in drafts:
-		if draft.get("modified") > now_datetime() + datetime.timedelta(minutes=15):
+		if now_datetime() > draft.get("modified") + datetime.timedelta(minutes=15):
 			remove_booked_slot(draft.get("name"))
