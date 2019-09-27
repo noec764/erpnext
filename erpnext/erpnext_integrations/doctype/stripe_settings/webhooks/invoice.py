@@ -87,11 +87,13 @@ class StripeInvoiceWebhookHandler():
 			else:
 				self.subscription.process_active_subscription()
 				self.invoice = self.subscription.get_current_invoice()
-				self.invoice.external_reference = self.integration_request.get("service_id")
-				self.integration_request.update_status({}, "Completed")
+				if self.invoice:
+					self.invoice.external_reference = self.integration_request.get("service_id")
+					self.integration_request.update_status({}, "Completed")
+				else:
+					self.set_as_failed(_("The corresponding invoice could not be found"))
 		except Exception as e:
-			self.integration_request.db_set("error", str(e))
-			self.integration_request.update_status({}, "Failed")
+			self.set_as_failed(e)
 
 	def delete_invoice(self):
 		try:
@@ -99,27 +101,26 @@ class StripeInvoiceWebhookHandler():
 				self.invoice.cancel()
 				self.integration_request.update_status({}, "Completed")
 			else:
-				self.integration_request.db_set("error",\
-					_("There is a mismatch between the reference in this document and the current invoice {1} linked to subscription {0}").format(\
+				self.set_as_failed(_("There is a mismatch between the reference in this document and the current invoice {1} linked to subscription {0}").format(\
 					self.subscription.name, self.invoice.name))
-				self.integration_request.update_status({}, "Failed")
 		except Exception as e:
-			self.integration_request.db_set("error", str(e))
-			self.integration_request.update_status({}, "Failed")
+			self.set_as_failed(e)
 
 	def finalize_invoice(self):
 		try:
-			if self.invoice.docstatus == 0:
-				self.check_and_finalize_invoice()
-			elif self.invoice.docstatus == 2:
-				self.integration_request.db_set("error",\
-					_("Sales invoice {0} is already cancelled").format(self.invoice.name))
-				self.integration_request.update_status({}, "Completed")
+			if self.invoice:
+				if self.invoice.docstatus == 0:
+					self.check_and_finalize_invoice()
+				elif self.invoice.docstatus == 2:
+					self.integration_request.db_set("error",\
+						_("Sales invoice {0} is already cancelled").format(self.invoice.name))
+					self.integration_request.update_status({}, "Completed")
 
-			self.integration_request.update_status({}, "Completed")
+				self.integration_request.update_status({}, "Completed")
+			else:
+				self.set_as_failed(_("The corresponding invoice could not be found"))
 		except Exception as e:
-			self.integration_request.db_set("error", str(e))
-			self.integration_request.update_status({}, "Failed")
+			self.set_as_failed(e)
 
 	def fail_invoice(self):
 		pass
@@ -139,13 +140,11 @@ class StripeInvoiceWebhookHandler():
 				self.integration_request.update_status({}, "Completed")
 			else:
 				if self.invoice.docstatus == 2:
-					self.integration_request.db_set("error", _("Current invoice {0} is cancelled").format(self.invoice.name))
+					self.set_as_failed(_("Current invoice {0} is cancelled").format(self.invoice.name))
 				else:
-					self.integration_request.db_set("error", _("Current invoice {0} is not submitted").format(self.invoice.name))
-				self.integration_request.update_status({}, "Failed")
+					self.set_as_failed(_("Current invoice {0} is not submitted").format(self.invoice.name))
 		except Exception as e:
-			self.integration_request.db_set("error", str(e))
-			self.integration_request.update_status({}, "Failed")
+			self.set_as_failed(e)
 
 	def void_invoice(self):
 		try:
@@ -164,8 +163,7 @@ class StripeInvoiceWebhookHandler():
 		if (self.invoice.grand_total * 100) == self.data.get("data", {}).get("object", {}).get("amount_due"):
 			return True
 		else:
-			self.integration_request.db_set("error", _("The total amount in this document and in the sales invoice don't match"))
-			self.integration_request.update_status({}, "Failed")
+			self.set_as_failed(_("The total amount in this document and in the sales invoice don't match"))
 			return False
 
 	def add_fees(self):
@@ -200,3 +198,7 @@ class StripeInvoiceWebhookHandler():
 				})
 
 				self.payment_entry.set_amounts()
+
+	def set_as_failed(self, message):
+		self.integration_request.db_set("error", str(message))
+		self.integration_request.update_status({}, "Failed")
