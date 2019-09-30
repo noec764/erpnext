@@ -34,7 +34,7 @@
    "fieldname": "uom",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Unit of Measurre",
+   "label": "Unit of Measure",
    "options": "UOM"
   },
   {
@@ -56,7 +56,7 @@
    "unique": 1
   }
  ],
- "modified": "2019-09-25 09:51:15.546647",
+ "modified": "2019-09-25 09:55:15.546647",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking Calendar",
