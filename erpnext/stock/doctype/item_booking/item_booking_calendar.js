@@ -6,7 +6,8 @@ frappe.views.calendar["Item Booking"] = {
 		"start": "starts_on",
 		"end": "ends_on",
 		"id": "name",
-		"title": "item_name",
+		"title": "title",
+		"allDay": "allDay"
 	},
 	filters: [
 		{
@@ -15,6 +16,5 @@ frappe.views.calendar["Item Booking"] = {
 			"options": "Item",
 			"label": __("Item")
 		}
-	],
-	get_availabilities_method: "erpnext.stock.doctype.item_booking.item_booking.get_availabilities"
+	]
 };

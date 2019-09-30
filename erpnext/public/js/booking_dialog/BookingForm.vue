@@ -27,6 +27,8 @@
 				:selectAllow="selectAllow"
 				@eventClick="eventClick"
 				:validRange="validRange"
+				:defaultDate="defaultDate"
+				@datesRender="datesRender"
 			/>
 		</div>
 	</div>
@@ -81,6 +83,7 @@ export default {
 		}
 	},
 	created() {
+		this.getLocale()
 		this.getQuotation()
 		erpnext.booking_dialog_update.on("refresh", () => {
 			this.$refs.fullCalendar.getApi().refetchEvents();
@@ -158,20 +161,38 @@ export default {
 				quotation: this.quotation,
 				uom: this.uom
 			}).then(r => {
-				this.updateCart(r.message.length)
+				if (r.message) {
+					if (r.message.length == 1) {
+						this.updateCart(r.message.length, true)
+					} else {
+						this.updateCart(r.message.length, false)
+					}
+				}
 			})
 		},
-		updateCart(qty) {
+		updateCart(qty, reset) {
 			new Promise((resolve) => {
 				resolve(
 					erpnext.shopping_cart.shopping_cart_update({
 						item_code: this.item,
 						qty: qty,
-						uom: this.uom
+						uom: this.uom,
+						reset: reset
 					})
 				)
 			}).then(r => {
 				this.loading = false;
+			})
+		},
+		datesRender(event) {
+			if (event.view.dayDates.length) {
+				this.defaultDate = event.view.dayDates[0]
+			}
+		},
+		getLocale() {
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_locale")
+			.then(r => {
+				this.locale = r.message
 			})
 		}
 	}

@@ -12,27 +12,58 @@ from datetime import timedelta, date
 import calendar
 import json
 from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
+from erpnext.utilities.product import get_price
+from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
+from frappe.model.mapper import get_mapped_doc
+from erpnext.accounts.party import get_party_account_currency
 
 class ItemBooking(Document):
-	pass
+	def before_save(self):
+		if self.party_name or self.user:
+			self.title = self.item_name + " - " + self.party_name if self.party_name else self.user
+		else:
+			self.title = self.item_name
 
 @frappe.whitelist(allow_guest=True)
 def get_item_uoms(item_code):
 	return {
 		"uoms": frappe.get_all('UOM Conversion Detail',\
-		filters={'parent': item_code}, fields=["distinct uom"], as_list=1),
+		filters={'parent': item_code}, fields=["distinct uom"], order_by='idx desc', as_list=1),
 		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
+	}
+
+@frappe.whitelist(allow_guest=True)
+def get_item_price(item_code, uom):
+	cart_settings = get_shopping_cart_settings()
+
+	if not cart_settings.enabled:
+		return frappe._dict()
+
+	cart_quotation = _get_cart_quotation()
+
+	price = get_price(
+		item_code=item_code,
+		price_list=cart_quotation.selling_price_list,
+		customer_group=cart_settings.default_customer_group,
+		company=cart_settings.company,
+		uom=uom
+	)
+
+	return {
+		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
+		"price": price
 	}
 
 @frappe.whitelist()
 def book_new_slot(**kwargs):
 	quotation = kwargs.get("quotation")
+	uom = kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom")
 	if not frappe.session.user == "Guest":
 		if not quotation:
 			quotation = _get_cart_quotation().get("name")
 
 		if not quotation or not frappe.db.exists("Quotation", quotation):
-			quotation = update_cart(kwargs.get("item"), 1).get("name")
+			quotation = update_cart(item_code=kwargs.get("item"), qty=1, uom=uom).get("name")
 
 	try:
 		doc = frappe.get_doc({
@@ -41,10 +72,11 @@ def book_new_slot(**kwargs):
 			"starts_on": kwargs.get("start"),
 			"ends_on": kwargs.get("end"),
 			"billing_qty": 1,
-			"sales_uom": kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom"),
+			"sales_uom": uom,
 			"reference_doctype": "Quotation",
 			"reference_name": quotation,
-			"party": frappe.db.get_value("Quotation", quotation, "party_name"),
+			"party_type": frappe.db.get_value("Quotation", quotation, "quotation_to"),
+			"party_name": frappe.db.get_value("Quotation", quotation, "party_name"),
 			"user": frappe.session.user
 		}).insert(ignore_permissions=True)
 
@@ -83,12 +115,19 @@ def reset_all_booked_slots():
 	return slots
 
 @frappe.whitelist(allow_guest=True)
+def get_locale():
+	return frappe.local.lang
+
+@frappe.whitelist(allow_guest=True)
 def get_availabilities(item, start, end, uom=None, quotation=None):
 	item_doc = frappe.get_doc("Item", item)
 	if not item_doc.enable_item_booking:
 		return []
 
-	duration = get_uom_in_minutes(item_doc, uom)
+	if not uom:
+		uom = item_doc.sales_uom
+
+	duration = get_uom_in_minutes(uom)
 	if not duration:
 		return
 
@@ -97,17 +136,18 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 
 	output = []
 	for dt in daterange(init, finish):
-		calendar_availability = _check_availability(item_doc, dt, duration, quotation)
+		calendar_availability = _check_availability(item_doc, dt, duration, quotation, uom)
 		if calendar_availability:
 			output.extend(calendar_availability)
 
 	return output
 
-def _check_availability(item, date, duration, quotation=None):
+def _check_availability(item, date, duration, quotation=None, uom=None):
 	date = getdate(date)
 	day = calendar.day_name[date.weekday()]
 
-	schedule = get_item_calendar(item)
+
+	schedule = get_item_calendar(item.name, uom)
 
 	availability = []
 	schedules = []
@@ -242,19 +282,25 @@ def get_unavailable_dict(event):
 		"id": event.name,
 		"backgroundColor": "#69eb94",
 		"classNames": "unavailable",
-		"title": _("Already booked")
+		"title": _("Booked")
 	}
 
-def get_item_calendar(item):
-	if not item.item_booking_calendar:
-		return frappe.get_doc("Stock Settings", None).default_calendar
-	else:
-		return item.item_booking_calendar
+def get_item_calendar(item, uom):
+	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
+	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
+		dict(item=None, uom=uom), dict(item=None, uom=None)]:
+		filtered_calendars = [x.get("name") for x in calendars if x.get("item") == filters.get("item") and x.get("uom") == filters.get("uom")]
+		if filtered_calendars:
+			return frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+	return []
 
-def get_uom_in_minutes(item, uom=None):
+def get_uom_in_minutes(uom=None):
 	minute_uom = frappe.db.get_value("Stock Settings", None, "minute_uom")
+	if uom == minute_uom:
+		return 1
+
 	return frappe.db.get_value("UOM Conversion Factor",\
-		dict(from_uom=uom if uom else item.sales_uom, to_uom=minute_uom), "value") or 0
+		dict(from_uom=uom, to_uom=minute_uom), "value") or 0
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():
@@ -288,5 +334,59 @@ def clear_draft_bookings():
 	drafts = frappe.get_all("Item Booking", filters={"docstatus": 0}, fields=["name", "modified"])
 
 	for draft in drafts:
-		if draft.get("modified") > now_datetime() + datetime.timedelta(minutes=15):
+		if now_datetime() > draft.get("modified") + datetime.timedelta(minutes=15):
 			remove_booked_slot(draft.get("name"))
+
+@frappe.whitelist()
+def make_quotation(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
+		quotation = frappe.get_doc(target)
+		quotation.order_type = "Maintenance"
+		company_currency = frappe.get_cached_value('Company',  quotation.company,  "default_currency")
+
+		if quotation.quotation_to == 'Customer' and quotation.party_name:
+			party_account_currency = get_party_account_currency("Customer", quotation.party_name, quotation.company)
+		else:
+			party_account_currency = company_currency
+
+		quotation.currency = party_account_currency or company_currency
+
+		if company_currency == quotation.currency:
+			exchange_rate = 1
+		else:
+			exchange_rate = get_exchange_rate(quotation.currency, company_currency,
+				quotation.transaction_date, args="for_selling")
+
+		quotation.conversion_rate = exchange_rate
+
+		# add item
+		quotation.append('items', {
+			'item_code': source.item,
+			'qty': source.billing_qty,
+			'uom': source.sales_uom
+		})
+
+		# get default taxes
+		taxes = get_default_taxes_and_charges("Sales Taxes and Charges Template", company=quotation.company)
+		if taxes.get('taxes'):
+			quotation.update(taxes)
+
+		quotation.run_method("set_missing_values")
+		quotation.run_method("calculate_taxes_and_totals")
+
+	doclist = get_mapped_doc("Item Booking", source_name, {
+		"Item Booking": {
+			"doctype": "Quotation",
+			"field_map": {
+				"party_type": "quotation_to"
+			}
+		}
+	}, target_doc, set_missing_values)
+
+	doc = frappe.get_doc(doclist).insert()
+	frappe.db.set_value("Item Booking", source_name, "reference_doctype", doc.doctype)
+	frappe.db.set_value("Item Booking", source_name, "reference_name", doc.name)
+
+	return doc
+

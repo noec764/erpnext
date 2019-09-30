@@ -3,6 +3,7 @@
 {% set cart_settings = shopping_cart.cart_settings %}
 {% set product_info = shopping_cart.product_info %}
 {% set enable_item_booking = frappe.db.get_value('Item', item_code, 'enable_item_booking') %}
+{% set disable_unit_purchasing = frappe.db.get_value('Item', item_code, 'disable_unit_purchasing') %}
 
 <div class="item-cart row mt-2" data-variant-item-code="{{ item_code }}">
 	<div class="col-md-12">
@@ -36,12 +37,14 @@
 			>
 				{{ _("View in Cart") }}
 			</a>
+			{% if enable_item_booking and not disable_unit_purchasing %}
 			<button
 				data-item-code="{{item_code}}"
 				class="btn btn-outline-primary btn-add-to-cart {% if product_info.qty %}hidden{% endif %}"
 			>
 			{% if enable_item_booking %}{{ _("Buy units") }}{% else %}{{ _("Add to Cart") }}{% endif %}
 			</button>
+			{% endif %}
 			{% if enable_item_booking %}
 			<button
 				data-item-code="{{item_code}}"

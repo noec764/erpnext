@@ -351,7 +351,7 @@ class StripeSettings(PaymentGatewayController):
 				linked_subscription = self.reference_document.is_linked_to_a_subscription()
 				if linked_subscription:
 					frappe.db.set_value("Subscription", linked_subscription,\
-						"payment_gateway", self.integration_request.payment_gateway)
+						"payment_gateway", self.reference_document.payment_gateway)
 					frappe.db.set_value("Subscription", linked_subscription,\
 						"payment_gateway_reference", self.subscription.id)
 				return self.retrieve_subscription_latest_invoice()
