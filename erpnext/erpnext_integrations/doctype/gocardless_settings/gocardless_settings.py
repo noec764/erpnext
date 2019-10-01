@@ -10,8 +10,8 @@ from urllib.parse import urlencode
 from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day
 from frappe.integrations.utils import PaymentGatewayController,\
 	create_request_log, create_payment_gateway
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.mandate import GoCardlessMandateWebhookHandler
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.payment import GoCardlessPaymentWebhookHandler
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.mandate import GoCardlessMandateWebhookHandler
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.payment import GoCardlessPaymentWebhookHandler
 import json
 
 class GoCardlessSettings(PaymentGatewayController):
@@ -188,12 +188,14 @@ class GoCardlessSettings(PaymentGatewayController):
 		try:
 			return self.client.payments.get(id)
 		except Exception as e:
+			print("ID", id)
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
 	def get_payment_list(self, params=None):
 		try:
 			return self.client.payments.list(params=params).records
 		except Exception as e:
+			print("PARAMS", params)
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
 	def create_charge_on_gocardless(self):
@@ -305,7 +307,9 @@ def check_integrated_documents():
 		provider = frappe.get_doc("GoCardless Settings", settings.name)
 		check_mandate_status(provider)
 		check_payment_status(provider)
-		fetch_existing_payments(provider)
+		
+		# TODO: Analyze if necessary
+		# fetch_existing_payments(provider)
 
 def check_mandate_status(provider):
 	customers = frappe.get_all("Integration References",\
@@ -316,10 +320,12 @@ def check_mandate_status(provider):
 			mandates = frappe.get_all("GoCardless Mandate", filters={"customer": customer.customer})
 			if mandates:
 				for mandate in mandates:
-					result = provider.client.mandates.get(mandate.name)
-					frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
-						result.status.replace("_", " ").capitalize())
-
+					try:
+						result = provider.client.mandates.get(mandate.name)
+						frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
+							result.status.replace("_", " ").capitalize())
+					except Exception as e:
+						frappe.log_error(str(e), _("GoCardless mandate status update error"))
 
 def check_payment_status(provider):
 	pending_requests = frappe.get_all("Integration Request",\
@@ -331,13 +337,19 @@ def check_payment_status(provider):
 			if request["service_id"]:
 				payments = []
 				if request["service_document"] == "payment":
-					payments.append(provider.get_payments_on_gocardless(id=request["service_id"]))
-				else:
-					payments = provider.get_payments_on_gocardless(params={request["service_document"]: request["service_id"]})
+					gocardless_payments = provider.get_payments_on_gocardless(id=request["service_id"])
+				elif request["service_document"] in ["mandates", "customer"]:
+					map = {"mandates": "mandate", "customer": "customer"}
+					gocardless_payments = provider.get_payments_on_gocardless(params={map.get(request["service_document"]): request["service_id"]})
+
+				if gocardless_payments:
+					payments.append(gocardless_payments)
 
 				for payment in payments:
-					frappe.db.set_value("Integration Request", request["name"],\
-						"service_status", payment.status.replace("_", " ").capitalize())
+					if payment.status.replace("_", " ").capitalize() \
+						!= frappe.db.get_value("Integration Request", request["name"], "service_status"):
+						frappe.db.set_value("Integration Request", request["name"],\
+							"service_status", payment.status.replace("_", " ").capitalize())
 
 					if payment.status == "confirmed" or payment.status == "paid_out":
 						frappe.db.set_value("Integration Request", request["name"], "status", "Completed")
@@ -353,6 +365,7 @@ def fetch_existing_payments(provider):
 				"doctype": "Integration Request",
 				"integration_type": "Request",
 				"integration_request_service": "GoCardless",
+				"payment_gateway_controller": provider.name,
 				"data": str(payment.__dict__),
 				"service_document": "payment",
 				"service_id": payment.id,

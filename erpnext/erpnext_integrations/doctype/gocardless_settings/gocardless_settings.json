@@ -10,8 +10,7 @@
   "webhooks_secret",
   "use_sandbox",
   "settings_section",
-  "check_for_updates",
-  "fetch_missing_payments"
+  "check_for_updates"
  ],
  "fields": [
   {
@@ -51,16 +50,9 @@
    "fieldname": "check_for_updates",
    "fieldtype": "Check",
    "label": "Check for updates"
-  },
-  {
-   "default": "1",
-   "depends_on": "eval:doc.check_for_updates",
-   "fieldname": "fetch_missing_payments",
-   "fieldtype": "Check",
-   "label": "Fetch missing payments"
   }
  ],
- "modified": "2019-08-26 11:01:09.558503",
+ "modified": "2019-10-01 19:17:53.580964",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "GoCardless Settings",
