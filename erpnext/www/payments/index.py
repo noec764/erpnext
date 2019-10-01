@@ -44,14 +44,23 @@ def get_payment_details(link):
 		payment_request.reference_name)
 	error = None
 
-	if flt(reference_document.get("outstanding_amount")) == 0 or \
-		flt(reference_document.get("advance_paid")) >= flt(reference_document.get("rounded_total")\
-		or reference_document.get("grand_total")):
-		error = _("This invoice has already been fully paid")
+	outstanding = reference_document.get("outstanding_amount")
+	total = reference_document.get("rounded_total") or reference_document.get("grand_total")
+	advance = reference_document.get("advance_paid")
 
-	elif erpnext.get_company_currency(reference_document.get("company")) == payment_request.currency and\
-		flt(reference_document.get("outstanding_amount")) < payment_request.grand_total:
-		error = _("The outstanding amount for this document is lower than the current payment request.")
+	if outstanding:
+		if flt(outstanding) == 0:
+			error = _("This invoice has already been fully paid")
+		elif erpnext.get_company_currency(reference_document.get("company")) == payment_request.currency and \
+			flt(outstanding) < payment_request.grand_total:
+			error = _("The outstanding amount for this document is lower than the current payment request.")
+
+	elif advance:
+		if flt(advance) >= flt(total):
+			error = _("This invoice has already been fully paid")
+		elif erpnext.get_company_currency(reference_document.get("company")) == payment_request.currency and \
+			flt(total) - (flt(advance) + flt(payment_request.grand_total)) < 0:
+			error = _("The outstanding amount for this document is lower than the current payment request.")
 
 	return {
 		"doctype": reference_document.doctype,

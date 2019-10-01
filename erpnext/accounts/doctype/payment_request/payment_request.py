@@ -119,6 +119,7 @@ class PaymentRequest(Document):
 			ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
 			si = make_sales_invoice(self.reference_name, ignore_permissions=True)
+			si.allocate_advances_automatically = True
 			si = si.insert(ignore_permissions=True)
 			si.submit()
 
@@ -169,8 +170,10 @@ class PaymentRequest(Document):
 		})
 
 	def set_as_paid(self):
+		frappe.flags.mute_messages = True
 		payment_entry = self.create_payment_entry()
 		self.make_invoice()
+		frappe.flags.mute_messages = False
 
 		return payment_entry
 
