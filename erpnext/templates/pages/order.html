@@ -55,10 +55,10 @@
 			<div class="col-sm-6 col-6 h6 text-uppercase">
 				{{ _("Item") }}
 			</div>
-			<div class="col-sm-3 col-xs-3 text-right h6 text-uppercase">
+			<div class="col-sm-3 col-3 text-right h6 text-uppercase">
 				{{ _("Quantity") }}
 			</div>
-			<div class="col-sm-3 col-xs-3 text-right h6 text-uppercase">
+			<div class="col-sm-3 col-3 text-right h6 text-uppercase">
 				{{ _("Amount") }}
 			</div>
 		</div>
@@ -67,14 +67,14 @@
 			<div class="col-sm-6 col-6">
 				{{ item_name_and_description(d) }}
 			</div>
-			<div class="col-sm-3 col-xs-3 text-right">
+			<div class="col-sm-3 col-3 text-right">
 				{{ d.qty }}
 				{% if d.delivered_qty is defined and d.delivered_qty != None %}
 				<p class="text-muted small">{{ _("Delivered") }}&nbsp;{{ d.delivered_qty }}</p>
 				{% endif %}
 			</div>
-			<div class="col-sm-3 col-xs-3 text-right">
-				{{ d.get_formatted("amount")	 }}
+			<div class="col-sm-3 col-3 text-right">
+				{{ d.get_formatted("amount") }}
 				<p class="text-muted small">{{ _("Rate:") }}&nbsp;{{ d.get_formatted("rate") }}</p>
 			</div>
 		</div>
@@ -82,7 +82,7 @@
 	</div>
 
 	<!-- taxes -->
-	<div class="order-taxes d-flex justify-content-end">
+	<div class="order-taxes d-flex justify-content-end mt-5">
 		<table>
 			{% include "erpnext/templates/includes/order/order_taxes.html" %}
 		</table>
@@ -92,46 +92,27 @@
 {% if enabled_checkout and ((doc.doctype=="Sales Order" and doc.per_billed <= 0)
 	or (doc.doctype=="Sales Invoice" and doc.outstanding_amount > 0)) %}
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<div class="row">
-			<div class="form-column col-sm-6 address-title">
-				<strong>Payment</strong>
+	{% if available_loyalty_points %}
+		<div class="card mt-3">
+			<div class="card-body">
+				<h5 class="card-title">{{ _("Redeem loyalty points") }}</h5>
+				<div class="control-input-wrapper">
+					<div class="control-input">
+						<input class="form-control" type="number" min="0" max="{{ available_loyalty_points }}" id="loyalty-point-to-redeem">
+					</div>
+					<p class="help-box small text-muted d-none d-sm-block"> {{ _("Points available:") }} {{ available_loyalty_points }} </p>
+				</div>
 			</div>
+		  </div>
+	{% endif %}
+
+	<div class="card mt-3">
+		<div class="card-body">
+			<h5 class="card-title">{{ _("Payment") }}</h5>
+			<p id="loyalty-points-status"></p>
+			<a href="/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn={{ doc.name }}&dt={{ doc.doctype }}&submit_doc=1&order_type=Shopping Cart" id="pay-for-order" class="btn btn-primary">{{ _("Pay") }} {{ doc.get_formatted("grand_total") }}</a>
 		</div>
 	</div>
-	<div class="panel-collapse">
-		<div class="panel-body text-muted small">
-			<div class="row">
-				<div class="form-column col-sm-6">
-					{% if available_loyalty_points %}
-					<div class="form-group">
-						<div class="h6">Enter Loyalty Points</div>
-						<div class="control-input-wrapper">
-							<div class="control-input">
-								<input class="form-control" type="number" min="0" max="{{ available_loyalty_points }}" id="loyalty-point-to-redeem">
-							</div>
-							<p class="help-box small text-muted d-none d-sm-block"> Available Points: {{ available_loyalty_points }} </p>
-						</div>
-					</div>
-					{% endif %}
-				</div>
-
-				<div class="form-column col-sm-6">
-					<div id="loyalty-points-status" style="text-align: right"></div>
-					<div class="page-header-actions-block" data-html-block="header-actions">
-						<p>
-							<a href="/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn={{ doc.name }}&dt={{ doc.doctype }}&submit_doc=1&order_type=Shopping Cart"
-								class="btn btn-primary btn-sm" id="pay-for-order">{{ _("Pay") }} {{ doc.get_formatted("grand_total") }} </a>
-						</p>
-					</div>
-				</div>
-
-			</div>
-
-		</div>
-	</div>
-</div>
 {% endif %}
 
 

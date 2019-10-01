@@ -3,7 +3,7 @@ frappe.ui.form.on("Issue", {
 		frm.email_field = "raised_by";
 
 		frappe.db.get_value("Support Settings", {name: "Support Settings"}, "allow_resetting_service_level_agreement", (r) => {
-			if (!r.allow_resetting_service_level_agreement) {
+			if (r && !r.allow_resetting_service_level_agreement) {
 				frm.set_df_property("reset_service_level_agreement", "hidden", 1) ;
 			}
 		});

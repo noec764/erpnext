@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2019-06-27 22:58:49.609672",
+ "modified": "2019-10-01 13:51:09.900603",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "issues",
@@ -107,7 +107,7 @@
    "max_length": 0,
    "max_value": 0,
    "options": "Issue Priority",
-   "read_only": 0,
+   "read_only": 1,
    "reqd": 1,
    "show_in_filter": 0
   },
