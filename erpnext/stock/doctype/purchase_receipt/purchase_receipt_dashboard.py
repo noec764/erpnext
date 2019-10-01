@@ -30,7 +30,7 @@ def get_data():
 				'items': ['Purchase Receipt']
 			},
 			{
-				'label': _('Subscription'),
+				'label': _('Repeat'),
 				'items': ['Auto Repeat']
 			},
 		]

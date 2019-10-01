@@ -13,7 +13,7 @@ def get_data():
 				'items': ['Sales Order']
 			},
 			{
-				'label': _('Subscription'),
+				'label': _('Repeat'),
 				'items': ['Auto Repeat']
 			},
 		]
