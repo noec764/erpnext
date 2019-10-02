@@ -35,10 +35,10 @@ def execute():
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 
 	elements = [
-		{"document": "DocType", "items": doctypes},
-		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
-		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Education"})]},
 		{"document": "Web Form", "items": [x["name"] for x in frappe.get_all("Web Form", filters={"module": "Education"})]},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Education"})]},
 		{"document": "Role", "items": roles},
 		{"document": "Module Def", "items": ["Education"]},
 		{"document": "Domain", "items": ["Education"]}

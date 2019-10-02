@@ -27,16 +27,16 @@ def execute():
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	
 	elements = [
-		{"document": "DocType", "items": doctypes},
-		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
-		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Healthcare"})]},
+		{"document": "Item Group", "items": [_('Laboratory'), _('Drug')]},
+		{"document": "Custom Field", "items": [x["name"] for x in frappe.get_all("Custom Field", filters={"dt": ["in", doctypes]})]},
 		{"document": "Web Form", "items": [x["name"] for x in frappe.get_all("Web Form", filters={"module": "Healthcare"})]},
 		{"document": "Print Format", "items": [x["name"] for x in frappe.get_all("Print Format", filters={"doc_type": ["in", doctypes]})]},
+		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "DocType", "items": doctypes},
+		{"document": "Page", "items": [x["name"] for x in frappe.get_all("Page", filters={"module": "Healthcare"})]},
 		{"document": "Role", "items": roles},
-		{"document": "Domain", "items": ["Healthcare"]},
 		{"document": "Module Def", "items": ["Healthcare"]},
-		{"document": "Custom Field", "items": [x["name"] for x in frappe.get_all("Custom Field", filters={"dt": ["in", doctypes]})]},
-		{"document": "Item Group", "items": [_('Laboratory'), _('Drug')]}
+		{"document": "Domain", "items": ["Healthcare"]}
 	]
 
 	for element in elements:
