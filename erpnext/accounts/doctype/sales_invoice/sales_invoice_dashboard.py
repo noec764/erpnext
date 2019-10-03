@@ -29,7 +29,7 @@ def get_data():
 				'items': ['Sales Invoice']
 			},
 			{
-				'label': _('Subscription'),
+				'label': _('Repeat'),
 				'items': ['Auto Repeat']
 			},
 		]

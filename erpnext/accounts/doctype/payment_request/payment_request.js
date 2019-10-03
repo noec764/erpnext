@@ -103,7 +103,6 @@ frappe.ui.form.on("Payment Request", {
 				},
 				callback: function(r) {
 					if (r.message) {
-						console.log(frappe.boot.user.email_signature)
 						let signature = frappe.boot.user.email_signature || "";
 	
 						if(!frappe.utils.is_html(signature)) {

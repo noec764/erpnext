@@ -26,7 +26,7 @@ def get_data():
 				'items': ['Stock Entry']
 			},
 			{
-				'label': _('Subscription'),
+				'label': _('Repeat'),
 				'items': ['Auto Repeat']
 			},
 		]

@@ -7,7 +7,7 @@ import frappe
 
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import today, flt
+from frappe.utils import today, flt, fmt_money
 
 class LoyaltyProgram(Document):
 	pass
@@ -83,6 +83,17 @@ def get_redeemption_factor(loyalty_program=None, customer=None):
 	else:
 		frappe.throw(_("Customer isn't enrolled in any Loyalty Program"))
 
+@frappe.whitelist()
+def get_redeemed_amount(customer, points_redeemed, grand_total, currency=None):
+	redeemption_factor = get_redeemption_factor(customer=customer)
+	redeemed_amount = flt(points_redeemed) * flt(redeemption_factor)
+
+	return {
+		"loyalty_amount": fmt_money(redeemed_amount, currency=currency),
+		"remaining_amount": fmt_money(flt(grand_total) - redeemed_amount, currency=currency),
+		"redeemable_points": flt(grand_total) /flt(redeemption_factor),
+		"redeem_accepted": redeemed_amount <= flt(grand_total)
+	}
 
 def validate_loyalty_points(ref_doc, points_to_redeem):
 	loyalty_program = None

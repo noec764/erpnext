@@ -26,12 +26,12 @@ def execute():
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
-		{"document": "DocType", "items": doctypes},
+		{"document": "Item Group", "items": ["Fertilizer", "Seed", "By-product", "Produce"]},
 		{"document": "Report", "items": [x["name"] for x in frappe.get_all("Report", filters={"ref_doctype": ["in", doctypes]})]},
+		{"document": "DocType", "items": doctypes},
 		{"document": "Role", "items": roles},
-		{"document": "Domain", "items": ["Agriculture"]},
 		{"document": "Module Def", "items": ["Agriculture"]},
-		{"document": "Item Group", "items": ["Fertilizer", "Seed", "By-product", "Produce"]}
+		{"document": "Domain", "items": ["Agriculture"]}
 	]
 
 	for element in elements:

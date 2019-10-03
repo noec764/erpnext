@@ -6,10 +6,12 @@ import frappe
 from frappe import _
 import json
 
-class GoCardlessWebhookHandler():
+from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
+
+class GoCardlessWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
-		self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
-		self.data = json.loads(self.integration_request.get("data"))
+		super(GoCardlessWebhookHandler, self).__init__(**kwargs)
+
 		self.get_mandate()
 		self.get_customer()
 		self.get_subscription()
@@ -22,3 +24,6 @@ class GoCardlessWebhookHandler():
 
 	def get_subscription(self):
 		self.gocardless_subscription = self.data.get("links", {}).get("subscription")
+
+	def get_payment(self):
+		self.gocardless_payment = self.data.get("links", {}).get("payment")

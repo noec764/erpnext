@@ -159,6 +159,7 @@
   "col_break23",
   "status",
   "source",
+  "external_reference",
   "more_info",
   "debit_to",
   "party_account_currency",
@@ -182,8 +183,7 @@
   "auto_repeat",
   "update_auto_repeat_reference",
   "against_income_account",
-  "pos_total_qty",
-  "external_reference"
+  "pos_total_qty"
  ],
  "fields": [
   {
@@ -1573,19 +1573,19 @@
    "options": "Subscription"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "external_reference",
    "fieldtype": "Data",
    "label": "External Reference",
    "no_copy": 1,
-   "print_hide": 1,
-   "read_only": 1
+   "print_hide": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-09-16 15:28:24.957605",
+ "modified": "2019-10-01 18:12:26.016747",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

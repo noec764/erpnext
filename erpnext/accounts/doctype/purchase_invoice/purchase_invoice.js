@@ -73,8 +73,8 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 			}
 
 			if(!doc.auto_repeat) {
-				cur_frm.add_custom_button(__('Subscription'), function() {
-					erpnext.utils.make_subscription(doc.doctype, doc.name)
+				cur_frm.add_custom_button(__('Auto Repeat'), function() {
+					erpnext.utils.make_auto_repeat(doc.doctype, doc.name)
 				}, __('Create'))
 			}
 		}

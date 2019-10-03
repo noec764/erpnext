@@ -27,6 +27,7 @@
   "address_display",
   "contact_person",
   "contact_display",
+  "contact_phone",
   "contact_mobile",
   "contact_email",
   "company_address_display",
@@ -1171,12 +1172,18 @@
    "fieldtype": "Link",
    "label": "Subscription",
    "options": "Subscription"
+  },
+  {
+   "fieldname": "contact_phone",
+   "fieldtype": "Data",
+   "label": "Contact Phone",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2019-08-28 09:18:21.778675",
+ "modified": "2019-09-23 14:49:17.001507",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

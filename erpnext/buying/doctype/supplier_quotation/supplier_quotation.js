@@ -24,8 +24,8 @@ erpnext.buying.SupplierQuotationController = erpnext.buying.BuyingController.ext
 				__('Create'));
 
 			if(!this.frm.doc.auto_repeat) {
-				cur_frm.add_custom_button(__('Subscription'), function() {
-					erpnext.utils.make_subscription(me.frm.doc.doctype, me.frm.doc.name)
+				cur_frm.add_custom_button(__('Auto Repeat'), function() {
+					erpnext.utils.make_auto_repeat(me.frm.doc.doctype, me.frm.doc.name)
 				}, __('Create'))
 			}
 		}

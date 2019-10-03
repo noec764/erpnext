@@ -88,6 +88,7 @@ def add_gocardless_customer_id(reference_doc, customer_id):
 		if frappe.db.exists("Integration References", dict(customer=origin_transaction.get("customer"))):
 			doc = frappe.get_doc("Integration References", dict(customer=origin_transaction.get("customer")))
 			doc.gocardless_customer_id = customer_id
+			doc.gocardless_settings = frappe.db.get_value("Payment Gateway", reference_doc.get("payment_gateway"), "gateway_controller")
 			doc.save(ignore_permissions=True)
 
 		else:

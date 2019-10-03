@@ -56,7 +56,6 @@
 				{% } %}
 				chartData[{%=j%}] = tempData{%=j%};
 			{% } %}
-			console.log(chartData);
 
 			hold = {
 			bindto: "#chart_div" ,data: {
@@ -78,7 +77,6 @@
 			  show: false
 			}
 			};
-			console.log(hold);
 			var chart = c3.generate(hold);
 		});
 

@@ -298,7 +298,7 @@ class EmailDigest(Document):
 				"company": self.company
 			})
 
-		label = get_link_to_report("General Ledger",self.meta.get_label("income"),
+		label = get_link_to_report("General Ledger", _(self.meta.get_label("income")),
 			filters={
 				"from_date": self.future_from_date,
 				"to_date": self.future_to_date,
@@ -334,13 +334,13 @@ class EmailDigest(Document):
 			filters = {
 				"currency": self.currency
 			}
-			label = get_link_to_report('Profit and Loss Statement', label=self.meta.get_label(root_type + "_year_to_date"), filters=filters)
+			label = get_link_to_report('Profit and Loss Statement', label=_(self.meta.get_label(root_type + "_year_to_date")), filters=filters)
 
 		elif fieldname == 'expenses_booked':
 			filters = {
 				"currency": self.currency
 			}
-			label = get_link_to_report('Profit and Loss Statement', label=self.meta.get_label(root_type + "_year_to_date"), filters=filters)
+			label = get_link_to_report('Profit and Loss Statement', label=_(self.meta.get_label(root_type + "_year_to_date")), filters=filters)
 
 		return {
 			"label": label,
@@ -374,7 +374,7 @@ class EmailDigest(Document):
 				}
 			)
 
-		label = get_link_to_report("General Ledger",self.meta.get_label("expenses_booked"),
+		label = get_link_to_report("General Ledger", _(self.meta.get_label("expenses_booked")),
 			filters={
 				"company":self.company,
 				"from_date":self.future_from_date,
@@ -408,7 +408,7 @@ class EmailDigest(Document):
 					where (transaction_date <= %(to_date)s) and billing_status != "Fully Billed"
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
 
-		label = get_link_to_report('Sales Order', label=self.meta.get_label("sales_orders_to_bill"),
+		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_bill")),
 			report_type="Report Builder",
 			doctype="Sales Order",
 			filters = {
@@ -433,7 +433,7 @@ class EmailDigest(Document):
 					where (transaction_date <= %(to_date)s) and delivery_status != "Fully Delivered"
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
 
-		label = get_link_to_report('Sales Order', label=self.meta.get_label("sales_orders_to_deliver"),
+		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_deliver")),
 			report_type="Report Builder",
 			doctype="Sales Order",
 			filters = {
@@ -458,7 +458,7 @@ class EmailDigest(Document):
 					where (transaction_date <= %(to_date)s) and per_received < 100
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
 
-		label = get_link_to_report('Purchase Order', label=self.meta.get_label("purchase_orders_to_receive"),
+		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_receive")),
 			report_type="Report Builder",
 			doctype="Purchase Order",
 			filters = {
@@ -483,7 +483,7 @@ class EmailDigest(Document):
 					where (transaction_date <= %(to_date)s) and per_billed < 100
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
 
-		label = get_link_to_report('Purchase Order', label=self.meta.get_label("purchase_orders_to_bill"),
+		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_bill")),
 			report_type="Report Builder",
 			doctype="Purchase Order",
 			filters = {
@@ -527,7 +527,7 @@ class EmailDigest(Document):
 					"report_date": self.future_to_date,
 					"company": self.company
 				}
-				label = get_link_to_report('Account Balance', label=self.meta.get_label(fieldname), filters=filters)
+				label = get_link_to_report('Account Balance', label=_(self.meta.get_label(fieldname)), filters=filters)
 			else:
 				filters = {
 					"root_type": "Liability",
@@ -535,7 +535,7 @@ class EmailDigest(Document):
 					"report_date": self.future_to_date,
 					"company": self.company
 				}
-				label = get_link_to_report('Account Balance', label=self.meta.get_label(fieldname), filters=filters)
+				label = get_link_to_report('Account Balance', label=_(self.meta.get_label(fieldname)), filters=filters)
 
 			return {
 				'label': label,
@@ -544,13 +544,13 @@ class EmailDigest(Document):
 			}
 		else:
 			if account_type == 'Payable':
-				label = get_link_to_report('Accounts Payable', label=self.meta.get_label(fieldname),
+				label = get_link_to_report('Accounts Payable', label=_(self.meta.get_label(fieldname)),
 					filters={
 						"report_date": self.future_to_date,
 						"company": self.company
 					} )
 			elif account_type == 'Receivable':
-				label = get_link_to_report('Accounts Receivable', label=self.meta.get_label(fieldname),
+				label = get_link_to_report('Accounts Receivable', label=_(self.meta.get_label(fieldname)),
 					filters={
 						"report_date": self.future_to_date,
 						"company": self.company
@@ -638,7 +638,7 @@ class EmailDigest(Document):
 			and company = %(company)s
 			and status not in ('Ordered','Cancelled', 'Lost') """,{"to_date": self.past_to_date, "company": self.company})[0][0]
 
-		label = get_link_to_report('Quotation', label=self.meta.get_label(fieldname),
+		label = get_link_to_report('Quotation', label=_(self.meta.get_label(fieldname)),
 			report_type="Report Builder",
 			doctype="Quotation",
 			filters = {
@@ -672,7 +672,7 @@ class EmailDigest(Document):
 			"company": self.company
 		}
 
-		label = get_link_to_report(doc_type,label=self.meta.get_label(fieldname),
+		label = get_link_to_report(doc_type,label=_(self.meta.get_label(fieldname)),
 			report_type="Report Builder", filters=filters, doctype=doc_type)
 
 		return {

@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks.utils import GoCardlessWebhookHandler
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.utils import GoCardlessWebhookHandler
 
 EVENT_MAP = {
 	'customer_approval_granted': 'change_status',
@@ -69,7 +69,7 @@ class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
 			frappe.db.set_value("GoCardless Mandate", mandate, "status", status)
 			self.integration_request.update_status({}, "Completed")
 		except Exception as e:
-			self.integration_request.db_set("error", e)
+			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def add_mandate_to_integration_request(self):

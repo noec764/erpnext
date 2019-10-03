@@ -258,6 +258,7 @@ class Subscription(Document):
 
 		invoice.flags.ignore_mandatory = True
 		invoice.flags.ignore_permissions = True
+		invoice.set_missing_values()
 		invoice.save()
 
 		if self.submit_invoice:
@@ -406,7 +407,7 @@ class Subscription(Document):
 		total = 0
 		for plan in self.plans:
 			plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
-			total += (plan.qty * plan.rate)
+			total += (flt(plan.qty) * flt(plan.rate))
 
 		if total != self.total:
 			self.total = total

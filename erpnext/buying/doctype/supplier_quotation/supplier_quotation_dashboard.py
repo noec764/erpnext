@@ -22,7 +22,7 @@ def get_data():
 				'items': ['Material Request', 'Request for Quotation', 'Project']
 			},
 			{
-				'label': _('Subscription'),
+				'label': _('Repeat'),
 				'items': ['Auto Repeat']
 			},
 		]

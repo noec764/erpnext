@@ -8,7 +8,7 @@ from frappe import _
 from urllib.parse import urlencode
 from frappe.utils import get_url, call_hook_method, cint, flt
 from frappe.integrations.utils import PaymentGatewayController, create_request_log, create_payment_gateway
-from erpnext.erpnext_integrations.doctype.stripe_settings.webhooks.invoice import StripeInvoiceWebhookHandler
+from erpnext.erpnext_integrations.doctype.stripe_settings.webhooks_documents.invoice import StripeInvoiceWebhookHandler
 import stripe
 import json
 
