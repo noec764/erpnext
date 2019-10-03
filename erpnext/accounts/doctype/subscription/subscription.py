@@ -227,6 +227,7 @@ class Subscription(Document):
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.flags.ignore_permissions = True
+		sales_order.set_missing_values()
 		sales_order.save()
 		sales_order.submit()
 
@@ -240,6 +241,7 @@ class Subscription(Document):
 		invoice.set_posting_time = 1
 		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		invoice = self.set_subscription_invoicing_details(invoice, prorate)
+		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 
 		#Add link to sales order
 		current_sales_order = self.get_current_documents("Sales Order")
@@ -268,6 +270,7 @@ class Subscription(Document):
 
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
+		document.set_missing_lead_customer_details()
 		document.subscription = self.name
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
 
@@ -286,7 +289,19 @@ class Subscription(Document):
 		# Taxes
 		if self.tax_template:
 			document.taxes_and_charges = self.tax_template
-			document.set_taxes()
+		else:
+			from erpnext.accounts.party import set_taxes
+			document.taxes_and_charges = set_taxes(
+				party=self.customer,
+				party_type="Customer",
+				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
+				company=self.company,
+				customer_group=frappe.db.get_value("Customer", self.customer, "customer_group"),
+				tax_category=document.tax_category,
+				billing_address=document.customer_address,
+				shipping_address=document.shipping_address_name
+			)
+		document.set_taxes()
 
 		# Due date
 		document.append(

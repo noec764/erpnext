@@ -18,8 +18,7 @@ class WebhooksController():
 	def handle_invoice_update(self):
 		target = self.event_map.get(self.data.get("type"))
 		if not target:
-			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
-			self.integration_request.update_status({}, "Completed")
+			self.set_as_completed(_("This type of event is not handled by dokos"))
 
 		else:
 			method = getattr(self, target)
@@ -42,14 +41,20 @@ class WebhooksController():
 			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
 				self.set_as_failed(_("Subscription {0} has already invoice {1} for the current period").format(\
 					self.subscription.name, self.invoice.name))
+
 			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-				self.set_as_failed(_("Subscription {0} has already invoice {1} for the current period, but the invoice references don't match. Please check your subscription.").format(\
-					self.subscription.name, self.invoice.name))
+				if not self.invoice.external_reference:
+					self.invoice.db_set("external_reference", self.integration_request.get("service_id"))
+					self.integration_request.update_status({}, "Completed")
+				else:
+					self.set_as_failed(_("Subscription {0} has already invoice {1} for the current period, but the invoice references don't match. Please check your subscription.").format(\
+						self.subscription.name, self.invoice.name))
+
 			elif self.subscription:
 				self.subscription.process_active_subscription()
 				self.invoice = self.subscription.get_current_invoice()
 				if self.invoice:
-					self.invoice.external_reference = self.integration_request.get("service_id")
+					self.invoice.db_set("external_reference", self.integration_request.get("service_id"))
 					self.integration_request.update_status({}, "Completed")
 				else:
 					self.set_as_failed(_("The corresponding invoice could not be found"))
@@ -96,16 +101,16 @@ class WebhooksController():
 
 	#TODO: Add missing methods
 	def fail_invoice(self):
-		pass
+		self.set_as_completed("Invoice payment failed. Please check it manually.")
 
 	def create_credit_note(self):
-		pass
+		self.set_as_completed("Credit note to be created manually.")
 
 	def cancel_credit_note(self):
-		pass
+		self.set_as_completed("Credit note to be cancelled manually.")
 
 	def reconcile_payment(self):
-		pass
+		self.set_as_completed("Payment to be reconciled manually.")
 
 	def change_status(self):
 		pass
@@ -151,3 +156,7 @@ class WebhooksController():
 	def set_as_failed(self, message):
 		self.integration_request.db_set("error", str(message))
 		self.integration_request.update_status({}, "Failed")
+
+	def set_as_completed(self, message):
+		self.integration_request.db_set("error", str(message))
+		self.integration_request.update_status({}, "Completed")
