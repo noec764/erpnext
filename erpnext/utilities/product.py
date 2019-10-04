@@ -68,11 +68,13 @@ def qty_from_all_warehouses(batch_info):
 	return qty
 
 def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
-	template_item_code = frappe.db.get_value("Item", item_code, "variant_of")
+	template_item_code, stock_uom = frappe.db.get_value("Item", item_code, ["variant_of", "stock_uom"])
 	uom_condition = ""
 
 	if uom:
 		uom_condition = " AND uom = '{0}'".format(uom)
+	elif stock_uom:
+		uom_condition = " AND (uom = '{0}' OR ifnull(uom, '') = '')".format(stock_uom)
 
 	if price_list:
 		price = frappe.db.sql("""
@@ -114,6 +116,7 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 					price[0].price_list_rate = pricing_rule.price_list_rate
 
 			price_obj = price[0]
+
 			if price_obj:
 				price_obj["formatted_price"] = fmt_money(price_obj["price_list_rate"], currency=price_obj["currency"])
 
@@ -121,13 +124,14 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 					and (frappe.db.get_value("Currency", price_obj.currency, "symbol", cache=True) or price_obj.currency) \
 					or ""
 
-				uom_conversion_factor = frappe.db.sql("""select	C.conversion_factor
-					from `tabUOM Conversion Detail` C
-					inner join `tabItem` I on C.parent = I.name and C.uom = I.sales_uom
-					where I.name = %s""", item_code)
+				if stock_uom and not uom:
+					uom_conversion_factor = frappe.db.sql("""select	C.conversion_factor
+						from `tabUOM Conversion Detail` C
+						inner join `tabItem` I on C.parent = I.name and C.uom = I.sales_uom
+						where I.name = %s""", item_code)
 
-				uom_conversion_factor = uom_conversion_factor[0][0] if uom_conversion_factor else 1
-				price_obj["formatted_price_sales_uom"] = fmt_money(price_obj["price_list_rate"] * uom_conversion_factor, currency=price_obj["currency"])
+					uom_conversion_factor = uom_conversion_factor[0][0] if uom_conversion_factor else 1
+					price_obj["formatted_price_sales_uom"] = fmt_money(price_obj["price_list_rate"] * uom_conversion_factor, currency=price_obj["currency"])
 
 				if not price_obj["price_list_rate"]:
 					price_obj["price_list_rate"] = 0

@@ -227,6 +227,7 @@ class Subscription(Document):
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.flags.ignore_permissions = True
+		sales_order.set_missing_values()
 		sales_order.save()
 		sales_order.submit()
 
@@ -236,18 +237,23 @@ class Subscription(Document):
 		return self.create_invoice(prorate)
 
 	def create_invoice(self, prorate):
-		invoice = frappe.new_doc('Sales Invoice')
-		invoice.set_posting_time = 1
-		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
-		invoice = self.set_subscription_invoicing_details(invoice, prorate)
-
-		#Add link to sales order
 		current_sales_order = self.get_current_documents("Sales Order")
 		if current_sales_order:
-			for item in invoice.items:
-				item.sales_order = current_sales_order[0].name
+			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+			invoice = make_sales_invoice(current_sales_order[0])
+			self.add_due_date(invoice)
+			self.add_subscription_dates(invoice)
 
-		## Add dimesnions in invoice for subscription:
+		else:
+			invoice = frappe.new_doc('Sales Invoice')
+			invoice = self.set_subscription_invoicing_details(invoice, prorate)
+
+		invoice.set_posting_time = 1
+		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
+
+		## Add dimensions in invoice for subscription:
 		accounting_dimensions = get_accounting_dimensions()
 
 		for dimension in accounting_dimensions:
@@ -268,6 +274,7 @@ class Subscription(Document):
 
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
+		document.set_missing_lead_customer_details()
 		document.subscription = self.name
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
 
@@ -286,17 +293,21 @@ class Subscription(Document):
 		# Taxes
 		if self.tax_template:
 			document.taxes_and_charges = self.tax_template
-			document.set_taxes()
+		else:
+			from erpnext.accounts.party import set_taxes
+			document.taxes_and_charges = set_taxes(
+				party=self.customer,
+				party_type="Customer",
+				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
+				company=self.company,
+				customer_group=frappe.db.get_value("Customer", self.customer, "customer_group"),
+				tax_category=document.tax_category,
+				billing_address=document.customer_address,
+				shipping_address=document.shipping_address_name
+			)
+		document.set_taxes()
 
-		# Due date
-		document.append(
-			'payment_schedule',
-			{
-				'due_date': add_days(self.current_invoice_start if \
-					self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due)),
-				'invoice_portion': 100
-			}
-		)
+		self.add_due_date(document)
 
 		# Discounts
 		if self.additional_discount_percentage:
@@ -309,9 +320,7 @@ class Subscription(Document):
 			document = self.apply_additional_discount
 			document.apply_additional_discount = discount_on if discount_on else 'Grand Total'
 
-		# Subscription period
-		document.from_date = self.current_invoice_start
-		document.to_date = self.current_invoice_end
+		self.add_subscription_dates(document)
 
 		# Terms and conditions
 		if self.terms_and_conditions:
@@ -320,6 +329,21 @@ class Subscription(Document):
 			document.terms = get_terms_and_conditions(self.terms_and_conditions, document.__dict__)
 
 		return document
+
+	def add_due_date(self, document):
+		document.append(
+			'payment_schedule',
+			{
+				'due_date': add_days(self.current_invoice_start if \
+					self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due)),
+				'invoice_portion': 100
+			}
+		)
+
+	def add_subscription_dates(document):
+		# Subscription period
+		document.from_date = self.current_invoice_start
+		document.to_date = self.current_invoice_end
 
 	def get_items_from_plans(self, plans, date, prorate=0):
 		if prorate:
