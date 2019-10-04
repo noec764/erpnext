@@ -53,7 +53,7 @@ class ItemPrice(Document):
 
 		for field in ['uom', 'min_qty', 'valid_from',
 			'valid_upto', 'packing_unit', 'customer', 'supplier']:
-			if self.get(field):
+			if field == 'uom' or self.get(field):
 				conditions += " and {0} = %({1})s".format(field, field)
 
 		price_list_rate = frappe.db.sql("""

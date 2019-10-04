@@ -237,19 +237,23 @@ class Subscription(Document):
 		return self.create_invoice(prorate)
 
 	def create_invoice(self, prorate):
-		invoice = frappe.new_doc('Sales Invoice')
-		invoice.set_posting_time = 1
-		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
-		invoice = self.set_subscription_invoicing_details(invoice, prorate)
-		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
-
-		#Add link to sales order
 		current_sales_order = self.get_current_documents("Sales Order")
 		if current_sales_order:
-			for item in invoice.items:
-				item.sales_order = current_sales_order[0].name
+			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+			invoice = make_sales_invoice(current_sales_order[0])
+			self.add_due_date(invoice)
+			self.add_subscription_dates(invoice)
 
-		## Add dimesnions in invoice for subscription:
+		else:
+			invoice = frappe.new_doc('Sales Invoice')
+			invoice = self.set_subscription_invoicing_details(invoice, prorate)
+
+		invoice.set_posting_time = 1
+		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
+
+		## Add dimensions in invoice for subscription:
 		accounting_dimensions = get_accounting_dimensions()
 
 		for dimension in accounting_dimensions:
@@ -303,15 +307,7 @@ class Subscription(Document):
 			)
 		document.set_taxes()
 
-		# Due date
-		document.append(
-			'payment_schedule',
-			{
-				'due_date': add_days(self.current_invoice_start if \
-					self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due)),
-				'invoice_portion': 100
-			}
-		)
+		self.add_due_date(document)
 
 		# Discounts
 		if self.additional_discount_percentage:
@@ -324,9 +320,7 @@ class Subscription(Document):
 			document = self.apply_additional_discount
 			document.apply_additional_discount = discount_on if discount_on else 'Grand Total'
 
-		# Subscription period
-		document.from_date = self.current_invoice_start
-		document.to_date = self.current_invoice_end
+		self.add_subscription_dates(document)
 
 		# Terms and conditions
 		if self.terms_and_conditions:
@@ -335,6 +329,21 @@ class Subscription(Document):
 			document.terms = get_terms_and_conditions(self.terms_and_conditions, document.__dict__)
 
 		return document
+
+	def add_due_date(self, document):
+		document.append(
+			'payment_schedule',
+			{
+				'due_date': add_days(self.current_invoice_start if \
+					self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due)),
+				'invoice_portion': 100
+			}
+		)
+
+	def add_subscription_dates(document):
+		# Subscription period
+		document.from_date = self.current_invoice_start
+		document.to_date = self.current_invoice_end
 
 	def get_items_from_plans(self, plans, date, prorate=0):
 		if prorate:
