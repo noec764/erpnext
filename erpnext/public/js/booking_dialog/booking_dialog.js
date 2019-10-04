@@ -140,7 +140,8 @@ erpnext.booking_dialog = class BookingDialog {
 			{ item_code: this.item, uom: this.sales_uom }
 		).then(r => {
 			if (r && r.message) {
-				this.dialog.set_title(`${r.message.item_name}<h4>${r.message.price.formatted_price}</h4>`)
+				const price = r.message.price ? r.message.price.formatted_price : ''
+				this.dialog.set_title(`${r.message.item_name}<h4>${price}</h4>`)
 			}
 		})
 		
