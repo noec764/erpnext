@@ -116,7 +116,6 @@
    "search_index": 1
   },
   {
-   "default": "Medium",
    "fieldname": "priority",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -363,8 +362,8 @@
  ],
  "icon": "fa fa-ticket",
  "idx": 7,
- "modified": "2019-09-11 09:03:57.465623",
- "modified_by": "himanshu@erpnext.com",
+ "modified": "2019-10-04 16:53:33.062495",
+ "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",
  "owner": "Administrator",

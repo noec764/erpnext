@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2019-10-01 13:51:09.900603",
+ "modified": "2019-10-04 16:54:20.165201",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "issues",
@@ -99,7 +99,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
-   "default": "Medium",
+   "default": "",
    "fieldname": "priority",
    "fieldtype": "Link",
    "hidden": 0,
@@ -108,7 +108,7 @@
    "max_value": 0,
    "options": "Issue Priority",
    "read_only": 1,
-   "reqd": 1,
+   "reqd": 0,
    "show_in_filter": 0
   },
   {
