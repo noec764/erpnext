@@ -29,7 +29,6 @@
    "label": "Synchronize all accounts every hour"
   },
   {
-   "depends_on": "eval:doc.enabled==1",
    "fieldname": "plaid_client_id",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -37,7 +36,6 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.enabled==1",
    "fieldname": "plaid_secret",
    "fieldtype": "Password",
    "in_list_view": 1,
@@ -45,7 +43,6 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.enabled==1",
    "fieldname": "plaid_public_key",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -53,7 +50,6 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.enabled==1",
    "fieldname": "plaid_env",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -65,6 +61,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.enabled",
    "fieldname": "section_break_4",
    "fieldtype": "Section Break"
   },
@@ -74,7 +71,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2019-08-13 17:00:06.939422",
+ "modified": "2019-10-07 14:48:21.449168",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Plaid Settings",
