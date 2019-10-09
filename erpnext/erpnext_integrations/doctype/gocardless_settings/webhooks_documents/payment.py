@@ -38,6 +38,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 
 		if self.data.get("links", {}).get("payment"):
 			self.integration_request.db_set("service_id", self.data.get("links", {}).get("payment"))
+			self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
 
 		self.action_type = self.data.get("action")
 		self.handle_invoice_update()
@@ -70,4 +71,5 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			else:
 				self.set_as_failed(_("The corresponding invoice could not be found"))
 		except Exception as e:
+			frappe.log_error(frappe.get_traceback(), __("GoCardless invoice submission error"))
 			self.set_as_failed(e)

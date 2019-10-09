@@ -86,7 +86,7 @@ class WebhooksController():
 
 			if self.invoice.get("docstatus") == 1:
 				self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
-				self.payment_entry.reference_no = self.subscription.name
+				self.payment_entry.reference_no = self.integration_request.get("service_id") or self.integration_request.name
 				self.payment_entry.reference_date = nowdate()
 				self.add_fees()
 				self.payment_entry.flags.ignore_permissions = True
