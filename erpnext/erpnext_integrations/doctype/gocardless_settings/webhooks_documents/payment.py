@@ -37,6 +37,9 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			if self.gocardless_payment:
 				self.get_one_off_invoice()
 
+		if self.data.get("links", {}).get("payment"):
+			self.integration_request.db_set("service_id", self.data.get("links", {}).get("payment"))
+
 		self.action_type = self.data.get("action")
 		self.handle_invoice_update()
 		self.add_reference_to_integration_request()
