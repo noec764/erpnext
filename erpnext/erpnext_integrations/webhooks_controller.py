@@ -18,7 +18,8 @@ class WebhooksController():
 	def handle_invoice_update(self):
 		target = self.event_map.get(self.action_type)
 		if not target:
-			self.set_as_completed(_("This type of event is not handled by dokos"))
+			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
+			self.integration_request.update_status({}, "Not Handled")
 
 		else:
 			method = getattr(self, target)

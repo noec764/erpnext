@@ -8,7 +8,6 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents
 
 EVENT_MAP = {
 	'created': 'create_invoice',
-	'payment_created': 'create_invoice',
 	'customer_approval_granted': 'pay_invoice',
 	'customer_approval_denied': 'change_status',
 	'submitted': 'create_invoice',

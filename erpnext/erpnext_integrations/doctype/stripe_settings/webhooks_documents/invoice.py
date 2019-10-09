@@ -31,7 +31,7 @@ class StripeInvoiceWebhookHandler(WebhooksController):
 			self.get_subscription_invoice()
 		else:
 			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
-			self.integration_request.update_status({}, "Completed")
+			self.integration_request.update_status({}, "Not Handled")
 
 		self.action_type = self.data.get("type")
 		self.handle_invoice_update()

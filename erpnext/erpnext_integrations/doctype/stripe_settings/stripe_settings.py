@@ -423,4 +423,4 @@ def handle_webhooks(**kwargs):
 		StripeInvoiceWebhookHandler(**kwargs)
 	else:
 		integration_request.db_set("error", _("This type of event is not handled by dokos"))
-		integration_request.update_status({}, "Completed")
+		integration_request.update_status({}, "Not Handled")

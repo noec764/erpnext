@@ -42,7 +42,7 @@ class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
 		target = EVENT_MAP.get(self.data.get("action"))
 		if not target:
 			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
-			self.integration_request.update_status({}, "Completed")
+			self.integration_request.update_status({}, "Not Handled")
 
 		else:
 			method = getattr(self, target)
