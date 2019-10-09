@@ -40,8 +40,8 @@ class WebhooksController():
 	def create_invoice(self):
 		try:
 			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-				self.set_as_failed(_("Subscription {0} has already invoice {1} for the current period").format(\
-					self.subscription.name, self.invoice.name))
+				self.set_as_failed(_("An invoice {0} with reference {1} exists already").format(\
+					self.invoice.name, self.integration_request.get("service_id")))
 
 			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
 				if not self.invoice.external_reference:

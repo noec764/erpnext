@@ -10,7 +10,7 @@ EVENT_MAP = {
 	'created': 'create_invoice',
 	'customer_approval_granted': 'pay_invoice',
 	'customer_approval_denied': 'change_status',
-	'submitted': 'create_invoice',
+	'submitted': 'submit_invoice',
 	'confirmed': 'pay_invoice',
 	'cancelled': 'cancel_invoice',
 	'failed': 'fail_invoice',
@@ -54,3 +54,20 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 				self.gocardless_subscription), _("GoCardless webhook action error"))
 		else:
 			self.subscription = frappe.get_doc("Subscription", self.subscriptions[0].get("name"))
+
+	# TODO: Add some amount checks before submit
+	def submit_invoice(self):
+		try:
+			if self.invoice:
+				if self.invoice.docstatus == 0:
+					self.invoice.submit()
+				elif self.invoice.docstatus == 2:
+					self.integration_request.db_set("error",\
+						_("Sales invoice {0} is already cancelled").format(self.invoice.name))
+					self.integration_request.update_status({}, "Completed")
+
+				self.integration_request.update_status({}, "Completed")
+			else:
+				self.set_as_failed(_("The corresponding invoice could not be found"))
+		except Exception as e:
+			self.set_as_failed(e)
