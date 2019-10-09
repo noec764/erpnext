@@ -16,7 +16,7 @@ class WebhooksController():
 		self.subscription = None
 
 	def handle_invoice_update(self):
-		target = self.event_map.get(self.data.get("type"))
+		target = self.event_map.get(self.action_type)
 		if not target:
 			self.set_as_completed(_("This type of event is not handled by dokos"))
 

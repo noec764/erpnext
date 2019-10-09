@@ -340,7 +340,7 @@ class Subscription(Document):
 			}
 		)
 
-	def add_subscription_dates(document):
+	def add_subscription_dates(self, document):
 		# Subscription period
 		document.from_date = self.current_invoice_start
 		document.to_date = self.current_invoice_end
