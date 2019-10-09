@@ -16,7 +16,6 @@ class POSProfile(Document):
 		self.validate_all_link_fields()
 		self.validate_duplicate_groups()
 		self.check_default_payment()
-		self.validate_customer_territory_group()
 
 	def validate_default_profile(self):
 		for row in self.applicable_for_users:
@@ -63,13 +62,6 @@ class POSProfile(Document):
 
 			if len(default_mode_of_payment) > 1:
 				frappe.throw(_("Multiple default mode of payment is not allowed"))
-
-	def validate_customer_territory_group(self):
-		if not self.territory:
-			frappe.throw(_("Territory is Required in POS Profile"), title="Mandatory Field")
-
-		if not self.customer_group:
-			frappe.throw(_("Customer Group is Required in POS Profile"), title="Mandatory Field")
 
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
