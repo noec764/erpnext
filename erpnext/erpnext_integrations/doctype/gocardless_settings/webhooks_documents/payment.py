@@ -8,6 +8,7 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents
 
 EVENT_MAP = {
 	'created': 'create_invoice',
+	'payment_created': 'create_invoice',
 	'customer_approval_granted': 'pay_invoice',
 	'customer_approval_denied': 'change_status',
 	'submitted': 'create_invoice',
@@ -36,6 +37,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			if self.gocardless_payment:
 				self.get_one_off_invoice()
 
+		self.action_type = self.data.get("action")
 		self.handle_invoice_update()
 		self.add_reference_to_integration_request()
 
