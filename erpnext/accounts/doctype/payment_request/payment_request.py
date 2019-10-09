@@ -91,6 +91,9 @@ class PaymentRequest(Document):
 				self.payment_gateway_account, "payment_account")
 
 	def on_submit(self):
+		self.generate_payment_key()
+		self.db_set('status', 'Initiated')
+
 		send_mail = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
@@ -105,9 +108,6 @@ class PaymentRequest(Document):
 		if send_mail:
 			self.send_email()
 			self.make_communication_entry()
-
-		self.generate_payment_key()
-		self.db_set('status', 'Initiated')
 
 	def on_cancel(self):
 		self.check_if_payment_entry_exists()
@@ -145,6 +145,9 @@ class PaymentRequest(Document):
 
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
+
+	def get_payment_link(self):
+		return get_url("/payments?link={0}".format(self.payment_key))
 
 	def get_payment_url(self, payment_gateway):
 		data = frappe.db.get_value(self.reference_doctype, self.reference_name,\
@@ -261,8 +264,9 @@ class PaymentRequest(Document):
 		"""return message with payment gateway link"""
 
 		context = {
-			"doc": frappe.get_doc(self.reference_doctype, self.reference_name),
-			"payment_url": self.payment_url
+			"doc": self,
+			"reference": frappe.get_doc(self.reference_doctype, self.reference_name),
+			"payment_link": self.get_payment_link()
 		}
 
 		if self.message:
