@@ -96,8 +96,8 @@ class WebhooksController():
 					self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
 					self.payment_entry.reference_no = self.integration_request.get("service_id") or self.integration_request.name
 					self.payment_entry.reference_date = nowdate()
-					if hasattr(self, 'add_fees'):
-						self.add_fees()
+					if hasattr(self, 'add_fees_before_creation'):
+						self.add_fees_before_creation()
 					self.payment_entry.flags.ignore_permissions = True
 					self.payment_entry.insert()
 					self.integration_request.update_status({}, "Completed")
@@ -112,6 +112,8 @@ class WebhooksController():
 		try:
 			if frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
 				self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id")))
+				if hasattr(self, 'add_fees_before_submission'):
+					self.add_fees_before_submission()
 				self.payment_entry.submit()
 			else:
 				self.set_as_failed(_("Payment entry with reference {0} not found").format(self.integration_request.get("service_id")))
@@ -135,9 +137,6 @@ class WebhooksController():
 
 	def cancel_credit_note(self):
 		self.set_as_completed(_("Credit note to be cancelled manually."))
-
-	def reconcile_payment(self):
-		self.set_as_completed(_("Payment to be reconciled manually."))
 
 	def change_status(self):
 		pass

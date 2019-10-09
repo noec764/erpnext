@@ -88,7 +88,7 @@ class StripeInvoiceWebhookHandler(WebhooksController):
 			self.set_as_failed(_("The total amount in this document and in the sales invoice don't match"))
 			return False
 
-	def add_fees(self):
+	def add_fees_before_creation(self):
 		charge_id = self.data.get("data", {}).get("object", {}).get("charge")
 		if charge_id:
 			self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)

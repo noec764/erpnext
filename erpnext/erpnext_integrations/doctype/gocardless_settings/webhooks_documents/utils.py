@@ -28,3 +28,6 @@ class GoCardlessWebhookHandler(WebhooksController):
 
 	def get_payment(self):
 		self.gocardless_payment = self.data.get("links", {}).get("payment")
+
+	def get_payout(self):
+		self.gocardless_payout = self.data.get("links", {}).get("payout")

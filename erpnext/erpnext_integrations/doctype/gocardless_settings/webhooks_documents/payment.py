@@ -19,7 +19,7 @@ EVENT_MAP = {
 	'failed': 'fail_invoice',
 	'charged_back': 'create_credit_note',
 	'chargeback_cancelled': 'cancel_credit_note',
-	'paid_out': 'reconcile_payment',
+	'paid_out': 'submit_payment',
 	'late_failure_settled': 'change_status',
 	'chargeback_settled': 'change_status',
 	'resubmission_requested': 'change_status'
@@ -78,13 +78,14 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			frappe.log_error(frappe.get_traceback(), __("GoCardless invoice submission error"))
 			self.set_as_failed(e)
 
-	def add_fees(self):
-		if self.gocardless_payment:
-			payment = self.gocardless_settings.get_payment_by_id(self.gocardless_payment)
-			self.integration_request.db_set("output", str(payment.__dict__))
-			self.base_amount = self.gocardless_settings.get_base_amount(payment)
-			self.exchange_rate = self.gocardless_settings.get_exchange_rate(payment)
-			self.fee_amount = self.gocardless_settings.get_fee_amount(payment)
+	def add_fees_before_submission(self):
+		self.get_payout()
+		if self.gocardless_payout:
+			payout = self.gocardless_settings.get_payout_by_id(self.gocardless_payout)
+			self.integration_request.db_set("output", str(payout.__dict__))
+			self.base_amount = self.gocardless_settings.get_base_amount(payout)
+			self.exchange_rate = self.gocardless_settings.get_exchange_rate(payout)
+			self.fee_amount = self.gocardless_settings.get_fee_amount(payout)
 
 			#TODO: Commonify with payment request
 			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\

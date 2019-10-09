@@ -181,6 +181,18 @@ class GoCardlessSettings(PaymentGatewayController):
 		except Exception as e:
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
+	def get_payout_by_id(self, id):
+		try:
+			return self.client.payouts.get(id)
+		except Exception as e:
+			frappe.log_error(e, _("GoCardless payout retrieval error"))
+
+	def get_payout_items_list(self, params):
+		try:
+			return self.client.payout_items.list(params=params)
+		except Exception as e:
+			frappe.log_error(e, _("GoCardless payment retrieval error"))
+
 	@staticmethod
 	def get_base_amount(payment):
 		return flt(payment.attributes.get("amount")) / 100
