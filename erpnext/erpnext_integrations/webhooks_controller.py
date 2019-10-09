@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from frappe.utils import nowdate, flt
+from frappe.utils import nowdate
 
 class WebhooksController():
 	def __init__(self, **kwargs):
@@ -40,7 +40,7 @@ class WebhooksController():
 	def create_invoice(self):
 		try:
 			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-				self.set_as_failed(_("An invoice {0} with reference {1} exists already").format(\
+				self.set_as_completed(_("An invoice {0} with reference {1} exists already").format(\
 					self.invoice.name, self.integration_request.get("service_id")))
 
 			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
@@ -59,10 +59,18 @@ class WebhooksController():
 					self.integration_request.update_status({}, "Completed")
 				else:
 					self.set_as_failed(_("The corresponding invoice could not be found"))
+			elif frappe.db.exists("Sales Order", dict(external_reference=self.integration_request.get("service_id"))):
+				self.create_invoice_from_sales_order()
 			else:
 				self.set_as_failed(_("Please create a new invoice for this event with external reference {0}").format(self.integration_request.get("service_id")))
 		except Exception as e:
 			self.set_as_failed(e)
+
+	def create_invoice_from_sales_order(self):
+		from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+		self.so_name = frappe.db.get_value("Sales Order", dict(external_reference=self.integration_request.get("service_id")), "name")
+		self.invoice = make_sales_invoice(self.so_name)
+		self.invoice.save()
 
 	def delete_invoice(self):
 		self.cancel_invoice()
@@ -83,71 +91,40 @@ class WebhooksController():
 			if not self.invoice:
 				self.set_as_failed(_("Sales invoice with external reference {0} could not be found").format(\
 					self.integration_request.get("service_id")))
-
-			if self.invoice.get("docstatus") == 1:
-				self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
-				self.payment_entry.reference_no = self.integration_request.get("service_id") or self.integration_request.name
-				self.payment_entry.reference_date = nowdate()
-				self.add_fees()
-				self.payment_entry.flags.ignore_permissions = True
-				self.payment_entry.insert()
-				self.payment_entry.submit()
-				self.integration_request.update_status({}, "Completed")
-			elif self.invoice.get("docstatus") == 2:
-				self.set_as_failed(_("Current invoice {0} is cancelled").format(self.invoice.name))
 			else:
-				self.set_as_failed(_("Current invoice {0} is not submitted").format(self.invoice.name))
+				if self.invoice.get("docstatus") == 1:
+					self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
+					self.payment_entry.reference_no = self.integration_request.get("service_id") or self.integration_request.name
+					self.payment_entry.reference_date = nowdate()
+					if hasattr(self, 'add_fees'):
+						self.add_fees()
+					self.payment_entry.flags.ignore_permissions = True
+					self.payment_entry.insert()
+					self.payment_entry.submit()
+					self.integration_request.update_status({}, "Completed")
+				elif self.invoice.get("docstatus") == 2:
+					self.set_as_failed(_("Current invoice {0} is cancelled").format(self.invoice.name))
+				else:
+					self.set_as_failed(_("Current invoice {0} is not submitted").format(self.invoice.name))
 		except Exception as e:
+			print(frappe.get_traceback())
 			self.set_as_failed(e)
 
 	#TODO: Add missing methods
 	def fail_invoice(self):
-		self.set_as_completed("Invoice payment failed. Please check it manually.")
+		self.set_as_completed(_("Invoice payment failed. Please check it manually."))
 
 	def create_credit_note(self):
-		self.set_as_completed("Credit note to be created manually.")
+		self.set_as_completed(_("Credit note to be created manually."))
 
 	def cancel_credit_note(self):
-		self.set_as_completed("Credit note to be cancelled manually.")
+		self.set_as_completed(_("Credit note to be cancelled manually."))
 
 	def reconcile_payment(self):
-		self.set_as_completed("Payment to be reconciled manually.")
+		self.set_as_completed(_("Payment to be reconciled manually."))
 
 	def change_status(self):
 		pass
-
-	def add_fees(self):
-		charge_id = self.data.get("data", {}).get("object", {}).get("charge")
-		if charge_id:
-			self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
-			self.integration_request.db_set("output", json.dumps(self.charge))
-			self.base_amount = self.stripe_settings.get_base_amount(self.charge)
-			self.exchange_rate = self.stripe_settings.get_exchange_rate(self.charge)
-			self.fee_amount = self.stripe_settings.get_fee_amount(self.charge)
-
-			#TODO: Commonify with payment request
-			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
-				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
-
-			if self.exchange_rate:
-				self.payment_entry.update({
-					"target_exchange_rate": self.exchange_rate,
-				})
-
-			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
-				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
-				self.payment_entry.update({
-					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
-					"received_amount": flt(self.payment_entry.received_amount) - fees
-				})
-
-				self.payment_entry.append("deductions", {
-					"account": gateway_defaults.get("fee_account"),
-					"cost_center": gateway_defaults.get("cost_center"),
-					"amount": self.fee_amount
-				})
-
-				self.payment_entry.set_amounts()
 
 	def add_reference_to_integration_request(self):
 		if self.invoice:

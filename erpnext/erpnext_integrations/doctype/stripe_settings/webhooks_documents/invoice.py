@@ -4,6 +4,8 @@
 
 import frappe
 from frappe import _
+import json
+from frappe.utils import flt
 
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
@@ -85,3 +87,36 @@ class StripeInvoiceWebhookHandler(WebhooksController):
 		else:
 			self.set_as_failed(_("The total amount in this document and in the sales invoice don't match"))
 			return False
+
+	def add_fees(self):
+		charge_id = self.data.get("data", {}).get("object", {}).get("charge")
+		if charge_id:
+			self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
+			self.integration_request.db_set("output", json.dumps(self.charge))
+			self.base_amount = self.stripe_settings.get_base_amount(self.charge)
+			self.exchange_rate = self.stripe_settings.get_exchange_rate(self.charge)
+			self.fee_amount = self.stripe_settings.get_fee_amount(self.charge)
+
+			#TODO: Commonify with payment request
+			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
+				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
+
+			if self.exchange_rate:
+				self.payment_entry.update({
+					"target_exchange_rate": self.exchange_rate,
+				})
+
+			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
+				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
+				self.payment_entry.update({
+					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
+					"received_amount": flt(self.payment_entry.received_amount) - fees
+				})
+
+				self.payment_entry.append("deductions", {
+					"account": gateway_defaults.get("fee_account"),
+					"cost_center": gateway_defaults.get("cost_center"),
+					"amount": self.fee_amount
+				})
+
+				self.payment_entry.set_amounts()

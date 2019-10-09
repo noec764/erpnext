@@ -38,6 +38,9 @@ def webhooks():
 		queue='long', timeout=600, is_async=True, **{"doctype": "Integration Request",\
 		"docname":  doc.name})
 
+	frappe.enqueue(method='frappe.integrations.doctype.integration_request.integration_request.retry_failed_webhooks',\
+		queue='long', timeout=600, service="Stripe")
+
 	frappe.response.message = "Webhook received and event type handled"
 	frappe.response.http_status_code = 200
 

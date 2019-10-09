@@ -144,32 +144,20 @@ class GoCardlessSettings(PaymentGatewayController):
 			return self.create_charge_on_gocardless()
 		else:
 			try:
-				self.output = self.client.subscriptions.create(
-					params={
-						"amount": cint(flt(self.reference_document.grand_total, self.reference_document.precision("grand_total")) * 100),
-						"currency": self.reference_document.currency,
-						"name": subscription.name,
-						"interval_unit": self.interval_map[plan_details.billing_interval],
-						"interval": plan_details.billing_interval_count,
-						"day_of_month": self.get_day_of_month()\
-							if plan_details.billing_interval == "Month" else "",
-						"metadata": {
-							"order_no": self.reference_document.reference_name
-						},
-						"links": {
-							"mandate": self.data.get("mandate")
-						}		
-					},
-					headers={
-						'Idempotency-Key' : self.data.get('reference_docname'),
-					}
-				)
-
+				self.output = self.create_subscription_on_gocardless(self.reference_document, self.data, self.subscription, plan_details)
 				return self.process_output('subscription')
 
 			except Exception as e:
 				self.change_integration_request_status("Failed", "error", str(e))
 				return self.error_message(402, _("GoCardless subscription creation error"))
+
+	def create_charge_on_gocardless(self):
+		try:
+			self.output = self.create_payment_on_gocardless(self.reference_document, self.data)
+			return self.process_output('payment')
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("GoCardless Payment Error"))
 
 	def get_day_of_month(self):
 		if self.reference_document.transaction_date\
@@ -179,49 +167,71 @@ class GoCardlessSettings(PaymentGatewayController):
 			return -1
 
 	def get_payments_on_gocardless(self, id=None, params=None):
-		if id:
-			return self.get_payment_by_id(id)
-		else:
-			return self.get_payment_list(params)
+		return self.get_payment_by_id(id) if id else self.get_payment_list(params)
 
 	def get_payment_by_id(self, id):
 		try:
 			return self.client.payments.get(id)
 		except Exception as e:
-			print("ID", id)
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
 	def get_payment_list(self, params=None):
 		try:
 			return self.client.payments.list(params=params).records
 		except Exception as e:
-			print("PARAMS", params)
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
-	def create_charge_on_gocardless(self):
-		try:
-			self.output = self.client.payments.create(
-				params={
-					"amount" : cint(self.reference_document.grand_total * 100),
-					"currency" : self.reference_document.currency,
-					"links" : {
-						"mandate": self.data.get('mandate')
-					},
-					"metadata": {
-					  "reference_doctype": self.reference_document.doctype,
-					  "reference_document": self.reference_document.name
-					}
+	@staticmethod
+	def get_base_amount(payment):
+		return flt(payment.attributes.get("amount")) / 100
+
+	@staticmethod
+	def get_exchange_rate(payment):
+		return flt(payment.attributes.get("fx", {}).get("amount")) or 1
+
+	@staticmethod
+	def get_fee_amount(payment):
+		return flt(payment.attributes.get("transaction_fee")) / 100
+
+	def create_subscription_on_gocardless(self, reference_document, data, subscription, plan_details):
+		return self.client.subscriptions.create(
+			params={
+				"amount": cint(flt(reference_document.grand_total, self.reference_document.precision("grand_total")) * 100),
+				"currency": reference_document.currency,
+				"name": subscription,
+				"interval_unit": self.interval_map[plan_details.billing_interval],
+				"interval": plan_details.billing_interval_count,
+				"day_of_month": self.get_day_of_month()\
+					if plan_details.billing_interval == "Month" else "",
+				"metadata": {
+					"order_no": reference_document.reference_name
 				},
-				headers={
-					'Idempotency-Key' : self.data.get('reference_docname'),
+				"links": {
+					"mandate": data.get("mandate")
 				}
-			)
+			},
+			headers={
+				'Idempotency-Key' : data.get('reference_docname'),
+			}
+		)
 
-			return self.process_output('payment')
-
-		except Exception as e:
-			self.change_integration_request_status("Failed", "error", str(e))
-			return self.error_message(402, _("GoCardless Payment Error"))
+	def create_payment_on_gocardless(self, reference_document, data):
+		return self.client.payments.create(
+			params={
+				"amount" : cint(reference_document.grand_total * 100),
+				"currency" : reference_document.currency,
+				"links" : {
+					"mandate": data.get('mandate')
+				},
+				"metadata": {
+					"reference_doctype": reference_document.doctype,
+					"reference_document": reference_document.name
+				}
+			},
+			headers={
+				'Idempotency-Key' : data.get('reference_docname'),
+			}
+		)
 
 	def process_output(self, service):
 		if service == "subscription":
@@ -230,6 +240,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			self.process_payment()
 
 	def process_subscription(self):
+		self.update_transaction_reference()
 		if self.output.status == "pending_customer_approval":
 			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
 			self.reference_document.db_set("status", "Pending", update_modified=True)
@@ -250,6 +261,7 @@ class GoCardlessSettings(PaymentGatewayController):
 				_("Payment Failed. Please check your GoCardless Account for more details"))
 
 	def process_payment(self):
+		self.update_transaction_reference()
 		if self.output.status == "pending_submission"\
 			or self.output.status == "pending_customer_approval" or self.output.status == "submitted":
 			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
@@ -269,6 +281,10 @@ class GoCardlessSettings(PaymentGatewayController):
 			self.change_integration_request_status("Failed", "error", str(self.output.__dict__))
 			return self.error_message(402, _("GoCardless Payment Error"),\
 				_("Payment Failed. Please check your GoCardless Account for more details"))
+
+	def update_transaction_reference(self):
+		frappe.db.set_value(self.reference_document.reference_doctype, self.reference_document.reference_name,\
+			"external_reference", self.output.attributes.get("id") if self.output.attributes else "")
 
 	def change_integration_request_status(self, status, type, error):
 		self.flags.status_changed_to = status

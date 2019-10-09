@@ -4,6 +4,9 @@
 
 import frappe
 from frappe import _
+import json
+from frappe.utils import flt
+
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.utils import GoCardlessWebhookHandler
 
 EVENT_MAP = {
@@ -27,17 +30,18 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		super(GoCardlessPaymentWebhookHandler, self).__init__(**kwargs)
 
 		self.event_map = EVENT_MAP
+		self.get_payment()
+		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
+			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
 		if self.gocardless_subscription:
 			self.get_linked_subscription()
 			self.get_subscription_invoice()
-		else:
-			self.get_payment()
-			if self.gocardless_payment:
-				self.get_one_off_invoice()
+		elif self.gocardless_payment:
+			self.get_one_off_invoice()
 
-		if self.data.get("links", {}).get("payment"):
-			self.integration_request.db_set("service_id", self.data.get("links", {}).get("payment"))
+		if self.gocardless_payment:
+			self.integration_request.db_set("service_id", self.gocardless_payment)
 			self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
 
 		self.action_type = self.data.get("action")
@@ -73,3 +77,35 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		except Exception as e:
 			frappe.log_error(frappe.get_traceback(), __("GoCardless invoice submission error"))
 			self.set_as_failed(e)
+
+	def add_fees(self):
+		if self.gocardless_payment:
+			payment = self.gocardless_settings.get_payment_by_id(self.gocardless_payment)
+			self.integration_request.db_set("output", str(payment.__dict__))
+			self.base_amount = self.gocardless_settings.get_base_amount(payment)
+			self.exchange_rate = self.gocardless_settings.get_exchange_rate(payment)
+			self.fee_amount = self.gocardless_settings.get_fee_amount(payment)
+
+			#TODO: Commonify with payment request
+			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
+				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
+
+			if self.exchange_rate:
+				self.payment_entry.update({
+					"target_exchange_rate": self.exchange_rate,
+				})
+
+			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
+				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
+				self.payment_entry.update({
+					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
+					"received_amount": flt(self.payment_entry.received_amount) - fees
+				})
+
+				self.payment_entry.append("deductions", {
+					"account": gateway_defaults.get("fee_account"),
+					"cost_center": gateway_defaults.get("cost_center"),
+					"amount": self.fee_amount
+				})
+
+				self.payment_entry.set_amounts()

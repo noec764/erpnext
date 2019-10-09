@@ -15,6 +15,7 @@ class GoCardlessWebhookHandler(WebhooksController):
 		self.get_mandate()
 		self.get_customer()
 		self.get_subscription()
+		self.gocardless_settings = frappe.get_doc("GoCardless Settings", self.integration_request.get("payment_gateway_controller"))
 
 	def get_mandate(self):
 		self.mandate = self.data.get("links", {}).get("mandate")

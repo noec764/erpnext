@@ -320,11 +320,11 @@ class StripeSettings(PaymentGatewayController):
 
 	@staticmethod
 	def get_base_amount(charge):
-		return charge.balance_transaction.get("amount") / 100
+		return flt(charge.balance_transaction.get("amount")) / 100
 
 	@staticmethod
 	def get_exchange_rate(charge):
-		return charge.balance_transaction.get("exchange_rate") or 1
+		return flt(charge.balance_transaction.get("exchange_rate")) or 1
 
 	@staticmethod
 	def get_fee_amount(charge):

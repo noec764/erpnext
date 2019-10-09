@@ -28,6 +28,9 @@ def webhooks():
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("GoCardless webhooks processing error"))
 
+	frappe.enqueue(method='frappe.integrations.doctype.integration_request.integration_request.retry_failed_webhooks',\
+		queue='long', timeout=600, service="GoCardless")
+
 	frappe.response.message = "Webhook received and event type handled"
 	frappe.response.http_status_code = 200
 
