@@ -81,20 +81,23 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 	def add_fees_before_submission(self):
 		self.get_payout()
 		if self.gocardless_payout:
-			payout = self.gocardless_settings.get_payout_by_id(self.gocardless_payout)
+			payout_items = self.gocardless_settings.get_payout_items_list({"payout": self.gocardless_payout})
+
 			self.integration_request.db_set("output", str(payout.__dict__))
-			self.base_amount = self.gocardless_settings.get_base_amount(payout)
-			self.exchange_rate = self.gocardless_settings.get_exchange_rate(payout)
-			self.fee_amount = self.gocardless_settings.get_fee_amount(payout)
+			self.base_amount = self.gocardless_settings.get_base_amount(payout_items)
+			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items)
+			#TODO: Handle exchange rates
+			# self.exchange_rate = self.gocardless_settings.get_exchange_rate(payout)
 
 			#TODO: Commonify with payment request
 			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
-			if self.exchange_rate:
-				self.payment_entry.update({
-					"target_exchange_rate": self.exchange_rate,
-				})
+			#TODO: Handle exchange rates
+			# if self.exchange_rate:
+			#	self.payment_entry.update({
+			#		"target_exchange_rate": self.exchange_rate,
+			#	})
 
 			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
 				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))

@@ -189,21 +189,29 @@ class GoCardlessSettings(PaymentGatewayController):
 
 	def get_payout_items_list(self, params):
 		try:
-			return self.client.payout_items.list(params=params)
+			return self.client.payout_items.list(params=params).records
 		except Exception as e:
 			frappe.log_error(e, _("GoCardless payment retrieval error"))
 
 	@staticmethod
-	def get_base_amount(payment):
-		return flt(payment.attributes.get("amount")) / 100
+	def get_base_amount(payout_items):
+		paid_amount = [x.amount for x in payout_items if x.type == "payment_paid_out"]
+		total = 0
+		for p in paid_amount:
+			total += flt(p)
+		return total / 100
+
+	@staticmethod
+	def get_fee_amount(payout_items):
+		fee_amount = [x.amount for x in payout_items if x.type == "gocardless_fee" or x.type == "app_fee"]
+		total = 0
+		for p in fee_amount:
+			total += flt(p)
+		return total / 100
 
 	@staticmethod
 	def get_exchange_rate(payment):
 		return flt(payment.attributes.get("fx", {}).get("amount")) or 1
-
-	@staticmethod
-	def get_fee_amount(payment):
-		return flt(payment.attributes.get("transaction_fee")) / 100
 
 	def create_subscription_on_gocardless(self, reference_document, data, subscription, plan_details):
 		return self.client.subscriptions.create(
