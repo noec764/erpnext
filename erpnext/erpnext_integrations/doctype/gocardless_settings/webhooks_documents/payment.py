@@ -83,7 +83,11 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		if self.gocardless_payout:
 			payout_items = self.gocardless_settings.get_payout_items_list({"payout": self.gocardless_payout})
 
-			self.integration_request.db_set("output", str(payout.__dict__))
+			output = ""
+			for p in payout_items:
+				output += str(p.__dict__)
+			self.integration_request.db_set("output", output)
+
 			self.base_amount = self.gocardless_settings.get_base_amount(payout_items)
 			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items)
 			#TODO: Handle exchange rates
@@ -102,8 +106,8 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			if self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center"):
 				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
 				self.payment_entry.update({
-					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
-					"received_amount": flt(self.payment_entry.received_amount) - fees
+					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) + fees,
+					"received_amount": flt(self.payment_entry.received_amount) + fees
 				})
 
 				self.payment_entry.append("deductions", {
