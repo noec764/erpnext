@@ -14,7 +14,7 @@ EVENT_MAP = {
 	'invoice.deleted': 'delete_invoice',
 	'invoice.finalized': 'finalize_invoice',
 	'invoice.payment_failed': 'fail_invoice',
-	'invoice.payment_succeeded': 'pay_invoice',
+	'invoice.payment_succeeded': 'create_and_submit_payment',
 	'invoice.voided': 'void_invoice'
 }
 

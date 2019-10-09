@@ -70,7 +70,7 @@ class WebhooksController():
 		from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 		self.so_name = frappe.db.get_value("Sales Order", dict(external_reference=self.integration_request.get("service_id")), "name")
 		self.invoice = make_sales_invoice(self.so_name)
-		self.invoice.save()
+		self.invoice.insert()
 
 	def delete_invoice(self):
 		self.cancel_invoice()
@@ -100,14 +100,30 @@ class WebhooksController():
 						self.add_fees()
 					self.payment_entry.flags.ignore_permissions = True
 					self.payment_entry.insert()
-					self.payment_entry.submit()
 					self.integration_request.update_status({}, "Completed")
 				elif self.invoice.get("docstatus") == 2:
 					self.set_as_failed(_("Current invoice {0} is cancelled").format(self.invoice.name))
 				else:
 					self.set_as_failed(_("Current invoice {0} is not submitted").format(self.invoice.name))
 		except Exception as e:
-			print(frappe.get_traceback())
+			self.set_as_failed(e)
+
+	def submit_payment(self):
+		try:
+			if frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
+				self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id")))
+				self.payment_entry.submit()
+			else:
+				self.set_as_failed(_("Payment entry with reference {0} not found").format(self.integration_request.get("service_id")))
+		except Exception as e:
+			self.set_as_failed(e)
+
+	def create_and_submit_payment(self):
+		try:
+			self.pay_invoice()
+			if self.payment_entry:
+				self.payment_entry.submit()
+		except Exception as e:
 			self.set_as_failed(e)
 
 	#TODO: Add missing methods
