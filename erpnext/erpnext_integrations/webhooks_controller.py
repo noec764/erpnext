@@ -123,7 +123,7 @@ class WebhooksController():
 	def create_and_submit_payment(self):
 		try:
 			self.pay_invoice()
-			if self.payment_entry:
+			if hasattr(self, 'payment_entry') and self.payment_entry:
 				self.payment_entry.submit()
 		except Exception as e:
 			self.set_as_failed(e)

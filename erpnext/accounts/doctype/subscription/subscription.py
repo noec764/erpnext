@@ -217,7 +217,10 @@ class Subscription(Document):
 	def generate_sales_order(self):
 		if self.create_sales_order:
 			if not self.has_sales_order_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
-				self.create_new_sales_order()
+				try:
+					self.create_new_sales_order()
+				except Exception:
+					frappe.log_error(frappe.get_traceback(), __("Sales order generation error for subscription {0}").format(self.name))
 
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
@@ -234,7 +237,10 @@ class Subscription(Document):
 		return sales_order
 
 	def generate_invoice(self, prorate=0):
-		return self.create_invoice(prorate)
+		try:
+			return self.create_invoice(prorate)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), __("Invoice generation error for subscription {0}").format(self.name))
 
 	def create_invoice(self, prorate):
 		current_sales_order = self.get_current_documents("Sales Order")

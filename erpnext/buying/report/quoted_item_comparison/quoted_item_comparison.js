@@ -46,7 +46,7 @@ frappe.query_reports["Quoted Item Comparison"] = {
 
 			//Always make a new one so that the latest values get updated
 			reporter.make_default_supplier_dialog(report);
-		}, 'Tools');
+		}, __('Tools'));
 
 	},
 	make_default_supplier_dialog: (report) => {
