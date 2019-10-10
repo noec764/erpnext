@@ -68,6 +68,12 @@ class Subscription(Document):
 				self.current_invoice_end = get_last_day(self.current_invoice_start)
 
 	def process(self):
+		if self.cancel_at_period_end:
+			self.cancel_subscription_at_period_end()
+
+		if self.cancellation_date and self.period_has_passed(add_days(self.cancellation_date, -1)):
+			self.cancel_subscription()
+
 		if self.status == 'Active':
 			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
 				self.process_active_subscription()
@@ -77,13 +83,7 @@ class Subscription(Document):
 		self.save()
 
 	def process_active_subscription(self):
-		if self.cancel_at_period_end:
-			self.cancel_subscription_at_period_end()
-
-		if self.cancellation_date and self.period_has_passed(add_days(self.cancellation_date, -1)):
-			self.cancel_subscription()
-
-		elif self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end):
+		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end):
 			self.update_subscription_period(add_days(self.trial_period_end, 1))
 
 		elif not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
@@ -399,9 +399,23 @@ class Subscription(Document):
 			if not self.cancellation_date:
 				self.cancellation_date = self.current_invoice_end
 
-			if generate_invoice and not self.generate_invoice_at_period_start:
+			if generate_invoice and not self.generate_invoice_at_period_start \
+				and not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
 				self.generate_invoice(prorate=self.prorate_invoice)
 			self.save()
+
+			self.cancel_gateway_subscription()
+
+	def cancel_gateway_subscription(self):
+		if self.payment_gateway and self.payment_gateway_reference:
+			gateway_settings, gateway_controller = frappe.db.get_value("Payment Gateway", \
+				self.payment_gateway, ["gateway_settings", "gateway_controller"])
+			settings = frappe.get_doc(gateway_settings, gateway_controller)
+			if hasattr(settings, "cancel_subscription"):
+				settings.cancel_subscription(**{
+					"subscription": self.payment_gateway_reference,
+					"prorate": True if self.prorate_invoice else False
+				})
 
 	def restart_subscription(self):
 		if self.status == 'Cancelled':
@@ -561,7 +575,7 @@ def subscription_headline(name):
 
 	if subscription.cancel_at_period_end and getdate(nowdate()) \
 		> getdate(subscription.current_invoice_end):
-		return _("This subscription will be cancelled on {0}".format(\
-			global_date_format(next_invoice_date)))
+		return _("This subscription will be cancelled on {0}").format(\
+			global_date_format(next_invoice_date))
 
-	return _("The next invoice will be generated on {0}".format(global_date_format(next_invoice_date)))
+	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date))

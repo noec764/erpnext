@@ -37,18 +37,24 @@ frappe.ui.form.on('Subscription', {
 	},
 
 	cancel_this_subscription: function(frm) {
-		const dialog = new frappe.ui.Dialog({
-			title: __("Cancel subscription"),
-			fields: [
-				{"fieldtype": "Date",
-				"label": __("Cancellation date"),
-				"fieldname": "cancellation_date",
-				},
-				{"fieldtype": "Check",
+		let fields = [
+			{"fieldtype": "Date",
+			"label": __("Cancellation date"),
+			"fieldname": "cancellation_date",
+			}
+		]
+
+		if (frm.doc.generate_invoice_at_period_start == 0) {
+			fields.push({
+				"fieldtype": "Check",
 				"label": __("Prorate last invoice"),
 				"fieldname": "prorate_invoice"
-				}
-			],
+			})
+		}
+
+		const dialog = new frappe.ui.Dialog({
+			title: __("Cancel subscription"),
+			fields: fields,
 			primary_action: function() {
 				const values = dialog.get_values();
 				values["name"] = frm.doc.name

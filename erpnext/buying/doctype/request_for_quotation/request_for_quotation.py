@@ -348,9 +348,9 @@ def get_supplier_tag():
 
 	tags = []
 	for tag in data:
-		tags += filter(bool, tag[0].split(","))
+		if tag[0]:
+			tags += filter(bool, tag[0].split(","))
 
 	tags = list(set(tags))
 
 	return tags
-

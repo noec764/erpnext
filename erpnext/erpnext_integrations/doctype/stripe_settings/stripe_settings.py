@@ -286,6 +286,17 @@ class StripeSettings(PaymentGatewayController):
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe source attachment error"))
 
+	def cancel_subscription(self, **kwargs):
+		try:
+			return stripe.Subscription.delete(
+				kwargs.get("subscription"),
+				invoice_now=kwargs.get("invoice_now", False),
+				prorate=kwargs.get("prorate", False)
+			)
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe subscription cancellation error"))
+
 	def fetch_charges_after_intent(self, payment_intent):
 		try:
 			self.payment_intent = self.stripe.PaymentIntent.retrieve(payment_intent)
@@ -320,11 +331,11 @@ class StripeSettings(PaymentGatewayController):
 
 	@staticmethod
 	def get_base_amount(charge):
-		return charge.balance_transaction.get("amount") / 100
+		return flt(charge.balance_transaction.get("amount")) / 100
 
 	@staticmethod
 	def get_exchange_rate(charge):
-		return charge.balance_transaction.get("exchange_rate") or 1
+		return flt(charge.balance_transaction.get("exchange_rate")) or 1
 
 	@staticmethod
 	def get_fee_amount(charge):
@@ -423,4 +434,4 @@ def handle_webhooks(**kwargs):
 		StripeInvoiceWebhookHandler(**kwargs)
 	else:
 		integration_request.db_set("error", _("This type of event is not handled by dokos"))
-		integration_request.update_status({}, "Completed")
+		integration_request.update_status({}, "Not Handled")
