@@ -286,6 +286,17 @@ class StripeSettings(PaymentGatewayController):
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe source attachment error"))
 
+	def cancel_subscription(self, **kwargs):
+		try:
+			return stripe.Subscription.delete(
+				kwargs.get("subscription"),
+				invoice_now=kwargs.get("invoice_now", False),
+				prorate=kwargs.get("prorate", False)
+			)
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe subscription cancellation error"))
+
 	def fetch_charges_after_intent(self, payment_intent):
 		try:
 			self.payment_intent = self.stripe.PaymentIntent.retrieve(payment_intent)

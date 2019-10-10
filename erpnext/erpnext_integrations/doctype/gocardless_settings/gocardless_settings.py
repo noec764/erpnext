@@ -191,7 +191,13 @@ class GoCardlessSettings(PaymentGatewayController):
 		try:
 			return self.client.payout_items.list(params=params).records
 		except Exception as e:
-			frappe.log_error(e, _("GoCardless payment retrieval error"))
+			frappe.log_error(e, _("GoCardless payout items retrieval error"))
+
+	def cancel_subscription(self, **kwargs):
+		try:
+			return self.client.subscriptions.cancel(kwargs.get("subscription"))
+		except Exception as e:
+			frappe.log_error(e, _("GoCardless subscription cancellation error"))
 
 	@staticmethod
 	def get_base_amount(payout_items):
