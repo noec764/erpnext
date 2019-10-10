@@ -42,7 +42,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 
 		if self.gocardless_payment:
 			self.integration_request.db_set("service_id", self.gocardless_payment)
-			self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
+			self.integration_request.load_from_db()
 
 		self.action_type = self.data.get("action")
 		self.handle_invoice_update()
