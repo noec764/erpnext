@@ -1231,7 +1231,7 @@
    "collapsible_depends_on": "terms",
    "fieldname": "terms_section_break",
    "fieldtype": "Section Break",
-   "label": "Terms",
+   "label": "Terms and Conditions",
    "oldfieldtype": "Section Break"
   },
   {
@@ -1488,7 +1488,7 @@
    "allow_on_submit": 1,
    "fieldname": "sales_team",
    "fieldtype": "Table",
-   "label": "Sales Team1",
+   "label": "Sales Team",
    "oldfieldname": "sales_team",
    "oldfieldtype": "Table",
    "options": "Sales Team",
@@ -1585,7 +1585,7 @@
  "idx": 181,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-10-01 18:12:26.016747",
+ "modified": "2019-10-11 08:04:33.620955",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
