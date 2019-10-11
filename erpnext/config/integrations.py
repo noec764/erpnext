@@ -19,7 +19,7 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "GoCardless Mandate",
+					"name": "Sepa Mandate",
 					"description": _("GoCardless SEPA Mandate"),
 				}
 			]

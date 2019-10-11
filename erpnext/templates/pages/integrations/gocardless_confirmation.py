@@ -62,7 +62,7 @@ def confirm_payment(redirect_flow_id, reference_doctype, reference_docname):
 def create_mandate(data):
 	data = frappe._dict(data)
 
-	if not frappe.db.exists("GoCardless Mandate", data.get('mandate')):
+	if not frappe.db.exists("Sepa Mandate", data.get('mandate')):
 		try:
 			reference_doc = frappe.db.get_value(data.get('reference_doctype'), data.get('reference_docname'),\
 				["reference_doctype", "reference_name", "payment_gateway"], as_dict=1)
@@ -70,15 +70,16 @@ def create_mandate(data):
 				["customer"], as_dict=1)
 
 			frappe.get_doc({
-				"doctype": "GoCardless Mandate",
+				"doctype": "Sepa Mandate",
 				"mandate": data.get('mandate'),
-				"customer": origin_transaction.get("customer")
+				"customer": origin_transaction.get("customer"),
+				"registered_on_gocardless": 1
 			}).insert(ignore_permissions=True)
 
 			add_gocardless_customer_id(reference_doc, data.get('customer'))
 
 		except Exception as e:
-			frappe.log_error(e, "GoCardless Mandate Registration Error")
+			frappe.log_error(e, "Sepa Mandate Registration Error")
 
 def add_gocardless_customer_id(reference_doc, customer_id):
 	origin_transaction = frappe.db.get_value(reference_doc.reference_doctype,\
