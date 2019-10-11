@@ -206,6 +206,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Sepa Direct Debit",
+					"label": _("Sepa Direct Debit"),
+				},
+				{
+					"type": "doctype",
 					"name": "Bank Guarantee"
 				},
 				{
@@ -405,6 +410,11 @@ def get_data():
 					"name": "Mode of Payment",
 					"description": _("e.g. Bank, Cash, Credit Card")
 				},
+				{
+					"type": "doctype",
+					"name": "Sepa Direct Debit Settings",
+					"label": _("Sepa Direct Debit Settings"),
+				}
 			]
 		},
 		{
