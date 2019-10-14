@@ -11,20 +11,20 @@ from six import iteritems
 
 @frappe.whitelist()
 def upload_bank_statement():
-	if getattr(frappe, "uploaded_file", None):
-		with open(frappe.uploaded_file, "rb") as upfile:
-			fcontent = upfile.read()
-	else:
-		from frappe.utils.file_manager import get_uploaded_content
-		fname, fcontent = get_uploaded_content()
-
-	if frappe.safe_encode(fname).lower().endswith("csv".encode('utf-8')):
+	if frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("csv".encode('utf-8')):
 		from frappe.utils.csvutils import read_csv_content
-		rows = read_csv_content(fcontent, False)
+		rows = read_csv_content(frappe.local.uploaded_file)
 
-	elif frappe.safe_encode(fname).lower().endswith("xlsx".encode('utf-8')):
+	elif frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("xlsx".encode('utf-8')):
 		from frappe.utils.xlsxutils import read_xlsx_file_from_attached_file
-		rows = read_xlsx_file_from_attached_file(fcontent=fcontent)
+		rows = read_xlsx_file_from_attached_file(fcontent=frappe.local.uploaded_file)
+
+	elif frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("xls".encode('utf-8')):
+		from frappe.utils.xlsxutils import read_xls_file_from_attached_file
+		rows = read_xls_file_from_attached_file(frappe.local.uploaded_file)
+	
+	else:
+		frappe.throw(_("Please upload a csv, xls or xlsx file"))
 
 	columns = rows[0]
 	rows.pop(0)
