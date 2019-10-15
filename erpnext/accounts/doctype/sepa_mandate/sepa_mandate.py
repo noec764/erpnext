@@ -8,7 +8,7 @@ from frappe.model.document import Document
 
 class SepaMandate(Document):
 	def validate(self):
-		if self.registered_on_gocardless and not (self.start_date and self.bank_account):
+		if not self.registered_on_gocardless and not (self.creation_date and self.bank_account):
 			frappe.throw(_("Please register the creation date and a customer bank account"))
 
 		if self.bank_account:
