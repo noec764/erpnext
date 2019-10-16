@@ -90,14 +90,15 @@ def get_customer_data(data, original_transaction):
 		}
 
 def get_billing_address(prefilled_customer, original_transaction):
-	address = frappe.get_doc("Address", original_transaction.get("customer_address"))
-	prefilled_customer.update({
-		"address_line1": address.get("address_line1") or "",
-		"address_line2": address.get("address_line2") or "",
-		"city": address.get("city") or "",
-		"postal_code": address.get("pincode") or "",
-		"country_code": frappe.db.get_value("Country", address.country, "code") or ""
-	})
+	if original_transaction.get("customer_address"):
+		address = frappe.get_doc("Address", original_transaction.get("customer_address"))
+		prefilled_customer.update({
+			"address_line1": address.get("address_line1") or "",
+			"address_line2": address.get("address_line2") or "",
+			"city": address.get("city") or "",
+			"postal_code": address.get("pincode") or "",
+			"country_code": frappe.db.get_value("Country", address.country, "code") or ""
+		})
 
 	return prefilled_customer
 
