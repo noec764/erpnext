@@ -95,31 +95,24 @@ frappe.ui.form.on("Payment Request", {
 	},
 	email_template(frm) {
 		if (frm.doc.email_template) {
-			frappe.call({
-				method: 'frappe.email.doctype.email_template.email_template.get_email_template',
-				args: {
-					template_name: frm.doc.email_template,
-					doc: me.frm.doc
-				},
-				callback: function(r) {
-					if (r.message) {
-						let signature = frappe.boot.user.email_signature || "";
-	
-						if(!frappe.utils.is_html(signature)) {
-							signature = signature.replace(/\n/g, "<br>");
-						}
-	
-						if(r.message.message && signature && r.message.message.includes(signature)) {
-							signature = "";
-						}
-				
-						const content = (r.message.message || "") + (signature ? ("<br>" + signature) : "");
-	
-						frm.set_value("subject", r.message.subject);
-						frm.set_value("message", content);
+			frappe.db.get_value("Email Template", frm.doc.email_template, ["subject", "response"], r => {
+				if (r) {
+					let signature = frappe.boot.user.email_signature || "";
+
+					if(!frappe.utils.is_html(signature)) {
+						signature = signature.replace(/\n/g, "<br>");
 					}
+
+					if(r.response && signature && r.response.includes(signature)) {
+						signature = "";
+					}
+			
+					const content = (r.response || "") + (signature ? ("<br>" + signature) : "");
+
+					frm.set_value("subject", r.subject);
+					frm.set_value("message", content);
 				}
-			});
+			})
 		}
 	},
 	payment_gateways_template(frm) {
