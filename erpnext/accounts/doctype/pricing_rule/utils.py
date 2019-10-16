@@ -14,9 +14,19 @@ from erpnext.stock.get_item_details import get_conversion_factor
 class MultiplePricingRuleConflict(frappe.ValidationError): pass
 
 apply_on_table = {
-    'Item Code': 'items',
-    'Item Group': 'item_groups',
-    'Brand': 'brands'
+	'Item Code': 'items',
+	'Item Group': 'item_groups',
+	'Brand': 'brands'
+}
+
+date_field_map = {
+	'Quotation': 'transaction_date',
+	'Sales Order': 'transaction_date',
+	'Delivery Note': 'posting_date',
+	'Sales Invoice': 'posting_date',
+	'Purchase Order': 'transaction_date',
+	'Purchase Receipt': 'posting_date',
+	'Purchase Invoice': 'posting_date'
 }
 
 def get_pricing_rules(args, doc=None):
@@ -190,7 +200,6 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 			pricing_rules = get_qty_and_rate_for_other_item(doc, pr_doc, pricing_rules) or []
 		else:
 			pricing_rules = filter_pricing_rules_for_qty_amount(stock_qty, amount, pricing_rules, args)
-
 		if not pricing_rules:
 			for d in original_pricing_rule:
 				if not d.threshold_percentage: continue
@@ -278,7 +287,7 @@ def filter_pricing_rules_for_qty_amount(qty, rate, pricing_rules, args=None):
 			conversion_factor = get_conversion_factor(rule.item_code, rule.uom).get("conversion_factor", 1)
 
 		if (flt(qty) >= (flt(rule.min_qty) * conversion_factor)
-			and (flt(qty)<= (rule.max_qty * conversion_factor) if rule.max_qty else True)):
+			and (flt(qty) <= (rule.max_qty * conversion_factor) if rule.max_qty else True)):
 			status = True
 
 		# if user has created item price against the transaction UOM
@@ -355,15 +364,19 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	sum_qty, sum_amt = [0, 0]
 	doctype = doc.get('parenttype') or doc.doctype
 
-	date_field = ('transaction_date'
-		if doc.get('transaction_date') else 'posting_date')
+	date_field = date_field_map.get(doctype)
 
 	child_doctype = '{0} Item'.format(doctype)
 	apply_on = frappe.scrub(pr_doc.get('apply_on'))
 
 	values = [pr_doc.valid_from, pr_doc.valid_upto]
-	condition = ""
+	party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
+		parent_doc=doctype,
+		party_type="customer" if doc.get("customer") else "supplier",
+		party=doc.get("customer") or doc.get("supplier")
+	)
 
+	condition = ""
 	if pr_doc.warehouse:
 		warehouses = get_child_warehouses(pr_doc.warehouse)
 
@@ -382,11 +395,15 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 			`tab{child_doc}`.amount
 		FROM `tab{child_doc}`, `tab{parent_doc}`
 		WHERE
-			`tab{child_doc}`.parent = `tab{parent_doc}`.name and `tab{parent_doc}`.{date_field}
+			`tab{child_doc}`.parent = `tab{parent_doc}`.name
+			and `tab{parent_doc}`.name != '{parent_name}'
+			and `tab{parent_doc}`.{date_field}
 			between %s and %s and `tab{parent_doc}`.docstatus = 1
-			{condition} group by `tab{child_doc}`.name
+			{party_condition} {condition} group by `tab{child_doc}`.name
 	""".format(parent_doc = doctype,
 		child_doc = child_doctype,
+		parent_name = doc.get("name"),
+		party_condition=party_condition,
 		condition = condition,
 		date_field = date_field
 	), tuple(values), as_dict=1)
