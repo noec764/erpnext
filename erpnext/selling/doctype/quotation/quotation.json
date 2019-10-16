@@ -65,6 +65,8 @@
   "column_break_42",
   "total_taxes_and_charges",
   "section_break_44",
+  "coupon_code",
+  "referral_sales_partner",
   "apply_discount_on",
   "base_discount_amount",
   "column_break_46",
@@ -572,7 +574,7 @@
    "collapsible_depends_on": "discount_amount",
    "fieldname": "section_break_44",
    "fieldtype": "Section Break",
-   "label": "Additional Discount"
+   "label": "Additional Discount and Coupon Code"
   },
   {
    "default": "Grand Total",
@@ -908,13 +910,25 @@
    "label": "Lost Reasons",
    "options": "Lost Reason Detail",
    "read_only": 1
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Link",
+   "label": "Coupon Code",
+   "options": "Coupon Code"
+  },
+  {
+   "fieldname": "referral_sales_partner",
+   "fieldtype": "Link",
+   "label": "Referral Sales Partner",
+   "options": "Sales Partner"
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 82,
  "is_submittable": 1,
  "max_attachments": 1,
- "modified": "2019-10-11 14:26:49.734283",
+ "modified": "2019-10-16 12:26:41.719989",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation",
