@@ -37,7 +37,7 @@
 			>
 				{{ _("View in Cart") }}
 			</a>
-			{% if enable_item_booking and not disable_unit_purchasing %}
+			{% if not disable_unit_purchasing %}
 			<button
 				data-item-code="{{item_code}}"
 				class="btn btn-outline-primary btn-add-to-cart {% if product_info.qty %}hidden{% endif %}"

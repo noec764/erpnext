@@ -575,7 +575,7 @@ def apply_coupon_code(applied_code,applied_referral_sales_partner):
 					quotation.flags.ignore_permissions = True
 					quotation.save()
 		else:
-			frappe.throw(_("Please enter valid coupon code !!"))
+			frappe.throw(_("Your coupon code is not valid."))
 	else:
-		frappe.throw(_("Please enter coupon code !!"))
+		frappe.throw(_("Your coupon code is not valid."))
 	return quotation

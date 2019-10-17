@@ -188,7 +188,7 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 		if pricing_rules[0].mixed_conditions and doc:
 			stock_qty, amount = get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args)
 
-		elif pricing_rules[0].is_cumulative:
+		elif pricing_rules[0].is_cumulative and not args.get('for_shopping_cart'):
 			items = [args.get(frappe.scrub(pr_doc.get('apply_on')))]
 			data = get_qty_amount_data_for_cumulative(pr_doc, args, items)
 
@@ -341,7 +341,7 @@ def get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args):
 				sum_qty += row.get("stock_qty") or args.get("stock_qty")
 				sum_amt += amt
 
-		if pr_doc.is_cumulative:
+		if pr_doc.is_cumulative and not doc.get('for_shopping_cart'):
 			data = get_qty_amount_data_for_cumulative(pr_doc, doc, items)
 
 			if data and data[0]:
@@ -370,11 +370,15 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	apply_on = frappe.scrub(pr_doc.get('apply_on'))
 
 	values = [pr_doc.valid_from, pr_doc.valid_upto]
-	party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
-		parent_doc=doctype,
-		party_type="customer" if doc.get("customer") else "supplier",
-		party=doc.get("customer") or doc.get("supplier")
-	)
+
+	party_condition = ""
+	if doc.get("customer") or doc.get("supplier"):
+		party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
+			parent_doc=doctype,
+			party_type="customer" if doc.get("customer") else "supplier",
+			party=doc.get("customer") or doc.get("supplier")
+		)
+
 
 	condition = ""
 	if pr_doc.warehouse:

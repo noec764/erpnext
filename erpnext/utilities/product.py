@@ -103,6 +103,7 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 				"transaction_type": "selling",
 				"price_list": price_list,
 				"customer_group": customer_group,
+				"for_shopping_cart": 1,
 				"company": company,
 				"conversion_rate": 1,
 				"currency": frappe.db.get_value("Price List", price_list, "currency")
