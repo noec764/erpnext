@@ -47,7 +47,8 @@ class WebhooksController():
 
 			elif self.invoice and not self.invoice.external_reference == self.integration_request.get("service_id"):
 				if frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-					self.set_as_failed(_("An invoice ({0}) with reference {1} exists already"))
+					self.set_as_failed(_("An invoice ({0}) with reference {1} exists already").format(\
+						self.invoice.name, self.integration_request.get("service_id")))
 				elif not self.invoice.external_reference:
 					self.invoice.db_set("external_reference", self.integration_request.get("service_id"))
 					self.integration_request.update_status({}, "Completed")
