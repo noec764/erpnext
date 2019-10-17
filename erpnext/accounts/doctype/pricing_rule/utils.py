@@ -555,29 +555,29 @@ def validate_pricing_rule_for_different_cond(doc):
 	return doc
 
 def validate_coupon_code(coupon_name):
-	from frappe.utils import today,getdate
-	coupon=frappe.get_doc("Coupon Code",coupon_name)
+	from frappe.utils import today, getdate
+	coupon = frappe.get_doc("Coupon Code", coupon_name)
 	if coupon.valid_from:
-		if coupon.valid_from > getdate(today()) :
-			frappe.throw(_("Sorry,coupon code validity has not started"))
+		if coupon.valid_from > getdate(today()):
+			frappe.throw(_("The coupon code validity has not started"))
 	elif coupon.valid_upto:
-		if coupon.valid_upto < getdate(today()) :
-			frappe.throw(_("Sorry,coupon code validity has expired"))	
-	elif coupon.used>=coupon.maximum_use:
-		frappe.throw(_("Sorry,coupon code are exhausted"))
+		if coupon.valid_upto < getdate(today()):
+			frappe.throw(_("The coupon code validity has expired"))
+	elif coupon.used >= coupon.maximum_use:
+		frappe.throw(_("The coupon code use has exceeded the maximum allowed."))
 	else:
 		return
 
-def update_coupon_code_count(coupon_name,transaction_type):
-	coupon=frappe.get_doc("Coupon Code",coupon_name)
+def update_coupon_code_count(coupon_name, transaction_type):
+	coupon = frappe.get_doc("Coupon Code", coupon_name)
 	if coupon:
-		if transaction_type=='used':
-			if coupon.used<coupon.maximum_use:
-				coupon.used=coupon.used+1
+		if transaction_type == 'used':
+			if coupon.used < coupon.maximum_use:
+				coupon.used = coupon.used + 1
 				coupon.save(ignore_permissions=True)
 			else:
-				frappe.throw(_("{0} Coupon used are {1}. Allowed quantity is exhausted").format(coupon.coupon_code,coupon.used))
-		elif transaction_type=='cancelled':
-			if coupon.used>0:
-				coupon.used=coupon.used-1
+				frappe.throw(_("{0} has been use {1} times. Allowed quantity has been exceeded.").format(coupon.coupon_code, coupon.used))
+		elif transaction_type == 'cancelled':
+			if coupon.used > 0:
+				coupon.used = coupon.used - 1
 				coupon.save(ignore_permissions=True)
