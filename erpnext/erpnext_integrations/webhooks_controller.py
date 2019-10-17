@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from frappe.utils import nowdate
+from frappe.utils import nowdate, getdate
 
 class WebhooksController():
 	def __init__(self, **kwargs):
@@ -28,9 +28,11 @@ class WebhooksController():
 	def get_subscription_invoice(self):
 		if self.subscription:
 			self.subscription.flags.ignore_permissions = True
-			self.subscription.process()
-			self.invoice = self.subscription.get_current_invoice()
-			if self.invoice:
+			self.subscription.process(True)
+			invoice = self.subscription.get_current_invoice()
+
+			if invoice and invoice.to_date > getdate(nowdate()):
+				self.invoice = invoice
 				self.invoice.flags.ignore_permissions = True
 
 	def get_one_off_invoice(self):
@@ -39,12 +41,14 @@ class WebhooksController():
 
 	def create_invoice(self):
 		try:
-			if self.invoice and frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-				self.set_as_completed(_("An invoice {0} with reference {1} exists already").format(\
+			if self.invoice and self.invoice.external_reference == self.integration_request.get("service_id"):
+				self.set_as_completed(_("An invoice ({0}) with reference {1} exists already").format(\
 					self.invoice.name, self.integration_request.get("service_id")))
 
-			elif self.invoice and not frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
-				if not self.invoice.external_reference:
+			elif self.invoice and not self.invoice.external_reference == self.integration_request.get("service_id"):
+				if frappe.db.exists("Sales Invoice", dict(external_reference=self.integration_request.get("service_id"))):
+					self.set_as_failed(_("An invoice ({0}) with reference {1} exists already"))
+				elif not self.invoice.external_reference:
 					self.invoice.db_set("external_reference", self.integration_request.get("service_id"))
 					self.integration_request.update_status({}, "Completed")
 				else:
@@ -59,8 +63,10 @@ class WebhooksController():
 					self.integration_request.update_status({}, "Completed")
 				else:
 					self.set_as_failed(_("The corresponding invoice could not be found"))
+
 			elif frappe.db.exists("Sales Order", dict(external_reference=self.integration_request.get("service_id"))):
 				self.create_invoice_from_sales_order()
+
 			else:
 				self.set_as_failed(_("Please create a new invoice for this event with external reference {0}").format(self.integration_request.get("service_id")))
 		except Exception as e:
