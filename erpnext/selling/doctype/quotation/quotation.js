@@ -23,6 +23,9 @@ frappe.ui.form.on('Quotation', {
 	refresh: function(frm) {
 		frm.trigger("set_label");
 		frm.trigger("set_dynamic_field_label");
+		if (frm.doc.quotation_to && frm.doc.party_name && !frm.doc.contact_person) {
+			frm.trigger("party_name");
+		}
 	},
 
 	quotation_to: function(frm) {
@@ -75,9 +78,13 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 
 			if(doc.status!=="Ordered") {
 				this.frm.add_custom_button(__('Set as Lost'), () => {
-						this.frm.trigger('set_as_lost_dialog');
-					});
-				}
+					this.frm.trigger('set_as_lost_dialog');
+				});
+
+				this.frm.add_custom_button(__('Extend validity period'), () => {
+					this.frm.trigger('extend_validity_dialog');
+				});
+			}
 
 			if(!doc.auto_repeat) {
 				cur_frm.add_custom_button(__('Auto Repeat'), function() {
@@ -197,6 +204,33 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 				}
 			}
 		})
+	},
+	extend_validity_dialog: function() {
+		const me = this;
+		const dialog = new frappe.ui.Dialog({
+			title: __("Extend the quotation validity"),
+			fields: [{
+				"fieldtype": "Date",
+				"label": __("New end date"),
+				"fieldname": "end_date",
+				"reqd": 1,
+				"default": this.frm.doc.valid_till
+			}],
+			primary_action: function() {
+				const values = dialog.get_values();
+				frappe.call({
+					method: "extend_validity",
+					doc: me.frm.doc,
+					args: {date: values.end_date}
+				}).then(() => {
+					me.frm.refresh_field("valid_till");
+				})
+				dialog.hide();
+			},
+			primary_action_label: __('Extend validity')
+		});
+
+		dialog.show();
 	}
 });
 

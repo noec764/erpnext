@@ -56,6 +56,18 @@
 	{% endif %}
 
 	{% if doc.items %}
+	{% set show_coupon_code = frappe.db.get_single_value('Shopping Cart Settings', 'show_apply_coupon_code_in_website') %}
+	{% if show_coupon_code == 1%}
+	<div class="mb-3 d-flex flex-row-reverse">
+		<input type="text" class="txtcoupon form-control w-25" placeholder="Enter Coupon Code" name="txtcouponcode"/>
+		<input type="hidden" class="txtreferral_sales_partner" placeholder="Enter Sales Partner" name="txtreferral_sales_partner" type="text"/>
+	</div>
+	<div class="mb-3 d-flex flex-row-reverse">
+		<button class="btn btn-primary btn-sm bt-coupon">{{ _("Apply Coupon Code") }}</button>
+	</div>
+	{% endif %}
+
+
 	{% if doc.tc_name %}
 		<div class="terms-and-conditions-link">
 			<a href class="link-terms-and-conditions" data-terms-name="{{ doc.tc_name }}">

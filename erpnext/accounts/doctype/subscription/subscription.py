@@ -67,7 +67,7 @@ class Subscription(Document):
 			else:
 				self.current_invoice_end = get_last_day(self.current_invoice_start)
 
-	def process(self):
+	def process(self, from_gateway=False):
 		if self.cancel_at_period_end:
 			self.cancel_subscription_at_period_end()
 
@@ -75,7 +75,7 @@ class Subscription(Document):
 			self.cancel_subscription()
 
 		if self.status == 'Active':
-			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle) or from_gateway:
 				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_subscription_status()

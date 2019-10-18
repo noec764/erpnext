@@ -58,7 +58,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			return self.check_mandate_validity(data)
 
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("GoCardless mandate validation failed for {0}".format(data.get("payer_name"))))
+			frappe.log_error(frappe.get_traceback(), _("Sepa mandate validation failed for {0}".format(data.get("payer_name"))))
 
 	def immediate_payment_processing(self, data):
 		try:
@@ -88,21 +88,18 @@ class GoCardlessSettings(PaymentGatewayController):
 				_("GoCardless direct processing failed for {0}".format(customer_data.customer_name)))
 
 	def check_mandate_validity(self, data):
-		if frappe.db.exists("GoCardless Mandate", dict(customer=data.get('payer_name'),\
+		if frappe.db.exists("Sepa Mandate", dict(customer=data.get('payer_name'),\
 			status=["not in", ["Cancelled", "Expired", "Failed"]])):
 
-			registered_mandate = frappe.db.get_value("GoCardless Mandate",\
+			registered_mandate = frappe.db.get_value("Sepa Mandate",\
 				dict(customer=data.get('payer_name'), status=["not in", ["Cancelled", "Expired", "Failed"]]), 'mandate')
-			mandate = self.client.mandates.get(registered_mandate)
+			mandate = self.get_single_mandate(registered_mandate)
 
 			if mandate.status == "pending_customer_approval" or mandate.status == "pending_submission"\
 				or mandate.status == "submitted" or mandate.status == "active":
 				return {
 					"mandate": registered_mandate
 				}
-
-	def create_new_mandate(self):
-		mandate = self.client.mandates.get(registered_mandate)
 
 	def get_environment(self):
 		return 'sandbox' if self.use_sandbox else 'live'
@@ -198,6 +195,12 @@ class GoCardlessSettings(PaymentGatewayController):
 			return self.client.subscriptions.cancel(kwargs.get("subscription"))
 		except Exception as e:
 			frappe.log_error(e, _("GoCardless subscription cancellation error"))
+
+	def get_single_mandate(self, id):
+		try:
+			return self.client.mandates.get(id)
+		except Exception as e:
+			frappe.log_error(e, _("Sepa mandate retrieval error"))
 
 	@staticmethod
 	def get_base_amount(payout_items):
@@ -359,15 +362,15 @@ def check_mandate_status(provider):
 	if customers:
 
 		for customer in customers:
-			mandates = frappe.get_all("GoCardless Mandate", filters={"customer": customer.customer})
+			mandates = frappe.get_all("Sepa Mandate", filters={"customer": customer.customer, "registered_on_gocardless": 1})
 			if mandates:
 				for mandate in mandates:
 					try:
-						result = provider.client.mandates.get(mandate.name)
-						frappe.db.set_value("GoCardless Mandate", mandate.name, "status",\
+						result = provider.get_single_mandate(mandate.name)
+						frappe.db.set_value("Sepa Mandate", mandate.name, "status",\
 							result.status.replace("_", " ").capitalize())
 					except Exception as e:
-						frappe.log_error(str(e), _("GoCardless mandate status update error"))
+						frappe.log_error(str(e), _("Sepa mandate status update error"))
 
 def check_payment_status(provider):
 	pending_requests = frappe.get_all("Integration Request",\

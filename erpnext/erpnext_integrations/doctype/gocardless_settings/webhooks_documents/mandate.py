@@ -59,19 +59,19 @@ class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
 			self.integration_request.update_status({}, "Completed")
 
 	def check_existing_mandate(self):
-		return False if frappe.db.exists("GoCardless Mandate", dict(mandate=mandate)) else True
+		return False if frappe.db.exists("Sepa Mandate", dict(mandate=mandate)) else True
 
 	def change_status(self):
 		self.set_status(self.mandate, STATUS_MAP.get(self.data.get("action")))
 
 	def set_status(self, mandate, status):
 		try:
-			frappe.db.set_value("GoCardless Mandate", mandate, "status", status)
+			frappe.db.set_value("Sepa Mandate", mandate, "status", status)
 			self.integration_request.update_status({}, "Completed")
 		except Exception as e:
 			self.integration_request.db_set("error", str(e))
 			self.integration_request.update_status({}, "Failed")
 
 	def add_mandate_to_integration_request(self):
-		self.integration_request.db_set("reference_doctype", "GoCardless Mandate")
+		self.integration_request.db_set("reference_doctype", "Sepa Mandate")
 		self.integration_request.db_set("reference_docname", self.mandate)

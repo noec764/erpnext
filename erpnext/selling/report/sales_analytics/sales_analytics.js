@@ -80,12 +80,15 @@ frappe.query_reports["Sales Analytics"] = {
 
 					var tree_type = frappe.query_report.filters[0].value;
 
-					if(tree_type == "Customer" || tree_type == "Item") {
+					if(tree_type == "Customer") {
 						row_values = data.slice(4,length-1).map(function (column) {
 							return column.content;
 						})
-					}
-					else {
+					} else if (tree_type == "Item") {
+						row_values = data.slice(5,length-1).map(function (column) {
+							return column.content;
+						})
+					} else {
 						row_values = data.slice(3,length-1).map(function (column) {
 							return column.content;
 						})

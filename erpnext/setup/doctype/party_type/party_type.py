@@ -5,6 +5,8 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+import re
+from frappe import _
 
 class PartyType(Document):
 	pass
@@ -16,10 +18,7 @@ def get_party_type(doctype, txt, searchfield, start, page_len, filters):
 		account_type = frappe.db.get_value('Account', filters.get('account'), 'account_type')
 		cond = "and account_type = '%s'" % account_type
 
-	return frappe.db.sql("""select name from `tabParty Type`
-			where `{key}` LIKE %(txt)s {cond}
-			order by name limit %(start)s, %(page_len)s"""
-			.format(key=searchfield, cond=cond), {
-				'txt': '%' + txt + '%',
-				'start': start, 'page_len': page_len
-			})
+	party_types = [d["name"] for d in frappe.get_all("Party Type")]
+
+	output = [[v] for v in party_types if re.search(txt+".*", _(v), re.IGNORECASE)]
+	return output

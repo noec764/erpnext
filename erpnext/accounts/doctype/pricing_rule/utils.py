@@ -188,7 +188,7 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 		if pricing_rules[0].mixed_conditions and doc:
 			stock_qty, amount = get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args)
 
-		elif pricing_rules[0].is_cumulative:
+		elif pricing_rules[0].is_cumulative and not args.get('for_shopping_cart'):
 			items = [args.get(frappe.scrub(pr_doc.get('apply_on')))]
 			data = get_qty_amount_data_for_cumulative(pr_doc, args, items)
 
@@ -341,7 +341,7 @@ def get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args):
 				sum_qty += row.get("stock_qty") or args.get("stock_qty")
 				sum_amt += amt
 
-		if pr_doc.is_cumulative:
+		if pr_doc.is_cumulative and not doc.get('for_shopping_cart'):
 			data = get_qty_amount_data_for_cumulative(pr_doc, doc, items)
 
 			if data and data[0]:
@@ -362,7 +362,7 @@ def get_qty_and_rate_for_other_item(doc, pr_doc, pricing_rules):
 
 def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	sum_qty, sum_amt = [0, 0]
-	doctype = doc.get('parenttype') or doc.doctype
+	doctype = doc.get('parenttype') or doc.get('doctype') or "Sales Invoice"
 
 	date_field = date_field_map.get(doctype)
 
@@ -370,11 +370,21 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	apply_on = frappe.scrub(pr_doc.get('apply_on'))
 
 	values = [pr_doc.valid_from, pr_doc.valid_upto]
-	party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
-		parent_doc=doctype,
-		party_type="customer" if doc.get("customer") else "supplier",
-		party=doc.get("customer") or doc.get("supplier")
-	)
+
+	parent_condition = ""
+	if doc.get("name"):
+		parent_condition = " and `tab{parent_doc}`.name != '{parent_name}'".format(
+			parent_doc=doctype,
+			parent_name=doc.get("name")
+		)
+
+	party_condition = ""
+	if doc.get("customer") or doc.get("supplier"):
+		party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
+			parent_doc=doctype,
+			party_type="customer" if doc.get("customer") else "supplier",
+			party=doc.get("customer") or doc.get("supplier")
+		)
 
 	condition = ""
 	if pr_doc.warehouse:
@@ -396,13 +406,13 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 		FROM `tab{child_doc}`, `tab{parent_doc}`
 		WHERE
 			`tab{child_doc}`.parent = `tab{parent_doc}`.name
-			and `tab{parent_doc}`.name != '{parent_name}'
+			{parent_condition}
 			and `tab{parent_doc}`.{date_field}
 			between %s and %s and `tab{parent_doc}`.docstatus = 1
 			{party_condition} {condition} group by `tab{child_doc}`.name
 	""".format(parent_doc = doctype,
 		child_doc = child_doctype,
-		parent_name = doc.get("name"),
+		parent_condition = parent_condition,
 		party_condition=party_condition,
 		condition = condition,
 		date_field = date_field
@@ -549,3 +559,31 @@ def validate_pricing_rule_for_different_cond(doc):
 		validate_pricing_rule_on_items(doc, d, True)
 
 	return doc
+
+def validate_coupon_code(coupon_name):
+	from frappe.utils import today, getdate
+	coupon = frappe.get_doc("Coupon Code", coupon_name)
+	if coupon.valid_from:
+		if coupon.valid_from > getdate(today()):
+			frappe.throw(_("The coupon code validity has not started"))
+	elif coupon.valid_upto:
+		if coupon.valid_upto < getdate(today()):
+			frappe.throw(_("The coupon code validity has expired"))
+	elif coupon.used >= coupon.maximum_use:
+		frappe.throw(_("The coupon code use has exceeded the maximum allowed."))
+	else:
+		return
+
+def update_coupon_code_count(coupon_name, transaction_type):
+	coupon = frappe.get_doc("Coupon Code", coupon_name)
+	if coupon:
+		if transaction_type == 'used':
+			if coupon.used < coupon.maximum_use:
+				coupon.used = coupon.used + 1
+				coupon.save(ignore_permissions=True)
+			else:
+				frappe.throw(_("{0} has been use {1} times. Allowed quantity has been exceeded.").format(coupon.coupon_code, coupon.used))
+		elif transaction_type == 'cancelled':
+			if coupon.used > 0:
+				coupon.used = coupon.used - 1
+				coupon.save(ignore_permissions=True)

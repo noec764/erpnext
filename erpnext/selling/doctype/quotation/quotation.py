@@ -116,6 +116,14 @@ class Quotation(SellingController):
 	def on_recurring(self, reference_doc, auto_repeat_doc):
 		self.valid_till = None
 
+	@frappe.whitelist()
+	def extend_validity(self, date):
+		self.flags.ignore_validate_update_after_submit = True
+		self.valid_till = date
+		self.save()
+		self.flags.ignore_validate_update_after_submit = False
+		
+
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
 	list_context = get_list_context(context)
@@ -142,6 +150,9 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 		if customer:
 			target.customer = customer.name
 			target.customer_name = customer.customer_name
+		if source.referral_sales_partner:
+			target.sales_partner=source.referral_sales_partner
+			target.commission_rate=frappe.get_value('Sales Partner', source.referral_sales_partner, 'commission_rate')
 		target.ignore_pricing_rule = 1
 		target.flags.ignore_permissions = ignore_permissions
 		target.run_method("set_missing_values")

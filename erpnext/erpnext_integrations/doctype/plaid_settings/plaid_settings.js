@@ -69,12 +69,16 @@ erpnext.integrations.plaidLink = class plaidLink {
 	}
 
 	onScriptLoaded(me) {
+		const lang = ['fr', 'es'].includes(frappe.boot.lang) ? frappe.boot.lang : 'en'
 		me.linkHandler = window.Plaid.create({
 			clientName: me.client_name,
 			env: me.plaid_env,
 			key: me.plaid_public_key,
 			onSuccess: me.plaid_success,
-			product: me.product
+			product: me.product,
+			api_version: '2019-05-29',
+			language: lang,
+			countryCodes: ['CA', 'FR', 'IE', 'ES', 'GB', 'US']
 		});
 	}
 

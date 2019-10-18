@@ -27,7 +27,7 @@ class PlaidConnector():
 			secret=self.config.get("plaid_secret"),
 			public_key=self.config.get("plaid_public_key"),
 			environment=self.config.get("plaid_env")
-			)
+		)
 
 		self.access_token = access_token
 

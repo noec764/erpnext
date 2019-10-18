@@ -1,4 +1,4 @@
-frappe.listview_settings['GoCardless Mandate'] = {
+frappe.listview_settings['Sepa Mandate'] = {
 	get_indicator: function(doc) {
 		if (doc.status == "Pending customer approval") {
 			return [__("Pending customer approval"), "orange", "status,=,Pending customer approval"];
