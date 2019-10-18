@@ -362,7 +362,7 @@ def get_qty_and_rate_for_other_item(doc, pr_doc, pricing_rules):
 
 def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	sum_qty, sum_amt = [0, 0]
-	doctype = doc.get('parenttype') or doc.doctype
+	doctype = doc.get('parenttype') or doc.get('doctype') or "Sales Invoice"
 
 	date_field = date_field_map.get(doctype)
 
@@ -371,6 +371,13 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 
 	values = [pr_doc.valid_from, pr_doc.valid_upto]
 
+	parent_condition = ""
+	if doc.get("name"):
+		parent_condition = " and `tab{parent_doc}`.name != '{parent_name}'".format(
+			parent_doc=doctype,
+			parent_name=doc.get("name")
+		)
+
 	party_condition = ""
 	if doc.get("customer") or doc.get("supplier"):
 		party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
@@ -378,7 +385,6 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 			party_type="customer" if doc.get("customer") else "supplier",
 			party=doc.get("customer") or doc.get("supplier")
 		)
-
 
 	condition = ""
 	if pr_doc.warehouse:
@@ -400,13 +406,13 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 		FROM `tab{child_doc}`, `tab{parent_doc}`
 		WHERE
 			`tab{child_doc}`.parent = `tab{parent_doc}`.name
-			and `tab{parent_doc}`.name != '{parent_name}'
+			{parent_condition}
 			and `tab{parent_doc}`.{date_field}
 			between %s and %s and `tab{parent_doc}`.docstatus = 1
 			{party_condition} {condition} group by `tab{child_doc}`.name
 	""".format(parent_doc = doctype,
 		child_doc = child_doctype,
-		parent_name = doc.get("name"),
+		parent_condition = parent_condition,
 		party_condition=party_condition,
 		condition = condition,
 		date_field = date_field
