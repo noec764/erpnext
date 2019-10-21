@@ -220,7 +220,7 @@ class Subscription(Document):
 				try:
 					self.create_new_sales_order()
 				except Exception:
-					frappe.log_error(frappe.get_traceback(), __("Sales order generation error for subscription {0}").format(self.name))
+					frappe.log_error(frappe.get_traceback(), _("Sales order generation error for subscription {0}").format(self.name))
 
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
@@ -240,7 +240,7 @@ class Subscription(Document):
 		try:
 			return self.create_invoice(prorate)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), __("Invoice generation error for subscription {0}").format(self.name))
+			frappe.log_error(frappe.get_traceback(), _("Invoice generation error for subscription {0}").format(self.name))
 
 	def create_invoice(self, prorate):
 		current_sales_order = self.get_current_documents("Sales Order")
