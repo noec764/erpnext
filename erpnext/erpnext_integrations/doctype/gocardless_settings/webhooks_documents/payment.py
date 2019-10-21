@@ -75,7 +75,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			else:
 				self.set_as_failed(_("The corresponding invoice could not be found"))
 		except Exception as e:
-			frappe.log_error(frappe.get_traceback(), __("GoCardless invoice submission error"))
+			frappe.log_error(frappe.get_traceback(), _("GoCardless invoice submission error"))
 			self.set_as_failed(e)
 
 	def add_fees_before_submission(self):
