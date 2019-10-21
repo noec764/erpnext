@@ -224,12 +224,12 @@ class Subscription(Document):
 
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
+		sales_order.flags.ignore_permissions = True
 		sales_order.transaction_date = self.current_invoice_start
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		sales_order = self.set_subscription_invoicing_details(sales_order)
 
 		sales_order.flags.ignore_mandatory = True
-		sales_order.flags.ignore_permissions = True
 		sales_order.set_missing_values()
 		sales_order.save()
 		sales_order.submit()
@@ -252,6 +252,7 @@ class Subscription(Document):
 
 		else:
 			invoice = frappe.new_doc('Sales Invoice')
+			invoice.flags.ignore_permissions = True
 			invoice = self.set_subscription_invoicing_details(invoice, prorate)
 
 		invoice.set_posting_time = 1
@@ -269,7 +270,6 @@ class Subscription(Document):
 				})
 
 		invoice.flags.ignore_mandatory = True
-		invoice.flags.ignore_permissions = True
 		invoice.set_missing_values()
 		invoice.save()
 
