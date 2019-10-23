@@ -29,6 +29,8 @@ def create_customer_or_supplier():
 	'''Based on the default Role (Customer, Supplier), create a Customer / Supplier.
 	Called on_session_creation hook.
 	'''
+	# Temporarily disabled because of several bugs on portal
+	return
 	user = frappe.session.user
 
 	if frappe.db.get_value('User', user, 'user_type') != 'Website User':
