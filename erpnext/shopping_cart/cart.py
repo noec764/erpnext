@@ -387,7 +387,9 @@ def get_party(user=None):
 	if not user:
 		user = frappe.session.user
 
-	contact_name = frappe.db.get_value("Contact", {"email_id": user})
+	contact_name = frappe.db.get_value("Contact", {"user": user})
+	if not contact_name:
+		contact_name = frappe.db.get_value("Contact", {"email_id": user})
 	party = None
 
 	if contact_name:
@@ -435,6 +437,7 @@ def get_party(user=None):
 			"first_name": fullname,
 			"email_id": user
 		})
+		contact.add_email(user, is_primary=True)
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
 		contact.flags.ignore_mandatory = True
 		contact.insert(ignore_permissions=True)
