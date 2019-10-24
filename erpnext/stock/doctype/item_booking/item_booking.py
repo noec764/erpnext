@@ -21,8 +21,8 @@ class ItemBooking(Document):
 	def before_save(self):
 		if self.party_name or self.user:
 			if self.party_name and self.party_type:
-				title_field = frappe.get_meta(self.party_type).title_field
-				party_name = frappe.db.get_value(self.party_type, self.party_name, title_field)
+				title_field = frappe.get_meta(self.party_type).get_title_field()
+				party_name = frappe.db.get_value(self.party_type, self.party_name, title_field if title_field else "name")
 			self.title = self.item_name + " - " + party_name if party_name else self.user
 		else:
 			self.title = self.item_name
