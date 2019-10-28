@@ -147,7 +147,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-09-26 16:32:37.870520",
+ "modified": "2019-10-28 14:55:38.604586",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
@@ -215,6 +215,14 @@
    "report": 1,
    "role": "Guest",
    "share": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Customer",
+   "submit": 1,
+   "write": 1
   }
  ],
  "sort_field": "modified",

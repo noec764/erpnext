@@ -149,6 +149,7 @@ website_route_rules = [
 			"parents": [{"label": _("Material Request"), "route": "material-requests"}]
 		}
 	},
+	{"from_route": "/bookings", "to_route": "Item Booking"}
 ]
 
 standard_portal_menu_items = [
@@ -166,6 +167,7 @@ standard_portal_menu_items = [
 	{"title": _("Timesheets"), "route": "/timesheets", "reference_doctype": "Timesheet", "role":"Customer"},
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
+	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"}
 ]
 
 default_roles = [

@@ -16,6 +16,7 @@ from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
+from frappe.utils.user import is_website_user
 
 class ItemBooking(Document):
 	def before_save(self):
@@ -26,6 +27,41 @@ class ItemBooking(Document):
 			self.title = self.item_name + " - " + party_name if party_name else self.user
 		else:
 			self.title = self.item_name
+
+def get_list_context(context=None):
+	context.update({
+		"show_sidebar": True,
+		"show_search": True,
+		'no_breadcrumbs': True,
+		"title": _("Bookings"),
+		"get_list": get_bookings_list,
+		"row_template": "templates/includes/item_booking_row.html",
+		"create_new": "/",
+		"can_cancel": frappe.has_permission("Item Booking", "cancel")
+	})
+
+def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None):
+	from frappe.www.list import get_list
+	user = frappe.session.user
+	contact = frappe.db.get_value('Contact', {'user': user}, 'name')
+	customer = None
+
+	if contact:
+		contact_doc = frappe.get_doc('Contact', contact)
+		customer = contact_doc.get_link_for('Customer')
+
+	if is_website_user():
+		if not filters: filters = []
+
+		or_filters = []
+		or_filters.append({"user": user, "party_name": customer})
+
+	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=False, or_filters=or_filters)
+
+@frappe.whitelist()
+def cancel_appointment(id):
+	booking = frappe.get_doc("Item Booking", id)
+	return booking.cancel()
 
 @frappe.whitelist(allow_guest=True)
 def get_item_uoms(item_code):
