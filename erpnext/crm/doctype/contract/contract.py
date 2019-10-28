@@ -8,6 +8,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate, now_datetime, nowdate
+import json
 
 
 class Contract(Document):
@@ -15,7 +16,7 @@ class Contract(Document):
 		name = self.party_name
 
 		if self.contract_template:
-			name += " - {} Agreement".format(self.contract_template)
+			name += " - {}".format(self.contract_template)
 
 		# If identical, append contract name with the next number in the iteration
 		if frappe.db.exists("Contract", name):
@@ -68,6 +69,16 @@ class Contract(Document):
 	def get_fulfilment_progress(self):
 		return len([term for term in self.fulfilment_terms if term.fulfilled])
 
+@frappe.whitelist()
+def get_contract_template(template_name, doc):
+	'''Returns the processed HTML of a email template with the given doc'''
+	if isinstance(doc, str):
+		doc = json.loads(doc)
+
+	contract_template = frappe.get_doc("Contract Template", template_name)
+	return {"contract_terms" : frappe.render_template(contract_template.contract_terms, { "doc": doc }),
+			"requires_fulfilment" : contract_template.requires_fulfilment,
+			"fulfilment_terms": contract_template.fulfilment_terms}
 
 def get_status(start_date, end_date):
 	"""

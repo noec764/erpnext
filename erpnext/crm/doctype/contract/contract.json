@@ -162,8 +162,7 @@
    "fieldname": "contract_terms",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
-   "label": "Contract Terms",
-   "reqd": 1
+   "label": "Contract Terms"
   },
   {
    "fieldname": "sb_fulfilment",
@@ -226,7 +225,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-09-30 00:56:41.559681",
+ "modified": "2019-10-28 17:01:33.989038",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
