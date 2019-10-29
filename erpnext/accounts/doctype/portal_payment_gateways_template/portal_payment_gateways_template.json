@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "template_name",
-  "payment_gateways"
+  "payment_gateways",
+  "email_template"
  ],
  "fields": [
   {
@@ -24,9 +25,15 @@
    "label": "Template Name",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "email_template",
+   "fieldtype": "Link",
+   "label": "Email Template",
+   "options": "Email Template"
   }
  ],
- "modified": "2019-08-21 12:20:40.078820",
+ "modified": "2019-10-29 11:45:31.414852",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Portal Payment Gateways Template",
