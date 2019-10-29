@@ -49,7 +49,9 @@ frappe.ui.form.on('Item Booking', {
 								frappe.datetime.add_minutes(frm.doc.modified, r),
 								frappe.datetime.now_datetime())
 							frm.set_intro()
-							frm.set_intro(__("This document will be automatically deleted in {0} minutes if not validated.", [delay]))
+							if (delay > 0) {
+								frm.set_intro(__("This document will be automatically deleted in {0} minutes if not validated.", [delay]))
+							}
 						}, 10000 )
 					}
 				} )

@@ -17,7 +17,7 @@
 			{{  frappe.utils.get_time(doc.starts_on).strftime("%H:%M") }}-{{  frappe.utils.get_time(doc.ends_on).strftime("%H:%M") }}
 		</div>
 		<div class="col-3">
-			{% if doc.docstatus != 2 and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
+			{% if doc.docstatus != 2 and doc.starts_on > frappe.utils.now_datetime() and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
 		</div>
 	</div>
 </div>
