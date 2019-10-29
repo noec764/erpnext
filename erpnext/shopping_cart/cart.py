@@ -178,6 +178,9 @@ def add_new_address(doc):
 	address = frappe.get_doc(doc)
 	address.save(ignore_permissions=True)
 
+	update_cart_address("shipping_address_name" if address.address_type == "Shipping" \
+		else "customer_address", address.name)
+
 	return address
 
 @frappe.whitelist(allow_guest=True)
