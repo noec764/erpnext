@@ -21,6 +21,8 @@ $(document).bind('toolbar_setup', function() {
 	var $help_menu = $('.dropdown-help ul .documentation-links');
 	$('<li><a data-link-type="doc" href="https://doc.dokos.io" \
 		target="_blank">'+__('Documentation')+'</a></li>').insertBefore($help_menu);
+	$('<li><a data-link-type="doc" href="https://community.dokos.io" \
+		target="_blank">'+__('Community')+'</a></li>').insertBefore($help_menu);
 	$('<li><a href="https://gitlab.com/dokos/dokos/issues" \
 		target="_blank">'+__('Report an Issue')+'</a></li>').insertBefore($help_menu);
 
