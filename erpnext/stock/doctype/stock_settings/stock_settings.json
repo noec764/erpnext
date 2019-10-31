@@ -32,7 +32,10 @@
   "use_naming_series",
   "naming_series_prefix",
   "item_booking_column",
-  "minute_uom"
+  "minute_uom",
+  "column_break_30",
+  "enable_simultaneous_booking",
+  "clear_item_booking_draft_duration"
  ],
  "fields": [
   {
@@ -204,12 +207,29 @@
    "fieldtype": "Link",
    "label": "Minute UOM",
    "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_30",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_simultaneous_booking",
+   "fieldtype": "Check",
+   "label": "Enable simultaneous booking"
+  },
+  {
+   "default": "15",
+   "description": "Minimum 3 minutes.<br>Set 0 to disable this functionality.",
+   "fieldname": "clear_item_booking_draft_duration",
+   "fieldtype": "Int",
+   "label": "Clear drafts after x minutes"
   }
  ],
  "icon": "icon-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2019-09-25 09:36:11.586161",
+ "modified": "2019-10-24 16:55:37.928147",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",

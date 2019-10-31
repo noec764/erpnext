@@ -684,10 +684,10 @@
    "label": "Additional Discount and Coupon Code"
   },
   {
-    "fieldname": "coupon_code",
-    "fieldtype": "Link",
-    "label": "Coupon Code",
-    "options": "Coupon Code"
+   "fieldname": "coupon_code",
+   "fieldtype": "Link",
+   "label": "Coupon Code",
+   "options": "Coupon Code"
   },
   {
    "default": "Grand Total",
@@ -1208,7 +1208,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2019-10-14 08:46:07.540565",
+ "modified": "2019-10-22 14:26:42.767189",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

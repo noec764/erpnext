@@ -106,8 +106,8 @@ class PaymentRequest(Document):
 			send_mail = False
 
 		if send_mail:
-			self.send_email()
-			self.make_communication_entry()
+			communication = self.make_communication_entry()
+			self.send_email(communication)
 
 	def on_cancel(self):
 		self.check_if_payment_entry_exists()
@@ -248,7 +248,7 @@ class PaymentRequest(Document):
 
 		return payment_entry
 
-	def send_email(self):
+	def send_email(self, communication):
 		"""send email with payment link"""
 		email_args = {
 			"recipients": self.email_to,
@@ -256,6 +256,7 @@ class PaymentRequest(Document):
 			"subject": self.subject,
 			"message": self.get_message(),
 			"now": True,
+			"communication": communication.name if communication else None,
 			"attachments": [frappe.attach_print(self.reference_doctype, self.reference_name,
 				file_name=self.reference_name, print_format=self.print_format)]}
 		enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
@@ -288,15 +289,22 @@ class PaymentRequest(Document):
 
 	def make_communication_entry(self):
 		"""Make communication entry"""
-		comm = frappe.get_doc({
-			"doctype":"Communication",
-			"subject": self.subject,
-			"content": self.get_message(),
-			"sent_or_received": "Sent",
-			"reference_doctype": self.reference_doctype,
-			"reference_name": self.reference_name
-		})
-		comm.insert(ignore_permissions=True)
+		try:
+			comm = frappe.get_doc({
+				"doctype":"Communication",
+				"communication_medium": "Email",
+				"recipients": self.email_to,
+				"subject": self.subject,
+				"content": self.get_message(),
+				"sent_or_received": "Sent",
+				"reference_doctype": self.reference_doctype,
+				"reference_name": self.reference_name
+			})
+			comm.insert(ignore_permissions=True)
+
+			return comm
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), _("Payment request communication creation error"))
 
 	def get_payment_success_url(self):
 		return self.payment_success_url

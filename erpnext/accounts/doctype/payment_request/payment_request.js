@@ -1,8 +1,9 @@
-cur_frm.add_fetch("payment_gateway_account", "payment_account", "payment_account")
-*cur_frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway")
-cur_frm.add_fetch("payment_gateway_account", "message", "message")
-
 frappe.ui.form.on("Payment Request", {
+	setup(frm) {
+		frm.add_fetch("payment_gateway_account", "payment_account", "payment_account")
+		frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway")
+		frm.add_fetch("payment_gateways_template", "email_template", "email_template")
+	},
 	onload(frm) {
 		if (frm.doc.reference_doctype) {
 			frappe.call({

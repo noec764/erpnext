@@ -68,7 +68,7 @@ def place_order():
 	from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 	sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
 
-	if not cart_settings.allow_items_not_in_stock:
+	if not cint(cart_settings.allow_items_not_in_stock):
 		for item in sales_order.get("items"):
 			item.reserved_warehouse, is_stock_item = frappe.db.get_value("Item",
 				item.item_code, ["website_warehouse", "is_stock_item"])
@@ -177,6 +177,9 @@ def add_new_address(doc):
 	})
 	address = frappe.get_doc(doc)
 	address.save(ignore_permissions=True)
+
+	update_cart_address("shipping_address_name" if address.address_type == "Shipping" \
+		else "customer_address", address.name)
 
 	return address
 
@@ -387,7 +390,9 @@ def get_party(user=None):
 	if not user:
 		user = frappe.session.user
 
-	contact_name = frappe.db.get_value("Contact", {"email_id": user})
+	contact_name = frappe.db.get_value("Contact", {"user": user})
+	if not contact_name:
+		contact_name = frappe.db.get_value("Contact", {"email_id": user})
 	party = None
 
 	if contact_name:
@@ -435,6 +440,7 @@ def get_party(user=None):
 			"first_name": fullname,
 			"email_id": user
 		})
+		contact.add_email(user, is_primary=True)
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
 		contact.flags.ignore_mandatory = True
 		contact.insert(ignore_permissions=True)
