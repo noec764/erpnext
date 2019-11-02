@@ -10331,7 +10331,7 @@
     "Ordered Qty: Quantity ordered for purchase, but not received.": "Qté commandée: Quantité commandée au fournisseur, mais non reçue",
     "Reserved Qty: Quantity ordered for sale, but not delivered.": "Qté réservée: Quantité vendue, mais non livrée",
     "Reserved Qty for Production: Raw materials quantity to make manufacturing items.": "Qté réservée pour la production: Quantité de matières premières nécessaire à la production d'articles manufacturés.",
-    "Reserved Qty for Subcontract: Raw materials quantity to make subcotracted items.": "Qté réservée pour la sous-traitance: Quantité de matières premières nécessaire à la sous-traitance d'articles.",
+    "Reserved Qty for Subcontract: Raw materials quantity to make subcontracted items.": "Qté réservée pour la sous-traitance: Quantité de matières premières nécessaire à la sous-traitance d'articles.",
     "Do you want to submit the material request": "Voulez-vous soumettre la demande de matériel"
   },
   "apps/erpnext/erpnext/stock/get_item_details.py": {

@@ -117,7 +117,7 @@ class Account(NestedSet):
 
 			if not parent_acc_name_map: return
 
-			self.create_account_for_child_company(parent_acc_name_map, descendants)
+			self.create_account_for_child_company(parent_acc_name_map, descendants, parent_acc_name)
 
 	def validate_group_or_ledger(self):
 		if self.get("__islocal"):
@@ -177,7 +177,7 @@ class Account(NestedSet):
 		else:
 			return True
 
-	def create_account_for_child_company(self, parent_acc_name_map, descendants):
+	def create_account_for_child_company(self, parent_acc_name_map, descendants, parent_acc_name):
 		for company in descendants:
 			if not parent_acc_name_map.get(company):
 				frappe.throw(_("While creating account for child Company {0}, parent account {1} not found. Please create the parent account in corresponding COA")
