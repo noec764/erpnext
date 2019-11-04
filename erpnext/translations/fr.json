@@ -3656,7 +3656,8 @@
     "Please click on 'Generate Schedule'": "Veuillez cliquer sur \"Générer calendrier''",
     "Please enter Maintaince Details first": "Veuillez d’abord entrer les Détails de Maintenance",
     "Please select Start Date and End Date for Item {0}": "Veuillez sélectionner la Date de Début et Date de Fin pour l'Article {0}",
-    "Start date should be less than end date for Item {0}": "La date de début doit être antérieure à la date de fin pour l'Article {0}"
+    "Start date should be less than end date for Item {0}": "La date de début doit être antérieure à la date de fin pour l'Article {0}",
+    "Please select a Sales Person for item: {0}": "Veuillez sélectionner un commercial pour l'article: {0}"
   },
   "apps/erpnext/erpnext/accounts/report/consolidated_financial_statement/consolidated_financial_statement.py": {
     "{0} {1} is not present in the parent company": "{0} {1} n'est pas présent dans la société mère",
@@ -4480,7 +4481,8 @@
     "Goods are already received against the outward entry {0}": "Biens déjà reçus pour l'écriture sortante {0}",
     "Did not found transfered item {0} in Work Order {1}, the item not added in Stock Entry": "Articles transférés {0} dans l'ordre de travail {1} introuvables. Ils n'ont pas été ajoutés à l'écriture de stock.",
     "Work Order {0}: job card not found for the operation {1}": "Ordre de travail {0}: Carte de travail introuvable pour l'opération {1}",
-    "Work Order {0}: Job card not found for the operation {1}": "Order de travail {0}: Carte de travail introuvable pour l'opération {1}"
+    "Work Order {0}: Job card not found for the operation {1}": "Order de travail {0}: Carte de travail introuvable pour l'opération {1}",
+    "Please enter <b>Difference Account</b> or set default <b>Stock Adjustment Account</b> for company {0}": "Veuillez sélectionner un <b>compte d'écart</b> ou définir un <b>compte d'ajustement du stock</b> par défaut pour la société {0}"
   },
   "apps/erpnext/erpnext/setup/setup_wizard/setup_wizard.py": {
     "Wrapping up": "Emballer",
@@ -8147,7 +8149,8 @@
     "External Reference": "Référence externe",
     "Skip Delivery Note": "Ne pas faire de bon de livraison",
     "Additional Discount and Coupon Code": "Remises additionnelles et codes promotionnels",
-    "Coupon Code": "Code promotionnel"
+    "Coupon Code": "Code promotionnel",
+    "Company Address Name": "Nom de l'adresse de la société"
   },
   "apps/erpnext/erpnext/accounts/doctype/opening_invoice_creation_tool/opening_invoice_creation_tool.py": {
     "Opening Invoice Item": "Ouverture d'un poste de facture",
@@ -10331,7 +10334,7 @@
     "Ordered Qty: Quantity ordered for purchase, but not received.": "Qté commandée: Quantité commandée au fournisseur, mais non reçue",
     "Reserved Qty: Quantity ordered for sale, but not delivered.": "Qté réservée: Quantité vendue, mais non livrée",
     "Reserved Qty for Production: Raw materials quantity to make manufacturing items.": "Qté réservée pour la production: Quantité de matières premières nécessaire à la production d'articles manufacturés.",
-    "Reserved Qty for Subcontract: Raw materials quantity to make subcotracted items.": "Qté réservée pour la sous-traitance: Quantité de matières premières nécessaire à la sous-traitance d'articles.",
+    "Reserved Qty for Subcontract: Raw materials quantity to make subcontracted items.": "Qté réservée pour la sous-traitance: Quantité de matières premières nécessaire à la sous-traitance d'articles.",
     "Do you want to submit the material request": "Voulez-vous soumettre la demande de matériel"
   },
   "apps/erpnext/erpnext/stock/get_item_details.py": {
@@ -10914,7 +10917,8 @@
     "Debit and Credit not equal for {0} #{1}. Difference is {2}.": "Débit et Crédit non égaux pour {0} # {1}. La différence est de {2}.",
     "Account: {0} can only be updated via Stock Transactions": "Compte : {0} peut uniquement être mis à jour via les Mouvements de Stock",
     "You can't create accounting entries in the closed accounting period {0}": "Vous ne pouvez pas créer d'écritures comptables dans la période comptable clôturée {0}",
-    "Account: <b>{0}</b> is capital Work in progress and can not be updated by Journal Entry": "Le compte: <b>{0}</b> est un compte d'immobilisation en cours et ne peut pas être mis à jour avec une écriture de journal"
+    "Account: <b>{0}</b> is capital Work in progress and can not be updated by Journal Entry": "Le compte: <b>{0}</b> est un compte d'immobilisation en cours et ne peut pas être mis à jour avec une écriture de journal",
+    "Account Balance ({0}) and Stock Value ({1}) is out of sync for account {2} and linked warehouse ({3}). Please create adjustment Journal Entry for amount {4}.": "Le solde comptable ({0}) et la valeur du stock ({1}) sont différents pour le compte {2} et l'entrepôt ({3}). Veuillez créer une écriture de journal d'ajustement pour un montant de {4}."
   },
   "DocType: Item Barcode": {
     "Item Barcode": "Code barre article",
@@ -11065,7 +11069,8 @@
     "Total Budget": "Budget total",
     "Account": "Compte",
     "Budget": "Budget",
-    "Actual ": "Actuel"
+    "Actual ": "Actuel",
+    "Variance ": "Variance"
   },
   "apps/erpnext/erpnext/accounts/doctype/c_form/c_form.py": {
     "Row {0}: Invoice {1} is invalid, it might be cancelled / does not exist. \\\n\t\t\t\t\t\tPlease enter a valid Invoice": "Ligne {0} : La Facture {1} est invalide, elle a peut-être été annulée ou n'existe pas. \\ Veuillez entrer une Facture valide",
@@ -11148,25 +11153,25 @@
     "Email Digest: ": "Récapitulatif par email"
   },
   "apps/erpnext/erpnext/templates/pages/cart.html": {
-    "Subtotal": "Sous-Total",
-    "Place Order": "Passer la Commande",
+    "Subtotal": "Sous-total",
+    "Place Order": "Passer la commande",
     "Shopping Cart": "Panier",
     "Item": "Article",
     "Qty": "Qté",
-    "Cart is Empty": "Le panier est Vide",
+    "Cart is Empty": "Le panier est vide",
     "Terms and Conditions": "Termes et conditions",
-    "Request for Quotation": "Appel d'Offre",
+    "Request for Quotation": "Appel d'offre",
     "Quantity": "Quantité",
     "Your cart is Empty": "Votre panier est vide",
     "See past orders": "Voir vos commandes passées",
     "See past quotations": "Voir vos devis passés",
     "Apply Coupon Code": "Valider le code promotionnel",
     "Coupon Code": "Code promotionnel",
-    "Sales Partner": "Partenaire Commercial"
+    "Sales Partner": "Partenaire commercial"
   },
   "apps/erpnext/erpnext/controllers/selling_controller.py": {
-    "Order Type must be one of {0}": "Type de Commande doit être l'un des {0}",
-    "Sales Order {0} is {1}": "Commande Client {0} est {1}",
+    "Order Type must be one of {0}": "Le type de commande doit être l'un parmi {0}",
+    "Sales Order {0} is {1}": "Commande client {0} est {1}",
     "To {0} | {1} {2}": "À {0} | {1} {2}",
     "Maximum discount for Item {0} is {1}%": "La remise maximale pour l'article {0} est {1}%",
     "Total allocated percentage for sales team should be 100": "Pourcentage total attribué à l'équipe commerciale devrait être de 100",
@@ -13243,7 +13248,8 @@
   },
   "apps/erpnext/erpnext/public/js/conf.js": {
     "Report an Issue": "Signaler un Problème",
-    "Documentation": "Documentation"
+    "Documentation": "Documentation",
+    "Community": "Communauté"
   },
   "DocType: Employee Tax Exemption Declaration Category": {
     "Exemption Sub Category": "Sous-catégorie d'exemption",
@@ -16366,7 +16372,8 @@
     "Please specify": "Veuillez définir",
     "Added {0} ({1})": "Ajouté {0} ({1})",
     "Mobile No": "N° mobile",
-    "Write off": "Remise"
+    "Write off": "Remise",
+    "Community": "Communauté"
   },
   "sites/assets/js/item-dashboard.min.js": {
     "Reserved Qty": "Qté Réservées",
@@ -17681,7 +17688,8 @@
     "Template Name": "Nom du modèle",
     "System Manager": "Responsable système",
     "Portal Payment Gateways Template": "Modèle de passerelles de paiement du portail",
-    "Payment Gateways": "Passerelles de paiement"
+    "Payment Gateways": "Passerelles de paiement",
+    "Email Template": "Modèle d'email"
   },
   "DocType: Subscription Gateway Plans": {
     "Accounts": "Comptes",
@@ -17851,7 +17859,8 @@
     "Party Type": "Type de tiers",
     "Sales Manager": "Responsable commercial",
     "Sales User": "Commercial",
-    "Customer": "Client"
+    "Customer": "Client",
+    "Notes": "Notes"
   },
   "apps/erpnext/erpnext/stock/doctype/item_booking/item_booking_calendar.js": {
     "Item": "Article"
@@ -19312,7 +19321,10 @@
     "System Manager": "Responsable système",
     "Accounts User": "Comptable",
     "Sales Manager": "Responsable commercial",
-    "Website Manager": "Responsable du site web"
+    "Website Manager": "Responsable du site web",
+    "e.g. \"Summer Holiday 2019 Offer 20\"": "ex. 'Promo Noël 2019'",
+    "unique e.g. SAVE20  To be used to get discount": "Unique. Ex. NOEL19",
+    "Validity and Usage": "Validité et utilisation"
   },
   "apps/erpnext/erpnext/accounts/doctype/coupon_code/coupon_code.js": {
     "Add/Edit Coupon Conditions": "Ajouter/Modifier les conditions de la promotion"
@@ -19354,5 +19366,14 @@
     "Pin Code": "Code postal",
     "Country": "Pays",
     "Save": "Enregistrer"
+  },
+  "apps/erpnext/erpnext/stock/doctype/serial_no/serial_no_list.js": {
+    "Cancelled": "Annulé",
+    "Delivered": "Livré",
+    "Expired": "Expiré",
+    "Active": "Actif"
+  },
+  "apps/erpnext/erpnext/accounts/dashboard_chart_source/account_balance_timeline/account_balance_timeline.py": {
+    "Account is not set for the dashboard chart {0}": "Aucun compte défini pour le graphique du tableau de bord {0}"
   }
 }
