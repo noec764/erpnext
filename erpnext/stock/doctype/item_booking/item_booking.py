@@ -20,11 +20,9 @@ from frappe.utils.user import is_website_user
 
 class ItemBooking(Document):
 	def before_save(self):
-		if self.party_name or self.user:
-			if self.party_name and self.party_type:
-				title_field = frappe.get_meta(self.party_type).get_title_field()
-				party_name = frappe.db.get_value(self.party_type, self.party_name, title_field if title_field else "name")
-			self.title = self.item_name + " - " + party_name if party_name else self.user
+		if self.user:
+			user_name = frappe.db.get_value("User", self.user, "full_name")
+			self.title = self.item_name + " - " + user_name or self.user
 		else:
 			self.title = self.item_name
 
@@ -95,15 +93,7 @@ def get_item_price(item_code, uom):
 
 @frappe.whitelist()
 def book_new_slot(**kwargs):
-	quotation = kwargs.get("quotation")
 	uom = kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom")
-	if not frappe.session.user == "Guest":
-		if not quotation:
-			quotation = _get_cart_quotation().get("name")
-
-		if not quotation or not frappe.db.exists("Quotation", quotation):
-			quotation = update_cart(item_code=kwargs.get("item"), qty=1, uom=uom).get("name")
-
 	try:
 		doc = frappe.get_doc({
 			"doctype": "Item Booking",
@@ -112,10 +102,6 @@ def book_new_slot(**kwargs):
 			"ends_on": kwargs.get("end"),
 			"billing_qty": 1,
 			"sales_uom": uom,
-			"reference_doctype": "Quotation",
-			"reference_name": quotation,
-			"party_type": frappe.db.get_value("Quotation", quotation, "quotation_to"),
-			"party_name": frappe.db.get_value("Quotation", quotation, "party_name"),
 			"user": frappe.session.user
 		}).insert(ignore_permissions=True)
 
@@ -139,11 +125,11 @@ def get_booked_slots(quotation=None, uom=None):
 	if not quotation:
 		return []
 
-	filters = dict(reference_doctype="Quotation", reference_name=quotation, docstatus=0)
+	filters = dict(parenttype="Quotation", parent=quotation)
 	if uom:
-		filters["sales_uom"] = uom
+		filters["uom"] = uom
 
-	return frappe.get_all("Item Booking", filters=filters)
+	return frappe.get_all("Quotation Item", filters=filters, fields=["item_booking as name"])
 
 @frappe.whitelist()
 def reset_all_booked_slots():
@@ -301,8 +287,10 @@ def _get_selected_slots(events, quotation=None):
 		quotation = _get_cart_quotation().get("name")
 
 	if quotation:
-		linked_items = [x for x in linked_items\
-			if x.reference_doctype == "Quotation" and x.reference_name == quotation]
+		quotation_items = [x["item_booking"] for x in frappe.get_all("Quotation Item", \
+			filters={"parenttype": "Quotation", "parent": quotation}, fields=["item_booking"]) if x["item_booking"] is not None]
+		print(quotation_items, linked_items)
+		linked_items = [x for x in linked_items if x.name in quotation_items]
 
 	result = []
 	for item in linked_items:
@@ -354,7 +342,7 @@ def get_unavailable_dict(event):
 		"id": event.name,
 		"backgroundColor": "#69eb94",
 		"classNames": "unavailable",
-		"title": _("Booked")
+		"title": _("In shopping cart")
 	}
 
 def get_item_calendar(item, uom):
@@ -440,7 +428,8 @@ def make_quotation(source_name, target_doc=None):
 		quotation.append('items', {
 			'item_code': source.item,
 			'qty': source.billing_qty,
-			'uom': source.sales_uom
+			'uom': source.sales_uom,
+			'item_booking': source.name
 		})
 
 		# get default taxes
