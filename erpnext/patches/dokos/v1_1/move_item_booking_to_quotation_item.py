@@ -2,7 +2,9 @@ import frappe
 
 def execute():
 	frappe.reload_doc("selling", "doctype", "quotation")
+	frappe.reload_doc("selling", "doctype", "quotation_item")
 	frappe.reload_doc("selling", "doctype", "sales_order")
+	frappe.reload_doc("selling", "doctype", "sales_order_item")
 	item_bookings = frappe.get_all("Item Booking", fields=["name", "item", "reference_doctype", "reference_name"])
 
 	for booking in item_bookings:
