@@ -635,3 +635,4 @@ execute:frappe.delete_doc_if_exists("DocType", "Subscription Invoice")
 execute:frappe.delete_doc_if_exists("DocType", "Subscription Settings")
 execute:frappe.delete_doc_if_exists("DocType", "Subscriber")
 erpnext.patches.dokos.v1_0.move_gocardless_mandate_to_sepa_mandate
+erpnext.patches.dokos.v1_1.move_item_booking_to_quotation_item
