@@ -11,7 +11,7 @@
 		{% set item_booking = frappe.db.get_value("Item Booking", dict(reference_doctype="Quotation", reference_name=doc.get("name")), "name") %}
 		{% if items_params["variant_of"] %}
 		<span class="text-muted">
-			{{ _('Variant of') }} <a href="{{frappe.db.get_value('Item', variant_of, 'route')}}">{{ variant_of }}</a>
+			{{ _('Variant of') }} <a href="{{frappe.db.get_value('Item', items_params['variant_of'], 'route')}}">{{ items_params["variant_of"] }}</a>
 		</span>
 		{% endif %}
 		<div class="mt-2">
