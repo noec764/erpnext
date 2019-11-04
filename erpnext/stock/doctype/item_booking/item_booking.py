@@ -112,6 +112,11 @@ def book_new_slot(**kwargs):
 @frappe.whitelist()
 def remove_booked_slot(name):
 	try:
+		for dt in ["Quotation Item", "Sales Order"]:
+			linked_docs = frappe.get_all(dt, filters={"item_booking": name})
+			for d in linked_docs:
+				frappe.db.set_value(dt, d.get("name"), "item_booking", None)
+
 		return frappe.delete_doc("Item Booking", name, ignore_permissions=True, force=True)
 	except frappe.TimestampMismatchError:
 		frappe.get_doc("Item Booking", name).reload()

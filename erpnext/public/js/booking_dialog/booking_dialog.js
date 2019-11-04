@@ -5,6 +5,9 @@ frappe.provide("erpnext.booking_dialog_update")
 erpnext.booking_dialog = class BookingDialog {
 	constructor(opts) {
 		Object.assign(this, opts);
+		this.sales_uom = null;
+		this.uoms = [];
+		this.uoms_btns = {};
 		this.show()
 	}
 
@@ -15,8 +18,11 @@ erpnext.booking_dialog = class BookingDialog {
 			'/assets/js/control.min.js'
 		], () => {
 			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
-			this.build_dialog()
-			this.build_calendar()
+			this.get_selling_uoms()
+			.then(() => {
+				this.build_dialog()
+				this.build_calendar()
+			})
 		});
 	}
 
@@ -64,7 +70,7 @@ erpnext.booking_dialog = class BookingDialog {
 		new Vue({
 			el: this.wrapper,
 			render: h => h(BookingForm, {
-				props: { item: this.item }
+				props: { item: this.item, sales_uom: this.sales_uom }
 			})
 		})
 	}
@@ -88,12 +94,8 @@ erpnext.booking_dialog = class BookingDialog {
 	}
 
 	add_uom_selector() {
-		this.uoms = []
-		this.uoms_btns = {}
-		this.get_selling_uoms()
-		.then(() => {
-			this.show_uom_selector()
-		})
+		this.get_item_price()
+		this.show_uom_selector()
 	}
 
 	show_uom_selector() {
@@ -129,7 +131,6 @@ erpnext.booking_dialog = class BookingDialog {
 					this.uoms.unshift(r.message.sales_uom)
 				}
 				this.sales_uom = r.message.sales_uom
-				this.get_item_price()
 			}
 		})
 	}

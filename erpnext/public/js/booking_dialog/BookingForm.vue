@@ -8,6 +8,9 @@
 				<div class="spinner-inner"></div>
 			</div>
 		</div>
+		<div v-else-if="!uom" class="col-12 text-center justify-content-center align-self-center">
+			<h2 class="text-muted">{{ __("Please select a unit of measure first") }}</h2>
+		</div>
 		<div v-else class="col-12">
 			<FullCalendar
 				eventClassName='booking-calendar'
@@ -45,6 +48,9 @@ export default {
 	props: {
 		item: {
 			default: null
+		},
+		sales_uom: {
+			default: null
 		}
 	},
 	data() {
@@ -68,7 +74,7 @@ export default {
 			quotation: null,
 			defaultDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			loading: false,
-			uom: this.item.sales_uom
+			uom: this.sales_uom
 		}
 	},
 	computed: {
