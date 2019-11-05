@@ -57,8 +57,16 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=False, or_filters=or_filters)
 
 @frappe.whitelist()
-def cancel_appointment(id):
+def cancel_appointments(ids, force=False):
+	ids = frappe.parse_json(ids)
+	for id in ids:
+		cancel_appointment(id, force)
+
+@frappe.whitelist()
+def cancel_appointment(id, force=False):
 	booking = frappe.get_doc("Item Booking", id)
+	if force:
+		booking.flags.ignore_links = True
 	return booking.cancel()
 
 @frappe.whitelist(allow_guest=True)
