@@ -80,8 +80,6 @@ class Subscription(Document):
 		elif self.status == 'Trial':
 			self.set_subscription_status()
 
-		self.save()
-
 	def process_active_subscription(self):
 		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end):
 			self.update_subscription_period(add_days(self.trial_period_end, 1))
@@ -372,6 +370,7 @@ class Subscription(Document):
 	def cancel_subscription_at_period_end(self):
 		if not self.cancellation_date:
 			self.cancellation_date = self.current_invoice_end
+			self.save()
 
 	def has_invoice_for_period(self):
 		return True if self.get_current_documents("Sales Invoice") else False
@@ -395,7 +394,7 @@ class Subscription(Document):
 
 			if calculated_end >= getdate(self.current_invoice_end):
 				period_documents.append(document)
-			
+
 		return period_documents
 
 	def cancel_subscription(self):
@@ -408,6 +407,7 @@ class Subscription(Document):
 			if generate_invoice and not self.generate_invoice_at_period_start \
 				and not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
 				self.generate_invoice(prorate=self.prorate_invoice)
+
 			self.save()
 
 			self.cancel_gateway_subscription()
@@ -470,7 +470,6 @@ def process(data, date=None):
 		try:
 			subscription = frappe.get_doc('Subscription', data['name'])
 			subscription.process()
-			frappe.db.commit()
 		except frappe.ValidationError:
 			frappe.db.rollback()
 			frappe.db.begin()
@@ -489,7 +488,6 @@ def cancel_subscription(**kwargs):
 def restart_subscription(name):
 	subscription = frappe.get_doc('Subscription', name)
 	subscription.restart_subscription()
-
 
 @frappe.whitelist()
 def get_subscription_updates(name):
