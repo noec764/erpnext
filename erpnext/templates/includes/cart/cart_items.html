@@ -7,11 +7,16 @@
 		<div>
 			{{ d.item_code }}
 		</div>
+		{% if d.item_booking %}
+		{% set item_booking_doc = frappe.db.get_value('Item Booking', d.item_booking, ['starts_on', 'ends_on'], as_dict=True) %}
+		<div>
+			{{ frappe.utils.format_datetime(item_booking_doc.starts_on) }} - {{ frappe.utils.format_datetime(item_booking_doc.ends_on) }}
+		</div>
+		{% endif %}
 		{% set items_params = frappe.db.get_value('Item', d.item_code, ['variant_of', 'enable_item_booking'], as_dict=True) %}
-		{% set item_booking = frappe.db.get_value("Item Booking", dict(reference_doctype="Quotation", reference_name=doc.get("name")), "name") %}
 		{% if items_params["variant_of"] %}
 		<span class="text-muted">
-			{{ _('Variant of') }} <a href="{{frappe.db.get_value('Item', variant_of, 'route')}}">{{ variant_of }}</a>
+			{{ _('Variant of') }} <a href="{{frappe.db.get_value('Item', items_params['variant_of'], 'route')}}">{{ items_params["variant_of"] }}</a>
 		</span>
 		{% endif %}
 		<div class="mt-2">
@@ -21,14 +26,14 @@
 	<td class="text-right">
 		<div class="input-group number-spinner">
 			<span class="input-group-prepend d-none d-md-inline-block">
-				<button class="btn btn-outline-secondary cart-btn" data-dir="dwn" {% if items_params["enable_item_booking"] and item_booking %}disabled{% endif %}>–</button>
+				<button class="btn btn-outline-secondary cart-btn" data-dir="dwn" {% if items_params["enable_item_booking"] and d.item_booking %}disabled{% endif %}>–</button>
 			</span>
 			<input class="form-control text-right cart-qty border-secondary" value="{{ d.get_formatted('qty') }}" data-item-code="{{ d.item_code }}" {% if items_params["enable_item_booking"] %}disabled{% endif %}>
 			<span class="input-group-append d-none d-md-inline-block">
-				<button class="btn btn-outline-secondary cart-btn" data-dir="up" {% if items_params["enable_item_booking"] and item_booking %}disabled{% endif %}>+</button>
+				<button class="btn btn-outline-secondary cart-btn" data-dir="up" {% if items_params["enable_item_booking"] and d.item_booking %}disabled{% endif %}>+</button>
 			</span>
 		</div>
-		{% if items_params["enable_item_booking"] and item_booking %}
+		{% if items_params["enable_item_booking"] and d.item_booking %}
 			<div class="text-center mt-2">
 				<button class="btn btn-primary btn-xs item-booking-btn" data-item-code="{{d.item_code}}">{{ _("Change booking") }}</button>
 			</div>

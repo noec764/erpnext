@@ -65,6 +65,8 @@
   "item_tax_rate",
   "shopping_cart_section",
   "additional_notes",
+  "column_break_61",
+  "item_booking",
   "section_break_61",
   "page_break"
  ],
@@ -382,6 +384,7 @@
    "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "is_free_item",
    "fieldtype": "Check",
    "label": "Is Free Item",
@@ -517,6 +520,7 @@
   },
   {
    "allow_on_submit": 1,
+   "default": "0",
    "fieldname": "page_break",
    "fieldtype": "Check",
    "label": "Page Break",
@@ -570,11 +574,21 @@
    "fieldname": "image_section",
    "fieldtype": "Section Break",
    "label": "Image"
+  },
+  {
+   "fieldname": "column_break_61",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_booking",
+   "fieldtype": "Link",
+   "label": "Item Booking",
+   "options": "Item Booking"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-05-01 17:39:14.228141",
+ "modified": "2019-11-04 14:25:44.235487",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation Item",

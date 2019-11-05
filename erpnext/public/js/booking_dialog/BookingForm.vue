@@ -8,6 +8,9 @@
 				<div class="spinner-inner"></div>
 			</div>
 		</div>
+		<div v-else-if="!uom" class="col-12 text-center justify-content-center align-self-center">
+			<h2 class="text-muted">{{ __("Please select a unit of measure first") }}</h2>
+		</div>
 		<div v-else class="col-12">
 			<FullCalendar
 				eventClassName='booking-calendar'
@@ -45,6 +48,9 @@ export default {
 	props: {
 		item: {
 			default: null
+		},
+		sales_uom: {
+			default: null
 		}
 	},
 	data() {
@@ -68,7 +74,7 @@ export default {
 			quotation: null,
 			defaultDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			loading: false,
-			uom: this.item.sales_uom
+			uom: this.sales_uom
 		}
 	},
 	computed: {
@@ -141,11 +147,10 @@ export default {
 				start: moment(event.event.start).format("YYYY-MM-DD H:mm:SS"),
 				end: moment(event.event.end).format("YYYY-MM-DD H:mm:SS"),
 				item: this.item,
-				quotation: this.quotation,
 				uom: this.uom
 			}).then(r => {
 				this.getQuotation()
-				this.updateShoppingCart()
+				this.updateCart(r.message.name, 1)
 			})
 		},
 		removeBookedSlot(event) {
@@ -153,35 +158,22 @@ export default {
 				name: event.event.id,
 			}).then(r => {
 				this.getQuotation()
-				this.updateShoppingCart()
+				this.updateCart(event.event.id, 0)
 			})
 		},
-		updateShoppingCart() {
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_booked_slots", {
-				quotation: this.quotation,
-				uom: this.uom
-			}).then(r => {
-				if (r.message) {
-					if (r.message.length == 1) {
-						this.updateCart(r.message.length, true)
-					} else {
-						this.updateCart(r.message.length, false)
-					}
-				}
-			})
-		},
-		updateCart(qty, reset) {
+		updateCart(booking, qty) {
 			new Promise((resolve) => {
 				resolve(
 					erpnext.shopping_cart.shopping_cart_update({
 						item_code: this.item,
 						qty: qty,
 						uom: this.uom,
-						reset: reset
+						booking: booking
 					})
 				)
 			}).then(r => {
-				this.loading = false;
+				// Hack for promise resolving too fast
+				setTimeout(() => { this.loading = false; }, 2000);
 			})
 		},
 		datesRender(event) {

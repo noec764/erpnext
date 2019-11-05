@@ -80,6 +80,8 @@
   "work_order_qty",
   "produced_qty",
   "returned_qty",
+  "item_booking_section",
+  "item_booking",
   "section_break_63",
   "page_break",
   "item_tax_rate",
@@ -741,11 +743,22 @@
    "fieldname": "image_section",
    "fieldtype": "Section Break",
    "label": "Image"
+  },
+  {
+   "fieldname": "item_booking_section",
+   "fieldtype": "Section Break",
+   "label": "Item Booking"
+  },
+  {
+   "fieldname": "item_booking",
+   "fieldtype": "Link",
+   "label": "Item Booking",
+   "options": "Item Booking"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-10-10 08:46:26.244823",
+ "modified": "2019-11-04 14:26:43.030501",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",
