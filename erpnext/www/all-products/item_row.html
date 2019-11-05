@@ -1,3 +1,7 @@
+{% macro no_description_text() %}
+	<i class="text-muted">{{ _("No description") }}</i>
+{% endmacro %}
+
 <div class="card mb-3">
 	<div class="row no-gutters">
 		<div class="col-md-3">
@@ -15,7 +19,7 @@
 					</a>
 				</h5>
 				<p class="card-text">
-					{{ item.website_description or item.description or '<i class="text-muted">No description</i>' }}
+					{{ item.website_content or item.description or no_description_text() }}
 				</p>
 				<a href="/{{ item.route }}" class="btn btn-sm btn-light">{{ _('More details') }}</a>
 			</div>

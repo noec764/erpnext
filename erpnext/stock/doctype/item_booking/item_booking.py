@@ -6,13 +6,14 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime, format_datetime, cint
+from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime, format_datetime
 import datetime
 from datetime import timedelta, date
 import calendar
 import json
 from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
 from erpnext.utilities.product import get_price
+from erpnext.shopping_cart.product_info import get_product_info_for_website
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
@@ -155,6 +156,28 @@ def reset_all_booked_slots():
 @frappe.whitelist(allow_guest=True)
 def get_locale():
 	return frappe.local.lang
+
+@frappe.whitelist(allow_guest=True)
+def get_available_item(item, start, end):
+	alternative_items = frappe.get_all("Item", \
+		filters={"show_in_website": 1, "enable_item_booking": 1, "item_code": ["!=", item]}, \
+		fields=["name", "item_name", "route", "website_image", "image", "description", "website_content"])
+
+	available_items = []
+	for alternative_item in alternative_items:
+		availabilities = get_availabilities(alternative_item.name, start, end)
+		if len(availabilities):
+			available_items.append(alternative_item)
+
+	result = []
+	for available_item in available_items:
+		product_info = get_product_info_for_website(available_item.name)
+		if product_info.product_info and product_info.product_info.get("price") \
+			and (product_info.cart_settings.get("allow_items_not_in_stock") \
+			or product_info.product_info.get("in_stock")):
+			result.append(available_item)
+
+	return result
 
 @frappe.whitelist(allow_guest=True)
 def get_availabilities(item, start, end, uom=None, quotation=None):
