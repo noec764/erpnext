@@ -19,7 +19,7 @@
 {% endif %}
 {% if doc.items and not cart_settings.enable_checkout %}
 <button class="btn btn-primary btn-request-for-quotation" type="button">
-	{{ _("Request for Quotation") }}
+	{{ _("Request a Quotation") }}
 </button>
 {% endif %}
 {% endblock %}
@@ -59,7 +59,7 @@
 		<input type="hidden" class="txtreferral_sales_partner" placeholder="{{ _('Sales Partner') }}" name="txtreferral_sales_partner" type="text"/>
 	</div>
 	<div class="mb-3 d-flex flex-row-reverse">
-		<button class="btn btn-primary btn-sm bt-coupon">{{ _("Apply Coupon Code") }}</button>
+		<button class="btn btn-secondary btn-sm bt-coupon">{{ _("Apply Coupon Code") }}</button>
 	</div>
 	{% endif %}
 
