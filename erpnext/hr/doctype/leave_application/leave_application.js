@@ -104,24 +104,27 @@ frappe.ui.form.on("Leave Application", {
 	},
 
 	half_day: function(frm) {
-		if (frm.doc.from_date == frm.doc.to_date) {
-			frm.set_value("half_day_date", frm.doc.from_date);
-		}
-		else {
-			frm.trigger("half_day_datepicker");
-		}
+		frm.trigger("half_day_date_setup");
 		frm.trigger("calculate_total_days");
 	},
 
 	from_date: function(frm) {
 		frm.trigger("make_dashboard");
-		frm.trigger("half_day_datepicker");
+		frm.trigger("half_day_date_setup");
 		frm.trigger("calculate_total_days");
 	},
 
 	to_date: function(frm) {
-		frm.trigger("half_day_datepicker");
+		frm.trigger("half_day_date_setup");
 		frm.trigger("calculate_total_days");
+	},
+
+	half_day_date_setup(frm) {
+		if (frm.doc.from_date == frm.doc.to_date) {
+			frm.set_value("half_day_date", frm.doc.from_date);
+		} else {
+			frm.trigger("half_day_datepicker");
+		}
 	},
 
 	half_day_date(frm) {
