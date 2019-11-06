@@ -381,19 +381,16 @@ def reduced(timeseries):
 			yield start, end
 
 def delete_linked_item_bookings(doc, method):
-	bookings = get_linked_docs_list(doc)
-	for booking in bookings:
-		frappe.delete_doc("Item Booking", booking.name, ignore_permissions=True, force=True)
+	for item in doc.items:
+		if item.item_booking:
+			frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True, force=True)
 
 def submit_linked_item_bookings(doc, method):
-	bookings = get_linked_docs_list(doc)
-	for booking in bookings:
-		slot = frappe.get_doc("Item Booking", booking.name)
-		slot.flags.ignore_permissions = True
-		slot.submit()
-
-def get_linked_docs_list(doc):
-	return frappe.get_list("Item Booking", filters={"reference_doctype": doc.doctype, "reference_name": doc.name})
+	for item in doc.items:
+		if item.item_booking:
+			slot = frappe.get_doc("Item Booking", item.item_booking)
+			slot.flags.ignore_permissions = True
+			slot.submit()
 
 def clear_draft_bookings():
 	drafts = frappe.get_all("Item Booking", filters={"docstatus": 0}, fields=["name", "modified"])
