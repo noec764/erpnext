@@ -248,7 +248,7 @@ class PaymentRequest(Document):
 
 		return payment_entry
 
-	def send_email(self, communication):
+	def send_email(self, communication=None):
 		"""send email with payment link"""
 		email_args = {
 			"recipients": self.email_to,
@@ -512,7 +512,9 @@ def get_print_format_list(ref_doctype):
 
 @frappe.whitelist(allow_guest=True)
 def resend_payment_email(docname):
-	return frappe.get_doc("Payment Request", docname).send_email()
+	doc = frappe.get_doc("Payment Request", docname)
+	communication = doc.make_communication_entry()
+	return doc.send_email(communication)
 
 @frappe.whitelist()
 def make_payment_entry(docname):
