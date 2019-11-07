@@ -19,6 +19,7 @@ erpnext.accounts.bankReconciliation = class BankReconciliation {
 
 		this.check_plaid_status();
 		this.make();
+		this.company = frappe.defaults.get_user_default("Company");
 	}
 
 	make() {
@@ -27,13 +28,14 @@ erpnext.accounts.bankReconciliation = class BankReconciliation {
 		me.$main_section = $(`<div class="reconciliation page-main-content"></div>`).appendTo(me.page.main);
 		const empty_state = __("Upload a bank statement, link or reconcile a bank account")
 		me.$main_section.append(`<div class="flex justify-center align-center text-muted"
-			style="height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
+			style="min-height: 50vh; display: flex;"><h5 class="text-muted">${empty_state}</h5></div>`)
 
 		me.page.add_field({
 			fieldtype: 'Link',
 			label: __('Company'),
 			fieldname: 'company',
 			options: "Company",
+			default: frappe.defaults.get_user_default("Company"),
 			onchange: function() {
 				if (this.value) {
 					me.company = this.value;
@@ -88,9 +90,14 @@ erpnext.accounts.bankReconciliation = class BankReconciliation {
 
 		me.page.show_menu()
 
-		me.page.add_menu_item(__("Upload a statement"), function() {
+		me.page.add_menu_item(__("Upload a csv/xlsx statement"), function() {
 			me.clear_page_content();
-			new erpnext.accounts.bankTransactionUpload(me);
+			new erpnext.accounts.bankTransactionUpload(me, 'csv');
+		}, true)
+
+		me.page.add_menu_item(__("Upload an ofx statement"), function() {
+			me.clear_page_content();
+			new erpnext.accounts.bankTransactionUpload(me, 'ofx');
 		}, true)
 
 		if (me.plaid_status==="active") {
@@ -125,9 +132,10 @@ erpnext.accounts.bankReconciliation = class BankReconciliation {
 
 
 erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
-	constructor(parent) {
+	constructor(parent, upload_type) {
 		this.parent = parent;
 		this.data = [];
+		this.upload_type = upload_type;
 
 		const assets = [
 			"/assets/frappe/css/frappe-datatable.css",
@@ -143,8 +151,12 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 
 	make() {
 		const me = this;
+		const method = this.upload_type === 'ofx' ?
+			'erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.upload_ofx_bank_statement'
+			: 'erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.upload_csv_bank_statement'
+
 		new frappe.ui.FileUploader({
-			method: 'erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.upload_bank_statement',
+			method: method,
 			allow_multiple: 0,
 			on_success: function(attachment, r) {
 				if (!r.exc && r.message) {
@@ -168,6 +180,8 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 				columns: this.data.columns,
 				data: this.data.data
 			})
+
+			$('.body-scrollable').css('max-height', 'calc(100vh - 250px)')
 		}
 		catch(err) {
 			let msg = __(`Your file could not be processed by dokos.
@@ -187,9 +201,10 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 	add_bank_entries() {
 		const me = this;
 		frappe.xcall('erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.create_bank_entries',
-			{columns: this.datatable.datamanager.columns, data: this.datatable.datamanager.data, bank_account: me.parent.bank_account}
+			{columns: this.datatable.datamanager.columns, data: this.datatable.datamanager.data,
+			bank_account: me.parent.bank_account, upload_type: this.upload_type}
 		).then((result) => {
-			let result_title = result.errors == 0 ? __("{0} bank transaction(s) created", [result.success]) : __("{0} bank transaction(s) created and {1} errors", [result.success, result.errors])
+			let result_title = __("{0} bank transaction(s) created, {1} duplicate entries not created and {2} errors.", [result.success, result.duplicates, result.errors])
 			let result_msg = `
 				<div class="flex justify-center align-center text-muted" style="height: 50vh; display: flex;">
 					<h5 class="text-muted">${result_title}</h5>
@@ -197,10 +212,14 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 			me.parent.page.clear_primary_action();
 			me.parent.$main_section.empty();
 			me.parent.$main_section.append(result_msg);
-			if (result.errors == 0) {
+			if (result.success !== 0) {
 				frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
-			} else {
+			}
+			if (result.errors !== 0) {
 				frappe.show_alert({message:__("Please check the error log for details about the import errors"), indicator:'red'});
+			}
+			if (result.duplicates !== 0) {
+				frappe.show_alert({message:__("Some entries are duplicates and have not been created"), indicator:'orange'});
 			}
 		})
 	}

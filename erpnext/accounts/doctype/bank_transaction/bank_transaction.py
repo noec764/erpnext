@@ -13,6 +13,19 @@ class BankTransaction(StatusUpdater):
 	def after_insert(self):
 		self.unallocated_amount = abs(flt(self.credit) - flt(self.debit))
 
+	def before_insert(self):
+		filters = {"date": self.date, "credit": self.credit, "debit": self.debit, "currency": self.currency}
+		similar_entries = frappe.get_all("Bank Transaction", filters=filters)
+
+		if similar_entries:
+			if self.flags.import_statement:
+				filters.update({"description": self.description})
+				similar_entries = frappe.get_all("Bank Transaction", filters=filters)
+				if similar_entries:
+					raise frappe.DuplicateEntryError
+			else:
+				frappe.msgprint(_("The following entries exist already with the same date, debit, credit and currency:<br>{0}").format(", ".join([x.get("name") for x in similar_entries])))
+
 	def on_submit(self):
 		self.clear_linked_payment_entries()
 		self.set_status()
