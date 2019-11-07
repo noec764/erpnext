@@ -29,6 +29,7 @@ class Subscription(Document):
 		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
 		self.validate_plans_pricing_rule()
 		self.validate_subscription_period()
+		self.simulate_grand_total_calculation()
 
 	def on_update(self):
 		self.set_subscription_status()
@@ -234,13 +235,13 @@ class Subscription(Document):
 
 		return sales_order
 
-	def generate_invoice(self, prorate=0):
+	def generate_invoice(self, prorate=0, simulate=False):
 		try:
-			return self.create_invoice(prorate)
+			return self.create_invoice(prorate, simulate)
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Invoice generation error for subscription {0}").format(self.name))
 
-	def create_invoice(self, prorate):
+	def create_invoice(self, prorate, simulate=False):
 		current_sales_order = self.get_current_documents("Sales Order")
 		if current_sales_order:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
@@ -269,10 +270,11 @@ class Subscription(Document):
 
 		invoice.flags.ignore_mandatory = True
 		invoice.set_missing_values()
-		invoice.save()
+		if not simulate:
+			invoice.save()
 
-		if self.submit_invoice:
-			invoice.submit()
+			if self.submit_invoice:
+				invoice.submit()
 
 		return invoice
 
@@ -456,6 +458,14 @@ class Subscription(Document):
 		if total != self.total:
 			self.total = total
 
+	def simulate_grand_total_calculation(self):
+		self.grand_total = self.simulated_grand_total()
+
+	def simulated_grand_total(self):
+		invoice = self.generate_invoice(simulate=True)
+		invoice._action = "save"
+		invoice.run_method("validate")
+		return invoice.grand_total
 
 def process_all():
 	subscriptions = get_all_subscriptions()

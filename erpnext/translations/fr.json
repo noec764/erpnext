@@ -16563,7 +16563,7 @@
   },
   "apps/erpnext/erpnext/accounts/doctype/subscription/subscription_dashboard.py": {
     "Sales": "Ventes",
-    "Last subscription invoices": "Dernière factures pour cet abonnement"
+    "Last subscription invoices": "Dernières factures pour cet abonnement"
   },
   "apps/erpnext/erpnext/accounts/doctype/accounting_journal/accounting_journal.py": {
     "Unable to find DocType {0}": "Impossible de trouver le DocType {0}",

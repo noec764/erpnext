@@ -28,7 +28,6 @@
   "submit_invoice",
   "sb_4",
   "plans",
-  "total",
   "sb_1",
   "tax_template",
   "column_break_21",
@@ -38,6 +37,10 @@
   "cb_2",
   "additional_discount_percentage",
   "additional_discount_amount",
+  "total_section",
+  "total",
+  "column_break_25",
+  "grand_total",
   "terms_section",
   "terms_and_conditions",
   "accounting_dimensions_section",
@@ -286,7 +289,7 @@
   {
    "fieldname": "total",
    "fieldtype": "Currency",
-   "label": "Total",
+   "label": "Plans total",
    "read_only": 1
   },
   {
@@ -305,9 +308,24 @@
    "remember_last_selected_value": 1,
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "column_break_25",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Simulated grand total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_section",
+   "fieldtype": "Section Break",
+   "label": "Total"
   }
  ],
- "modified": "2019-09-16 15:58:14.608582",
+ "modified": "2019-11-07 17:03:49.583094",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
