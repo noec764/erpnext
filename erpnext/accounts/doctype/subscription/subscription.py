@@ -33,6 +33,7 @@ class Subscription(Document):
 
 	def on_update(self):
 		self.set_subscription_status()
+		self.update_payment_gateway_subscription()
 
 	def update_subscription_period(self, date=None):
 		self.set_current_invoice_start(date)
@@ -469,6 +470,15 @@ class Subscription(Document):
 		invoice._action = "save"
 		invoice.run_method("validate")
 		return invoice.grand_total
+
+	def update_payment_gateway_subscription(self):
+		if self.payment_gateway:
+			settings, controller = frappe.db.get_value("Payment Gateway", self.payment_gateway, ["gateway_settings", "gateway_controller"])
+			if settings and controller:
+				gateway_settings = frappe.get_doc(settings, controller)
+
+				if hasattr(gateway_settings, 'on_subscription_update'):
+					gateway_settings.run_method('on_subscription_update', self)
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

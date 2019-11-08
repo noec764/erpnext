@@ -360,6 +360,20 @@ class GoCardlessSettings(PaymentGatewayController):
 				"status": 500
 			}
 
+	def on_subscription_update(self, subscription, run_simulation=False):
+		grand_total = subscription.grand_total if not run_simulation \
+			else subscription.run_method("simulated_grand_total")
+		formatted_grand_total = cint(flt(round(grand_total, 2)) * 100)
+		gocardless_subscription = self.get_subscription(subscription.get("payment_gateway_reference"))
+
+		if gocardless_subscription.attributes.get("amount", 0) != formatted_grand_total:
+			self.update_subscription(id=gocardless_subscription.attributes.get("id"), params={
+				"amount": formatted_grand_total
+			})
+
+			frappe.publish_realtime('payment_gateway_updated', \
+				{"initial_amount": gocardless_subscription.attributes.get("amount", 0), \
+				"updated_amount": formatted_grand_total}, user=frappe.session.user)
 
 def check_integrated_documents():
 	settings_documents = frappe.get_all("GoCardless Settings", filters={"check_for_updates": 1})
@@ -453,13 +467,7 @@ def check_subscriptions_amount():
 
 			for subscription in subscriptions_due:
 				settings = frappe.get_doc("GoCardless Settings", provider.name)
-				grand_total = frappe.get_doc("Subscription", subscription.name).run_method("simulated_grand_total")
-				gocardless_subscription = settings.get_subscription(subscription.get("payment_gateway_reference"))
-
-				if gocardless_subscription.attributes.get("amount", 0) != flt(grand_total) * 100:
-					settings.update_subscription(id=gocardless_subscription.attributes.get("id"), params={
-						"amount": cint(flt(grand_total) * 100)
-					})
+				settings.run_method('on_subscription_update', frappe.get_doc("Subscription", subscription.name))
 
 def handle_webhooks(**kwargs):
 	integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
