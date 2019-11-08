@@ -290,7 +290,8 @@ scheduler_events = {
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
 		"erpnext.hr.utils.generate_leave_encashment",
-		"erpnext.projects.doctype.project.project.update_project_sales_billing"
+		"erpnext.projects.doctype.project.project.update_project_sales_billing",
+		"erpnext.accounts.doctype.subscription.subscription.update_grand_total"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",

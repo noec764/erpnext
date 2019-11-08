@@ -84,6 +84,7 @@ class Subscription(Document):
 	def process_active_subscription(self):
 		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end):
 			self.update_subscription_period(add_days(self.trial_period_end, 1))
+			self.save()
 
 		elif not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
 			self.generate_sales_order()
@@ -94,6 +95,7 @@ class Subscription(Document):
 			else:
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
+			self.save()
 
 		elif self.generate_invoice_at_period_start:
 			self.generate_sales_order()
@@ -101,6 +103,7 @@ class Subscription(Document):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
 				self.generate_invoice()
+				self.save()
 
 			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
 				self.generate_invoice()
@@ -467,13 +470,21 @@ class Subscription(Document):
 		invoice.run_method("validate")
 		return invoice.grand_total
 
+def update_grand_total():
+	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
+		fields=["name", "grand_total"])
+	for subscription in subscriptions:
+		sub = frappe.get_doc("Subscription", subscription.get("name"))
+		simulated_total = sub.run_method("simulated_grand_total")
+
+		if simulated_total != subscription.get("grand_total"):
+			sub.run_method("simulate_grand_total_calculation")
+			sub.save()
+
 def process_all():
-	subscriptions = get_all_subscriptions()
+	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")})
 	for subscription in subscriptions:
 		process(subscription)
-
-def get_all_subscriptions():
-	return frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")})
 
 def process(data, date=None):
 	if data:

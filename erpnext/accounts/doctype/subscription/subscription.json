@@ -56,6 +56,7 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1,
@@ -111,6 +112,7 @@
   {
    "fieldname": "current_invoice_end",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Current Invoicing Period End Date",
    "no_copy": 1,
    "read_only": 1
@@ -316,6 +318,7 @@
   {
    "fieldname": "grand_total",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Simulated grand total",
    "read_only": 1
   },
@@ -325,7 +328,7 @@
    "label": "Total"
   }
  ],
- "modified": "2019-11-07 17:03:49.583094",
+ "modified": "2019-11-08 08:13:27.063020",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
@@ -371,5 +374,6 @@
  "route": "/desk#Form/DocType/Subscription",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "customer",
  "track_changes": 1
 }
