@@ -501,11 +501,9 @@ def process(data, date=None):
 		try:
 			subscription = frappe.get_doc('Subscription', data['name'])
 			subscription.process()
-		except frappe.ValidationError:
-			frappe.db.rollback()
-			frappe.db.begin()
-			frappe.log_error(frappe.get_traceback())
-			frappe.db.commit()
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), \
+				_("Subscription hourly processing error for {}").format(subscription.name))
 
 @frappe.whitelist()
 def cancel_subscription(**kwargs):
