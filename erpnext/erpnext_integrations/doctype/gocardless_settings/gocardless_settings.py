@@ -7,7 +7,7 @@ import frappe
 import gocardless_pro
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day, getdate
+from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day
 from frappe.integrations.utils import PaymentGatewayController,\
 	create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.mandate import GoCardlessMandateWebhookHandler
@@ -117,14 +117,18 @@ class GoCardlessSettings(PaymentGatewayController):
 			self.integration_request = create_request_log(self.data, "Request", "GoCardless")
 			self.reference_document = frappe.get_doc(self.data.reference_doctype, self.data.reference_docname)
 
+			self.create_charge_on_gocardless()
+
 			self.subscription = False
 			if hasattr(self.reference_document, 'is_linked_to_a_subscription'):
 				self.subscription = self.reference_document.is_linked_to_a_subscription()
 
-			if self.subscription:
-				self.create_new_subscription()
-			else:
-				self.create_charge_on_gocardless()
+				if self.subscription:
+					try:
+						self.integration_request = create_request_log(self.data, "Request", "GoCardless")
+						self.create_new_subscription()
+					except Exception as e:
+						self.change_integration_request_status("Failed", "error", str(e))
 
 			return self.finalize_request()
 		except Exception as e:
@@ -234,7 +238,6 @@ class GoCardlessSettings(PaymentGatewayController):
 		return flt(payment.attributes.get("fx", {}).get("amount")) or 1
 
 	def create_subscription_on_gocardless(self, reference_document, data, subscription, plan_details):
-		mandate = self.get_single_mandate(data.get("mandate"))
 		return self.client.subscriptions.create(
 			params={
 				"amount": cint(flt(reference_document.grand_total, self.reference_document.precision("grand_total")) * 100),
@@ -242,7 +245,6 @@ class GoCardlessSettings(PaymentGatewayController):
 				"name": subscription,
 				"interval_unit": self.interval_map[plan_details.billing_interval],
 				"interval": plan_details.billing_interval_count,
-				"start_date": max(getdate(mandate.next_possible_charge_date), getdate(reference_document.transaction_date)).isoformat(),
 				"day_of_month": self.get_day_of_month()\
 					if plan_details.billing_interval == "Month" else "",
 				"metadata": {
@@ -287,10 +289,12 @@ class GoCardlessSettings(PaymentGatewayController):
 			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
 			self.reference_document.db_set("status", "Pending", update_modified=True)
 			self.add_service_link_to_integration_request("subscription", self.output.id)
+			self.add_subscription_reference(self.output.id)
 
 		elif self.output.status == "active" or self.output.status == "finished":
 			self.change_integration_request_status("Completed", "output", str(self.output.__dict__))
 			self.add_service_link_to_integration_request("subscription", self.output.id)
+			self.add_subscription_reference(self.output.id)
 
 		elif self.output.status == "cancelled" or self.output.status == "customer_approval_denied":
 			self.change_integration_request_status("Cancelled", "error", str(self.output.__dict__))
@@ -338,6 +342,13 @@ class GoCardlessSettings(PaymentGatewayController):
 	def add_service_link_to_integration_request(self, document, id):
 		self.integration_request.db_set('service_document', document, update_modified=True)
 		self.integration_request.db_set('service_id', id, update_modified=True)
+
+	def add_subscription_reference(self, id):
+		if frappe.db.exists("Subscription", self.subscription):
+			frappe.db.set_value("Subscription", self.subscription,
+				"payment_gateway", self.reference_document.payment_gateway)
+			frappe.db.set_value("Subscription", self.subscription,\
+				"payment_gateway_reference", id)
 
 	def error_message(self, error_number=500, title=None, error=None):
 		if error is None:
