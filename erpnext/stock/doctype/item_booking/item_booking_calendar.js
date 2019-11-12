@@ -16,6 +16,5 @@ frappe.views.calendar["Item Booking"] = {
 			"options": "Item",
 			"label": __("Item")
 		}
-	],
-	get_events_method: "erpnext.stock.doctype.item_booking.item_booking.get_events"
+	]
 };

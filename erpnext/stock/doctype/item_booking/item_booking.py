@@ -21,7 +21,6 @@ from frappe.utils.user import is_website_user
 from frappe.integrations.doctype.google_calendar.google_calendar import google_calendar_to_repeat_on, \
 	get_google_calendar_object, format_date_according_to_google_calendar
 from googleapiclient.errors import HttpError
-from frappe.desk.calendar import get_events as get_calendar_events
 
 class ItemBooking(Document):
 	def before_save(self):
@@ -48,11 +47,6 @@ def get_list_context(context=None):
 		"create_new": "/",
 		"can_cancel": frappe.has_permission("Item Booking", "cancel")
 	})
-
-@frappe.whitelist()
-def get_events(**kwargs):
-	kwargs.pop('cmd', None)
-	return get_calendar_events(**kwargs)
 
 def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None):
 	from frappe.www.list import get_list
