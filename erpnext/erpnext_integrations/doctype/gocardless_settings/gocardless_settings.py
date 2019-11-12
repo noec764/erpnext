@@ -12,7 +12,6 @@ from frappe.integrations.utils import PaymentGatewayController,\
 	create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.mandate import GoCardlessMandateWebhookHandler
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.payment import GoCardlessPaymentWebhookHandler
-import json
 
 class GoCardlessSettings(PaymentGatewayController):
 	supported_currencies = ["EUR", "DKK", "GBP", "SEK"]
@@ -243,7 +242,7 @@ class GoCardlessSettings(PaymentGatewayController):
 				"name": subscription,
 				"interval_unit": self.interval_map[plan_details.billing_interval],
 				"interval": plan_details.billing_interval_count,
-				"start_date": max(getdate(mandate.next_possible_charge_date), getdate(reference_document.transaction_date)),
+				"start_date": max(getdate(mandate.next_possible_charge_date), getdate(reference_document.transaction_date)).isoformat(),
 				"day_of_month": self.get_day_of_month()\
 					if plan_details.billing_interval == "Month" else "",
 				"metadata": {
