@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Booking', {
-	refresh: function(frm) {
+	refresh(frm) {
 		if (frm.doc.docstatus == 1) {
 			frm.page.add_action_item(__("Create a quotation"), () => {
 				frappe.xcall(
@@ -31,6 +31,15 @@ frappe.ui.form.on('Item Booking', {
 			}
 		})
 
+		frm.set_query("user", function() {
+			return {
+				query: "frappe.core.doctype.user.user.user_query",
+				filters: {
+					ignore_user_type: 1
+				}
+			}
+		});
+
 		if (frm.delayInfo) {
 			clearInterval(frm.delayInfo)
 		}
@@ -50,6 +59,19 @@ frappe.ui.form.on('Item Booking', {
 						}, 10000 )
 					}
 				} )
+		}
+	},
+	sync_with_google_calendar(frm) {
+		frm.trigger('get_google_calendar');
+	},
+	item(frm) {
+		frm.trigger('get_google_calendar');
+	},
+	get_google_calendar(frm) {
+		if (frm.doc.sync_with_google_calendar && frm.doc.item && !frm.doc.google_calendar) {
+			frappe.db.get_value("Item", frm.doc.item, "google_calendar", r => {
+				r&&frm.set_value("google_calendar", r.google_calendar);
+			})
 		}
 	}
 });

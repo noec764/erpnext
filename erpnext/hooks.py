@@ -57,7 +57,13 @@ my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
 email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
 
 calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
-
+gcalendar_integrations = {
+	"Item Booking": {
+		"pull_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_to_calendar",
+		"pull_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_calendar",
+		"pull_delete": "erpnext.stock.doctype.item_booking.item_booking.cancel_event_in_calendar"
+	}
+}
 
 
 domains = {
@@ -245,7 +251,12 @@ doc_events = {
 	"Quotation": {
 		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
 		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.submit_linked_item_bookings"
-	}
+	},
+	"Item Booking": {
+		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",
+		"on_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_google_calendar",
+		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_from_google_calendar",
+	},
 }
 
 scheduler_events = {

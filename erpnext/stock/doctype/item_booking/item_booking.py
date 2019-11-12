@@ -18,6 +18,10 @@ from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
 from frappe.utils.user import is_website_user
+from frappe.integrations.doctype.google_calendar.google_calendar import google_calendar_to_repeat_on, \
+	get_google_calendar_object, format_date_according_to_google_calendar
+from googleapiclient.errors import HttpError
+from frappe.desk.calendar import get_events as get_calendar_events
 
 class ItemBooking(Document):
 	def before_save(self):
@@ -26,6 +30,12 @@ class ItemBooking(Document):
 			self.title = self.item_name + " - " + user_name or self.user
 		else:
 			self.title = self.item_name
+
+		if self.sync_with_google_calendar and not self.google_calendar:
+			self.google_calendar = frappe.db.get_value("Item", self.item, "google_calendar")
+
+		if self.google_calendar and not self.google_calendar_id:
+			self.google_calendar_id = frappe.db.get_value("Google Calendar", self.google_calendar, "google_calendar_id")
 
 def get_list_context(context=None):
 	context.update({
@@ -38,6 +48,11 @@ def get_list_context(context=None):
 		"create_new": "/",
 		"can_cancel": frappe.has_permission("Item Booking", "cancel")
 	})
+
+@frappe.whitelist()
+def get_events(**kwargs):
+	kwargs.pop('cmd', None)
+	return get_calendar_events(**kwargs)
 
 def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None):
 	from frappe.www.list import get_list
@@ -488,3 +503,144 @@ def make_quotation(source_name, target_doc=None):
 
 	return doc
 
+def get_calendar_item(account):
+	return frappe.db.get_value("Item", dict(google_calendar=account.name), "item_code")
+
+def insert_event_to_calendar(account, event, recurrence=None):
+	"""
+		Inserts event in Dokos Calendar during Sync
+	"""
+	calendar_event = {
+		"doctype": "Item Booking",
+		"item": get_calendar_item(account),
+		"notes": event.get("description"),
+		"sync_with_google_calendar": 1,
+		"google_calendar": account.name,
+		"google_calendar_id": account.google_calendar_id,
+		"google_calendar_event_id": event.get("id"),
+		"pulled_from_google_calendar": 1
+	}
+	calendar_event.update(google_calendar_to_repeat_on(recurrence=recurrence, start=event.get("start"), end=event.get("end")))
+	doc = frappe.get_doc(calendar_event)
+	doc.insert(ignore_permissions=True)
+	doc.submit()
+
+def update_event_in_calendar(account, event, recurrence=None):
+	"""
+		Updates Event in Dokos Calendar if any existing Google Calendar Event is updated
+	"""
+	calendar_event = frappe.get_doc("Item Booking", {"google_calendar_event_id": event.get("id"), "docstatus": 1})
+	calendar_event.cancel()
+
+	new_calendar_event = frappe.copy_doc(calendar_event)
+	new_calendar_event.item = get_calendar_item(account)
+	new_calendar_event.notes = event.get("description")
+	new_calendar_event.update(google_calendar_to_repeat_on(recurrence=recurrence, start=event.get("start"), end=event.get("end")))
+	new_calendar_event.insert(ignore_permissions=True)
+	new_calendar_event.submit()
+
+def cancel_event_in_calendar(account, event):
+	# If any synced Google Calendar Event is cancelled, then close the Event
+	if frappe.db.exists("Item Booking", {"google_calendar_id": account.google_calendar_id, "google_calendar_event_id": event.get("id"), "docstatus": 1}):
+		booking = frappe.get_doc("Item Booking", {"google_calendar_id": account.google_calendar_id, "google_calendar_event_id": event.get("id"), "docstatus": 1})
+		booking.cancel()
+
+		frappe.get_doc({
+			"doctype": "Comment",
+			"comment_type": "Info",
+			"reference_doctype": "Item Booking",
+			"reference_name": booking.get("name"),
+			"content": " {0}".format(_("- Event deleted from Google Calendar.")),
+		}).insert(ignore_permissions=True)
+
+	if frappe.db.exists("Item Booking", {"google_calendar_id": account.google_calendar_id, "google_calendar_event_id": event.get("id"), "docstatus": 0}):
+		booking = frappe.get_doc("Item Booking", {"google_calendar_id": account.google_calendar_id, "google_calendar_event_id": event.get("id"), "docstatus": 0})
+		booking.delete()
+
+def insert_event_in_google_calendar(doc, method=None):
+	"""
+		Insert Events in Google Calendar if sync_with_google_calendar is checked.
+	"""
+	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}) or doc.pulled_from_google_calendar \
+		or not doc.sync_with_google_calendar:
+		return
+
+	google_calendar, account = get_google_calendar_object(doc.google_calendar)
+
+	if not account.push_to_google_calendar:
+		return
+
+	event = {
+		"summary": doc.title,
+		"description": doc.notes,
+		"sync_with_google_calendar": 1
+	}
+	event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
+
+	#TODO: Add recurrence
+	"""
+	if doc.repeat_on:
+		event.update({"recurrence": repeat_on_to_google_calendar_recurrence_rule(doc)})
+	"""
+
+	try:
+		event = google_calendar.events().insert(calendarId=doc.google_calendar_id, body=event).execute()
+		frappe.db.set_value("Item Booking", doc.name, "google_calendar_event_id", event.get("id"), update_modified=False)
+		frappe.msgprint(_("Event Synced with Google Calendar."))
+	except HttpError as err:
+		frappe.throw(_("Google Calendar - Could not insert event in Google Calendar {0}, error code {1}.").format(account.name, err.resp.status))
+
+def update_event_in_google_calendar(doc, method=None):
+	"""
+		Updates Events in Google Calendar if any existing event is modified in Dokos Calendar
+	"""
+	# Workaround to avoid triggering updation when Event is being inserted since
+	# creation and modified are same when inserting doc
+	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}) or doc.modified == doc.creation \
+		or not doc.sync_with_google_calendar:
+		return
+
+	if doc.sync_with_google_calendar and not doc.google_calendar_event_id:
+		# If sync_with_google_calendar is checked later, then insert the event rather than updating it.
+		insert_event_in_google_calendar(doc)
+		return
+
+	google_calendar, account = get_google_calendar_object(doc.google_calendar)
+
+	if not account.push_to_google_calendar:
+		return
+
+	try:
+		event = google_calendar.events().get(calendarId=doc.google_calendar_id, eventId=doc.google_calendar_event_id).execute()
+		event["summary"] = doc.title
+		event["description"] = doc.notes
+		#event["recurrence"] = repeat_on_to_google_calendar_recurrence_rule(doc)
+		event["status"] = "cancelled" if doc.docstatus == 2 else "confirmed"
+		event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
+
+		google_calendar.events().update(calendarId=doc.google_calendar_id, eventId=doc.google_calendar_event_id, body=event).execute()
+		frappe.msgprint(_("Event Synced with Google Calendar."))
+	except HttpError as err:
+		frappe.throw(_("Google Calendar - Could not update Event {0} in Google Calendar, error code {1}.").format(doc.name, err.resp.status))
+
+def delete_event_from_google_calendar(doc, method=None):
+	"""
+		Delete Events from Google Calendar if Item Booking is deleted.
+	"""
+
+	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}):
+		return
+
+	google_calendar, account = get_google_calendar_object(doc.google_calendar)
+
+	if not account.push_to_google_calendar:
+		return
+
+	try:
+		event = google_calendar.events().get(calendarId=doc.google_calendar_id, eventId=doc.google_calendar_event_id).execute()
+		event["recurrence"] = None
+		event["status"] = "cancelled"
+
+		google_calendar.events().update(calendarId=doc.google_calendar_id, eventId=doc.google_calendar_event_id, body=event).execute()
+	except HttpError as err:
+		frappe.msgprint(_("Google Calendar - Could not delete Event {0} from Google Calendar, error code {1}.").format(doc.name, err.resp.status))
