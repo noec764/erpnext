@@ -5,6 +5,7 @@
 import frappe
 from frappe import _
 import json
+from frappe.utils import getdate, formatdate, nowdate
 
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
@@ -12,7 +13,8 @@ class GoCardlessWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessWebhookHandler, self).__init__(**kwargs)
 
-		self.gocardless_settings = frappe.get_doc("GoCardless Settings", self.integration_request.get("payment_gateway_controller"))
+		self.gocardless_settings = frappe.get_doc("GoCardless Settings", \
+			self.integration_request.get("payment_gateway_controller"))
 		self.get_mandate()
 		self.get_customer()
 		self.get_payment()
@@ -37,3 +39,17 @@ class GoCardlessWebhookHandler(WebhooksController):
 
 	def get_payout(self):
 		self.gocardless_payout = self.data.get("links", {}).get("payout")
+
+	def check_subscription_dates(self):
+		if self.subscription and self.gocardless_payment:
+			payment = self.gocardless_settings.get_payment_by_id(self.gocardless_payment)
+
+			charge_date = payment.attributes.get("charge_date")
+
+			if getdate(charge_date) > getdate(self.subscription.current_invoice_end) \
+				and getdate(self.subscription.current_invoice_end) >= nowdate():
+				self.integration_request.db_set("error", _("This event will be processed after the {}").format(\
+					formatdate(self.subscription.current_invoice_end)))
+				self.integration_request.update_status({}, "Queued")
+			else:
+				self.integration_request.update_status({}, "Pending")
