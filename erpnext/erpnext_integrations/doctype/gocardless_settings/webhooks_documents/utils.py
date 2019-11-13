@@ -47,7 +47,7 @@ class GoCardlessWebhookHandler(WebhooksController):
 			charge_date = payment.attributes.get("charge_date")
 
 			if getdate(charge_date) > getdate(self.subscription.current_invoice_end) \
-				and getdate(self.subscription.current_invoice_end) >= nowdate():
+				and getdate(self.subscription.current_invoice_end) >= getdate(nowdate()):
 				self.integration_request.db_set("error", _("This event will be processed after the {}").format(\
 					formatdate(self.subscription.current_invoice_end)))
 				self.integration_request.update_status({}, "Queued")
