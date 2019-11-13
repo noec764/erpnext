@@ -35,7 +35,10 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 
 		if self.gocardless_subscription:
 			self.get_linked_subscription()
+			self.check_subscription_dates()
 			self.get_subscription_invoice()
+			if self.integration_request.status == "Queued":
+				return
 		elif self.gocardless_payment:
 			self.get_one_off_invoice()
 
