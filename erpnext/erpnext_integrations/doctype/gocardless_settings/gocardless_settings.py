@@ -141,7 +141,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			["billing_interval", "billing_interval_count"], as_dict=1)
 
 		if not plan_details.billing_interval or plan_details.billing_interval == "Day":
-			return self.create_charge_on_gocardless()
+			return
 		else:
 			try:
 				self.output = self.create_subscription_on_gocardless(self.reference_document, self.data, self.subscription, plan_details)
