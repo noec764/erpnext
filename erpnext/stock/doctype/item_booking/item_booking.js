@@ -73,5 +73,10 @@ frappe.ui.form.on('Item Booking', {
 				r&&frm.set_value("google_calendar", r.google_calendar);
 			})
 		}
+	},
+	repeat_this_event: function(frm) {
+		if(frm.doc.repeat_this_event === 1) {
+			new frappe.CalendarRecurrence(frm);
+		}
 	}
 });

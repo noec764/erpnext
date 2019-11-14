@@ -14,6 +14,10 @@
   "column_break_2",
   "starts_on",
   "ends_on",
+  "all_day",
+  "repeat_this_event",
+  "repeat",
+  "rrule",
   "sync_with_google_calendar",
   "notes_section",
   "notes",
@@ -193,10 +197,35 @@
   {
    "fieldname": "section_break_23",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rrule",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "RRULE"
+  },
+  {
+   "default": "0",
+   "fieldname": "all_day",
+   "fieldtype": "Check",
+   "label": "All day"
+  },
+  {
+   "default": "0",
+   "fieldname": "repeat_this_event",
+   "fieldtype": "Check",
+   "label": "Repeat this event"
+  },
+  {
+   "depends_on": "eval:doc.repeat_this_event",
+   "fieldname": "repeat",
+   "fieldtype": "Data",
+   "label": "Repeat",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-12 14:21:01.664253",
+ "modified": "2019-11-14 17:40:01.474287",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",

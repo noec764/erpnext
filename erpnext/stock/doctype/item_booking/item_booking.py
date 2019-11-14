@@ -11,6 +11,7 @@ import datetime
 from datetime import timedelta, date
 import calendar
 import json
+from frappe.desk.calendar import get_rrule, get_repeat_on
 from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
 from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.product_info import get_product_info_for_website
@@ -18,8 +19,7 @@ from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
 from frappe.utils.user import is_website_user
-from frappe.integrations.doctype.google_calendar.google_calendar import google_calendar_to_repeat_on, \
-	get_google_calendar_object, format_date_according_to_google_calendar
+from frappe.integrations.doctype.google_calendar.google_calendar import get_google_calendar_object, format_date_according_to_google_calendar
 from googleapiclient.errors import HttpError
 
 class ItemBooking(Document):
@@ -35,6 +35,9 @@ class ItemBooking(Document):
 
 		if self.google_calendar and not self.google_calendar_id:
 			self.google_calendar_id = frappe.db.get_value("Google Calendar", self.google_calendar, "google_calendar_id")
+
+		if len(self.rrule) > 1:
+			self.rrule = self.rrule[0]
 
 def get_list_context(context=None):
 	context.update({
@@ -512,9 +515,9 @@ def insert_event_to_calendar(account, event, recurrence=None):
 		"google_calendar": account.name,
 		"google_calendar_id": account.google_calendar_id,
 		"google_calendar_event_id": event.get("id"),
-		"pulled_from_google_calendar": 1
+		"pulled_from_google_calendar": 1,
+		"rrule": event.get("recurrence")
 	}
-	calendar_event.update(google_calendar_to_repeat_on(recurrence=recurrence, start=event.get("start"), end=event.get("end")))
 	doc = frappe.get_doc(calendar_event)
 	doc.insert(ignore_permissions=True)
 	doc.submit()
@@ -529,7 +532,7 @@ def update_event_in_calendar(account, event, recurrence=None):
 	new_calendar_event = frappe.copy_doc(calendar_event)
 	new_calendar_event.item = get_calendar_item(account)
 	new_calendar_event.notes = event.get("description")
-	new_calendar_event.update(google_calendar_to_repeat_on(recurrence=recurrence, start=event.get("start"), end=event.get("end")))
+	new_calendar_event.rrule = event.get("recurrence")
 	new_calendar_event.insert(ignore_permissions=True)
 	new_calendar_event.submit()
 
