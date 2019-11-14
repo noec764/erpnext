@@ -472,7 +472,7 @@ def check_subscriptions_amount():
 			filters={"gateway_settings": "GoCardless Settings", "gateway_controller": provider.name})
 		for gateway in gateways:
 			subscriptions_due = frappe.get_all("Subscription", \
-				filters={"current_invoice_end": "2019-11-02", "payment_gateway": gateway.name}, \
+				filters={"current_invoice_end": add_days(nowdate(), 4), "payment_gateway": gateway.name}, \
 				fields=["name", "payment_gateway_reference"])
 
 			for subscription in subscriptions_due:
