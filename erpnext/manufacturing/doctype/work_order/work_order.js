@@ -534,8 +534,7 @@ erpnext.work_order = {
 	},
 
 	calculate_total_cost: function(frm) {
-		var variable_cost = frm.doc.actual_operating_cost ?
-			flt(frm.doc.actual_operating_cost) : flt(frm.doc.planned_operating_cost);
+		let variable_cost = flt(frm.doc.actual_operating_cost) || flt(frm.doc.planned_operating_cost);
 		frm.set_value("total_operating_cost", (flt(frm.doc.additional_operating_cost) + variable_cost));
 	},
 
