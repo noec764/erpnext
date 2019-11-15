@@ -36,7 +36,7 @@ class ItemBooking(Document):
 		if self.google_calendar and not self.google_calendar_id:
 			self.google_calendar_id = frappe.db.get_value("Google Calendar", self.google_calendar, "google_calendar_id")
 
-		if len(self.rrule) > 1:
+		if isinstance(self.rrule, list) and self.rrule> 1:
 			self.rrule = self.rrule[0]
 
 def get_list_context(context=None):
