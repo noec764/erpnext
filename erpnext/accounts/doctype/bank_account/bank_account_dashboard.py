@@ -13,7 +13,7 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Payments'),
-				'items': ['Payment Entry', 'Payment Request', 'Payment Order', 'Payroll Entry']
+				'items': ['Payment Entry', 'Payment Order', 'Payroll Entry']
 			},
 			{
 				'label': _('Party'),

@@ -472,7 +472,7 @@ class Subscription(Document):
 		return invoice.grand_total
 
 	def update_payment_gateway_subscription(self):
-		if self.payment_gateway:
+		if self.payment_gateway and self.payment_gateway_reference:
 			settings, controller = frappe.db.get_value("Payment Gateway", self.payment_gateway, ["gateway_settings", "gateway_controller"])
 			if settings and controller:
 				gateway_settings = frappe.get_doc(settings, controller)
