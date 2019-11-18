@@ -20,7 +20,8 @@ from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
 from frappe.utils.user import is_website_user
-from frappe.integrations.doctype.google_calendar.google_calendar import get_google_calendar_object, format_date_according_to_google_calendar
+from frappe.integrations.doctype.google_calendar.google_calendar import get_google_calendar_object, \
+	format_date_according_to_google_calendar, get_timezone_naive_datetime
 from googleapiclient.errors import HttpError
 
 class ItemBooking(Document):
@@ -521,8 +522,8 @@ def insert_event_to_calendar(account, event, recurrence=None):
 		"google_calendar_event_id": event.get("id"),
 		"pulled_from_google_calendar": 1,
 		"rrule": recurrence,
-		"starts_on": get_datetime(start.get("date")) if start.get("date") else parser.parse(start.get("dateTime")).replace(tzinfo=None),
-		"ends_on": get_datetime(end.get("date")) if end.get("date") else parser.parse(end.get("dateTime")).replace(tzinfo=None),
+		"starts_on": get_datetime(start.get("date")) if start.get("date") else get_timezone_naive_datetime(start),
+		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
 		"repeat_this_event": 1 if recurrence else 0
 	}
@@ -543,8 +544,8 @@ def update_event_in_calendar(account, event, recurrence=None):
 		"item":  get_calendar_item(account),
 		"notes": event.get("description"),
 		"rrule": recurrence,
-		"starts_on": get_datetime(start.get("date")) if start.get("date") else parser.parse(start.get("dateTime")).replace(tzinfo=None),
-		"ends_on": get_datetime(end.get("date")) if end.get("date") else parser.parse(end.get("dateTime")).replace(tzinfo=None),
+		"starts_on": get_datetime(start.get("date")) if start.get("date") else get_timezone_naive_datetime(start),
+		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
 		"repeat_this_event": 1 if recurrence else 0
 	}
@@ -664,7 +665,7 @@ def update_event_in_google_calendar(doc, method=None):
 		frappe.throw(_("Google Calendar - Could not update Event {0} in Google Calendar, error code {1}."\
 			).format(doc.name, err.resp.status))
 
-def delete_event_from_google_calendar(doc, method=None):
+def delete_event_in_google_calendar(doc, method=None):
 	"""
 		Delete Events from Google Calendar if Item Booking is deleted.
 	"""
