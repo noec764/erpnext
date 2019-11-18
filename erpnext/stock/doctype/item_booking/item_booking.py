@@ -41,6 +41,9 @@ class ItemBooking(Document):
 		if isinstance(self.rrule, list) and self.rrule > 1:
 			self.rrule = self.rrule[0]
 
+	def after_update(self):
+		self.db_set("pulled_from_google_calendar", 0, update_modified=False)
+
 def get_list_context(context=None):
 	context.update({
 		"show_sidebar": True,
@@ -547,7 +550,8 @@ def update_event_in_calendar(account, event, recurrence=None):
 		"starts_on": get_datetime(start.get("date")) if start.get("date") else get_timezone_naive_datetime(start),
 		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
-		"repeat_this_event": 1 if recurrence else 0
+		"repeat_this_event": 1 if recurrence else 0,
+		"pulled_from_google_calendar": 1,
 	}
 
 	if calendar_event.docstatus == 1:
@@ -635,7 +639,7 @@ def update_event_in_google_calendar(doc, method=None):
 	# Workaround to avoid triggering update when Event is being inserted since
 	# creation and modified are same when inserting doc
 	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}) or \
-		doc.modified == doc.creation or not doc.sync_with_google_calendar:
+		doc.modified == doc.creation or not doc.sync_with_google_calendar or doc.pulled_from_google_calendar:
 		return
 
 	if doc.sync_with_google_calendar and not doc.google_calendar_event_id:
@@ -670,7 +674,8 @@ def delete_event_in_google_calendar(doc, method=None):
 		Delete Events from Google Calendar if Item Booking is deleted.
 	"""
 
-	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}):
+	if not frappe.db.exists("Google Calendar", {"name": doc.google_calendar}) or \
+		doc.pulled_from_google_calendar:
 		return
 
 	google_calendar, account = get_google_calendar_object(doc.google_calendar)

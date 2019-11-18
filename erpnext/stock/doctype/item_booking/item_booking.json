@@ -176,8 +176,9 @@
    "default": "0",
    "fieldname": "pulled_from_google_calendar",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Pulled from Google Calendar",
-   "read_only": 1
+   "no_copy": 1
   },
   {
    "fieldname": "column_break_20",
@@ -187,13 +188,15 @@
    "fieldname": "google_calendar_id",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Google Calendar ID"
+   "label": "Google Calendar ID",
+   "no_copy": 1
   },
   {
    "fieldname": "google_calendar_event_id",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Google Calendar Event ID"
+   "label": "Google Calendar Event ID",
+   "no_copy": 1
   },
   {
    "fieldname": "section_break_23",
@@ -232,7 +235,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-16 08:35:57.884098",
+ "modified": "2019-11-19 07:28:33.497834",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
