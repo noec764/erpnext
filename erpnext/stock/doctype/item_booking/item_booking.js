@@ -2,6 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Booking', {
+	onload(frm) {
+		frappe.realtime.on('event_synced', (message) => {
+			frappe.show_alert({message=message, indicator='green'});
+		})
+	},
 	refresh(frm) {
 		if (frm.doc.docstatus == 1) {
 			frm.page.add_action_item(__("Create a quotation"), () => {

@@ -17,6 +17,7 @@
   "all_day",
   "repeat_this_event",
   "repeat",
+  "repeat_till",
   "rrule",
   "sync_with_google_calendar",
   "notes_section",
@@ -222,10 +223,16 @@
    "fieldtype": "Data",
    "label": "Repeat",
    "read_only": 1
+  },
+  {
+   "fieldname": "repeat_till",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Repeat Until"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-14 17:40:01.474287",
+ "modified": "2019-11-16 08:35:57.884098",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
