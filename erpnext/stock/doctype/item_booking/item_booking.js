@@ -2,9 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Booking', {
-	onload(frm) {
-		frappe.realtime.on('event_synced', (message) => {
-			frappe.show_alert({message=message, indicator='green'});
+	setup(frm) {
+		frappe.realtime.on('event_synced', (data) => {
+			frappe.show_alert({message: data, indicator: 'green'});
 		})
 	},
 	refresh(frm) {
