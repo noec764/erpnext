@@ -103,9 +103,6 @@ class Opportunity(TransactionBase):
 		else:
 			frappe.throw(_("Cannot declare as lost, because Quotation has been made."))
 
-	def on_trash(self):
-		self.delete_events()
-
 	def has_active_quotation(self):
 		if not self.with_items:
 			return frappe.get_all('Quotation',

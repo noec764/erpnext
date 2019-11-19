@@ -7,7 +7,7 @@ import frappe
 from frappe.utils import add_days, getdate, cint, cstr
 
 from frappe import throw, _
-from erpnext.utilities.transaction_base import TransactionBase, delete_events
+from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.stock.utils import get_valid_serial_nos
 from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
 
@@ -235,10 +235,6 @@ class MaintenanceSchedule(TransactionBase):
 				serial_nos = get_valid_serial_nos(d.serial_no)
 				self.update_amc_date(serial_nos)
 		frappe.db.set(self, 'status', 'Cancelled')
-		delete_events(self.doctype, self.name)
-
-	def on_trash(self):
-		delete_events(self.doctype, self.name)
 
 @frappe.whitelist()
 def make_maintenance_visit(source_name, target_doc=None):

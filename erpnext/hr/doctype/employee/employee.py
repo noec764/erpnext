@@ -10,7 +10,6 @@ from frappe import throw, _, scrub
 from frappe.permissions import add_user_permission, remove_user_permission, \
 	set_user_permission_if_allowed, has_permission
 from frappe.model.document import Document
-from erpnext.utilities.transaction_base import delete_events
 from frappe.utils.nestedset import NestedSet
 from erpnext.hr.doctype.job_offer.job_offer import get_staffing_plan_detail
 
@@ -199,7 +198,6 @@ class Employee(NestedSet):
 
 	def on_trash(self):
 		self.update_nsm_model()
-		delete_events(self.doctype, self.name)
 		if frappe.db.exists("Employee Transfer", {'new_employee_id': self.name, 'docstatus': 1}):
 			emp_transfer = frappe.get_doc("Employee Transfer", {'new_employee_id': self.name, 'docstatus': 1})
 			emp_transfer.db_set("new_employee_id", '')
