@@ -8,7 +8,8 @@ frappe.ui.form.on('Item Booking', {
 		})
 	},
 	refresh(frm) {
-		if (frm.doc.docstatus == 1) {
+		frm.page.clear_actions_menu();
+		if (frm.doc.docstatus === 1) {
 			frm.page.add_action_item(__("Create a quotation"), () => {
 				frappe.xcall(
 					"erpnext.stock.doctype.item_booking.item_booking.make_quotation",
