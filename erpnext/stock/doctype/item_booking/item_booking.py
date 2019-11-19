@@ -631,10 +631,9 @@ def insert_event_in_google_calendar(doc, method=None):
 
 	try:
 		event = google_calendar.events().insert(calendarId=doc.google_calendar_id, body=event).execute()
-		doc.google_calendar_event_id = event.get("id")
-		frappe.publish_realtime('event_synced',_("Event Synced with Google Calendar."), user=frappe.session.user)
+		doc.db_set("google_calendar_event_id", event.get("id"), update_modified=False)
+		frappe.publish_realtime('event_synced', {"message": _("Event Synced with Google Calendar.")}, user=frappe.session.user)
 		frappe.msgprint(_("Event Synced with Google Calendar."))
-		return doc
 	except HttpError as err:
 		frappe.throw(_("Google Calendar - Could not insert event in Google Calendar {0}, error code {1}."\
 			).format(account.name, err.resp.status))

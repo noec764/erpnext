@@ -256,6 +256,7 @@ doc_events = {
 		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",
 		"on_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_google_calendar",
 		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar"
 	},
 }
 
