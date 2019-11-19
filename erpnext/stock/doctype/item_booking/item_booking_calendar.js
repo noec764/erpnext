@@ -8,7 +8,8 @@ frappe.views.calendar["Item Booking"] = {
 		"id": "name",
 		"title": "title",
 		"allDay": "all_day",
-		"rrule": "rrule"
+		"rrule": "rrule",
+		"color": "color"
 	},
 	filters: [
 		{

@@ -65,23 +65,33 @@ frappe.ui.form.on('Item Booking', {
 					}
 				} )
 		}
+
+		frm.trigger('add_repeat_text')
+	},
+	add_repeat_text(frm) {
+		if (frm.doc.rrule) {
+			new frappe.CalendarRecurrence(frm, false);
+		}
 	},
 	sync_with_google_calendar(frm) {
-		frm.trigger('get_google_calendar');
+		frm.trigger('get_google_calendar_and_color');
 	},
 	item(frm) {
-		frm.trigger('get_google_calendar');
+		frm.trigger('get_google_calendar_and_color');
 	},
-	get_google_calendar(frm) {
+	get_google_calendar_and_color(frm) {
 		if (frm.doc.sync_with_google_calendar && frm.doc.item && !frm.doc.google_calendar) {
-			frappe.db.get_value("Item", frm.doc.item, "google_calendar", r => {
-				r&&frm.set_value("google_calendar", r.google_calendar);
+			frappe.db.get_value("Item", frm.doc.item, ["google_calendar", "calendar_color"], r => {
+				if (r) {
+					r.google_calendar&&frm.set_value("google_calendar", r.google_calendar);
+					r.calendar_color&&frm.set_value("color", r.calendar_color);
+				}
 			})
 		}
 	},
 	repeat_this_event: function(frm) {
 		if(frm.doc.repeat_this_event === 1) {
-			new frappe.CalendarRecurrence(frm);
+			new frappe.CalendarRecurrence(frm, true);
 		}
 	}
 });

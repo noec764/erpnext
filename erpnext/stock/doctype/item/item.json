@@ -135,7 +135,9 @@
   "manufacturers",
   "total_projected_qty",
   "google_calendar_section",
-  "google_calendar"
+  "google_calendar",
+  "column_break_127",
+  "calendar_color"
  ],
  "fields": [
   {
@@ -1032,6 +1034,15 @@
    "fieldtype": "Link",
    "label": "Google Calendar",
    "options": "Google Calendar"
+  },
+  {
+   "fieldname": "column_break_127",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "calendar_color",
+   "fieldtype": "Color",
+   "label": "Calendar color"
   }
  ],
  "has_web_view": 1,
@@ -1039,7 +1050,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2019-11-12 09:46:00.568426",
+ "modified": "2019-11-19 23:38:44.477782",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
