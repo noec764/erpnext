@@ -550,19 +550,26 @@ def update_event_in_calendar(account, event, recurrence=None):
 		"repeat_this_event": 1 if recurrence else 0
 	}
 
-	if calendar_event.docstatus == 1:
-		calendar_event.cancel()
+	update = False
+	for field in updated_event:
+		if calendar_event.get(field) != updated_event.get(field):
+			update = True
+			break
 
-		new_calendar_event = frappe.copy_doc(calendar_event)
-		new_calendar_event.update(updated_event)
-		new_calendar_event.flags.pulled_from_google_calendar = True
-		new_calendar_event.insert(ignore_permissions=True)
-		new_calendar_event.submit()
+	if update:
+		if calendar_event.docstatus == 1:
+			calendar_event.cancel()
 
-	elif calendar_event.docstatus == 0:
-		calendar_event.update(updated_event)
-		calendar_event.flags.pulled_from_google_calendar = True
-		calendar_event.save()
+			new_calendar_event = frappe.copy_doc(calendar_event)
+			new_calendar_event.update(updated_event)
+			new_calendar_event.flags.pulled_from_google_calendar = True
+			new_calendar_event.insert(ignore_permissions=True)
+			new_calendar_event.submit()
+
+		elif calendar_event.docstatus == 0:
+			calendar_event.update(updated_event)
+			calendar_event.flags.pulled_from_google_calendar = True
+			calendar_event.save()
 
 def cancel_event_in_calendar(account, event):
 	# If any synced Google Calendar Event is cancelled, then close the Event
