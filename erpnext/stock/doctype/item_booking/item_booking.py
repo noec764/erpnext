@@ -23,6 +23,7 @@ from frappe.utils.user import is_website_user
 from frappe.integrations.doctype.google_calendar.google_calendar import get_google_calendar_object, \
 	format_date_according_to_google_calendar, get_timezone_naive_datetime
 from googleapiclient.errors import HttpError
+from frappe.desk.calendar import process_recurring_events
 
 class ItemBooking(Document):
 	def before_save(self):
@@ -289,7 +290,7 @@ def _get_events(doctype, start, end, item):
 	if recurring_events:
 		events.extend(recurring_events)
 		for recurring_event in recurring_events:
-			events.extend(process_recurring_events(recurring_event, start, end, field_map.start, field_map.end, field_map.rrule))
+			events.extend(process_recurring_events(recurring_event, start, end, "starts_on", "ends_on", "rrule"))
 
 	return events
 
@@ -577,6 +578,14 @@ def update_event_in_calendar(account, event, recurrence=None):
 		if calendar_event.docstatus == 1:
 			calendar_event.flags.pulled_from_google_calendar = True
 			calendar_event.cancel()
+
+			frappe.get_doc({
+				"doctype": "Comment",
+				"comment_type": "Info",
+				"reference_doctype": "Item Booking",
+				"reference_name": calendar_event.get("name"),
+				"content": " {0}".format(_("- Event cancelled by Google Calendar.")),
+			}).insert(ignore_permissions=True)
 
 			new_calendar_event = frappe.copy_doc(calendar_event)
 			new_calendar_event.update(updated_event)
