@@ -5,6 +5,7 @@ frappe.ui.form.on('Item Booking', {
 	setup() {
 		frappe.realtime.on('event_synced', (data) => {
 			frappe.show_alert({message: data.message, indicator: 'green'});
+			frm.reload_doc();
 		})
 	},
 	refresh(frm) {
@@ -46,8 +47,8 @@ frappe.ui.form.on('Item Booking', {
 			}
 		});
 
-		if (frm.delayInfo) {
-			clearInterval(frm.delayInfo)
+		if (cur_frm.delayInfo) {
+			clearInterval(cur_frm.delayInfo)
 		}
 
 		if (frm.doc.docstatus === 0) {
@@ -56,7 +57,7 @@ frappe.ui.form.on('Item Booking', {
 					if (r && r>0) {
 						frm.delayInfo = setInterval( () => {
 							const delay = frappe.datetime.get_minute_diff(
-								frappe.datetime.add_minutes(frm.doc.modified, r),
+								frappe.datetime.add_minutes(frm.doc.modified || frappe.datetime.now_datetime(), r),
 								frappe.datetime.now_datetime())
 							frm.set_intro()
 							if (delay > 0) {
@@ -81,7 +82,7 @@ frappe.ui.form.on('Item Booking', {
 		frm.trigger('get_google_calendar_and_color');
 	},
 	get_google_calendar_and_color(frm) {
-		if (frm.doc.sync_with_google_calendar && frm.doc.item && !frm.doc.google_calendar) {
+		if (frm.doc.item) {
 			frappe.db.get_value("Item", frm.doc.item, ["google_calendar", "calendar_color"], r => {
 				if (r) {
 					r.google_calendar&&frm.set_value("google_calendar", r.google_calendar);

@@ -558,6 +558,7 @@ def update_event_in_calendar(account, event, recurrence=None):
 
 	if update:
 		if calendar_event.docstatus == 1:
+			calendar_event.flags.pulled_from_google_calendar = True
 			calendar_event.cancel()
 
 			new_calendar_event = frappe.copy_doc(calendar_event)
