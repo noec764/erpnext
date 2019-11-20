@@ -575,28 +575,25 @@ def update_event_in_calendar(account, event, recurrence=None):
 def cancel_event_in_calendar(account, event):
 	# If any synced Google Calendar Event is cancelled, then close the Event
 	add_comment = False
-	if frappe.db.exists("Item Booking", {"google_calendar_id": account.google_calendar_id, \
-		"google_calendar_event_id": event.get("id"), "docstatus": 1}):
-		booking = frappe.get_doc("Item Booking", {"google_calendar_id": account.google_calendar_id, \
-			"google_calendar_event_id": event.get("id"), "docstatus": 1})
-		booking.flags.pulled_from_google_calendar = True
-		booking.cancel()
-		add_comment = True
-
 
 	if frappe.db.exists("Item Booking", {"google_calendar_id": account.google_calendar_id, \
-		"google_calendar_event_id": event.get("id"), "docstatus": 0}):
+		"google_calendar_event_id": event.get("id")}):
 		booking = frappe.get_doc("Item Booking", {"google_calendar_id": account.google_calendar_id, \
-			"google_calendar_event_id": event.get("id"), "docstatus": 0})
+			"google_calendar_event_id": event.get("id")})
 
-		try:
+		if booking.docstatus == 1:
 			booking.flags.pulled_from_google_calendar = True
-			booking.delete
-			add_comment = False
-		except frappe.LinkExistsError:
-			# Try to delete event, but only if it has no links
+			booking.cancel()
 			add_comment = True
-			pass
+
+		elif booking.docstatus == 0:
+			try:
+				booking.flags.pulled_from_google_calendar = True
+				booking.delete()
+				add_comment = False
+			except frappe.LinkExistsError:
+				# Try to delete event, but only if it has no links
+				add_comment = True
 
 	if add_comment:
 		frappe.get_doc({
