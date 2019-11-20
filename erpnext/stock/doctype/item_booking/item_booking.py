@@ -183,7 +183,7 @@ def get_available_item(item, start, end):
 
 	available_items = []
 	for alternative_item in alternative_items:
-		availabilities = get_availabilities(alternative_item.name, start, end)
+		availabilities = get_availabilities(alternative_item.name, start, end) or []
 		if len(availabilities):
 			available_items.append(alternative_item)
 
@@ -306,7 +306,7 @@ def _get_events(start, end, item):
 	if result:
 		for event in events:
 			if event.get("repeat_this_event") == 1:
-				result.extend(process_recurring_events(event, start, end, "starts_on", "ends_on", "rrule"))
+				result.extend(process_recurring_events(event, now_datetime(), end, "starts_on", "ends_on", "rrule"))
 
 	return result
 
@@ -323,7 +323,7 @@ def _find_available_slot(date, duration, line, scheduled_items, item, quotation=
 	for scheduled_item in scheduled_items:
 		try:
 			if get_datetime(scheduled_item.get("starts_on")) < line.get("start"):
-				current_schedule.append((get_datetime(line.get("start")), get_datetime(scheduled_item.ends_on)))
+				current_schedule.append((get_datetime(line.get("start")), get_datetime(scheduled_item.get("ends_on"))))
 			elif get_datetime(scheduled_item.get("starts_on")) < line.get("end"):
 				current_schedule.append((get_datetime(scheduled_item.get("starts_on")),\
 					get_datetime(scheduled_item.get("ends_on"))))
