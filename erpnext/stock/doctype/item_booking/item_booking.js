@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Booking', {
-	setup() {
+	setup(frm) {
 		frappe.realtime.on('event_synced', (data) => {
 			frappe.show_alert({message: data.message, indicator: 'green'});
 			frm.reload_doc();
@@ -47,14 +47,16 @@ frappe.ui.form.on('Item Booking', {
 			}
 		});
 
-		if (cur_frm.delayInfo) {
-			clearInterval(cur_frm.delayInfo)
+		if (frm.delayInfo) {
+			clearInterval(frm.delayInfo)
 		}
 
 		if (frm.doc.docstatus === 0) {
 			frappe.db.get_single_value("Stock settings", "clear_item_booking_draft_duration")
 				.then(r => {
-					if (r && r>0) {
+					frm.delayInfo && clearInterval(frm.delayInfo);
+
+					if (r && r>0 && !frm.delayInfo) {
 						frm.delayInfo = setInterval( () => {
 							const delay = frappe.datetime.get_minute_diff(
 								frappe.datetime.add_minutes(frm.doc.modified || frappe.datetime.now_datetime(), r),
