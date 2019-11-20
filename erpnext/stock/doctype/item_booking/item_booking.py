@@ -275,9 +275,23 @@ def _get_events(doctype, start, end, item):
 	filters.extend([
 		[doctype, start_date, '<=', end],
 		[doctype, end_date, '>=', start],
+		[doctype, 'repeat_this_event', '!=', 1]
 	])
 
-	return frappe.get_list(doctype, fields=fields, filters=filters)
+	events = frappe.get_list(doctype, fields=fields, filters=filters)
+
+	recurring_filters += [
+		[doctype, 'repeat_this_event', '!=', 0],
+		[doctype, "ifnull(repeat_till, '3000-01-01 00:00:00')", '>=', start]
+	]
+	recurring_events = frappe.get_list(doctype, fields=fields, filters=recurring_filters)
+
+	if recurring_events:
+		events.extend(recurring_events)
+		for recurring_event in recurring_events:
+			events.extend(process_recurring_events(recurring_event, start, end, field_map.start, field_map.end, field_map.rrule))
+
+	return events
 
 def _find_available_slot(date, duration, line, scheduled_items, item, quotation=None):
 	current_schedule = []
@@ -552,8 +566,11 @@ def update_event_in_calendar(account, event, recurrence=None):
 
 	update = False
 	for field in updated_event:
-		if calendar_event.get(field) != updated_event.get(field):
-			update = True
+		if field == "rrule":
+			update = (set(calendar_event.get(field).split(";")) != set(updated_event.get(field).split(";")))
+		else:
+			update = (str(calendar_event.get(field)) != str(updated_event.get(field)))
+		if update:
 			break
 
 	if update:
