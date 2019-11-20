@@ -32,6 +32,7 @@
 				:validRange="validRange"
 				:defaultDate="defaultDate"
 				@datesRender="datesRender"
+				:timeZone="timeZone"
 			/>
 		</div>
 	</div>
@@ -68,6 +69,7 @@ export default {
 				listPlugin
 			],
 			locale: frappe.boot.lang || 'en',
+			timeZone: 'UTC',
 			slots: [],
 			alternative_items: [],
 			quotation: null,
@@ -235,9 +237,10 @@ export default {
 			}
 		},
 		getLocale() {
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_locale")
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_locale_and_timezone")
 			.then(r => {
-				this.locale = r.message
+				this.locale = r.message.locale
+				this.timeZone = r.message.time_zone
 			})
 		}
 	}

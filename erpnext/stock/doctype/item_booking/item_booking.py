@@ -169,8 +169,11 @@ def reset_all_booked_slots():
 	return slots
 
 @frappe.whitelist(allow_guest=True)
-def get_locale():
-	return frappe.local.lang
+def get_locale_and_timezone():
+	return {
+		"locale": frappe.local.lang,
+		"time_zone": frappe.db.get_single_value("System Settings", "time_zone")
+	}
 
 @frappe.whitelist(allow_guest=True)
 def get_available_item(item, start, end):
@@ -252,47 +255,60 @@ def _get_availability_from_schedule(item, schedules, date, quotation=None):
 	for line in schedules:
 		duration = line.get("duration")
 
-		booked_items = _get_events("Item Booking", line.get("start"), line.get("end"), item)
+		booked_items = _get_events(line.get("start"), line.get("end"), item)
 
 		scheduled_items = []
 		for event in booked_items:
-			if (get_datetime(event.starts_on) >= line.get("start")\
-				and get_datetime(event.starts_on) <= line.get("end")) \
-				or get_datetime(event.ends_on) >= line.get("start"):
+			if (get_datetime(event.get("starts_on")) >= line.get("start")\
+				and get_datetime(event.get("starts_on")) <= line.get("end")) \
+				or get_datetime(event.get("ends_on")) >= line.get("start"):
 				scheduled_items.append(event)
 
 		available_slots.extend(_find_available_slot(date, duration, line, scheduled_items, item, quotation))
 
 	return available_slots
 
-def _get_events(doctype, start, end, item):
-	fields = ["starts_on", "ends_on", "item_name", "name",\
-		"docstatus", "reference_doctype", "reference_name"]
-	filters = [["Item Booking", "item", "=", item.name]]
+def _get_events(start, end, item):
+	events = frappe.db.sql("""
+		SELECT starts_on,
+				ends_on,
+				item_name,
+				name,
+				docstatus,
+				repeat_this_event,
+				rrule,
+				user
+		FROM `tabItem Booking`
+		WHERE (
+				(
+					(date(starts_on) BETWEEN date(%(start)s) AND date(%(end)s))
+					OR (date(ends_on) BETWEEN date(%(start)s) AND date(%(end)s))
+					OR (
+						date(starts_on) <= date(%(start)s)
+						AND date(ends_on) >= date(%(end)s)
+					)
+				)
+				OR (
+					date(starts_on) <= date(%(start)s)
+					AND repeat_this_event=1
+					AND coalesce(repeat_till, '3000-01-01') > date(%(start)s)
+				)
+			)
+		AND item = %(item_name)s
+		ORDER BY starts_on""", {
+			"start": start,
+			"end": end,
+			"item_name": item.name,
+		}, as_dict=1)
 
-	start_date = "ifnull(starts_on, '0001-01-01 00:00:00')"
-	end_date = "ifnull(ends_on, '2199-12-31 00:00:00')"
+	result = events
 
-	filters.extend([
-		[doctype, start_date, '<=', end],
-		[doctype, end_date, '>=', start],
-		[doctype, 'repeat_this_event', '!=', 1]
-	])
+	if result:
+		for event in events:
+			if event.get("repeat_this_event") == 1:
+				result.extend(process_recurring_events(event, start, end, "starts_on", "ends_on", "rrule"))
 
-	events = frappe.get_list(doctype, fields=fields, filters=filters)
-
-	recurring_filters += [
-		[doctype, 'repeat_this_event', '!=', 0],
-		[doctype, "ifnull(repeat_till, '3000-01-01 00:00:00')", '>=', start]
-	]
-	recurring_events = frappe.get_list(doctype, fields=fields, filters=recurring_filters)
-
-	if recurring_events:
-		events.extend(recurring_events)
-		for recurring_event in recurring_events:
-			events.extend(process_recurring_events(recurring_event, start, end, "starts_on", "ends_on", "rrule"))
-
-	return events
+	return result
 
 def _find_available_slot(date, duration, line, scheduled_items, item, quotation=None):
 	current_schedule = []
@@ -344,7 +360,7 @@ def check_simultaneaous_bookings(item, scheduled_items):
 	return scheduled_items
 
 def _get_selected_slots(events, quotation=None):
-	linked_items = [x for x in events if x.docstatus == 0]
+	linked_items = [x for x in events if x.get("docstatus") == 0 and x.get("user") == frappe.session.user]
 	if not linked_items:
 		return []
 
@@ -402,9 +418,9 @@ def get_available_dict(start, end):
 
 def get_unavailable_dict(event):
 	return {
-		"start": event.starts_on.isoformat(),
-		"end": event.ends_on.isoformat(),
-		"id": event.name,
+		"start": event.get("starts_on").isoformat(),
+		"end": event.get("ends_on").isoformat(),
+		"id": event.get("name"),
 		"backgroundColor": "#69eb94",
 		"classNames": "unavailable",
 		"title": _("In shopping cart")
