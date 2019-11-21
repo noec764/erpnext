@@ -11,7 +11,9 @@ def get_data():
 			'Work Order': 'production_item',
 			'Product Bundle': 'new_item_code',
 			'BOM': 'item',
-			'Batch': 'item'
+			'Batch': 'item',
+			'Item Booking': 'item',
+			'Item Booking Calendar': 'item'
 		},
 		'transactions': [
 			{
@@ -42,6 +44,10 @@ def get_data():
 			{
 				'label': _('Manufacture'),
 				'items': ['Production Plan', 'Work Order', 'Item Manufacturer']
+			},
+			{
+				'label': _('Bookings'),
+				'items': ['Item Booking', 'Item Booking Calendar']
 			}
 		]
 	}
