@@ -12,10 +12,11 @@ from erpnext.accounts.party import get_party_account
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry, get_company_defaults
 from frappe.integrations.utils import get_payment_gateway_controller
 from frappe.utils.background_jobs import enqueue
+import json
 
 class PaymentRequest(Document):
 	def before_insert(self):
-		self.payment_key = None
+		self.generate_payment_key()
 
 	def validate(self):
 		if self.get("__islocal"):
@@ -91,7 +92,6 @@ class PaymentRequest(Document):
 				self.payment_gateway_account, "payment_account")
 
 	def on_submit(self):
-		self.generate_payment_key()
 		self.db_set('status', 'Initiated')
 
 		send_mail = True
@@ -145,9 +145,6 @@ class PaymentRequest(Document):
 
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
-
-	def get_payment_link(self):
-		return get_url("/payments?link={0}".format(self.payment_key))
 
 	def get_payment_url(self, payment_gateway):
 		data = frappe.db.get_value(self.reference_doctype, self.reference_name,\
@@ -254,24 +251,12 @@ class PaymentRequest(Document):
 			"recipients": self.email_to,
 			"sender": None,
 			"subject": self.subject,
-			"message": self.get_message(),
+			"message": self.message,
 			"now": True,
 			"communication": communication.name if communication else None,
 			"attachments": [frappe.attach_print(self.reference_doctype, self.reference_name,
 				file_name=self.reference_name, print_format=self.print_format)]}
 		enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
-
-	def get_message(self):
-		"""return message with payment gateway link"""
-
-		context = {
-			"doc": self,
-			"reference": frappe.get_doc(self.reference_doctype, self.reference_name),
-			"payment_link": self.get_payment_link()
-		}
-
-		if self.message:
-			return frappe.render_template(self.message, context)
 
 	def set_failed(self):
 		self.db_set("status", "Failed")
@@ -285,7 +270,7 @@ class PaymentRequest(Document):
 				filters={"reference_name": self.reference_name, "docstatus": ["<", 2]},
 				fields=["parent"],
 				limit=1):
-				frappe.throw(_("Payment Entry already exists"), title=_('Error'))
+				frappe.throw(_("A payment entry for this reference exists already"), title=_('Error'))
 
 	def make_communication_entry(self):
 		"""Make communication entry"""
@@ -295,7 +280,7 @@ class PaymentRequest(Document):
 				"communication_medium": "Email",
 				"recipients": self.email_to,
 				"subject": self.subject,
-				"content": self.get_message(),
+				"content": self.message,
 				"sent_or_received": "Sent",
 				"reference_doctype": self.reference_doctype,
 				"reference_name": self.reference_name
@@ -369,8 +354,15 @@ class PaymentRequest(Document):
 			subscription = frappe.get_doc("Subscription", subscription_name)
 			return subscription.plans
 
+	@frappe.whitelist()
 	def is_linked_to_a_subscription(self):
 		return frappe.db.get_value(self.reference_doctype, self.reference_name, "subscription")
+
+	@frappe.whitelist()
+	def get_linked_subscription(self):
+		subscription = self.is_linked_to_a_subscription()
+		if subscription:
+			return frappe.get_doc("Subscription", subscription)
 
 	@frappe.whitelist()
 	def process_payment_immediately(self):
@@ -452,6 +444,11 @@ def make_payment_request(**args):
 
 	return pr.as_dict()
 
+@frappe.whitelist()
+def get_reference_amount(doctype, docname):
+	ref_doc = frappe.get_doc(doctype, docname)
+	return get_amount(ref_doc)
+
 def get_amount(ref_doc):
 	"""get amount based on doctype"""
 	dt = ref_doc.doctype
@@ -468,7 +465,7 @@ def get_amount(ref_doc):
 		return grand_total
 
 	else:
-		frappe.throw(_("Payment Entry is already created"))
+		frappe.throw(_("There is no outstanding amount for this reference"))
 
 def get_existing_payment_request_amount(ref_dt, ref_dn):
 	existing_payment_request_amount = frappe.db.sql("""
@@ -533,28 +530,25 @@ def make_status_as_paid(doc, method):
 				doc.db_set('status', 'Paid')
 				frappe.db.commit()
 
-def get_dummy_message(doc):
-	return frappe.render_template("""{% if doc.contact_person -%}
-<p>Dear {{ doc.contact_person }},</p>
-{%- else %}<p>Hello,</p>{% endif %}
-
-<p>{{ _("Requesting payment against {0} {1} for amount {2}").format(doc.doctype,
-	doc.name, doc.get_formatted("grand_total")) }}</p>
-
-<a href="{{ payment_url }}">{{ _("Make Payment") }}</a>
-
-<p>{{ _("If you have any questions, please get back to us.") }}</p>
-
-<p>{{ _("Thank you for your business!") }}</p>
-""", dict(doc=doc, payment_url = '{{ payment_url }}'))
-
 @frappe.whitelist()
-def get_subscription_details(reference_doctype, reference_name):
-	if reference_doctype == "Sales Invoice":
-		subscriptions = frappe.db.sql("""SELECT parent as sub_name FROM `tabSubscription Invoice` WHERE invoice=%s""",reference_name, as_dict=1)
-		subscription_plans = []
-		for subscription in subscriptions:
-			plans = frappe.get_doc("Subscription", subscription.sub_name).plans
-			for plan in plans:
-				subscription_plans.append(plan)
-		return subscription_plans
+def get_message(doc, template):
+	"""return message with payment gateway link"""
+
+	if isinstance(doc, str):
+		doc = json.loads(doc)
+
+	context = {
+		"doc": doc,
+		"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
+		"payment_link": get_payment_link(doc.get("payment_key"))
+	}
+
+	email_template = frappe.get_doc("Email Template", template)
+
+	return {
+		"subject" : frappe.render_template(email_template.subject, context),
+		"message" : frappe.render_template(email_template.response, context)
+	}
+
+def get_payment_link(payment_key):
+		return get_url("/payments?link={0}".format(payment_key))

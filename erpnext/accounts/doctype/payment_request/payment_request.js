@@ -15,7 +15,20 @@ frappe.ui.form.on("Payment Request", {
 			})
 		}
 	},
+	validate(frm) {
+		if (frm.subscription_doc && !frm.date_confirmation) {
+			if (frm.subscription_doc.current_invoice_start !== frm.doc.transaction_date) {
+				frappe.show_alert ({
+					message: __('Warning: The transaction date is different from the subscription current invoice start.'),
+					indicator: 'orange'
+				});
+			}
+		}
+	},
 	refresh(frm) {
+		frm.trigger('get_subscription_link');
+		frm.trigger('get_payment_gateways');
+
 		if (!frm.is_new() && frm.doc.payment_key) {
 			frm.web_link && frm.web_link.remove();
 			frm.add_web_link(`/payments?link=${frm.doc.payment_key}`, __("See payment link"));
@@ -77,8 +90,71 @@ frappe.ui.form.on("Payment Request", {
 			})
 		}, __("Actions"))
 	},
+	reference_doctype(frm) {
+		frm.trigger('get_subscription_link');
+		frm.trigger('get_payment_gateways');
+		frm.trigger('get_reference_amount');
+	},
 	reference_name(frm) {
-		if (frm.doc.reference_name) {
+		frm.trigger('get_subscription_link');
+		frm.trigger('get_payment_gateways');
+		frm.trigger('get_reference_amount');
+	},
+	email_template(frm) {
+		if (frm.doc.email_template) {
+			frappe.xcall('erpnext.accounts.doctype.payment_request.payment_request.get_message', {
+				doc: frm.doc,
+				template: frm.doc.email_template
+			}).then(r => {
+				let signature = frappe.boot.user.email_signature || "";
+
+				if(!frappe.utils.is_html(signature)) {
+					signature = signature.replace(/\n/g, "<br>");
+				}
+
+				if(r.message && signature && r.message.includes(signature)) {
+					signature = "";
+				}
+		
+				const content = (r.message || "") + (signature ? ("<br>" + signature) : "");
+
+				frm.set_value("subject", r.subject);
+				frm.set_value("message", content);
+			})
+		}
+	},
+	payment_gateways_template(frm) {
+		if(frm.doc.payment_gateways_template) {
+			frappe.model.with_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template, function() {
+				const template = frappe.get_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template)
+				frm.set_value('payment_gateways', template.payment_gateways.slice());
+			});
+		}
+	},
+	get_subscription_link(frm) {
+		frm.dashboard.clear_headline();
+		if (frm.doc.reference_doctype && frm.doc.reference_name) {
+			frappe.call({
+				method: "is_linked_to_a_subscription",
+				doc: frm.doc
+			}).done((r) => {
+				frm.dashboard.clear_headline();
+				if (r && r.message) {
+					frm.dashboard.set_headline(__('This reference is linked to subscription {0}', [r.message]));
+					frm.toggle_display("payment_gateways_template", false);
+					frm.trigger("get_subscription_details");
+					frm.fields_dict.transaction_date.df.description = __("Start date for the subscription");
+					frm.refresh_field('transaction_date');
+				} else {
+					frm.toggle_display("payment_gateways_template", true);
+					frm.fields_dict.transaction_date.df.description = null;
+					frm.refresh_field('transaction_date');
+				}
+			})
+		}
+	},
+	get_payment_gateways(frm) {
+		if (frm.doc.reference_doctype && frm.doc.reference_name) {
 			frappe.call({
 				method: "get_subscription_payment_gateways",
 				doc: frm.doc,
@@ -89,39 +165,42 @@ frappe.ui.form.on("Payment Request", {
 						const c = frm.add_child("payment_gateways");
 						c.payment_gateway = value;
 					})
-					frm.refresh_fields("payment_gateways")
+				} else {
+					frm.set_value("payment_gateways", [])
 				}
+				frm.refresh_fields("payment_gateways")
+			})
+		} else {
+			frm.set_value("payment_gateways", [])
+			frm.refresh_fields("payment_gateways")
+		}
+	},
+	get_reference_amount(frm) {
+		if (frm.doc.reference_doctype && frm.doc.reference_name) {
+			frappe.xcall('erpnext.accounts.doctype.payment_request.payment_request.get_reference_amount', {
+				doctype: frm.doc.reference_doctype,
+				docname: frm.doc.reference_name
+			}).then(r => {
+				r&&frm.set_value("grand_total", r);
+				frm.refresh_fields("grand_total");
 			})
 		}
 	},
-	email_template(frm) {
-		if (frm.doc.email_template) {
-			frappe.db.get_value("Email Template", frm.doc.email_template, ["subject", "response"], r => {
-				if (r) {
-					let signature = frappe.boot.user.email_signature || "";
-
-					if(!frappe.utils.is_html(signature)) {
-						signature = signature.replace(/\n/g, "<br>");
-					}
-
-					if(r.response && signature && r.response.includes(signature)) {
-						signature = "";
-					}
-			
-					const content = (r.response || "") + (signature ? ("<br>" + signature) : "");
-
-					frm.set_value("subject", r.subject);
-					frm.set_value("message", content);
+	get_subscription_details(frm) {
+		if (!frm.get_subscription_details_call) {
+			frm.get_subscription_details_call = true;
+			frappe.call({
+				method: "get_linked_subscription",
+				doc: frm.doc
+			}).done((r) => {
+				if (r && r.message) {
+					frm.subscription_doc = r.message;
+					frm.dashboard.set_headline(
+						__('This subscription invoicing period starts on {0}.',
+						[frappe.datetime.global_date_format(frm.subscription_doc.current_invoice_start)]));
 				}
+				frm.get_subscription_details_call = false;
 			})
-		}
-	},
-	payment_gateways_template(frm) {
-		if(frm.doc.payment_gateways_template) {
-			frappe.model.with_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template, function() {
-				const template = frappe.get_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template)
-				frm.set_value('payment_gateways', template.payment_gateways.slice());
-			});
 		}
 	}
 

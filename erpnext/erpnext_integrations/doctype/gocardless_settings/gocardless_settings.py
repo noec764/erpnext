@@ -161,13 +161,12 @@ class GoCardlessSettings(PaymentGatewayController):
 			return self.error_message(402, _("GoCardless Payment Error"))
 
 	def get_day_of_month(self):
-		start_date, end_date, generate_invoice_at_period_start = frappe.db.get_value("Subscription", self.subscription, \
-			["current_invoice_start", "current_invoice_end", "generate_invoice_at_period_start"])
-		subscription_date = start_date if generate_invoice_at_period_start else end_date
-		if subscription_date != get_last_day(subscription_date):
-			return subscription_date.strftime("%d")
+		if self.reference_document.transaction_date\
+			!= get_last_day(self.reference_document.transaction_date):
+			return self.reference_document.transaction_date.strftime("%d")
 		else:
 			return -1
+
 
 	def get_payments_on_gocardless(self, id=None, params=None):
 		return self.get_payment_by_id(id) if id else self.get_payment_list(params)
