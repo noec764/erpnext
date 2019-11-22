@@ -85,7 +85,6 @@
    "label": "Transaction Details"
   },
   {
-   "description": "Amount in transaction currency",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "label": "Amount in transaction currency",
@@ -263,7 +262,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-21 14:51:24.685684",
+ "modified": "2019-11-22 00:11:15.493347",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

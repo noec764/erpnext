@@ -17,9 +17,14 @@ frappe.ui.form.on("Payment Request", {
 	},
 	validate(frm) {
 		if (frm.subscription_doc && !frm.date_confirmation) {
-			if (frm.subscription_doc.current_invoice_start !== frm.doc.transaction_date) {
+			if (frm.subscription_doc.generate_invoice_at_period_start && frm.subscription_doc.current_invoice_start !== frm.doc.transaction_date) {
 				frappe.show_alert ({
 					message: __('Warning: The transaction date is different from the subscription current invoice start.'),
+					indicator: 'orange'
+				});
+			} else if (!frm.subscription_doc.generate_invoice_at_period_start && frm.subscription_doc.current_invoice_end !== frm.doc.transaction_date) {
+				frappe.show_alert ({
+					message: __('Warning: The transaction date is different from the subscription current invoice end.'),
 					indicator: 'orange'
 				});
 			}
@@ -143,7 +148,7 @@ frappe.ui.form.on("Payment Request", {
 					frm.dashboard.set_headline(__('This reference is linked to subscription {0}', [r.message]));
 					frm.toggle_display("payment_gateways_template", false);
 					frm.trigger("get_subscription_details");
-					frm.fields_dict.transaction_date.df.description = __("Start date for the subscription");
+					frm.fields_dict.transaction_date.df.description = __("Start date for the payment gateway subscription");
 					frm.refresh_field('transaction_date');
 				} else {
 					frm.toggle_display("payment_gateways_template", true);
@@ -195,9 +200,16 @@ frappe.ui.form.on("Payment Request", {
 			}).done((r) => {
 				if (r && r.message) {
 					frm.subscription_doc = r.message;
-					frm.dashboard.set_headline(
-						__('This subscription invoicing period starts on {0}.',
-						[frappe.datetime.global_date_format(frm.subscription_doc.current_invoice_start)]));
+					if (frm.subscription_doc.generate_invoice_at_period_start) {
+						frm.dashboard.set_headline(
+							__('This subscription invoicing period starts on {0}.',
+							[frappe.datetime.global_date_format(frm.subscription_doc.current_invoice_start)]));
+					} else {
+						frm.dashboard.set_headline(
+							__('This subscription invoicing period ends on {0}.',
+							[frappe.datetime.global_date_format(frm.subscription_doc.current_invoice_end)]));
+					}
+					
 				}
 				frm.get_subscription_details_call = false;
 			})
