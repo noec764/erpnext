@@ -583,7 +583,7 @@ def update_event_in_calendar(account, event, recurrence=None):
 
 	update = False
 	for field in updated_event:
-		if field == "rrule":
+		if field == "rrule" and recurrence:
 			update = (set(calendar_event.get(field).split(";")) != set(updated_event.get(field).split(";")))
 		else:
 			update = (str(calendar_event.get(field)) != str(updated_event.get(field)))
