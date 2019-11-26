@@ -82,11 +82,21 @@ class PurchaseReceipt(BuyingController):
 		self.validate_with_previous_doc()
 		self.validate_uom_is_integer("uom", ["qty", "received_qty"])
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
+		self.validate_cwip_accounts()
 
 		self.check_on_hold_or_closed_status()
 
 		if getdate(self.posting_date) > getdate(nowdate()):
 			throw(_("Posting Date cannot be future date"))
+
+	def validate_cwip_accounts(self):
+		for item in self.get('items'):
+			if item.is_fixed_asset and is_cwip_accounting_enabled(item.asset_category):
+				# check cwip accounts before making auto assets
+				# Improves UX by not giving messages of "Assets Created" before throwing error of not finding arbnb account
+				arbnb_account = self.get_company_default("asset_received_but_not_billed")
+				cwip_account = get_asset_account("capital_work_in_progress_account", company = self.company)
+				break
 
 	def validate_with_previous_doc(self):
 		super(PurchaseReceipt, self).validate_with_previous_doc({
@@ -414,7 +424,7 @@ class PurchaseReceipt(BuyingController):
 		}, item=item))
 
 	def update_assets(self, item, valuation_rate):
-		assets = frappe.db.get_all('Asset', 
+		assets = frappe.db.get_all('Asset',
 			filters={ 'purchase_receipt': self.name, 'item_code': item.item_code }
 		)
 
