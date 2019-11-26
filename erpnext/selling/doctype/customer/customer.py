@@ -398,6 +398,7 @@ def get_customer_primary_contact(doctype, txt, searchfield, start, page_len, fil
 			'txt': '%%%s%%' % txt
 		})
 
+#TODO: Refactor since it has been removed from ERPNext
 def get_customer_primary_address(doctype, txt, searchfield, start, page_len, filters):
 	customer = filters.get('customer')
 	return frappe.db.sql("""
