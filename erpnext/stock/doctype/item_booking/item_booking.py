@@ -653,7 +653,7 @@ def insert_event_in_google_calendar(doc, method=None):
 		"summary": doc.title,
 		"description": doc.notes,
 		"sync_with_google_calendar": 1,
-		"recurrence": [doc.rrule] if doc.repeat_this_event and doc.rrule else None
+		"recurrence": [doc.rrule] if doc.repeat_this_event and doc.rrule else []
 	}
 	event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), \
 		get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
@@ -691,7 +691,7 @@ def update_event_in_google_calendar(doc, method=None):
 			eventId=doc.google_calendar_event_id).execute()
 		event["summary"] = doc.title
 		event["description"] = doc.notes
-		event["recurrence"] = [doc.rrule] if doc.repeat_this_event and doc.rrule else None
+		event["recurrence"] = [doc.rrule] if doc.repeat_this_event and doc.rrule else []
 		event["status"] = "cancelled" if doc.status == "Cancelled" else "confirmed"
 		event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), \
 			get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
