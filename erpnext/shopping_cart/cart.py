@@ -13,7 +13,6 @@ from erpnext.accounts.utils import get_account_name
 from erpnext.utilities.product import get_qty_in_stock
 from frappe.contacts.doctype.contact.contact import get_contact_name
 
-
 class WebsitePriceListMissingError(frappe.ValidationError):
 	pass
 
@@ -103,9 +102,10 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	qty = flt(qty)
 	if qty == 0:
 		if booking:
-			quotation_items = quotation.get("items", {"item_booking": ["!=", booking]})
+			quotation_items = quotation.get("items", filters={"item_booking": ["!=", booking]})
+			frappe.delete_doc("Item Booking", booking, ignore_permissions=True, force=True)
 		else:
-			quotation_items = quotation.get("items", {"item_code": ["!=", item_code]})
+			quotation_items = quotation.get("items", filters={"item_code": ["!=", item_code]})
 
 		if quotation_items:
 			quotation.set("items", quotation_items)

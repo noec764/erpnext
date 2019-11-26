@@ -10,7 +10,7 @@ frappe.ui.form.on('Item Booking', {
 	},
 	refresh(frm) {
 		frm.page.clear_actions_menu();
-		if (frm.doc.docstatus === 1) {
+		if (frm.doc.status === "Confirmed") {
 			frm.page.add_action_item(__("Create a quotation"), () => {
 				frappe.xcall(
 					"erpnext.stock.doctype.item_booking.item_booking.make_quotation",
@@ -47,11 +47,19 @@ frappe.ui.form.on('Item Booking', {
 			}
 		});
 
+		frm.set_query('google_calendar', function() {
+			return {
+				filters: {
+					"reference_document": "Item Booking"
+				}
+			};
+		});
+
 		if (frm.delayInfo) {
 			clearInterval(frm.delayInfo)
 		}
 
-		if (frm.doc.docstatus === 0) {
+		if (!frm.is_new()) {
 			frappe.db.get_single_value("Stock settings", "clear_item_booking_draft_duration")
 				.then(r => {
 					frm.delayInfo && clearInterval(frm.delayInfo);

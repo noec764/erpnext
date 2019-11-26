@@ -209,12 +209,8 @@ export default {
 			})
 		},
 		removeBookedSlot(event) {
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.remove_booked_slot", {
-				name: event.event.id,
-			}).then(r => {
-				this.getQuotation()
-				this.updateCart(event.event.id, 0)
-			})
+			this.getQuotation()
+			this.updateCart(event.event.id, 0)
 		},
 		updateCart(booking, qty) {
 			new Promise((resolve) => {
@@ -228,7 +224,7 @@ export default {
 				)
 			}).then(r => {
 				// Hack for promise resolving too fast
-				setTimeout(() => { this.loading = false; }, 2000);
+				setTimeout(() => { this.loading = false; }, (qty == 0) ? 3000: 2000);
 			})
 		},
 		datesRender(event) {
