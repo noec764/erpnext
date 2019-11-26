@@ -117,6 +117,7 @@
   },
   {
    "fetch_from": "item_code.item_name",
+   "fetch_if_empty": 1,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -192,7 +193,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "item_code.stock_uom",
    "fieldname": "uom",
    "fieldtype": "Link",
    "label": "UOM",
