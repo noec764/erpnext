@@ -7,7 +7,7 @@ import frappe
 import gocardless_pro
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day
+from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day, add_days
 from frappe.integrations.utils import PaymentGatewayController,\
 	create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.mandate import GoCardlessMandateWebhookHandler
@@ -425,6 +425,7 @@ def check_payment_status(provider):
 		for request in pending_requests:
 			if request["service_id"]:
 				payments = []
+				gocardless_payments = {}
 				if request["service_document"] == "payment":
 					gocardless_payments = provider.get_payments_on_gocardless(id=request["service_id"])
 				elif request["service_document"] in ["mandates", "customer"]:

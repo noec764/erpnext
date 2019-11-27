@@ -21,7 +21,8 @@ web_include_css = "assets/css/erpnext-web.css"
 doctype_js = {
 	"Communication": "public/js/communication.js",
 	"Website Theme": "public/js/website_theme.js",
-	"Newsletter": "public/js/newsletter.js"
+	"Newsletter": "public/js/newsletter.js",
+	"Google Calendar": "public/js/google_calendar.js"
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
@@ -249,7 +250,7 @@ doc_events = {
 	},
 	"Quotation": {
 		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
-		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.submit_linked_item_bookings"
+		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.confirm_linked_item_bookings"
 	},
 	"Item Booking": {
 		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",

@@ -13,7 +13,7 @@ import calendar
 import json
 from frappe.desk.calendar import get_rrule
 from dateutil import parser
-from erpnext.shopping_cart.cart import update_cart, _get_cart_quotation
+from erpnext.shopping_cart.cart import _get_cart_quotation
 from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.product_info import get_product_info_for_website
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
@@ -42,6 +42,9 @@ class ItemBooking(Document):
 		if isinstance(self.rrule, list) and self.rrule > 1:
 			self.rrule = self.rrule[0]
 
+	def set_status(self, status):
+		self.db_set("status", status)
+
 def get_list_context(context=None):
 	context.update({
 		"show_sidebar": True,
@@ -51,7 +54,7 @@ def get_list_context(context=None):
 		"get_list": get_bookings_list,
 		"row_template": "templates/includes/item_booking_row.html",
 		"create_new": "/",
-		"can_cancel": frappe.has_permission("Item Booking", "cancel")
+		"can_cancel": frappe.has_permission("Item Booking", "write")
 	})
 
 def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None):
@@ -83,7 +86,7 @@ def cancel_appointment(id, force=False):
 	booking = frappe.get_doc("Item Booking", id)
 	if force:
 		booking.flags.ignore_links = True
-	return booking.cancel()
+	return booking.set_status("Cancelled")
 
 @frappe.whitelist(allow_guest=True)
 def get_item_uoms(item_code):
@@ -126,7 +129,8 @@ def book_new_slot(**kwargs):
 			"ends_on": kwargs.get("end"),
 			"billing_qty": 1,
 			"sales_uom": uom,
-			"user": frappe.session.user
+			"user": frappe.session.user,
+			"status": "In Cart"
 		}).insert(ignore_permissions=True)
 
 		return doc
@@ -253,6 +257,7 @@ def _check_availability(item, date, duration, quotation=None, uom=None):
 def _get_availability_from_schedule(item, schedules, date, quotation=None):
 	available_slots = []
 	for line in schedules:
+
 		duration = line.get("duration")
 
 		booked_items = _get_events(line.get("start"), line.get("end"), item)
@@ -264,7 +269,12 @@ def _get_availability_from_schedule(item, schedules, date, quotation=None):
 				or get_datetime(event.get("ends_on")) >= line.get("start"):
 				scheduled_items.append(event)
 
-		available_slots.extend(_find_available_slot(date, duration, line, scheduled_items, item, quotation))
+		slots = _find_available_slot(date, duration, line, scheduled_items, item, quotation)
+		available_slots_ids = [s.get("id") for s in available_slots]
+		
+		for slot in slots:
+			if slot.get("id") not in available_slots_ids:
+				available_slots.append(slot)
 
 	return available_slots
 
@@ -274,10 +284,10 @@ def _get_events(start, end, item):
 				ends_on,
 				item_name,
 				name,
-				docstatus,
 				repeat_this_event,
 				rrule,
-				user
+				user,
+				status
 		FROM `tabItem Booking`
 		WHERE (
 				(
@@ -360,7 +370,7 @@ def check_simultaneaous_bookings(item, scheduled_items):
 	return scheduled_items
 
 def _get_selected_slots(events, quotation=None):
-	linked_items = [x for x in events if x.get("docstatus") == 0 and x.get("user") == frappe.session.user]
+	linked_items = [x for x in events if x.get("status") == "In Cart" and x.get("user") == frappe.session.user]
 	if not linked_items:
 		return []
 
@@ -461,15 +471,15 @@ def delete_linked_item_bookings(doc, method):
 		if item.item_booking:
 			frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True, force=True)
 
-def submit_linked_item_bookings(doc, method):
+def confirm_linked_item_bookings(doc, method):
 	for item in doc.items:
 		if item.item_booking:
 			slot = frappe.get_doc("Item Booking", item.item_booking)
 			slot.flags.ignore_permissions = True
-			slot.submit()
+			slot.set_status("Confirmed")
 
 def clear_draft_bookings():
-	drafts = frappe.get_all("Item Booking", filters={"docstatus": 0}, fields=["name", "modified"])
+	drafts = frappe.get_all("Item Booking", filters={"status": "In Cart"}, fields=["name", "modified"])
 	clearing_duration = frappe.db.get_value("Stock Settings", None, "clear_item_booking_draft_duration")
 
 	if cint(clearing_duration) <= 0:
@@ -534,7 +544,7 @@ def make_quotation(source_name, target_doc=None):
 	return doc
 
 def get_calendar_item(account):
-	return frappe.db.get_value("Item", dict(google_calendar=account.name), "item_code")
+	return frappe.db.get_value("Item", dict(google_calendar=account.name), ["item_code", "calendar_color"])
 
 def insert_event_to_calendar(account, event, recurrence=None):
 	"""
@@ -542,10 +552,12 @@ def insert_event_to_calendar(account, event, recurrence=None):
 	"""
 	start = event.get("start")
 	end = event.get("end")
+	item, color = get_calendar_item(account)
 
 	calendar_event = {
 		"doctype": "Item Booking",
-		"item": get_calendar_item(account),
+		"item": item,
+		"color": color,
 		"notes": event.get("description"),
 		"sync_with_google_calendar": 1,
 		"google_calendar": account.name,
@@ -555,12 +567,12 @@ def insert_event_to_calendar(account, event, recurrence=None):
 		"starts_on": get_datetime(start.get("date")) if start.get("date") else get_timezone_naive_datetime(start),
 		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
-		"repeat_this_event": 1 if recurrence else 0
+		"repeat_this_event": 1 if recurrence else 0,
+		"status": "confirmed"
 	}
 	doc = frappe.get_doc(calendar_event)
 	doc.flags.pulled_from_google_calendar = True
 	doc.insert(ignore_permissions=True)
-	doc.submit()
 
 def update_event_in_calendar(account, event, recurrence=None):
 	"""
@@ -570,49 +582,32 @@ def update_event_in_calendar(account, event, recurrence=None):
 	end = event.get("end")
 
 	calendar_event = frappe.get_doc("Item Booking", {"google_calendar_event_id": event.get("id")})
+	item, _ = get_calendar_item(account)
 
 	updated_event = {
-		"item": get_calendar_item(account),
+		"item": item,
 		"notes": event.get("description"),
 		"rrule": recurrence,
 		"starts_on": get_datetime(start.get("date")) if start.get("date") else get_timezone_naive_datetime(start),
 		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
-		"repeat_this_event": 1 if recurrence else 0
+		"repeat_this_event": 1 if recurrence else 0,
+		"status": "Confirmed"
 	}
 
 	update = False
 	for field in updated_event:
 		if field == "rrule" and recurrence:
-			update = (set(calendar_event.get(field).split(";")) != set(updated_event.get(field).split(";")))
+			update = calendar_event.get(field) is None or (set(calendar_event.get(field).split(";")) != set(updated_event.get(field).split(";")))
 		else:
 			update = (str(calendar_event.get(field)) != str(updated_event.get(field)))
 		if update:
 			break
 
 	if update:
-		if calendar_event.docstatus == 1:
-			calendar_event.flags.pulled_from_google_calendar = True
-			calendar_event.cancel()
-
-			frappe.get_doc({
-				"doctype": "Comment",
-				"comment_type": "Info",
-				"reference_doctype": "Item Booking",
-				"reference_name": calendar_event.get("name"),
-				"content": " {0}".format(_("- Event cancelled by Google Calendar.")),
-			}).insert(ignore_permissions=True)
-
-			new_calendar_event = frappe.copy_doc(calendar_event)
-			new_calendar_event.update(updated_event)
-			new_calendar_event.flags.pulled_from_google_calendar = True
-			new_calendar_event.insert(ignore_permissions=True)
-			new_calendar_event.submit()
-
-		elif calendar_event.docstatus == 0:
-			calendar_event.update(updated_event)
-			calendar_event.flags.pulled_from_google_calendar = True
-			calendar_event.save()
+		calendar_event.update(updated_event)
+		calendar_event.flags.pulled_from_google_calendar = True
+		calendar_event.save()
 
 def cancel_event_in_calendar(account, event):
 	# If any synced Google Calendar Event is cancelled, then close the Event
@@ -623,19 +618,13 @@ def cancel_event_in_calendar(account, event):
 		booking = frappe.get_doc("Item Booking", {"google_calendar_id": account.google_calendar_id, \
 			"google_calendar_event_id": event.get("id")})
 
-		if booking.docstatus == 1:
+		try:
 			booking.flags.pulled_from_google_calendar = True
-			booking.cancel()
+			booking.delete()
+			add_comment = False
+		except frappe.LinkExistsError:
+			# Try to delete event, but only if it has no links
 			add_comment = True
-
-		elif booking.docstatus == 0:
-			try:
-				booking.flags.pulled_from_google_calendar = True
-				booking.delete()
-				add_comment = False
-			except frappe.LinkExistsError:
-				# Try to delete event, but only if it has no links
-				add_comment = True
 
 	if add_comment:
 		frappe.get_doc({
@@ -664,7 +653,7 @@ def insert_event_in_google_calendar(doc, method=None):
 		"summary": doc.title,
 		"description": doc.notes,
 		"sync_with_google_calendar": 1,
-		"recurrence": [doc.rrule] if doc.rrule else None
+		"recurrence": [doc.rrule] if doc.repeat_this_event and doc.rrule else []
 	}
 	event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), \
 		get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
@@ -702,8 +691,8 @@ def update_event_in_google_calendar(doc, method=None):
 			eventId=doc.google_calendar_event_id).execute()
 		event["summary"] = doc.title
 		event["description"] = doc.notes
-		event["recurrence"] = [doc.rrule] if doc.rrule else None
-		event["status"] = "cancelled" if doc.docstatus == 2 else "confirmed"
+		event["recurrence"] = [doc.rrule] if doc.repeat_this_event and doc.rrule else []
+		event["status"] = "cancelled" if doc.status == "Cancelled" else "confirmed"
 		event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), \
 			get_datetime(doc.starts_on), get_datetime(doc.ends_on)))
 

@@ -13,6 +13,7 @@
   "user",
   "color",
   "column_break_2",
+  "status",
   "starts_on",
   "ends_on",
   "all_day",
@@ -86,8 +87,6 @@
    "fetch_from": "item.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Item Name",
    "read_only": 1
   },
@@ -120,7 +119,6 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "User",
    "options": "User"
@@ -231,18 +229,23 @@
    "fieldname": "color",
    "fieldtype": "Color",
    "label": "Color"
+  },
+  {
+   "default": "Not confirmed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "In Cart\nNot confirmed\nConfirmed\nCancelled"
   }
  ],
- "is_submittable": 1,
- "modified": "2019-11-19 23:43:02.408332",
+ "modified": "2019-11-26 14:58:22.734951",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
  "owner": "Administrator",
  "permissions": [
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -252,12 +255,9 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -267,12 +267,9 @@
    "report": 1,
    "role": "Sales Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -282,7 +279,6 @@
    "report": 1,
    "role": "Sales User",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
@@ -304,11 +300,9 @@
    "share": 1
   },
   {
-   "cancel": 1,
    "create": 1,
    "read": 1,
    "role": "Customer",
-   "submit": 1,
    "write": 1
   }
  ],
