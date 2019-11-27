@@ -328,7 +328,7 @@ class Subscription(Document):
 
 		if self.additional_discount_percentage or self.additional_discount_amount:
 			discount_on = self.apply_additional_discount
-			document.apply_additional_discount = discount_on if discount_on else 'Grand Total'
+			document.apply_discount_on = discount_on if discount_on else 'Grand Total'
 
 		self.add_subscription_dates(document)
 
