@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 import frappe
+import os
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def setup(company=None, patch=True):
