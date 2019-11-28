@@ -20,7 +20,7 @@ frappe.ui.form.on("Supplier", {
 		frm.set_query("default_bank_account", function() {
 			return {
 				filters: {
-					"is_company_account":1
+					"party_type": "Supplier"
 				}
 			}
 		});

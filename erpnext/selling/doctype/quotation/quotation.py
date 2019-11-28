@@ -136,6 +136,10 @@ def get_list_context(context=None):
 
 	return list_context
 
+def set_expired_status():
+	frappe.db.sql("""UPDATE `tabQuotation` SET `status` = 'Expired'
+		WHERE `status` != "Expired" AND `valid_till` < %s""", (nowdate()))
+
 @frappe.whitelist()
 def make_sales_order(source_name, target_doc=None):
 	quotation = frappe.db.get_value("Quotation", source_name, ["transaction_date", "valid_till"], as_dict = 1)
