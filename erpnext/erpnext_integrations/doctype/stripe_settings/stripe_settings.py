@@ -123,7 +123,7 @@ class StripeSettings(PaymentGatewayController):
 		if hasattr(self.reference_document, 'get_subscription_plans_details'):
 			self.payment_plans = self.reference_document.get_subscription_plans_details('Stripe-' + self.gateway_name)
 			if self.payment_plans:
-				self.create_customer_on_stripe()
+				self.get_stripe_customer()
 				result = self.create_subscription_on_stripe()
 				if result.get("status") == "Incomplete":
 					return result
@@ -137,22 +137,31 @@ class StripeSettings(PaymentGatewayController):
 		self.create_charge_on_stripe()
 		return self.finalize_request()
 
-	def create_customer_on_stripe(self):
+	def get_stripe_customer(self):
 		try:
 			if self.get_existing_customer():
 				self.customer = self.get_existing_customer()
 			else:
-				self.customer = self.stripe.Customer.create(
-					name=self.data.payer_name,
-					email=self.data.payer_email,
-					source=self.data.stripe_token_id
-				)
-				self.register_new_stripe_customer()
+				self.customer = self.create_new_customer_on_stripe(self,
+						dict(
+							name=self.data.payer_name,
+							email=self.data.payer_email,
+							source=self.data.stripe_token_id
+						)
+					)
+				self.register_new_stripe_customer(self.customer, self.origin_transaction.get("customer"))
 
 			return self.customer
 		except Exception as e:
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe customer creation error"))
+
+	def create_new_customer_on_stripe(self, **kwargs):
+		return self.stripe.Customer.create(
+						name=kwargs.get("payer_name"),
+						email=kwargs.get("payer_email"),
+						source=kwargs.get("stripe_token_id")
+				)
 
 	def get_existing_customer(self):
 		if self.origin_transaction.get("customer") and frappe.db.exists("Integration References",\
@@ -170,20 +179,19 @@ class StripeSettings(PaymentGatewayController):
 			except stripe.error.InvalidRequestError:
 				return self.stripe.Customer.retrieve(customer_id)
 
-	def register_new_stripe_customer(self):
-		if self.origin_transaction.get("customer"):
-			if frappe.db.exists("Integration References", dict(customer=self.origin_transaction.get("customer"))):
-				doc = frappe.get_doc("Integration References", dict(customer=self.origin_transaction.get("customer")))
-				doc.stripe_customer_id = self.customer.id
-				doc.save(ignore_permissions=True)
+	def register_new_stripe_customer(self, stripe_customer, dokos_customer):
+		if frappe.db.exists("Integration References", dict(customer=dokos_customer)):
+			doc = frappe.get_doc("Integration References", dict(customer=dokos_customer))
+			doc.stripe_customer_id = stripe_customer.id
+			doc.save(ignore_permissions=True)
 
-			else:
-				frappe.get_doc({
-					"doctype": "Integration References",
-					"customer": self.origin_transaction.get("customer"),
-					"stripe_customer_id": self.customer.id,
-					"stripe_settings": self.name
-				}).insert(ignore_permissions=True)
+		else:
+			frappe.get_doc({
+				"doctype": "Integration References",
+				"customer": dokos_customer,
+				"stripe_customer_id": stripe_customer.id,
+				"stripe_settings": self.name
+			}).insert(ignore_permissions=True)
 
 	def create_subscription_on_stripe(self):
 		try:

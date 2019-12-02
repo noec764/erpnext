@@ -14,8 +14,6 @@ $(document).bind('toolbar_setup', function() {
 	$('[data-link="issues"]').attr("href", "https://gitlab.com/dokos/dokos/issues")
 
 
-	// default documentation goes to erpnext
-	// $('[data-link-type="documentation"]').attr('data-path', '/erpnext/manual/index');
 
 	// additional help links for erpnext
 	var $help_menu = $('.dropdown-help ul .documentation-links');
