@@ -63,7 +63,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			self.subscription = frappe.get_doc("Subscription", self.subscriptions[0].get("name"))
 
 	def create_and_pay_invoice(self):
-		if self.invoice.docstatus == 0:
+		if self.invoice and self.invoice.docstatus == 0:
 			self.submit_invoice()
 
 		self.pay_invoice()
