@@ -41,8 +41,7 @@ class Subscription(Document):
 
 	def validate_subscription_period(self):
 		if self.trial_period_start and getdate(self.trial_period_end) > getdate(self.current_invoice_start):
-			if self.period_has_passed(self.trial_period_end):
-				self.update_subscription_period(add_days(self.trial_period_end, 1))
+			self.update_subscription_period(add_days(self.trial_period_end, 1))
 		elif self.is_new_subscription():
 			self.update_subscription_period(self.start)
 		elif self.has_invoice_for_period():
@@ -466,10 +465,14 @@ class Subscription(Document):
 		self.grand_total = self.simulated_grand_total()
 
 	def simulated_grand_total(self):
-		invoice = self.generate_invoice(simulate=True)
-		invoice._action = "save"
-		invoice.run_method("validate")
-		return invoice.grand_total
+		try:
+			invoice = self.generate_invoice(simulate=True)
+			invoice._action = "save"
+			invoice.run_method("validate")
+			return invoice.grand_total
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
+			return
 
 	def update_payment_gateway_subscription(self):
 		if self.payment_gateway and self.payment_gateway_reference:
