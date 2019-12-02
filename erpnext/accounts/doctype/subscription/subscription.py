@@ -246,7 +246,7 @@ class Subscription(Document):
 
 	def create_invoice(self, prorate, simulate=False):
 		current_sales_order = self.get_current_documents("Sales Order")
-		if current_sales_order:
+		if current_sales_order and not simulate:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 			invoice = make_sales_invoice(current_sales_order[0], ignore_permissions=True)
 			self.add_due_date(invoice)
