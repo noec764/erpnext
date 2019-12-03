@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+import warnings
 import frappe
 from frappe import _
 from urllib.parse import urlencode
@@ -149,7 +150,7 @@ class StripeSettings(PaymentGatewayController):
 							source=self.data.stripe_token_id
 						)
 					)
-				self.register_new_stripe_customer(self.customer, self.origin_transaction.get("customer"))
+				self.register_new_stripe_customer(self.customer.get("id"), self.origin_transaction.get("customer"))
 
 			return self.customer
 		except Exception as e:
@@ -160,7 +161,9 @@ class StripeSettings(PaymentGatewayController):
 		return self.stripe.Customer.create(
 						name=kwargs.get("payer_name"),
 						email=kwargs.get("payer_email"),
-						source=kwargs.get("stripe_token_id")
+						source=kwargs.get("stripe_token_id"),
+						payment_method=kwargs.get("payment_method"),
+						address=kwargs.get("address")
 				)
 
 	def get_existing_customer(self):
@@ -182,16 +185,22 @@ class StripeSettings(PaymentGatewayController):
 	def register_new_stripe_customer(self, stripe_customer, dokos_customer):
 		if frappe.db.exists("Integration References", dict(customer=dokos_customer)):
 			doc = frappe.get_doc("Integration References", dict(customer=dokos_customer))
-			doc.stripe_customer_id = stripe_customer.id
+			doc.stripe_customer_id = stripe_customer
 			doc.save(ignore_permissions=True)
 
 		else:
 			frappe.get_doc({
 				"doctype": "Integration References",
 				"customer": dokos_customer,
-				"stripe_customer_id": stripe_customer.id,
+				"stripe_customer_id": stripe_customer,
 				"stripe_settings": self.name
 			}).insert(ignore_permissions=True)
+
+	def get_setup_intent(self, customer=None, usage="off_session"):
+		return self.stripe.SetupIntent.create(
+			customer=customer,
+			usage=usage
+		)
 
 	def create_subscription_on_stripe(self):
 		try:
@@ -265,7 +274,7 @@ class StripeSettings(PaymentGatewayController):
 
 	def get_payment_methods(self, customer, type='card'):
 		try:
-			self.payment_methods = stripe.PaymentMethod.list(
+			self.payment_methods = self.stripe.PaymentMethod.list(
 				customer=customer,
 				type=type
 			)
@@ -276,7 +285,7 @@ class StripeSettings(PaymentGatewayController):
 
 	def delete_source(self, customer, source):
 		try:
-			return stripe.Customer.delete_source(
+			return self.stripe.Customer.delete_source(
 				customer,
 				source
 			)
@@ -285,8 +294,15 @@ class StripeSettings(PaymentGatewayController):
 			return self.error_message(402, _("Stripe source deletion error"))
 
 	def attach_source(self, customer, source):
+		warnings.warn(
+			"attach_source will be deprecated. Please use create_source.",
+			FutureWarning
+		)
+		return create_source(self, customer, source)
+
+	def create_source(self, customer, source):
 		try:
-			return stripe.Customer.create_source(
+			return self.stripe.Customer.create_source(
 				customer,
 				source=source
 			)
@@ -294,9 +310,19 @@ class StripeSettings(PaymentGatewayController):
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("Stripe source attachment error"))
 
+	def attach_payment_method(self, customer, payment_method):
+		try:
+			return self.stripe.PaymentMethod.attach(
+				payment_method,
+				customer=customer
+			)
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("Stripe payment method attachment error"))
+
 	def cancel_subscription(self, **kwargs):
 		try:
-			return stripe.Subscription.delete(
+			return self.stripe.Subscription.delete(
 				kwargs.get("subscription"),
 				invoice_now=kwargs.get("invoice_now", False),
 				prorate=kwargs.get("prorate", False)
