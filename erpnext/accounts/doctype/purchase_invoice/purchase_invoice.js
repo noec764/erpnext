@@ -323,23 +323,6 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 			method: "erpnext.accounts.doctype.purchase_invoice.purchase_invoice.make_debit_note",
 			frm: cur_frm
 		})
-	},
-
-	item_code: function(frm, cdt, cdn) {
-		var row = locals[cdt][cdn];
-		if(row.item_code) {
-			frappe.call({
-				method: "erpnext.assets.doctype.asset_category.asset_category.get_asset_category_account",
-				args: {
-					"item": row.item_code,
-					"fieldname": "fixed_asset_account",
-					"company": frm.doc.company
-				},
-				callback: function(r, rt) {
-					frappe.model.set_value(cdt, cdn, "expense_account", r.message);
-				}
-			})
-		}
 	}
 });
 
