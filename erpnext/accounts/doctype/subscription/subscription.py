@@ -47,9 +47,6 @@ class Subscription(Document):
 		elif self.has_invoice_for_period():
 			self.update_subscription_period(self.current_invoice_start)
 
-		if self.cancel_at_period_end:
-			self.cancel_subscription_at_period_end()
-
 	def set_current_invoice_start(self, date=None):
 		if self.trial_period_start and self.is_trial():
 			self.current_invoice_start = self.trial_period_start
@@ -69,9 +66,6 @@ class Subscription(Document):
 				self.current_invoice_end = get_last_day(self.current_invoice_start)
 
 	def process(self, from_gateway=False):
-		if self.cancel_at_period_end:
-			self.cancel_subscription_at_period_end()
-
 		if self.cancellation_date and self.period_has_passed(add_days(self.cancellation_date, -1)):
 			self.cancel_subscription()
 
@@ -372,11 +366,6 @@ class Subscription(Document):
 
 		return items
 
-	def cancel_subscription_at_period_end(self):
-		if not self.cancellation_date:
-			self.cancellation_date = self.current_invoice_end
-			self.save()
-
 	def has_invoice_for_period(self):
 		return True if self.get_current_documents("Sales Invoice") else False
 
@@ -432,7 +421,6 @@ class Subscription(Document):
 		if self.status == 'Cancelled':
 			self.status = 'Active'
 			self.cancellation_date = None
-			self.cancel_at_period_end = 0
 			self.prorate_invoice = 0
 			self.update_subscription_period(nowdate())
 			self.save()
@@ -609,9 +597,8 @@ def subscription_headline(name):
 			else:
 				next_invoice_date = get_last_day(add_days(subscription.current_invoice_end, 1))
 
-	if subscription.cancel_at_period_end and getdate(nowdate()) \
-		> getdate(subscription.current_invoice_end):
+	if subscription.cancellation_date:
 		return _("This subscription will be cancelled on {0}").format(\
-			global_date_format(next_invoice_date))
+			global_date_format(subscription.cancellation_date))
 
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date))

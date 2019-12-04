@@ -9,10 +9,15 @@ frappe.ui.form.on('Subscription', {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
 			if(frm.doc.status !== 'Cancelled'){
-				if(!frm.doc.generate_invoice_at_period_start || !frm.doc.cancel_at_period_end){
+				if(!frm.doc.cancellation_date){
 					frm.page.add_action_item(
 						__('Cancel Subscription'),
 						() => frm.events.cancel_this_subscription(frm)
+					);
+				} else {
+					frm.page.add_action_item(
+						__('Do not cancel this subscription'),
+						() => frm.events.abort_cancel_this_subscription(frm)
 					);
 				}
 				frm.page.add_action_item(
@@ -41,19 +46,17 @@ frappe.ui.form.on('Subscription', {
 
 	cancel_this_subscription: function(frm) {
 		let fields = [
-			{"fieldtype": "Date",
-			"label": __("Cancellation date"),
-			"fieldname": "cancellation_date",
-			}
-		]
-
-		if (frm.doc.generate_invoice_at_period_start == 0) {
-			fields.push({
+			{
+				"fieldtype": "Date",
+				"label": __("Cancellation date"),
+				"fieldname": "cancellation_date",
+			},
+			{
 				"fieldtype": "Check",
 				"label": __("Prorate last invoice"),
 				"fieldname": "prorate_invoice"
-			})
-		}
+			}
+		]
 
 		const dialog = new frappe.ui.Dialog({
 			title: __("Cancel subscription"),
@@ -75,6 +78,23 @@ frappe.ui.form.on('Subscription', {
 			}
 		})
 		dialog.show()
+	},
+
+	abort_cancel_this_subscription: function(frm) {
+		frappe.call({
+			method:
+			"erpnext.accounts.doctype.subscription.subscription.cancel_subscription",
+			args: {
+				cancellation_date: null,
+				prorate_invoice: 0,
+				name: frm.doc.name
+			},
+			callback: function(data){
+				if(!data.exc){
+					frm.reload_doc();
+				}
+			}
+		});
 	},
 
 	renew_this_subscription: function(frm) {

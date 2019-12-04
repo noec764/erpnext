@@ -15,17 +15,17 @@
   "trial_period_start",
   "trial_period_end",
   "cancellation_date",
+  "prorate_invoice",
   "column_break_11",
   "current_invoice_start",
   "current_invoice_end",
   "days_until_due",
   "settings_section",
-  "cancel_at_period_end",
-  "prorate_invoice",
-  "column_break_18",
   "create_sales_order",
   "generate_invoice_at_period_start",
   "submit_invoice",
+  "column_break_18",
+  "subscription_setup_html",
   "sb_4",
   "plans",
   "sb_1",
@@ -125,14 +125,6 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:!doc.prorate_invoice",
-   "fieldname": "cancel_at_period_end",
-   "fieldtype": "Check",
-   "label": "Cancel At End Of Period",
-   "no_copy": 1
-  },
-  {
-   "default": "0",
    "fieldname": "generate_invoice_at_period_start",
    "fieldtype": "Check",
    "label": "Generate the invoice at beginning of period"
@@ -225,6 +217,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.prorate_invoice",
    "fieldname": "prorate_invoice",
    "fieldtype": "Check",
    "label": "Prorate last invoice",
@@ -325,9 +318,13 @@
    "fieldname": "total_section",
    "fieldtype": "Section Break",
    "label": "Total"
+  },
+  {
+   "fieldname": "subscription_setup_html",
+   "fieldtype": "HTML"
   }
  ],
- "modified": "2019-11-27 16:38:43.556860",
+ "modified": "2019-12-03 15:05:34.396708",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
