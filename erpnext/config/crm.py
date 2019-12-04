@@ -5,7 +5,6 @@ def get_data():
 	return [
 		{
 			"label": _("Sales Pipeline"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",
@@ -60,7 +59,6 @@ def get_data():
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",
@@ -73,7 +71,6 @@ def get_data():
 					"type": "page",
 					"name": "sales-funnel",
 					"label": _("Sales Funnel"),
-					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
 				{
@@ -122,13 +119,11 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
 					"label": _("Customer Group"),
 					"name": "Customer Group",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Customer Group",
 					"description": _("Manage Customer Group Tree."),
 					"onboard": 1,
@@ -137,7 +132,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Territory"),
 					"name": "Territory",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Territory",
 					"description": _("Manage Territory Tree."),
 					"onboard": 1,
@@ -146,7 +140,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Sales Person"),
 					"name": "Sales Person",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Sales Person",
 					"description": _("Manage Sales Person Tree."),
 					"onboard": 1,
@@ -185,7 +178,6 @@ def get_data():
 		},
 		{
 			"label": _("Maintenance"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",

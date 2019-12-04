@@ -138,7 +138,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Account",
-					"icon": "fa fa-sitemap",
 					"label": _("Chart of Accounts"),
 					"route": "#Tree/Account",
 					"description": _("Tree of financial accounts."),
@@ -289,7 +288,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Cost Center",
-					"icon": "fa fa-sitemap",
 					"label": _("Chart of Cost Centers"),
 					"route": "#Tree/Cost Center",
 					"description": _("Tree of financial Cost Centers."),
@@ -392,7 +390,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
@@ -488,7 +485,6 @@ def get_data():
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-table",
 			"items": [
 				{
 					"type": "report",
@@ -530,7 +526,6 @@ def get_data():
 		},
 		{
 			"label": _("Share Management"),
-			"icon": "fa fa-microchip ",
 			"items": [
 				{
 					"type": "doctype",

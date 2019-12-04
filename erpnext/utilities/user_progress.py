@@ -106,7 +106,7 @@ def get_slide_settings():
 		frappe._dict(
 			action_name='Add Suppliers',
 			domains=('Manufacturing', 'Services', 'Retail', 'Distribution'),
-			icon="fa fa-group",
+			icon="fas fa-users",
 			title=_("Your Suppliers"),
 			help=_("List a few of your suppliers. They could be organizations or individuals."),
 			fields=[
@@ -135,7 +135,7 @@ def get_slide_settings():
 		frappe._dict(
 			action_name='Add Products',
 			domains=['Manufacturing', 'Services', 'Retail', 'Distribution'],
-			icon="fa fa-barcode",
+			icon="fas fa-barcode",
 			title=_("Your Products or Services"),
 			help=_("List your products or services that you buy or sell."),
 			fields=[

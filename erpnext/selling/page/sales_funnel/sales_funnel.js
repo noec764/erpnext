@@ -42,7 +42,7 @@ erpnext.SalesFunnel = class SalesFunnel {
 				{value: 'sales_pipeline', label:__("Sales Pipeline")},
 				{value: 'opp_by_lead_source', label:__("Opportunities by lead source")}]),
 			refresh_btn: wrapper.page.set_primary_action(__("Refresh"),
-				function() { me.get_data(); }, "fa fa-refresh"),
+				function() { me.get_data(); }, "fas fa-sync-alt"),
 		};
 
 		this.elements.no_data = $('<div class="alert alert-warning">' + __("No Data") + '</div>')

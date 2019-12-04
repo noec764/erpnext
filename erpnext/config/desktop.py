@@ -11,7 +11,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Getting Started"),
 			"color": "#1abc9c",
-			"icon": "fa fa-check-square-o",
+			"icon": "fas fa-door-open",
 			"type": "module",
 			"disable_after_onboard": 1,
 			"description": "Dive into the basics for your organisation's needs.",
@@ -22,7 +22,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Accounting"),
 			"color": "#3498db",
-			"icon": "octicon octicon-repo",
+			"icon": "fas fa-book",
 			"type": "module",
 			"description": "Accounts, billing, payments, cost center and budgeting."
 		},
@@ -31,7 +31,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Selling"),
 			"color": "#1abc9c",
-			"icon": "octicon octicon-tag",
+			"icon": "fas fa-cash-register",
 			"type": "module",
 			"description": "Sales orders, quotations, customers and items."
 		},
@@ -40,7 +40,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Buying"),
 			"color": "#c0392b",
-			"icon": "octicon octicon-briefcase",
+			"icon": "fas fa-shopping-bag",
 			"type": "module",
 			"description": "Purchasing, suppliers, material requests, and items."
 		},
@@ -49,7 +49,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Stock"),
 			"color": "#f39c12",
-			"icon": "octicon octicon-package",
+			"icon": "fas fa-warehouse",
 			"type": "module",
 			"description": "Stock transactions, reports, serial numbers and batches."
 		},
@@ -58,7 +58,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Assets"),
 			"color": "#4286f4",
-			"icon": "octicon octicon-database",
+			"icon": "fas fa-database",
 			"type": "module",
 			"description": "Asset movement, maintainance and tools."
 		},
@@ -67,7 +67,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Projects"),
 			"color": "#8e44ad",
-			"icon": "octicon octicon-rocket",
+			"icon": "fas fa-project-diagram",
 			"type": "module",
 			"description": "Updates, Timesheets and Activities."
 		},
@@ -76,7 +76,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("CRM"),
 			"color": "#EF4DB6",
-			"icon": "octicon octicon-broadcast",
+			"icon": "fas fa-funnel-dollar",
 			"type": "module",
 			"description": "Sales pipeline, leads, opportunities and customers."
 		},
@@ -85,7 +85,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Support"),
 			"color": "#1abc9c",
-			"icon": "fa fa-check-square-o",
+			"icon": "fas fa-headset",
 			"type": "module",
 			"description": "User interactions, support issues and knowledge base."
 		},
@@ -94,7 +94,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Human Resources"),
 			"color": "#2ecc71",
-			"icon": "octicon octicon-organization",
+			"icon": "fas fa-users",
 			"type": "module",
 			"description": "Employees, attendance, payroll, leaves and shifts."
 		},
@@ -103,7 +103,7 @@ def get_data():
 			"category": "Modules",
 			"label": _("Quality"),
 			"color": "#1abc9c",
-			"icon": "fa fa-check-square-o",
+			"icon": "fas fa-tasks",
 			"type": "module",
 			"description": "Quality goals, procedures, reviews and action."
 		},
@@ -114,8 +114,8 @@ def get_data():
 			"module_name": "Manufacturing",
 			"category": "Domains",
 			"label": _("Manufacturing"),
-			"color": "#7f8c8d",
-			"icon": "octicon octicon-tools",
+			"color": "#7c61ff",
+			"icon": "fas fa-industry",
 			"type": "module",
 			"description": "BOMS, work orders, operations, and timesheets."
 		},
@@ -123,8 +123,8 @@ def get_data():
 			"module_name": "Retail",
 			"category": "Domains",
 			"label": _("Retail"),
-			"color": "#7f8c8d",
-			"icon": "octicon octicon-credit-card",
+			"color": "#61e4ff",
+			"icon": "fas fa-store-alt",
 			"type": "module",
 			"description": "Point of Sale and cashier closing."
 		}

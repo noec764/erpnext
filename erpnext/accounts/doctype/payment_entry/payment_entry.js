@@ -224,7 +224,7 @@ frappe.ui.form.on('Payment Entry', {
 					group_by: ""
 				};
 				frappe.set_route("query-report", "General Ledger");
-			}, "fa fa-table");
+			}, "fas fa-table");
 		}
 	},
 

@@ -97,7 +97,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
@@ -146,7 +145,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Item Group",
-					"icon": "fa fa-sitemap",
 					"label": _("Item Group"),
 					"link": "Tree/Item Group",
 					"onboard": 1,
@@ -220,7 +218,6 @@ def get_data():
 		},
 		{
 			"label": _("Tools"),
-			"icon": "fa fa-wrench",
 			"items": [
 				{
 					"type": "doctype",
@@ -249,7 +246,6 @@ def get_data():
 		},
 		{
 			"label": _("Key Reports"),
-			"icon": "fa fa-table",
 			"items": [
 				{
 					"type": "report",
@@ -305,7 +301,6 @@ def get_data():
 		},
 		{
 			"label": _("Other Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",

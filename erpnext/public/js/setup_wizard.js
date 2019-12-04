@@ -43,7 +43,7 @@ erpnext.setup.slides_settings = [
 	{
 		// Brand
 		name: 'brand',
-		icon: "fa fa-bookmark",
+		icon: "far fa-bookmark",
 		title: __("The Brand"),
 		// help: __('Upload your letter head and logo. (you can edit them later).'),
 		fields: [
@@ -101,7 +101,7 @@ erpnext.setup.slides_settings = [
 		// Organisation
 		name: 'organisation',
 		title: __("Your Organization"),
-		icon: "fa fa-building",
+		icon: "far fa-building",
 		fields: [
 			{
 				fieldname: 'company_tagline',
