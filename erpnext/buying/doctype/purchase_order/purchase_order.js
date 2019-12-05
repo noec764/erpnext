@@ -18,6 +18,7 @@ frappe.ui.form.on("Purchase Order", {
 			return {
 				filters: {
 					"company": frm.doc.company,
+					"name": ['!=', frm.doc.supplier_warehouse],
 					"is_group": 0
 				}
 			}
@@ -278,6 +279,8 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 				}
 			})
 		}
+
+		me.dialog.get_field('sub_con_rm_items').check_all_rows()
 
 		me.dialog.show()
 		this.dialog.set_primary_action(__('Transfer'), function() {
