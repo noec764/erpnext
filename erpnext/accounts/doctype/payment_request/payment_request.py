@@ -455,7 +455,7 @@ def get_amount(ref_doc):
 	if dt == "Sales Order":
 		grand_total = flt(ref_doc.grand_total) - flt(ref_doc.advance_paid)
 
-	if dt == "Sales Invoice":
+	elif dt == "Sales Invoice":
 		if ref_doc.party_account_currency == ref_doc.currency:
 			grand_total = flt(ref_doc.outstanding_amount)
 		else:
