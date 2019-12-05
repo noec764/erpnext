@@ -198,6 +198,11 @@ def get_data():
 					"doctype": "Journal Entry"
 				},
 				{
+					"type": "page",
+					"name": "bank-reconciliation",
+					"label": _("Bank Reconciliation"),
+				},
+				{
 					"type": "report",
 					"name": "Bank Clearance Summary",
 					"is_query_report": True,
