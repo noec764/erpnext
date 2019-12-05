@@ -385,23 +385,27 @@ def install_company(args):
 
 
 def install_post_company_fixtures(args=None):
+	existing_parent = frappe.db.get_value("Department", filters={"parent_department": ""})
+	root_department = existing_parent if existing_parent else _('All Departments')
+
 	records = [
 		# Department
-		{'doctype': 'Department', 'department_name': _('All Departments'), 'is_group': 1, 'parent_department': ''},
-		{'doctype': 'Department', 'department_name': _('Accounts'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Marketing'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Sales'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Purchase'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Operations'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Production'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Dispatch'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Customer Service'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Human Resources'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Management'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Quality Management'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Research & Development'), 'parent_department': _('All Departments'), 'company': args.company_name},
-		{'doctype': 'Department', 'department_name': _('Legal'), 'parent_department': _('All Departments'), 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': root_department, 'is_group': 1, 'parent_department': ''},
+		{'doctype': 'Department', 'department_name': _('Accounts'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Marketing'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Sales'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Purchase'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Operations'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Production'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Dispatch'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Customer Service'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Human Resources'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Management'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Quality Management'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Research & Development'), 'parent_department': root_department, 'company': args.company_name},
+		{'doctype': 'Department', 'department_name': _('Legal'), 'parent_department': root_department, 'company': args.company_name},
 	]
+
 
 	make_records(records)
 
