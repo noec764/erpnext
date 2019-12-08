@@ -568,7 +568,7 @@ def insert_event_to_calendar(account, event, recurrence=None):
 		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
 		"repeat_this_event": 1 if recurrence else 0,
-		"status": "confirmed"
+		"status": "Confirmed"
 	}
 	doc = frappe.get_doc(calendar_event)
 	doc.flags.pulled_from_google_calendar = True
