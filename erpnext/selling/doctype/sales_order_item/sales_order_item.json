@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "hash",
  "creation": "2013-03-07 11:42:58",
  "doctype": "DocType",
@@ -759,15 +760,16 @@
    "options": "Item Booking"
   },
   {
-    "default": "0",
-    "fieldname": "against_blanket_order",
-    "fieldtype": "Check",
-    "label": "Against Blanket Order"
+   "default": "0",
+   "fieldname": "against_blanket_order",
+   "fieldtype": "Check",
+   "label": "Against Blanket Order"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-11-19 14:19:29.491945",
+ "links": [],
+ "modified": "2019-12-12 18:49:47.475523",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",

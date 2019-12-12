@@ -61,6 +61,7 @@ class PaymentEntry(AccountsController):
 		self.validate_duplicate_entry()
 		self.validate_allocated_amount()
 		self.ensure_supplier_is_not_blocked()
+		self.update_unreconciled_amount()
 
 	def on_submit(self):
 		self.setup_party_account_field()
@@ -70,6 +71,7 @@ class PaymentEntry(AccountsController):
 		self.update_outstanding_amounts()
 		self.update_advance_paid()
 		self.update_expense_claim()
+		self.set_status()
 
 
 	def on_cancel(self):
@@ -79,6 +81,7 @@ class PaymentEntry(AccountsController):
 		self.update_advance_paid()
 		self.update_expense_claim()
 		self.delink_advance_entry_references()
+		self.set_status()
 
 	def update_outstanding_amounts(self):
 		self.set_missing_ref_details(force=True)
@@ -549,6 +552,9 @@ class PaymentEntry(AccountsController):
 		self.append('deductions', row)
 		self.set_unallocated_amount()
 
+	def update_unreconciled_amount(self):
+		self.unreconciled_amount = self.paid_amount or 0
+
 @frappe.whitelist()
 def get_outstanding_reference_documents(args):
 
@@ -984,7 +990,7 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 
 	if pe.party_type in ["Customer", "Supplier"]:
 		bank_account = get_party_bank_account(pe.party_type, pe.party)
-		pe.set("bank_account", bank_account)
+		pe.set("party_bank_account", bank_account)
 		pe.set_bank_account_data()
 
 	# only Purchase Invoice can be blocked individually

@@ -9,7 +9,7 @@ from frappe import _
 from frappe.model.document import Document
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
 from erpnext.erpnext_integrations.doctype.plaid_settings.plaid_connector import PlaidConnector
-from frappe.utils import getdate, formatdate, today, add_months
+from frappe.utils import getdate, formatdate, today, add_months, cint
 
 class PlaidSettings(Document):
 	pass
@@ -152,6 +152,9 @@ def get_transactions(bank, bank_account=None, start_date=None, end_date=None):
 		access_token = frappe.db.get_value("Bank", bank, "plaid_access_token")
 		account_id = None
 
+	if not access_token:
+		frappe.throw(_("Please link your bank with Plaid first."))
+
 	plaid = PlaidConnector(access_token)
 	transactions = plaid.get_transactions(start_date=start_date, end_date=end_date, account_id=account_id)
 
@@ -171,7 +174,7 @@ def new_bank_transaction(transaction):
 
 	status = "Pending" if transaction["pending"] == "True" else "Settled"
 
-	if not frappe.db.exists("Bank Transaction", dict(transaction_id=transaction["transaction_id"])):
+	if not frappe.db.exists("Bank Transaction", dict(reference_number=transaction["transaction_id"])):
 		try:
 			new_transaction = frappe.get_doc({
 				"doctype": "Bank Transaction",
@@ -196,7 +199,7 @@ def new_bank_transaction(transaction):
 def automatic_synchronization():
 	settings = frappe.get_doc("Plaid Settings", "Plaid Settings")
 
-	if settings.enabled == 1 and settings.automatic_sync == 1:
+	if cint(settings.enabled) == 1 and cint(settings.automatic_sync) == 1:
 		plaid_accounts = frappe.get_all("Bank Account", filter={"integration_id": ["!=", ""]}, fields=["name", "bank"])
 
 		for plaid_account in plaid_accounts:

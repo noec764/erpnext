@@ -930,7 +930,7 @@
         "Accounts User": "Comptable",
         "Bank Account": "Compte Bancaire",
         "Bank Account No": "No de compte bancaire",
-        "Bank Reconciliation": "Réconciliation Bancaire",
+        "Bank Reconciliation": "Rapprochement Bancaire",
         "From Date": "Date de début",
         "Get Payment Entries": "Obtenir les Écritures de Paiement",
         "Include POS Transactions": "Inclure les transactions du point de vente",
@@ -945,7 +945,7 @@
         "Accounts": "Comptes",
         "Against Account": "Pour le Compte",
         "Amount": "Montant",
-        "Bank Reconciliation Detail": "Détail de la Réconciliation Bancaire",
+        "Bank Reconciliation Detail": "Détail des rapprochements bancaires",
         "Cheque Date": "Date du Chèque",
         "Cheque Number": "Numéro de Chèque",
         "Clearance Date": "Date de rapprochement",
@@ -5328,7 +5328,7 @@
         "Bank / Cash Account": "Compte bancaire / de caisse",
         "Company": "Société",
         "From Invoice Date": "Date de la facture à partir du",
-        "Get Unreconciled Entries": "Obtenir les écritures non réconciliées",
+        "Get Unreconciled Entries": "Obtenir les écritures non rapprochées",
         "Invoice/Journal Entry Details": "Détails des facture / écritures de journal",
         "Invoices": "Factures",
         "Limit": "Limite",
@@ -5342,7 +5342,7 @@
         "Reconcile": "Réconcilier",
         "System will fetch all the entries if limit value is zero.": "Le système va récupérer toutes les écritures si la valeur limite est zéro",
         "To Invoice Date": "Date de la facture jusqu'au",
-        "Unreconciled Payment Details": "Détails des paiements non réconciliés"
+        "Unreconciled Payment Details": "Détails des paiements non rapprochés"
     },
     "DocType: Payment Reconciliation Invoice": {
         "Accounts": "Comptes",
@@ -5671,6 +5671,7 @@
         "Campaign": "Campagne",
         "Company": "Société",
         "Conditions will be applied on all the selected items combined. ": "Les conditions seront appliquées sur tous les éléments sélectionnés combinés",
+        "Coupon Code Based": "Sur la base d'un code promotionnel",
         "Currency": "Devise",
         "Customer": "Client",
         "Customer Group": "Groupe de clients",
@@ -9045,9 +9046,11 @@
     "DocType: Stock Settings": {
         "Action if Quality inspection is not submitted": "Action si l'inspection de la qualité n'est pas soumise",
         "Allow Negative Stock": "Autoriser un Stock Négatif",
+        "Applicable for shopping cart bookings": "Valable pour les réservations ajoutées au panier",
         "Auto Material Request": "Demande de matériel Automatique",
         "Auto insert Price List rate if missing": "Insertion automatique du taux de la Liste de prix si manquante",
         "Automatically Set Serial Nos based on FIFO": "Régler Automatiquement les Nos de Série basés sur FIFO",
+        "Automatically synchronize with Google Calendar": "Synchroniser automatiquement avec Google Calendar",
         "Batch Identification": "Identification par lots",
         "Clear drafts after x minutes": "Supprimer les brouillons après x minutes",
         "Convert Item Description to Clean HTML": "Convertir la description de l'élément pour nettoyer le code HTML",
@@ -10452,7 +10455,7 @@
         "BOM Comparison Tool": "Outil de comparaison des listes de matériaux"
     },
     "Page: Bank Reconciliation": {
-        "Bank Reconciliation": "Réconciliation Bancaire"
+        "Bank Reconciliation": "Rapprochement bancaire"
     },
     "Page: Leaderboard": {
         "Leaderboard": "Classement"
@@ -10518,7 +10521,7 @@
         "Bank Clearance Summary": "Récapitulatif des rapprochements bancaires"
     },
     "Report: Bank Reconciliation Statement": {
-        "Bank Reconciliation Statement": "Relevé de Réconciliation Bancaire"
+        "Bank Reconciliation Statement": "Relevé de rapprochement bancaire"
     },
     "Report: Bank Remittance": {
         "Bank Remittance": "Virement bancaire"
@@ -11231,8 +11234,8 @@
         "The total allocated amount ({0}) is greated than the paid amount ({1}).": "Le montant total alloué ({0}) est supérieur au montant payé ({1})"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_list.js": {
-        "Reconciled": "Réconcilié",
-        "Unreconciled": "Non réconcilié"
+        "Reconciled": "Rapproché",
+        "Unreconciled": "Non rapproché"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_upload.py": {
         "Bank transaction creation error": "Erreur de création d'une transaction bancaire",
@@ -12125,6 +12128,7 @@
         "Outstanding Amount": "Montant restant dû",
         "Please select plans with the same price determination rule": "Veuillez sélectionner des plans avec la même règle de détermination du prix",
         "Sales order generation error for subscription {0}": "Erreur de génération d'un bon de commande pour l'abonnement {0}",
+        "Subscription Grand Total Simulation Error": "Erreur de simulation du total TTC dans un abonnement",
         "Subscription hourly processing error for {}": "Erreur de traitement pour l'abonnement {}",
         "The next invoice will be generated on {0}": "La prochaine facture sera générée le {0}",
         "This subscription will be cancelled on {0}": "Cet abonnement sera annulé le {0}",
@@ -12184,7 +12188,7 @@
         "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
         "Automatic Reconciliation": "Rapprochement automatique",
         "Bank Account": "Compte Bancaire",
-        "Bank Reconciliation": "Réconciliation Bancaire",
+        "Bank Reconciliation": "Rapprochement bancaire",
         "Bank account '{0}' has been synchronized": "Le compte bancaire '{0}' a été synchronisé",
         "Choose a corresponding payment": "Sélectionnez un paiement correspondant",
         "Company": "Société",
@@ -12538,7 +12542,7 @@
     },
     "apps/erpnext/erpnext/accounts/report/bank_reconciliation_statement/bank_reconciliation_statement.html": {
         "Against": "Contre",
-        "Bank Reconciliation Statement": "Relevé de Réconciliation Bancaire",
+        "Bank Reconciliation Statement": "Relevé de rapprochement bancaire",
         "Clearance Date": "Date de rapprochement",
         "Credit": "Crédit",
         "Debit": "Débit",

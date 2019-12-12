@@ -103,6 +103,9 @@ class AccountsController(TransactionBase):
 			else:
 				self.validate_deferred_start_and_end_date()
 
+		if self.get('is_paid'):
+			frappe.throw(_("The field 'is_paid' should not be used anymore. Please create payment entry linked to this document."))
+
 		validate_regional(self)
 		if self.doctype != 'Material Request':
 			apply_pricing_rule_on_transaction(self)

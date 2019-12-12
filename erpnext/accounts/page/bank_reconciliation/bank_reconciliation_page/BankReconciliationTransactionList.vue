@@ -1,0 +1,178 @@
+<template>
+    <div v-if="transactions" class="transactions-table">
+        <div class="text-center">
+            <div class="text-center section-title">
+                <h4>{{ __("Bank Transactions") }}</h4>
+            </div>
+            <div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button
+                        v-for="(filter, i) in ['All', 'Unreconciled', 'Reconciled']"
+                        :key="i"
+                        type="button"
+                        class="btn btn-default"
+                        :class="list_filter==filter ? 'active': ''"
+                        @click="change_filter(filter)">
+                            {{ __(filter)}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="transactions-table">
+            <vue-good-table
+                v-show="transactions.length"
+                :columns="columns"
+                :rows="mapped_transactions"
+                :fixed-header="false"
+                styleClass="vgt-table striped"
+                :pagination-options="{
+                    enabled: true,
+                    mode: 'records',
+                    perPage: 10,
+                    dropdownAllowAll: false,
+                    nextLabel: __('next'),
+                    prevLabel: __('prev'),
+                    rowsPerPageLabel: __('Rows per page'),
+                    ofLabel: __('of')
+                }"
+                :selectOptions="{
+                    enabled: true,
+                    selectOnCheckboxOnly: false,
+                    selectionText: __('rows selected'),
+                    clearSelectionText: __('clear'),
+                }"
+                :search-options="{
+                    enabled: true,
+                    placeholder: __('Search for a specific bank transaction'),
+                }"
+                @on-selected-rows-change="onSelectedRowsChange"
+            />
+            <div v-show="!transactions.length" class="flex flex-wrap justify-center align-center border rounded no-data">
+                {{ __("No data available for this period")}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { VueGoodTable } from 'vue-good-table';
+export default {
+    name: 'BankReconciliationTransactionList',
+    props: {
+        bank_account: {
+            type: String,
+            default: null
+        },
+         start_date: {
+            type: String,
+            default: null
+        },
+         end_date: {
+            type: String,
+            default: null
+        },
+        selected_transactions: {
+            type: Array,
+            default: () => []
+        }
+    },
+    data() {
+        return {
+            list_filter: "Unreconciled",
+            transactions: [],
+            columns: [
+                {field: "name", hidden: true},
+                {field: "date", hidden: true},
+                {label:__("Date"), field:"displayed_date"},
+                {label:__("Description"), field:"description", width: "60%"},
+                {label:__("Amount"), field:"amount", width: "100%", type: "decimal", formatFn: this.formatAmount},
+                {field: "currency", hidden: true},
+                {field: "debit", hidden: true},
+                {field: "credit", hidden: true},
+                {field: "allocated_amount", hidden: true},
+                {field: "unallocated_amount", hidden: true},
+                {field: "bank_account", hidden: true}
+            ]
+        }
+    },
+    computed: {
+        mapped_transactions() {
+            return this.transactions.map(transaction => ({...transaction,
+                displayed_date: frappe.datetime.str_to_user(transaction.date),
+                amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount
+            }))
+        }
+    },
+    watch: {
+        bank_account() {
+            this.get_transaction_list(true)
+        },
+        start_date() {
+            this.get_transaction_list(true)
+        },
+        end_date() {
+            this.get_transaction_list(true)
+        }
+    },
+    methods: {
+        get_transaction_list(init) {
+            if (this.bank_account && this.start_date && this.end_date) {
+                const query_filters = [
+                    ["Bank Transaction", "bank_account", "=", this.bank_account],
+                    ["Bank Transaction", "date", "between", [this.start_date, this.end_date]],
+                    ["Bank Transaction", "docstatus", "=", 1]
+                ]
+
+                if (this.list_filter == "Unreconciled") {
+                    query_filters.push(["Bank Transaction", "unallocated_amount", ">", 0])
+                } else if (this.list_filter == "Reconciled") {
+                    query_filters.push(["Bank Transaction", "unallocated_amount", "=", 0])
+                }
+
+                frappe.xcall('frappe.client.get_list', {
+                    doctype: "Bank Transaction",
+                    order_by: "date",
+                    fields: ["name", "date", "currency", "debit", "credit", "description", "allocated_amount", "unallocated_amount", "bank_account"],
+                    filters: query_filters,
+                    limit_page_length: 500,
+                    limit_start: init ? 0 : this.transactions.length
+                }).then(r => {
+                    init ? this.transactions = r : this.transactions.push(r)
+                    if (r.length == 500) {
+                        this.get_transaction_list(false)
+                    }
+                })
+            }
+        },
+        formatAmount(value) {
+            return format_currency(value, this.transactions[0].currency)
+        },
+        onSelectedRowsChange: function(params) {
+            this.$emit('transactionsChange', params.selectedRows)
+        },
+        change_filter: function(value) {
+            this.list_filter = value;
+            this.get_transaction_list(true)
+        }
+    }
+    
+}
+</script>
+
+<style lang='scss'>
+@import 'node_modules/vue-good-table/dist/vue-good-table';
+@import 'frappe/public/scss/good-grid.scss';
+
+.transactions-table {
+    .section-title {
+        border-bottom: 1px solid #d1d8dd;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+}
+
+.no-data {
+    margin: 25px;
+    height: 150px;
+}
+</style>

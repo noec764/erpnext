@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2018-10-22 18:19:02.784533",
@@ -21,7 +22,6 @@
   "section_break_10",
   "description",
   "section_break_14",
-  "transaction_id",
   "payment_entries",
   "section_break_18",
   "allocated_amount",
@@ -111,6 +111,7 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Description"
   },
   {
@@ -120,15 +121,7 @@
   {
    "fieldname": "reference_number",
    "fieldtype": "Data",
-   "label": "Reference Number",
-   "unique": 1
-  },
-  {
-   "fieldname": "transaction_id",
-   "fieldtype": "Data",
-   "label": "Transaction ID",
-   "read_only": 1,
-   "unique": 1
+   "label": "Reference Number"
   },
   {
    "allow_on_submit": 1,
@@ -166,7 +159,8 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-07 11:09:38.699776",
+ "links": [],
+ "modified": "2019-12-06 15:24:24.198393",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

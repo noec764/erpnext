@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:05",
@@ -126,6 +127,7 @@
   "payments_section",
   "cash_bank_account",
   "payments",
+  "unreconciled_amount",
   "section_break_84",
   "base_paid_amount",
   "column_break_86",
@@ -1578,13 +1580,22 @@
    "label": "External Reference",
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "fieldname": "unreconciled_amount",
+   "fieldtype": "Currency",
+   "label": "Unreconciled Amount",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-11-11 18:39:34.518100",
+ "links": [],
+ "modified": "2019-12-10 08:35:06.548399",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

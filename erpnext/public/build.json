@@ -50,5 +50,11 @@
     ],
     "js/booking-dialog.min.js": [
         "public/js/booking_dialog/booking_dialog.js"
+    ],
+    "js/bank-transaction-importer.min.js": [
+        "accounts/doctype/bank_transaction/bank_transaction_import/bank_transaction_import.js"
+    ],
+    "js/bank-reconciliation.min.js": [
+        "accounts/page/bank_reconciliation/bank_reconciliation_page/bank_reconciliation.js"
     ]
 }

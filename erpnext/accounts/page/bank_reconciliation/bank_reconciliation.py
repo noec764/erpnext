@@ -6,374 +6,553 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 import difflib
-from frappe.utils import flt
-from six import iteritems
-from erpnext import get_company_currency
+import numpy as np
+from frappe.utils import flt, getdate, add_days, nowdate
+from erpnext.accounts.doctype.bank_transaction.bank_transaction import get_bank_transaction_balance_on
+from frappe.utils.dateutils import parse_date
+from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import get_party_account_based_on_invoice_discounting
+from erpnext.accounts.utils import get_account_currency
+from erpnext import get_default_company
+from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
+
+PARTY_FIELD = {
+	"Payment Entry": "party",
+	"Journal Entry": "party",
+	"Sales Invoice": "customer",
+	"Purchase Invoice": "supplier",
+	"Expense Claim": "Employee"
+}
+
+PARTY_TYPES = {
+	"Sales Invoice": "Customer",
+	"Purchase Invoice": "Supplier",
+	"Expense Claim": "Employee"
+}
 
 @frappe.whitelist()
-def reconcile(bank_transaction, payment_doctype, payment_name):
-	transaction = frappe.get_doc("Bank Transaction", bank_transaction)
-	payment_entry = frappe.get_doc(payment_doctype, payment_name)
+def reconcile(bank_transactions, documents):
+	bank_reconciliation = BankReconciliation(bank_transactions, documents)
+	bank_reconciliation.reconcile()
 
-	account = frappe.db.get_value("Bank Account", transaction.bank_account, "account")
-	gl_entry = frappe.get_doc("GL Entry", dict(account=account, voucher_type=payment_doctype, voucher_no=payment_name))
+class BankReconciliation:
+	def __init__(self, bank_transactions, documents):
+		self.bank_transactions = frappe.parse_json(bank_transactions)
+		self.documents = frappe.parse_json(documents)
 
-	if payment_entry.unallocated_amount > transaction.unallocated_amount:
-		frappe.throw(_("This Payment Entry's unallocated amount is greater than this Bank Transaction's unallocated amount"))
+		if not self.bank_transactions or not self.documents:
+			frappe.throw(_("Please select at least one bank transaction and one document to reconcile"))
 
-	if transaction.unallocated_amount == 0:
-		frappe.throw(_("This bank transaction is already fully reconciled"))
+		self.reconciliation_doctype = self.documents[0]["doctype"]
+		self.party = None
+		self.party_account = None
+		self.party_type = PARTY_TYPES.get(self.reconciliation_doctype)
+		self.company = None
+		self.cost_center = None
+		self.mode_of_payment = None
+		self.payment_entries = []
 
-	if transaction.credit > 0 and gl_entry.credit > 0:
-		frappe.throw(_("The selected payment entry should be linked with a debtor bank transaction"))
+		self.check_party()
 
-	if transaction.debit > 0 and gl_entry.debit > 0:
-		frappe.throw(_("The selected payment entry should be linked with a creditor bank transaction"))
+	def check_unique_values(self):
+		self.check_party()
+		self.check_party_account()
+		self.check_field_uniqueness("company", _("company"))
+		self.check_field_uniqueness("cost_center", _("cost center"))
+		self.check_field_uniqueness("mode_of_payment", _("mode of payment"))
 
-	add_payment_to_transaction(transaction, payment_entry, gl_entry)
+	def check_party(self):
+		party = set([x.get(PARTY_FIELD.get(self.reconciliation_doctype)) for x in self.documents])
+		if not party or len(party) > 1:
+			frappe.throw(_("Please select documents linked to the same party"))
+		else:
+			self.party = next(iter(party))
 
-	return 'reconciled'
+	def check_party_account(self):
+		if self.reconciliation_doctype == "Sales Invoice":
+			party_account = set([get_party_account_based_on_invoice_discounting(doc.get("name")) or doc.get("debit_to") for doc in self.documents])
+		elif self.reconciliation_doctype == "Purchase Invoice":
+			party_account = set([doc.get("credit_to") for doc in self.documents])
+		elif self.reconciliation_doctype == "Employee Advance":
+			party_account = set([doc.get("advance_account") for doc in self.documents])
+		elif self.reconciliation_doctype == "Expense Claim":
+			party_account = set([doc.get("payable_account") for doc in self.documents])
 
-def add_payment_to_transaction(transaction, payment_entry, gl_entry):
-	gl_amount, transaction_amount = (gl_entry.credit, transaction.debit) if gl_entry.credit > 0 else (gl_entry.debit, transaction.credit)
-	allocated_amount = gl_amount if gl_amount <= transaction_amount else transaction_amount
-	transaction.append("payment_entries", {
-		"payment_document": payment_entry.doctype,
-		"payment_entry": payment_entry.name,
-		"allocated_amount": allocated_amount
-	})
+		if not party_account or len(party_account) > 1:
+			frappe.throw(_("Please select documents linked to the same party account"))
+		else:
+			self.party_account = next(iter(party_account))
 
-	transaction.save()
-	transaction.update_allocations()
+	def check_field_uniqueness(self, fielname, label):
+		value = set([x.get(fielname) for x in self.documents])
+
+		if not value or len(value) > 1:
+			frappe.throw(_("Please select documents linked to the same {0}").format(label))
+		else:
+			self[value] = next(iter(value))
+
+	def reconcile(self):
+		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"]:
+			self.make_payment_entries()
+			self.reconcile_created_payments()
+
+		elif len(self.bank_transactions) > 1:
+			self.reconcile_multiple_transactions_with_one_document()
+		elif len(self.documents) > 1:
+			self.reconcile_one_transaction_with_multiple_documents()
+
+	def reconcile_multiple_transactions_with_one_document(self):
+		reconciled_amount = 0
+		for bank_transaction in self.bank_transactions:
+			if abs(self.documents[0]["amount"]) > reconciled_amount:
+				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
+				allocated_amount = min(bank_transaction.unallocated_amount, abs(self.documents[0]["amount"]))
+
+				if allocated_amount > 0:
+					bank_transaction.append('payment_entries', {
+						'payment_document': self.reconciliation_doctype,
+						'payment_entry': self.documents[0]["name"],
+						'allocated_amount': allocated_amount
+					})
+
+					reconciled_amount += allocated_amount
+					bank_transaction.save()
+
+	def reconcile_one_transaction_with_multiple_documents(self):
+		bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
+		for document in self.documents:
+			bank_transaction.append('payment_entries', {
+				'payment_document': document.get("doctype"),
+				'payment_entry': document.get("name"),
+				'allocated_amount': min(document.get("unreconciled_amount"), bank_transaction.unallocated_amount)
+			})
+
+		bank_transaction.save()
+
+	def reconcile_created_payments(self):
+		for transaction, payment in zip(self.bank_transactions, self.payment_entries):
+			bank_transaction = frappe.get_doc("Bank Transaction", transaction.get("name"))
+			bank_transaction.append('payment_entries', {
+				'payment_document': payment.get("doctype"),
+				'payment_entry': payment.get("name"),
+				'allocated_amount': min(payment.get("unreconciled_amount"), bank_transaction.unallocated_amount)
+			})
+
+			bank_transaction.save()
+
+	def make_payment_entries(self):
+		for transaction in self.bank_transactions:
+			payment_entry = self.get_payment_entry(transaction)
+			payment_entry.insert()
+			payment_entry.submit()
+			self.payment_entries.append(payment_entry)
+
+	def get_payment_entry(self, transaction):
+		company_currency = frappe.db.get_value("Company", self.company, "default_currency")
+		party_account_currency = get_account_currency(self.party_account)
+
+		# payment type
+		if (self.reconciliation_doctype == "Sales Invoice" and transaction.get("amount") < 0) \
+			or (self.reconciliation_doctype == "Purchase Invoice" and transaction.get("amount") > 0):
+			payment_type = "Receive"
+		else:
+			payment_type = "Pay"
+
+		# total outstanding
+		total_outstanding_amount = 0
+		if self.reconciliation_doctype in ("Sales Invoice", "Purchase Invoice"):
+			total_outstanding_amount = sum([x.get("outstanding_amount") for x in self.documents])
+		elif self.reconciliation_doctype in ("Expense Claim"):
+			total_outstanding_amount = sum([(flt(x.get("grand_total"))-flt(x.get("total_amount_reimbursed"))) for x in self.documents])
+		elif self.reconciliation_doctype == "Employee Advance":
+			total_outstanding_amount = sum([(flt(x.get("advance_amount"))-flt(x.get("paid_amount"))) for x in self.documents])
+
+		bank_account = frappe.get_doc("Bank Account", transaction.get("bank_account"))
+		account_currency = frappe.db.get_value("Account", bank_account.account, "account_currency")
+
+		paid_amount = received_amount = 0
+		if party_account_currency == account_currency:
+			paid_amount = received_amount = abs(transaction.get("unallocated_amount"))
+		elif payment_type == "Receive":
+			paid_amount = abs(transaction.get("unallocated_amount"))
+			target_exchange_rate = total_outstanding_amount / paid_amount
+			received_amount = total_outstanding_amount
+		else:
+			received_amount = abs(transaction.get("unallocated_amount"))
+			source_exchange_rate = received_amount / total_outstanding_amount
+			paid_amount = total_outstanding_amount
+
+		pe = frappe.new_doc("Payment Entry")
+		pe.payment_type = payment_type
+		pe.company = bank_account.company
+		pe.cost_center = self.cost_center
+		pe.posting_date = nowdate()
+		pe.mode_of_payment = self.mode_of_payment
+		pe.party_type = self.party_type
+		pe.party = self.party
+		contacts = [x.get("contact_person") for x in self.documents]
+		pe.contact_person = contacts[0] if contacts else None
+		pe.contact_email = " ,".join([x.get("contact_email") for x in self.documents if x.get("contact_email")])
+		pe.ensure_supplier_is_not_blocked()
+
+		pe.paid_from = self.party_account if payment_type == "Receive" else bank_account.account
+		pe.paid_to = self.party_account if payment_type == "Pay" else bank_account.account
+		pe.paid_from_account_currency = party_account_currency \
+			if payment_type == "Receive" else account_currency
+		pe.paid_to_account_currency = party_account_currency if payment_type == "Pay" else account_currency
+		pe.paid_amount = paid_amount
+		pe.received_amount = received_amount
+		letter_heads = [x.get("letter_head") for x in self.documents]
+		pe.letter_head = letter_heads[0] if letter_heads else None
+		pe.reference_no = frappe.db.get_value("Bank Transaction", transaction.get("name"), "reference_number")
+		pe.reference_date = getdate(transaction.get("date"))
+		pe.bank_account = bank_account.name
+
+		if pe.party_type in ["Customer", "Supplier"]:
+			bank_account = get_party_bank_account(pe.party_type, pe.party)
+			pe.set("party_bank_account", bank_account)
+		pe.set_bank_account_data()
+
+		total_allocated_amount = 0
+		for doc in self.documents:
+			# only Purchase Invoice can be blocked individually
+			if doc.get("doctype") == "Purchase Invoice":
+				pi = frappe.get_doc("Purchase Invoice", doc.get("name"))
+				if pi.invoice_is_blocked():
+					frappe.throw(_('{0} is on hold till {1}'.format(pi.name, pi.release_date)))
+
+			# amounts
+			grand_total = outstanding_amount = 0
+			if self.reconciliation_doctype in ("Sales Invoice", "Purchase Invoice"):
+				if party_account_currency == doc.get("company_currency"):
+					grand_total = doc.get("base_rounded_total") or doc.get("base_grand_total")
+				else:
+					grand_total = doc.get("rounded_total") or doc.get("grand_total")
+				outstanding_amount = doc.get("outstanding_amount")
+			elif self.reconciliation_doctype in ("Expense Claim"):
+				grand_total = doc.get("total_sanctioned_amount") + doc.get("total_taxes_and_charges")
+				outstanding_amount = doc.get("grand_total") - doc.get("total_amount_reimbursed")
+			elif dt == "Employee Advance":
+				grand_total = doc.get("advance_amount")
+				outstanding_amount = flt(doc.get("advance_amount")) - flt(doc.get("paid_amount"))
+			else:
+				if party_account_currency == doc.get("company_currency"):
+					grand_total = flt(doc.get("base_rounded_total") or doc.get("base_grand_total"))
+				else:
+					grand_total = flt(doc.get("rounded_total") or doc.get("grand_total"))
+				outstanding_amount = grand_total - flt(doc.get("advance_paid"))
+
+			allocated_amount = min(outstanding_amount, flt(transaction.get("unallocated_amount")) - flt(total_allocated_amount))
+
+			pe.append("references", {
+				'reference_doctype': doc.get("doctype"),
+				'reference_name': doc.get("name"),
+				"bill_no": doc.get("bill_no"),
+				"due_date": doc.get("due_date"),
+				'total_amount': grand_total,
+				'outstanding_amount': outstanding_amount,
+				'allocated_amount': allocated_amount
+			})
+
+			total_allocated_amount += allocated_amount
+
+		pe.setup_party_account_field()
+		pe.set_missing_values()
+		if self.party_account and bank_account:
+			pe.set_exchange_rate()
+			pe.set_amounts()
+		return pe
 
 @frappe.whitelist()
-def get_linked_payments(bank_transaction):
-	transaction = frappe.get_doc("Bank Transaction", bank_transaction)
-	bank_account = frappe.db.get_values("Bank Account", transaction.bank_account, ["account", "company"], as_dict=True)
+def get_linked_payments(bank_transactions, document_type, match=True):
+	bank_transaction_match = BankTransactionMatch(bank_transactions, document_type, match=True)
+	return bank_transaction_match.get_linked_payments()
 
-	# Get all payment entries with a matching amount
-	amount_matching = check_matching_amount(bank_account[0].account, bank_account[0].company, transaction)
 
-	# Get some data from payment entries linked to a corresponding bank transaction
-	description_matching = get_matching_descriptions_data(bank_account[0].company, transaction)
+class BankTransactionMatch:
+	def __init__(self, bank_transactions, document_type, match=True):
+		self.bank_transactions = frappe.parse_json(bank_transactions) or []
+		self.document_type = document_type
+		self.match = False if match == "false" else True
+		self.amount = sum([x.get("amount") for x in self.bank_transactions]) or 0
+		self.currency = self.bank_transactions[0]["currency"] if self.bank_transactions else None
+		self.bank_account = self.bank_transactions[0]["bank_account"] if self.bank_transactions else None
+		self.company = frappe.db.get_value("Bank Account", self.bank_account, "company") if self.bank_account else get_default_company()
 
-	if amount_matching:
-		return check_amount_vs_description(amount_matching, description_matching)
-
-	elif description_matching:
-		description_matching = filter(lambda x: not x.get('clearance_date'), description_matching)
-		if not description_matching:
+	def get_linked_payments(self):
+		if not self.bank_transactions:
 			return []
 
-		return sorted(list(description_matching), key = lambda x: x["posting_date"], reverse=True)
+		documents = self.get_linked_documents(unreconciled=self.match)
 
-	else:
-		return []
+		if not documents or not self.match:
+			return sorted([i for n, i in enumerate(documents) if i not in documents[n + 1:]], \
+				key=lambda x: x.get("posting_date", x.get("date")), reverse=True)
 
-def check_matching_amount(bank_account, company, transaction):
-	payments = []
-	amount = transaction.credit if transaction.credit > 0 else transaction.debit
+		# Check if document with a matching amount (+- 10%) exists
+		amount_matches = self.check_matching_amounts(documents)
+		if amount_matches and len(amount_matches) == 1:
+			return [dict(x, **{"vgtSelected": True}) for x in amount_matches]
 
-	payment_type = "Receive" if transaction.credit > 0 else "Pay"
-	account_from_to = "paid_to" if transaction.credit > 0 else "paid_from"
-	currency_field = "paid_to_account_currency as currency" if transaction.credit > 0 else "paid_from_account_currency as currency"
+		# Get similar bank transactions from history
+		similar_transactions_matches = self.get_similar_transactions_references()
+		result = amount_matches + similar_transactions_matches
+		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
+			key=lambda x: x.get("posting_date", x.get("date")), reverse=True)
 
-	payment_entries = frappe.get_all("Payment Entry", fields=["'Payment Entry' as doctype", "name", "paid_amount", "payment_type", "reference_no", "reference_date",
-		"party", "party_type", "posting_date", "{0}".format(currency_field)], filters=[["paid_amount", "like", "{0}%".format(amount)],
-		["docstatus", "=", "1"], ["payment_type", "=", [payment_type, "Internal Transfer"]], ["ifnull(clearance_date, '')", "=", ""], ["{0}".format(account_from_to), "=", "{0}".format(bank_account)]])
+		return [dict(x, **{"vgtSelected": True}) for x in output] if len(output) == 1 else self.check_matching_dates(output)
 
-	if transaction.credit > 0:
-		journal_entries = frappe.db.sql("""
-			SELECT
-				'Journal Entry' as doctype, je.name, je.posting_date, je.cheque_no as reference_no,
-				je.pay_to_recd_from as party, je.cheque_date as reference_date, jea.debit_in_account_currency as paid_amount
-			FROM
-				`tabJournal Entry Account` as jea
-			JOIN
-				`tabJournal Entry` as je
-			ON
-				jea.parent = je.name
-			WHERE
-				(je.clearance_date is null or je.clearance_date='0000-00-00')
-			AND
-				jea.account = %s
-			AND
-				jea.debit_in_account_currency like %s
-			AND
-				je.docstatus = 1
-		""", (bank_account, amount), as_dict=True)
-	else:
-		journal_entries = frappe.db.sql("""
-			SELECT
-				'Journal Entry' as doctype, je.name, je.posting_date, je.cheque_no as reference_no,
-				jea.account_currency as currency, je.pay_to_recd_from as party, je.cheque_date as reference_date,
-				jea.credit_in_account_currency as paid_amount
-			FROM
-				`tabJournal Entry Account` as jea
-			JOIN
-				`tabJournal Entry` as je
-			ON
-				jea.parent = je.name
-			WHERE
-				(je.clearance_date is null or je.clearance_date='0000-00-00')
-			AND
-				jea.account = %(bank_account)s
-			AND
-				jea.credit_in_account_currency like %(txt)s
-			AND
-				je.docstatus = 1
-		""", {
-			'bank_account': bank_account,
-			'txt': '%%%s%%' % amount
-		}, as_dict=True)
+	def get_linked_documents(self, document_names=None, unreconciled=True, filters=None):
+		print("QUERY")
+		query_filters = {"docstatus": 1, "company": self.company}
+		query_or_filters = {}
 
-	if transaction.credit > 0:
-		sales_invoices = frappe.db.sql("""
-			SELECT
-				'Sales Invoice' as doctype, si.name, si.customer as party,
-				si.posting_date, sip.amount as paid_amount
-			FROM
-				`tabSales Invoice Payment` as sip
-			JOIN
-				`tabSales Invoice` as si
-			ON
-				sip.parent = si.name
-			WHERE
-				(sip.clearance_date is null or sip.clearance_date='0000-00-00')
-			AND
-				sip.account = %s
-			AND
-				sip.amount like %s
-			AND
-				si.docstatus = 1
-		""", (bank_account, amount), as_dict=True)
-	else:
-		sales_invoices = []
+		if self.document_type == "Journal Entry":
+			return self.get_linked_journal_entries(document_names, unreconciled, filters)
 
-	if transaction.debit > 0:
-		purchase_invoices = frappe.get_all("Purchase Invoice",
-			fields = ["'Purchase Invoice' as doctype", "name", "paid_amount", "supplier as party", "posting_date", "currency"],
-			filters=[
-				["paid_amount", "like", "{0}%".format(amount)],
-				["docstatus", "=", "1"],
-				["is_paid", "=", "1"],
-				["ifnull(clearance_date, '')", "=", ""],
-				["cash_bank_account", "=", "{0}".format(bank_account)]
+		elif self.document_type == "Payment Entry":
+			if self.amount < 0:
+				query_filters.update({"paid_from_account_currency": self.currency, "payment_type": "Pay"})
+			else:
+				query_filters.update({"paid_to_account_currency": self.currency, "payment_type": "Receive"})
+		elif self.document_type != "Expense Claim":
+			query_filters.update({"currency": self.currency})
+			
+
+		party_field = PARTY_FIELD.get(self.document_type)
+		reference_field = self.get_reference_field()
+		date_field = self.get_reference_date_field()
+		amount_field = self.get_amount_field("debit" if self.amount > 0 else "credit")
+
+		if filters:
+			query_filters.update(filters)
+
+		if unreconciled and self.document_type == "Expense Claim":
+			query_or_filters.update({"unreconciled_amount": (">", 0), "total_amount_reimbursed": ("=", 0)})
+		elif unreconciled:
+			query_or_filters.update({"unreconciled_amount": (">", 0), "outstanding_amount": (">", 0)})
+
+		if document_names:
+			query_filters.update({"name": ("in", document_names)})
+
+		query_result = frappe.get_list(self.document_type, filters=query_filters, or_filters=query_or_filters, fields=["*"], debug=True)
+		print([x.get("name") for x in query_result])
+		return [dict(x, **{
+			"party": x.get(party_field),
+			"amount": x.get("unreconciled_amount") if x.get("unreconciled_amount") > 0 else x.get(amount_field),\
+			"reference_date": x.get(date_field), \
+			"reference_string": x.get(reference_field) \
+			}) for x in query_result]
+
+	def get_linked_journal_entries(self, document_names=None, unreconciled=True, filters=None):
+		account = frappe.db.get_value("Bank Account", self.bank_account, "account")
+
+		child_query_filters = {"account_currency": self.currency, "account": account}
+		parent_query_filters = {"company": self.company}
+
+		if unreconciled:
+			parent_query_filters.update({"unreconciled_amount": (">", 0)})
+
+		if document_names:
+			parent_query_filters.update({"name": ("in", document_names)})
+		else:
+			bank_entries = [x.get("parent") for x in frappe.get_all("Journal Entry Account", filters=child_query_filters, \
+				fields=["parent"])]
+			parent_query_filters.update({"name": ("in", bank_entries)})
+
+		parent_query_result = frappe.get_list("Journal Entry", filters=parent_query_filters, fields=["name", "posting_date", "cheque_no", "cheque_date"])
+		parent_map = {x.get("name"): x for x in parent_query_result}
+
+		party_query_filters = child_query_filters
+		party_query_filters.pop("account")
+		if filters:
+			party_query_filters.update(filters)
+
+		party_query_filters.update({"parent": ["in", [x.get("name") for x in parent_query_result]], 'party_type': ['is', 'set']})
+		party_query_result = frappe.get_all("Journal Entry Account", filters=party_query_filters, fields=["*"])
+
+		amount_field = self.get_amount_field("debit" if self.amount < 0 else "credit")
+
+		return [dict(x, **{
+			"name": parent_map.get(x.get("parent"), {}).get("name"),
+			"amount": x.get(amount_field),\
+			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
+			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
+			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
+			}) for x in party_query_result]
+
+	def get_amount_field(self, debit_or_credit='debit'):
+		amount_field = {
+			"Payment Entry": "paid_amount",
+			"Journal Entry": "debit_in_account_currency" if debit_or_credit == "debit" else "credit_in_account_currency",
+			"Sales Invoice": "amount",
+			"Purchase Invoice": "paid_amount",
+			"Expense Claim": "total_sanctioned_amount"
+		}
+		return amount_field.get(self.document_type)
+
+	def get_reference_date_field(self):
+		reference_date_field = {
+			"Payment Entry": "reference_date",
+			"Journal Entry": "cheque_date",
+			"Sales Invoice": "due_date",
+			"Purchase Invoice": "due_date",
+			"Expense Claim": "total_claimed_amount"
+		}
+		return reference_date_field.get(self.document_type)
+
+	def get_reference_field(self):
+		reference_field = {
+			"Payment Entry": "reference_no",
+			"Journal Entry": "cheque_no",
+			"Sales Invoice": "remarks",
+			"Purchase Invoice": "remarks",
+			"Expense Claim": "remark"
+		}
+		return reference_field.get(self.document_type)
+
+	def check_matching_amounts(self, documents):
+		amount_field = self.get_amount_field("debit" if self.amount > 0 else "credit")
+		return [x for x in documents if flt(abs(self.amount)) == flt(x.get(amount_field))]
+
+	def check_matching_dates(self, output):
+		comparison_date = self.bank_transactions[0].get("date")
+
+		date_field = self.get_reference_date_field()
+		closest = min(output, key=lambda x: abs(getdate(x.get(date_field)) - getdate(parse_date(comparison_date))))
+
+		return [dict(x, **{"vgtSelected": True}) if x.get("name") == closest.get("name") else x for x in output]
+
+	def get_similar_transactions_references(self):
+		already_reconciled_matches = self.get_already_reconciled_matches()
+		references = self.get_similar_documents(already_reconciled_matches)
+		return self.get_similar_transactions_based_on_history(references)
+
+	def get_similar_transactions_based_on_history(self, references):
+		descriptions = self.get_description_and_party(references)
+
+		query_filters = {descriptions.get("party_field"): ["in", descriptions.get("party")]}
+
+		if self.document_type == "Journal Entry":
+			query_filters.update({descriptions.get("party_type_field"): ["in", descriptions.get("party_type")]})
+
+		return self.get_linked_documents(unreconciled=True, filters=query_filters)
+
+	def get_description_and_party(self, references):
+		output = {
+			"party_type": set(),
+			"party": set(),
+			"description": set(),
+			"party_type_field": "party_type",
+			"party_field": PARTY_FIELD.get(self.document_type),
+			"description_field": self.get_reference_field()
+		}
+
+		for reference in references:
+			output["description"].add(reference.get(output["description_field"]))
+
+			if reference.get("doctype") == "Journal Entry":
+				journal_entry_accounts = frappe.get_all("Journal Entry Account", filters={"parent": reference.get("name"), "parenttype": document_type, \
+					"party_type": ["is", "set"]}, fields=["party_type", "party"])
+				for account in journal_entry_accounts:
+					output["party"].add(account.get(output["party_field"]))
+
+			else:
+				output["party"].add(reference.get(output["party_field"]))
+
+		return output
+
+	def get_already_reconciled_matches(self):
+		reconciled_bank_transactions = get_reconciled_bank_transactions()
+
+		selection = []
+		for transaction in self.bank_transactions:
+			for bank_transaction in reconciled_bank_transactions:
+				if bank_transaction.get("description"):
+					seq = difflib.SequenceMatcher(lambda x: x == " ", transaction.get("description"), bank_transaction.get("description"))
+
+					if seq.ratio() > 0.6:
+						bank_transaction["ratio"] = seq.ratio()
+						selection.append(bank_transaction)
+
+		return [x.get("name") for x in selection]
+
+	def get_similar_documents(self, transactions):
+		payments_references = [x.get("payment_entry") for x in frappe.get_list("Bank Transaction Payments",
+			filters={"parent": ("in", transactions), "parenttype": ("=", "Bank Transaction"), "payment_document": self.document_type},
+			fields=["payment_document", "payment_entry"])]
+		return self.get_linked_documents(document_names=payments_references, unreconciled=False)
+
+def get_reconciled_bank_transactions():
+	return frappe.get_list("Bank Transaction", filters={"allocated_amount": (">", 0), "docstatus": 1}, fields=["name", "description"])
+
+@frappe.whitelist()
+def get_statement_chart(account, start_date, end_date):
+	transactions = frappe.get_all("Bank Transaction", filters={"docstatus": 1, "date": ["between", [getdate(start_date), getdate(end_date)]], \
+		"bank_account": account}, fields=["sum(credit)-sum(debit) as amount", "date", "currency", "sum(unallocated_amount) as unallocated_amount"], \
+		group_by="date", order_by="date ASC")
+
+	balance_before = get_bank_transaction_balance_on(account, add_days(getdate(start_date), -1))
+
+	if not transactions or not balance_before:
+		return {}
+
+	symbol = frappe.db.get_value("Currency", transactions[0].currency, "symbol", cache=True) \
+		or transactions[0].currency
+
+	previous_unallocation = frappe.get_all("Bank Transaction", filters={"docstatus": 1, "date": ("<", getdate(start_date)), "bank_account": account},\
+		fields=["sum(unallocated_amount) as unallocated_amount"])
+
+
+	dates = [add_days(getdate(start_date), -1)]
+	daily_balance = [balance_before.get("balance")]
+	unallocated_amount = [previous_unallocation[0]["unallocated_amount"] if previous_unallocation else 0]
+
+	for transaction in transactions:
+		dates.append(transaction.date)
+		daily_balance.append(transaction.amount)
+		unallocated_amount.append(transaction.unallocated_amount)
+
+	bank_balance = np.cumsum(daily_balance)
+	mean_value = np.mean(bank_balance)
+
+	data = {
+		'title': _("Bank balance") + " (" + symbol + ")",
+		'data': {
+			'datasets': [
+				{
+					'name': _("Bank Balance"),
+					'values': bank_balance
+				},
+				{
+					'name': _("Unallocated Amount"),
+					'chartType': 'bar',
+					'values': unallocated_amount
+				}
+			],
+			'labels': dates,
+			'yMarkers': [
+				{
+					'label': _("Average balance"),
+					'value': mean_value,
+					'options': {
+						'labelPos': 'left'
+						}
+				}
 			]
-		)
-
-		mode_of_payments = [x["parent"] for x in frappe.db.get_list("Mode of Payment Account",
-			filters={"default_account": bank_account}, fields=["parent"])]
-
-		company_currency = get_company_currency(company)
-
-		expense_claims = frappe.get_all("Expense Claim",
-			fields=["'Expense Claim' as doctype", "name", "total_sanctioned_amount as paid_amount",
-				"employee as party", "posting_date", "'{0}' as currency".format(company_currency)],
-			filters=[
-				["total_sanctioned_amount", "like", "{0}%".format(amount)],
-				["docstatus", "=", "1"],
-				["is_paid", "=", "1"],
-				["ifnull(clearance_date, '')", "=", ""],
-				["mode_of_payment", "in", "{0}".format(tuple(mode_of_payments))]
-			]
-		)
-	else:
-		purchase_invoices = expense_claims = []
-
-	for data in [payment_entries, journal_entries, sales_invoices, purchase_invoices, expense_claims]:
-		if data:
-			payments.extend(data)
-
-	return payments
-
-def get_matching_descriptions_data(company, transaction):
-	if not transaction.description :
-		return []
-
-	bank_transactions = frappe.db.sql("""
-		SELECT
-			bt.name, bt.description, bt.date, btp.payment_document, btp.payment_entry
-		FROM
-			`tabBank Transaction` as bt
-		LEFT JOIN
-			`tabBank Transaction Payments` as btp
-		ON
-			bt.name = btp.parent
-		WHERE
-			bt.allocated_amount > 0
-		AND
-			bt.docstatus = 1
-		""", as_dict=True)
-
-	selection = []
-	for bank_transaction in bank_transactions:
-		if bank_transaction.description:
-			seq=difflib.SequenceMatcher(lambda x: x == " ", transaction.description, bank_transaction.description)
-
-			if seq.ratio() > 0.6:
-				bank_transaction["ratio"] = seq.ratio()
-				selection.append(bank_transaction)
-
-	document_types = set([x["payment_document"] for x in selection])
-
-	links = {}
-	for document_type in document_types:
-		links[document_type] = [x["payment_entry"] for x in selection if x["payment_document"]==document_type]
-
-
-	data = []
-	company_currency = get_company_currency(company)
-	for key, value in iteritems(links):
-		if key == "Payment Entry":
-			data.extend(frappe.get_all("Payment Entry", filters=[["name", "in", value]],
-				fields=["'Payment Entry' as doctype", "posting_date", "party", "reference_no",
-					"reference_date", "paid_amount", "paid_to_account_currency as currency", "clearance_date"]))
-		if key == "Journal Entry":
-			journal_entries = frappe.get_all("Journal Entry", filters=[["name", "in", value]],
-				fields=["name", "'Journal Entry' as doctype", "posting_date",
-					"pay_to_recd_from as party", "cheque_no as reference_no", "cheque_date as reference_date",
-					"total_credit as paid_amount", "clearance_date"])
-			for journal_entry in journal_entries:
-				journal_entry_accounts = frappe.get_all("Journal Entry Account", filters={"parenttype": journal_entry["doctype"], "parent": journal_entry["name"]}, fields=["account_currency"])
-				journal_entry["currency"] = journal_entry_accounts[0]["account_currency"] if journal_entry_accounts else company_currency
-			data.extend(journal_entries)
-		if key == "Sales Invoice":
-			data.extend(frappe.get_all("Sales Invoice", filters=[["name", "in", value]], fields=["'Sales Invoice' as doctype", "posting_date", "customer_name as party", "paid_amount", "currency"]))
-		if key == "Purchase Invoice":
-			data.extend(frappe.get_all("Purchase Invoice", filters=[["name", "in", value]], fields=["'Purchase Invoice' as doctype", "posting_date", "supplier_name as party", "paid_amount", "currency"]))
-		if key == "Expense Claim":
-			expense_claims = frappe.get_all("Expense Claim", filters=[["name", "in", value]], fields=["'Expense Claim' as doctype", "posting_date", "employee_name as party", "total_amount_reimbursed as paid_amount"])
-			data.extend([dict(x,**{"currency": company_currency}) for x in expense_claims])
+		},
+		'type': 'line',
+		'colors': ['blue', 'green'],
+		'lineOptions': {
+			'hideDots': 1
+		}
+	}
 
 	return data
 
-def check_amount_vs_description(amount_matching, description_matching):
-	result = []
+@frappe.whitelist()
+def get_initial_balance(account, start_date):
+	return get_bank_transaction_balance_on(account, add_days(getdate(start_date), -1))
 
-	if description_matching:
-		for am_match in amount_matching:
-			for des_match in description_matching:
-				if des_match.get("clearance_date"):
-					continue
-
-				if am_match["party"] == des_match["party"]:
-					if am_match not in result:
-						result.append(am_match)
-						continue
-
-				if "reference_no" in am_match and "reference_no" in des_match:
-					if difflib.SequenceMatcher(lambda x: x == " ", am_match["reference_no"], des_match["reference_no"]).ratio() > 70:
-						if am_match not in result:
-							result.append(am_match)
-		if result:
-			return sorted(result, key = lambda x: x["posting_date"], reverse=True)
-		else:
-			return sorted(amount_matching, key = lambda x: x["posting_date"], reverse=True)
-
-	else:
-		return sorted(amount_matching, key = lambda x: x["posting_date"], reverse=True)
-
-def get_matching_transactions_payments(description_matching):
-	payments = [x["payment_entry"] for x in description_matching]
-
-	payment_by_ratio = {x["payment_entry"]: x["ratio"] for x in description_matching}
-
-	if payments:
-		reference_payment_list = frappe.get_all("Payment Entry", fields=["name", "paid_amount", "payment_type", "reference_no", "reference_date",
-			"party", "party_type", "posting_date", "paid_to_account_currency"], filters=[["name", "in", payments]])
-
-		return sorted(reference_payment_list, key=lambda x: payment_by_ratio[x["name"]])
-
-	else:
-		return []
-
-def payment_entry_query(doctype, txt, searchfield, start, page_len, filters):
-	account = frappe.db.get_value("Bank Account", filters.get("bank_account"), "account")
-	if not account:
-		return
-
-	return frappe.db.sql("""
-		SELECT
-			name, party, paid_amount, received_amount, reference_no
-		FROM
-			`tabPayment Entry`
-		WHERE
-			(clearance_date is null or clearance_date='0000-00-00')
-			AND (paid_from = %(account)s or paid_to = %(account)s)
-			AND (name like %(txt)s or party like %(txt)s)
-			AND docstatus = 1
-		ORDER BY
-			if(locate(%(_txt)s, name), locate(%(_txt)s, name), 99999), name
-		LIMIT
-			%(start)s, %(page_len)s""",
-		{
-			'txt': "%%%s%%" % txt,
-			'_txt': txt.replace("%", ""),
-			'start': start,
-			'page_len': page_len,
-			'account': account
-		}
-	)
-
-def journal_entry_query(doctype, txt, searchfield, start, page_len, filters):
-	account = frappe.db.get_value("Bank Account", filters.get("bank_account"), "account")
-
-	return frappe.db.sql("""
-		SELECT
-			jea.parent, je.pay_to_recd_from,
-			if(jea.debit_in_account_currency > 0, jea.debit_in_account_currency, jea.credit_in_account_currency)
-		FROM
-			`tabJournal Entry Account` as jea
-		LEFT JOIN
-			`tabJournal Entry` as je
-		ON
-			jea.parent = je.name
-		WHERE
-			(je.clearance_date is null or je.clearance_date='0000-00-00')
-		AND
-			jea.account = %(account)s
-		AND
-			(jea.parent like %(txt)s or je.pay_to_recd_from like %(txt)s)
-		AND
-			je.docstatus = 1
-		ORDER BY
-			if(locate(%(_txt)s, jea.parent), locate(%(_txt)s, jea.parent), 99999),
-			jea.parent
-		LIMIT
-			%(start)s, %(page_len)s""",
-		{
-			'txt': "%%%s%%" % txt,
-			'_txt': txt.replace("%", ""),
-			'start': start,
-			'page_len': page_len,
-			'account': account
-		}
-	)
-
-def sales_invoices_query(doctype, txt, searchfield, start, page_len, filters):
-	return frappe.db.sql("""
-		SELECT
-			sip.parent, si.customer, sip.amount, sip.mode_of_payment
-		FROM
-			`tabSales Invoice Payment` as sip
-		LEFT JOIN
-			`tabSales Invoice` as si
-		ON
-			sip.parent = si.name
-		WHERE
-			(sip.clearance_date is null or sip.clearance_date='0000-00-00')
-		AND
-			(sip.parent like %(txt)s or si.customer like %(txt)s)
-		ORDER BY
-			if(locate(%(_txt)s, sip.parent), locate(%(_txt)s, sip.parent), 99999),
-			sip.parent
-		LIMIT
-			%(start)s, %(page_len)s""",
-		{
-			'txt': "%%%s%%" % txt,
-			'_txt': txt.replace("%", ""),
-			'start': start,
-			'page_len': page_len
-		}
-	)
+@frappe.whitelist()
+def get_final_balance(account, end_date):
+	return get_bank_transaction_balance_on(account, getdate(end_date))
