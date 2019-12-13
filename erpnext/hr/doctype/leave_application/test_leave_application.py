@@ -82,7 +82,8 @@ class TestLeaveApplication(unittest.TestCase):
 		application.insert()
 		application.submit()
 
-		attendance = frappe.get_all('Attendance', ['name', 'status', 'attendance_date'], dict(attendance_date=('between', ['2018-01-01', '2018-01-03']), docstatus=("!=", 2)))
+		attendance = frappe.get_all('Attendance', ['name', 'status', 'attendance_date'],
+			dict(attendance_date=('between', ['2018-01-01', '2018-01-03']), docstatus=("!=", 2)))
 
 		# attendance created for all 3 days
 		self.assertEqual(len(attendance), 3)
@@ -300,7 +301,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 2),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		leave_application.submit()
 
@@ -313,7 +314,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 8),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
 

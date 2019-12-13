@@ -27,6 +27,7 @@ class IncorrectValuationRateError(frappe.ValidationError): pass
 class DuplicateEntryForWorkOrderError(frappe.ValidationError): pass
 class OperationsNotCompleteError(frappe.ValidationError): pass
 class MaxSampleAlreadyRetainedError(frappe.ValidationError): pass
+class TotalBasicAmountZeroError(frappe.ValidationError): pass
 
 from erpnext.controllers.stock_controller import StockController
 
@@ -648,6 +649,12 @@ class StockEntry(StockController):
 		gl_entries = super(StockEntry, self).get_gl_entries(warehouse_account)
 
 		total_basic_amount = sum([flt(t.basic_amount) for t in self.get("items") if t.t_warehouse])
+
+		if self.get("additional_costs") and not total_basic_amount:
+			#If additional costs table is populated and total basic amount is
+			#somehow 0, interrupt transaction.
+			frappe.throw(_("Total Basic Amount in Items Table cannot be 0"), TotalBasicAmountZeroError)
+
 		item_account_wise_additional_cost = {}
 
 		for t in self.get("additional_costs"):

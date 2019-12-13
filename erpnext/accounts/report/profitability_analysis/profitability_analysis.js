@@ -61,7 +61,7 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
 		],
 		"formatter": function(value, row, column, data, default_formatter) {
 			if (column.fieldname=="account") {
-				value = data.account_name;
+				value = data.account_name || value;
 
 				column.link_onclick =
 					"frappe.query_reports['Profitability Analysis'].open_profit_and_loss_statement(" + JSON.stringify(data) + ")";

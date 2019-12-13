@@ -45,7 +45,6 @@
   "accounting_dimensions_section",
   "project",
   "dimension_col_break",
-  "cost_center",
   "more_details",
   "status",
   "amended_from",
@@ -280,12 +279,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "cost_center",
-   "fieldtype": "Link",
-   "label": "Cost Center",
-   "options": "Cost Center"
-  },
-  {
    "collapsible": 1,
    "fieldname": "more_details",
    "fieldtype": "Section Break",
@@ -389,12 +382,12 @@
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-10 08:37:52.164589",
+ "modified": "2019-12-10 09:37:52.164589",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Expense Claim",
  "name_case": "Title Case",
- "owner": "harshada@webnotestech.com",
+ "owner": "Administrator",
  "permissions": [
   {
    "amend": 1,
