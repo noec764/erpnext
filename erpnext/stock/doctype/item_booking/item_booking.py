@@ -130,7 +130,8 @@ def book_new_slot(**kwargs):
 			"billing_qty": 1,
 			"sales_uom": uom,
 			"user": frappe.session.user,
-			"status": "In Cart"
+			"status": "In Cart",
+			"sync_with_google_calendar": frappe.db.get_single_value('Stock Settings', 'sync_with_google_calendar')
 		}).insert(ignore_permissions=True)
 
 		return doc
@@ -568,7 +569,7 @@ def insert_event_to_calendar(account, event, recurrence=None):
 		"ends_on": get_datetime(end.get("date")) if end.get("date") else get_timezone_naive_datetime(end),
 		"all_day": 1 if start.get("date") else 0,
 		"repeat_this_event": 1 if recurrence else 0,
-		"status": "confirmed"
+		"status": "Confirmed"
 	}
 	doc = frappe.get_doc(calendar_event)
 	doc.flags.pulled_from_google_calendar = True
@@ -652,7 +653,6 @@ def insert_event_in_google_calendar(doc, method=None):
 	event = {
 		"summary": doc.title,
 		"description": doc.notes,
-		"sync_with_google_calendar": 1,
 		"recurrence": [doc.rrule] if doc.repeat_this_event and doc.rrule else []
 	}
 	event.update(format_date_according_to_google_calendar(doc.get("all_day", 0), \

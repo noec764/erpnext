@@ -33,9 +33,10 @@
   "naming_series_prefix",
   "item_booking_column",
   "minute_uom",
+  "clear_item_booking_draft_duration",
   "column_break_30",
   "enable_simultaneous_booking",
-  "clear_item_booking_draft_duration"
+  "sync_with_google_calendar"
  ],
  "fields": [
   {
@@ -224,12 +225,19 @@
    "fieldname": "clear_item_booking_draft_duration",
    "fieldtype": "Int",
    "label": "Clear drafts after x minutes"
+  },
+  {
+   "default": "0",
+   "description": "Applicable for shopping cart bookings",
+   "fieldname": "sync_with_google_calendar",
+   "fieldtype": "Check",
+   "label": "Automatically synchronize with Google Calendar"
   }
  ],
  "icon": "icon-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2019-10-24 16:55:37.928147",
+ "modified": "2019-12-09 08:10:39.041694",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",
