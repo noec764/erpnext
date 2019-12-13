@@ -1,6 +1,12 @@
 import frappe
 
 def execute():
+	frappe.reload_doctype("Bank Transaction")
+	frappe.reload_doctype("Payment Entry")
+	frappe.reload_doctype("Sales Invoice")
+	frappe.reload_doctype("Purchase Invoice")
+	frappe.reload_doctype("Expense Claim")
+
 	for transaction in frappe.get_all("Bank Transaction", filters={"transaction_id": ("!=", "")}, fields=["name", "transaction_id", "reference_number"]):
 		if not transaction.reference_number:
 			frappe.db.set_value("Bank Transaction", transaction.name, "reference_number", "transaction_id")
