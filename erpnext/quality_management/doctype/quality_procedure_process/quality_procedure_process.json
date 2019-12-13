@@ -18,12 +18,12 @@
    "fieldname": "procedure",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Procedure",
+   "label": "Child Procedure",
    "options": "Quality Procedure"
   }
  ],
  "istable": 1,
- "modified": "2019-05-26 22:05:49.007189",
+ "modified": "2019-12-12 22:05:49.007189",
  "modified_by": "Administrator",
  "module": "Quality Management",
  "name": "Quality Procedure Process",
