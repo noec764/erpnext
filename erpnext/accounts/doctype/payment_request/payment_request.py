@@ -255,7 +255,8 @@ class PaymentRequest(Document):
 			"now": True,
 			"communication": communication.name if communication else None,
 			"attachments": [frappe.attach_print(self.reference_doctype, self.reference_name,
-				file_name=self.reference_name, print_format=self.print_format)]}
+				file_name=self.reference_name, print_format=self.print_format)] if self.print_format else []}
+
 		enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
 
 	def set_failed(self):
