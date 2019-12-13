@@ -260,6 +260,11 @@ class StripeSettings(PaymentGatewayController):
 			]
 		)
 
+	def get_payout_on_stripe(self, payout_id):
+		return self.stripe.Payout.retrieve(
+			payout_id
+		)
+
 	def create_payment_intent_on_stripe(self, amount, currency):
 		try:
 			self.payment_intent = self.stripe.PaymentIntent.create(
@@ -298,7 +303,7 @@ class StripeSettings(PaymentGatewayController):
 			"attach_source will be deprecated. Please use create_source.",
 			FutureWarning
 		)
-		return create_source(self, customer, source)
+		return self.create_source(customer, source)
 
 	def create_source(self, customer, source):
 		try:
