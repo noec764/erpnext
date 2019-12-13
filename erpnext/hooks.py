@@ -231,10 +231,10 @@ doc_events = {
 		"on_submit": ["erpnext.accounts.doctype.payment_request.payment_request.make_status_as_paid"]
 	},
 	'Address': {
-		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code']
+		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code', 'erpnext.regional.india.utils.update_gst_category']
 	},
-	('Sales Invoice', 'Purchase Invoice', 'Delivery Note'): {
-		'validate': 'erpnext.regional.india.utils.set_place_of_supply'
+	('Sales Invoice', 'Sales Order', 'Delivery Note', 'Purchase Invoice', 'Purchase Order', 'Purchase Receipt'): {
+		'validate': ['erpnext.regional.india.utils.set_place_of_supply']
 	},
 	"Contact":{
 		"on_trash": "erpnext.support.doctype.issue.issue.update_issue",
