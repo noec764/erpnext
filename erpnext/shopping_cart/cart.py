@@ -11,7 +11,7 @@ from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings
 from frappe.utils.nestedset import get_root_of
 from erpnext.accounts.utils import get_account_name
 from erpnext.utilities.product import get_qty_in_stock
-
+from frappe.contacts.doctype.contact.contact import get_contact_name
 
 class WebsitePriceListMissingError(frappe.ValidationError):
 	pass
@@ -102,9 +102,10 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	qty = flt(qty)
 	if qty == 0:
 		if booking:
-			quotation_items = quotation.get("items", {"item_booking": ["!=", booking]})
+			quotation_items = quotation.get("items", filters={"item_booking": ["!=", booking]})
+			frappe.delete_doc("Item Booking", booking, ignore_permissions=True, force=True)
 		else:
-			quotation_items = quotation.get("items", {"item_code": ["!=", item_code]})
+			quotation_items = quotation.get("items", filters={"item_code": ["!=", item_code]})
 
 		if quotation_items:
 			quotation.set("items", quotation_items)
@@ -395,7 +396,7 @@ def get_party(user=None):
 
 	contact_name = frappe.db.get_value("Contact", {"user": user})
 	if not contact_name:
-		contact_name = frappe.db.get_value("Contact", {"email_id": user})
+		contact_name = get_contact_name(user)
 	party = None
 
 	if contact_name:
@@ -440,8 +441,7 @@ def get_party(user=None):
 
 		contact = frappe.new_doc("Contact")
 		contact.update({
-			"first_name": fullname,
-			"email_id": user
+			"first_name": fullname
 		})
 		contact.add_email(user, is_primary=True)
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
@@ -529,7 +529,7 @@ def get_applicable_shipping_rules(party=None, quotation=None):
 	if shipping_rules:
 		rule_label_map = frappe.db.get_values("Shipping Rule", shipping_rules, "label")
 		# we need this in sorted order as per the position of the rule in the settings page
-		return [[rule, rule_label_map.get(rule)] for rule in shipping_rules]
+		return [[rule, rule] for rule in shipping_rules]
 
 def get_shipping_rules(quotation=None, cart_settings=None):
 	if not quotation:

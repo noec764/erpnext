@@ -10,7 +10,6 @@ from frappe import throw, _, scrub
 from frappe.permissions import add_user_permission, remove_user_permission, \
 	set_user_permission_if_allowed, has_permission
 from frappe.model.document import Document
-from erpnext.utilities.transaction_base import delete_events
 from frappe.utils.nestedset import NestedSet
 from erpnext.hr.doctype.job_offer.job_offer import get_staffing_plan_detail
 
@@ -167,10 +166,11 @@ class Employee(NestedSet):
 	def validate_status(self):
 		if self.status == 'Left':
 			reports_to = frappe.db.get_all('Employee',
-				filters={'reports_to': self.name}
+				filters={'reports_to': self.name, 'status': "Active"},
+				fields=['name','employee_name']
 			)
 			if reports_to:
-				link_to_employees = [frappe.utils.get_link_to_form('Employee', employee.name) for employee in reports_to]
+				link_to_employees = [frappe.utils.get_link_to_form('Employee', employee.name, label=employee.employee_name) for employee in reports_to]
 				throw(_("Employee status cannot be set to 'Left' as following employees are currently reporting to this employee:&nbsp;")
 					+ ', '.join(link_to_employees), EmployeeLeftValidationError)
 			if not self.relieving_date:
@@ -198,7 +198,6 @@ class Employee(NestedSet):
 
 	def on_trash(self):
 		self.update_nsm_model()
-		delete_events(self.doctype, self.name)
 		if frappe.db.exists("Employee Transfer", {'new_employee_id': self.name, 'docstatus': 1}):
 			emp_transfer = frappe.get_doc("Employee Transfer", {'new_employee_id': self.name, 'docstatus': 1})
 			emp_transfer.db_set("new_employee_id", '')

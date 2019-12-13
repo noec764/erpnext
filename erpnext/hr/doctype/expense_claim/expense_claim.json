@@ -262,7 +262,8 @@
     "fieldname": "payable_account",
     "fieldtype": "Link",
     "label": "Payable Account",
-    "options": "Account"
+    "options": "Account",
+    "reqd": 1
    },
    {
     "fieldname": "cost_center",
@@ -365,7 +366,7 @@
   "icon": "fa fa-money",
   "idx": 1,
   "is_submittable": 1,
-  "modified": "2019-06-26 18:05:52.530462",
+  "modified": "2019-11-08 14:13:08.964547",
   "modified_by": "Administrator",
   "module": "HR",
   "name": "Expense Claim",

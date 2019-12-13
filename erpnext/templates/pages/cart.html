@@ -19,7 +19,7 @@
 {% endif %}
 {% if doc.items and not cart_settings.enable_checkout %}
 <button class="btn btn-primary btn-request-for-quotation" type="button">
-	{{ _("Request for Quotation") }}
+	{{ _("Request a Quotation") }}
 </button>
 {% endif %}
 {% endblock %}
@@ -37,19 +37,15 @@
 			<tr>
 				<th width="60%">{{ _('Item') }}</th>
 				<th width="20%" class="text-right">{{ _('Quantity') }}</th>
-				{% if cart_settings.enable_checkout %}
 				<th width="20%" class="text-right">{{ _('Subtotal') }}</th>
-				{% endif %}
 			</tr>
 		</thead>
 		<tbody class="cart-items">
 			{% include "templates/includes/cart/cart_items.html" %}
 		</tbody>
-		{% if cart_settings.enable_checkout %}
 		<tfoot class="cart-tax-items">
 			{% include "templates/includes/order/order_taxes.html" %}
 		</tfoot>
-		{% endif %}
 	</table>
 	{% else %}
 	<p class="text-muted">{{ _('Your cart is Empty') }}</p>
@@ -63,7 +59,7 @@
 		<input type="hidden" class="txtreferral_sales_partner" placeholder="{{ _('Sales Partner') }}" name="txtreferral_sales_partner" type="text"/>
 	</div>
 	<div class="mb-3 d-flex flex-row-reverse">
-		<button class="btn btn-primary btn-sm bt-coupon">{{ _("Apply Coupon Code") }}</button>
+		<button class="btn btn-secondary btn-sm bt-coupon">{{ _("Apply Coupon Code") }}</button>
 	</div>
 	{% endif %}
 
@@ -109,7 +105,7 @@
 		<a href="/orders">
 			{{ _('See past orders') }}
 		</a>
-		{% else %}
+		{% elif frappe.db.get_value("Portal Menu Item", dict(route="/quotations"), "enabled") == 1 %}
 		<a href="/quotations">
 			{{ _('See past quotations') }}
 		</a>

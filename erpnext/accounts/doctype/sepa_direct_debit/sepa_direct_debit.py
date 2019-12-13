@@ -37,7 +37,7 @@ class SepaDirectDebit(Document):
 			order by
 				pe.reference_date ASC, pe.name DESC
 		""".format(condition),
-				{"mop":self.mode_of_payment, "from":self.from_date, "to":self.to_date, "currency": self.currency}, as_dict=1, debug=True)
+				{"mop":self.mode_of_payment, "from":self.from_date, "to":self.to_date, "currency": self.currency}, as_dict=1)
 
 		entries = sorted(list(payment_entries), key=lambda k: k['reference_date'] or getdate(nowdate()))
 		self.set('payment_entries', [])

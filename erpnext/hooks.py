@@ -20,9 +20,9 @@ web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
 	"Communication": "public/js/communication.js",
-	"Event": "public/js/event.js",
 	"Website Theme": "public/js/website_theme.js",
-	"Newsletter": "public/js/newsletter.js"
+	"Newsletter": "public/js/newsletter.js",
+	"Google Calendar": "public/js/google_calendar.js"
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
@@ -57,7 +57,13 @@ my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
 email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
 
 calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
-
+gcalendar_integrations = {
+	"Item Booking": {
+		"pull_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_to_calendar",
+		"pull_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_calendar",
+		"pull_delete": "erpnext.stock.doctype.item_booking.item_booking.cancel_event_in_calendar"
+	}
+}
 
 
 domains = {
@@ -244,8 +250,14 @@ doc_events = {
 	},
 	"Quotation": {
 		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
-		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.submit_linked_item_bookings"
-	}
+		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.confirm_linked_item_bookings"
+	},
+	"Item Booking": {
+		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",
+		"on_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_google_calendar",
+		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar"
+	},
 }
 
 scheduler_events = {
@@ -258,14 +270,13 @@ scheduler_events = {
 		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.erpnext_integrations.doctype.amazon_mws_settings.amazon_mws_settings.schedule_get_order_details",
 		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
-		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_integrated_documents"
+		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_integrated_documents",
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts"
 	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",
-		"erpnext.setup.doctype.email_digest.email_digest.send",
 		"erpnext.support.doctype.issue.issue.auto_close_tickets",
 		"erpnext.crm.doctype.opportunity.opportunity.auto_close_opportunity",
 		"erpnext.controllers.accounts_controller.update_invoice_status",
@@ -287,10 +298,12 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status"
 	],
 	"daily_long": [
+		"erpnext.setup.doctype.email_digest.email_digest.send",
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
 		"erpnext.hr.utils.generate_leave_encashment",
-		"erpnext.projects.doctype.project.project.update_project_sales_billing"
+		"erpnext.projects.doctype.project.project.update_project_sales_billing",
+		"erpnext.accounts.doctype.subscription.subscription.update_grand_total"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",

@@ -84,8 +84,6 @@ class Lead(SellingController):
 		frappe.db.sql("""update `tabIssue` set lead='' where lead=%s""",
 			self.name)
 
-		self.delete_events()
-
 	def has_customer(self):
 		return frappe.db.get_value("Customer", {"lead_name": self.name})
 

@@ -100,6 +100,29 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 		this.toggle_editable_price_list_rate();
 	},
 
+	before_cancel: function(frm) {
+		if (['Quotation', 'Sales Order'].includes(frm.doctype)) {
+			return new Promise(resolve => {
+				const bookings = frm.items.filter(item => {
+					if (item.item_booking !== undefined && item.item_booking !== null) {
+						return item
+					}
+				}).map(f => f.item_booking )
+	
+				if (bookings.length) {
+					frappe.confirm(__("Do you also want to cancel the item bookings linked to this document ?"), () => {
+						frappe.xcall("erpnext.stock.doctype.item_booking.item_booking.cancel_appointments", { ids: bookings, force: true })
+						.then(() => {
+							resolve(frappe.show_alert({message:__("Linked item bookings successfully cancelled"), indicator:'green'}));
+						})
+					}, () => { resolve() })
+				} else {
+					resolve()
+				}
+			})
+		}
+	},
+
 	customer: function() {
 		var me = this;
 		erpnext.utils.get_party_details(this.frm, null, null, function() {

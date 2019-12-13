@@ -11,10 +11,10 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents
 
 EVENT_MAP = {
 	'created': 'create_invoice',
-	'customer_approval_granted': 'pay_invoice',
+	'customer_approval_granted': 'create_and_pay_invoice',
 	'customer_approval_denied': 'change_status',
 	'submitted': 'submit_invoice',
-	'confirmed': 'pay_invoice',
+	'confirmed': 'create_and_pay_invoice',
 	'cancelled': 'cancel_invoice',
 	'failed': 'fail_invoice',
 	'charged_back': 'create_credit_note',
@@ -30,13 +30,15 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		super(GoCardlessPaymentWebhookHandler, self).__init__(**kwargs)
 
 		self.event_map = EVENT_MAP
-		self.get_payment()
 		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
 			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
 		if self.gocardless_subscription:
 			self.get_linked_subscription()
+			self.check_subscription_dates()
 			self.get_subscription_invoice()
+			if self.integration_request.status == "Queued":
+				return
 		elif self.gocardless_payment:
 			self.get_one_off_invoice()
 
@@ -59,6 +61,12 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 				self.gocardless_subscription), _("GoCardless webhook action error"))
 		else:
 			self.subscription = frappe.get_doc("Subscription", self.subscriptions[0].get("name"))
+
+	def create_and_pay_invoice(self):
+		if self.invoice and self.invoice.docstatus == 0:
+			self.submit_invoice()
+
+		self.pay_invoice()
 
 	# TODO: Add some amount checks before submit
 	def submit_invoice(self):

@@ -11,15 +11,17 @@ def get_data():
 		'non_standard_fieldnames': {
 			'Payment Entry': 'party',
 			'Quotation': 'party_name',
-			'Opportunity': 'party_name'
+			'Opportunity': 'party_name',
+			'Contract': 'party_name'
 		},
 		'dynamic_links': {
-			'party_name': ['Customer', 'quotation_to']
+			'party_name': ['Customer', 'quotation_to'],
+			'party_name': ['Customer', 'party_type']
 		},
 		'transactions': [
 			{
 				'label': _('Pre Sales'),
-				'items': ['Opportunity', 'Quotation']
+				'items': ['Opportunity', 'Quotation', 'Contract']
 			},
 			{
 				'label': _('Orders'),

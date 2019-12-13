@@ -40,6 +40,10 @@ def get_data():
 					"type": "doctype",
 					"name": "Delivery Trip"
 				},
+				{
+					"type": "doctype",
+					"name": "Item Booking"
+				}
 			]
 		},
 		{

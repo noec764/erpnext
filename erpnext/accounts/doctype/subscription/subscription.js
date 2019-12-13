@@ -2,6 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Subscription', {
+	setup: function(frm) {
+		frm.trigger('setup_listeners');
+	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
@@ -106,6 +109,18 @@ frappe.ui.form.on('Subscription', {
 				}
 			}
 		});
+	},
+
+	setup_listeners: function(frm) {
+		frappe.realtime.on('payment_gateway_updated', (data) => {
+			const format_values = value => {
+				return format_currency(value / 100, frm.doc.currency)
+			}
+			if (data.initial_amount && data.updated_amount) {
+				frappe.show_alert({message: __("Payment gateway subscription amount updated from {0} to {1}",
+					[format_values(data.initial_amount), format_values(data.updated_amount)]), indicator: 'green'})
+			}
+		})
 	}
 });
 

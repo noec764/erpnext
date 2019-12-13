@@ -909,8 +909,7 @@
    "fieldname": "discount_amount",
    "fieldtype": "Currency",
    "label": "Additional Discount Amount",
-   "options": "currency",
-   "print_hide": 1
+   "options": "currency"
   },
   {
    "fieldname": "totals",
@@ -1585,7 +1584,7 @@
  "idx": 181,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-10-11 08:04:33.620955",
+ "modified": "2019-11-11 18:39:34.518100",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

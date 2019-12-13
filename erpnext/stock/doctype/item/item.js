@@ -359,6 +359,14 @@ $.extend(erpnext.item, {
 			}
 		}
 
+		frm.set_query('google_calendar', function() {
+			return {
+				filters: {
+					"reference_document": "Item Booking"
+				}
+			};
+		});
+
 	},
 
 	make_dashboard: function(frm) {

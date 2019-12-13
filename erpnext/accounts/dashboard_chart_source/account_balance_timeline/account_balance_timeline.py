@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe, json
+from frappe import _
 from frappe.utils import add_to_date, date_diff, getdate, nowdate, get_last_day, formatdate
 from erpnext.accounts.report.general_ledger.general_ledger import execute
 from frappe.core.page.dashboard.dashboard import cache_source, get_from_date_from_timespan
@@ -24,6 +25,9 @@ def get(chart_name = None, chart = None, no_cache = None, from_date = None, to_d
 
 	account = filters.get("account")
 	company = filters.get("company")
+
+	if not account and chart:
+		frappe.throw(_("Account is not set for the dashboard chart {0}").format(chart))
 
 	if not to_date:
 		to_date = nowdate()
@@ -85,7 +89,8 @@ def get_gl_entries(account, to_date):
 		fields = ['posting_date', 'debit', 'credit'],
 		filters = [
 			dict(posting_date = ('<', to_date)),
-			dict(account = ('in', child_accounts))
+			dict(account = ('in', child_accounts)),
+			dict(voucher_type = ('!=', 'Period Closing Voucher'))
 		],
 		order_by = 'posting_date asc')
 

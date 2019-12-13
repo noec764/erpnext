@@ -32,6 +32,7 @@
 				:validRange="validRange"
 				:defaultDate="defaultDate"
 				@datesRender="datesRender"
+				:timeZone="timeZone"
 			/>
 		</div>
 	</div>
@@ -67,14 +68,15 @@ export default {
 			calendarPlugins: [
 				listPlugin
 			],
-			noEventsMessage: __("No events to display"),
 			locale: frappe.boot.lang || 'en',
+			timeZone: 'UTC',
 			slots: [],
-			selectedSlots: [],
+			alternative_items: [],
 			quotation: null,
 			defaultDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			loading: false,
-			uom: this.sales_uom
+			uom: this.sales_uom,
+			noEventsMessage: __("No events to display")
 		}
 	},
 	computed: {
@@ -103,6 +105,7 @@ export default {
 	methods: {
 		getAvailableSlots(parameters, callback) {
 			if (this.item) {
+				this.alternative_items = []
 				frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_availabilities", {
 					start: moment(parameters.start).format("YYYY-MM-DD"),
 					end: moment(parameters.end).format("YYYY-MM-DD"),
@@ -115,8 +118,60 @@ export default {
 					callback(this.slots);
 					if (!this.slots.length) {
 						this.$refs.fullCalendar.getApi().updateSize()
+						this.getAvailableItems(parameters)
 					}
 				})
+			}
+		},
+		getAvailableItems(parameters) {
+			return frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_available_item", {
+				start: moment(parameters.start).format("YYYY-MM-DD"),
+				end: moment(parameters.end).format("YYYY-MM-DD"),
+				item: this.item
+			}).then(result => {
+				if (result && result.message) {
+					this.alternative_items = result.message;
+					this.displayAlternativeItems()
+				}
+			})
+		},
+		displayAlternativeItems() {
+			if (this.alternative_items.length) {
+				const emptyElems = document.getElementsByClassName("fc-list-empty");
+				if (emptyElems.length) {
+					const alternative_items_links = this.alternative_items.map(item => {
+						return `<div class="card">
+									<div class="row no-gutters">
+										<div class="col-md-3">
+											<div class="card-body">
+												<a class="no-underline" href="${'/' + item.route}">
+													<img class="website-image" alt=${item.item_name} src=${item.website_image || item.image || '/no-image.jpg'}>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-9">
+											<div class="card-body">
+												<h5 class="card-title">
+													<a class="text-dark" href="${'/' + item.route }">
+														${item.item_name || item.name }
+													</a>
+												</h5>
+												<p class="card-text">
+													${ item.website_content || item.description || `<i class="text-muted">${ __("No description") }</i>` }
+												</p>
+												<a href="${'/' + item.route }" class="btn btn-sm btn-light">${ __('More details') }</a>
+											</div>
+										</div>
+									</div>
+								</card>`
+					}).join('')
+
+					emptyElems[0].innerHTML = `
+					<div>${__("No events to display for this item")}</div>
+					<h3 class="text-muted mb-5">${__("Items available on this date")}</h3>
+					${alternative_items_links}
+					`
+				}
 			}
 		},
 		getQuotation() {
@@ -154,12 +209,8 @@ export default {
 			})
 		},
 		removeBookedSlot(event) {
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.remove_booked_slot", {
-				name: event.event.id,
-			}).then(r => {
-				this.getQuotation()
-				this.updateCart(event.event.id, 0)
-			})
+			this.getQuotation()
+			this.updateCart(event.event.id, 0)
 		},
 		updateCart(booking, qty) {
 			new Promise((resolve) => {
@@ -173,7 +224,7 @@ export default {
 				)
 			}).then(r => {
 				// Hack for promise resolving too fast
-				setTimeout(() => { this.loading = false; }, 2000);
+				setTimeout(() => { this.loading = false; }, (qty == 0) ? 3000: 2000);
 			})
 		},
 		datesRender(event) {
@@ -182,9 +233,10 @@ export default {
 			}
 		},
 		getLocale() {
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_locale")
+			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_locale_and_timezone")
 			.then(r => {
-				this.locale = r.message
+				this.locale = r.message.locale
+				this.timeZone = r.message.time_zone
 			})
 		}
 	}
@@ -226,6 +278,14 @@ export default {
 
 .fc-unthemed .fc-list-view {
 	border-color: #fff;
+}
+
+.fc-list-empty img:after {
+	box-sizing: border-box;
+}
+
+.fc-list-empty .card-body {
+	text-align: left;
 }
 
 .fulfilling-square-spinner , .fulfilling-square-spinner * {

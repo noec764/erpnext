@@ -57,6 +57,7 @@ class WebhooksController():
 						self.subscription.name, self.invoice.name))
 
 			elif self.subscription:
+				self.subscription.reload()
 				self.subscription.process_active_subscription()
 				self.invoice = self.subscription.get_current_invoice()
 				if self.invoice:

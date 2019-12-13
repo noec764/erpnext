@@ -5,10 +5,16 @@ from frappe import _
 
 def get_data():
 	return {
-        'reports': [
+		'fieldname': 'leave_application',
+		'transactions': [
 			{
-                'label': _('Reports'),
+				'items': ['Attendance']
+			}
+		],
+		'reports': [
+			{
+				'label': _('Reports'),
 				'items': ['Employee Leave Balance']
 			}
 		]
-    }
+	}
