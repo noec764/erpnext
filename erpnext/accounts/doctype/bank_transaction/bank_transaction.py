@@ -35,6 +35,10 @@ class BankTransaction(StatusUpdater):
 		self.set_payment_entries_clearance_date()
 		self.set_status(update=True)
 
+	def on_cancel(self):
+		for entry in self.payment_entries:
+			self.set_unreconciled_amount(entry, False)
+
 	def check_similar_entries(self):
 		filters = {"date": self.date, "credit": self.credit, "debit": self.debit, \
 			"currency": self.currency, "bank_account": self.bank_account, "docstatus": 1}
