@@ -136,8 +136,8 @@ def get_bank_transaction_balance_on(bank_account, date):
 		filters={"date": ("<=", getdate(date)), "docstatus": 1, "bank_account": bank_account},
 		fields=["SUM(credit)-SUM(debit) as balance", "currency"])
 
-	balance = balance_query[0].get("balance") if balance_query else 0
-	currency = balance_query[0].get("currency") if balance_query else None
+	balance = balance_query[0].get("balance") if balance_query[0].get("balance") else 0
+	currency = balance_query[0].get("currency") if balance_query[0].get("currency") else None
 	
 	return {
 		"balance": balance,

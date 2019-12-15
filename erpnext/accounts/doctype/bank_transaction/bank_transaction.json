@@ -137,7 +137,8 @@
   {
    "fieldname": "allocated_amount",
    "fieldtype": "Currency",
-   "label": "Allocated Amount"
+   "label": "Allocated Amount",
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -155,12 +156,13 @@
   {
    "fieldname": "unallocated_amount",
    "fieldtype": "Currency",
-   "label": "Unallocated Amount"
+   "label": "Unallocated Amount",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-06 15:24:24.198393",
+ "modified": "2019-12-15 20:34:13.172240",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
