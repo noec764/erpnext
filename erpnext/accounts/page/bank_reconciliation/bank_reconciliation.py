@@ -51,7 +51,6 @@ class BankReconciliation:
 		self.mode_of_payment = None
 		self.payment_entries = []
 
-		self.check_party()
 
 	def check_unique_values(self):
 		self.check_party()
@@ -92,6 +91,7 @@ class BankReconciliation:
 
 	def reconcile(self):
 		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"]:
+			self.check_unique_values()
 			self.make_payment_entries()
 			self.reconcile_created_payments()
 
