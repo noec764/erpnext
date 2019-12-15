@@ -302,19 +302,12 @@ class BankTransactionMatch:
 		return [dict(x, **{"vgtSelected": True}) for x in output] if len(output) == 1 else self.check_matching_dates(output)
 
 	def get_linked_documents(self, document_names=None, unreconciled=True, filters=None):
-		print("QUERY")
 		query_filters = {"docstatus": 1, "company": self.company}
 		query_or_filters = {}
 
 		if self.document_type == "Journal Entry":
 			return self.get_linked_journal_entries(document_names, unreconciled, filters)
-
-		elif self.document_type == "Payment Entry":
-			if self.amount < 0:
-				query_filters.update({"paid_from_account_currency": self.currency, "payment_type": "Pay"})
-			else:
-				query_filters.update({"paid_to_account_currency": self.currency, "payment_type": "Receive"})
-		elif self.document_type != "Expense Claim":
+		elif self.document_type not in ["Expense Claim", "Payment Entry"]:
 			query_filters.update({"currency": self.currency})
 			
 
@@ -334,14 +327,28 @@ class BankTransactionMatch:
 		if document_names:
 			query_filters.update({"name": ("in", document_names)})
 
-		query_result = frappe.get_list(self.document_type, filters=query_filters, or_filters=query_or_filters, fields=["*"], debug=True)
-		print([x.get("name") for x in query_result])
+		query_result = frappe.get_list(self.document_type, filters=query_filters, or_filters=query_or_filters, fields=["*"])
+
+		filtered_result = self.get_filtered_results(query_result)
+
 		return [dict(x, **{
 			"party": x.get(party_field),
 			"amount": x.get("unreconciled_amount") if x.get("unreconciled_amount") > 0 else x.get(amount_field),\
 			"reference_date": x.get(date_field), \
 			"reference_string": x.get(reference_field) \
-			}) for x in query_result]
+			}) for x in filtered_result]
+
+	def get_filtered_results(self, query_result):
+		filtered_result = []
+		if self.document_type == "Payment Entry":
+			for result in query_result:
+				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency) \
+					or (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
+					filtered_result.append(result)
+		else:
+			filtered_result = query_result
+
+		return filtered_result
 
 	def get_linked_journal_entries(self, document_names=None, unreconciled=True, filters=None):
 		account = frappe.db.get_value("Bank Account", self.bank_account, "account")
