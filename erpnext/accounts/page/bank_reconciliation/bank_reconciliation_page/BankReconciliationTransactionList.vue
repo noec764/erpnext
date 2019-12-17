@@ -45,6 +45,9 @@
                     enabled: true,
                     placeholder: __('Search for a specific bank transaction'),
                 }"
+                :sort-options="{
+                    initialSortBy: {field: 'date', type: 'desc'}
+                }"
                 @on-selected-rows-change="onSelectedRowsChange"
             />
             <div v-show="!transactions.length" class="flex flex-wrap justify-center align-center border rounded no-data">
