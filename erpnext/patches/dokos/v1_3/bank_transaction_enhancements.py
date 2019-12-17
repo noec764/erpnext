@@ -6,6 +6,7 @@ def execute():
 	frappe.reload_doctype("Sales Invoice")
 	frappe.reload_doctype("Purchase Invoice")
 	frappe.reload_doctype("Expense Claim")
+	frappe.reload_doctype("Journal Entry")
 
 	for transaction in frappe.get_all("Bank Transaction", filters={"transaction_id": ("!=", "")}, fields=["name", "transaction_id", "reference_number"]):
 		if not transaction.reference_number:
@@ -30,3 +31,8 @@ def execute():
 		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]}, fields=["total_claimed_amount", "name"]):
 		frappe.db.set_value("Expense Claim", expense_claim.name, "unreconciled_amount", \
 			expense_claim.total_claimed_amount)
+
+	for journal_entry in frappe.get_all("Journal Entry", \
+		filters={"docstatus": 1, "clearance_date": ["is", "not set"]}):
+		doc = frappe.get_doc("Journal Entry", journal_entry.name)
+		doc.update_unreconciled_amount()

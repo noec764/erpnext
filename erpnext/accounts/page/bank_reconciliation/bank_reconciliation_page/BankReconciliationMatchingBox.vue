@@ -51,6 +51,12 @@
                     <span v-if="props.column.field == 'link'">
                         <a :href="props.row.link" target="_blank"><i class='uil uil-external-link-alt'></i></a>
                     </span>
+                    <span v-else-if="props.column.field == 'amount' && props.row.amount == 0">
+                        {{ __(props.row.status) }}
+                    </span>
+                    <span v-else>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
                 </template>
             </vue-good-table>
         </div>
@@ -93,9 +99,9 @@ export default {
             columns: [
                 {field: 'name', hidden: true},
                 {label:__('Date'), field:'date'},
-                {label:__('Party'), field:'party'},
-                {label:__('Amount'), field:'amount', type: 'decimal', formatFn: this.formatAmount},
-                {label:__('Reference'), field:'reference_string'},
+                {label:__('Party'), field:'party', width: "20%"},
+                {label:__('Amount'), field:'amount', type: 'decimal', formatFn: this.formatAmount, width: "30%"},
+                {label:__('Reference'), field:'reference_string', width: "30%"},
                 {label:__('Reference Date'), field:'reference_date'},
                 {field:'link'}
             ]
