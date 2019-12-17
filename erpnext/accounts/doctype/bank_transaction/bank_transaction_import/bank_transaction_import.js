@@ -4,7 +4,8 @@ frappe.provide("erpnext.bank_transaction")
 erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 	constructor(upload_type) {
 		this.data = [];
-		this.upload_type = upload_type;
+        this.upload_type = upload_type;
+        erpnext.bank_transaction = {};
 
         frappe.utils.make_event_emitter(erpnext.bank_transaction);
         this.make();
