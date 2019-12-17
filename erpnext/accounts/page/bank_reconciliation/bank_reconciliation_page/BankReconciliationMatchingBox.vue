@@ -62,7 +62,7 @@
         </div>
         <div v-show="matching_documents[document_type].length || (transactions.length && !matching_documents[document_type].length)" class="text-center document-options">
             <div class="btn-group" role="group" aria-label="Document Options">
-                <button type="button" class="btn btn-default" @click="show_full_list()">{{ __("Show the full list") }}</button>
+                <button type="button" class="btn btn-default" @click="get_linked_docs(false)">{{ __("Show the full list") }}</button>
                 <button type="button" class="btn btn-primary" @click="create_new_document">{{ __(`Create a new ${__(document_type)}`) }}</button>
             </div>
         </div>
@@ -133,9 +133,6 @@ export default {
         },
         formatAmount(value) {
             return format_currency(value, this.transactions.length && this.transactions[0].currency)
-        },
-        show_full_list() {
-            this.get_linked_docs(false)
         },
         create_new_document() {
             if (this.document_type == "Payment Entry") {

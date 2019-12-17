@@ -264,7 +264,7 @@ class BankReconciliation:
 
 @frappe.whitelist()
 def get_linked_payments(bank_transactions, document_type, match=True):
-	bank_transaction_match = BankTransactionMatch(bank_transactions, document_type, match=True)
+	bank_transaction_match = BankTransactionMatch(bank_transactions, document_type, match)
 	return bank_transaction_match.get_linked_payments()
 
 
