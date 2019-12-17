@@ -101,8 +101,8 @@ class BankTransaction(StatusUpdater):
 		for payment_entry in self.payment_entries:
 			unreconciled_amount = get_unreconciled_amount(payment_entry)
 
-			if unreconciled_amount and payment_entry.allocated_amount:
-				if flt(payment_entry.allocated_amount) > (flt(unreconciled_amount) + flt(payment_entry.allocated_amount)):
+			if unreconciled_amount and payment_entry.allocated_amount and hasattr(payment_entry, "__unsaved"):
+				if flt(payment_entry.allocated_amount) > flt(unreconciled_amount):
 					frappe.throw(_("The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.").format(\
 						fmt_money(flt(payment_entry.allocated_amount), currency=self.currency), fmt_money(flt(unreconciled_amount), currency=self.currency), _(payment_entry.payment_document), payment_entry.payment_entry))
 
