@@ -12,7 +12,7 @@ from itertools import zip_longest
 
 class BankTransaction(StatusUpdater):
 	def after_insert(self):
-		self.unallocated_amount = abs(flt(self.credit) - flt(self.debit))
+		self.unallocated_amount = flt(self.credit) - flt(self.debit)
 
 	def before_insert(self):
 		self.check_similar_entries()
@@ -86,7 +86,7 @@ class BankTransaction(StatusUpdater):
 		allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])\
 			if self.payment_entries else 0
 		
-		transaction_amount = abs(flt(self.credit) - flt(self.debit))
+		transaction_amount = flt(self.credit) - flt(self.debit)
 
 		self.db_set("allocated_amount", flt(allocated_amount) if allocated_amount else 0)
 		self.db_set("unallocated_amount", (transaction_amount - flt(allocated_amount)) \
