@@ -337,11 +337,20 @@ class BankTransactionMatch:
 		if self.document_type == "Payment Entry":
 			for result in query_result:
 				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency):
-					result["amount"] = result["unreconciled_amount"] * -1
-					filtered_result.append(result)
+					filtered_result.append(dict(result, **{
+						"amount": result.get("unreconciled_amount", 0) * -1,\
+						"party": result.get(party_field),\
+						"reference_date": result.get(date_field), \
+						"reference_string": result.get(reference_field)
+					}))
 
 				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
-					filtered_result.append(result)
+					filtered_result.append(dict(result, **{
+						"amount": result.get("unreconciled_amount", 0),\
+						"party": result.get(party_field),\
+						"reference_date": result.get(date_field), \
+						"reference_string": result.get(reference_field)
+					}))
 
 		elif self.document_type == "Purchase Invoice":
 			return [dict(x, **{
