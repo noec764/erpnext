@@ -282,7 +282,7 @@ class BankTransactionMatch:
 		if not self.bank_transactions:
 			return []
 
-		documents = self.get_linked_documents(unreconciled=self.match)
+		documents = self.get_linked_documents()
 
 		if not documents or not self.match:
 			return sorted([i for n, i in enumerate(documents) if i not in documents[n + 1:]], \
