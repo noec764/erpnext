@@ -98,21 +98,15 @@ class BankTransaction(StatusUpdater):
 		self.reload()
 
 	def check_reconciliation_amounts(self):
-		total_allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])
-
 		total_unreconciled_amount = 0
 		for payment_entry in self.payment_entries:
 			unreconciled_amount = get_unreconciled_amount(payment_entry)
 			total_unreconciled_amount += (flt(unreconciled_amount) * (1 if payment_entry.get("payment_type") == "Debit" else -1))
 
 			if unreconciled_amount and payment_entry.allocated_amount:
-				if flt(payment_entry.allocated_amount) - flt(unreconciled_amount):
+				if flt(payment_entry.allocated_amount) > flt(unreconciled_amount):
 					frappe.throw(_("The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.").format(\
 						fmt_money(flt(payment_entry.allocated_amount), currency=self.currency), fmt_money(flt(unreconciled_amount), currency=self.currency), _(payment_entry.payment_document), payment_entry.payment_entry))
-
-		if flt(total_allocated_amount) > flt(total_unreconciled_amount):
-			frappe.msgprint(_("The total allocated amount ({0}) is greater than the total unreconciled amount ({1}).").format(\
-				fmt_money(flt(total_allocated_amount), currency=self.currency), fmt_money(flt(total_unreconciled_amount), currency=self.currency)))
 
 	def set_payment_entries_clearance_date(self):
 		for payment_entry in self.payment_entries:
