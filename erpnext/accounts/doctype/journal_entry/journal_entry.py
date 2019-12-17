@@ -53,6 +53,7 @@ class JournalEntry(AccountsController):
 		self.update_loan()
 		self.update_inter_company_jv()
 		self.update_invoice_discounting()
+		self.update_unreconciled_amount()
 
 	def on_cancel(self):
 		from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
@@ -643,6 +644,15 @@ class JournalEntry(AccountsController):
 
 			d.account_balance = account_balance[d.account]
 			d.party_balance = party_balance[(d.party_type, d.party)]
+
+	def update_unreconciled_amount(self):
+		amount = 0
+		cash_bank_accounts = [x.get("name") for x in frappe.get_all("Account", {"account_type": ["in", ["Bank", "Cash"]]})]
+		for line in self.accounts:
+			if line.account in cash_bank_accounts:
+				amount += (flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency))
+
+		self.db_set("unreconciled_amount", amount, update_modified=False)
 
 @frappe.whitelist()
 def get_default_bank_cash_account(company, account_type=None, mode_of_payment=None, account=None):
