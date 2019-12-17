@@ -56,15 +56,17 @@ export default {
             return this.selected_transactions.length && this.selected_transactions[0].currency
         },
         is_reconciliation_disabled() {
-            return this.transactions_amount > this.documents_amount || this.transactions_amount == 0 || this.documents_amount == 0
+            return this.transactions_amount == 0 || this.documents_amount == 0
+        },
+        is_pos() {
+            return this.selected_documents.filter(f => (f.is_pos == 1 || f.is_paid == 1))
         }
     },
     methods: {
         reconcile_entries: function() {
             if ((this.selected_transactions.length == 1 && this.selected_documents.length >= 1)
                 || (this.selected_transactions.length >= 1 && this.selected_documents.length == 1)) {
-
-                    if (["Sales Invoice", "Purchase Invoice"].includes(this.selected_documents[0]["doctype"])) {
+                    if (["Sales Invoice", "Purchase Invoice"].includes(this.selected_documents[0]["doctype"]) && !this.is_pos.length) {
                         frappe.confirm(__("This action will create a new payment entry. Do you confirm ?"), () => {
                             this.call_reconciliation()
                         });
@@ -77,7 +79,7 @@ export default {
         },
         call_reconciliation: function() {
             frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.reconcile',
-                {bank_transactions: this.selected_transactions, documents: this.selected_documents}
+                {bank_transactions: this.selected_transactions, documents: !this.is_pos.length ? this.selected_documents : this.is_pos}
             ).then((result) => {
                 this.$emit('resetList')
                 frappe.show_alert({message: __(`${this.selected_documents.length} documents reconciled`), indicator: "green"})

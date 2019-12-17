@@ -19,6 +19,7 @@ class BankTransaction(StatusUpdater):
 		self.check_transaction_references()
 
 	def before_save(self):
+		self.check_payment_types()
 		self.check_reconciliation_amounts()
 
 	def on_submit(self):
@@ -27,6 +28,9 @@ class BankTransaction(StatusUpdater):
 		self.set_allocation_in_bank_transaction()
 		self.set_payment_entries_clearance_date()
 		self.set_status()
+
+	def before_update_after_submit(self):
+		self.check_payment_types()
 
 	def on_update_after_submit(self):
 		self.check_reconciliation_amounts()
@@ -79,7 +83,7 @@ class BankTransaction(StatusUpdater):
 		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status()
 
 	def set_allocation_in_bank_transaction(self):
-		allocated_amount = reduce(lambda x, y: flt(x) + flt(y), [x.allocated_amount for x in self.payment_entries]) \
+		allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])\
 			if self.payment_entries else 0
 		
 		transaction_amount = abs(flt(self.credit) - flt(self.debit))
@@ -94,23 +98,20 @@ class BankTransaction(StatusUpdater):
 		self.reload()
 
 	def check_reconciliation_amounts(self):
-		total_allocated_amount = sum([x.get("allocated_amount", 0) for x in self.payment_entries])
+		total_allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])
 
 		total_unreconciled_amount = 0
 		for payment_entry in self.payment_entries:
 			unreconciled_amount = get_unreconciled_amount(payment_entry)
-			total_unreconciled_amount += flt(unreconciled_amount)
+			total_unreconciled_amount += (flt(unreconciled_amount) * (1 if payment_entry.get("payment_type") == "Debit" else -1))
 
 			if unreconciled_amount and payment_entry.allocated_amount:
-				if  flt(payment_entry.allocated_amount) > flt(unreconciled_amount):
+				if flt(payment_entry.allocated_amount) - flt(unreconciled_amount):
 					frappe.throw(_("The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.").format(\
 						fmt_money(flt(payment_entry.allocated_amount), currency=self.currency), fmt_money(flt(unreconciled_amount), currency=self.currency), _(payment_entry.payment_document), payment_entry.payment_entry))
 
-			if total_unreconciled_amount > abs(flt(self.credit) - flt(self.debit)):
-				frappe.throw(_("The total allocated amount cannot be greater than total (debit - credit) of this bank transaction"))
-
 		if flt(total_allocated_amount) > flt(total_unreconciled_amount):
-			frappe.throw(_("The total allocated amount ({0}) is greater than the total unreconciled amount ({1}).").format(\
+			frappe.msgprint(_("The total allocated amount ({0}) is greater than the total unreconciled amount ({1}).").format(\
 				fmt_money(flt(total_allocated_amount), currency=self.currency), fmt_money(flt(total_unreconciled_amount), currency=self.currency)))
 
 	def set_payment_entries_clearance_date(self):
@@ -127,6 +128,22 @@ class BankTransaction(StatusUpdater):
 	def set_child_clearance_date(self, payment_entry, child_table):
 		frappe.db.set_value(child_table, dict(parenttype=payment_entry.payment_document,
 			parent=payment_entry.payment_entry), "clearance_date", self.date)
+
+	def check_payment_types(self):
+		for payment in self.payment_entries:
+			if payment.payment_document == "Sales Invoice":
+				payment.payment_type = "Debit"
+			elif payment.payment_document == "Purchase Invoice":
+				payment.payment_type = "Credit"
+			if payment.payment_document == "Payment Entry":
+				pt = frappe.db.get_value("Payment Entry", payment.payment_entry, "payment_type")
+				payment.payment_type = "Debit" if pt == "Receive" else "Credit"
+			if payment.payment_document == "Journal Entry":
+				bank_account = frappe.db.get_value("Bank Account", self.bank_account, "account")
+				debit_in_account_currency = frappe.db.get_value("Journal Entry Account", {"parent": payment.payment_entry, "account": bank_account}, "debit_in_account_currency")
+				payment.payment_type = "Debit" if flt(debit_in_account_currency) > 0 else "Credit"
+			if payment.payment_document == "Expense Claim":
+				payment.payment_type = "Credit"
 
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")

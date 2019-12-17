@@ -184,6 +184,7 @@ class SalesInvoice(SellingController):
 			self.update_against_document_in_jv()
 
 		self.update_time_sheet(self.name)
+		self.update_unreconciled_amount()
 
 		if frappe.db.get_single_value('Selling Settings', 'sales_update_frequency') == "Each Transaction":
 			update_company_current_month_sales(self.company)
@@ -1171,6 +1172,10 @@ class SalesInvoice(SellingController):
 				if status == "Disbursed":
 					break
 		return status
+
+	def update_unreconciled_amount(self):
+		if self.is_pos and self.paid_amount:
+			self.db_set("unreconciled_amount", (flt(self.grand_total) - flt(self.outstanding_amount)), update_modified=False)
 
 	def set_status(self, update=False, status=None, update_modified=True):
 		if self.is_new():

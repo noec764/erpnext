@@ -42,6 +42,7 @@ frappe.ui.form.on('Bank Transaction', {
 		});
 	},
 	refresh(frm) {
+		frm.page.clear_actions_menu();
 		if (frm.doc.docstatus == 1 && frm.doc.unallocated_amount > 0) {
 			frm.page.add_action_item(__('Make payment entry'), function() {
 				make_new_doc(frm.doc, "Payment Entry");			
@@ -53,10 +54,33 @@ frappe.ui.form.on('Bank Transaction', {
 frappe.ui.form.on('Bank Transaction Payments', {
 	payment_entry: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frappe.db.get_value(row.payment_document, row.payment_entry, "unreconciled_amount", r => {
-			const amount = r.unreconciled_amount >= frm.doc.unallocated_amount ? r.unreconciled_amount : r.unreconciled_amount <=0 ? 0 : frm.doc.unallocated_amount
-			frappe.model.set_value(cdt, cdn, "allocated_amount", amount);
-		})
+		if (row.payment_document && row.payment_entry) {
+			frappe.db.get_value(row.payment_document, row.payment_entry, "unreconciled_amount", r => {
+				const amount = (r.unreconciled_amount >= frm.doc.unallocated_amount) ? (r.unreconciled_amount <= 0) ? 0 : frm.doc.unallocated_amount : r.unreconciled_amount
+				frappe.model.set_value(cdt, cdn, "allocated_amount", amount);
+			})
+
+			switch(row.payment_document) {
+				case "Sales Invoice":
+					frappe.model.set_value(cdt, cdn, "payment_type", "Debit");
+				case "Purchase Invoice":
+					frappe.model.set_value(cdt, cdn, "payment_type", "Credit");
+				case "Payment Entry":
+					frappe.db.get_value(row.payment_document, row.payment_entry, "payment_type", r => {
+						frappe.model.set_value(cdt, cdn, "payment_type", r.payment_type == "Receive" ? "Debit": "Credit");
+					});
+				case "Journal Entry":
+					if (frm.doc.bank_account) {
+						frappe.db.get_value("Bank Account", frm.doc.bank_account, "account", r => {
+							frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: r.account}, "debit_in_account_currency", (value) => {
+								value&&value.debit_in_account_currency&&frappe.model.set_value(cdt, cdn, "payment_type", value.debit_in_account_currency == 0 ? "Credit" : "Debit");
+							}, 'Journal Entry');
+						})
+					}
+				case "Expense Claim":
+					frappe.model.set_value(cdt, cdn, "payment_type", "Credit");
+			}
+		}
 	}
 });
 

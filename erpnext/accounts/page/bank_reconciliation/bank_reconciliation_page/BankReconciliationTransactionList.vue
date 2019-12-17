@@ -124,7 +124,7 @@ export default {
                 ]
 
                 if (this.list_filter == "Unreconciled") {
-                    query_filters.push(["Bank Transaction", "unallocated_amount", ">", 0])
+                    query_filters.push(["Bank Transaction", "unallocated_amount", "!=", 0])
                 } else if (this.list_filter == "Reconciled") {
                     query_filters.push(["Bank Transaction", "unallocated_amount", "=", 0])
                 }

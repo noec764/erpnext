@@ -105,7 +105,6 @@ export default {
         rows: function() {
             return this.matching_documents[this.document_type].map(document => ({...document,
                 date: frappe.datetime.str_to_user(document.posting_date),
-                amount: document.amount,
                 reference_date: frappe.datetime.str_to_user(document.reference_date),
                 reference_string: document.reference_string,
                 doctype: this.document_type,
@@ -172,7 +171,7 @@ export default {
 }
 
 .document-options {
-    margin-top: 10px;
+    margin: 20px;
 }
 
 .no-data {

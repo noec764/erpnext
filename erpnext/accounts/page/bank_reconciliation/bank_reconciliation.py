@@ -90,22 +90,22 @@ class BankReconciliation:
 			self[value] = next(iter(value))
 
 	def reconcile(self):
-		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"]:
+		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
 			self.check_unique_values()
 			self.make_payment_entries()
 			self.reconcile_created_payments()
 
 		elif len(self.bank_transactions) > 1:
 			self.reconcile_multiple_transactions_with_one_document()
-		elif len(self.documents) > 1:
+		elif len(self.documents) >= 1:
 			self.reconcile_one_transaction_with_multiple_documents()
 
 	def reconcile_multiple_transactions_with_one_document(self):
 		reconciled_amount = 0
 		for bank_transaction in self.bank_transactions:
-			if abs(self.documents[0]["amount"]) > reconciled_amount:
+			if abs(self.documents[0]["unreconciled_amount"]) > reconciled_amount:
 				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
-				allocated_amount = min(bank_transaction.unallocated_amount, abs(self.documents[0]["amount"]))
+				allocated_amount = min(max(bank_transaction.unallocated_amount, 0), abs(self.documents[0]["unreconciled_amount"]))
 
 				if allocated_amount > 0:
 					bank_transaction.append('payment_entries', {
@@ -123,7 +123,7 @@ class BankReconciliation:
 			bank_transaction.append('payment_entries', {
 				'payment_document': document.get("doctype"),
 				'payment_entry': document.get("name"),
-				'allocated_amount': min(document.get("unreconciled_amount"), bank_transaction.unallocated_amount)
+				'allocated_amount': abs(document.get("unreconciled_amount"))
 			})
 
 		bank_transaction.save()
@@ -286,7 +286,7 @@ class BankTransactionMatch:
 
 		if not documents or not self.match:
 			return sorted([i for n, i in enumerate(documents) if i not in documents[n + 1:]], \
-				key=lambda x: x.get("posting_date", x.get("date")), reverse=True)
+				key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)
 
 		# Check if document with a matching amount (+- 10%) exists
 		amount_matches = self.check_matching_amounts(documents)
@@ -295,9 +295,10 @@ class BankTransactionMatch:
 
 		# Get similar bank transactions from history
 		similar_transactions_matches = self.get_similar_transactions_references()
+		
 		result = amount_matches + similar_transactions_matches
 		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
-			key=lambda x: x.get("posting_date", x.get("date")), reverse=True)
+			key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)
 
 		return [dict(x, **{"vgtSelected": True}) for x in output] if len(output) == 1 else self.check_matching_dates(output)
 
@@ -309,42 +310,65 @@ class BankTransactionMatch:
 			return self.get_linked_journal_entries(document_names, unreconciled, filters)
 		elif self.document_type not in ["Expense Claim", "Payment Entry"]:
 			query_filters.update({"currency": self.currency})
-			
-
-		party_field = PARTY_FIELD.get(self.document_type)
-		reference_field = self.get_reference_field()
-		date_field = self.get_reference_date_field()
-		amount_field = self.get_amount_field("debit" if self.amount > 0 else "credit")
 
 		if filters:
 			query_filters.update(filters)
 
 		if unreconciled and self.document_type == "Expense Claim":
 			query_or_filters.update({"unreconciled_amount": (">", 0), "total_amount_reimbursed": ("=", 0)})
-		elif unreconciled:
+		elif unreconciled and self.document_type in ["Sales Invoice", "Purchase Invoice"]:
 			query_or_filters.update({"unreconciled_amount": (">", 0), "outstanding_amount": (">", 0)})
+		elif unreconciled:
+			query_filters.update({"unreconciled_amount": (">", 0)})
 
 		if document_names:
 			query_filters.update({"name": ("in", document_names)})
 
 		query_result = frappe.get_list(self.document_type, filters=query_filters, or_filters=query_or_filters, fields=["*"])
 
-		filtered_result = self.get_filtered_results(query_result)
-
-		return [dict(x, **{
-			"party": x.get(party_field),
-			"amount": x.get("unreconciled_amount") if x.get("unreconciled_amount") > 0 else x.get(amount_field),\
-			"reference_date": x.get(date_field), \
-			"reference_string": x.get(reference_field) \
-			}) for x in filtered_result]
+		return self.get_filtered_results(query_result)
 
 	def get_filtered_results(self, query_result):
 		filtered_result = []
+		party_field = PARTY_FIELD.get(self.document_type)
+		reference_field = self.get_reference_field()
+		date_field = self.get_reference_date_field()
+
 		if self.document_type == "Payment Entry":
 			for result in query_result:
-				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency) \
-					or (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
+				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency):
+					result["amount"] = result["unreconciled_amount"] * -1
 					filtered_result.append(result)
+
+				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
+					filtered_result.append(result)
+
+		elif self.document_type == "Purchase Invoice":
+			return [dict(x, **{
+				"amount": x.get("unreconciled_amount", x.get("outstanding_amount", 0)) if flt(x.get("is_return")) == 1 \
+					else (flt(x.get("unreconciled_amount", x.get("outstanding_amount", 0))) * -1),\
+				"party": x.get(party_field),\
+				"reference_date": x.get(date_field), \
+				"reference_string": x.get(reference_field)
+			}) for x in query_result]
+
+		elif self.document_type == "Sales Invoice":
+			return [dict(x, **{
+				"amount": (x.get("unreconciled_amount", x.get("outstanding_amount", 0)) * -1) if flt(x.get("is_return")) == 1 \
+					else x.get("unreconciled_amount", x.get("outstanding_amount", 0)),
+				"party": x.get(party_field),
+				"reference_date": x.get(date_field), \
+				"reference_string": x.get(reference_field)
+			}) for x in query_result]
+
+		elif self.document_type == "Expense Claim":
+			return [dict(x, **{
+				"amount": x.get("unreconciled_amount", 0) * -1,
+				"party": x.get(party_field),
+				"reference_date": x.get(date_field), \
+				"reference_string": x.get(reference_field)
+			}) for x in query_result]
+
 		else:
 			filtered_result = query_result
 
@@ -366,7 +390,8 @@ class BankTransactionMatch:
 				fields=["parent"])]
 			parent_query_filters.update({"name": ("in", bank_entries)})
 
-		parent_query_result = frappe.get_list("Journal Entry", filters=parent_query_filters, fields=["name", "posting_date", "cheque_no", "cheque_date"])
+		parent_query_result = frappe.get_list("Journal Entry", filters=parent_query_filters, \
+			fields=["name", "posting_date", "cheque_no", "cheque_date", "unreconciled_amount", "remark", "user_remark"])
 		parent_map = {x.get("name"): x for x in parent_query_result}
 
 		party_query_filters = child_query_filters
@@ -374,48 +399,49 @@ class BankTransactionMatch:
 		if filters:
 			party_query_filters.update(filters)
 
-		party_query_filters.update({"parent": ["in", [x.get("name") for x in parent_query_result]], 'party_type': ['is', 'set']})
-		party_query_result = frappe.get_all("Journal Entry Account", filters=party_query_filters, fields=["*"])
+		#party_query_filters.update({"parent": ["in", [x.get("name") for x in parent_query_result]], 'party_type': ['is', 'set']})
+		party_query_result = frappe.get_all("Journal Entry Account", filters=party_query_filters, fields=["*"], debug=True)
 
 		amount_field = self.get_amount_field("debit" if self.amount < 0 else "credit")
 
-		return [dict(x, **{
+		result = [dict(x, **{
 			"name": parent_map.get(x.get("parent"), {}).get("name"),
 			"amount": x.get(amount_field),\
 			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
 			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
 			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
+				or parent_map.get(x.get("parent"), {}).get("remark") or parent_map.get(x.get("parent"), {}).get("userremark"), \
+			"unreconciled_amount": parent_map.get(x.get("parent"), {}).get("unreconciled_amount")
 			}) for x in party_query_result]
 
+		return [x for x in result if x.get("amount") and x.get("name")]
+
 	def get_amount_field(self, debit_or_credit='debit'):
-		amount_field = {
+		return {
 			"Payment Entry": "paid_amount",
 			"Journal Entry": "debit_in_account_currency" if debit_or_credit == "debit" else "credit_in_account_currency",
 			"Sales Invoice": "amount",
 			"Purchase Invoice": "paid_amount",
 			"Expense Claim": "total_sanctioned_amount"
-		}
-		return amount_field.get(self.document_type)
+		}.get(self.document_type)
 
 	def get_reference_date_field(self):
-		reference_date_field = {
+		return {
 			"Payment Entry": "reference_date",
 			"Journal Entry": "cheque_date",
 			"Sales Invoice": "due_date",
 			"Purchase Invoice": "due_date",
 			"Expense Claim": "total_claimed_amount"
-		}
-		return reference_date_field.get(self.document_type)
+		}.get(self.document_type)
 
 	def get_reference_field(self):
-		reference_field = {
+		return {
 			"Payment Entry": "reference_no",
 			"Journal Entry": "cheque_no",
 			"Sales Invoice": "remarks",
 			"Purchase Invoice": "remarks",
 			"Expense Claim": "remark"
-		}
-		return reference_field.get(self.document_type)
+		}.get(self.document_type)
 
 	def check_matching_amounts(self, documents):
 		amount_field = self.get_amount_field("debit" if self.amount > 0 else "credit")

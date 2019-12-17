@@ -277,6 +277,7 @@
    "bold": 1,
    "fieldname": "paid_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Paid Amount",
    "options": "paid_from_account_currency",
    "reqd": 1
@@ -570,6 +571,7 @@
   {
    "fieldname": "unreconciled_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Unreconciled Amount",
    "no_copy": 1,
    "print_hide": 1,
@@ -579,7 +581,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-09 17:44:07.719025",
+ "modified": "2019-12-16 09:21:27.155362",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
