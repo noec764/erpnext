@@ -315,11 +315,11 @@ class BankTransactionMatch:
 			query_filters.update(filters)
 
 		if unreconciled and self.document_type == "Expense Claim":
-			query_or_filters.update({"unreconciled_amount": (">", 0), "total_amount_reimbursed": ("=", 0)})
+			query_or_filters.update({"unreconciled_amount": ("!=", 0), "total_amount_reimbursed": ("=", 0)})
 		elif unreconciled and self.document_type in ["Sales Invoice", "Purchase Invoice"]:
-			query_or_filters.update({"unreconciled_amount": (">", 0), "outstanding_amount": (">", 0)})
+			query_or_filters.update({"unreconciled_amount": ("!=", 0), "outstanding_amount": (">", 0)})
 		elif unreconciled:
-			query_filters.update({"unreconciled_amount": (">", 0)})
+			query_filters.update({"unreconciled_amount": ("!=", 0)})
 
 		if document_names:
 			query_filters.update({"name": ("in", document_names)})
@@ -390,7 +390,7 @@ class BankTransactionMatch:
 		parent_query_filters = {"company": self.company}
 
 		if unreconciled:
-			parent_query_filters.update({"unreconciled_amount": (">", 0)})
+			parent_query_filters.update({"unreconciled_amount": ("!=", 0)})
 
 		if document_names:
 			parent_query_filters.update({"name": ("in", document_names)})
