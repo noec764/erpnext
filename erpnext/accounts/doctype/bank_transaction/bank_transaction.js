@@ -56,7 +56,7 @@ frappe.ui.form.on('Bank Transaction Payments', {
 		const row = locals[cdt][cdn];
 		if (row.payment_document && row.payment_entry) {
 			frappe.db.get_value(row.payment_document, row.payment_entry, "unreconciled_amount", r => {
-				const amount = (r.unreconciled_amount >= frm.doc.unallocated_amount) ? (r.unreconciled_amount <= 0) ? 0 : frm.doc.unallocated_amount : r.unreconciled_amount
+				const amount = (r.unreconciled_amount >= Math.abs(frm.doc.unallocated_amount)) ? ((r.unreconciled_amount <= 0) ? 0 : Math.abs(frm.doc.unallocated_amount)) : r.unreconciled_amount
 				frappe.model.set_value(cdt, cdn, "allocated_amount", amount);
 			})
 
