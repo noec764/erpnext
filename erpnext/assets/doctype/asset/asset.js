@@ -154,6 +154,10 @@ frappe.ui.form.on('Asset', {
 			frm.toggle_reqd('purchase_receipt', 0);
 			frm.set_df_property('purchase_receipt', 'read_only', 1);
 		}
+		else if (frm.doc.is_existing_asset) {
+			frm.toggle_reqd('purchase_receipt', 0);
+			frm.toggle_reqd('purchase_invoice', 0);
+		}
 		else {
 			frm.toggle_reqd('purchase_receipt', 1);
 			frm.set_df_property('purchase_receipt', 'read_only', 0);
@@ -256,6 +260,7 @@ frappe.ui.form.on('Asset', {
 	},
 
 	is_existing_asset: function(frm) {
+		frm.trigger("toggle_reference_doc");
 		// frm.toggle_reqd("next_depreciation_date", (!frm.doc.is_existing_asset && frm.doc.calculate_depreciation));
 	},
 
