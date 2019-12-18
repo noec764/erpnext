@@ -280,7 +280,7 @@ erpnext.pos.PointOfSale = class PointOfSale {
 
 		frappe.run_serially([
 			() => {
-				this.frm.script_manager.trigger('item_code', item.doctype, item.name)
+				return this.frm.script_manager.trigger('item_code', item.doctype, item.name)
 					.then(() => {
 						this.frm.script_manager.trigger('qty', item.doctype, item.name)
 							.then(() => {
