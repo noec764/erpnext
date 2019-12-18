@@ -66,7 +66,7 @@ export default {
     methods: {
         getChartData: function() {
             if (this.bank_account && this.start_date && this.end_date) {
-                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_statement_chart',
+                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_transaction_match.get_statement_chart',
                     {
                         account: this.bank_account,
                         start_date: this.start_date,

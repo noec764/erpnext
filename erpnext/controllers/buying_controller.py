@@ -626,7 +626,7 @@ class BuyingController(StockController):
 
 		asset_items = self.get_asset_items()
 		if asset_items:
-			self.make_serial_nos_for_asset(asset_items)
+			self.auto_make_assets(asset_items)
 
 	def auto_make_assets(self, asset_items):
 		items_data = get_asset_item_details(asset_items)

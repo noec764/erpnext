@@ -57,7 +57,7 @@ export default {
     methods: {
         get_initial_balance: function() {
             if (this.bank_account && this.start_date) {
-                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_initial_balance',
+                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_transaction_match.get_initial_balance',
                     {
                         account: this.bank_account,
                         start_date: this.start_date
@@ -71,7 +71,7 @@ export default {
         },
         get_final_balance: function() {
             if (this.bank_account && this.end_date) {
-                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_final_balance',
+                frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_transaction_match.get_final_balance',
                     {
                         account: this.bank_account,
                         end_date: this.end_date

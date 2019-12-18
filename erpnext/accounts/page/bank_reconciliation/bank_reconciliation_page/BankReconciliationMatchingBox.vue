@@ -131,7 +131,7 @@ export default {
             }
         },
         get_linked_docs: function(match) {
-            frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_reconciliation.get_linked_payments',
+            frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_transaction_match.get_linked_payments',
                 {bank_transactions: this.transactions, document_type: this.document_type, match: match}
             ).then((result) => {
                 this.matching_documents[this.document_type] = result;
