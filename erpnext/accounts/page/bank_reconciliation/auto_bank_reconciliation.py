@@ -9,38 +9,42 @@ from frappe import _
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
 
 @frappe.whitelist()
-def auto_bank_reconciliation(bank_transactions, method="by_name"):
-	#frappe.enqueue("erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation._reconcile_transactions", bank_transactions=bank_transactions, method_type=method)
-	_reconcile_transactions(bank_transactions, method)
-def _reconcile_transactions(bank_transactions, method_type):
+def auto_bank_reconciliation(bank_transactions):
+	frappe.enqueue("erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation._reconcile_transactions", bank_transactions=bank_transactions)
+
+def _reconcile_transactions(bank_transactions):
 	bank_transactions = frappe.parse_json(bank_transactions) or []
 	if not bank_transactions:
 		frappe.throw(_("Please select a period with at least one transaction to reconcile"))
 
 	for bank_transaction in bank_transactions:
-		bank_reconciliation = AutoBankReconciliation(bank_transaction, method_type)
-		bank_reconciliation.reconcile()
+		if frappe.get_hooks('auto_reconciliation_methods'):
+			for hook in frappe.get_hooks('auto_reconciliation_methods'):
+				frappe.get_attr(hook)(bank_transaction)
+
+		else:
+			bank_reconciliation = AutoBankReconciliation(bank_transaction)
+			bank_reconciliation.reconcile()
 
 class AutoBankReconciliation:
-	def __init__(self, bank_transaction, method):
+	def __init__(self, bank_transaction):
 		self.bank_transaction = bank_transaction
-		self.method = method
 		self.prefixes = []
 		self.matching_names = []
 		self.documents = []
 
 	def reconcile(self):
-		if self.method == "by_name":
-			self.get_naming_series()
-			self.check_transaction_references()
-			if self.matching_names:
-				self.get_corresponding_documents()
+		# Reconcile by document name in references
+		self.get_naming_series()
+		self.check_transaction_references()
+		if self.matching_names:
+			self.get_corresponding_documents()
 
 		if self.documents:
 			BankReconciliation([self.bank_transaction], self.documents).reconcile()
 
 	def get_naming_series(self):
-		self.prefixes = [x.get("name") for x in frappe.db.sql("SELECT name FROM `tabSeries`;", as_dict=True) if x.get("name")]
+		self.prefixes = [x.get("name") for x in frappe.db.sql("""SELECT name FROM `tabSeries`""", as_dict=True) if x.get("name")]
 
 	def check_transaction_references(self):
 		for prefix in self.prefixes:

@@ -56,7 +56,7 @@
         </div>
         <div class="text-center document-options">
             <div class="btn-group" role="group" aria-label="Bank Transactions Options">
-                <button type="button" class="btn btn-default" @click="auto_reconciliation('by_name')">{{ __("Reconcile by transaction name") }}</button>
+                <button type="button" class="btn btn-default" @click="auto_reconciliation">{{ __("Automatic reconciliation") }}</button>
                 <button v-if="stripe_transactions.length" type="button" class="btn btn-default" @click="reconcile_stripe">{{ __("Reconcile Stripe Transactions") }}</button>
             </div>
         </div>
@@ -180,12 +180,12 @@ export default {
                 frappe.show_alert({message: __(`Stripe transactions reconciliation in progress`), indicator: "green"})
             })
         },
-        auto_reconciliation: function(method) {
+        auto_reconciliation: function() {
             frappe.xcall('erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation.auto_bank_reconciliation',
-                {bank_transactions: this.mapped_transactions, method: method}
+                {bank_transactions: this.mapped_transactions}
             ).then((result) => {
                 this.get_transaction_list(true)
-                frappe.show_alert({message: __(`Transactions reconciliation by name in progress`), indicator: "green"})
+                frappe.show_alert({message: __(`Automatic reconciliation in progress`), indicator: "green"})
             })
         },
     }
