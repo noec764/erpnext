@@ -119,7 +119,7 @@ class BankReconciliation:
 				bank_transaction.append('payment_entries', {
 					'payment_document': document.get("doctype"),
 					'payment_entry': document.get("name"),
-					'allocated_amount': allocated_amount
+					'allocated_amount': abs(document.get("unreconciled_amount"))
 				})
 
 				bank_transaction.save()
