@@ -49,7 +49,16 @@
                     initialSortBy: {field: 'date', type: 'desc'}
                 }"
                 @on-selected-rows-change="onSelectedRowsChange"
-            />
+            >
+                <template slot="table-row" slot-scope="props">
+                    <span v-if="props.column.field == 'link'">
+                        <a :href="props.row.link" target="_blank"><i class='uil uil-external-link-alt'></i></a>
+                    </span>
+                    <span v-else>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
+                </template>
+            </vue-good-table>
             <div v-show="!transactions.length" class="flex flex-wrap justify-center align-center border rounded no-data">
                 {{ __("No data available for this period")}}
             </div>
@@ -101,7 +110,8 @@ export default {
                 {field: "allocated_amount", hidden: true},
                 {field: "unallocated_amount", hidden: true},
                 {field: "bank_account", hidden: true},
-                {field: "reference_number", hidden: true}
+                {field: "reference_number", hidden: true},
+                {field:'link'}
             ]
         }
     },
@@ -109,7 +119,8 @@ export default {
         mapped_transactions() {
             return this.transactions.map(transaction => ({...transaction,
                 displayed_date: frappe.datetime.str_to_user(transaction.date),
-                amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount
+                amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount,
+                link: `/desk#Form/Bank Transaction/${document.name}`
             }))
         },
         stripe_transactions() {

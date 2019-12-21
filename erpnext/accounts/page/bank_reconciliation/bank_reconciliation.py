@@ -116,7 +116,6 @@ class BankReconciliation:
 		for document in self.documents:
 			bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
 			if flt(bank_transaction.unallocated_amount) != 0:
-				allocated_amount = min(abs(bank_transaction.unallocated_amount), abs(document.get("unreconciled_amount")))
 				bank_transaction.append('payment_entries', {
 					'payment_document': document.get("doctype"),
 					'payment_entry': document.get("name"),
