@@ -114,14 +114,17 @@ class BankReconciliation:
 
 	def reconcile_one_transaction_with_multiple_documents(self):
 		bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
-		for document in self.documents:
-			bank_transaction.append('payment_entries', {
-				'payment_document': document.get("doctype"),
-				'payment_entry': document.get("name"),
-				'allocated_amount': abs(document.get("unreconciled_amount"))
-			})
+		if flt(bank_transaction.unallocated_amount) != 0:
+			allocated_amount = min(abs(bank_transaction.unallocated_amount), abs(document.get("unreconciled_amount")))
 
-		bank_transaction.save()
+			for document in self.documents:
+				bank_transaction.append('payment_entries', {
+					'payment_document': document.get("doctype"),
+					'payment_entry': document.get("name"),
+					'allocated_amount': allocated_amount
+				})
+
+			bank_transaction.save()
 
 	def reconcile_created_payments(self):
 		for transaction, payment in zip(self.bank_transactions, self.payment_entries):
