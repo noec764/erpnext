@@ -652,7 +652,7 @@ class JournalEntry(AccountsController):
 			if line.account in cash_bank_accounts:
 				amount += (flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency))
 
-		self.db_set("unreconciled_amount", amount, update_modified=False)
+		self.db_set("unreconciled_amount", abs(amount), update_modified=False)
 
 @frappe.whitelist()
 def get_default_bank_cash_account(company, account_type=None, mode_of_payment=None, account=None):
