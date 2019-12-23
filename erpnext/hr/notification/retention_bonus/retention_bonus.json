@@ -1,5 +1,6 @@
 {
  "attach_print": 0,
+ "channel": "Email",
  "condition": "doc.docstatus==1",
  "creation": "2018-05-15 18:52:36.362838",
  "date_changed": "bonus_payment_date",
@@ -12,8 +13,8 @@
  "idx": 0,
  "is_standard": 1,
  "message": "<p>{{ _(\"Hello\") }},</p>\n\n<p> {{ _(\"Retention Bonus for\") }} {{ doc.employee_name }} {{ _(\"due on\") }} {{ doc.bonus_payment_date }}</p>",
- "modified": "2018-05-15 19:00:24.294418",
- "modified_by": "ranjith@earthianslive.com",
+ "modified": "2019-12-23 15:09:08.683170",
+ "modified_by": "Administrator",
  "module": "HR",
  "name": "Retention Bonus",
  "owner": "ranjith@earthianslive.com",
