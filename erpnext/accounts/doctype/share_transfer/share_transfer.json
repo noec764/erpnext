@@ -1,124 +1,202 @@
 {
-    "autoname": "naming_series:",
-    "creation": "2017-12-25 16:50:53.878430",
+    "autoname": "ACC-SHT-.YYYY.-.#####",
+    "creation": "2017-12-25 17:18:03.143726",
     "doctype": "DocType",
     "editable_grid": 1,
     "engine": "InnoDB",
     "field_order": [
-     "title",
-     "column_break_2",
-     "naming_series",
-     "section_break_2",
-     "folio_no",
-     "column_break_4",
+     "transfer_type",
+     "column_break_1",
+     "date",
+     "section_break_1",
+     "from_shareholder",
+     "from_folio_no",
+     "column_break_3",
+     "to_shareholder",
+     "to_folio_no",
+     "section_break_10",
+     "equity_or_liability_account",
+     "column_break_12",
+     "asset_account",
+     "section_break_4",
+     "share_type",
+     "from_no",
+     "rate",
+     "column_break_8",
+     "no_of_shares",
+     "to_no",
+     "amount",
+     "section_break_11",
      "company",
-     "is_company",
-     "address_contacts",
-     "address_html",
-     "column_break_9",
-     "contact_html",
-     "section_break_3",
-     "share_balance",
-     "contact_list"
+     "section_break_6",
+     "remarks",
+     "amended_from"
     ],
     "fields": [
      {
-      "fieldname": "title",
-      "fieldtype": "Data",
-      "label": "Title",
+      "fieldname": "transfer_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Transfer Type",
+      "options": "\nIssue\nPurchase\nTransfer",
       "reqd": 1
      },
      {
-      "fieldname": "column_break_2",
+      "fieldname": "column_break_1",
       "fieldtype": "Column Break"
      },
      {
-      "fieldname": "naming_series",
-      "fieldtype": "Select",
-      "options": "ACC-SH-.YYYY.-"
+      "fieldname": "date",
+      "fieldtype": "Date",
+      "label": "Date",
+      "reqd": 1
      },
      {
-      "fieldname": "section_break_2",
+      "fieldname": "section_break_1",
       "fieldtype": "Section Break"
      },
      {
-      "fieldname": "folio_no",
-      "fieldtype": "Data",
-      "label": "Folio no.",
-      "read_only": 1,
-      "unique": 1
+      "depends_on": "eval:doc.transfer_type != 'Issue'",
+      "fieldname": "from_shareholder",
+      "fieldtype": "Link",
+      "label": "From Shareholder",
+      "options": "Shareholder"
      },
      {
-      "fieldname": "column_break_4",
+      "depends_on": "eval:doc.transfer_type != 'Issue'",
+      "fetch_from": "from_shareholder.folio_no",
+      "fieldname": "from_folio_no",
+      "fieldtype": "Data",
+      "label": "From Folio No"
+     },
+     {
+      "depends_on": "eval:doc.company",
+      "fieldname": "equity_or_liability_account",
+      "fieldtype": "Link",
+      "label": "Equity/Liability Account",
+      "options": "Account",
+      "reqd": 1
+     },
+     {
+      "depends_on": "eval:(doc.transfer_type != 'Transfer') && (doc.company)",
+      "fieldname": "asset_account",
+      "fieldtype": "Link",
+      "label": "Asset Account",
+      "options": "Account"
+     },
+     {
+      "fieldname": "column_break_3",
       "fieldtype": "Column Break"
+     },
+     {
+      "depends_on": "eval:doc.transfer_type != 'Purchase'",
+      "fieldname": "to_shareholder",
+      "fieldtype": "Link",
+      "label": "To Shareholder",
+      "options": "Shareholder"
+     },
+     {
+      "depends_on": "eval:doc.transfer_type != 'Purchase'",
+      "fetch_from": "to_shareholder.folio_no",
+      "fieldname": "to_folio_no",
+      "fieldtype": "Data",
+      "label": "To Folio No"
+     },
+     {
+      "fieldname": "section_break_4",
+      "fieldtype": "Section Break"
+     },
+     {
+      "fieldname": "share_type",
+      "fieldtype": "Link",
+      "label": "Share Type",
+      "options": "Share Type",
+      "reqd": 1
+     },
+     {
+      "description": "(including)",
+      "fieldname": "from_no",
+      "fieldtype": "Int",
+      "label": "From No",
+      "reqd": 1
+     },
+     {
+      "fieldname": "rate",
+      "fieldtype": "Currency",
+      "label": "Rate",
+      "reqd": 1
+     },
+     {
+      "fieldname": "column_break_8",
+      "fieldtype": "Column Break"
+     },
+     {
+      "fieldname": "no_of_shares",
+      "fieldtype": "Int",
+      "label": "No of Shares",
+      "reqd": 1
+     },
+     {
+      "description": "(including)",
+      "fieldname": "to_no",
+      "fieldtype": "Int",
+      "label": "To No",
+      "reqd": 1
+     },
+     {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "Amount",
+      "read_only": 1
+     },
+     {
+      "fieldname": "section_break_11",
+      "fieldtype": "Section Break"
      },
      {
       "fieldname": "company",
       "fieldtype": "Link",
-      "in_list_view": 1,
       "label": "Company",
       "options": "Company",
       "reqd": 1
      },
      {
-      "default": "0",
-      "fieldname": "is_company",
-      "fieldtype": "Check",
-      "hidden": 1,
-      "label": "Is Company",
+      "fieldname": "section_break_6",
+      "fieldtype": "Section Break"
+     },
+     {
+      "fieldname": "remarks",
+      "fieldtype": "Long Text",
+      "label": "Remarks"
+     },
+     {
+      "fieldname": "amended_from",
+      "fieldtype": "Link",
+      "label": "Amended From",
+      "no_copy": 1,
+      "options": "Share Transfer",
+      "print_hide": 1,
       "read_only": 1
      },
      {
-      "fieldname": "address_contacts",
-      "fieldtype": "Section Break",
-      "label": "Address and Contacts",
-      "options": "fa fa-map-marker"
+      "fieldname": "section_break_10",
+      "fieldtype": "Section Break"
      },
      {
-      "fieldname": "address_html",
-      "fieldtype": "HTML",
-      "label": "Address HTML",
-      "read_only": 1
-     },
-     {
-      "fieldname": "column_break_9",
+      "fieldname": "column_break_12",
       "fieldtype": "Column Break"
-     },
-     {
-      "fieldname": "contact_html",
-      "fieldtype": "HTML",
-      "label": "Contact HTML",
-      "read_only": 1
-     },
-     {
-      "fieldname": "section_break_3",
-      "fieldtype": "Section Break",
-      "label": "Share Balance"
-     },
-     {
-      "fieldname": "share_balance",
-      "fieldtype": "Table",
-      "label": "Share Balance",
-      "options": "Share Balance",
-      "read_only": 1
-     },
-     {
-      "description": "Hidden list maintaining the list of contacts linked to Shareholder",
-      "fieldname": "contact_list",
-      "fieldtype": "Code",
-      "hidden": 1,
-      "label": "Contact List",
-      "read_only": 1
      }
     ],
-    "modified": "2019-11-17 23:24:11.395882",
+    "is_submittable": 1,
+    "modified": "2019-12-20 14:48:01.990600",
     "modified_by": "Administrator",
     "module": "Accounts",
-    "name": "Shareholder",
-    "name_case": "Title Case",
+    "name": "Share Transfer",
     "owner": "Administrator",
     "permissions": [
      {
+      "amend": 1,
+      "cancel": 1,
       "create": 1,
       "delete": 1,
       "email": 1,
@@ -128,18 +206,7 @@
       "report": 1,
       "role": "System Manager",
       "share": 1,
-      "write": 1
-     },
-     {
-      "create": 1,
-      "delete": 1,
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "Accounts Manager",
-      "share": 1,
+      "submit": 1,
       "write": 1
      },
      {
@@ -153,11 +220,23 @@
       "role": "Accounts User",
       "share": 1,
       "write": 1
+     },
+     {
+      "cancel": 1,
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Accounts Manager",
+      "share": 1,
+      "submit": 1,
+      "write": 1
      }
     ],
-    "search_fields": "folio_no",
     "sort_field": "modified",
     "sort_order": "DESC",
-    "title_field": "title",
     "track_changes": 1
    }
