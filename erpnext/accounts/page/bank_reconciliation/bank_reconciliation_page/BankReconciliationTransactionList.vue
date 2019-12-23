@@ -119,8 +119,8 @@ export default {
         mapped_transactions() {
             return this.transactions.map(transaction => ({...transaction,
                 displayed_date: frappe.datetime.str_to_user(transaction.date),
-                amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount,
-                link: `/desk#Form/Bank Transaction/${document.name}`
+                amount: transaction.unallocated_amount,
+                link: `/desk#Form/Bank Transaction/${transaction.name}`
             }))
         },
         stripe_transactions() {

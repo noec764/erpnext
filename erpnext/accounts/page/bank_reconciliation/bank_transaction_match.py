@@ -175,14 +175,13 @@ class BankTransactionMatch:
 		if filters:
 			party_query_filters.update(filters)
 
-		#party_query_filters.update({"parent": ["in", [x.get("name") for x in parent_query_result]], 'party_type': ['is', 'set']})
 		party_query_result = frappe.get_all("Journal Entry Account", filters=party_query_filters, fields=["*"], debug=True)
 
 		amount_field = self.get_amount_field("debit" if self.amount < 0 else "credit")
 
 		result = [dict(x, **{
 			"name": parent_map.get(x.get("parent"), {}).get("name"),
-			"amount": x.get(amount_field),\
+			"amount": (x.get(amount_field) * -1) if x.get("credit_in_account_currency") > 0 else x.get(amount_field),\
 			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
 			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
 			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
