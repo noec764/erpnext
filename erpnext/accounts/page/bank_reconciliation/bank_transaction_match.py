@@ -18,7 +18,7 @@ from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_ac
 
 PARTY_FIELD = {
 	"Payment Entry": "party",
-	"Journal Entry": "party",
+	"Journal Entry": "against",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
 	"Expense Claim": "Employee"
@@ -170,23 +170,21 @@ class BankTransactionMatch:
 			fields=["name", "posting_date", "cheque_no", "cheque_date", "unreconciled_amount", "remark", "user_remark"])
 		parent_map = {x.get("name"): x for x in parent_query_result}
 
-		party_query_filters = child_query_filters
-		party_query_filters.pop("account")
+		child_query_filters.update({"voucher_type": "Journal Entry", "voucher_no": ("in", [x.name for x in parent_query_result])})
+
 		if filters:
-			party_query_filters.update(filters)
+			child_query_filters.update(filters)
 
-		party_query_result = frappe.get_all("Journal Entry Account", filters=party_query_filters, fields=["*"], debug=True)
-
-		amount_field = self.get_amount_field("debit" if self.amount < 0 else "credit")
+		party_query_result = frappe.get_all("GL Entry", filters=child_query_filters, fields=["*"])
 
 		result = [dict(x, **{
-			"name": parent_map.get(x.get("parent"), {}).get("name"),
-			"amount": (x.get(amount_field) * -1) if x.get("credit_in_account_currency") > 0 else x.get(amount_field),\
-			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
-			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
-			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
-				or parent_map.get(x.get("parent"), {}).get("remark") or parent_map.get(x.get("parent"), {}).get("userremark"), \
-			"unreconciled_amount": parent_map.get(x.get("parent"), {}).get("unreconciled_amount")
+			"name": parent_map.get(x.get("voucher_no"), {}).get("name"),
+			"amount": x.get("debit_in_account_currency") - x.get("credit_in_account_currency"), \
+			"posting_date": parent_map.get(x.get("voucher_no"), {}).get("posting_date"), \
+			"reference_date": parent_map.get(x.get("voucher_no"), {}).get("cheque_date"), \
+			"reference_string": parent_map.get(x.get("voucher_no"), {}).get("cheque_no") \
+				or parent_map.get(x.get("voucher_no"), {}).get("remark") or parent_map.get(x.get("voucher_no"), {}).get("userremark"), \
+			"unreconciled_amount": parent_map.get(x.get("voucher_no"), {}).get("unreconciled_amount")
 			}) for x in party_query_result]
 
 		return [x for x in result if x.get("amount") and x.get("name")]
@@ -240,17 +238,12 @@ class BankTransactionMatch:
 
 		query_filters = {descriptions.get("party_field"): ["in", descriptions.get("party")]}
 
-		if self.document_type == "Journal Entry":
-			query_filters.update({descriptions.get("party_type_field"): ["in", descriptions.get("party_type")]})
-
 		return self.get_linked_documents(unreconciled=True, filters=query_filters)
 
 	def get_description_and_party(self, references):
 		output = {
-			"party_type": set(),
 			"party": set(),
 			"description": set(),
-			"party_type_field": "party_type",
 			"party_field": PARTY_FIELD.get(self.document_type),
 			"description_field": self.get_reference_field()
 		}
@@ -259,10 +252,10 @@ class BankTransactionMatch:
 			output["description"].add(reference.get(output["description_field"]))
 
 			if reference.get("doctype") == "Journal Entry":
-				journal_entry_accounts = frappe.get_all("Journal Entry Account", filters={"parent": reference.get("name"), "parenttype": document_type, \
-					"party_type": ["is", "set"]}, fields=["party_type", "party"])
-				for account in journal_entry_accounts:
-					output["party"].add(account.get(output["party_field"]))
+				je_parties = set([x.party for x in frappe.get_all("Journal Entry Account", filters={"parent": reference.get("name"), "parenttype": document_type, \
+					"party_type": ["is", "set"]}, fields=["party"])])
+
+				output["party"].update(je_parties)
 
 			else:
 				output["party"].add(reference.get(output["party_field"]))
