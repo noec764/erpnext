@@ -221,10 +221,16 @@ class BankTransactionMatch:
 		return [x for x in documents if flt(abs(self.amount)) == flt(x.get(amount_field))]
 
 	def check_matching_dates(self, output):
+		if not output:
+			return []
+
 		comparison_date = self.bank_transactions[0].get("date")
+		description = self.bank_transactions[0].get("description")
+
+		output = sorted(output, key=lambda doc: difflib.SequenceMatcher(lambda doc: doc == " ", doc.get("party"), description).ratio(), reverse=True)
 
 		date_field = self.get_reference_date_field()
-		closest = min(output, key=lambda x: abs(getdate(x.get(date_field)) - getdate(parse_date(comparison_date))))
+		closest = min(output[:10], key=lambda x: abs(getdate(x.get(date_field)) - getdate(parse_date(comparison_date))))
 
 		return [dict(x, **{"vgtSelected": True}) if x.get("name") == closest.get("name") else x for x in output]
 

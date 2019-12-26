@@ -107,6 +107,7 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_preview": 1,
    "label": "Posting Date",
    "no_copy": 1,
    "oldfieldname": "posting_date",
@@ -187,6 +188,7 @@
   {
    "fieldname": "total_debit",
    "fieldtype": "Currency",
+   "in_preview": 1,
    "label": "Total Debit",
    "no_copy": 1,
    "oldfieldname": "total_debit",
@@ -198,6 +200,7 @@
   {
    "fieldname": "total_credit",
    "fieldtype": "Currency",
+   "in_preview": 1,
    "label": "Total Credit",
    "no_copy": 1,
    "oldfieldname": "total_credit",
@@ -286,6 +289,7 @@
    "fieldname": "remark",
    "fieldtype": "Small Text",
    "in_global_search": 1,
+   "in_preview": 1,
    "label": "Remark",
    "no_copy": 1,
    "oldfieldname": "remark",
@@ -497,7 +501,7 @@
  "idx": 176,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-10 08:32:47.349190",
+ "modified": "2019-12-24 10:38:55.627154",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",
@@ -542,6 +546,7 @@
   }
  ],
  "search_fields": "voucher_type,posting_date, due_date, cheque_no",
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "title",

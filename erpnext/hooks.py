@@ -356,6 +356,9 @@ regional_overrides = {
 	'Italy': {
 		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.italy.utils.update_itemised_tax_data',
 		'erpnext.controllers.accounts_controller.validate_regional': 'erpnext.regional.italy.utils.sales_invoice_validate',
+	},
+	'Switzerland': {
+		'erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation.regional_reconciliation': 'erpnext.regional.switzerland.utils.regional_reconciliation'
 	}
 }
 user_privacy_documents = [

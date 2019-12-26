@@ -97,6 +97,7 @@
    "fieldname": "payment_type",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Payment Type",
    "options": "Receive\nPay\nInternal Transfer",
@@ -113,6 +114,7 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Posting Date",
    "reqd": 1
   },
@@ -159,6 +161,7 @@
    "depends_on": "eval:in_list([\"Receive\", \"Pay\"], doc.payment_type) && doc.party_type",
    "fieldname": "party",
    "fieldtype": "Dynamic Link",
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Party",
    "options": "party_type"
@@ -278,6 +281,7 @@
    "fieldname": "paid_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Paid Amount",
    "options": "paid_from_account_currency",
    "reqd": 1
@@ -581,7 +585,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-16 09:21:27.155362",
+ "modified": "2019-12-24 10:36:38.055125",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
@@ -622,6 +626,7 @@
   }
  ],
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "title",
