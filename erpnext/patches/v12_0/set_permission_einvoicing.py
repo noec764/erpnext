@@ -8,7 +8,7 @@ def execute():
 	if not company:
 		return
 
-    make_custom_fields()
+	make_custom_fields()
 
 	add_permission('Import Supplier Invoice', 'Accounts Manager', 0)
 	update_permission_property('Import Supplier Invoice', 'Accounts Manager', 0, 'write', 1)

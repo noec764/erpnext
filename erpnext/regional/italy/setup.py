@@ -154,7 +154,8 @@ def make_custom_fields(update=True):
 				fieldtype='Data', insert_after='country', print_hide=1, read_only=0,
 				fetch_from="country.code"),
 			dict(fieldname='state_code', label='State Code',
-				fieldtype='Data', insert_after='state', print_hide=1),
+				fieldtype='Data', insert_after='state', print_hide=1)
+		],
 		'Purchase Invoice': [
 			dict(fieldname='document_type', label='Document Type',
 				fieldtype='Data', insert_after='company', print_hide=1, read_only=1
