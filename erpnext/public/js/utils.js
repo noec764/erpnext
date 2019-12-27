@@ -316,7 +316,8 @@ erpnext.utils.select_alternate_items = function(opts) {
 					fieldname:"item_code",
 					options: 'Item',
 					in_list_view: 1,
-					read_only: 1,
+					read_only: 0,
+					disabled: 0,
 					label: __('Item Code')
 				}, {
 					fieldtype:'Link',
