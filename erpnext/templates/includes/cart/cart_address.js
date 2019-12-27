@@ -22,16 +22,6 @@ frappe.ready(() => {
 					reqd: 1
 				},
 				{
-					label: __('Address Type'),
-					fieldname: 'address_type',
-					fieldtype: 'Select',
-					options: [
-						{ "label": __("Billing"), "value": "Billing" },
-						{ "label": __("Shipping"), "value": "Shipping" },
-					],
-					reqd: 1
-				},
-				{
 					label: __('Address Line 1'),
 					fieldname: 'address_line1',
 					fieldtype: 'Data',
@@ -54,18 +44,38 @@ frappe.ready(() => {
 					fieldtype: 'Data'
 				},
 				{
-					label: __('Pin Code'),
-					fieldname: 'pincode',
-					fieldtype: 'Data'
-				},
-				{
 					label: __('Country'),
 					fieldname: 'country',
 					fieldtype: 'Link',
 					reqd: 1,
 					options: 'Country',
 					only_select: 1
+				}
+				{
+					fieldname: "column_break0",
+					fieldtype: "Column Break",
+					width: "50%"
 				},
+				{
+					label: __('Address Type'),
+					fieldname: 'address_type',
+					fieldtype: 'Select',
+					options: [
+						{ "label": __("Billing"), "value": "Billing" },
+						{ "label": __("Shipping"), "value": "Shipping" },
+					],
+					reqd: 1
+				},
+				{
+					label: __('Pin Code'),
+					fieldname: 'pincode',
+					fieldtype: 'Data'
+				},
+				{
+					fieldname: "phone",
+					fieldtype: "Data",
+					label: "Phone"
+				}
 			],
 			primary_action_label: __('Save'),
 			primary_action: (values) => {

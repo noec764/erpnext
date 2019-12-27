@@ -78,10 +78,12 @@
   "ordered_qty",
   "planned_qty",
   "column_break_69",
-  "delivered_qty",
   "work_order_qty",
+  "delivered_qty",
   "produced_qty",
   "returned_qty",
+  "shopping_cart_section",
+  "additional_notes",
   "item_booking_section",
   "item_booking",
   "section_break_63",
@@ -764,12 +766,23 @@
    "fieldname": "against_blanket_order",
    "fieldtype": "Check",
    "label": "Against Blanket Order"
+  },
+  {
+    "collapsible": 1,
+    "fieldname": "shopping_cart_section",
+    "fieldtype": "Section Break",
+    "label": "Shopping Cart"
+  },
+  {
+    "fieldname": "additional_notes",
+    "fieldtype": "Text",
+    "label": "Additional Notes"
   }
  ],
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2019-12-12 18:49:47.475523",
+ "modified": "2019-12-26 18:49:47.475523",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",
