@@ -172,52 +172,28 @@ class GoCardlessSettings(PaymentGatewayController):
 		return self.get_payment_by_id(id) if id else self.get_payment_list(params)
 
 	def get_payment_by_id(self, id):
-		try:
-			return self.client.payments.get(id)
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless payment retrieval error"))
+		return self.client.payments.get(id)
 
 	def get_payment_list(self, params=None):
-		try:
-			return self.client.payments.list(params=params).records
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless payment retrieval error"))
+		return self.client.payments.list(params=params).records
 
 	def get_payout_by_id(self, id):
-		try:
-			return self.client.payouts.get(id)
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless payout retrieval error"))
+		return self.client.payouts.get(id)
 
 	def get_payout_items_list(self, params):
-		try:
-			return self.client.payout_items.list(params=params).records
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless payout items retrieval error"))
+		return self.client.payout_items.list(params=params).records
 
 	def get_subscription(self, id):
-		try:
-			return self.client.subscriptions.get(id)
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless subscription retrieval error"))
+		return self.client.subscriptions.get(id)
 
 	def update_subscription(self, id, params=None):
-		try:
-			return self.client.subscriptions.update(id, params=params)
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless subscription update error"))
+		return self.client.subscriptions.update(id, params=params)
 
 	def cancel_subscription(self, **kwargs):
-		try:
-			return self.client.subscriptions.cancel(kwargs.get("subscription"))
-		except Exception as e:
-			frappe.log_error(e, _("GoCardless subscription cancellation error"))
+		return self.client.subscriptions.cancel(kwargs.get("subscription"))
 
 	def get_single_mandate(self, id):
-		try:
-			return self.client.mandates.get(id)
-		except Exception as e:
-			frappe.log_error(e, _("Sepa mandate retrieval error"))
+		return self.client.mandates.get(id)
 
 	@staticmethod
 	def get_base_amount(payout_items, gocardless_payment):
@@ -396,9 +372,6 @@ def check_integrated_documents():
 
 	check_subscriptions_amount()
 
-		# TODO: Analyze if necessary
-		# fetch_existing_payments(provider)
-
 def check_mandate_status(provider):
 	customers = frappe.get_all("Integration References",\
 		filters={"gocardless_settings": provider.name}, fields=["customer"])
@@ -443,26 +416,6 @@ def check_payment_status(provider):
 
 					if payment.status == "confirmed" or payment.status == "paid_out":
 						frappe.db.set_value("Integration Request", request["name"], "status", "Completed")
-
-def fetch_existing_payments(provider):
-	existing_requests = [x["service_id"] for x in frappe.get_all("Integration Request",\
-		filters={"integration_request_service": "GoCardless"}, fields=["service_id"])]
-	payments = provider.get_payments_on_gocardless(params={"charge_date[gte]": nowdate()})
-
-	for payment in payments:
-		if payment.id not in existing_requests:
-			missing_request = frappe.get_doc({
-				"doctype": "Integration Request",
-				"integration_type": "Request",
-				"integration_request_service": "GoCardless",
-				"payment_gateway_controller": provider.name,
-				"data": str(payment.__dict__),
-				"service_document": "payment",
-				"service_id": payment.id,
-				"service_status": payment.status,
-				"status": "Confirmed" if (payment.status == "confirmed" or payment.status == "paid_out") \
-					else "Pending"
-			}).insert(ignore_permissions=True)
 
 def check_subscriptions_amount():
 	"""
