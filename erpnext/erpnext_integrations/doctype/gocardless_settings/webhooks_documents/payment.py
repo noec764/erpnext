@@ -33,14 +33,16 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
 			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
+		if self.gocardless_payment:
+			self.get_one_off_invoice()
+
 		if self.gocardless_subscription:
 			self.get_linked_subscription()
 			self.check_subscription_dates()
-			self.get_subscription_invoice()
+			if not self.invoice:
+				self.get_subscription_invoice()
 			if self.integration_request.status == "Queued":
 				return
-		elif self.gocardless_payment:
-			self.get_one_off_invoice()
 
 		if self.gocardless_payment:
 			self.integration_request.db_set("service_id", self.gocardless_payment)
