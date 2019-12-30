@@ -82,6 +82,7 @@ class Subscription(Document):
 			self.save()
 
 		elif not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
+			self.set_plan_details_status()
 			self.generate_sales_order()
 			if not self.has_invoice_for_period():
 				self.generate_invoice()
@@ -93,6 +94,7 @@ class Subscription(Document):
 			self.save()
 
 		elif self.generate_invoice_at_period_start:
+			self.set_plan_details_status()
 			self.generate_sales_order()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
