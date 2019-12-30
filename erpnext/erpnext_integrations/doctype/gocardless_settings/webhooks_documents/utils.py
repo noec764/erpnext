@@ -18,6 +18,7 @@ class GoCardlessWebhookHandler(WebhooksController):
 		self.get_mandate()
 		self.get_customer()
 		self.get_payment()
+		self.get_reference_date()
 		self.get_subscription()
 
 	def get_mandate(self):
@@ -36,6 +37,12 @@ class GoCardlessWebhookHandler(WebhooksController):
 
 	def get_payment(self):
 		self.gocardless_payment = self.data.get("links", {}).get("payment")
+
+	def get_reference_date(self):
+		self.reference_date = getdate(getattr(self.get_payment_document(), "charge_date"))
+
+	def get_payment_document(self):
+		return self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
 
 	def get_payout(self):
 		self.gocardless_payout = self.data.get("links", {}).get("payout")

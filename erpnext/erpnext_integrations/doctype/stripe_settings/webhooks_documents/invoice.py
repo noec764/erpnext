@@ -10,7 +10,7 @@ from frappe.utils import flt
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
 EVENT_MAP = {
-	'invoice.created': 'create_invoice',
+	'invoice.created': 'find_invoice',
 	'invoice.deleted': 'delete_invoice',
 	'invoice.finalized': 'finalize_invoice',
 	'invoice.payment_failed': 'fail_invoice',

@@ -10,11 +10,11 @@ from frappe.utils import flt
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.utils import GoCardlessWebhookHandler
 
 EVENT_MAP = {
-	'created': 'create_invoice',
-	'customer_approval_granted': 'create_and_pay_invoice',
+	'created': 'find_invoice',
+	'customer_approval_granted': 'submit_and_pay_invoice',
 	'customer_approval_denied': 'change_status',
 	'submitted': 'submit_invoice',
-	'confirmed': 'create_and_pay_invoice',
+	'confirmed': 'submit_and_pay_invoice',
 	'cancelled': 'cancel_invoice',
 	'failed': 'fail_invoice',
 	'charged_back': 'create_credit_note',
@@ -33,16 +33,13 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
 			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
-		if self.gocardless_payment:
-			self.get_one_off_invoice()
-
 		if self.gocardless_subscription:
 			self.get_linked_subscription()
 			self.check_subscription_dates()
-			if not self.invoice:
-				self.get_subscription_invoice()
 			if self.integration_request.status == "Queued":
 				return
+
+		self.get_corresponding_invoice()
 
 		if self.gocardless_payment:
 			self.integration_request.db_set("service_id", self.gocardless_payment)
@@ -64,7 +61,7 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 		else:
 			self.subscription = frappe.get_doc("Subscription", self.subscriptions[0].get("name"))
 
-	def create_and_pay_invoice(self):
+	def submit_and_pay_invoice(self):
 		if self.invoice and self.invoice.docstatus == 0:
 			self.submit_invoice()
 
@@ -117,7 +114,8 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
 				self.payment_entry.update({
 					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) + fees,
-					"received_amount": flt(self.payment_entry.received_amount) + fees
+					"received_amount": flt(self.payment_entry.received_amount) + fees,
+					"mode_of_payment": gateway_defaults.get("mode_of_payment")
 				})
 
 				self.payment_entry.append("deductions", {
