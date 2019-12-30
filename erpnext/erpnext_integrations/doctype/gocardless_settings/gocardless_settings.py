@@ -220,16 +220,16 @@ class GoCardlessSettings(PaymentGatewayController):
 			frappe.log_error(e, _("Sepa mandate retrieval error"))
 
 	@staticmethod
-	def get_base_amount(payout_items):
-		paid_amount = [x.amount for x in payout_items if x.type == "payment_paid_out"]
+	def get_base_amount(payout_items, gocardless_payment):
+		paid_amount = [x.amount for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == gocardless_payment)]
 		total = 0
 		for p in paid_amount:
 			total += flt(p)
 		return total / 100
 
 	@staticmethod
-	def get_fee_amount(payout_items):
-		fee_amount = [x.amount for x in payout_items if x.type == "gocardless_fee" or x.type == "app_fee"]
+	def get_fee_amount(payout_items, gocardless_payment):
+		fee_amount = [x.amount for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == gocardless_payment)]
 		total = 0
 		for p in fee_amount:
 			total += flt(p)
