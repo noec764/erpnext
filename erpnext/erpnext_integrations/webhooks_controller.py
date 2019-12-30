@@ -101,9 +101,11 @@ class WebhooksController():
 					self.integration_request.get("service_id")))
 			else:
 				if self.invoice.get("docstatus") == 1:
+					posting_date = getdate(frappe.parse_json(self.integration_request.data).get("created_at"))
 					self.payment_entry = get_payment_entry("Sales Invoice", self.invoice.name)
+					self.payment_entry.posting_date = posting_date
 					self.payment_entry.reference_no = self.integration_request.get("service_id") or self.integration_request.name
-					self.payment_entry.reference_date = nowdate()
+					self.payment_entry.reference_date = posting_date
 					if hasattr(self, 'add_fees_before_creation'):
 						self.add_fees_before_creation()
 					self.payment_entry.flags.ignore_permissions = True
@@ -119,7 +121,10 @@ class WebhooksController():
 	def submit_payment(self):
 		try:
 			if frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
+				posting_date = getdate(frappe.parse_json(self.integration_request.data).get("created_at"))
 				self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id")))
+				self.payment_entry.posting_date = posting_date
+				self.payment_entry.reference_date = posting_date
 				if hasattr(self, 'add_fees_before_submission'):
 					self.add_fees_before_submission()
 				self.payment_entry.submit()
