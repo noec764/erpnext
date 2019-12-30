@@ -24,6 +24,7 @@ class Subscription(Document):
 		self.set_subscription_status()
 
 	def validate(self):
+		self.set_plan_details_status()
 		self.get_subscription_rates()
 		self.validate_trial_period()
 		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
@@ -123,20 +124,25 @@ class Subscription(Document):
 	def get_plans_pricing_rules(self):
 		rules = set()
 		for plan in self.plans:
-			rules.add(frappe.db.get_value("Subscription Plan", plan.plan, "price_determination"))
+			if plan.status == "Active":
+				rules.add(frappe.db.get_value("Subscription Plan", plan.plan, "price_determination"))
 
 		return rules
 
 	def get_billing_cycle_and_interval(self):
-		plan_names = [plan.plan for plan in self.plans]
-		billing_info = frappe.db.sql(
-			'select distinct `billing_interval`, `billing_interval_count` '
-			'from `tabSubscription Plan` '
-			'where name in %s',
-			(plan_names,), as_dict=1
-		)
+		plan_names = [plan.plan for plan in self.plans if plan.status == "Active"]
+		
+		if plan_names:
+			billing_info = frappe.db.sql(
+				'select distinct `billing_interval`, `billing_interval_count` '
+				'from `tabSubscription Plan` '
+				'where name in %s',
+				(plan_names,), as_dict=1
+			)
 
-		return billing_info
+			return billing_info
+
+		return {}
 
 	def get_billing_cycle_data(self):
 		billing_info = self.get_billing_cycle_and_interval()
@@ -283,7 +289,7 @@ class Subscription(Document):
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
-		items_list = self.get_items_from_plans(self.plans,\
+		items_list = self.get_items_from_plans([p for p in self.plans if p.status == "Active"],\
 			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date, prorate)
 		for item in items_list:
 			document.append('items', item)
@@ -443,11 +449,19 @@ class Subscription(Document):
 	def get_subscription_rates(self):
 		total = 0
 		for plan in self.plans:
-			plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
-			total += (flt(plan.qty) * flt(plan.rate))
+			if plan.status == "Active":
+				plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
+				total += (flt(plan.qty) * flt(plan.rate))
 
 		if total != self.total:
 			self.total = total
+
+	def set_plan_details_status(self):
+		for plan in self.plans:
+			if getdate(plan.from_date or "1900-01-01") <= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
+				plan.status = "Active"
+			else:
+				plan.status = "Inactive"
 
 	def simulate_grand_total_calculation(self):
 		self.grand_total = self.simulated_grand_total()

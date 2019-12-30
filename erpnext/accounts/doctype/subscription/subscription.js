@@ -4,6 +4,10 @@
 frappe.ui.form.on('Subscription', {
 	setup: function(frm) {
 		frm.trigger('setup_listeners');
+
+		frm.set_indicator_formatter('plan', function(doc) {
+			return (doc.status == "Active") ? "green" : "darkgrey";
+		});
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
