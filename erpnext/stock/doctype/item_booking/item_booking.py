@@ -26,12 +26,14 @@ from googleapiclient.errors import HttpError
 from frappe.desk.calendar import process_recurring_events
 
 class ItemBooking(Document):
-	def before_save(self):
+	def validate(self):
+		self.title = self.item_name
 		if self.user:
 			user_name = frappe.db.get_value("User", self.user, "full_name")
-			self.title = self.item_name + " - " + user_name or self.user
-		else:
-			self.title = self.item_name
+			self.title += " - " + (user_name or self.user)
+
+		elif self.party_name and self.party_type:
+			self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title()
 
 		if self.sync_with_google_calendar and not self.google_calendar:
 			self.google_calendar = frappe.db.get_value("Item", self.item, "google_calendar")
