@@ -287,7 +287,7 @@ class Subscription(Document):
 		document.customer = self.customer
 		document.set_missing_lead_customer_details()
 		document.subscription = self.name
-		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
+		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
