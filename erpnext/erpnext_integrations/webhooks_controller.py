@@ -37,7 +37,7 @@ class WebhooksController():
 			invoice = self.subscription.get_current_invoice()
 
 			if invoice and invoice.to_date > getdate(nowdate()) and \
-				(abs(getdate(invoice.due_date) - self.reference_date) < timedelta(days=11)):
+				(abs(getdate(invoice.due_date) - getdate(self.reference_date)) < timedelta(days=11)):
 				self.invoice = invoice
 				self.invoice.flags.ignore_permissions = True
 
