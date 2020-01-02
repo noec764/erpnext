@@ -124,9 +124,9 @@ class BankTransaction(StatusUpdater):
 	def check_payment_types(self):
 		for payment in self.payment_entries:
 			if payment.payment_document == "Sales Invoice":
-				payment.payment_type = "Debit"
+				payment.payment_type = "Debit" if not frappe.db.get_value("Sales Invoice", payment.payment_entry, "is_return") else "Credit"
 			elif payment.payment_document == "Purchase Invoice":
-				payment.payment_type = "Credit"
+				payment.payment_type = "Credit" if not frappe.db.get_value("Purchase Invoice", payment.payment_entry, "is_return") else "Debit"
 			if payment.payment_document == "Payment Entry":
 				pt = frappe.db.get_value("Payment Entry", payment.payment_entry, "payment_type")
 				payment.payment_type = "Debit" if pt == "Receive" else "Credit"
