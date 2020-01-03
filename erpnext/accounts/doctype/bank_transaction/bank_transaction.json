@@ -49,6 +49,7 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Date"
   },
   {
@@ -193,7 +194,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-03 12:34:29.768713",
+ "modified": "2020-01-03 18:05:39.230156",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

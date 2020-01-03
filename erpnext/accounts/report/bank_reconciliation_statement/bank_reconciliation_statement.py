@@ -163,9 +163,11 @@ def get_entries(filters):
 
 	pos_entries = frappe.db.sql("""
 		select
-			"Sales Invoice Payment" as payment_document, si.name as payment_entry, sip.amount as debit,
+			"Sales Invoice Payment" as payment_document, si.name as payment_entry,
 			si.posting_date, si.customer as against_account, sip.clearance_date, si.remarks as reference_no,
-			account.account_currency, 0 as credit
+			account.account_currency,
+			if(si.is_return, 0, sip.amount) as debit,
+			if(si.is_return, sip.amount, 0) as credit
 		from `tabSales Invoice Payment` sip, `tabSales Invoice` si, `tabAccount` account
 		where
 			sip.account=%(account)s and si.docstatus=1 and sip.parent = si.name
@@ -179,8 +181,8 @@ def get_entries(filters):
 		select
 			"Purchase Invoice" as payment_document, pi.name as payment_entry,
 			pi.remarks as reference_no, pi.due_date as ref_date,
-			if(pi.base_paid_amount<0, pi.base_paid_amount, 0) as debit,
-			if(pi.base_paid_amount>0, pi.base_paid_amount, 0) as credit,
+			if(pi.is_return, ABS(pi.base_paid_amount), 0) as debit,
+			if(pi.is_return, 0, ABS(pi.base_paid_amount)) as credit,
 			pi.posting_date, pi.supplier as against_account, pi.clearance_date,
 			account.account_currency
 		from `tabPurchase Invoice` pi, `tabAccount` account

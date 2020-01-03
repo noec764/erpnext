@@ -56,7 +56,7 @@ class WebhooksController():
 		invoices = frappe.get_all("Sales Invoice", \
 			filters={"customer": customer, "external_reference": ["is", "not set"]}, fields=["name", "due_date"])
 		if invoices:
-			closest_invoice =  min(invoices, key=lambda x: abs(getdate(x.get("due_date")) - self.reference_date))
+			closest_invoice =  min(invoices, key=lambda x: abs(getdate(x.get("due_date")) - getdate(self.reference_date)))
 			if closest_invoice:
 				self.invoice = frappe.get_doc("Sales Invoice", closest_invoice.get("name"))
 
