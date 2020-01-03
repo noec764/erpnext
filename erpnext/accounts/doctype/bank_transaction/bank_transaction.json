@@ -176,7 +176,8 @@
    "allow_on_submit": 1,
    "fieldname": "total_debit",
    "fieldtype": "Currency",
-   "label": "Total Debit"
+   "label": "Total Debit",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_19",
@@ -192,7 +193,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-03 11:43:03.788090",
+ "modified": "2020-01-03 12:34:29.768713",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

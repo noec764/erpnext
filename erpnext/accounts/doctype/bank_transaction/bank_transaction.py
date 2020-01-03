@@ -82,6 +82,10 @@ class BankTransaction(StatusUpdater):
 
 		frappe.db.set_value(payment.payment_document, payment.payment_entry, \
 			"unreconciled_amount", updated_amount)
+
+		if updated_amount == 0:
+			self.set_payment_entries_clearance_date(True)
+
 		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status()
 
 	def set_allocation_in_bank_transaction(self):
@@ -108,20 +112,20 @@ class BankTransaction(StatusUpdater):
 					frappe.throw(_("The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.").format(\
 						fmt_money(flt(payment_entry.allocated_amount), currency=self.currency), fmt_money(flt(unreconciled_amount), currency=self.currency), _(payment_entry.payment_document), payment_entry.payment_entry))
 
-	def set_payment_entries_clearance_date(self):
+	def set_payment_entries_clearance_date(self, clear=False):
 		for payment_entry in self.payment_entries:
 			if payment_entry.payment_document in ["Payment Entry", "Journal Entry", "Purchase Invoice", "Expense Claim"]:
-				self.set_header_clearance_date(payment_entry)
+				self.set_header_clearance_date(payment_entry, clear)
 
 			elif payment_entry.payment_document == "Sales Invoice":
-				self.set_child_clearance_date(payment_entry, "Sales Invoice Payment")
+				self.set_child_clearance_date(payment_entry, "Sales Invoice Payment", clear)
 
-	def set_header_clearance_date(self, payment_entry):
-		frappe.db.set_value(payment_entry.payment_document, payment_entry.payment_entry, "clearance_date", self.date)
+	def set_header_clearance_date(self, payment_entry, clear=False):
+		frappe.db.set_value(payment_entry.payment_document, payment_entry.payment_entry, "clearance_date", None if clear else self.date)
 
-	def set_child_clearance_date(self, payment_entry, child_table):
+	def set_child_clearance_date(self, payment_entry, child_table, clear=False):
 		frappe.db.set_value(child_table, dict(parenttype=payment_entry.payment_document,
-			parent=payment_entry.payment_entry), "clearance_date", self.date)
+			parent=payment_entry.payment_entry), "clearance_date", None if clear else self.date)
 
 	def check_payment_types(self):
 		for payment in self.payment_entries:

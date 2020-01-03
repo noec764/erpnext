@@ -29,18 +29,31 @@ def execute(filters=None):
 
 	amounts_not_reflected_in_system = get_amounts_not_reflected_in_system(filters)
 
+
 	bank_bal = flt(balance_as_per_system) - flt(total_debit) + flt(total_credit) \
 		+ amounts_not_reflected_in_system
 
-	data += [
-		get_balance_row(_("Bank Statement balance as per General Ledger"), balance_as_per_system, account_currency),
+	output = [
 		{},
+		get_balance_row(_("Bank Statement balance as per General Ledger"), balance_as_per_system, account_currency),
+		{}
+	]
+
+	output += data
+	output += [
 		{
-			"payment_entry": _("Outstanding Cheques and Deposits to clear"),
+			"payment_entry": frappe.bold(_("Outstanding Cheques and Deposits to clear")),
 			"debit": total_debit,
 			"credit": total_credit,
 			"account_currency": account_currency
 		},
+		{}
+	]
+
+	if amounts_not_reflected_in_system:
+		output +=  get_entries_not_reflected(filters)
+
+	output += [
 		get_balance_row(_("Cheques and Deposits incorrectly cleared"), amounts_not_reflected_in_system,
 			account_currency),
 		{},
@@ -49,7 +62,7 @@ def execute(filters=None):
 		get_bank_statement_row(filters, account_currency)
 	]
 
-	return columns, data
+	return columns, output
 
 def get_columns():
 	return [
@@ -150,8 +163,8 @@ def get_entries(filters):
 
 	pos_entries = frappe.db.sql("""
 		select
-			"Sales Invoice Payment" as payment_document, sip.name as payment_entry, sip.amount as debit,
-			si.posting_date, si.debit_to as against_account, sip.clearance_date,
+			"Sales Invoice Payment" as payment_document, si.name as payment_entry, sip.amount as debit,
+			si.posting_date, si.customer as against_account, sip.clearance_date, si.remarks as reference_no,
 			account.account_currency, 0 as credit
 		from `tabSales Invoice Payment` sip, `tabSales Invoice` si, `tabAccount` account
 		where
@@ -178,7 +191,7 @@ def get_entries(filters):
 			and ifnull(pi.clearance_date, '4000-01-01') > %(report_date)s
 	""", filters, as_dict=1)
 
-	return sorted(list(payment_entries)+list(journal_entries+list(pos_entries)+list(purchase_invoices)),
+	return sorted(list(payment_entries)+list(journal_entries)+list(pos_entries)+list(purchase_invoices),
 			key=lambda k: k['posting_date'] or getdate(nowdate()))
 
 def get_amounts_not_reflected_in_system(filters):
@@ -201,17 +214,42 @@ def get_amounts_not_reflected_in_system(filters):
 
 	return je_amount + pe_amount
 
+def get_entries_not_reflected(filters):
+	je_entries = frappe.db.sql("""
+		select "Journal Entry" as payment_document, jv.posting_date,
+			jv.name as payment_entry, jvd.debit_in_account_currency as debit,
+			jvd.credit_in_account_currency as credit, jvd.against_account,
+			jv.cheque_no as reference_no, jv.cheque_date as ref_date, jv.clearance_date, jvd.account_currency
+		from `tabJournal Entry Account` jvd, `tabJournal Entry` jv
+		where jvd.parent = jv.name and jv.docstatus=1 and jvd.account=%(account)s
+		and jv.posting_date > %(report_date)s and jv.clearance_date <= %(report_date)s
+		and ifnull(jv.is_opening, 'No') = 'No' """, filters, as_dict=True)
+
+	pe_entries = frappe.db.sql("""
+		select
+			"Payment Entry" as payment_document, name as payment_entry,
+			reference_no, reference_date as ref_date,
+			if(paid_to=%(account)s, received_amount, 0) as debit,
+			if(paid_from=%(account)s, paid_amount, 0) as credit,
+			posting_date, ifnull(party,if(paid_from=%(account)s,paid_to,paid_from)) as against_account, clearance_date,
+			if(paid_to=%(account)s, paid_to_account_currency, paid_from_account_currency) as account_currency
+		from `tabPayment Entry`
+		where (paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
+		and posting_date > %(report_date)s and clearance_date <= %(report_date)s""", filters, as_dict=True)
+
+	return sorted(list(je_entries)+list(pe_entries), key=lambda k: k['posting_date'] or getdate(nowdate()))
+
 def get_balance_row(label, amount, account_currency):
 	if amount > 0:
 		return {
-			"payment_entry": label,
+			"payment_entry": frappe.bold(label),
 			"debit": amount,
 			"credit": 0,
 			"account_currency": account_currency
 		}
 	else:
 		return {
-			"payment_entry": label,
+			"payment_entry": frappe.bold(label),
 			"debit": 0,
 			"credit": abs(amount),
 			"account_currency": account_currency
@@ -221,7 +259,7 @@ def get_bank_statement_row(filters, account_currency):
 	balance = get_bank_transaction_balance_on(filters["bank_account"], getdate(filters["report_date"]))
 
 	return {
-		"payment_entry": _("Bank statement balance"),
+		"payment_entry": frappe.bold(_("Bank statement balance")),
 		"debit": balance.get("balance") if balance.get("balance") > 0 else 0,
 		"credit": balance.get("balance") if balance.get("balance") < 0 else 0,
 		"account_currency": account_currency

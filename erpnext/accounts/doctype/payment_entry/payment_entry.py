@@ -553,7 +553,8 @@ class PaymentEntry(AccountsController):
 		self.set_unallocated_amount()
 
 	def update_unreconciled_amount(self):
-		self.unreconciled_amount = self.paid_amount or 0
+		amount = self.paid_amount if self.payment_type == "Receive" else self.paid_amount * 1
+		self.db_set("unreconciled_amount", amount or 0)
 
 @frappe.whitelist()
 def get_outstanding_reference_documents(args):
