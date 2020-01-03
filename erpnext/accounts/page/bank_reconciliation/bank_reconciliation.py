@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate, nowdate
+from frappe.utils import flt, getdate, nowdate, user_to_str
 from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import get_party_account_based_on_invoice_discounting
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
@@ -108,7 +108,7 @@ class BankReconciliation:
 						'payment_entry': self.documents[0]["name"],
 						'allocated_amount': allocated_amount,
 						'party': self.documents[0]["party"],
-						'date': getdate(self.documents[0]["date"])
+						'date': getdate(user_to_str(self.documents[0]["date"]))
 					})
 
 					reconciled_amount += allocated_amount
@@ -123,7 +123,7 @@ class BankReconciliation:
 					'payment_entry': document.get("name"),
 					'allocated_amount': abs(document.get("unreconciled_amount")),
 					'party': document.get("party"),
-					'date': getdate(document.get("date"))
+					'date': getdate(user_to_str(document.get("date")))
 				})
 
 				bank_transaction.save()
@@ -136,7 +136,7 @@ class BankReconciliation:
 				'payment_entry': payment.get("name"),
 				'allocated_amount': min(payment.get("unreconciled_amount"), bank_transaction.unallocated_amount),
 				'party': payment.get("party"),
-				'date': getdate(payment.get("date"))
+				'date': getdate(user_to_str(payment.get("date")))
 			})
 
 			bank_transaction.save()
@@ -206,7 +206,7 @@ class BankReconciliation:
 		letter_heads = [x.get("letter_head") for x in self.documents]
 		pe.letter_head = letter_heads[0] if letter_heads else None
 		pe.reference_no = transaction.get("reference_number") or transaction.get("name")
-		pe.reference_date = getdate(transaction.get("date"))
+		pe.reference_date = getdate(user_to_str(transaction.get("date")))
 		pe.bank_account = bank_account.name
 
 		if pe.party_type in ["Customer", "Supplier"]:
