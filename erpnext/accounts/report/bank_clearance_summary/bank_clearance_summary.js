@@ -17,22 +17,11 @@ frappe.query_reports["Bank Clearance Summary"] = {
 			"default": frappe.datetime.get_today()
 		},
 		{
-			"fieldname":"account",
+			"fieldname":"bank_account",
 			"label": __("Bank Account"),
 			"fieldtype": "Link",
-			"options": "Account",
-			"reqd": 1,
-			"default": frappe.defaults.get_user_default("Company")? 
-				locals[":Company"][frappe.defaults.get_user_default("Company")]["default_bank_account"]: "",
-			"get_query": function() {
-				return {
-					"query": "erpnext.controllers.queries.get_account_list",
-					"filters": [
-						['Account', 'account_type', 'in', 'Bank, Cash'],
-						['Account', 'is_group', '=', 0],
-					]
-				}
-			}
+			"options": "Bank Account",
+			"reqd": 1
 		},
 	]
 }

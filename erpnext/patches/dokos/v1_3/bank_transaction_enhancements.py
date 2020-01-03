@@ -20,12 +20,12 @@ def execute():
 	for sales_invoice_payment in frappe.get_all("Sales Invoice Payment", \
 		filters={"mode_of_payment": ["is", "set"], "clearance_date": ["is", "not set"]}, fields=["sum(amount) as amount", "parent"], group_by="parent"):
 		frappe.db.set_value("Sales Invoice", sales_invoice_payment.parent, "unreconciled_amount", \
-			sales_invoice_payment.amount)
+			sales_invoice_payment.base_amount)
 
 	for purchase_invoice in frappe.get_all("Purchase Invoice", \
 		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]}, fields=["paid_amount", "name"]):
 		frappe.db.set_value("Purchase Invoice", purchase_invoice.name, "unreconciled_amount", \
-			purchase_invoice.paid_amount)
+			purchase_invoice.base_paid_amount)
 
 	for expense_claim in frappe.get_all("Expense Claim", \
 		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]}, fields=["total_claimed_amount", "name"]):
@@ -36,3 +36,11 @@ def execute():
 		filters={"docstatus": 1, "clearance_date": ["is", "not set"]}):
 		doc = frappe.get_doc("Journal Entry", journal_entry.name)
 		doc.update_unreconciled_amount()
+
+	for transaction in frappe.get_all("Bank Transaction"):
+		doc = frappe.get_doc("Bank Transaction", transaction.name)
+		debit = sum([x.allocated_amount for x in doc.payment_entries if x.payment_type == "Debit"])
+		credit = sum([x.allocated_amount for x in doc.payment_entries if x.payment_type == "Credit"])
+
+		frappe.db.set_value("Bank Transaction", doc.name, "total_debit", debit)
+		frappe.db.set_value("Bank Transaction", doc.name, "total_credit", credit)

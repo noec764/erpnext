@@ -5,14 +5,16 @@ from __future__ import unicode_literals
 import frappe
 from frappe.utils import flt, getdate, nowdate
 from frappe import _
+from erpnext.accounts.doctype.bank_transaction.bank_transaction import get_bank_transaction_balance_on
 
 def execute(filters=None):
 	if not filters: filters = {}
 
 	columns = get_columns()
 
-	if not filters.get("account"): return columns, []
+	if not filters.get("bank_account"): return columns, []
 
+	filters["account"] = frappe.db.get_value("Bank Account", filters.bank_account, "account")
 	account_currency = frappe.db.get_value("Account", filters.account, "account_currency")
 
 	data = get_entries(filters)
@@ -42,7 +44,9 @@ def execute(filters=None):
 		get_balance_row(_("Cheques and Deposits incorrectly cleared"), amounts_not_reflected_in_system,
 			account_currency),
 		{},
-		get_balance_row(_("Calculated Bank Statement balance"), bank_bal, account_currency)
+		get_balance_row(_("Calculated Bank Statement balance"), bank_bal, account_currency),
+		{},
+		get_bank_statement_row(filters, account_currency)
 	]
 
 	return columns, data
@@ -144,23 +148,37 @@ def get_entries(filters):
 			and ifnull(clearance_date, '4000-01-01') > %(report_date)s
 	""", filters, as_dict=1)
 
-	pos_entries = []
-	if filters.include_pos_transactions:
-		pos_entries = frappe.db.sql("""
-			select
-				"Sales Invoice Payment" as payment_document, sip.name as payment_entry, sip.amount as debit,
-				si.posting_date, si.debit_to as against_account, sip.clearance_date,
-				account.account_currency, 0 as credit
-			from `tabSales Invoice Payment` sip, `tabSales Invoice` si, `tabAccount` account
-			where
-				sip.account=%(account)s and si.docstatus=1 and sip.parent = si.name
-				and account.name = sip.account and si.posting_date <= %(report_date)s and
-				ifnull(sip.clearance_date, '4000-01-01') > %(report_date)s
-			order by
-				si.posting_date ASC, si.name DESC
-		""", filters, as_dict=1)
+	pos_entries = frappe.db.sql("""
+		select
+			"Sales Invoice Payment" as payment_document, sip.name as payment_entry, sip.amount as debit,
+			si.posting_date, si.debit_to as against_account, sip.clearance_date,
+			account.account_currency, 0 as credit
+		from `tabSales Invoice Payment` sip, `tabSales Invoice` si, `tabAccount` account
+		where
+			sip.account=%(account)s and si.docstatus=1 and sip.parent = si.name
+			and account.name = sip.account and si.posting_date <= %(report_date)s and
+			ifnull(sip.clearance_date, '4000-01-01') > %(report_date)s
+		order by
+			si.posting_date ASC, si.name DESC
+	""", filters, as_dict=1)
 
-	return sorted(list(payment_entries)+list(journal_entries+list(pos_entries)),
+	purchase_invoices = frappe.db.sql("""
+		select
+			"Purchase Invoice" as payment_document, pi.name as payment_entry,
+			pi.remarks as reference_no, pi.due_date as ref_date,
+			if(pi.base_paid_amount<0, pi.base_paid_amount, 0) as debit,
+			if(pi.base_paid_amount>0, pi.base_paid_amount, 0) as credit,
+			pi.posting_date, pi.supplier as against_account, pi.clearance_date,
+			account.account_currency
+		from `tabPurchase Invoice` pi, `tabAccount` account
+		where
+			pi.docstatus=1 and pi.is_paid=1 and pi.cash_bank_account=%(account)s
+			and account.name = pi.cash_bank_account
+			and pi.posting_date <= %(report_date)s
+			and ifnull(pi.clearance_date, '4000-01-01') > %(report_date)s
+	""", filters, as_dict=1)
+
+	return sorted(list(payment_entries)+list(journal_entries+list(pos_entries)+list(purchase_invoices)),
 			key=lambda k: k['posting_date'] or getdate(nowdate()))
 
 def get_amounts_not_reflected_in_system(filters):
@@ -198,3 +216,13 @@ def get_balance_row(label, amount, account_currency):
 			"credit": abs(amount),
 			"account_currency": account_currency
 		}
+
+def get_bank_statement_row(filters, account_currency):
+	balance = get_bank_transaction_balance_on(filters["bank_account"], getdate(filters["report_date"]))
+
+	return {
+		"payment_entry": _("Bank statement balance"),
+		"debit": balance.get("balance") if balance.get("balance") > 0 else 0,
+		"credit": balance.get("balance") if balance.get("balance") < 0 else 0,
+		"account_currency": account_currency
+	}

@@ -23,6 +23,10 @@
   "description",
   "section_break_14",
   "payment_entries",
+  "section_break_17",
+  "total_debit",
+  "column_break_19",
+  "total_credit",
   "section_break_18",
   "allocated_amount",
   "amended_from",
@@ -116,7 +120,8 @@
   },
   {
    "fieldname": "section_break_14",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "options": "noBottomBorder"
   },
   {
    "fieldname": "reference_number",
@@ -135,8 +140,10 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "allocated_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Allocated Amount",
    "read_only": 1
   },
@@ -154,15 +161,38 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "unallocated_amount",
    "fieldtype": "Currency",
-   "label": "Unallocated Amount",
+   "label": "Difference",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "options": "noBottomBorder"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_debit",
+   "fieldtype": "Currency",
+   "label": "Total Debit"
+  },
+  {
+   "fieldname": "column_break_19",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_credit",
+   "fieldtype": "Currency",
+   "label": "Total Credit",
    "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-15 20:34:13.172240",
+ "modified": "2020-01-03 11:43:03.788090",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

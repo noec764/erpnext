@@ -93,8 +93,8 @@ status_map = {
 		["Manufactured", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Manufacture'"]
 	],
 	"Bank Transaction": [
-		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount>0"],
-		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount<=0"]
+		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount!=0"],
+		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount==0"]
 	]
 }
 

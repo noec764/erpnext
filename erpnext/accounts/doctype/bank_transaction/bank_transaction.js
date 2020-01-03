@@ -62,17 +62,17 @@ frappe.ui.form.on('Bank Transaction Payments', {
 
 			switch(row.payment_document) {
 				case "Sales Invoice":
-					frappe.db.get_value(row.payment_document, row.payment_entry, "is_return", r => {
+					frappe.db.get_value(row.payment_document, row.payment_entry, ["is_return", "customer", "due_date"], r => {
 						frappe.model.set_value(cdt, cdn, "payment_type", r.is_return ? "Credit": "Debit");
 					});
 					break;
 				case "Purchase Invoice":
-					frappe.db.get_value(row.payment_document, row.payment_entry, "is_return", r => {
+					frappe.db.get_value(row.payment_document, row.payment_entry, ["is_return", "supplier", "due_date"], r => {
 						frappe.model.set_value(cdt, cdn, "payment_type", r.is_return ? "Debit": "Credit");
 					});
 					break;
 				case "Payment Entry":
-					frappe.db.get_value(row.payment_document, row.payment_entry, "payment_type", r => {
+					frappe.db.get_value(row.payment_document, row.payment_entry, ["payment_type", "party", "posting_date"], r => {
 						frappe.model.set_value(cdt, cdn, "payment_type", r.payment_type == "Receive" ? "Debit": "Credit");
 					});
 					break;
@@ -82,7 +82,15 @@ frappe.ui.form.on('Bank Transaction Payments', {
 							frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: r.account}, "debit_in_account_currency", (value) => {
 								value&&value.debit_in_account_currency&&frappe.model.set_value(cdt, cdn, "payment_type", value.debit_in_account_currency == 0 ? "Credit" : "Debit");
 							}, 'Journal Entry');
+
+							frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: ["!=", r.account]}, "party", (value) => {
+								value&&value.party&&frappe.model.set_value(cdt, cdn, "party", value.party);
+							}, 'Journal Entry');
 						})
+
+						frappe.db.get_value("Journal Entry", row.payment_entry, "posting_date", (value) => {
+							value&&value.posting_date&&frappe.model.set_value(cdt, cdn, "date", value.posting_date);
+						});
 					}
 					break;
 				default:

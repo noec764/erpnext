@@ -106,7 +106,9 @@ class BankReconciliation:
 					bank_transaction.append('payment_entries', {
 						'payment_document': self.reconciliation_doctype,
 						'payment_entry': self.documents[0]["name"],
-						'allocated_amount': allocated_amount
+						'allocated_amount': allocated_amount,
+						'party': self.documents[0]["party"],
+						'date': self.documents[0]["date"]
 					})
 
 					reconciled_amount += allocated_amount
@@ -119,7 +121,9 @@ class BankReconciliation:
 				bank_transaction.append('payment_entries', {
 					'payment_document': document.get("doctype"),
 					'payment_entry': document.get("name"),
-					'allocated_amount': abs(document.get("unreconciled_amount"))
+					'allocated_amount': abs(document.get("unreconciled_amount")),
+					'party': document.get("party"),
+					'date': document.get("date")
 				})
 
 				bank_transaction.save()
@@ -130,7 +134,9 @@ class BankReconciliation:
 			bank_transaction.append('payment_entries', {
 				'payment_document': payment.get("doctype"),
 				'payment_entry': payment.get("name"),
-				'allocated_amount': min(payment.get("unreconciled_amount"), bank_transaction.unallocated_amount)
+				'allocated_amount': min(payment.get("unreconciled_amount"), bank_transaction.unallocated_amount),
+				'party': payment.get("party"),
+				'date': payment.get("date")
 			})
 
 			bank_transaction.save()

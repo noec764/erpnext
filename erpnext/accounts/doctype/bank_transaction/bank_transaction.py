@@ -20,6 +20,7 @@ class BankTransaction(StatusUpdater):
 
 	def before_save(self):
 		self.check_payment_types()
+		self.calculate_totals()
 		self.check_reconciliation_amounts()
 
 	def on_submit(self):
@@ -31,6 +32,7 @@ class BankTransaction(StatusUpdater):
 
 	def before_update_after_submit(self):
 		self.check_payment_types()
+		self.calculate_totals()
 
 	def on_update_after_submit(self):
 		self.check_reconciliation_amounts()
@@ -136,6 +138,10 @@ class BankTransaction(StatusUpdater):
 				payment.payment_type = "Debit" if flt(debit_in_account_currency) > 0 else "Credit"
 			if payment.payment_document == "Expense Claim":
 				payment.payment_type = "Credit"
+
+	def calculate_totals(self):
+		self.total_debit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Debit"])
+		self.total_credit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Credit"])
 
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")
