@@ -69,7 +69,7 @@ class BankTransaction(StatusUpdater):
 				self.set_unreconciled_amount(j, True)
 			elif not j:
 				self.set_unreconciled_amount(i, False)
-			elif i.name != j.name:
+			elif i.name != j.name or i.get("allocated_amount") != j.get("allocated_amount"):
 				self.set_unreconciled_amount(i, False)
 				self.set_unreconciled_amount(j, True)
 
@@ -83,7 +83,7 @@ class BankTransaction(StatusUpdater):
 		frappe.db.set_value(payment.payment_document, payment.payment_entry, \
 			"unreconciled_amount", updated_amount)
 
-		if clear:
+		if not clear:
 			self.set_payment_entries_clearance_date(True)
 
 		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status()
