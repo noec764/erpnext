@@ -115,6 +115,10 @@ class BankReconciliation(Document):
 
 				payment_entry = frappe.get_doc(d.payment_document, d.payment_entry)
 				payment_entry.db_set('clearance_date', d.clearance_date)
+
+				if d.payment_document == "Sales Invoice Payment":
+					payment_entry = frappe.get_doc("Sales Invoice", payment_entry.parent)
+
 				if d.clearance_date is None:
 					if hasattr(payment_entry, "update_unreconciled_amount"):
 						payment_entry.run_method("update_unreconciled_amount")
