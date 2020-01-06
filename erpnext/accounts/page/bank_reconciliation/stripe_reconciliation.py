@@ -11,20 +11,30 @@ from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankRe
 
 @frappe.whitelist()
 def reconcile_stripe_payouts(bank_transactions):
-	frappe.enqueue("erpnext.accounts.page.bank_reconciliation.stripe_reconciliation._reconcile_stripe_payouts", bank_transactions=bank_transactions)
-
-def _reconcile_stripe_payouts(bank_transactions):
 	bank_transactions = frappe.parse_json(bank_transactions) or []
 	if not bank_transactions:
 		frappe.throw(_("Please select a period with at least one Stripe transaction to reconcile"))
 
 	stripe_accounts = frappe.get_list("Stripe Settings", {"bank_account": bank_transactions[0].get("bank_account")})
+	if not stripe_accounts:
+		frappe.throw(_("Please link this bank account with at least one Stripe account"))
+
+	frappe.enqueue("erpnext.accounts.page.bank_reconciliation.stripe_reconciliation._reconcile_stripe_payouts", bank_transactions=bank_transactions, stripe_accounts=stripe_accounts)
+
+def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
+	reconciled_transactions = []
 	for stripe_account in stripe_accounts:
 		stripe_settings = frappe.get_doc("Stripe Settings", stripe_account.name)
 
 		for bank_transaction in bank_transactions:
-			bank_reconciliation = StripeReconciliation(stripe_settings, bank_transaction)
-			bank_reconciliation.reconcile()
+			if bank_transaction.get("name") not in reconciled_transactions:
+				try:
+					bank_reconciliation = StripeReconciliation(stripe_settings, bank_transaction)
+					bank_reconciliation.reconcile()
+					if bank_reconciliation.documents:
+						reconciled_transactions.append(bank_transaction.get("name"))
+				except Exception:
+					print(frappe.get_traceback())
 
 class StripeReconciliation:
 	def __init__(self, stripe_settings, bank_transaction):
@@ -43,7 +53,6 @@ class StripeReconciliation:
 
 		self.get_invoices_references()
 		self.get_corresponding_documents()
-
 		if self.documents:
 			BankReconciliation([self.bank_transaction], self.documents).reconcile()
 

@@ -54,14 +54,9 @@ def get_notification_config():
 			},
 			"Work Order": { "status": ("in", ("Draft", "Not Started", "In Process")) },
 			"BOM": {"docstatus": 0},
-
 			"Timesheet": {"status": "Draft"},
-
-			"Lab Test": {"docstatus": 0},
-			"Sample Collection": {"docstatus": 0},
-			"Patient Appointment": {"status": "Open"},
-			"Patient Encounter": {"docstatus": 0},
-			"Sepa Direct Debit": {"docstatus": 0}
+			"Sepa Direct Debit": {"docstatus": 0},
+			"Bank Transaction": {"unallocated_amount": ["!=", 0]}
 		},
 
 		"targets": {

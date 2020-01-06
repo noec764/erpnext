@@ -3,11 +3,11 @@
         <div class="actions-wrapper border rounded">
             <div class="flex flex-wrap justify-center align-center">
                 <div class="amount-recap">
-                    <p>{{ __("Bank Transactions") }}</p>
+                    <h4>{{ __("Bank Transactions") }}</h4>
                     <p class="strong">{{ transactions_formatted_amount }}</p>
                 </div>
                 <div class="amount-recap">
-                    <p>{{ __("Documents") }}</p>
+                    <h4>{{ __("Documents") }}</h4>
                     <p class="strong">{{ documents_formatted_amount }}</p>
                 </div>
             </div>
@@ -94,6 +94,7 @@ export default {
 .amount-recap {
     margin: 20px;
     text-align: center;
+    padding: 0 20px 0 20px;
 }
 
 .actions-wrapper {

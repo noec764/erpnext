@@ -126,9 +126,7 @@ export default {
     methods: {
         change_doctype: function(dt) {
             this.document_type = dt;
-            if (!this.matching_documents[dt].length) {
-                this.get_linked_docs(true);
-            }
+            this.get_linked_docs(true);
         },
         get_linked_docs: function(match) {
             frappe.xcall('erpnext.accounts.page.bank_reconciliation.bank_transaction_match.get_linked_payments',
@@ -170,6 +168,10 @@ export default {
         border-bottom: 1px solid #d1d8dd;
         margin-bottom: 10px;
         text-transform: uppercase;
+    }
+
+    table.vgt-table {
+        font-size: 1.5rem;
     }
 }
 

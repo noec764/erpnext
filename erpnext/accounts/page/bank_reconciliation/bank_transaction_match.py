@@ -121,20 +121,22 @@ class BankTransactionMatch:
 
 		elif self.document_type == "Purchase Invoice":
 			return [dict(x, **{
-				"amount": x.get("unreconciled_amount", x.get("outstanding_amount", 0)) if flt(x.get("is_return")) == 1 \
-					else (flt(x.get("unreconciled_amount", x.get("outstanding_amount", 0))) * -1),\
+				"amount": (flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0)))\
+					if flt(x.get("is_return")) == 1 \
+					else ((flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0))) * -1),\
 				"party": x.get(party_field),\
 				"reference_date": x.get(date_field), \
-				"reference_string": x.get(reference_field)
+				"reference_string": x.get(reference_field) \
 			}) for x in query_result]
 
 		elif self.document_type == "Sales Invoice":
 			return [dict(x, **{
-				"amount": (x.get("unreconciled_amount", x.get("outstanding_amount", 0)) * -1) if flt(x.get("is_return")) == 1 \
-					else x.get("unreconciled_amount", x.get("outstanding_amount", 0)),
-				"party": x.get(party_field),
+				"amount": ((flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0))) * -1) \
+					if flt(x.get("is_return")) == 1 \
+					else (flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0))), \
+				"party": x.get(party_field), \
 				"reference_date": x.get(date_field), \
-				"reference_string": x.get(reference_field)
+				"reference_string": x.get(reference_field) \
 			}) for x in query_result]
 
 		elif self.document_type == "Expense Claim":

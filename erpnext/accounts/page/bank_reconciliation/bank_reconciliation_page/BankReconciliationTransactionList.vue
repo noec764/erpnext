@@ -209,10 +209,15 @@ export default {
 @import 'frappe/public/scss/good-grid.scss';
 
 .transactions-table {
+    margin-bottom: 50px;
     .section-title {
         border-bottom: 1px solid #d1d8dd;
         margin-bottom: 10px;
         text-transform: uppercase;
+    }
+
+    table.vgt-table {
+        font-size: 1.5rem;
     }
 }
 
