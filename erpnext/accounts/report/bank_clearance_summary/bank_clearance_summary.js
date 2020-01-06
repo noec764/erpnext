@@ -21,6 +21,7 @@ frappe.query_reports["Bank Clearance Summary"] = {
 			"label": __("Bank Account"),
 			"fieldtype": "Link",
 			"options": "Bank Account",
+			"default": frappe.boot.sysdefaults.default_bank_account_name,
 			"reqd": 1
 		},
 	]

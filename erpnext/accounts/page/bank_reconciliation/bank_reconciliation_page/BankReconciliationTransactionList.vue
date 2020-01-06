@@ -132,6 +132,9 @@ export default {
                 }))
         }
     },
+    mounted() {
+        this.get_transaction_list(true)
+    },
     watch: {
         bank_account() {
             this.get_transaction_list(true)

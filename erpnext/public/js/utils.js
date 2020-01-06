@@ -92,7 +92,6 @@ $.extend(erpnext, {
 	}
 });
 
-
 $.extend(erpnext.utils, {
 	set_party_dashboard_indicators: function(frm) {
 		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {

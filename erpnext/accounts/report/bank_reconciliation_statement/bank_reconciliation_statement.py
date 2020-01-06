@@ -29,7 +29,6 @@ def execute(filters=None):
 
 	amounts_not_reflected_in_system = get_amounts_not_reflected_in_system(filters)
 
-
 	bank_bal = flt(balance_as_per_system) - flt(total_debit) + flt(total_credit) \
 		+ amounts_not_reflected_in_system
 
@@ -207,7 +206,7 @@ def get_amounts_not_reflected_in_system(filters):
 	je_amount = flt(je_amount[0][0]) if je_amount else 0.0
 
 	pe_amount = frappe.db.sql("""
-		select sum(if(paid_from=%(account)s, paid_amount, received_amount))
+		select sum(if(paid_from=%(account)s, paid_amount * -1, received_amount))
 		from `tabPayment Entry`
 		where (paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
 		and posting_date > %(report_date)s and clearance_date <= %(report_date)s""", filters)

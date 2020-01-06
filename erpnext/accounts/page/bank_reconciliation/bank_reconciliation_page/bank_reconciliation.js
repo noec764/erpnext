@@ -11,7 +11,8 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 		this.parent = wrapper;
 		this.page = this.parent.page;
 
-        this.company = frappe.defaults.get_user_default("Company");
+		this.company = frappe.defaults.get_user_default("Company");
+		this.bank_account = frappe.boot.sysdefaults.default_bank_account_name;
         this.date_range = [frappe.datetime.add_months(frappe.datetime.get_today(),-1), frappe.datetime.get_today()];
         frappe.utils.make_event_emitter(erpnext.bank_reconciliation);
         this.make();
@@ -32,18 +33,19 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 			onchange: function() {
 				if (this.value) {
 					me.company = this.value;
-					me.show_reconciliation_tool()
 				} else {
 					me.company = null;
 					me.bank_account = null;
                 }
 			}
 		})
+
 		me.page.add_field({
 			fieldtype: 'Link',
 			label: __('Bank Account'),
 			fieldname: 'bank_account',
-            options: "Bank Account",
+			options: "Bank Account",
+			default: frappe.boot.sysdefaults.default_bank_account_name,
             reqd: 1,
 			get_query: function() {
 				if(!me.company) {
