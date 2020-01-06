@@ -35,11 +35,8 @@ DATE_FIELD = {
 
 @frappe.whitelist()
 def reconcile(bank_transactions, documents):
-	try:
-		bank_reconciliation = BankReconciliation(bank_transactions, documents)
-		bank_reconciliation.reconcile()
-	except Exception:
-		print(frappe.get_traceback())
+	bank_reconciliation = BankReconciliation(bank_transactions, documents)
+	bank_reconciliation.reconcile()
 
 class BankReconciliation:
 	def __init__(self, bank_transactions, documents):

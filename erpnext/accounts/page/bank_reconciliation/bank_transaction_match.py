@@ -325,7 +325,7 @@ def get_statement_chart(account, start_date, end_date):
 	mean_value = np.mean(bank_balance)
 
 	data = {
-		'title': _("Bank balance") + " (" + symbol + ")",
+		'title': _("Bank Balance") + " (" + symbol + ")",
 		'data': {
 			'datasets': [
 				{

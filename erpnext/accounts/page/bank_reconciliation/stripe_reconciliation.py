@@ -28,13 +28,10 @@ def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
 
 		for bank_transaction in bank_transactions:
 			if bank_transaction.get("name") not in reconciled_transactions:
-				try:
-					bank_reconciliation = StripeReconciliation(stripe_settings, bank_transaction)
-					bank_reconciliation.reconcile()
-					if bank_reconciliation.documents:
-						reconciled_transactions.append(bank_transaction.get("name"))
-				except Exception:
-					print(frappe.get_traceback())
+				bank_reconciliation = StripeReconciliation(stripe_settings, bank_transaction)
+				bank_reconciliation.reconcile()
+				if bank_reconciliation.documents:
+					reconciled_transactions.append(bank_transaction.get("name"))
 
 class StripeReconciliation:
 	def __init__(self, stripe_settings, bank_transaction):

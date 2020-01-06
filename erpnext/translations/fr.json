@@ -267,6 +267,45 @@
         "US": "NOUS",
         "Warehouse": "Entrepôt"
     },
+    "DocType: Appointment": {
+        "Appointment": "Rendez-vous",
+        "CRM": "CRM",
+        "Calendar Event": "Evénement du calendrier",
+        "Closed": "Fermé",
+        "Customer Details": "Détails du client",
+        "Details": "Détails",
+        "Email": "Email",
+        "Guest": "Invité",
+        "Lead": "Prospect",
+        "Name": "Nom",
+        "Open": "Ouvert",
+        "Sales Manager": "Responsable commercial",
+        "Sales User": "Commercial",
+        "Status": "Statut",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Appointment Booking Settings": {
+        "Availability Of Slots": "Disponibilité des créneaux",
+        "CRM": "CRM",
+        "Guest": "Invité",
+        "HR Manager": "Responsable RH",
+        "Holiday List": "Liste de Vacances",
+        "Sales Manager": "Responsable commercial",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Appointment Booking Slots": {
+        "CRM": "CRM",
+        "Day Of Week": "Jour de la semaine",
+        "Friday": "Vendredi",
+        "From Time ": "Horaire de début",
+        "Monday": "Lundi",
+        "Saturday": "Samedi",
+        "Sunday": "Dimanche",
+        "Thursday": "Jeudi",
+        "To Time": "Horaire de fin",
+        "Tuesday": "Mardi",
+        "Wednesday": "Mercredi"
+    },
     "DocType: Appraisal": {
         "Amended From": "Modifié depuis",
         "Any other remarks, noteworthy effort that should go in the records.": "Toute autre remarque, effort remarquable qui devrait aller dans les dossiers.",
@@ -531,6 +570,8 @@
         "Receipt": "Reçu",
         "Reference": "Référence",
         "Reference DocType": "Type de document de référence",
+        "Reference Document Name": "Nom du document de référence",
+        "Reference Document Type": "Type du document de référence",
         "Reference Name": "Nom du document de référence",
         "Select Serial No": "Veuillez sélectionner le numéro de série",
         "Serial No": "N° de série",
@@ -542,6 +583,17 @@
         "To Employee": "À l'employé",
         "Transaction Date": "Date de la Transaction",
         "Transfer": "Transférer"
+    },
+    "DocType: Asset Movement Item": {
+        "Asset": "Actif",
+        "Asset Movement Item": "Article de mouvement d'actif",
+        "Asset Name": "Nom de l'actif",
+        "Assets": "Actifs",
+        "Company": "Société",
+        "From Employee": "De l'employé",
+        "Source Location": "Localisation source",
+        "Target Location": "Localisation cible",
+        "To Employee": "À l'employé"
     },
     "DocType: Asset Repair": {
         "ACC-ASR-.YYYY.-": "ACC-ASR-.AAAA.-",
@@ -677,6 +729,20 @@
         "System Manager": "Responsable système",
         "Transaction": "Transaction"
     },
+    "DocType: Availability Of Slots": {
+        "Availability Of Slots": "Disponibilité des créneaux",
+        "CRM": "CRM",
+        "Day Of Week": "Jour de la semaine",
+        "Friday": "Vendredi",
+        "From Time": "Horaire de Début",
+        "Monday": "Lundi",
+        "Saturday": "Samedi",
+        "Sunday": "Dimanche",
+        "Thursday": "Jeudi",
+        "To Time": "Horaire de Fin",
+        "Tuesday": "Mardi",
+        "Wednesday": "Mercredi"
+    },
     "DocType: BOM": {
         "Allow Alternative Item": "Autoriser un article alternatif",
         "Allow Same Item Multiple Times": "Autoriser le même élément plusieurs fois",
@@ -712,6 +778,7 @@
         "Operations": "Opérations",
         "Price List": "Liste de prix",
         "Project": "Projet",
+        "Quality Inspection Required": "Inspection de la qualité requise",
         "Quality Inspection Template": "Modèle d'inspection de la qualité",
         "Quantity": "Quantité",
         "Quantity of item obtained after manufacturing / repacking from given quantities of raw materials": "Quantité d'article obtenue après production / reconditionnement des quantités données de matières premières",
@@ -850,6 +917,7 @@
     "DocType: Bank": {
         "Accounts": "Comptes",
         "Bank": "Banque",
+        "Bank Logo": "Logo de la banque",
         "Bank Name": "Nom de la Banque",
         "Bank Transaction Mapping": "Mapping des transactions bancaires",
         "Data Import Configuration": "Configuration pour l'import de données",
@@ -968,6 +1036,7 @@
         "Date": "Date",
         "Debit": "Débit",
         "Description": "Description",
+        "Difference": "Différence",
         "Payment Entries": "Écritures de Paiement",
         "Pending": "En attente",
         "Reconciled": "Réconcilié",
@@ -976,6 +1045,8 @@
         "Settled": "Confirmé",
         "Status": "Statut",
         "System Manager": "Responsable système",
+        "Total Credit": "Total Crédit",
+        "Total Debit": "Total Débit",
         "Transaction ID": "Identifiant de Transaction",
         "Unallocated Amount": "Montant Non Alloué",
         "Unreconciled": "Non réconcilié"
@@ -990,8 +1061,13 @@
         "Accounts": "Comptes",
         "Allocated Amount": "Montant alloué",
         "Bank Transaction Payments": "Paiements des transactions bancaires",
+        "Credit": "Crédit",
+        "Date": "Date",
+        "Debit": "Débit",
+        "Party": "Tiers",
         "Payment Document": "Document de paiement",
-        "Payment Entry": "Écriture de Paiement"
+        "Payment Entry": "Écriture de Paiement",
+        "Payment Type": "Type de Paiement"
     },
     "DocType: Batch": {
         "Batch": "Lot",
@@ -2005,6 +2081,7 @@
         "Draft": "Brouillon",
         "Driver": "Chauffeur",
         "Driver Address": "Adresse du livreur",
+        "Driver Email": "Email du chauffeur",
         "Driver Name": "Nom du conducteur",
         "Fulfillment User": "Livreur",
         "In Transit": "Livraison en cours",
@@ -2340,6 +2417,7 @@
         "Paid Amount": "Montant payé",
         "Posting Date": "Date de comptabilisation",
         "Purpose": "Objet",
+        "Returned Amount": "Montant remboursé",
         "Series": "Série",
         "Status": "Statut",
         "Unpaid": "Impayé"
@@ -2801,6 +2879,7 @@
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Department": "Département",
+        "Deprecated: Kept for compatibility only but will be removed in the future": "Obsolète: Gardé uniquement pour compatibilité, mais sera supprimé à l'avenir",
         "Draft": "Brouillon",
         "EXP": "EXP",
         "Employee": "Employé",
@@ -2835,6 +2914,7 @@
         "Total Sanctioned Amount": "Montant total approuvé",
         "Total Taxes and Charges": "Total des taxes et frais",
         "Unpaid": "Impayé",
+        "Unreconciled Amount": "Montant non rapproché",
         "Vehicle Log": "Journal du véhicule"
     },
     "DocType: Expense Claim Account": {
@@ -2855,6 +2935,7 @@
     },
     "DocType: Expense Claim Detail": {
         "Amount": "Montant",
+        "Cost Center": "Centre de coûts",
         "Default Account": "Compte par Défaut",
         "Description": "Description",
         "Expense Claim Detail": "Détail de la note de frais",
@@ -2865,6 +2946,7 @@
     },
     "DocType: Expense Claim Type": {
         "Accounts": "Comptes",
+        "Deferred Expense Account": "Compte de dépenses différées",
         "Description": "Description",
         "Employee": "Employé",
         "Expense Claim Type": "Type de Note de Frais",
@@ -2962,7 +3044,8 @@
         "Description": "Description",
         "GST HSN Code": "Code GST HSN",
         "HSN Code": "Code HSN",
-        "Regional": "Régional"
+        "Regional": "Régional",
+        "Taxes": "Taxes"
     },
     "DocType: GST Settings": {
         "B2C Limit": "Limite B2C",
@@ -3167,6 +3250,20 @@
         "Identification Document Type": "Type de document d'identification",
         "System Manager": "Responsable système"
     },
+    "DocType: Import Supplier Invoice": {
+        "ACC-PINV-.YYYY.-": "ACC-PINV-.YYYY.-",
+        "Company": "Société",
+        "Default Buying Price List": "Liste de prix d'achat par défaut",
+        "Import Invoices": "Importer des factures",
+        "Import Supplier Invoice": "Importer des factures d'achat",
+        "Item Code": "Code de l'Article",
+        "Regional": "Régional",
+        "Status": "Statut",
+        "Supplier Group": "Groupe de fournisseurs",
+        "Tax Account": "Compte de taxes",
+        "Upload XML Invoices": "Télécharger des facture XML",
+        "Zip File": "Fichier Zip"
+    },
     "DocType: Industry Type": {
         "Industry": "Industrie",
         "Industry Type": "Secteur d'Activité",
@@ -3332,6 +3429,7 @@
         "Asset Category": "Catégorie d'Actif",
         "Asset Naming Series": "Nom de série de l'actif",
         "Attributes": "Attributs",
+        "Auto Create Assets on Purchase": "Créer automatiquement des actifs à l'achat",
         "Auto re-order": "Réapprovisionnement automatique",
         "Automatically Create New Batch": "Créer un Nouveau Lot Automatiquement",
         "Average time taken by the supplier to deliver": "Délai moyen de livraison par le fournisseur",
@@ -3804,11 +3902,15 @@
         "Actual Start Date": "Date de Début Réelle",
         "Amended From": "Modifié depuis",
         "BOM No": "N° LDM",
+        "Barcode": "Code barre",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Completed": "Terminé",
+        "Current Time": "Horaire actuel",
         "Employee": "Employé",
+        "Employee Name": "Nom de l'employé",
         "For Quantity": "Quantité demandée",
+        "Item Name": "Nom de l'article",
         "Items": "Articles",
         "Job Card": "Carte de travail",
         "Job Started": "Tâche démarrée",
@@ -3817,11 +3919,17 @@
         "Manufacturing User": "Chargé de production",
         "Material Transferred": "Matériel transféré",
         "More Information": "Information additionnelles",
+        "Naming Series": "Nom de série",
+        "On Hold": "En attente",
         "Open": "Ouvert",
         "Operation": "Opération",
         "Operation ID": "ID de l'Opération",
+        "PO-JOB.#####": "PO-JOB.#####",
         "Posting Date": "Date de comptabilisation",
+        "Production": "Production",
+        "Production Item": "Article de production",
         "Project": "Projet",
+        "Qty To Manufacture": "Quantité à produire",
         "Raw Materials": "Matières premières",
         "Remarks": "Remarques",
         "Requested Qty": "Qté Demandée",
@@ -3967,6 +4075,7 @@
         "Total Amount in Words": "Montant Total En Toutes Lettres",
         "Total Credit": "Total Crédit",
         "Total Debit": "Total Débit",
+        "Unreconciled Amount": "Montant non rapproché",
         "User Remark": "Remarque de l'Utilisateur",
         "Write Off": "Reprise",
         "Write Off Amount": "Montant de la Reprise",
@@ -4025,6 +4134,7 @@
         "Applicable Charges": "Frais Applicables",
         "Cost Center": "Centre de coûts",
         "Description": "Description",
+        "Is Fixed Asset": "Est Immobilisation",
         "Item Code": "Code de l'Article",
         "Landed Cost Item": "Coût de l'Article au Débarquement",
         "Purchase Invoice": "Facture d’Achat",
@@ -4058,6 +4168,7 @@
         "Additional Charges": "Frais Supplémentaires",
         "Amended From": "Modifié depuis",
         "Amount": "Montant",
+        "Applicable Charges": "Frais Applicables",
         "Company": "Société",
         "Distribute Charges Based On": "Distribuer les Charges sur la Base de",
         "Get Items From Purchase Receipts": "Obtenir des Articles à partir des Reçus d'Achat",
@@ -4077,16 +4188,24 @@
         "Address & Contact": "Adresse &amp; Contact",
         "Address Desc": "Adresse Desc",
         "Address HTML": "Adresse HTML",
+        "Address Line 1": "Adresse",
+        "Address Line 2": "Complément d'adresse",
+        "Address Title": "Titre de l'Adresse",
         "All": "Tous",
         "Blog Subscriber": "Abonné au Blog",
         "CRM": "CRM",
         "Campaign Name": "Nom de la Campagne",
         "Channel Partner": "Partenaire de Canal",
+        "City/Town": "Ville",
         "Client": "Client",
         "Company": "Société",
         "Consultant": "Consultant",
+        "Contact": "Contact",
         "Contact HTML": "HTML du Contact",
         "Converted": "Converti",
+        "Country": "Pays",
+        "County": "Etat",
+        "Designation": "Désignation",
         "Do Not Contact": "Ne Pas Contacter",
         "Email Address": "Adresse email",
         "Ends On": "Se termine le",
@@ -4094,6 +4213,7 @@
         "Follow Up": "Suivre",
         "From Customer": "Du Client",
         "Gender": "Genre",
+        "Guest": "Invité",
         "Hub Sync ID": "Hub Sync ID",
         "Image": "Image",
         "Industry": "Industrie",
@@ -4116,6 +4236,7 @@
         "Other": "Autre",
         "Person Name": "Nom de la Personne",
         "Phone": "Téléphone",
+        "Postal Code": "Code postal",
         "Product Enquiry": "Demande d'Information Produit",
         "Quotation": "Devis",
         "Replied": "Répondu",
@@ -4126,10 +4247,12 @@
         "Salutation": "Salutation",
         "Series": "Série",
         "Source": "Source",
+        "State": "État",
         "Status": "Statut",
         "Suggestions": "Suggestions",
         "System Manager": "Responsable système",
         "Territory": "Région",
+        "Title": "Titre",
         "Unsubscribed": "Désinscrit",
         "Website": "Site web"
     },
@@ -5100,6 +5223,14 @@
         "System Manager": "Responsable système",
         "User": "Utilisateur"
     },
+    "DocType: POS Settings": {
+        "Accounts": "Comptes",
+        "Accounts User": "Comptable",
+        "POS Field": "Champ du point de vente",
+        "POS Settings": "Paramètres du point de vente",
+        "Sales User": "Commercial",
+        "System Manager": "Responsable système"
+    },
     "DocType: Package Code": {
         "Code": "Code",
         "Description": "Description",
@@ -5254,6 +5385,7 @@
         "Transaction ID": "Identifiant de Transaction",
         "Type of Payment": "Type de Paiement",
         "Unallocated Amount": "Montant Non Alloué",
+        "Unreconciled Amount": "Montant non rapproché",
         "Write Off Difference Amount": "Montant de la Différence de la Reprise",
         "Writeoff": "Écrire"
     },
@@ -6145,6 +6277,7 @@
         "Currency and Price List": "Devise et liste de prix",
         "Date": "Date",
         "Debit Note Issued": "Notes de Débit Émises",
+        "Deprecated: Kept for compatibility only but will be removed in the future": "Obsolète: Gardé uniquement pour compatibilité, mais sera supprimé à l'avenir",
         "Disable Rounded Total": "Désactiver le Total Arrondi",
         "Draft": "Brouillon",
         "Due Date": "Date d'échéance de paiement",
@@ -6251,6 +6384,7 @@
         "Total Taxes and Charges": "Total des taxes et frais",
         "Total Taxes and Charges (Company Currency)": "Total des taxes et frais (Devise Société)",
         "Unpaid": "Impayé",
+        "Unreconciled Amount": "Montant non rapproché",
         "Update Auto Repeat Reference": "Mettre à jour la référence de répétition automatique",
         "Update Stock": "Mettre à Jour le Stock",
         "Warehouse where you are maintaining stock of rejected items": "L'entrepôt où vous conservez le stock d'objets refusés",
@@ -6281,6 +6415,7 @@
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
         "Asset": "Actif",
+        "Asset Category": "Catégorie d'actif",
         "Asset Location": "Localisation de l'actif",
         "BOM": "LDM (Liste de Matériaux)",
         "Batch No": "N° du lot",
@@ -6490,6 +6625,7 @@
         "Image": "Image",
         "Image View": "Vue image",
         "Include Exploded Items": "Inclure les articles éclatés",
+        "Is Fixed Asset": "Est Immobilisation",
         "Is Free Item": "Est un article gratuit",
         "Item Code": "Code de l'Article",
         "Item Group": "Groupe d'article",
@@ -6675,6 +6811,7 @@
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
         "Asset": "Actif",
+        "Asset Category": "Catégorie d'actif",
         "Asset Location": "Localisation de l'actif",
         "BOM": "LDM (Liste de Matériaux)",
         "Barcode": "Code barre",
@@ -6805,6 +6942,7 @@
         "Purchase Taxes and Charges Template": "Modèle de Taxe et Frais d'Achat",
         "Purchase User": "Acheteur",
         "Standard tax template that can be applied to all Purchase Transactions. This template can contain list of tax heads and also other expense heads like \"Shipping\", \"Insurance\", \"Handling\" etc.\n\n#### Note\n\nThe tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.\n\n#### Description of Columns\n\n1. Calculation Type: \n    - This can be on **Net Total** (that is the sum of basic amount).\n    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.\n    - **Actual** (as mentioned).\n2. Account Head: The Account ledger under which this tax will be booked\n3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.\n4. Description: Description of the tax (that will be printed in invoices / quotes).\n5. Rate: Tax rate.\n6. Amount: Tax amount.\n7. Total: Cumulative total to this point.\n8. Enter Row: If based on \"Previous Row Total\" you can select the row number which will be taken as a base for this calculation (default is the previous row).\n9. Consider Tax or Charge for: In this section you can specify if the tax / charge is only for valuation (not a part of total) or only for total (does not add value to the item) or for both.\n10. Add or Deduct: Whether you want to add or deduct the tax.": "Modèle de la taxe standard qui peut être appliqué à toutes les Opérations d'Achat. Ce modèle peut contenir la liste des titres d'impôts ainsi que d'autres titre de charges comme \"Livraison\", \"Assurance\", \"Gestion\", etc. \n\n#### Remarque \n\nLe taux d'imposition que vous définissez ici sera le taux d'imposition standard pour tous les **Articles**. S'il y a des **Articles** qui ont des taux différents, ils doivent être ajoutés dans la table **Taxe de l'Article** dans les données de base **Article**.\n\n#### Description des Colonnes\n\n1. Type de Calcul : \n    - Cela peut être le **Total Net** (qui est la somme des montants de base).\n    - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).\n    - **Réel** (comme mentionné).\n2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée\n3. Centre de Coût : Si la taxe / redevance est un revenu (comme la livraison) ou une charge, elle doit être comptabilisée dans un Centre de coûts.\n4. Description : Description de la taxe (qui sera imprimée sur les factures / devis).\n5. Taux : Le taux d'imposition.\n6. Montant : Le montant de la taxe.\n7. Total : Total accumulé à ce point.\n8. Entrez la Ligne : Si elle est basée sur \"Total de la Ligne Précédente\" vous pouvez sélectionner le numéro de la ligne qui sera pris comme base pour ce calcul (par défaut la ligne précédente).\n9. Considérez Taxe ou Charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est seulement pour la valorisation (pas une partie du total) ou seulement pour le total (n'ajoute pas de la valeur à l'article) ou pour les deux.\n10. Ajouter ou Déduire : Ce que vous voulez ajouter ou déduire de la taxe.",
+        "Tax Category": "Catégorie de taxe",
         "Title": "Titre"
     },
     "DocType: Purpose of Travel": {
@@ -6842,7 +6980,8 @@
         "Problem": "Problème",
         "Quality Action Resolution": "Résolution d'une action de qualité",
         "Quality Management": "Gestion de la Qualité",
-        "Resolution": "Résolution"
+        "Resolution": "Résolution",
+        "Review": "Revue"
     },
     "DocType: Quality Feedback": {
         "All": "Tous",
@@ -7148,6 +7287,7 @@
         "Detailed Reason": "Raison détaillée",
         "Draft": "Brouillon",
         "Exchange Rate": "Taux de change",
+        "Expired": "Expiré",
         "Grand Total": "Total TTC",
         "Grand Total (Company Currency)": "Total TTC (Devise de la Société)",
         "Group same items": "Groupe les éléments identiques",
@@ -7811,6 +7951,7 @@
         "Total Taxes and Charges (Company Currency)": "Total des taxes et frais (Devise Société)",
         "Unpaid": "Impayé",
         "Unpaid and Discounted": "Impayée et affacturée",
+        "Unreconciled Amount": "Montant non rapproché",
         "Update Auto Repeat Reference": "Mettre à jour la référence de répétition automatique",
         "Update Billed Amount in Sales Order": "Mettre à jour le montant facturé dans la commande client",
         "Update Stock": "Mettre à Jour le Stock",
@@ -8077,6 +8218,7 @@
     },
     "DocType: Sales Order Item": {
         "Actual Qty": "Quantité Réelle",
+        "Additional Notes": "Notes additionnelles",
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
         "Basic Rate (Company Currency)": "Taux de Base (Devise de la Société )",
@@ -8135,6 +8277,7 @@
         "Sales Order Date": "Date de la Commande Client",
         "Sales Order Item": "Article de la commande client",
         "Selling": "Vente",
+        "Shopping Cart": "Panier",
         "Stock UOM": "Unité de mesure du stock",
         "Supplier": "Fournisseur",
         "Supplier delivers to Customer": "Fournisseur livre au Client",
@@ -8250,6 +8393,7 @@
         "Sales Taxes and Charges Template": "Modèle de Taxes et Frais de Vente",
         "Sales User": "Commercial",
         "Standard tax template that can be applied to all Sales Transactions. This template can contain list of tax heads and also other expense / income heads like \"Shipping\", \"Insurance\", \"Handling\" etc.\n\n#### Note\n\nThe tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.\n\n#### Description of Columns\n\n1. Calculation Type: \n    - This can be on **Net Total** (that is the sum of basic amount).\n    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.\n    - **Actual** (as mentioned).\n2. Account Head: The Account ledger under which this tax will be booked\n3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.\n4. Description: Description of the tax (that will be printed in invoices / quotes).\n5. Rate: Tax rate.\n6. Amount: Tax amount.\n7. Total: Cumulative total to this point.\n8. Enter Row: If based on \"Previous Row Total\" you can select the row number which will be taken as a base for this calculation (default is the previous row).\n9. Is this Tax included in Basic Rate?: If you check this, it means that this tax will not be shown below the item table, but will be included in the Basic Rate in your main item table. This is useful where you want give a flat price (inclusive of all taxes) price to customers.": "Modèle de la taxe standard qui peut être appliqué à toutes les Opérations d'Achat. Ce modèle peut contenir la liste des titres d'impôts ainsi que d'autres titre de charges comme \"Livraison\", \"Assurance\", \"Gestion\", etc. \n\n#### Remarque \n\nLe taux d'imposition que vous définissez ici sera le taux d'imposition standard pour tous les **Articles**. S'il y a des **Articles** qui ont des taux différents, ils doivent être ajoutés dans la table **Taxe de l'Article** dans les données de base **Article**.\n\n#### Description des Colonnes\n\n1. Type de Calcul : \n    - Cela peut être le **Total Net** (qui est la somme des montants de base).\n    - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).\n    - **Réel** (comme mentionné).\n2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée\n3. Centre de Coût : Si la taxe / redevance est un revenu (comme la livraison) ou une charge, elle doit être comptabilisée dans un Centre de coûts.\n4. Description : Description de la taxe (qui sera imprimée sur les factures / devis).\n5. Taux : Le taux d'imposition.\n6. Montant : Le montant de la taxe.\n7. Total : Total accumulé à ce point.\n8. Entrez la Ligne : Si elle est basée sur \"Total de la Ligne Précédente\" vous pouvez sélectionner le numéro de la ligne qui sera pris comme base pour ce calcul (par défaut la ligne précédente).\n9. Considérez Taxe ou Charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est seulement pour la valorisation (pas une partie du total) ou seulement pour le total (n'ajoute pas de la valeur à l'article) ou pour les deux.\n10. Ajouter ou Déduire : Ce que vous voulez ajouter ou déduire de la taxe.",
+        "Tax Category": "Catégorie de taxe",
         "Title": "Titre"
     },
     "DocType: Sales Team": {
@@ -9090,6 +9234,8 @@
         "Warn": "Avertir"
     },
     "DocType: Stripe Settings": {
+        "Bank": "Banque",
+        "Bank Account": "Compte bancaire",
         "ERPNext Integrations": "Intégrations dokos",
         "Header Image": "Image d'en-tête",
         "Payment Gateway Name": "Nom de la passerelle de paiement",
@@ -9167,6 +9313,7 @@
         "Billing Interval Count": "Fréquence de facturation",
         "Cost": "Coût",
         "Currency": "Devise",
+        "Customer Group": "Groupe de clients",
         "Day": "Jour",
         "Fixed rate": "Prix unitaire fixe",
         "Gateways Payment Plans": "Plans de paiement des passerelles de paiement",
@@ -9187,11 +9334,16 @@
     },
     "DocType: Subscription Plan Detail": {
         "Accounts": "Comptes",
+        "Active": "Actif",
         "Description": "Description",
+        "From Date": "Date de début",
+        "Inactive": "Inactif",
         "Plan": "Plan",
         "Quantity": "Quantité",
         "Rate": "Prix unitaire",
-        "Subscription Plan Detail": "Détail du plan d'abonnement"
+        "Status": "Statut",
+        "Subscription Plan Detail": "Détail du plan d'abonnement",
+        "To Date": "Date de fin"
     },
     "DocType: Supplier": {
         "Accounts": "Comptes",
@@ -10436,6 +10588,7 @@
         "Manufacturing User": "Chargé de production",
         "Net Hour Rate": "Taux Horaire Net",
         "Operating Costs": "Coûts d'Exploitation",
+        "Production Capacity": "Capacité de production",
         "Rent Cost": "Coût de la Location",
         "Wages": "Salaires",
         "Wages per hour": "Salaires par heure",
@@ -11227,19 +11380,40 @@
         "Row #{0}: Payment document is required to complete the transaction": "Ligne #{0}: un document de paiement est nécessaire pour compléter cette transaction"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction.js": {
-        "Document {0} successfully uncleared": "Rapprochement du document {0} annulé avec succès"
+        "Document {0} successfully uncleared": "Rapprochement du document {0} annulé avec succès",
+        "Make payment entry": "Créer une écriture de paiement"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction.py": {
         "The following entries exist already with the same date, debit, credit and currency:<br>{0}": "Les écritures suivantes existent déjà avec la même date, débit, crédit et devise:<br>{0}",
         "The total allocated amount ({0}) is greated than the paid amount ({1}).": "Le montant total alloué ({0}) est supérieur au montant payé ({1})"
     },
+    "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_import/BankTransactionImporter.vue": {
+        "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
+        "Bank transactions creation in progress. Please wait...": "Création des transactions bancaire en cours. Veuillez patienter...",
+        "Please check the error log for details about the import errors": "Veuillez vérifier le journal des erreurs pour plus de détails sur les erreurs lors de l'import",
+        "Rows per page": "Lignes par page",
+        "next": "suiv.",
+        "of": "de",
+        "prev": "préc."
+    },
+    "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_import/bank_transaction_import.js": {
+        "New Transactions": "Créer des transactions",
+        "Submit": "Valider",
+        "Synchronize": "Synchroniser",
+        "Synchronize an account": "Synchroniser un compte",
+        "Upload New Bank Transactions": "Télécharger de nouvelles transactions bancaires"
+    },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_list.js": {
         "Reconciled": "Rapproché",
-        "Unreconciled": "Non rapproché"
+        "Synchronize this account": "Synchroniser ce compte",
+        "Unreconciled": "Non rapproché",
+        "Upload a csv/xlsx statement": "Télécharger un relevé en csv/xlsx",
+        "Upload an ofx statement": "Télécharger un relevé en ofx"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_upload.py": {
         "Bank transaction creation error": "Erreur de création d'une transaction bancaire",
         "Credit": "Crédit",
+        "Currency": "Devise",
         "Date": "Date",
         "Debit": "Débit",
         "Description": "Description",
@@ -11312,7 +11486,8 @@
         "Cost Center with existing transactions can not be converted to group": "Un Centre de coûts avec des transactions existantes ne peut pas être converti en groupe",
         "Cost Center with existing transactions can not be converted to ledger": "Un Centre de coûts avec des transactions existantes ne peut pas être converti en grand livre",
         "Please enter parent cost center": "Veuillez entrer le centre de coût parent",
-        "Root cannot have a parent cost center": "Racine ne peut pas avoir un Centre de coûts parent"
+        "Root cannot have a parent cost center": "Racine ne peut pas avoir un Centre de coûts parent",
+        "{0} is not a group node. Please select a group node as parent cost center": "{0} n'est pas un noeud de groupe. Veuillez sélectionner un noeud de groupe en tant que centre de coûts parent."
     },
     "apps/erpnext/erpnext/accounts/doctype/cost_center/cost_center_dashboard.py": {
         "Reports": "Rapports"
@@ -11496,6 +11671,9 @@
         "{0} {1} is fully billed": "{0} {1} est entièrement facturé",
         "{0} {1} is not submitted": "{0} {1} n'a pas été soumis"
     },
+    "apps/erpnext/erpnext/accounts/doctype/journal_entry/journal_entry_dashboard.py": {
+        "Bank Statement": "Relevé bancaire"
+    },
     "apps/erpnext/erpnext/accounts/doctype/journal_entry/journal_entry_list.js": {
         "Cancelled": "Annulé",
         "Draft": "Brouillon"
@@ -11618,6 +11796,13 @@
         "{0} {1} is not associated with {2} {3}": "{0} {1} n'est pas associé à {2} {3}",
         "{0} {1} must be submitted": "{0} {1} doit être soumis"
     },
+    "apps/erpnext/erpnext/accounts/doctype/payment_entry/payment_entry_dashboard.py": {
+        "Bank Statement": "Relevé bancaire"
+    },
+    "apps/erpnext/erpnext/accounts/doctype/payment_entry/payment_entry_list.js": {
+        "Reconciled": "Rapproché",
+        "Unreconciled": "Non rapproché"
+    },
     "apps/erpnext/erpnext/accounts/doctype/payment_order/payment_order.js": {
         "Create Payment Entries": "Créer des écritures de paiement",
         "For Supplier": "Pour Fournisseur",
@@ -11661,6 +11846,7 @@
         "See payment link": "Voir le lien de paiement",
         "Sending": "Envoir en cours",
         "Start date for the payment gateway subscription": "Date de début de l'abonnement pour la passerelle de paiement",
+        "This reference is linked to subscription <a href=\"/desk#Form/Subscription/{0}\">{0}</a>": "Cette référence est liée à l'abonnement <a href=\"/desk#Form/Subscription/{0}\">{0}</a>",
         "This reference is linked to subscription {0}": "Ce document de référence est lié à l'abonnement {0}",
         "This subscription invoicing period ends on {0}.": "La période de facturation de cet abonnement termine le {0}",
         "This subscription invoicing period starts on {0}.": "La période de facturation de cet abonnement démarre le {0}",
@@ -11969,6 +12155,7 @@
         "cannot be greater than 100": "ne peut pas être supérieure à 100"
     },
     "apps/erpnext/erpnext/accounts/doctype/sales_invoice/sales_invoice.py": {
+        "'Update Stock' cannot be checked for fixed asset sale": "'Mettre à Jour Le Stock’ ne peut pas être coché pour la vente d'actifs immobilisés",
         "At least one mode of payment is required for POS invoice.": "Au moins un mode de paiement est nécessaire pour une facture de PDV",
         "Cancelled": "Annulé",
         "Company currencies of both the companies should match for Inter Company Transactions.": "Les devises des deux sociétés doivent correspondre pour les transactions inter-sociétés.",
@@ -11996,6 +12183,7 @@
         "Return": "Retour",
         "Row #{0} (Payment Table): Amount must be negative": "Row # {0} (Table de paiement): le montant doit être négatif",
         "Row #{0} (Payment Table): Amount must be positive": "Ligne #{0} (Table de paiement): Le montant doit être positif",
+        "Row #{0}: Asset {1} cannot be submitted, it is already {2}": "Ligne #{0} : L’Actif {1} ne peut pas être soumis, il est déjà {2}",
         "Row {0}: {1} Serial numbers required for Item {2}. You have provided {3}.": "Ligne {0}: {1} Numéros de série requis pour l'article {2}. Vous en avez fourni {3}.",
         "Sales Order {0} is not submitted": "Commande Client {0} n'a pas été transmise",
         "Select change amount account": "Sélectionner le compte de change",
@@ -12115,6 +12303,7 @@
         "Cancel Subscription": "Annuler l'abonnement",
         "Cancel subscription": "Annuler l'abonnement",
         "Cancellation date": "Date d'annulation",
+        "Do not cancel this subscription": "Ne pas annuler cet abonnement",
         "Fetch Subscription Updates": "Vérifier les mises à jour des abonnements",
         "Payment gateway subscription amount updated from {0} to {1}": "Le montant de l'abonnement de la passerelle de paiement a été mis à jour de {0} à {1}",
         "Prorate last invoice": "Facturer la dernière période au prorata",
@@ -12184,6 +12373,9 @@
         "Please mention Round Off Cost Center in Company": "Veuillez indiquer le Centre de coûts d’Arrondi de la Société",
         "You can't create accounting entries in the closed accounting period {0}": "Vous ne pouvez pas créer d'écritures comptables dans la période comptable clôturée {0}"
     },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/auto_bank_reconciliation.py": {
+        "Please select a period with at least one transaction to reconcile": "Veuillez sélectionner une période avec au moins une transaction à rapprocher"
+    },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation.js": {
         "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
         "Automatic Reconciliation": "Rapprochement automatique",
@@ -12213,10 +12405,73 @@
         "{0} bank transaction(s) created, {1} duplicate entries not created and {2} errors.": "{0} transaction(s) bancaires créées, {1} écritures en double non créées et {2} erreurs."
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation.py": {
+        "Please select at least one bank transaction and one document to reconcile": "Veuillez sélectionner au moins une transaction bancaire et un document à rapprocher",
+        "Please select documents linked to the same party": "Veuillez sélectionner des documents liés au même tiers",
+        "Please select documents linked to the same party account": "Veuillez sélectionner des documents liés au même compte de tiers",
+        "Please select documents linked to the same {0}": "Veuillez sélectionner des documents liés au·à la même {0}",
         "The selected payment entry should be linked with a creditor bank transaction": "Le paiement sélectionné doit être lié avec une transaction bancaire créditrice",
         "The selected payment entry should be linked with a debtor bank transaction": "Le paiement sélectionné doit être lié avec une transaction bancaire débitrice",
         "This Payment Entry's unallocated amount is greater than this Bank Transaction's unallocated amount": "Le montant non alloué de cette écriture de paiement est supérieur au montant non alloué de cette transaction bancaire",
-        "This bank transaction is already fully reconciled": "Cette transaction bancaire est déjà complètement réconciliée"
+        "This bank transaction is already fully reconciled": "Cette transaction bancaire est déjà complètement réconciliée",
+        "company": "société",
+        "cost center": "centre de coût",
+        "mode of payment": "mode de paiement",
+        "{0} is on hold till {1}": "{0} est en attente jusqu'à {1}"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliation.vue": {
+        "Please select only one bank transaction and multiple documents or multiple bank transactions and only one document.": "Veuillez sélectionner une seule transaction bancaire et plusieurs documents ou plusieurs transactions bancaires et un seul document."
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationActions.vue": {
+        "Bank Transactions": "Transactions bancaires",
+        "Documents": "Documents",
+        "Reconcile": "Réconcilier",
+        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
+        "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document."
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationInfo.vue": {
+        "Final balance": "Solde final",
+        "Initial balance": "Solde initial"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationMatchingBox.vue": {
+        "Amount": "Montant",
+        "Date": "Date",
+        "Documents": "Documents",
+        "No matching document found for your selection": "Aucun document correspondant trouvé pour votre sélection",
+        "Party": "Tiers",
+        "Reference": "Référence",
+        "Reference Date": "Date de référence",
+        "Rows per page": "Lignes par page",
+        "Search for a specific document": "Chercher un document en particulier",
+        "Select a bank transaction to find matching transactions": "Sélectionnez une transaction bancaire pour trouver des documents correspondants.",
+        "Show the full list": "Voir la liste complète",
+        "clear": "réinitialiser",
+        "next": "suiv.",
+        "of": "de",
+        "prev": "préc.",
+        "rows selected": "lignes sélectionnées"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationTransactionList.vue": {
+        "Amount": "Montant",
+        "Automatic reconciliation": "Rapprochement automatique",
+        "Bank Transactions": "Transactions bancaires",
+        "Date": "Date",
+        "Description": "Description",
+        "No data available for this period": "Aucune donnée disponible pour cette période",
+        "Reconcile Stripe Transactions": "Rapprocher les transactions Stripe",
+        "Rows per page": "Lignes par page",
+        "Search for a specific bank transaction": "Chercher une transaction en particulier",
+        "clear": "réinitialiser",
+        "next": "suiv.",
+        "of": "de",
+        "prev": "préc.",
+        "rows selected": "lignes sélectionnées"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/bank_reconciliation.js": {
+        "Bank Account": "Compte bancaire",
+        "Bank Reconciliation": "Rapprochement bancaire",
+        "Company": "Société",
+        "Date Range": "Intervalle de dates",
+        "Please select company first": "Veuillez d'abord sélectionner la société"
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_transaction_header.html": {
         "Credit": "Crédit",
@@ -12224,6 +12479,11 @@
         "Date": "Date",
         "Debit": "Débit",
         "Description": "Description"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_transaction_match.py": {
+        "Average balance": "Solde moyen",
+        "Bank Balance": "Solde bancaire",
+        "Unallocated Amount": "Montant non alloué"
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_transaction_row.html": {
         "New Expense": "Nouvelle dépense",
@@ -12240,6 +12500,10 @@
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/linked_payment_row.html": {
         "Reconcile": "Réconcilier"
+    },
+    "apps/erpnext/erpnext/accounts/page/bank_reconciliation/stripe_reconciliation.py": {
+        "Please link this bank account with at least one Stripe account": "Veuille lier ce compte bancaire avec au moins un compte Stripe",
+        "Please select a period with at least one Stripe transaction to reconcile": "Veuillez sélectionner une période contenant au moins une transaction Stripe à rapprocher"
     },
     "apps/erpnext/erpnext/accounts/party.py": {
         "Accounting Entry for {0}: {1} can only be made in currency: {2}": "Écriture Comptable pour {0}: {1} ne peut être effectuée qu'en devise: {2}",
@@ -12326,6 +12590,7 @@
         "Ageing Range 3": "Balance Agée 3",
         "Ageing Range 4": "Balance agée 4",
         "As on Date": "Comme à la date",
+        "Based On Payment Terms": "Basé sur les termes de paiement",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Finance Book": "Livre comptable",
@@ -12341,6 +12606,7 @@
         "Ageing Range 2": "Balance Agée 2",
         "Ageing Range 3": "Balance Agée 3",
         "Ageing Range 4": "Balance agée 4",
+        "Based On Payment Terms": "Basé sur les termes de paiement",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Date": "Date",
@@ -12451,6 +12717,7 @@
         "Ageing Range 2": "Balance Agée 2",
         "Ageing Range 3": "Balance Agée 3",
         "Ageing Range 4": "Balance agée 4",
+        "Based On Payment Terms": "Basé sur les termes de paiement",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Customer": "Client",
@@ -12559,6 +12826,7 @@
     "apps/erpnext/erpnext/accounts/report/bank_reconciliation_statement/bank_reconciliation_statement.py": {
         "Against Account": "Pour le Compte",
         "Bank Statement balance as per General Ledger": "Solde du Relevé Bancaire d’après le Grand livre",
+        "Bank statement balance": "Solde du relevé bancaire",
         "Calculated Bank Statement balance": "Solde Calculé du Relevé Bancaire",
         "Cheques and Deposits incorrectly cleared": "Chèques et Dépôts incorrectement compensés",
         "Clearance Date": "Date de rapprochement",
@@ -12577,6 +12845,7 @@
         "Budget Against": "Budget Pour",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
+        "Dimension Filter": "Filtrer par dimension",
         "From Fiscal Year": "À partir de l'année fiscale",
         "Half-Yearly": "Semestriel",
         "Monthly": "Mensuel",
@@ -12679,6 +12948,7 @@
     },
     "apps/erpnext/erpnext/accounts/report/financial_statements.html": {
         "Currency": "Devise",
+        "Printed On": "Imprimé sur",
         "Too many columns. Export the report and print it using a spreadsheet application.": "Trop de colonnes. Exportez le rapport et imprimez-le à l'aide d'un tableur."
     },
     "apps/erpnext/erpnext/accounts/report/financial_statements.py": {
@@ -13048,6 +13318,7 @@
         "Delivery Note": "Bon de livraison",
         "Grand Total": "Total TTC",
         "Invoice": "Facture",
+        "Mode Of Payment": "Mode de paiement",
         "Mode of Payment": "Mode de Paiement",
         "Net Total": "Total Net",
         "No record found": "Aucun enregistrement trouvé",
@@ -13060,6 +13331,7 @@
         "Rounded Total": "Total Arrondi",
         "Sales Order": "Commande client",
         "Tax Id": "N° TVA",
+        "Tax Total": "Total des taxes",
         "Territory": "Région",
         "Total Tax": "Total des Taxes",
         "Warehouse": "Entrepôt"
@@ -13225,10 +13497,16 @@
         "Depreciation Entry": "Ecriture d’Amortissement",
         "Do you really want to restore this scrapped asset?": "Voulez-vous vraiment restaurer cet actif mis au rebut ?",
         "Do you really want to scrap this asset?": "Voulez-vous vraiment mettre cet actif au rebut ?",
+        "Invalid Purchase Invoice": "Facture d'achat invalide",
+        "Invalid Purchase Receipt": "Reçu d'achat invalide",
+        "Not Allowed": "Non autorisé",
+        "Please select Item Code first": "Veuillez d'abord sélectionner un code d'article",
         "Purchase Invoice": "Facture d’Achat",
         "Select Serial No": "Veuillez sélectionner le numéro de série",
         "Serial No": "N° de série",
         "Target Location": "Localisation cible",
+        "The selected Purchase Invoice doesn't contains selected Asset Item.": "La facture d'achat sélectionnée ne contient pas d'article correspondant à cet actif",
+        "The selected Purchase Receipt doesn't contains selected Asset Item.": "Le reçu d'achat sélectionnée ne contient pas d'article correspondant à cet actif",
         "Transfer": "Transférer",
         "Transfer Asset": "Transfert d'Actifs"
     },
@@ -13237,6 +13515,7 @@
         "All the depreciations has been booked": "Toutes les dépréciations ont été comptabilisées",
         "Asset Movement record {0} created": "Registre de Mouvement de l'Actif {0} créé",
         "Asset cannot be cancelled, as it is already {0}": "L'actif ne peut être annulé, car il est déjà {0}",
+        "Atleast one asset has to be selected.": "Au moins un actif doit être sélectionné",
         "Available for use date is required": "La date de mise en service est nécessaire",
         "Available-for-use Date should be after purchase date": "La date de disponibilité devrait être postérieure à la date d'achat",
         "Depreciation Row {0}: Depreciation Start Date is entered as past date": "Ligne de d'amortissement {0}: La date de début de l'amortissement est dans le passé",
@@ -13264,6 +13543,7 @@
         "Fully Depreciated": "Complètement déprécié",
         "In Maintenance": "En maintenance",
         "Issue": "Ticket",
+        "Make Asset Movement": "Faire un mouvement d'actifs",
         "Out of Order": "Hors service",
         "Partially Depreciated": "Partiellement déprécié",
         "Receipt": "Réception",
@@ -13331,6 +13611,7 @@
     },
     "apps/erpnext/erpnext/assets/report/fixed_asset_register/fixed_asset_register.js": {
         "Company": "Société",
+        "Date": "Date",
         "Finance Book": "Livre comptable",
         "Status": "Statut"
     },
@@ -13338,6 +13619,7 @@
         "Asset Category": "Catégorie d'actif",
         "Asset Id": "Identifiant de l'actif",
         "Asset Name": "Nom de l'actif",
+        "Asset Value": "Valeur de l'actif",
         "Available For Use Date": "Date de mise en service",
         "Cost Center": "Centre de coûts",
         "Current Value": "Valeur actuelle",
@@ -13502,6 +13784,7 @@
         "View": "Voir"
     },
     "apps/erpnext/erpnext/buying/doctype/supplier/supplier.py": {
+        "Local": "Locale",
         "Series is mandatory": "Série est obligatoire"
     },
     "apps/erpnext/erpnext/buying/doctype/supplier/supplier_dashboard.py": {
@@ -13753,7 +14036,9 @@
         "Accounts Receivable": "Comptes débiteurs",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
+        "Bank Reconciliation": "Rapprochement bancaire",
         "Bank Statement": "Relevé bancaire",
+        "Bank Transaction": "Transaction bancaire",
         "Bank/Cash transactions against party or for internal transfer": "Transactions bancaires/de trésorerie avec un tiers ou pour transfert interne",
         "Banking and Payments": "Banque et Paiements",
         "Bills raised by Suppliers.": "Factures émises par des fournisseurs.",
@@ -13854,13 +14139,16 @@
         "Customer Group": "Groupe de clients",
         "Customer database.": "Base de données Clients.",
         "Database of potential customers.": "Base de données de clients potentiels.",
+        "Email Group": "Groupe d'email",
         "Help": "Aide",
         "Helps you keep tracks of Contracts based on Supplier, Customer and Employee": "Aide à suivre les contrats pour les fournisseurs, clients et employés",
+        "Helps you manage appointments with your leads": "Aide à la gestion des rendez-vous avec vos prospects",
         "Logs for maintaining sms delivery status": "Journaux pour maintenir le statut de livraison des sms",
         "Maintenance": "Entretien",
         "Manage Customer Group Tree.": "Gérer l'Arborescence des Groupes de Clients.",
         "Manage Sales Person Tree.": "Gérer l'Arborescence des Vendeurs.",
         "Manage Territory Tree.": "Gérer l’Arborescence des Régions.",
+        "Newsletter": "Newsletter",
         "Plan for maintenance visits.": "Plan pour les visites de maintenance.",
         "Potential opportunities for selling.": "Opportunités potentielles de vente.",
         "Record of all communications of type email, phone, chat, visit, etc.": "Enregistrement de toutes les communications de type email, téléphone, chat, visite, etc.",
@@ -14274,6 +14562,9 @@
         "{0}% Billed": "{0}% Facturé",
         "{0}% Delivered": "{0}% Livré"
     },
+    "apps/erpnext/erpnext/crm/doctype/appointment/appointment.py": {
+        "Appointment Confirmation": "Confirmation de rendez-vous"
+    },
     "apps/erpnext/erpnext/crm/doctype/contract/contract.py": {
         "End Date cannot be before Start Date.": "La date de fin ne peut pas être antérieure à la date de début."
     },
@@ -14504,6 +14795,7 @@
     "apps/erpnext/erpnext/erpnext_integrations/doctype/plaid_settings/plaid_settings.py": {
         "Bank account {0} already exists and could not be created again": "Le compte bancaire {0} existe déjà et ne peut pas être créé une seconde fois",
         "Plaid transactions sync error": "Erreur de synchronisation des transactions Plaid",
+        "Please link your bank with Plaid first.": "Veuillez d'abord lier votre banque avec Plaid",
         "Please setup a default bank account for company {0}": "Veuillez définir un compte bancaire par défaut pour la société {0}"
     },
     "apps/erpnext/erpnext/erpnext_integrations/doctype/quickbooks_migrator/quickbooks_migrator.js": {
@@ -14563,6 +14855,7 @@
         "Stripe invoice processing error": "Erreur lors du traitement d'une facture Stripe",
         "Stripe invoice retrieval error": "Erreur lors de la récupération d'une facture Stripe",
         "Stripe payment intent creation error": "Erreur lors de la création d'une intention de paiement Stripe",
+        "Stripe payment method attachment error": "Erreur de liaison de méthode de paiement Stripe",
         "Stripe payment methods listing error": "Erreur de listing des méthodes de paiement Stripe",
         "Stripe plan verification error": "Erreur de vérification du plan de paiement Stripe",
         "Stripe request creation failure": "Echec lors de la création d'une demande Stripe",
@@ -14652,6 +14945,7 @@
     },
     "apps/erpnext/erpnext/hooks.py": {
         "Addresses": "Adresses",
+        "Appointment Booking": "Réservation de rendez-vous",
         "Bookings": "Réservations",
         "Invoices": "Factures",
         "Issues": "Tickets",
@@ -14772,7 +15066,8 @@
     "apps/erpnext/erpnext/hr/doctype/employee_advance/employee_advance.js": {
         "Create": "Créer",
         "Expense Claim": "Note de Frais",
-        "Payment": "Paiement"
+        "Payment": "Paiement",
+        "Return": "Retour"
     },
     "apps/erpnext/erpnext/hr/doctype/employee_advance/employee_advance.py": {
         "Advance account currency should be same as company currency {0}": "La devise du compte d'avance doit être la même que la devise de la société {0}",
@@ -15275,8 +15570,10 @@
         "Please share your feedback to the training by clicking on 'Training Feedback' and then 'New'": "Partagez vos commentaires sur la formation en cliquant sur 'Retour d'Expérience de la formation', puis 'Nouveau'"
     },
     "apps/erpnext/erpnext/hr/notification/training_scheduled/training_scheduled.html": {
+        "Date": "Date",
         "Details": "Détails",
         "End Time": "Date de fin",
+        "Event Link": "Lien de l'événement",
         "Event Location": "Lieu de l'Événement",
         "Event Name": "Nom de l'Événement",
         "Start Time": "Date de début",
@@ -15543,8 +15840,12 @@
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom.js": {
         "Alternate Item": "Article alternatif",
         "Browse BOM": "Parcourir la LDM",
+        "Create": "Créer",
         "Duplicate": "Dupliquer",
+        "Qty To Manufacture": "Quantité À Produire",
+        "Quality Inspection": "Inspection de la Qualité",
         "Update Cost": "Mettre à jour le Coût",
+        "Work Order": "Ordre de travail",
         "You can not change rate if BOM mentioned agianst any item": "Vous ne pouvez pas modifier le taux si la LDM est mentionnée pour un article"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom.py": {
@@ -15575,7 +15876,8 @@
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom_dashboard.py": {
         "Manufacture": "Production",
         "Purchase": "Achat",
-        "Stock": "Stock"
+        "Stock": "Stock",
+        "Subcontract": "Sous-traiter"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom_item_preview.html": {
         "Description": "Description",
@@ -15603,9 +15905,15 @@
         "The selected BOMs are not for the same item": "Les LDMs sélectionnées ne sont pas pour le même article"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/job_card/job_card.js": {
+        "Complete": "Complété",
         "Complete Job": "Job complet",
+        "Completed Quantity": "Quantité produite",
+        "Employee": "Employé",
         "Material Request": "Demande de matériel",
         "Material Transfer": "Transfert de matériel",
+        "Pause": "Pause",
+        "Resume": "Reprendre",
+        "Start": "Démarrer",
         "Start Job": "Démarrer le travail"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/job_card/job_card.py": {
@@ -15615,6 +15923,9 @@
         "Time logs are required for job card {0}": "Des feuilles de temps sont nécessaires pour la carte de travail {0}",
         "Total completed qty can not be greater than for quantity": "La quantité complétée totale ne peut pas être supérieure à la quantité demandée",
         "Total completed qty must be greater than zero": "La quantité complétée totale doit être supérieure à zéro"
+    },
+    "apps/erpnext/erpnext/manufacturing/doctype/job_card/job_card_calendar.js": {
+        "Employee": "Employé"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/job_card/job_card_dashboard.py": {
         "Transactions": "Transactions"
@@ -15661,7 +15972,8 @@
         "{0} created": "{0} créé"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/production_plan/production_plan_dashboard.py": {
-        "Related": "En Relation"
+        "Related": "En Relation",
+        "Transactions": "Transactions"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/production_plan/production_plan_list.js": {
         "Not Started": "Non Commencé"
@@ -15677,13 +15989,18 @@
         "For Quantity": "Quantité demandée",
         "For Quantity must be greater than zero": "Pour que la quantité soit supérieure à zéro",
         "For Quantity must be less than quantity {0}": "Pour que la quantité doit être inférieure à la quantité {0}",
+        "Job Card": "Carte de travail",
         "Material Consumption": "Consommation de matériel",
         "Max: {0}": "Max : {0}",
         "Operation": "Opération",
+        "Operation Id": "Identifiant de l'opération",
+        "Operations": "Opérations",
+        "Pending Qty": "Qté en Attente",
         "Please enter Production Item first": "Veuillez d’abord entrer l'Article en Production",
         "Please set the Item Code first": "Veuillez définir le Code d'Article en premier",
         "Qty for {0}": "Qté pour {0}",
         "Quantity must not be more than {0}": "Quantité ne doit pas être plus de {0}",
+        "Quantity to Manufacture": "Quantité à produire",
         "Re-open": "Ré-ouvrir",
         "Select Quantity": "Sélectionner une quantité",
         "Start": "Démarrer",
@@ -15719,6 +16036,9 @@
         "Sales Order": "Commande client",
         "WIP Warehouse": "Entrepôt (Travaux en Cours)"
     },
+    "apps/erpnext/erpnext/manufacturing/doctype/work_order/work_order_dashboard.py": {
+        "Transactions": "Transactions"
+    },
     "apps/erpnext/erpnext/manufacturing/doctype/work_order/work_order_list.js": {
         "Not Started": "Non Commencé"
     },
@@ -15728,7 +16048,9 @@
         "Workstation is closed on the following dates as per Holiday List: {0}": "La station de travail est fermée aux dates suivantes d'après la liste de vacances : {0}"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/workstation/workstation_dashboard.py": {
-        "Manufacture": "Production"
+        "Manufacture": "Production",
+        "Master": "Données de base",
+        "Transaction": "Transaction"
     },
     "apps/erpnext/erpnext/manufacturing/page/bom_comparison_tool/bom_comparison_tool.js": {
         "BOM 1": "Liste de matériaux 1",
@@ -16433,6 +16755,10 @@
         "Action Initialised": "Action initialisée",
         "No Action": "Aucune action"
     },
+    "apps/erpnext/erpnext/regional/doctype/gst_hsn_code/gst_hsn_code.js": {
+        "Item taxes updated": "Taxes de l'article mises à jour",
+        "Update Taxes for Items": "Mettre à jour les taxes pour les articles"
+    },
     "apps/erpnext/erpnext/regional/doctype/gst_settings/gst_settings.py": {
         "Email Reminders will be sent to all parties with email contacts": "Les rappels par emails seront envoyés à toutes les parties avec des contacts ayant une adresse email",
         "Email not found in default contact": "Email non trouvé dans le contact par défaut",
@@ -16675,6 +17001,7 @@
     "apps/erpnext/erpnext/regional/report/gstr_1/gstr_1.js": {
         "Address": "Adresse",
         "Company": "Société",
+        "Download as JSON": "Télécharger en JSON",
         "Download as Json": "Télécharger en JSON",
         "From Date": "Date de début",
         "To Date": "Date de fin",
@@ -16733,6 +17060,7 @@
     },
     "apps/erpnext/erpnext/selling/doctype/customer/customer.py": {
         "A Customer Group exists with same name please change the Customer name or rename the Customer Group": "Un Groupe de clients existe avec le même nom, veuillez changer le nom du Client ou renommer le Groupe de clients",
+        "Commercial": "Commercial",
         "Credit limit has been crossed for customer {0} ({1}/{2})": "La limite de crédit a été dépassée pour le client {0} ({1} / {2})",
         "Credit limit is already defined for the Company {0}": "Une limite de crédit est déjà définie pour la société {0}",
         "Following fields are mandatory to create address:": "Les champs suivants sont obligatoires pour créer une adresse",
@@ -16834,6 +17162,7 @@
     "apps/erpnext/erpnext/selling/doctype/quotation/quotation_list.js": {
         "Expired": "Expiré",
         "Lost": "Perdu",
+        "Open": "Ouvert",
         "Ordered": "Commandé",
         "Submitted": "Soumis"
     },
@@ -16939,6 +17268,7 @@
         "Please enter Delivery Date": "Entrez la Date de Livraison",
         "Please select BOM against item {0}": "Veuillez sélectionner la liste de matériaux (LDM) pour l'article {0}",
         "Please select Qty against item {0}": "Veuillez sélectionner Qté par rapport à l'élément {0}",
+        "Please set a Supplier against the Items to be considered in the Purchase Order.": "Veuillez définir un fournisseur pour les articles à prendre en compte dans la commande fournisseur.",
         "Quotation {0} is cancelled": "Devis {0} est annulée",
         "Quotation {0} not of type {1}": "Le devis {0} n'est pas du type {1}",
         "Row #{0}: Expected Delivery Date cannot be before Purchase Order Date": "Ligne {0}: la date de livraison prévue ne peut pas être avant la date de commande",
@@ -16992,6 +17322,7 @@
         "Item Name": "Nom de l'article",
         "Loyalty Amount": "Montant de fidélité",
         "Loyalty Points": "Points de fidélité",
+        "More Information": "Information additionnelles",
         "Net Total": "Total Net",
         "New": "Nouveau",
         "No Items added to cart": "Aucun article ajouté au panier",
@@ -17397,6 +17728,9 @@
         "Projects": "Projets",
         "Sales": "Ventes",
         "Support": "Support"
+    },
+    "apps/erpnext/erpnext/setup/doctype/company/company_list.js": {
+        "Accounts": "Comptes"
     },
     "apps/erpnext/erpnext/setup/doctype/company/company_tree.js": {
         "Company": "Société",
@@ -17942,6 +18276,7 @@
         "Default Unit of Measure for Variant '{0}' must be same as in Template '{1}'": "L’Unité de mesure par défaut pour la variante '{0}' doit être la même que dans le Modèle '{1}'",
         "Duplicate entry in Manufacturers table": "Entrée en double dans la table des fabricants",
         "Enable Auto Re-Order": "Autoriser le réapprovisonnement automatique",
+        "Finished Goods": "Produits finis",
         "Fixed Asset Item must be a non-stock item.": "Un Article Immobilisé doit être un élément non stocké.",
         "Item Tax Row {0} must have account of type Tax or Income or Expense or Chargeable": "La Ligne de Taxe d'Article {0} doit indiquer un compte de type Taxes ou Produit ou Charge ou Facturable",
         "Item Variants updated": "Variantes d'article mises à jour",
@@ -17955,6 +18290,7 @@
         "No Permission": "Aucune Autorisation",
         "Opening Stock": "Stock d'Ouverture",
         "Please select Sample Retention Warehouse in Stock Settings first": "Veuillez d'abord définir un entrepôt de stockage des échantillons dans les paramètres de stock",
+        "Products": "Produits",
         "Row #{0}: Please set reorder quantity": "Ligne #{0} : Veuillez définir la quantité de réapprovisionnement",
         "Row {0}: An Reorder entry already exists for this warehouse {1}": "Ligne {0} : Une écriture de Réapprovisionnement existe déjà pour cet entrepôt {1}",
         "Standard Selling": "Vente Standard",
@@ -18177,7 +18513,8 @@
         "Add / Edit Prices": "Ajouter / Modifier Prix"
     },
     "apps/erpnext/erpnext/stock/doctype/price_list/price_list.py": {
-        "Price List must be applicable for Buying or Selling": "La Liste de prix doit être applicable pour les Achats et les Ventes"
+        "Price List must be applicable for Buying or Selling": "La Liste de prix doit être applicable pour les Achats et les Ventes",
+        "Price List {0} is disabled or does not exist": "Liste des Prix {0} est désactivée ou n'existe pas"
     },
     "apps/erpnext/erpnext/stock/doctype/purchase_receipt/purchase_receipt.js": {
         "Actual type tax cannot be included in Item rate in row {0}": "Le type de taxe réel ne peut pas être inclus dans le prix de l'Article à la ligne {0}",
@@ -18264,6 +18601,7 @@
         "Item {0} is not setup for Serial Nos. Column must be blank": "L'article {0} n'est pas configuré pour un Numéros de Série. La colonne doit être vide",
         "New Serial No cannot have Warehouse. Warehouse must be set by Stock Entry or Purchase Receipt": "Les Nouveaux N° de série ne peuvent avoir d'entrepot. L'Entrepôt doit être établi par Écriture de stock ou Reçus d'Achat",
         "Sales Order {0} has reservation for item {1}, you can\n\t\tonly deliver reserved {1} against {0}. Serial No {2} cannot\n\t\tbe delivered": "La commande client {0} a une réservation pour l'article {1}, vous ne pouvez livrer que {1} réservé contre {0}. Le numéro de série {2} ne peut pas être délivré",
+        "Serial No {0} Created": "N° de série {0} créé",
         "Serial No {0} created": "N° de série {0} créé",
         "Serial No {0} does not belong to Batch {1}": "Le numéro de série {0} n'appartient pas au lot {1}",
         "Serial No {0} does not belong to Item {1}": "N° de série {0} n'appartient pas à l'Article {1}",
@@ -18273,10 +18611,13 @@
         "Serial No {0} not in stock": "N° de série {0} n'est pas en stock",
         "Serial No {0} quantity {1} cannot be a fraction": "N° de série {0} quantité {1} ne peut pas être une fraction",
         "Serial Nos Required for Serialized Item {0}": "N° de séries Requis pour Article Sérialisé {0}",
+        "Serial Number Created": "Numéro de série créé",
+        "Serial Numbers Created": "Numéros de série créés",
         "Serial no {0} has been already returned": "Le numéro de série {0} a déjà été renvoyé",
         "Sorry, Serial Nos cannot be merged": "Désolé, les N° de série ne peut pas être fusionnés",
         "The following serial numbers were created: <br> {0}": "Les numéros de séries suivants ont été créés: <br> {0}",
         "Warehouse cannot be changed for Serial No.": "L'entrepôt ne peut être modifié pour le N° de série",
+        "{0} Created": "{0} créé",
         "{0} Serial Numbers required for Item {1}. You have provided {2}.": "{0} Numéros de Série requis pour objet {1}. Vous en avez fourni {2}."
     },
     "apps/erpnext/erpnext/stock/doctype/serial_no/serial_no_list.js": {
@@ -18287,20 +18628,29 @@
     },
     "apps/erpnext/erpnext/stock/doctype/stock_entry/stock_entry.js": {
         "Alternate Item": "Article alternatif",
+        "BOM": "LDM (Liste de Matériaux)",
         "BOM and Manufacturing Quantity are required": "LDM et quantité de production sont nécessaires",
+        "BOM does not contain any stock item": "LDM ne contient aucun article en stock",
+        "Bill of Materials": "Liste de Matériaux",
+        "Company field is required": "Le champs Société est obligatoire",
         "Create": "Créer",
         "Create Material Request": "Créer une demande de matériaux",
         "Create Sample Retention Stock Entry": "Créer une écriture de conservation d'échantillon",
         "Excise Invoice": "Facture d'Accise",
         "Expired Batches": "Lots expirés",
+        "Fetch exploded BOM (including sub-assemblies)": "Récupérer la LDM éclatée (y compris les sous-ensembles)",
+        "Get Items from BOM": "Obtenir les Articles depuis LDM",
         "Get items from": "Obtenir les articles de",
         "Material Consumption is not set in Manufacturing Settings.": "La consommation de matériaux n'est pas définie dans Paramètres de Production.",
         "Material Request": "Demande de matériel",
         "Please enter Item Code to get Batch Number": "Veuillez entrer le Code d'Article pour obtenir le Numéro de Lot",
         "Purchase Invoice": "Facture d’Achat",
+        "Quantity": "Quantité",
         "Receive at Warehouse Entry": "Ecriture de réception à l'entrepôt",
         "Received Stock Entries": "Ecritures de stocks reçus",
         "Retention Stock Entry already created or Sample Quantity not provided": "Saisie de stock de rétention déjà créée ou quantité d'échantillon non fournie",
+        "Source Warehouse": "Entrepôt Source",
+        "Target Warehouse": "Entrepôt Cible",
         "View": "Voir"
     },
     "apps/erpnext/erpnext/stock/doctype/stock_entry/stock_entry.py": {
@@ -18466,6 +18816,7 @@
     },
     "apps/erpnext/erpnext/stock/report/batch_wise_balance_history/batch_wise_balance_history.js": {
         "From Date": "Date de début",
+        "Item": "Article",
         "To Date": "Date de fin"
     },
     "apps/erpnext/erpnext/stock/report/batch_wise_balance_history/batch_wise_balance_history.py": {
@@ -18724,10 +19075,14 @@
         "Company": "Société",
         "Date": "Date",
         "Description": "Description",
+        "Finished Product": "Produit terminé",
+        "Finished Qty": "Qté produite",
+        "In Qty": "Qté entrante",
         "Incoming Rate": "Taux d'Entrée",
         "Item": "Article",
         "Item Group": "Groupe d'article",
         "Item Name": "Nom de l'article",
+        "Out Qty": "Qté sortante",
         "Project": "Projet",
         "Qty": "Qté",
         "Serial #": "Série #",
@@ -18900,6 +19255,9 @@
     },
     "apps/erpnext/erpnext/support/report/support_hour_distribution/support_hour_distribution.py": {
         "Date": "Date"
+    },
+    "apps/erpnext/erpnext/templates/emails/confirm_appointment.html": {
+        "Dear": "Cher·e"
     },
     "apps/erpnext/erpnext/templates/emails/reorder_item.html": {
         "Following Material Requests have been raised automatically based on Item's re-order level": "Les Demandes de Matériel suivantes ont été créées automatiquement sur la base du niveau de réapprovisionnement de l’Article",
@@ -19433,6 +19791,9 @@
     "apps/erpnext/erpnext/www/all-products/not_found.html": {
         "No products found": "Aucun produit trouvé"
     },
+    "apps/erpnext/erpnext/www/book_appointment/index.html": {
+        "Book Appointment": "Prendre un rendez-vous"
+    },
     "apps/erpnext/erpnext/www/me.html": {
         "Add a new card": "Ajouter une nouvelle carte",
         "Add this card": "Ajouter cette carte",
@@ -19457,6 +19818,59 @@
     "apps/erpnext/erpnext/www/payments/index.py": {
         "The outstanding amount for this document is lower than the current payment request.": "Le montant restant dû pour ce document est inférieur au montant de cette demande de paiement.",
         "This invoice has already been fully paid": "La facture a été entièrement payée"
+    },
+    "sites/assets/js/bank-reconciliation.min.js": {
+        "Amount": "Montant",
+        "Automatic reconciliation": "Rapprochement automatique",
+        "Automatic reconciliation in progress": "Rapprochement automatique en cours",
+        "Bank Account": "Compte bancaire",
+        "Bank Reconciliation": "Rapprochement bancaire",
+        "Bank Transactions": "Transactions bancaires",
+        "Company": "Société",
+        "Create a new ": "Créer un·e nouveau·elle",
+        "Date": "Date",
+        "Date Range": "Intervalle de dates",
+        "Description": "Description",
+        "Documents": "Documents",
+        "Final balance": "Solde final",
+        "Initial balance": "Solde initial",
+        "No data available for this period": "Aucune donnée disponible pour cette période",
+        "No matching document found for your selection": "Aucune document trouvé pour votre sélection",
+        "Party": "Tiers",
+        "Please select company first": "Veuillez d'abord sélectionner la société",
+        "Please select only one bank transaction and multiple documents or multiple bank transactions and only one document.": "Veuillez sélectionner une seule transaction bancaire et plusieurs documents ou plusieurs transactions bancaires et un seul document.",
+        "Reconcile": "Réconcilier",
+        "Reconcile Stripe Transactions": "Rapprocher les transactions Stripe",
+        "Reference": "Référence",
+        "Reference Date": "Date de référence",
+        "Rows per page": "Lignes par page",
+        "Search for a specific bank transaction": "Chercher une transaction en particulier",
+        "Search for a specific document": "Chercher un document en particulier",
+        "Show the full list": "Voir la liste complète",
+        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
+        "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document.",
+        "clear": "réinitialiser",
+        "next": "suiv.",
+        "of": "de",
+        "prev": "préc.",
+        "rows selected": "lignes sélectionnées"
+    },
+    "sites/assets/js/bank-transaction-importer.min.js": {
+        "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
+        "Bank transactions creation in progress. Please wait...": "Création des transactions bancaire en cours. Veuillez patienter...",
+        "Home": "Accueil",
+        "New Transactions": "Créer des transactions",
+        "Not permitted": "Non autorisé",
+        "Please check the error log for details about the import errors": "Veuillez vérifier le journal des erreurs pour plus de détails sur les erreurs lors de l'import",
+        "Rows per page": "Lignes par page",
+        "Submit": "Valider",
+        "Synchronize": "Synchroniser",
+        "Synchronize an account": "Synchroniser un compte",
+        "Upload New Bank Transactions": "Télécharger de nouvelles transactions bancaires",
+        "next": "suiv.",
+        "of": "de",
+        "prev": "préc.",
+        "← Back to upload files": "← Retour au téléchargement de fichiers"
     },
     "sites/assets/js/booking-dialog.min.js": {
         "Day": "Jour",

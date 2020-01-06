@@ -139,7 +139,7 @@ def get_columns(invoice_list, additional_table_columns):
 
 	columns +=[
 		{
-			'label': _("Custmer Group"),
+			'label': _("Customer Group"),
 			'fieldname': 'customer_group',
 			'fieldtype': 'Link',
 			'options': 'Customer Group',
