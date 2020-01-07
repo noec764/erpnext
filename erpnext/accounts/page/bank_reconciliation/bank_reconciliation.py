@@ -154,7 +154,7 @@ class BankReconciliation:
 			bank_transaction.append('payment_entries', {
 				'payment_document': payment.get("doctype"),
 				'payment_entry': payment.get("name"),
-				'allocated_amount': abs(min(payment.get("unreconciled_amount"), bank_transaction.unallocated_amount)),
+				'allocated_amount': min(abs(payment.get("unreconciled_amount")), abs(bank_transaction.unallocated_amount)),
 				'party': payment.get(PARTY_FIELD.get(payment.get("doctype"))),
 				'date': getdate(date_value)
 			})
@@ -162,11 +162,13 @@ class BankReconciliation:
 			bank_transaction.save()
 
 	def make_payment_entries(self):
-		for transaction in self.bank_transactions:
-			payment_entry = self.get_payment_entry(transaction)
-			payment_entry.insert()
-			payment_entry.submit()
-			self.payment_entries.append(payment_entry)
+		if self.documents:
+			for transaction in self.bank_transactions:
+				payment_entry = self.get_payment_entry(transaction)
+				payment_entry.insert()
+				payment_entry.submit()
+				frappe.db.commit()
+				self.payment_entries.append(payment_entry)
 
 	def get_payment_entry(self, transaction):
 		company_currency = frappe.db.get_value("Company", self.company, "default_currency")
@@ -192,14 +194,17 @@ class BankReconciliation:
 		account_currency = frappe.db.get_value("Account", bank_account.account, "account_currency")
 
 		paid_amount = received_amount = 0
+		outstanding_amount = sum([x.get("outstanding_amount") for x in self.documents])
+		amount_to_pay_or_receive = abs(transaction.get("unallocated_amount")) \
+				if abs(transaction.get("unallocated_amount")) <= outstanding_amount else outstanding_amount
 		if party_account_currency == account_currency:
-			paid_amount = received_amount = abs(transaction.get("unallocated_amount"))
+			paid_amount = received_amount = amount_to_pay_or_receive
 		elif payment_type == "Receive":
-			paid_amount = abs(transaction.get("unallocated_amount"))
+			paid_amount = amount_to_pay_or_receive
 			target_exchange_rate = total_outstanding_amount / paid_amount
 			received_amount = total_outstanding_amount
 		else:
-			received_amount = abs(transaction.get("unallocated_amount"))
+			received_amount = amount_to_pay_or_receive
 			source_exchange_rate = received_amount / total_outstanding_amount
 			paid_amount = total_outstanding_amount
 

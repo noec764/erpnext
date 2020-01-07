@@ -7,7 +7,7 @@
             <div>
                 <div class="btn-group" role="group" aria-label="...">
                     <button
-                        v-for="(filter, i) in ['All', 'Unreconciled', 'Reconciled']"
+                        v-for="(filter, i) in [__('All'), __('Unreconciled'), __('Reconciled')]"
                         :key="i"
                         type="button"
                         class="btn btn-default"
