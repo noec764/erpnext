@@ -3,6 +3,12 @@ frappe.ui.form.on("Payment Request", {
 		frm.add_fetch("payment_gateway_account", "payment_account", "payment_account")
 		frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway")
 		frm.add_fetch("payment_gateways_template", "email_template", "email_template")
+
+		frm.set_query("party_type", function() {
+			return {
+				query: "erpnext.setup.doctype.party_type.party_type.get_party_type",
+			};
+		});
 	},
 	onload(frm) {
 		if (frm.doc.reference_doctype) {

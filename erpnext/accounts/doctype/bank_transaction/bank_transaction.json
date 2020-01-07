@@ -63,7 +63,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nPending\nSettled\nUnreconciled\nReconciled",
+   "options": "\nPending\nSettled\nUnreconciled\nReconciled\nCancelled",
    "read_only": 1
   },
   {
@@ -194,7 +194,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-03 18:05:39.230156",
+ "modified": "2020-01-07 11:00:57.414755",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
