@@ -8,6 +8,12 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
+					"name": "Supplier Quotation",
+					"dependencies": ["Item", "Supplier"],
+					"description": _("Quotations received from Suppliers."),
+				},
+				{
+					"type": "doctype",
 					"name": "Purchase Order",
 					"onboard": 1,
 					"dependencies": ["Item", "Supplier"],
@@ -35,10 +41,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Supplier Quotation",
+					"name": "Blanket Order",
+					"onboard": 1,
 					"dependencies": ["Item", "Supplier"],
-					"description": _("Quotations received from Suppliers."),
-				},
+					"description": _("Blanket order."),
+				}
 			]
 		},
 		{
