@@ -347,6 +347,12 @@ def get_data():
 					"is_query_report": True,
 					"name": "Subcontracted Item To Be Received",
 					"doctype": "Purchase Order"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Stock and Account Value Comparison",
+					"doctype": "Stock Ledger Entry"
 				}
 			]
 		},
