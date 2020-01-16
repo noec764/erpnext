@@ -342,7 +342,8 @@ class SalesInvoice(SellingController):
 				"allow_edit_rate": pos.get("allow_user_to_edit_rate"),
 				"allow_edit_discount": pos.get("allow_user_to_edit_discount"),
 				"campaign": pos.get("campaign"),
-				"allow_print_before_pay": pos.get("allow_print_before_pay")
+				"allow_print_before_pay": pos.get("allow_print_before_pay"),
+				"pos_profile": self.pos_profile
 			}
 
 	def update_time_sheet(self, sales_invoice):
@@ -414,16 +415,13 @@ class SalesInvoice(SellingController):
 			if pos.get('account_for_change_amount'):
 				self.account_for_change_amount = pos.get('account_for_change_amount')
 
-			for fieldname in ('territory', 'naming_series', 'currency', 'letter_head', 'tc_name',
-				'company', 'select_print_heading', 'cash_bank_account', 'write_off_account',
-				'write_off_cost_center', 'taxes_and_charges', 'apply_discount_on', 'cost_center'):
+			for fieldname in ('territory', 'naming_series', 'currency', 'taxes_and_charges', 'letter_head', 'tc_name',
+				'company', 'select_print_heading', 'cash_bank_account', 'company_address',
+				'write_off_account', 'write_off_cost_center', 'apply_discount_on', 'cost_center'):
 					if (not for_validate) or (for_validate and not self.get(fieldname)):
 						self.set(fieldname, pos.get(fieldname))
 
 			customer_price_list = frappe.get_value("Customer", self.customer, 'default_price_list')
-
-			if pos.get("company_address"):
-				self.company_address = pos.get("company_address")
 
 			if not customer_price_list:
 				self.set('selling_price_list', pos.get('selling_price_list'))
