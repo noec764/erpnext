@@ -6,21 +6,26 @@ def get_data():
 		{
             "label": _("Retail Operations"),
             "items": [
+                 {
+                    "type": "page",
+                    "name": "point-of-sale",
+                    "label": _("Point of Sale"),
+                    "description": _("Point of Sale"),
+					"onboard": 1,
+					"dependencies": ["POS Profile"]
+                },
                 {
                     "type": "doctype",
                     "name": "POS Profile",
                     "label": _("Point-of-Sale Profile"),
                     "description": _("Setup default values for POS Invoices"),
 					"onboard": 1,
-                },
-                {
-                    "type": "page",
-                    "name": "pos",
-                    "label": _("POS"),
-                    "description": _("Point of Sale"),
-					"onboard": 1,
-					"dependencies": ["POS Profile"]
-                },
+                }
+            ]
+        },
+        {
+            "label": _("Loyalty Program"),
+            "items": [
                 {
                     "type": "doctype",
                     "name": "Loyalty Program",
