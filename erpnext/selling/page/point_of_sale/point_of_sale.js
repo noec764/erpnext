@@ -89,7 +89,7 @@ erpnext.pos.PointOfSale = class PointOfSale {
 	}
 
 	raise_exception_for_pos_profile() {
-		setTimeout(() => frappe.set_route('List', 'POS Profile'), 2000);
+		//setTimeout(() => frappe.set_route('List', 'POS Profile'), 2000);
 		frappe.throw(__("POS Profile is required to use Point-of-Sale"));
 	}
 
@@ -602,7 +602,7 @@ erpnext.pos.PointOfSale = class PointOfSale {
 				method: "set_missing_values",
 			}).then((r) => {
 				if(!r.exc) {
-					if (!this.frm.doc.pos_profile) {
+					if (r.message && !r.message.pos_profile) {
 						frappe.dom.unfreeze();
 						this.raise_exception_for_pos_profile();
 					}

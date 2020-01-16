@@ -738,9 +738,7 @@ def get_pos_profile(company, pos_profile=None, user=None):
 	if not pos_profile and company:
 		pos_profile = frappe.db.sql("""SELECT pf.*
 			FROM
-				`tabPOS Profile` pf LEFT JOIN `tabPOS Profile User` pfu
-			ON
-					pf.name = pfu.parent
+				`tabPOS Profile` pf
 			WHERE
 				pf.company = %(company)s AND pf.disabled = 0
 		""", {
