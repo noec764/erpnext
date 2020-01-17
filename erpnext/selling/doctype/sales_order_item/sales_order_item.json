@@ -154,6 +154,7 @@
    "width": "300px"
   },
   {
+   "allow_on_submit": 1,
    "columns": 2,
    "depends_on": "eval: !parent.skip_delivery_note",
    "fieldname": "delivery_date",
@@ -782,7 +783,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2019-12-26 18:49:47.475523",
+ "modified": "2020-01-13 12:29:03.103797",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",
