@@ -818,6 +818,9 @@ def get_bom_diff(bom1, bom2):
 	doc2 = frappe.get_doc('BOM', bom2)
 
 	out = get_diff(doc1, doc2)
+	if not out:
+		return {"changed": [], "row_changed": [], "added": [], "removed": []}
+
 	out.row_changed = []
 	out.added = []
 	out.removed = []

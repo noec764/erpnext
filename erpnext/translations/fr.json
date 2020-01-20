@@ -5261,21 +5261,21 @@
     "DocType: Packing Slip": {
         "Amended From": "Modifié depuis",
         "Delivery Note": "Bon de livraison",
-        "From Package No.": "Du N° de Colis",
+        "From Package No.": "Du n° de colis",
         "Generate packing slips for packages to be delivered. Used to notify package number, package contents and its weight.": "Générer les bordereaux des colis à livrer. Utilisé pour indiquer le numéro de colis, le contenu et son poids.",
         "Get Items": "Obtenir les articles",
-        "Gross Weight": "Poids Brut",
-        "Gross Weight UOM": "Unité de mesure du Poids Brut",
+        "Gross Weight": "Poids brut",
+        "Gross Weight UOM": "Unité de mesure du poids brut",
         "Identification of the package for the delivery (for print)": "Identification de l'emballage pour la livraison (pour l'impression)",
-        "If more than one package of the same type (for print)": "Si plus d'un paquet du même type (pour l'impression)",
-        "Indicates that the package is a part of this delivery (Only Draft)": "Indique que le paquet est une partie de cette livraison (Brouillons Seulement)",
-        "Item Manager": "Gestionnaire d'Article",
+        "If more than one package of the same type (for print)": "Si plus d'un colis du même type (pour l'impression)",
+        "Indicates that the package is a part of this delivery (Only Draft)": "Indique que le colis est une partie de cette livraison (Brouillons Seulement)",
+        "Item Manager": "Gestionnaire d'article",
         "Items": "Articles",
         "Letter Head": "En-tête",
         "MAT-PAC-.YYYY.-": "MAT-PAC-.YYYY.-",
-        "Net Weight": "Poids Net",
-        "Net Weight UOM": "Unité de mesure Poids Net",
-        "Package Weight Details": "Détails du Poids du Paquet",
+        "Net Weight": "Poids net",
+        "Net Weight UOM": "Unité de mesure poids net",
+        "Package Weight Details": "Détails du poids du colis",
         "Packing Slip": "Bordereau de Colis",
         "Sales Manager": "Responsable commercial",
         "Sales User": "Commercial",
@@ -5285,7 +5285,7 @@
         "Stock User": "Chargé des stocks",
         "The gross weight of the package. Usually net weight + packaging material weight. (for print)": "Le poids brut du colis. Habituellement poids net + poids du matériau d'emballage. (Pour l'impression)",
         "The net weight of this package. (calculated automatically as sum of net weight of items)": "Le poids net de ce paquet. (Calculé automatiquement comme la somme du poids net des articles)",
-        "To Package No.": "Au N° de Paquet"
+        "To Package No.": "Au n° de colis"
     },
     "DocType: Packing Slip Item": {
         "Batch No": "N° du lot",
@@ -10818,7 +10818,7 @@
         "Item Balance (Simple)": "Solde par article (simple)"
     },
     "Report: Item Price Stock": {
-        "Item Price Stock": "Stock etp prix par article"
+        "Item Price Stock": "Stock et prix par article"
     },
     "Report: Item Prices": {
         "Item Prices": "Prix des articles"
