@@ -7,13 +7,13 @@
             <div>
                 <div class="btn-group" role="group" aria-label="...">
                     <button
-                        v-for="(filter, i) in [__('All'), __('Unreconciled'), __('Reconciled')]"
+                        v-for="(filter, i) in [{value: 'All', label: __('All')}, {value: 'Unreconciled', label: __('Unreconciled')}, {value: 'Reconciled', label: __('Reconciled')}]"
                         :key="i"
                         type="button"
                         class="btn btn-default"
-                        :class="list_filter==filter ? 'active': ''"
+                        :class="list_filter==filter.value ? 'active': ''"
                         @click="change_filter(filter)">
-                            {{ __(filter)}}
+                            {{ filter.label}}
                     </button>
                 </div>
             </div>
@@ -182,8 +182,8 @@ export default {
         onSelectedRowsChange: function(params) {
             this.$emit('transactionsChange', params.selectedRows)
         },
-        change_filter: function(value) {
-            this.list_filter = value;
+        change_filter: function(filter) {
+            this.list_filter = filter.value;
             this.get_transaction_list(true)
         },
         reconcile_stripe: function() {
