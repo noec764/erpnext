@@ -3,7 +3,7 @@
 		<div v-if="error" class="col-12 text-center justify-content-center align-self-center">
 			<h2>{{ error }}</h2>
 		</div>
-		<template v-else>
+		<template v-else-if="formattedAmount">
 			<div class="col-12 mb-4 text-center align-self-center">
 				<h2>{{ __("Payment for") }} {{ doctype }} {{ docname }}</h2>
 			</div>
@@ -34,7 +34,8 @@ export default {
 			error: null,
 			formattedAmount: null,
 			docname: null,
-			doctype: null
+			doctype: null,
+			subject: null
 		}
 	},
 	mounted() {

@@ -8,10 +8,34 @@ frappe.ui.form.on('Subscription', {
 		frm.set_indicator_formatter('plan', function(doc) {
 			return (doc.status == "Active") ? "green" : "darkgrey";
 		});
+
+		frm.make_methods = {
+			'Payment Request': () => {
+				frappe.call({
+					method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_request",
+					freeze: true,
+					args: {
+						dt: me.frm.doc.doctype,
+						dn: me.frm.doc.name,
+						party_type: "Customer",
+						party: me.frm.doc.customer
+					}
+				}).then(r => {
+					if (r.message) {
+						const doc = frappe.model.sync(r.message)[0];
+						frappe.set_route("Form", doc.doctype, doc.name);
+					}
+				});
+			}
+		}
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
+			frm.page.add_action_item(
+				__('Create payment'),
+				() => frm.events.create_payment(frm)
+			);
 			if(frm.doc.status !== 'Cancelled'){
 				if(!frm.doc.cancellation_date){
 					frm.page.add_action_item(
@@ -145,6 +169,18 @@ frappe.ui.form.on('Subscription', {
 					[format_values(data.initial_amount), format_values(data.updated_amount)]), indicator: 'green'})
 			}
 		})
+	},
+	create_payment(frm) {
+		return frappe.call({
+			method: "erpnext.accounts.doctype.subscription.subscription.get_payment_entry",
+			args: {
+				"name": frm.doc.name
+			}
+		}).then(r => {
+			console.log(r)
+			const doclist = frappe.model.sync(r.message);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		});
 	}
 });
 

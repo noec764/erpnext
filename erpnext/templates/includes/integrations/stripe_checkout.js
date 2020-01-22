@@ -75,6 +75,7 @@ const handleCardPayment = details => {
 
 const processError = error => {
 	cardButton.style.display = "none"
+	document.getElementById('card-errors').textContent = '';
 	$('#error-msg').html(error.message);
 	$('.error').show()
 }

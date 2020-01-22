@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 import json
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.utils import GoCardlessWebhookHandler
+from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
 EVENT_MAP = {
 	'customer_approval_granted': 'change_status',
@@ -35,10 +35,11 @@ STATUS_MAP = {
 	'replaced': 'Cancelled'
 }
 
-class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
+class GoCardlessMandateWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessMandateWebhookHandler, self).__init__(**kwargs)
 
+		self.get_mandate()
 		target = EVENT_MAP.get(self.data.get("action"))
 		if not target:
 			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
@@ -49,6 +50,9 @@ class GoCardlessMandateWebhookHandler(GoCardlessWebhookHandler):
 			method()
 
 		self.add_mandate_to_integration_request()
+
+	def get_mandate(self):
+		self.mandate = self.data.get("links", {}).get("mandate")
 
 	def create_mandates(self):
 		mandate_exists = self.check_existing_mandate()

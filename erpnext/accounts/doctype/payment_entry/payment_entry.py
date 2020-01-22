@@ -213,7 +213,7 @@ class PaymentEntry(AccountsController):
 		if self.party_type == "Student":
 			valid_reference_doctypes = ("Fees")
 		elif self.party_type == "Customer":
-			valid_reference_doctypes = ("Sales Order", "Sales Invoice", "Journal Entry")
+			valid_reference_doctypes = ("Sales Order", "Sales Invoice", "Journal Entry", "Subscription")
 		elif self.party_type == "Supplier":
 			valid_reference_doctypes = ("Purchase Order", "Purchase Invoice", "Journal Entry")
 		elif self.party_type == "Employee":
@@ -253,7 +253,7 @@ class PaymentEntry(AccountsController):
 								frappe.throw(_("{0} {1} is associated with {2}, but Party Account is {3}")
 									.format(d.reference_doctype, d.reference_name, ref_party_account, self.party_account))
 
-					if ref_doc.docstatus != 1:
+					if ref_doc.doctype != "Subscription" and ref_doc.docstatus != 1:
 						frappe.throw(_("{0} {1} must be submitted")
 							.format(d.reference_doctype, d.reference_name))
 
@@ -843,6 +843,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 				total_amount = ref_doc.total_sanctioned_amount
 			elif ref_doc.doctype == "Employee Advance":
 				total_amount = ref_doc.advance_amount
+			elif ref_doc.doctype == "Subscription":
+				total_amount = ref_doc.grand_total
 			else:
 				total_amount = ref_doc.base_grand_total
 			exchange_rate = 1
@@ -862,6 +864,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 				- flt(ref_doc.get("total_amount+reimbursed")) - flt(ref_doc.get("total_advance_amount"))
 		elif reference_doctype == "Employee Advance":
 			outstanding_amount = ref_doc.advance_amount - flt(ref_doc.paid_amount)
+		elif reference_doctype == "Subscription":
+			outstanding_amount = flt(total_amount)
 		else:
 			outstanding_amount = flt(total_amount) - flt(ref_doc.advance_paid)
 	else:

@@ -9,10 +9,21 @@ def get_data():
 			'title': _('Last subscription invoices')
 		},
 		'fieldname': 'subscription',
+		'non_standard_fieldnames': {
+			'Payment Request': 'reference_name'
+		},
 		'transactions': [
+			{
+				'label': _('Events'),
+				'items': ['Subscription Event']
+			},
 			{
 				'label': _('Sales'),
 				'items': ['Sales Order', 'Sales Invoice']
+			},
+			{
+				'label': _('Payments'),
+				'items': ['Payment Request']
 			}
 		]
 	}

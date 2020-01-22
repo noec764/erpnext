@@ -604,6 +604,13 @@ class AccountsController(TransactionBase):
 			if frappe.db.get_single_value('Accounts Settings', 'unlink_advance_payment_on_cancelation_of_order'):
 				unlink_ref_doc_from_payment_entries(self)
 
+		if self.doctype in ["Sales Order", "Sales Invoice", "Payment Entry"]:
+			self.cancel_linked_subscription_events()
+
+	def on_trash(self):
+		if self.doctype in ["Sales Order", "Sales Invoice", "Payment Entry"]:
+			self.cancel_linked_subscription_events()
+
 	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on, parentfield):
 		from erpnext.controllers.status_updater import get_allowance_for
 		item_allowance = {}
@@ -862,6 +869,11 @@ class AccountsController(TransactionBase):
 			return self.disable_rounded_total
 		else:
 			return frappe.db.get_single_value("Global Defaults", "disable_rounded_total")
+
+	def cancel_linked_subscription_events(self):
+		events = frappe.get_all("Subscription Event", filters={"document_type": self.doctype, "document_name": self.name})
+		for event in events:
+			frappe.get_doc("Subscription Event", event.name).cancel()
 
 @frappe.whitelist()
 def get_tax_rate(account_head):

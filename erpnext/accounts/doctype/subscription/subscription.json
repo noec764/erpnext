@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "naming_series:",
  "creation": "2017-07-18 17:50:43.967266",
  "doctype": "DocType",
@@ -9,11 +10,13 @@
   "customer",
   "cb_1",
   "company",
+  "currency",
   "status",
   "subscription_period",
   "start",
   "trial_period_start",
   "trial_period_end",
+  "trial_validated",
   "cancellation_date",
   "prorate_invoice",
   "column_break_11",
@@ -290,6 +293,7 @@
    "fieldname": "payment_gateway",
    "fieldtype": "Link",
    "label": "Payment Gateway",
+   "no_copy": 1,
    "options": "Payment Gateway"
   },
   {
@@ -322,9 +326,24 @@
   {
    "fieldname": "subscription_setup_html",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.trial_period_start",
+   "fieldname": "trial_validated",
+   "fieldtype": "Check",
+   "label": "Trial Validated"
   }
  ],
- "modified": "2019-12-03 15:05:34.396708",
+ "links": [],
+ "modified": "2020-01-22 07:49:24.922983",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

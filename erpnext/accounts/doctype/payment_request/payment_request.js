@@ -153,7 +153,7 @@ frappe.ui.form.on("Payment Request", {
 			}).done((r) => {
 				frm.dashboard.clear_headline();
 				if (r && r.message) {
-					frm.dashboard.set_headline(__('This reference is linked to subscription <a href="/desk#Form/Subscription/{0}">{0}</a>', [r.message]));
+					frm.dashboard.set_headline(__('This payment request is linked to subscription <a href="/desk#Form/Subscription/{0}">{0}</a>', [r.message]));
 					frm.toggle_display("payment_gateways_template", false);
 					frm.trigger("get_subscription_details");
 					frm.fields_dict.transaction_date.df.description = __("Start date for the payment gateway subscription");
