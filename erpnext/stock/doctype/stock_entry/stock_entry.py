@@ -75,6 +75,7 @@ class StockEntry(StockController):
 			set_batch_nos(self, 's_warehouse')
 
 		self.set_incoming_rate()
+		self.validate_serialized_batch()
 		self.set_actual_qty()
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
 
@@ -242,7 +243,9 @@ class StockEntry(StockController):
 
 		for d in self.get("items"):
 			if not d.expense_account:
-				frappe.throw(_("Please enter <b>Difference Account</b> or set default <b>Stock Adjustment Account</b> for company {0}").format(frappe.bold(self.company)))
+				frappe.throw(_("Please enter <b>Difference Account</b> or set default <b>Stock Adjustment Account</b> for company {0}")
+					.format(frappe.bold(self.company)))
+
 			elif self.is_opening == "Yes" and frappe.db.get_value("Account", d.expense_account, "report_type") == "Profit and Loss":
 				frappe.throw(_("Difference Account must be a Asset/Liability type account, since this Stock Entry is an Opening Entry"), OpeningEntryAccountError)
 
@@ -330,7 +333,7 @@ class StockEntry(StockController):
 			if total_completed_qty > flt(completed_qty):
 				job_card = frappe.db.get_value('Job Card', {'operation_id': d.name}, 'name')
 				if not job_card:
-					frappe.throw(_("Work Order {0}: Job card not found for the operation {1}")
+					frappe.throw(_("Work Order {0}: Job Card not found for the operation {1}")
 						.format(self.work_order, d.operation))
 
 				work_order_link = frappe.utils.get_link_to_form('Work Order', self.work_order)
@@ -477,10 +480,11 @@ class StockEntry(StockController):
 			for d in self.get("items"):
 				if (d.transfer_qty and (d.bom_no or d.t_warehouse)
 					and (getattr(self, "pro_doc", frappe._dict()).scrap_warehouse != d.t_warehouse)):
+
 					if self.work_order \
 						and frappe.db.get_single_value("Manufacturing Settings", "material_consumption"):
 						bom_items = self.get_bom_raw_materials(d.transfer_qty)
-						raw_material_cost = sum([flt(d.qty)*flt(d.rate) for d in bom_items.values()])
+						raw_material_cost = sum([flt(row.qty)*flt(row.rate) for row in bom_items.values()])
 
 					if raw_material_cost:
 						d.basic_rate = flt((raw_material_cost - scrap_material_cost) / flt(d.transfer_qty), d.precision("basic_rate"))
@@ -610,7 +614,7 @@ class StockEntry(StockController):
 		if self.work_order and self.purpose == "Manufacture":
 			allowed_qty = wo_qty + (allowance_percentage/100 * wo_qty)
 			if self.fg_completed_qty > allowed_qty:
-				frappe.throw(_("For quantity {0} should not be grater than work order quantity {1}")
+				frappe.throw(_("For quantity {0} should not be greater than work order quantity {1}")
 					.format(flt(self.fg_completed_qty), wo_qty))
 
 			if production_item not in items_with_target_warehouse:
@@ -653,7 +657,6 @@ class StockEntry(StockController):
 		self.make_sl_entries(sl_entries, self.amended_from and 'Yes' or 'No')
 
 	def get_gl_entries(self, warehouse_account):
-
 		gl_entries = super(StockEntry, self).get_gl_entries(warehouse_account)
 
 		total_basic_amount = sum([flt(t.basic_amount) for t in self.get("items") if t.t_warehouse])
@@ -670,13 +673,17 @@ class StockEntry(StockController):
 				if d.t_warehouse:
 					item_account_wise_additional_cost.setdefault((d.item_code, d.name), {})
 					item_account_wise_additional_cost[(d.item_code, d.name)].setdefault(t.expense_account, 0.0)
+
 					multiply_based_on = d.basic_amount if total_basic_amount else d.qty
+
 					item_account_wise_additional_cost[(d.item_code, d.name)][t.expense_account] += \
 						(t.amount * multiply_based_on) / divide_based_on
 
 		if item_account_wise_additional_cost:
 			for d in self.get("items"):
 				for account, amount in iteritems(item_account_wise_additional_cost.get((d.item_code, d.name), {})):
+					if not amount: continue
+
 					gl_entries.append(self.get_gl_dict({
 						"account": account,
 						"against": d.expense_account,
@@ -851,7 +858,7 @@ class StockEntry(StockController):
 								and po.name = %s""",self.purchase_order))
 
 					for item in itervalues(item_dict):
-						if self.pro_doc and (cint(self.pro_doc.from_wip_warehouse) or not self.pro_doc.skip_transfer):
+						if self.pro_doc and cint(self.pro_doc.from_wip_warehouse):
 							item["from_warehouse"] = self.pro_doc.wip_warehouse
 						#Get Reserve Warehouse from PO
 						if self.purchase_order and self.purpose=="Send to Subcontractor":
@@ -1396,33 +1403,8 @@ def get_work_order_details(work_order, company):
 		"use_multi_level_bom": work_order.use_multi_level_bom,
 		"wip_warehouse": work_order.wip_warehouse,
 		"fg_warehouse": work_order.fg_warehouse,
-		"fg_completed_qty": pending_qty_to_produce,
-		"additional_costs": get_additional_costs(work_order, fg_qty=pending_qty_to_produce, company=company)
+		"fg_completed_qty": pending_qty_to_produce
 	}
-
-def get_additional_costs(work_order=None, bom_no=None, fg_qty=None, company=None):
-	additional_costs = []
-	operating_cost_per_unit = get_operating_cost_per_unit(work_order, bom_no)
-	expenses_included_in_valuation = frappe.get_cached_value("Company", company, "expenses_included_in_valuation")
-
-	if operating_cost_per_unit:
-		additional_costs.append({
-			"expense_account": expenses_included_in_valuation,
-			"description": "Operating Cost as per Work Order / BOM",
-			"amount": operating_cost_per_unit * flt(fg_qty)
-		})
-
-	if work_order and work_order.additional_operating_cost and work_order.qty:
-		additional_operating_cost_per_unit = \
-			flt(work_order.additional_operating_cost) / flt(work_order.qty)
-
-		additional_costs.append({
-			"expense_account": expenses_included_in_valuation,
-			"description": "Additional Operating Cost",
-			"amount": additional_operating_cost_per_unit * flt(fg_qty)
-		})
-
-	return additional_costs
 
 def get_operating_cost_per_unit(work_order=None, bom_no=None):
 	operating_cost_per_unit = 0
