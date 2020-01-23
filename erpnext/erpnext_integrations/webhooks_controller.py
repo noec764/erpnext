@@ -18,6 +18,7 @@ class WebhooksController():
 		self.payment_entry = None
 		self.payment_request = None
 		self.reference_date = nowdate()
+		self.metadata = {}
 
 	def handle_payment_update(self):
 		target = self.event_map.get(self.action_type)

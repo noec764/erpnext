@@ -27,10 +27,13 @@ class StripeChargeWebhookHandler(WebhooksController):
 		self.event_map = EVENT_MAP
 
 		self.init_handler()
-		
 		self.action_type = self.data.get("type")
-		self.handle_payment_update()
-		self.add_reference_to_integration_request()
+
+		if self.metadata:
+			self.handle_payment_update()
+			self.add_reference_to_integration_request()
+		else:
+			self.set_as_failed(_("No metadata found in this webhook"))
 
 	def init_handler(self):
 		self.stripe_settings = frappe.get_doc("Stripe Settings", self.integration_request.get("payment_gateway_controller"))
@@ -46,7 +49,6 @@ class StripeChargeWebhookHandler(WebhooksController):
 
 	def get_metadata(self):
 		self.metadata = getattr(self.charge, "metadata")
-
 
 	def add_fees_before_submission(self):
 		if self.charge:

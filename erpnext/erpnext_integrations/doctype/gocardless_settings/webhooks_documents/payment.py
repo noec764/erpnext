@@ -22,6 +22,9 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		super(GoCardlessPaymentWebhookHandler, self).__init__(**kwargs)
 
 		self.event_map = EVENT_MAP
+		self.gocardless_payment = None
+		self.gocardless_payout = None
+		self.gocardless_payment_document = {}
 		self.init_handler()
 
 		if self.gocardless_payment and self.metadata:
@@ -31,7 +34,6 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 			self.action_type = self.data.get("action")
 			self.handle_payment_update()
 			self.add_reference_to_integration_request()
-
 		else:
 			self.set_as_failed(_("No payment reference and metadata found in this webhook"))
 
@@ -40,28 +42,28 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
 			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
-		self.get_customer()
 		self.get_payment()
+		self.get_payment_document()
 		self.get_reference_date()
-		self.metadata = self.get_metadata()
+		self.get_metadata()
 
 	def get_customer(self):
-		self.gocardless_customer = self.data.get("links", {}).get("customer")
+		return self.data.get("links", {}).get("customer")
 
 	def get_payment(self):
 		self.gocardless_payment = self.data.get("links", {}).get("payment")
 
 	def get_reference_date(self):
-		self.reference_date = getdate(getattr(self.get_payment_document(), "charge_date"))
+		self.reference_date = getdate(getattr(self.gocardless_payment_document, "charge_date"))
 
 	def get_payment_document(self):
-		return self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
+		self.gocardless_payment_document = self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
 
 	def get_payout(self):
 		self.gocardless_payout = self.data.get("links", {}).get("payout")
 
 	def get_metadata(self):
-		return getattr(self.get_payment_document(), "metadata")
+		self.metadata = getattr(self.gocardless_payment_document, "metadata")
 
 	def add_fees_before_submission(self):
 		self.get_payout()
