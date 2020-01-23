@@ -50,7 +50,6 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
-my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
 
 email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
 
