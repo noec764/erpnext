@@ -14,16 +14,16 @@ def get_data():
 		},
 		'transactions': [
 			{
-				'label': _('Events'),
-				'items': ['Subscription Event']
-			},
-			{
 				'label': _('Sales'),
 				'items': ['Sales Order', 'Sales Invoice']
 			},
 			{
 				'label': _('Payments'),
 				'items': ['Payment Request']
+			},
+			{
+				'label': _('Events'),
+				'items': ['Subscription Event']
 			}
 		]
 	}

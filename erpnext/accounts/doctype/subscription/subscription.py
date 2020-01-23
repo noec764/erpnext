@@ -729,9 +729,10 @@ def subscription_headline(name):
 			else:
 				next_invoice_date = get_last_day(add_days(subscription.current_invoice_end, 1))
 
-	if subscription.cancellation_date:
-		return _("This subscription will be cancelled on {0}").format(\
-			global_date_format(subscription.cancellation_date))
+	if subscription.cancellation_date > nowdate():
+		return _("This subscription will be cancelled on {0}").format(global_date_format(subscription.cancellation_date))
+	elif subscription.cancellation_date <= nowdate():
+		return _("This subscription has been cancelled on {0}").format(global_date_format(subscription.cancellation_date))
 
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date))
 
