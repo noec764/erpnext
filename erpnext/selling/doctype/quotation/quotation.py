@@ -133,8 +133,12 @@ def get_list_context(context=None):
 	return list_context
 
 def set_expired_status():
-	frappe.db.sql("""UPDATE `tabQuotation` SET `status` = 'Expired'
-		WHERE `status` != "Expired" AND `valid_till` < %s""", (nowdate()))
+	frappe.db.sql("""
+		UPDATE
+			`tabQuotation` SET `status` = 'Expired'
+		WHERE
+			`status` not in ('Ordered', 'Expired', 'Lost', 'Cancelled') AND `valid_till` < %s
+		""", (nowdate()))
 
 @frappe.whitelist()
 def make_sales_order(source_name, target_doc=None):
