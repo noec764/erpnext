@@ -10,31 +10,21 @@ frappe.ui.form.on('Sepa Direct Debit', {
 		}
 	},
 	refresh: function(frm) {
-		if (frm.doc.docstatus==0) {
-			frm.add_custom_button(__("Generate SEPA Payments"), function(){
-				frappe.confirm(__("Automatically generate payment entries for all unpaid sales invoice with a due date between {0} and {1} for customers with a valid Sepa mandate ?", [frappe.datetime.obj_to_user(frm.doc.from_date), frappe.datetime.obj_to_user(frm.doc.to_date)]), () => {
-					return frappe.call({
-						method: "erpnext.accounts.doctype.sepa_direct_debit.sepa_direct_debit.create_sepa_payment_entries",
-						args: {
-							"from_date": frm.doc.from_date,
-							"to_date": frm.doc.to_date,
-							"mode_of_payment": frm.doc.mode_of_payment
-						},
-						callback: function(r, rt) {
-							if (r.message == "Success") {
-								frappe.msgprint(__("All missing SEPA payment entries have been generated"));
-							};
-						}
-					});
-				})
-			});
+		if (frm.doc.docstatus==0 && frm.doc.mode_of_payment) {
+			frm.trigger("add_payment_btn")
 		}
 	},
 	company: function(frm) {
-		frm.set_value("currency", erpnext.get_currency(frm.doc.company));
-		frappe.db.get_value("Sepa Direct Debit Settings", frm.doc.company, "mode_of_payment", r => {
-			r && frm.set_value("mode_of_payment", r.mode_of_payment);
-		})
+		if (frm.doc.company) {
+			frm.set_value("currency", erpnext.get_currency(frm.doc.company));
+			frappe.db.get_value("Sepa Direct Debit Settings", frm.doc.company, "mode_of_payment", r => {
+				if (r) {
+					frm.set_value("mode_of_payment", r.mode_of_payment);
+				} else {
+					frappe.msgprint(__("Please create <a href='/desk#List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}", [frm.doc.company]))
+				}
+			})
+		}
 	},
 	get_payment_entries: function(frm) {
 		return frappe.call({
@@ -69,5 +59,29 @@ frappe.ui.form.on('Sepa Direct Debit', {
 			frappe.msgprint(__("Please select a direct debit type"))
 		}
 
+	},
+	mode_of_payment(frm) {
+		if (frm.doc.docstatus==0 && frm.doc.mode_of_payment) {
+			frm.trigger("add_payment_btn")
+		}
+	},
+	add_payment_btn(frm) {
+		frm.add_custom_button(__("Generate SEPA Payments"), function(){
+			frappe.confirm(__("Automatically generate payment entries for all unpaid sales invoice with a due date between {0} and {1} for customers with a valid Sepa mandate ?", [frappe.datetime.obj_to_user(frm.doc.from_date), frappe.datetime.obj_to_user(frm.doc.to_date)]), () => {
+				return frappe.call({
+					method: "erpnext.accounts.doctype.sepa_direct_debit.sepa_direct_debit.create_sepa_payment_entries",
+					args: {
+						"from_date": frm.doc.from_date,
+						"to_date": frm.doc.to_date,
+						"mode_of_payment": frm.doc.mode_of_payment
+					},
+					callback: function(r, rt) {
+						if (r.message == "Success") {
+							frappe.msgprint(__("All missing SEPA payment entries have been generated"));
+						};
+					}
+				});
+			})
+		});
 	}
 });
