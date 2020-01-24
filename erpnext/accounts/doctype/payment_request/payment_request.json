@@ -117,7 +117,8 @@
    "fieldname": "email_to",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "To"
+   "label": "To",
+   "options": "Email"
   },
   {
    "depends_on": "eval:!doc.mute_email",
@@ -267,8 +268,8 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-21 11:33:55.305922",
- "modified_by": "Administrator",
+ "modified": "2020-01-24 08:56:45.962409",
+ "modified_by": "chdecultot@dokos.io",
  "module": "Accounts",
  "name": "Payment Request",
  "owner": "Administrator",

@@ -70,17 +70,17 @@ def add_bank_accounts(response, bank, company):
 		if not acc_subtype:
 			add_account_subtype(account["subtype"])
 
-		if not frappe.db.exists("Bank Account", dict(integration_id=account["id"])):
+		if not account.get("id") or not frappe.db.exists("Bank Account", dict(integration_id=account.get("id"))):
 			try:
 				new_account = frappe.get_doc({
 					"doctype": "Bank Account",
-					"bank": bank["bank_name"],
+					"bank": bank.get("bank_name"),
 					"account": default_gl_account.account,
-					"account_name": account["name"],
-					"account_type": account["type"] or "",
-					"account_subtype": account["subtype"] or "",
-					"mask": account["mask"] or "",
-					"integration_id": account["id"],
+					"account_name": account.get("name"),
+					"account_type": account.get("type"),
+					"account_subtype": account.get("subtype"),
+					"mask": account.get("mask"),
+					"integration_id": account.get("id"),
 					"is_company_account": 1,
 					"company": company
 				})
@@ -93,8 +93,8 @@ def add_bank_accounts(response, bank, company):
 			except Exception:
 				frappe.throw(frappe.get_traceback())
 
-		else:
-			result.append(frappe.db.get_value("Bank Account", dict(integration_id=account["id"]), "name"))
+		elif account.get("id"):
+			result.append(frappe.db.get_value("Bank Account", dict(integration_id=account.get("id")), "name"))
 
 	return result
 
