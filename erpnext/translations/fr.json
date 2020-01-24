@@ -277,12 +277,17 @@
         "Email": "Email",
         "Guest": "Invité",
         "Lead": "Prospect",
+        "Linked Documents": "Documents liés",
         "Name": "Nom",
         "Open": "Ouvert",
+        "Phone Number": "Numéro de téléphone",
         "Sales Manager": "Responsable commercial",
         "Sales User": "Commercial",
+        "Scheduled Time": "Heure programmée",
+        "Skype ID": "ID Skype",
         "Status": "Statut",
-        "System Manager": "Responsable système"
+        "System Manager": "Responsable système",
+        "Unverified": "Non vérifié"
     },
     "DocType: Appointment Booking Settings": {
         "Availability Of Slots": "Disponibilité des créneaux",
@@ -294,6 +299,7 @@
         "System Manager": "Responsable système"
     },
     "DocType: Appointment Booking Slots": {
+        "Appointment Booking Slots": "Créneaux de réservations de rendez-vous",
         "CRM": "CRM",
         "Day Of Week": "Jour de la semaine",
         "Friday": "Vendredi",
@@ -1030,6 +1036,7 @@
         "Amended From": "Modifié depuis",
         "Bank Account": "Compte Bancaire",
         "Bank Transaction": "Transaction bancaire",
+        "Cancelled": "Annulé",
         "Company": "Société",
         "Credit": "Crédit",
         "Currency": "Devise",
@@ -2311,6 +2318,7 @@
         "Education": "Education",
         "Educational Qualification": "Qualification pour l'Éducation",
         "Emergency Contact": "Contact en cas d'Urgence",
+        "Emergency Contact Name": "Nom du contact d'urgence",
         "Emergency Phone": "Téléphone d'Urgence",
         "Employee": "Employé",
         "Employee Number": "Numéro d'Employé",
@@ -3130,6 +3138,7 @@
         "<b>Example:</b> SAL-{first_name}-{date_of_birth.year} <br>This will generate a password like SAL-Jane-1972": "<b>Exemple:</b> SAL-{first_name}-{date_of_birth.year} <br>Ceci générera un mot de passe de la forme SAL-Jane-1972",
         "Auto Leave Encashment": "Paiement des congés automatique",
         "Check Vacancies On Job Offer Creation": "Vérifier les ouvertures de poste lors de la création d'offres d'emploi",
+        "Disable Rounded Total": "Désactiver le Total Arrondi",
         "Don't send Employee Birthday Reminders": "Ne pas envoyer de rappel pour le Jour d'Anniversaire des Employés",
         "Email Salary Slip to Employee": "Envoyer la Fiche de Paie à l'Employé par Mail",
         "Emails salary slip to employee based on preferred email selected in Employee": "Envoi des fiches de paie à l'employé par Email en fonction de l'email sélectionné dans la fiche Employé",
@@ -3256,6 +3265,7 @@
         "Default Buying Price List": "Liste de prix d'achat par défaut",
         "Import Invoices": "Importer des factures",
         "Import Supplier Invoice": "Importer des factures d'achat",
+        "Invoice Series": "Séries de factures",
         "Item Code": "Code de l'Article",
         "Regional": "Régional",
         "Status": "Statut",
@@ -3818,7 +3828,8 @@
         "Item Tax Template": "Modèle de taxe d'article",
         "Stock": "Stock",
         "Tax Category": "Catégorie de taxe",
-        "Tax Rate": "Taux d'Imposition"
+        "Tax Rate": "Taux d'Imposition",
+        "Valid From": "Valide à Partir de"
     },
     "DocType: Item Tax Template": {
         "Accounts": "Comptes",
@@ -4105,6 +4116,7 @@
         "Exchange Rate": "Taux de change",
         "Exchange Rate Revaluation": "Réévaluation du taux de change",
         "Expense Claim": "Note de Frais",
+        "Fees": "Frais",
         "If Income or Expense": "Si Produits ou Charges",
         "Invoice Discounting": "Affacturage client",
         "Is Advance": "Est Accompte",
@@ -5492,6 +5504,8 @@
         "Accounts": "Comptes",
         "Allocated amount": "Montant alloué",
         "Amount": "Montant",
+        "Difference Account": "Compte d’écart",
+        "Difference Amount": "Écart de montant",
         "Invoice Number": "Numéro de facture",
         "Is Advance": "Est une avance",
         "Payment Reconciliation Payment": "Liste de paiements pour la réconciliation des paiements",
@@ -9259,6 +9273,7 @@
         "Cancellation Date": "Date d'annulation",
         "Cancelled": "Annulé",
         "Company": "Société",
+        "Currency": "Devise",
         "Current Invoicing Period End Date": "Date de fin de la période de facturation en cours",
         "Current Invoicing Period Start Date": "Date de début de la période de facturation en cours",
         "Customer": "Client",
@@ -9296,8 +9311,16 @@
         "Trial": "Essai",
         "Trial Period End Date": "Date de fin de la période d'essai",
         "Trial Period Start Date": "Date de début de la période d'essai",
+        "Trial Validated": "Essai validé",
         "Unpaid": "Impayé",
         "Use Payment Gateway Lifecycle": "Suivre le cycle de facturation de la passerelle de paiement"
+    },
+    "DocType: Subscription Event": {
+        "Accounts": "Comptes",
+        "Amended From": "Modifié depuis",
+        "Date": "Date",
+        "Subscription": "Abonnement",
+        "System Manager": "Responsable système"
     },
     "DocType: Subscription Gateway Plans": {
         "Accounts": "Comptes",
@@ -12303,6 +12326,7 @@
         "Cancel Subscription": "Annuler l'abonnement",
         "Cancel subscription": "Annuler l'abonnement",
         "Cancellation date": "Date d'annulation",
+        "Create payment": "Créer un paiement",
         "Do not cancel this subscription": "Ne pas annuler cet abonnement",
         "Fetch Subscription Updates": "Vérifier les mises à jour des abonnements",
         "Payment gateway subscription amount updated from {0} to {1}": "Le montant de l'abonnement de la passerelle de paiement a été mis à jour de {0} à {1}",
@@ -12315,18 +12339,22 @@
         "Invoice generation error for subscription {0}": "Erreur de génération de facture pour l'abonnement {0}",
         "Invoiced": "Facturé",
         "Outstanding Amount": "Montant restant dû",
+        "Please select plans with the same currency": "Veuillez sélectionner des plans dans la même devise",
         "Please select plans with the same price determination rule": "Veuillez sélectionner des plans avec la même règle de détermination du prix",
         "Sales order generation error for subscription {0}": "Erreur de génération d'un bon de commande pour l'abonnement {0}",
         "Subscription Grand Total Simulation Error": "Erreur de simulation du total TTC dans un abonnement",
         "Subscription hourly processing error for {}": "Erreur de traitement pour l'abonnement {}",
         "The next invoice will be generated on {0}": "La prochaine facture sera générée le {0}",
+        "This subscription has been cancelled on {0}": "Cet abonnement a été annulé le {0}",
         "This subscription will be cancelled on {0}": "Cet abonnement sera annulé le {0}",
         "Trial Period End Date Cannot be before Trial Period Start Date": "La Date de fin de la période d'essai ne peut pas précéder la date de début de la période d'évaluation",
         "You can only have Plans with the same billing cycle in a Subscription": "Vous ne pouvez avoir que des plans ayant le même cycle de facturation dans le même abonnement",
         "You cannot restart a Subscription that is not cancelled.": "Vous ne pouvez pas redémarrer un abonnement qui n'est pas annulé."
     },
     "apps/erpnext/erpnext/accounts/doctype/subscription/subscription_dashboard.py": {
+        "Events": "Evénements",
         "Last subscription invoices": "Dernières factures pour cet abonnement",
+        "Payments": "Paiements",
         "Sales": "Ventes"
     },
     "apps/erpnext/erpnext/accounts/doctype/subscription/subscription_list.js": {
@@ -12451,6 +12479,7 @@
         "rows selected": "lignes sélectionnées"
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationTransactionList.vue": {
+        "All": "Tous",
         "Amount": "Montant",
         "Automatic reconciliation": "Rapprochement automatique",
         "Bank Transactions": "Transactions bancaires",
@@ -12458,8 +12487,10 @@
         "Description": "Description",
         "No data available for this period": "Aucune donnée disponible pour cette période",
         "Reconcile Stripe Transactions": "Rapprocher les transactions Stripe",
+        "Reconciled": "Rapproché",
         "Rows per page": "Lignes par page",
         "Search for a specific bank transaction": "Chercher une transaction en particulier",
+        "Unreconciled": "Non rapproché",
         "clear": "réinitialiser",
         "next": "suiv.",
         "of": "de",
@@ -13446,6 +13477,7 @@
         "Total": "Total"
     },
     "apps/erpnext/erpnext/accounts/report/trial_balance_for_party/trial_balance_for_party.js": {
+        "Account": "Compte",
         "Company": "Société",
         "Fiscal Year": "Exercice Fiscal",
         "From Date": "Date de début",
@@ -14116,9 +14148,9 @@
         "Purchase Orders given to Suppliers.": "Bons de commande envoyés aux fournisseurs",
         "Purchasing": "Achat",
         "Quotations received from Suppliers.": "Devis reçus des fournisseurs.",
+        "Request for Quotation": "Appel d'offre",
         "Request for purchase.": "Demande d'achat.",
         "Request for quotation.": "Appel d'offre",
-        "Request for Quotation": "Appel d'offre",
         "Rules for applying different promotional schemes.": "Règles pour appliquer différents schémas promotionnels",
         "Rules for applying pricing and discount.": "Règles pour l’application des tarifs et des remises.",
         "Settings": "Paramètres",
@@ -14993,6 +15025,11 @@
         "Employee {0} on Half day on {1}": "Employé {0} sur une demi-journée sur {1}",
         "No leave record found for employee {0} for {1}": "Aucun congé trouvé pour l’employé {0} pour {1}"
     },
+    "apps/erpnext/erpnext/hr/doctype/attendance/attendance_list.js": {
+        "Attendance Marked": "Présence enregistrée",
+        "For Employee": "Employé",
+        "Status": "Statut"
+    },
     "apps/erpnext/erpnext/hr/doctype/attendance_request/attendance_request.py": {
         "Attendance not submitted for {0} as it is a Holiday.": "Présence de {0} non soumise car il s'agit d'un jour férié.",
         "Attendance not submitted for {0} as {1} on leave.": "Présence de {0} non soumise car {1} est en congés.",
@@ -15454,6 +15491,7 @@
         "Can refer row only if the charge type is 'On Previous Row Amount' or 'Previous Row Total'": "Peut se référer à ligne seulement si le type de charge est 'Montant de la ligne précedente' ou 'Total des lignes précedente'",
         "Cannot refer row number greater than or equal to current row number for this Charge type": "Impossible de se référer au numéro de la ligne supérieure ou égale au numéro de la ligne courante pour ce type de Charge",
         "Cannot select charge type as 'On Previous Row Amount' or 'On Previous Row Total' for first row": "Impossible de sélectionner le type de charge comme étant «Le Montant de la Ligne Précédente» ou «Montant Total de la Ligne Précédente» pour la première ligne",
+        "Company": "Société",
         "Department": "Département",
         "Designation": "Désignation",
         "Employee": "Employé",
@@ -19014,6 +19052,18 @@
         "Item Name": "Nom de l'article",
         "UOM": "Unité de mesure"
     },
+    "apps/erpnext/erpnext/stock/report/stock_and_account_value_comparison/stock_and_account_value_comparison.js": {
+        "Account": "Compte",
+        "As On Date": "A la date du",
+        "Company": "Société"
+    },
+    "apps/erpnext/erpnext/stock/report/stock_and_account_value_comparison/stock_and_account_value_comparison.py": {
+        "Posting Date": "Date de comptabilisation",
+        "Posting Time": "Heure de comptabilisation",
+        "Stock Value": "Valeur du Stock",
+        "Voucher No": "N° de référence",
+        "Voucher Type": "Type de Référence"
+    },
     "apps/erpnext/erpnext/stock/report/stock_balance/stock_balance.js": {
         "Brand": "Marque",
         "From Date": "Date de début",
@@ -19821,6 +19871,7 @@
         "This invoice has already been fully paid": "La facture a été entièrement payée"
     },
     "sites/assets/js/bank-reconciliation.min.js": {
+        "All": "Tous",
         "Amount": "Montant",
         "Automatic reconciliation": "Rapprochement automatique",
         "Automatic reconciliation in progress": "Rapprochement automatique en cours",
@@ -19842,6 +19893,7 @@
         "Please select only one bank transaction and multiple documents or multiple bank transactions and only one document.": "Veuillez sélectionner une seule transaction bancaire et plusieurs documents ou plusieurs transactions bancaires et un seul document.",
         "Reconcile": "Réconcilier",
         "Reconcile Stripe Transactions": "Rapprocher les transactions Stripe",
+        "Reconciled": "Rapproché",
         "Reference": "Référence",
         "Reference Date": "Date de référence",
         "Rows per page": "Lignes par page",
@@ -19849,6 +19901,7 @@
         "Search for a specific document": "Chercher un document en particulier",
         "Show the full list": "Voir la liste complète",
         "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
+        "Unreconciled": "Non rapproché",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document.",
         "clear": "réinitialiser",
         "next": "suiv.",
