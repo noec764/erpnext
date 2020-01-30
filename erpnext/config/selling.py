@@ -188,6 +188,11 @@ def get_data():
 					"name": "Campaign",
 					"description": _("Sales campaigns."),
 				},
+				{
+					"type": "doctype",
+					"name": "Brand",
+					"description": _("Brand"),
+				}
 			]
 		},
 		{
