@@ -173,14 +173,9 @@ class Appointment(Document):
 			'starts_on': self.scheduled_time,
 			'status': 'Open',
 			'type': 'Public',
-			'send_reminder': frappe.db.get_single_value('Appointment Booking Settings', 'email_reminders'),
-			'event_participants': [dict(reference_doctype=self.appointment_with, reference_docname=self.party)]
+			'send_reminder': frappe.db.get_single_value('Appointment Booking Settings', 'email_reminders')
 		})
-		employee = _get_employee_from_user(self._assign)
-		if employee:
-			appointment_event.append('event_participants', dict(
-				reference_doctype='Employee',
-				reference_docname=employee.name))
+
 		appointment_event.insert(ignore_permissions=True)
 		self.calendar_event = appointment_event.name
 		self.save(ignore_permissions=True)
