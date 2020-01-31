@@ -589,7 +589,7 @@ def transfer_asset(args):
 
 	frappe.db.commit()
 
-	frappe.msgprint(_("Asset Movement record {0} created").format("<a href='#Form/Asset Movement/{0}'>{0}</a>".format(movement_entry.name)))
+	frappe.msgprint(_("Asset Movement record {0} created").format("<a href='#Form/Asset Movement/{0}'>{0}</a>").format(movement_entry.name))
 
 @frappe.whitelist()
 def get_item_details(item_code, asset_category):

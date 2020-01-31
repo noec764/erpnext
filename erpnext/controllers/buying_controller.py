@@ -497,8 +497,8 @@ class BuyingController(StockController):
 		item_row = item_row.as_dict()
 		for fieldname in field_list:
 			if flt(item_row[fieldname]) < 0:
-				frappe.throw(_("Row #{0}: {1} can not be negative for item {2}".format(item_row['idx'],
-					frappe.get_meta(item_row.doctype).get_label(fieldname), item_row['item_code'])))
+				frappe.throw(_("Row #{0}: {1} can not be negative for item {2}").format(item_row['idx'],
+					frappe.get_meta(item_row.doctype).get_label(fieldname), item_row['item_code']))
 
 	def check_for_on_hold_or_closed_status(self, ref_doctype, ref_fieldname):
 		for d in self.get("items"):
@@ -696,7 +696,7 @@ class BuyingController(StockController):
 
 						# need to delete movements to delete assets otherwise throws link exists error
 						movements = frappe.db.sql(
-							"""SELECT asm.name 
+							"""SELECT asm.name
 							FROM `tabAsset Movement` asm, `tabAsset Movement Item` asm_item
 							WHERE asm_item.parent=asm.name and asm_item.asset=%s""", asset.name, as_dict=1)
 
@@ -870,9 +870,9 @@ def validate_item_type(doc, fieldname, message):
 		items = ", ".join([d for d in invalid_items])
 
 		if len(invalid_items) > 1:
-			error_message = _("Following items {0} are not marked as {1} item. You can enable them as {1} item from its Item master".format(items, message))
+			error_message = _("Following items {0} are not marked as {1} item. You can enable them as {1} item from its Item master").format(items, message)
 		else:
-			error_message = _("Following item {0} is not marked as {1} item. You can enable them as {1} item from its Item master".format(items, message))
+			error_message = _("Following item {0} is not marked as {1} item. You can enable them as {1} item from its Item master").format(items, message)
 
 		frappe.throw(error_message)
 

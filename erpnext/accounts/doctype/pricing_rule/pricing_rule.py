@@ -57,12 +57,12 @@ class PricingRule(Document):
 
 		if not self.selling and self.applicable_for in ["Customer", "Customer Group",
 				"Territory", "Sales Partner", "Campaign"]:
-			throw(_("Selling must be checked, if Applicable For is selected as {0}"
-				.format(self.applicable_for)))
+			throw(_("Selling must be checked, if Applicable For is selected as {0}")
+				.format(self.applicable_for))
 
 		if not self.buying and self.applicable_for in ["Supplier", "Supplier Group"]:
-			throw(_("Buying must be checked, if Applicable For is selected as {0}"
-				.format(self.applicable_for)))
+			throw(_("Buying must be checked, if Applicable For is selected as {0}")
+				.format(self.applicable_for))
 
 	def validate_min_max_qty(self):
 		if self.min_qty and self.max_qty and flt(self.min_qty) > flt(self.max_qty):

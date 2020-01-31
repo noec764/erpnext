@@ -45,8 +45,8 @@ class PaymentRequest(Document):
 				ref_amount = get_amount(ref_doc)
 
 				if existing_payment_request_amount + flt(self.grand_total)> ref_amount:
-					frappe.throw(_("Total Payment Request amount cannot be greater than {0} amount"
-						.format(self.reference_doctype)))
+					frappe.throw(_("Total Payment Request amount cannot be greater than {0} amount")
+						.format(self.reference_doctype))
 
 	def validate_currency(self):
 		currency = frappe.db.get_value(self.reference_doctype, self.reference_name, "currency")
