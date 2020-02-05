@@ -873,7 +873,9 @@ class AccountsController(TransactionBase):
 	def cancel_linked_subscription_events(self):
 		events = frappe.get_all("Subscription Event", filters={"document_type": self.doctype, "document_name": self.name})
 		for event in events:
-			frappe.get_doc("Subscription Event", event.name).cancel()
+			e = frappe.get_doc("Subscription Event", event.name)
+			e.flags.ignore_permissions = True
+			e.cancel()
 
 @frappe.whitelist()
 def get_tax_rate(account_head):
