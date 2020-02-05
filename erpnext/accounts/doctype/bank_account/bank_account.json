@@ -83,7 +83,7 @@
    "default": "0",
    "fieldname": "is_default",
    "fieldtype": "Check",
-   "label": "Is the Default Account"
+   "label": "Is Default Account"
   },
   {
    "default": "0",
@@ -214,7 +214,7 @@
   }
  ],
  "links": [],
- "modified": "2019-12-06 17:35:36.383699",
+ "modified": "2020-01-29 20:42:26.458316",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Account",
