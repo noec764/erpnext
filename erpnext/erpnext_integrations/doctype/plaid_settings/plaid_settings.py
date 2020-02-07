@@ -200,7 +200,7 @@ def automatic_synchronization():
 	settings = frappe.get_doc("Plaid Settings", "Plaid Settings")
 
 	if cint(settings.enabled) == 1 and cint(settings.automatic_sync) == 1:
-		plaid_accounts = frappe.get_all("Bank Account", filter={"integration_id": ["!=", ""]}, fields=["name", "bank"])
+		plaid_accounts = frappe.get_all("Bank Account", filters={"integration_id": ["!=", ""]}, fields=["name", "bank"])
 
 		for plaid_account in plaid_accounts:
 			frappe.enqueue("erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions", bank=plaid_account.bank, bank_account=plaid_account.name)
