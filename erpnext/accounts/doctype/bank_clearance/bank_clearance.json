@@ -360,7 +360,7 @@
    "label": "Payment Entries",
    "length": 0,
    "no_copy": 0,
-   "options": "Bank Reconciliation Detail",
+   "options": "Bank Clearance Detail",
    "permlevel": 0,
    "print_hide": 0,
    "print_hide_if_no_value": 0,
