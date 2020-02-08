@@ -209,7 +209,7 @@ def get_data():
 				{
 					"type": "doctype",
 					"label": _("Update Bank Transaction Dates"),
-					"name": "Bank Reconciliation",
+					"name": "Bank Clearance",
 					"description": _("Update bank payment dates with journals.")
 				},
 				{

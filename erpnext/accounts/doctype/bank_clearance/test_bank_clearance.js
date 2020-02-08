@@ -1,10 +1,10 @@
 QUnit.module('Account');
 
-QUnit.test("test Bank Reconciliation", function(assert) {
+QUnit.test("test Bank Clearance", function(assert) {
 	assert.expect(0);
 	let done = assert.async();
 	frappe.run_serially([
-		() => frappe.set_route('Form', 'Bank Reconciliation'),
+		() => frappe.set_route('Form', 'Bank Clearance'),
 		() => cur_frm.set_value('bank_account','Cash - FT'),
 		() => frappe.click_button('Get Payment Entries'),
 		() => {

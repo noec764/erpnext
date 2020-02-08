@@ -57,7 +57,7 @@ def update_script(dt, name, ref_dt, script_field, script, renamed_fields):
 			
 	if ref_dt == "Journal Entry":
 		script = re.sub(r"\bentries\b", "accounts", script)
-	elif ref_dt == "Bank Reconciliation":
+	elif ref_dt == "Bank Clearance":
 		script = re.sub(r"\bentries\b", "journal_entries", script)
 	elif ref_dt in ("Sales Invoice", "Purchase Invoice"):
 		script = re.sub(r"\bentries\b", "items", script)
