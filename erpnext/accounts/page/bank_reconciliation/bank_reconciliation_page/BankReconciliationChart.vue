@@ -52,6 +52,9 @@ export default {
             chartHeight: null
         }
     },
+    mounted() {
+        this.getChartData()
+    },
     watch: {
         bank_account() {
             this.getChartData()

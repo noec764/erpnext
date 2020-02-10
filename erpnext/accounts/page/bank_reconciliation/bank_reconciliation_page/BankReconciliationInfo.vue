@@ -42,6 +42,10 @@ export default {
             transaction_final_balance: 0
         }
     },
+    mounted() {
+        this.get_initial_balance()
+        this.get_final_balance()
+    },
     watch: {
         bank_account: function() {
             this.get_initial_balance()
