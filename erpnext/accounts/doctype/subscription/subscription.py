@@ -362,6 +362,7 @@ class Subscription(Document):
 
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
+		document.customer_group, document.territory = frappe.db.get_value("Customer", self.customer, ["customer_group", "territory"])
 		document.set_missing_lead_customer_details()
 		document.subscription = self.name
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and self.get_plans_pricing_rules().pop() == "Fixed rate" else 0

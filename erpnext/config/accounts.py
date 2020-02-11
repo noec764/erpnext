@@ -171,6 +171,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Payment Terms Template",
+					"description": _("Payment Terms Templates")
+				},
+				{
+					"type": "doctype",
 					"name": "Sepa Direct Debit Settings",
 				},
 			]
