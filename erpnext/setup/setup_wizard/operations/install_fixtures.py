@@ -453,6 +453,7 @@ def install_defaults(args=None):
 	stock_settings.save()
 
 	if args.bank_account:
+		from erpnext.setup.setup_wizard.operations.company_setup import create_bank_and_bank_account
 		company_name = args.company_name
 		bank_account_group =  frappe.db.get_value("Account",
 			{"account_type": "Bank", "is_group": 1, "root_type": "Asset",
@@ -470,6 +471,8 @@ def install_defaults(args=None):
 				doc = bank_account.insert()
 
 				frappe.db.set_value("Company", args.company_name, "default_bank_account", bank_account.name, update_modified=False)
+
+				create_bank_and_bank_account(args.bank_account, doc.name)
 
 			except RootNotEditable:
 				frappe.throw(_("Bank account cannot be named as {0}").format(args.bank_account))
