@@ -10,9 +10,11 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, \
 	get_last_day, add_to_date, flt, global_date_format, add_years, today
-from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_plan_rate
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 import numpy as np
+from erpnext.accounts.party import get_default_price_list
+from erpnext.stock.get_item_details import get_price_list_rate_for
+from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
 
 class Subscription(Document):
 	def onload(self):
@@ -28,10 +30,9 @@ class Subscription(Document):
 	def validate(self):
 		self.set_plan_details_status()
 		self.get_subscription_rates()
+		self.validate_interval_count()
 		self.validate_trial_period()
-		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
 		self.validate_plans_pricing_rule()
-		self.validate_plans_currency()
 		self.validate_subscription_period()
 		self.simulate_grand_total_calculation()
 
@@ -117,11 +118,6 @@ class Subscription(Document):
 		end_date = getdate(end_date)
 		return getdate(nowdate()) > getdate(end_date)
 
-	@staticmethod
-	def validate_plans_billing_cycle(billing_cycle_data):
-		if billing_cycle_data and len(billing_cycle_data) != 1:
-			frappe.throw(_('You can only have Plans with the same billing cycle in a Subscription'))
-
 	def validate_plans_pricing_rule(self):
 		rules = self.get_plans_pricing_rules()
 		if len(rules) > 1:
@@ -131,61 +127,26 @@ class Subscription(Document):
 		rules = set()
 		for plan in self.plans:
 			if plan.status == "Active":
-				rules.add(frappe.db.get_value("Subscription Plan", plan.plan, "price_determination"))
+				rules.add(plan.price_determination)
 
 		return rules
 
-	def validate_plans_currency(self):
-		currencies = self.get_plans_currencies()
-		if len(currencies) > 1:
-			frappe.throw(_("Please select plans with the same currency"))
-		elif list(currencies)[0] != self.currency:
-			self.currency = list(currencies)[0]
-
-	def get_plans_currencies(self):
-		currencies = set()
-		for plan in self.plans:
-			if plan.status == "Active":
-				currencies.add(frappe.db.get_value("Subscription Plan", plan.plan, "currency"))
-
-		return currencies
-
-	def get_billing_cycle_and_interval(self):
-		plan_names = [plan.plan for plan in self.plans if plan.status == "Active"]
-		
-		if plan_names:
-			billing_info = frappe.db.sql(
-				'select distinct `billing_interval`, `billing_interval_count` '
-				'from `tabSubscription Plan` '
-				'where name in %s',
-				(plan_names,), as_dict=1
-			)
-
-			return billing_info
-
-		return {}
-
 	def get_billing_cycle_data(self):
-		billing_info = self.get_billing_cycle_and_interval()
+		data = dict()
+		interval = self.billing_interval
+		interval_count = self.billing_interval_count
+		if interval not in ['Day', 'Week']:
+			data['days'] = -1
+		if interval == 'Day':
+			data['days'] = interval_count - 1
+		elif interval == 'Month':
+			data['months'] = interval_count
+		elif interval == 'Year':
+			data['years'] = interval_count
+		elif interval == 'Week':
+			data['days'] = interval_count * 7 - 1
 
-		self.validate_plans_billing_cycle(billing_info)
-
-		if billing_info:
-			data = dict()
-			interval = billing_info[0]['billing_interval']
-			interval_count = billing_info[0]['billing_interval_count']
-			if interval not in ['Day', 'Week']:
-				data['days'] = -1
-			if interval == 'Day':
-				data['days'] = interval_count - 1
-			elif interval == 'Month':
-				data['months'] = interval_count
-			elif interval == 'Year':
-				data['years'] = interval_count
-			elif interval == 'Week':
-				data['days'] = interval_count * 7 - 1
-
-			return data
+		return data
 
 	def set_subscription_status(self):
 		if self.is_trial() and self.status != 'Trial':
@@ -442,14 +403,13 @@ class Subscription(Document):
 
 		items = []
 		for plan in plans:
-			item_code = frappe.db.get_value("Subscription Plan", plan.plan, "item")
 			if not prorate:
-				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)),\
+				items.append({'item_code': plan.item, 'qty': plan.qty, \
+					'rate': self.get_plan_rate(plan, plan.qty, getdate(date)),\
 					'description': plan.description})
 			else:
-				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': (get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor),\
+				items.append({'item_code': plan.item, 'qty': plan.qty, \
+					'rate': (self.get_plan_rate(plan, plan.qty, getdate(date)) * prorata_factor),\
 					'description': plan.description})
 
 		return items
@@ -538,7 +498,7 @@ class Subscription(Document):
 		total = 0
 		for plan in self.plans:
 			if plan.status == "Active":
-				plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
+				plan.rate = self.get_plan_rate(plan, plan.qty)
 				total += (flt(plan.qty) * flt(plan.rate))
 
 		if total != self.total:
@@ -599,6 +559,50 @@ class Subscription(Document):
 			doc.flags.ignore_permissions = True
 			doc.insert()
 			doc.submit()
+
+	def validate_interval_count(self):
+		if self.billing_interval_count < 1:
+			frappe.throw(_('Billing Interval Count cannot be less than 1'))
+
+	def get_plan_rate(self, plan, quantity=1, date=nowdate()):
+		if plan.price_determination == "Fixed rate":
+			return plan.fixed_rate
+
+		elif plan.price_determination == "Based on price list":
+			customer_doc = frappe.get_doc("Customer", self.customer)
+			price_list = get_default_price_list(customer_doc)
+			if not price_list:
+				price_list = frappe.db.get_value("Price List", {"selling": 1})
+
+			price_list_rate = get_price_list_rate_for({
+				"company": self.company,
+				"uom": plan.uom,
+				"customer": self.customer,
+				"price_list": price_list,
+				"currency": self.currency,
+				"min_qty": quantity,
+				"transaction_date": date
+			}, plan.item)
+
+			rule = get_pricing_rule_for_item(frappe._dict({
+				"company": self.company,
+				"uom": plan.uom,
+				"item_code": plan.item,
+				"stock_qty": quantity,
+				"transaction_type": "selling",
+				"price_list_rate": price_list_rate,
+				"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
+				"price_list": price_list,
+				"customer": self.customer,
+				"currency": self.currency,
+				"transaction_date": date,
+				"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse=''))
+			}))
+
+			if rule.get("price_list_rate"):
+				price_list_rate = rule.get("price_list_rate")
+
+			return price_list_rate or 0
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

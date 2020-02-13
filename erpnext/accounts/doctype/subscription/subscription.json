@@ -28,8 +28,10 @@
   "generate_invoice_at_period_start",
   "submit_invoice",
   "column_break_18",
-  "subscription_setup_html",
+  "billing_interval",
+  "billing_interval_count",
   "sb_4",
+  "subscription_plan",
   "plans",
   "sb_1",
   "tax_template",
@@ -324,15 +326,11 @@
    "label": "Total"
   },
   {
-   "fieldname": "subscription_setup_html",
-   "fieldtype": "HTML"
-  },
-  {
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency",
-   "read_only": 1
+   "reqd": 1
   },
   {
    "default": "0",
@@ -340,10 +338,29 @@
    "fieldname": "trial_validated",
    "fieldtype": "Check",
    "label": "Trial Validated"
+  },
+  {
+   "default": "Month",
+   "fieldname": "billing_interval",
+   "fieldtype": "Select",
+   "label": "Billing Interval",
+   "options": "Day\nWeek\nMonth\nYear"
+  },
+  {
+   "default": "1",
+   "fieldname": "billing_interval_count",
+   "fieldtype": "Int",
+   "label": "Billing Interval Count"
+  },
+  {
+   "fieldname": "subscription_plan",
+   "fieldtype": "Link",
+   "label": "Subscription Plan",
+   "options": "Subscription Plan"
   }
  ],
  "links": [],
- "modified": "2020-01-22 07:49:24.922983",
+ "modified": "2020-02-12 19:29:28.522388",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
