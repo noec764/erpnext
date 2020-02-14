@@ -34,7 +34,6 @@ class SalesOrder(SellingController):
 
 	def validate(self):
 		super(SalesOrder, self).validate()
-		self.validate_order_type()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
@@ -99,9 +98,6 @@ class SalesOrder(SellingController):
 				if not res:
 					frappe.msgprint(_("Quotation {0} not of type {1}")
 						.format(d.prevdoc_docname, self.order_type))
-
-	def validate_order_type(self):
-		super(SalesOrder, self).validate_order_type()
 
 	def validate_delivery_date(self):
 		if self.order_type == 'Sales' and not self.skip_delivery_note:
@@ -218,7 +214,9 @@ class SalesOrder(SellingController):
 	def check_credit_limit(self):
 		# if bypass credit limit check is set to true (1) at sales order level,
 		# then we need not to check credit limit and vise versa
-		if not cint(frappe.db.get_value("Customer Credit Limit", {'parent': self.customer, 'parenttype': 'Customer', 'company': self.company}, "bypass_credit_limit_check")):
+		if not cint(frappe.db.get_value("Customer Credit Limit",
+			{'parent': self.customer, 'parenttype': 'Customer', 'company': self.company},
+			"bypass_credit_limit_check")):
 			check_credit_limit(self.customer, self.company)
 
 	def check_nextdoc_docstatus(self):
@@ -378,6 +376,9 @@ class SalesOrder(SellingController):
 	def get_work_order_items(self, for_raw_material_request=0):
 		'''Returns items with BOM that already do not have a linked work order'''
 		items = []
+		item_codes = [i.item_code for i in self.items]
+		product_bundle_parents = [pb.new_item_code for pb in frappe.get_all("Product Bundle", {"new_item_code": ["in", item_codes]}, ["new_item_code"])]
+
 		for table in [self.items, self.packed_items]:
 			for i in table:
 				bom = get_default_bom_item(i.item_code)
@@ -389,7 +390,7 @@ class SalesOrder(SellingController):
 				else:
 					pending_qty = stock_qty
 
-				if pending_qty:
+				if pending_qty and i.item_code not in product_bundle_parents:
 					if bom:
 						items.append(dict(
 							name= i.name,
@@ -576,8 +577,12 @@ def make_delivery_note(source_name, target_doc=None, skip_item_mapping=False):
 		target.run_method("set_po_nos")
 		target.run_method("calculate_taxes_and_totals")
 
-		# set company address
-		target.update(get_company_address(target.company))
+		if source.company_address:
+			target.update({'company_address': source.company_address})
+		else:
+			# set company address
+			target.update(get_company_address(target.company))
+
 		if target.company_address:
 			target.update(get_fetch_values("Delivery Note", 'company_address', target.company_address))
 
@@ -643,8 +648,12 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 		target.run_method("set_po_nos")
 		target.run_method("calculate_taxes_and_totals")
 
-		# set company address
-		target.update(get_company_address(target.company))
+		if source.company_address:
+			target.update({'company_address': source.company_address})
+		else:
+			# set company address
+			target.update(get_company_address(target.company))
+
 		if target.company_address:
 			target.update(get_fetch_values("Sales Invoice", 'company_address', target.company_address))
 
@@ -684,6 +693,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			"field_map": {
 				"name": "so_detail",
 				"parent": "sales_order",
+				"delivered_qty": "delivered_qty"
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: doc.qty and (doc.base_amount==0 or abs(doc.billed_amt) < abs(doc.amount))
@@ -832,6 +842,10 @@ def make_purchase_order(source_name, for_supplier=None, selected_items=[], targe
 		for item in sales_order.items:
 			if item.supplier and item.supplier not in suppliers:
 				suppliers.append(item.supplier)
+
+	if not suppliers:
+		frappe.throw(_("Please set a Supplier against the Items to be considered in the Purchase Order."))
+
 	for supplier in suppliers:
 		po =frappe.get_list("Purchase Order", filters={"sales_order":source_name, "supplier":supplier, "docstatus": ("<", "2")})
 		if len(po) == 0:

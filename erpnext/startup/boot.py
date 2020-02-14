@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from erpnext import get_default_company
 from frappe.utils import cint
 
 def boot_session(bootinfo):
@@ -24,6 +25,9 @@ def boot_session(bootinfo):
 			'allow_stale'))
 		bootinfo.sysdefaults.quotation_valid_till = cint(frappe.db.get_single_value('Selling Settings',
 			'default_valid_till'))
+
+		bootinfo.sysdefaults.default_bank_account_name = frappe.db.get_value("Bank Account",
+			{"is_default": 1, "is_company_account": 1, "company": get_default_company()}, "name")
 
 		# if no company, show a dialog box to create a new company
 		bootinfo.customer_count = frappe.db.sql("""SELECT count(*) FROM `tabCustomer`""")[0][0]

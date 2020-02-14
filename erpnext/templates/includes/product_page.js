@@ -30,7 +30,7 @@ frappe.ready(function() {
 							(" + r.message.product_info.price.formatted_price + " / " + r.message.product_info.uom + ")</div>");
 
 					if(r.message.product_info.in_stock==0) {
-						$(".item-stock").html("<div style='color: red'> <i class='fa fa-close'></i> {{ _("Not in stock") }}</div>");
+						$(".item-stock").html("<div style='color: red'> <i class='fas fa-times'></i> {{ _("Not in stock") }}</div>");
 					}
 					else if(r.message.product_info.in_stock==1) {
 						var qty_display = "{{ _("In stock") }}";
@@ -38,7 +38,7 @@ frappe.ready(function() {
 							qty_display += " ("+r.message.product_info.stock_qty+")";
 						}
 						$(".item-stock").html("<div style='color: green'>\
-							<i class='fa fa-check'></i> "+qty_display+"</div>");
+							<i class='fas fa-check'></i> "+qty_display+"</div>");
 					}
 
 					if(r.message.product_info.qty) {

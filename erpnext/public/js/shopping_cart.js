@@ -23,7 +23,7 @@ frappe.ready(function() {
 	// update user
 	if(full_name) {
 		$('.navbar li[data-label="User"] a')
-			.html('<i class="fa fa-fixed-width fa fa-user"></i> ' + full_name);
+			.html('<i class="fas fa-fixed-width fa-user"></i> ' + full_name);
 	}
 
 	// set coupon code and sales partner code

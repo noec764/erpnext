@@ -61,6 +61,7 @@ class PaymentEntry(AccountsController):
 		self.validate_duplicate_entry()
 		self.validate_allocated_amount()
 		self.ensure_supplier_is_not_blocked()
+		self.update_unreconciled_amount()
 
 	def on_submit(self):
 		self.setup_party_account_field()
@@ -70,6 +71,7 @@ class PaymentEntry(AccountsController):
 		self.update_outstanding_amounts()
 		self.update_advance_paid()
 		self.update_expense_claim()
+		self.set_status()
 
 
 	def on_cancel(self):
@@ -79,6 +81,7 @@ class PaymentEntry(AccountsController):
 		self.update_advance_paid()
 		self.update_expense_claim()
 		self.delink_advance_entry_references()
+		self.set_status()
 
 	def update_outstanding_amounts(self):
 		self.set_missing_ref_details(force=True)
@@ -99,7 +102,9 @@ class PaymentEntry(AccountsController):
 
 			self.bank = bank_data.bank
 			self.bank_account_no = bank_data.bank_account_no
-			self.set(field, bank_data.account)
+
+			if not self.get(field):
+				self.set(field, bank_data.account)
 
 	def validate_allocated_amount(self):
 		for d in self.get("references"):
@@ -210,7 +215,7 @@ class PaymentEntry(AccountsController):
 		if self.party_type == "Student":
 			valid_reference_doctypes = ("Fees")
 		elif self.party_type == "Customer":
-			valid_reference_doctypes = ("Sales Order", "Sales Invoice", "Journal Entry")
+			valid_reference_doctypes = ("Sales Order", "Sales Invoice", "Journal Entry", "Subscription")
 		elif self.party_type == "Supplier":
 			valid_reference_doctypes = ("Purchase Order", "Purchase Invoice", "Journal Entry")
 		elif self.party_type == "Employee":
@@ -250,7 +255,7 @@ class PaymentEntry(AccountsController):
 								frappe.throw(_("{0} {1} is associated with {2}, but Party Account is {3}")
 									.format(d.reference_doctype, d.reference_name, ref_party_account, self.party_account))
 
-					if ref_doc.docstatus != 1:
+					if ref_doc.doctype != "Subscription" and ref_doc.docstatus != 1:
 						frappe.throw(_("{0} {1} must be submitted")
 							.format(d.reference_doctype, d.reference_name))
 
@@ -549,6 +554,10 @@ class PaymentEntry(AccountsController):
 		self.append('deductions', row)
 		self.set_unallocated_amount()
 
+	def update_unreconciled_amount(self):
+		amount = self.paid_amount if self.payment_type == "Receive" else self.paid_amount * 1
+		self.db_set("unreconciled_amount", amount or 0)
+
 @frappe.whitelist()
 def get_outstanding_reference_documents(args):
 
@@ -836,6 +845,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 				total_amount = ref_doc.total_sanctioned_amount
 			elif ref_doc.doctype == "Employee Advance":
 				total_amount = ref_doc.advance_amount
+			elif ref_doc.doctype == "Subscription":
+				total_amount = ref_doc.grand_total
 			else:
 				total_amount = ref_doc.base_grand_total
 			exchange_rate = 1
@@ -855,6 +866,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 				- flt(ref_doc.get("total_amount+reimbursed")) - flt(ref_doc.get("total_advance_amount"))
 		elif reference_doctype == "Employee Advance":
 			outstanding_amount = ref_doc.advance_amount - flt(ref_doc.paid_amount)
+		elif reference_doctype == "Subscription":
+			outstanding_amount = flt(total_amount)
 		else:
 			outstanding_amount = flt(total_amount) - flt(ref_doc.advance_paid)
 	else:
@@ -900,7 +913,10 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	else:
 		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company)
 
-	party_account_currency = doc.get("party_account_currency") or get_account_currency(party_account)
+	if dt not in ("Sales Invoice", "Purchase Invoice"):
+		party_account_currency = get_account_currency(party_account)
+	else:
+		party_account_currency = doc.get("party_account_currency") or get_account_currency(party_account)
 
 	# payment type
 	if (dt == "Sales Order" or (dt in ("Sales Invoice", "Fees") and doc.outstanding_amount > 0)) \
@@ -984,12 +1000,12 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 
 	if pe.party_type in ["Customer", "Supplier"]:
 		bank_account = get_party_bank_account(pe.party_type, pe.party)
-		pe.set("bank_account", bank_account)
+		pe.set("party_bank_account", bank_account)
 		pe.set_bank_account_data()
 
 	# only Purchase Invoice can be blocked individually
 	if doc.doctype == "Purchase Invoice" and doc.invoice_is_blocked():
-		frappe.msgprint(_('{0} is on hold till {1}'.format(doc.name, doc.release_date)))
+		frappe.msgprint(_('{0} is on hold till {1}').format(doc.name, doc.release_date))
 	else:
 		pe.append("references", {
 			'reference_doctype': dt,

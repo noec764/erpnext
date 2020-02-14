@@ -5,7 +5,6 @@ def get_data():
 	return [
 		{
 			"label": _("Payments"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",

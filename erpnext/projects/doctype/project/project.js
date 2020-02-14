@@ -4,20 +4,16 @@ frappe.ui.form.on("Project", {
 	setup(frm) {
 		frm.make_methods = {
 			'Timesheet': () => {
-				let doctype = 'Timesheet';
-				frappe.model.with_doctype(doctype, () => {
-					let new_doc = frappe.model.get_new_doc(doctype);
-
- 					// add a new row and set the project
-					let time_log = frappe.model.get_new_doc('Timesheet Detail');
-					time_log.project = frm.doc.name;
-					time_log.parent = new_doc.name;
-					time_log.parentfield = 'time_logs';
-					time_log.parenttype = 'Timesheet';
-					new_doc.time_logs = [time_log];
-
- 					frappe.ui.form.make_quick_entry(doctype, null, null, new_doc);
-				});
+				open_form(frm, "Timesheet", "Timesheet Detail", "time_logs");
+			},
+			'Purchase Order': () => {
+				open_form(frm, "Purchase Order", "Purchase Order Item", "items");
+			},
+			'Purchase Receipt': () => {
+				open_form(frm, "Purchase Receipt", "Purchase Receipt Item", "items");
+			},
+			'Purchase Invoice': () => {
+				open_form(frm, "Purchase Invoice", "Purchase Invoice Item", "items");
 			},
 		};
 	},
@@ -53,7 +49,6 @@ frappe.ui.form.on("Project", {
 				filters: filters
 			};
 		});
-
 	},
 
 	refresh: function (frm) {
@@ -72,6 +67,7 @@ frappe.ui.form.on("Project", {
 			frm.add_custom_button(__('Duplicate Project with Tasks'), () => {
 				frm.events.create_duplicate(frm);
 			});
+
 			frm.add_custom_button(__('Completed'), () => {
 				frm.events.set_status(frm, 'Completed');
 			}, __('Set Status'));
@@ -121,5 +117,42 @@ frappe.ui.form.on("Project", {
 				{project: frm.doc.name, status: status}).then(() => { /* page will auto reload */ });
 		});
 	},
+	show_dashboard: function(frm) {
+		if(frm.doc.__onload.activity_summary.length) {
+			const hours = frm.doc.__onload.activity_summary.map(d => { return d.total_hours });
+			const max_count = Math.max.apply(null, hours);
+			const sum = hours.reduce((a, b) => { return a + b; }, 0);
+			const section = frm.dashboard.add_section(
+				frappe.render_template('project_dashboard',
+					{
+						data: frm.doc.__onload.activity_summary,
+						max_count: max_count,
+						sum: sum
+					}));
+
+			section.on('click', '.time-sheet-link', function() {
+				const activity_type = $(this).attr('data-activity_type');
+				frappe.set_route('List', 'Timesheet',
+					{'activity_type': activity_type, 'project': frm.doc.name, 'status': ["!=", "Cancelled"]});
+			});
+		}
+	}
 
 });
+
+function open_form(frm, doctype, child_doctype, parentfield) {
+	frappe.model.with_doctype(doctype, () => {
+		let new_doc = frappe.model.get_new_doc(doctype);
+
+		// add a new row and set the project
+		let new_child_doc = frappe.model.get_new_doc(child_doctype);
+		new_child_doc.project = frm.doc.name;
+		new_child_doc.parent = new_doc.name;
+		new_child_doc.parentfield = parentfield;
+		new_child_doc.parenttype = doctype;
+		new_doc[parentfield] = [new_child_doc];
+
+		frappe.ui.form.make_quick_entry(doctype, null, null, new_doc);
+	});
+
+}

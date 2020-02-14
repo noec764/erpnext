@@ -61,7 +61,7 @@ def add_new_payment_card(token):
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return stripe_settings.attach_source(account.stripe_customer_id, token.get("id"))
+			return stripe_settings.create_source(account.stripe_customer_id, token.get("id"))
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] New stripe payment source registration error"))

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-21 16:16:39",
@@ -114,6 +115,7 @@
   "payments_section",
   "mode_of_payment",
   "cash_bank_account",
+  "unreconciled_amount",
   "clearance_date",
   "col_br_payments",
   "paid_amount",
@@ -197,6 +199,7 @@
    "fieldname": "supplier_name",
    "fieldtype": "Data",
    "in_global_search": 1,
+   "in_preview": 1,
    "label": "Supplier Name",
    "oldfieldname": "supplier_name",
    "oldfieldtype": "Data",
@@ -219,9 +222,12 @@
   },
   {
    "default": "0",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "is_paid",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Paid",
+   "no_copy": 1,
    "print_hide": 1
   },
   {
@@ -265,6 +271,7 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Date",
    "oldfieldname": "posting_date",
    "oldfieldtype": "Date",
@@ -417,6 +424,7 @@
    "fieldname": "contact_email",
    "fieldtype": "Small Text",
    "label": "Contact Email",
+   "options": "Email",
    "print_hide": 1,
    "read_only": 1
   },
@@ -638,6 +646,7 @@
   {
    "fieldname": "net_total",
    "fieldtype": "Currency",
+   "in_preview": 1,
    "label": "Net Total",
    "oldfieldname": "net_total_import",
    "oldfieldtype": "Currency",
@@ -873,6 +882,7 @@
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Grand Total",
    "oldfieldname": "grand_total_import",
    "oldfieldtype": "Currency",
@@ -940,28 +950,41 @@
    "collapsible": 1,
    "collapsible_depends_on": "paid_amount",
    "depends_on": "eval:doc.is_paid===1||(doc.advances && doc.advances.length>0)",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "payments_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Payments"
   },
   {
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "mode_of_payment",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Mode of Payment",
+   "no_copy": 1,
    "options": "Mode of Payment",
    "print_hide": 1
   },
   {
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "cash_bank_account",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Cash/Bank Account",
-   "options": "Account"
+   "no_copy": 1,
+   "options": "Account",
+   "print_hide": 1,
+   "read_only": 1
   },
   {
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "clearance_date",
    "fieldtype": "Date",
    "hidden": 1,
-   "label": "Clearance Date"
+   "label": "Clearance Date",
+   "no_copy": 1,
+   "print_hide": 1
   },
   {
    "fieldname": "col_br_payments",
@@ -969,16 +992,20 @@
   },
   {
    "depends_on": "is_paid",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "paid_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Paid Amount",
    "no_copy": 1,
    "options": "currency",
    "print_hide": 1
   },
   {
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "base_paid_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Paid Amount (Company Currency)",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -1280,13 +1307,23 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "unreconciled_amount",
+   "fieldtype": "Currency",
+   "label": "Unreconciled Amount",
+   "no_copy": 1,
+   "options": "currency",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 204,
  "is_sealed": 1,
  "is_submittable": 1,
- "modified": "2019-07-19 19:08:44.277344",
+ "links": [],
+ "modified": "2020-01-03 13:46:14.582780",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
@@ -1344,6 +1381,7 @@
  ],
  "search_fields": "posting_date, supplier, bill_no, base_grand_total, outstanding_amount",
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "supplier",

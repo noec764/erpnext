@@ -3,6 +3,12 @@ frappe.ui.form.on("Payment Request", {
 		frm.add_fetch("payment_gateway_account", "payment_account", "payment_account")
 		frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway")
 		frm.add_fetch("payment_gateways_template", "email_template", "email_template")
+
+		frm.set_query("party_type", function() {
+			return {
+				query: "erpnext.setup.doctype.party_type.party_type.get_party_type",
+			};
+		});
 	},
 	onload(frm) {
 		if (frm.doc.reference_doctype) {
@@ -32,9 +38,6 @@ frappe.ui.form.on("Payment Request", {
 	},
 	refresh(frm) {
 		frm.trigger('get_subscription_link');
-		if (!frm.doc.payment_gateways.length) {
-			frm.trigger('get_payment_gateways');
-		}
 
 		if (frm.doc.docstatus === 1 && frm.doc.payment_key) {
 			frm.web_link && frm.web_link.remove();
@@ -99,12 +102,10 @@ frappe.ui.form.on("Payment Request", {
 	},
 	reference_doctype(frm) {
 		frm.trigger('get_subscription_link');
-		frm.trigger('get_payment_gateways');
 		frm.trigger('get_reference_amount');
 	},
 	reference_name(frm) {
 		frm.trigger('get_subscription_link');
-		frm.trigger('get_payment_gateways');
 		frm.trigger('get_reference_amount');
 	},
 	email_template(frm) {
@@ -147,7 +148,7 @@ frappe.ui.form.on("Payment Request", {
 			}).done((r) => {
 				frm.dashboard.clear_headline();
 				if (r && r.message) {
-					frm.dashboard.set_headline(__('This reference is linked to subscription <a href="/desk#Form/Subscription/{0}">{0}</a>', [r.message]));
+					frm.dashboard.set_headline(__('This payment request is linked to subscription <a href="/desk#Form/Subscription/{0}">{0}</a>', [r.message]));
 					frm.toggle_display("payment_gateways_template", false);
 					frm.trigger("get_subscription_details");
 					frm.fields_dict.transaction_date.df.description = __("Start date for the payment gateway subscription");
@@ -158,28 +159,6 @@ frappe.ui.form.on("Payment Request", {
 					frm.refresh_field('transaction_date');
 				}
 			})
-		}
-	},
-	get_payment_gateways(frm) {
-		if (frm.doc.reference_doctype && frm.doc.reference_name) {
-			frappe.call({
-				method: "get_subscription_payment_gateways",
-				doc: frm.doc,
-			}).then(r => {
-				if (r.message && r.message.length) {
-					frm.doc.payment_gateways = []
-					r.message.forEach(value => {
-						const c = frm.add_child("payment_gateways");
-						c.payment_gateway = value;
-					})
-				} else {
-					frm.set_value("payment_gateways", [])
-				}
-				frm.refresh_fields("payment_gateways")
-			})
-		} else {
-			frm.set_value("payment_gateways", [])
-			frm.refresh_fields("payment_gateways")
 		}
 	},
 	get_reference_amount(frm) {

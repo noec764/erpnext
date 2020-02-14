@@ -41,7 +41,6 @@ def redirect_to_gocardless(data):
 		success_url = get_url("./integrations/gocardless_confirmation?reference_doctype="\
 			+ data["reference_doctype"] + "&reference_docname=" + data["reference_docname"])
 
-
 	try:
 		redirect_flow = client.redirect_flows.create(params={
 			"description": _("Pay {0}").format(fmt_money(data['amount'], currency=data['currency'])),
@@ -60,8 +59,13 @@ def get_prefilled_customer(data):
 	reference = frappe.db.get_value(data["reference_doctype"], data["reference_docname"],\
 		["reference_doctype", "reference_name"], as_dict=True)
 
-	original_transaction = frappe.db.get_value(reference.get("reference_doctype"),\
-		reference.get("reference_name"), ["customer", "customer_address"], as_dict=True)
+	if reference.get("reference_doctype") == "Subscription":
+		original_transaction = frappe.db.get_value(reference.get("reference_doctype"),\
+			reference.get("reference_name"), "customer", as_dict=True)
+		original_transaction["customer_address"] = frappe.db.get_value("Customer", original_transaction.get("customer"), "customer_primary_address")
+	else:
+		original_transaction = frappe.db.get_value(reference.get("reference_doctype"),\
+			reference.get("reference_name"), ["customer", "customer_address"], as_dict=True)
 
 	prefilled_customer = get_customer_data(data, original_transaction)
 	prefilled_customer = get_billing_address(prefilled_customer, original_transaction)
@@ -83,11 +87,10 @@ def get_customer_data(data, original_transaction):
 			"email": primary_contact.get("email_id") or data.get("payer_email") or frappe.session.user
 		}
 
-	else:
-		return {
-			"company_name": customer.get("customer_name"),
-			"email": data.get("payer_email") or frappe.session.user
-		}
+	return {
+		"company_name": customer.get("customer_name"),
+		"email": data.get("payer_email") or frappe.session.user
+	}
 
 def get_billing_address(prefilled_customer, original_transaction):
 	if original_transaction.get("customer_address"):

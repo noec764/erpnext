@@ -53,6 +53,7 @@ class JournalEntry(AccountsController):
 		self.update_loan()
 		self.update_inter_company_jv()
 		self.update_invoice_discounting()
+		self.update_unreconciled_amount()
 
 	def on_cancel(self):
 		from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
@@ -616,7 +617,7 @@ class JournalEntry(AccountsController):
 					d.reference_name, ("total_sanctioned_amount", "total_amount_reimbursed"))
 				pending_amount = flt(sanctioned_amount) - flt(reimbursed_amount)
 				if d.debit > pending_amount:
-					frappe.throw(_("Row No {0}: Amount cannot be greater than Pending Amount against Expense Claim {1}. Pending Amount is {2}".format(d.idx, d.reference_name, pending_amount)))
+					frappe.throw(_("Row No {0}: Amount cannot be greater than Pending Amount against Expense Claim {1}. Pending Amount is {2}").format(d.idx, d.reference_name, pending_amount))
 
 	def validate_credit_debit_note(self):
 		if self.stock_entry:
@@ -624,7 +625,7 @@ class JournalEntry(AccountsController):
 				frappe.throw(_("Stock Entry {0} is not submitted").format(self.stock_entry))
 
 			if frappe.db.exists({"doctype": "Journal Entry", "stock_entry": self.stock_entry, "docstatus":1}):
-				frappe.msgprint(_("Warning: Another {0} # {1} exists against stock entry {2}".format(self.voucher_type, self.name, self.stock_entry)))
+				frappe.msgprint(_("Warning: Another {0} # {1} exists against stock entry {2}").format(self.voucher_type, self.name, self.stock_entry))
 
 	def validate_empty_accounts_table(self):
 		if not self.get('accounts'):
@@ -643,6 +644,15 @@ class JournalEntry(AccountsController):
 
 			d.account_balance = account_balance[d.account]
 			d.party_balance = party_balance[(d.party_type, d.party)]
+
+	def update_unreconciled_amount(self):
+		amount = 0
+		cash_bank_accounts = [x.get("name") for x in frappe.get_all("Account", {"account_type": ["in", ["Bank", "Cash"]]})]
+		for line in self.accounts:
+			if line.account in cash_bank_accounts:
+				amount += (flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency))
+
+		self.db_set("unreconciled_amount", abs(amount), update_modified=False)
 
 @frappe.whitelist()
 def get_default_bank_cash_account(company, account_type=None, mode_of_payment=None, account=None):
@@ -968,7 +978,7 @@ def get_exchange_rate(posting_date, account=None, account_currency=None, company
 
 		# The date used to retreive the exchange rate here is the date passed
 		# in as an argument to this function.
-		elif (not exchange_rate or exchange_rate==1) and account_currency and posting_date:
+		elif (not exchange_rate or flt(exchange_rate)==1) and account_currency and posting_date:
 			exchange_rate = get_exchange_rate(account_currency, company_currency, posting_date)
 	else:
 		exchange_rate = 1

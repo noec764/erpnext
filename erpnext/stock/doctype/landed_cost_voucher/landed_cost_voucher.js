@@ -47,8 +47,8 @@ erpnext.stock.LandedCostVoucher = erpnext.stock.StockController.extend({
 			`<br><br>
 			<table class="table table-bordered" style="background-color: #f9f9f9;">
 				<tr><td>
-					<h4>
-						<i class="fa fa-hand-right"></i>
+					<h4 style="padding-inline-start: 20px;">
+						<i class="far fa-sticky-note"></i>
 						${__("Notes")}:
 					</h4>
 					<ul>
@@ -129,6 +129,9 @@ erpnext.stock.LandedCostVoucher = erpnext.stock.StockController.extend({
 	},
 	distribute_charges_based_on: function (frm) {
 		this.set_applicable_charges_for_item();
+	},
+	items_remove: () => {
+		this.trigger('set_applicable_charges_for_item');
 	}
 
 });

@@ -5,7 +5,6 @@ def get_data():
 	return [
 		{
 			"label": _("Sales Pipeline"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",
@@ -46,11 +45,20 @@ def get_data():
 					"name": "Contract",
 					"description": _("Helps you keep tracks of Contracts based on Supplier, Customer and Employee"),
 				},
+				{
+					"type": "doctype",
+					"name": "Appointment",
+					"description" : _("Helps you manage appointments with your leads"),
+				},
+				{
+					"type": "doctype",
+					"name": "Newsletter",
+					"label": _("Newsletter"),
+				}
 			]
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",
@@ -63,7 +71,6 @@ def get_data():
 					"type": "page",
 					"name": "sales-funnel",
 					"label": _("Sales Funnel"),
-					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
 				{
@@ -107,18 +114,23 @@ def get_data():
 					"name": "Lead Owner Efficiency",
 					"doctype": "Lead",
 					"dependencies": ["Lead"]
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Territory-wise Sales",
+					"doctype": "Opportunity",
+					"dependencies": ["Opportunity"]
 				}
 			]
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
 					"label": _("Customer Group"),
 					"name": "Customer Group",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Customer Group",
 					"description": _("Manage Customer Group Tree."),
 					"onboard": 1,
@@ -127,7 +139,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Territory"),
 					"name": "Territory",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Territory",
 					"description": _("Manage Territory Tree."),
 					"onboard": 1,
@@ -136,7 +147,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Sales Person"),
 					"name": "Sales Person",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Sales Person",
 					"description": _("Manage Sales Person Tree."),
 					"onboard": 1,
@@ -165,12 +175,16 @@ def get_data():
 					"type": "doctype",
 					"name": "SMS Settings",
 					"description": _("Setup SMS gateway settings")
+				},
+				{
+					"type": "doctype",
+					"label": _("Email Group"),
+					"name": "Email Group"
 				}
 			]
 		},
 		{
 			"label": _("Maintenance"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",

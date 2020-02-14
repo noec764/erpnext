@@ -18,7 +18,7 @@ cur_frm.cscript.refresh = function(doc, dt, dn) {
 				d.show();
 			}
 		});
-	}, "fa fa-eye-open", "btn-default");
+	}, "fas fa-eye", "btn-default");
 
 	if (!cur_frm.is_new()) {
 		cur_frm.add_custom_button(__('Send Now'), function() {

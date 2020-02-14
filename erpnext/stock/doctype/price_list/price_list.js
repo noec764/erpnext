@@ -9,6 +9,6 @@ frappe.ui.form.on("Price List", {
 				"price_list": frm.doc.name
 			};
 			frappe.set_route("Report", "Item Price");
-		}, "fa fa-money");
+		}, "fas fa-money-check-alt");
 	}
 });

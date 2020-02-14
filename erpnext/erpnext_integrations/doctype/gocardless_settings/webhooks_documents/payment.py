@@ -5,85 +5,65 @@
 import frappe
 from frappe import _
 import json
-from frappe.utils import flt
+from frappe.utils import flt, getdate
 
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhooks_documents.utils import GoCardlessWebhookHandler
+from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
 EVENT_MAP = {
-	'created': 'find_invoice',
-	'customer_approval_granted': 'submit_and_pay_invoice',
-	'customer_approval_denied': 'change_status',
-	'submitted': 'submit_invoice',
-	'confirmed': 'submit_and_pay_invoice',
-	'cancelled': 'cancel_invoice',
-	'failed': 'fail_invoice',
-	'charged_back': 'create_credit_note',
-	'chargeback_cancelled': 'cancel_credit_note',
-	'paid_out': 'submit_payment',
-	'late_failure_settled': 'change_status',
-	'chargeback_settled': 'change_status',
-	'resubmission_requested': 'change_status'
+	'created': 'create_payment',
+	'submitted': 'create_payment',
+	'confirmed': 'submit_payment',
+	'cancelled': 'cancel_payment',
+	'failed': 'cancel_payment'
 }
 
-class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
+class GoCardlessPaymentWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessPaymentWebhookHandler, self).__init__(**kwargs)
 
 		self.event_map = EVENT_MAP
-		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
-			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
+		self.gocardless_payment = None
+		self.gocardless_payout = None
+		self.gocardless_payment_document = {}
+		self.init_handler()
 
-		if self.gocardless_subscription:
-			self.get_linked_subscription()
-			self.check_subscription_dates()
-			if self.integration_request.status == "Queued":
-				return
-
-		self.get_corresponding_invoice()
-
-		if self.gocardless_payment:
+		if self.gocardless_payment and self.metadata:
 			self.integration_request.db_set("service_id", self.gocardless_payment)
 			self.integration_request.load_from_db()
 
-		self.action_type = self.data.get("action")
-		self.handle_invoice_update()
-		self.add_reference_to_integration_request()
-
-	def get_linked_subscription(self):
-		self.subscriptions = frappe.get_all("Subscription", filters={"payment_gateway_reference": self.gocardless_subscription})
-
-		if len(self.subscriptions) > 1:
-			frappe.log_error(_("Several subscriptions are linked to GoCardless subscription {0}").format(\
-				self.gocardless_subscription), _("GoCardless webhook action error"))
-		elif len(self.subscriptions) == 0:
-			frappe.log_error(_("GoCardless subscription {0} is not linked to a subscription in dokos").format(\
-				self.gocardless_subscription), _("GoCardless webhook action error"))
+			self.action_type = self.data.get("action")
+			self.handle_payment_update()
+			self.add_reference_to_integration_request()
 		else:
-			self.subscription = frappe.get_doc("Subscription", self.subscriptions[0].get("name"))
+			self.set_as_failed(_("No payment reference and metadata found in this webhook"))
 
-	def submit_and_pay_invoice(self):
-		if self.invoice and self.invoice.docstatus == 0:
-			self.submit_invoice()
+	def init_handler(self):
+		self.gocardless_settings = frappe.get_doc("GoCardless Settings", self.integration_request.get("payment_gateway_controller"))
+		self.payment_gateway = frappe.db.get_value("Payment Gateway",\
+			dict(gateway_settings="GoCardless Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
-		self.pay_invoice()
+		self.get_payment()
+		self.get_payment_document()
+		self.get_reference_date()
+		self.get_metadata()
 
-	# TODO: Add some amount checks before submit
-	def submit_invoice(self):
-		try:
-			if self.invoice:
-				if self.invoice.docstatus == 0:
-					self.invoice.submit()
-				elif self.invoice.docstatus == 2:
-					self.integration_request.db_set("error",\
-						_("Sales invoice {0} is already cancelled").format(self.invoice.name))
-					self.integration_request.update_status({}, "Completed")
+	def get_customer(self):
+		return self.data.get("links", {}).get("customer")
 
-				self.integration_request.update_status({}, "Completed")
-			else:
-				self.set_as_failed(_("The corresponding invoice could not be found"))
-		except Exception as e:
-			frappe.log_error(frappe.get_traceback(), _("GoCardless invoice submission error"))
-			self.set_as_failed(e)
+	def get_payment(self):
+		self.gocardless_payment = self.data.get("links", {}).get("payment")
+
+	def get_reference_date(self):
+		self.reference_date = getdate(getattr(self.gocardless_payment_document, "charge_date"))
+
+	def get_payment_document(self):
+		self.gocardless_payment_document = self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
+
+	def get_payout(self):
+		self.gocardless_payout = self.data.get("links", {}).get("payout")
+
+	def get_metadata(self):
+		self.metadata = getattr(self.gocardless_payment_document, "metadata")
 
 	def add_fees_before_submission(self):
 		self.get_payout()
@@ -93,7 +73,8 @@ class GoCardlessPaymentWebhookHandler(GoCardlessWebhookHandler):
 			output = ""
 			for p in payout_items:
 				output += str(p.__dict__)
-			self.integration_request.db_set("output", output)
+			output_as_json = frappe.parse_json(output)
+			self.integration_request.db_set("output", json.dumps(output_as_json, indent=4))
 
 			self.base_amount = self.gocardless_settings.get_base_amount(payout_items, self.gocardless_payment)
 			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items, self.gocardless_payment)

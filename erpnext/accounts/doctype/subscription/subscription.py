@@ -5,13 +5,16 @@
 from __future__ import unicode_literals
 
 import frappe
+import erpnext
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, \
 	get_last_day, add_to_date, flt, global_date_format, add_years, today
-from erpnext.accounts.doctype.subscription_plan.subscription_plan import get_plan_rate
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 import numpy as np
+from erpnext.accounts.party import get_default_price_list
+from erpnext.stock.get_item_details import get_price_list_rate_for
+from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
 
 class Subscription(Document):
 	def onload(self):
@@ -21,12 +24,14 @@ class Subscription(Document):
 		self.update_subscription_period(self.start)
 
 	def after_insert(self):
+		self.add_subscription_event("New period")
 		self.set_subscription_status()
 
 	def validate(self):
+		self.set_plan_details_status()
 		self.get_subscription_rates()
+		self.validate_interval_count()
 		self.validate_trial_period()
-		self.validate_plans_billing_cycle(self.get_billing_cycle_and_interval())
 		self.validate_plans_pricing_rule()
 		self.validate_subscription_period()
 		self.simulate_grand_total_calculation()
@@ -36,19 +41,21 @@ class Subscription(Document):
 		self.update_payment_gateway_subscription()
 
 	def update_subscription_period(self, date=None):
+		start_date = self.current_invoice_start
+		end_date = self.current_invoice_end
 		self.set_current_invoice_start(date)
 		self.set_current_invoice_end()
 
+		if start_date != self.current_invoice_start or end_date != self.current_invoice_end:
+			self.add_subscription_event("New period")
+
 	def validate_subscription_period(self):
-		if self.trial_period_start and getdate(self.trial_period_end) > getdate(self.current_invoice_start):
+		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end) and not self.is_trial():
 			self.update_subscription_period(add_days(self.trial_period_end, 1))
 		elif self.is_new_subscription():
 			self.update_subscription_period(self.start)
 		elif self.has_invoice_for_period():
 			self.update_subscription_period(self.current_invoice_start)
-
-		if self.cancel_at_period_end:
-			self.cancel_subscription_at_period_end()
 
 	def set_current_invoice_start(self, date=None):
 		if self.trial_period_start and self.is_trial():
@@ -68,25 +75,19 @@ class Subscription(Document):
 			else:
 				self.current_invoice_end = get_last_day(self.current_invoice_start)
 
-	def process(self, from_gateway=False):
-		if self.cancel_at_period_end:
-			self.cancel_subscription_at_period_end()
-
+	def process(self):
 		if self.cancellation_date and self.period_has_passed(add_days(self.cancellation_date, -1)):
 			self.cancel_subscription()
 
 		if self.status == 'Active':
-			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle) or from_gateway:
+			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
 				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_subscription_status()
 
 	def process_active_subscription(self):
-		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end):
-			self.update_subscription_period(add_days(self.trial_period_end, 1))
-			self.save()
-
-		elif not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
+		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
+			self.set_plan_details_status()
 			self.generate_sales_order()
 			if not self.has_invoice_for_period():
 				self.generate_invoice()
@@ -95,18 +96,19 @@ class Subscription(Document):
 			else:
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
-			self.save()
 
 		elif self.generate_invoice_at_period_start:
+			self.set_plan_details_status()
 			self.generate_sales_order()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
 				self.generate_invoice()
-				self.save()
 
 			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
 				self.generate_invoice()
+
+		self.save()
 
 	@staticmethod
 	def period_has_passed(end_date):
@@ -116,11 +118,6 @@ class Subscription(Document):
 		end_date = getdate(end_date)
 		return getdate(nowdate()) > getdate(end_date)
 
-	@staticmethod
-	def validate_plans_billing_cycle(billing_cycle_data):
-		if billing_cycle_data and len(billing_cycle_data) != 1:
-			frappe.throw(_('You can only have Plans with the same billing cycle in a Subscription'))
-
 	def validate_plans_pricing_rule(self):
 		rules = self.get_plans_pricing_rules()
 		if len(rules) > 1:
@@ -129,47 +126,32 @@ class Subscription(Document):
 	def get_plans_pricing_rules(self):
 		rules = set()
 		for plan in self.plans:
-			rules.add(frappe.db.get_value("Subscription Plan", plan.plan, "price_determination"))
+			if plan.status == "Active":
+				rules.add(plan.price_determination)
 
 		return rules
 
-	def get_billing_cycle_and_interval(self):
-		plan_names = [plan.plan for plan in self.plans]
-		billing_info = frappe.db.sql(
-			'select distinct `billing_interval`, `billing_interval_count` '
-			'from `tabSubscription Plan` '
-			'where name in %s',
-			(plan_names,), as_dict=1
-		)
-
-		return billing_info
-
 	def get_billing_cycle_data(self):
-		billing_info = self.get_billing_cycle_and_interval()
+		data = dict()
+		interval = self.billing_interval
+		interval_count = self.billing_interval_count
+		if interval not in ['Day', 'Week']:
+			data['days'] = -1
+		if interval == 'Day':
+			data['days'] = interval_count - 1
+		elif interval == 'Month':
+			data['months'] = interval_count
+		elif interval == 'Year':
+			data['years'] = interval_count
+		elif interval == 'Week':
+			data['days'] = interval_count * 7 - 1
 
-		self.validate_plans_billing_cycle(billing_info)
-
-		if billing_info:
-			data = dict()
-			interval = billing_info[0]['billing_interval']
-			interval_count = billing_info[0]['billing_interval_count']
-			if interval not in ['Day', 'Week']:
-				data['days'] = -1
-			if interval == 'Day':
-				data['days'] = interval_count - 1
-			elif interval == 'Month':
-				data['months'] = interval_count
-			elif interval == 'Year':
-				data['years'] = interval_count
-			elif interval == 'Week':
-				data['days'] = interval_count * 7 - 1
-
-			return data
+		return data
 
 	def set_subscription_status(self):
 		if self.is_trial() and self.status != 'Trial':
 			self.db_set('status', 'Trial')
-		elif self.status != 'Cancelled':
+		elif not self.is_trial() and self.status != 'Cancelled':
 			self.db_set('status', 'Active')
 
 		self.reload()
@@ -204,7 +186,7 @@ class Subscription(Document):
 
 	def is_trial(self):
 		if self.trial_period_start:
-			return getdate(self.trial_period_end) > getdate(nowdate())
+			return getdate(self.trial_period_end) > getdate(nowdate()) or cint(self.trial_validated) == 0
 		else:
 			return False
 
@@ -220,7 +202,11 @@ class Subscription(Document):
 		if self.create_sales_order:
 			if not self.has_sales_order_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
 				try:
-					self.create_new_sales_order()
+					sales_order = self.create_new_sales_order()
+					self.add_subscription_event("Sales order created", **{
+						"document_type": "Sales Order",
+						"document_name": sales_order.name
+					})
 				except Exception:
 					frappe.log_error(frappe.get_traceback(), _("Sales order generation error for subscription {0}").format(self.name))
 
@@ -230,6 +216,7 @@ class Subscription(Document):
 		sales_order.transaction_date = self.current_invoice_start
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		sales_order = self.set_subscription_invoicing_details(sales_order)
+		sales_order.currency = self.currency
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.set_missing_values()
@@ -238,13 +225,20 @@ class Subscription(Document):
 
 		return sales_order
 
-	def generate_invoice(self, prorate=0, simulate=False):
+	def generate_invoice(self, prorate=0, simulate=False, payment_entry=None):
 		try:
-			return self.create_invoice(prorate, simulate)
+			invoice = self.create_invoice(prorate, simulate, payment_entry)
+			if not simulate:
+				self.add_subscription_event("Sales invoice created", **{
+					"document_type": "Sales Invoice",
+					"document_name": invoice.name
+				})
+
+			return invoice
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Invoice generation error for subscription {0}").format(self.name))
 
-	def create_invoice(self, prorate, simulate=False):
+	def create_invoice(self, prorate, simulate=False, payment_entry=None):
 		current_sales_order = self.get_current_documents("Sales Order")
 		if current_sales_order and not simulate:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
@@ -261,6 +255,7 @@ class Subscription(Document):
 		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		invoice.posting_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
+		invoice.currency = self.currency
 
 		## Add dimensions in invoice for subscription:
 		accounting_dimensions = get_accounting_dimensions()
@@ -276,20 +271,66 @@ class Subscription(Document):
 		if not simulate:
 			invoice.save()
 
+			if payment_entry:
+				invoice = self.add_advances(invoice, payment_entry)
+				invoice.save()
+
 			if self.submit_invoice:
 				invoice.submit()
 
 		return invoice
 
+	def add_advances(self, invoice, payment_entry):
+		pe = frappe.db.get_value("Payment Entry", payment_entry, ["remarks", "unallocated_amount"], as_dict=True)
+
+		invoice.append("advances", {
+				"doctype": "Sales Invoice Advance",
+				"reference_type": "Payment Entry",
+				"reference_name": payment_entry,
+				"remarks": pe.get("remarks"),
+				"advance_amount": flt(pe.get("unallocated_amount")),
+				"allocated_amount": min(flt(invoice.outstanding_amount), flt(pe.get("unallocated_amount")))
+			})
+
+		return invoice
+
+	def create_payment(self):
+		from erpnext.accounts.party import get_party_account
+		from erpnext.accounts.utils import get_account_currency
+		payment_entry = frappe.new_doc("Payment Entry")
+
+		bank_account_name = frappe.db.get_value("Bank Account",
+			{"is_default": 1, "is_company_account": 1, "company": erpnext.get_default_company()}, "name")
+		bank_account = frappe.get_doc("Bank Account", bank_account_name)
+
+		payment_entry.posting_date = nowdate()
+		payment_entry.company = self.company
+		payment_entry.paid_amount = self.grand_total
+		payment_entry.party = self.customer
+		payment_entry.paid_from = get_party_account("Customer", self.customer, self.company)
+		payment_entry.paid_from_account_currency = get_account_currency(payment_entry.paid_from)
+		payment_entry.bank_account = bank_account_name
+		payment_entry.paid_to = bank_account.account
+		payment_entry.received_amount = self.grand_total
+		payment_entry.reference_no = f"{self.customer}-{self.name}"
+		payment_entry.reference_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
+
+		payment_entry.payment_type = "Receive"
+		payment_entry.party_type = "Customer"
+		payment_entry.paid_to_account_currency = self.currency
+
+		return payment_entry
+
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
+		document.customer_group, document.territory = frappe.db.get_value("Customer", self.customer, ["customer_group", "territory"])
 		document.set_missing_lead_customer_details()
 		document.subscription = self.name
-		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
+		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
-		items_list = self.get_items_from_plans(self.plans,\
+		items_list = self.get_items_from_plans([p for p in self.plans if p.status == "Active"],\
 			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date, prorate)
 		for item in items_list:
 			document.append('items', item)
@@ -343,14 +384,16 @@ class Subscription(Document):
 		document.append(
 			'payment_schedule',
 			{
-				'due_date': add_days(self.current_invoice_start if \
-					self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due)),
+				'due_date': self.get_due_date(),
 				'invoice_portion': 100
 			}
 		)
 
+	def get_due_date(self):
+		return add_days(self.current_invoice_start if \
+			self.generate_invoice_at_period_start else self.current_invoice_end, cint(self.days_until_due))
+
 	def add_subscription_dates(self, document):
-		# Subscription period
 		document.from_date = self.current_invoice_start
 		document.to_date = self.current_invoice_end
 
@@ -360,22 +403,16 @@ class Subscription(Document):
 
 		items = []
 		for plan in plans:
-			item_code = frappe.db.get_value("Subscription Plan", plan.plan, "item")
 			if not prorate:
-				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)),\
+				items.append({'item_code': plan.item, 'qty': plan.qty, \
+					'rate': self.get_plan_rate(plan, plan.qty, getdate(date)),\
 					'description': plan.description})
 			else:
-				items.append({'item_code': item_code, 'qty': plan.qty, \
-					'rate': (get_plan_rate(self.company, self.customer, plan.plan, plan.qty, getdate(date)) * prorata_factor),\
+				items.append({'item_code': plan.item, 'qty': plan.qty, \
+					'rate': (self.get_plan_rate(plan, plan.qty, getdate(date)) * prorata_factor),\
 					'description': plan.description})
 
 		return items
-
-	def cancel_subscription_at_period_end(self):
-		if not self.cancellation_date:
-			self.cancellation_date = self.current_invoice_end
-			self.save()
 
 	def has_invoice_for_period(self):
 		return True if self.get_current_documents("Sales Invoice") else False
@@ -384,23 +421,29 @@ class Subscription(Document):
 		return True if self.get_current_documents("Sales Order") else False
 
 	def get_current_documents(self, doctype):
-		period_documents = []
+		events = frappe.get_all("Subscription Event",
+			filters={"subscription": self.name, "document_type": doctype, "event_type": f"{doctype.capitalize()} created"},
+			fields=["document_name"])
+		if events:
+			return [x.document_name for x in events]
 
-		transaction_date = "posting_date" if doctype == "Sales Invoice" else "transaction_date"
+		else:
+			period_documents = []
+			transaction_date = "posting_date" if doctype == "Sales Invoice" else "transaction_date"
 
-		billing_cycle_info = self.get_billing_cycle_data()
-		documents = frappe.get_all(doctype, filters={"subscription": self.name}, \
-			fields=[transaction_date, "name", "docstatus"])
-		for document in documents:
-			if billing_cycle_info:
-				calculated_end = add_to_date(document.get(transaction_date), **billing_cycle_info)
-			else:
-				calculated_end = get_last_day(document.get(transaction_date))
+			billing_cycle_info = self.get_billing_cycle_data()
+			documents = frappe.get_all(doctype, filters={"subscription": self.name}, \
+				fields=[transaction_date, "name", "docstatus"])
+			for document in documents:
+				if billing_cycle_info:
+					calculated_end = add_to_date(document.get(transaction_date), **billing_cycle_info)
+				else:
+					calculated_end = get_last_day(document.get(transaction_date))
 
-			if calculated_end >= getdate(self.current_invoice_end):
-				period_documents.append(document)
+				if calculated_end >= getdate(self.current_invoice_end):
+					period_documents.append(document)
 
-		return period_documents
+			return period_documents
 
 	def cancel_subscription(self):
 		if self.status != 'Cancelled':
@@ -432,7 +475,6 @@ class Subscription(Document):
 		if self.status == 'Cancelled':
 			self.status = 'Active'
 			self.cancellation_date = None
-			self.cancel_at_period_end = 0
 			self.prorate_invoice = 0
 			self.update_subscription_period(nowdate())
 			self.save()
@@ -455,11 +497,19 @@ class Subscription(Document):
 	def get_subscription_rates(self):
 		total = 0
 		for plan in self.plans:
-			plan.rate = get_plan_rate(self.company, self.customer, plan.plan, plan.qty)
-			total += (flt(plan.qty) * flt(plan.rate))
+			if plan.status == "Active":
+				plan.rate = self.get_plan_rate(plan, plan.qty)
+				total += (flt(plan.qty) * flt(plan.rate))
 
 		if total != self.total:
 			self.total = total
+
+	def set_plan_details_status(self):
+		for plan in self.plans:
+			if getdate(plan.from_date or "1900-01-01") <= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
+				plan.status = "Active"
+			else:
+				plan.status = "Inactive"
 
 	def simulate_grand_total_calculation(self):
 		self.grand_total = self.simulated_grand_total()
@@ -469,6 +519,7 @@ class Subscription(Document):
 			invoice = self.generate_invoice(simulate=True)
 			invoice._action = "save"
 			invoice.run_method("validate")
+
 			return invoice.grand_total
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
@@ -482,6 +533,76 @@ class Subscription(Document):
 
 				if hasattr(gateway_settings, 'on_subscription_update'):
 					gateway_settings.run_method('on_subscription_update', self)
+
+	def is_payable(self):
+		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
+			if not self.has_invoice_for_period():
+				return True
+		elif self.generate_invoice_at_period_start:
+			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
+				return True
+			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
+				return True
+
+		return False
+
+	def add_subscription_event(self, event_type, **kwargs):
+		if self.name:
+			doc = frappe.get_doc(dict(kwargs, **{
+				"doctype": "Subscription Event",
+				"subscription": self.name,
+				"date": nowdate(),
+				"event_type": event_type,
+				"period_start": self.current_invoice_start,
+				"period_end": self.current_invoice_end
+			}))
+			doc.flags.ignore_permissions = True
+			doc.insert()
+			doc.submit()
+
+	def validate_interval_count(self):
+		if self.billing_interval_count < 1:
+			frappe.throw(_('Billing Interval Count cannot be less than 1'))
+
+	def get_plan_rate(self, plan, quantity=1, date=nowdate()):
+		if plan.price_determination == "Fixed rate":
+			return plan.fixed_rate
+
+		elif plan.price_determination == "Based on price list":
+			customer_doc = frappe.get_doc("Customer", self.customer)
+			price_list = get_default_price_list(customer_doc)
+			if not price_list:
+				price_list = frappe.db.get_value("Price List", {"selling": 1})
+
+			price_list_rate = get_price_list_rate_for({
+				"company": self.company,
+				"uom": plan.uom,
+				"customer": self.customer,
+				"price_list": price_list,
+				"currency": self.currency,
+				"min_qty": quantity,
+				"transaction_date": date
+			}, plan.item)
+
+			rule = get_pricing_rule_for_item(frappe._dict({
+				"company": self.company,
+				"uom": plan.uom,
+				"item_code": plan.item,
+				"stock_qty": quantity,
+				"transaction_type": "selling",
+				"price_list_rate": price_list_rate,
+				"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
+				"price_list": price_list,
+				"customer": self.customer,
+				"currency": self.currency,
+				"transaction_date": date,
+				"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse=''))
+			}))
+
+			if rule.get("price_list_rate"):
+				price_list_rate = rule.get("price_list_rate")
+
+			return price_list_rate or 0
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
@@ -515,7 +636,6 @@ def cancel_subscription(**kwargs):
 	subscription.prorate_invoice = kwargs.get("prorate_invoice")
 	subscription.save()
 
-
 @frappe.whitelist()
 def restart_subscription(name):
 	subscription = frappe.get_doc('Subscription', name)
@@ -525,6 +645,11 @@ def restart_subscription(name):
 def get_subscription_updates(name):
 	subscription = frappe.get_doc('Subscription', name)
 	subscription.process()
+
+@frappe.whitelist()
+def get_payment_entry(name):
+	subscription = frappe.get_doc('Subscription', name)
+	return subscription.create_payment()
 
 @frappe.whitelist()
 def get_chart_data(title, doctype, docname):
@@ -609,9 +734,29 @@ def subscription_headline(name):
 			else:
 				next_invoice_date = get_last_day(add_days(subscription.current_invoice_end, 1))
 
-	if subscription.cancel_at_period_end and getdate(nowdate()) \
-		> getdate(subscription.current_invoice_end):
-		return _("This subscription will be cancelled on {0}").format(\
-			global_date_format(next_invoice_date))
+	if subscription.cancellation_date and getdate(subscription.cancellation_date) > getdate(nowdate()):
+		return _("This subscription will be cancelled on {0}").format(global_date_format(subscription.cancellation_date))
+	elif subscription.cancellation_date and subscription.cancellation_date <= getdate(nowdate()):
+		return _("This subscription has been cancelled on {0}").format(global_date_format(subscription.cancellation_date))
 
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date))
+
+def check_gateway_payments():
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
+	gocardless_gateways = [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
+	gocardless_subscription = frappe.get_all("Subscription", filters={"status": "Active", "payment_gateway": ["in", gocardless_gateways]})
+
+	for subscription in gocardless_subscription:
+		doc = frappe.get_doc("Subscription", subscription)
+		if doc.is_payable():
+			pr = make_payment_request(**{
+				"dt": doc.doctype,
+				"dn": doc.name,
+				"party_type": "Customer",
+				"party": doc.customer
+			})
+			pr.ignore_permissions = True
+			pr.insert()
+			if pr.payment_gateways and float(pr.grand_total) > 0:
+				pr.submit()
+				pr.run_method("process_payment_immediately")

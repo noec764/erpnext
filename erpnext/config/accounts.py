@@ -138,7 +138,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Account",
-					"icon": "fa fa-sitemap",
 					"label": _("Chart of Accounts"),
 					"route": "#Tree/Account",
 					"description": _("Tree of financial accounts."),
@@ -170,6 +169,15 @@ def get_data():
 					"name": "Payment Term",
 					"description": _("Payment Terms based on conditions")
 				},
+				{
+					"type": "doctype",
+					"name": "Payment Terms Template",
+					"description": _("Payment Terms Templates")
+				},
+				{
+					"type": "doctype",
+					"name": "Sepa Direct Debit Settings",
+				},
 			]
 		},
 		{
@@ -183,14 +191,13 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"label": _("Update Bank Transaction Dates"),
-					"name": "Bank Reconciliation",
-					"description": _("Update bank payment dates with journals.")
+					"label": _("Bank Transaction"),
+					"name": "Bank Transaction"
 				},
 				{
-					"type": "doctype",
-					"label": _("Invoice Discounting"),
-					"name": "Invoice Discounting",
+					"type": "page",
+					"name": "bank-reconciliation",
+					"label": _("Bank Reconciliation"),
 				},
 				{
 					"type": "report",
@@ -203,6 +210,17 @@ def get_data():
 					"name": "Bank Clearance Summary",
 					"is_query_report": True,
 					"doctype": "Journal Entry"
+				},
+				{
+					"type": "doctype",
+					"label": _("Update Bank Transaction Dates"),
+					"name": "Bank Clearance",
+					"description": _("Update bank payment dates with journals.")
+				},
+				{
+					"type": "doctype",
+					"label": _("Invoice Discounting"),
+					"name": "Invoice Discounting",
 				},
 				{
 					"type": "doctype",
@@ -289,7 +307,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Cost Center",
-					"icon": "fa fa-sitemap",
 					"label": _("Chart of Cost Centers"),
 					"route": "#Tree/Cost Center",
 					"description": _("Tree of financial Cost Centers."),
@@ -392,7 +409,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
@@ -488,7 +504,6 @@ def get_data():
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-table",
 			"items": [
 				{
 					"type": "report",
@@ -530,7 +545,6 @@ def get_data():
 		},
 		{
 			"label": _("Share Management"),
-			"icon": "fa fa-microchip ",
 			"items": [
 				{
 					"type": "doctype",

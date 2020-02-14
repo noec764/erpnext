@@ -6,8 +6,8 @@ frappe.ui.form.on('Loyalty Program', {
 		var help_content =
 			`<table class="table table-bordered" style="background-color: #f9f9f9;">
 				<tr><td>
-					<h4>
-						<i class="fa fa-hand-right"></i>
+					<h4 style="padding-inline-start: 20px;">
+						<i class="far fa-sticky-note"></i>
 						${__('Notes')}
 					</h4>
 					<ul>

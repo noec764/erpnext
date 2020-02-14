@@ -76,7 +76,6 @@ erpnext.integrations.plaidLink = class plaidLink {
 			key: me.plaid_public_key,
 			onSuccess: me.plaid_success,
 			product: me.product,
-			api_version: '2019-05-29',
 			language: lang,
 			countryCodes: ['CA', 'FR', 'IE', 'ES', 'GB', 'US']
 		});

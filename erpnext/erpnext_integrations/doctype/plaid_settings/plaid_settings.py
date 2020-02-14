@@ -9,7 +9,7 @@ from frappe import _
 from frappe.model.document import Document
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
 from erpnext.erpnext_integrations.doctype.plaid_settings.plaid_connector import PlaidConnector
-from frappe.utils import getdate, formatdate, today, add_months
+from frappe.utils import getdate, formatdate, today, add_months, cint
 
 class PlaidSettings(Document):
 	pass
@@ -59,7 +59,7 @@ def add_bank_accounts(response, bank, company):
 
 	default_gl_account = get_default_bank_cash_account(company, "Bank")
 	if not default_gl_account:
-		frappe.throw(_("Please setup a default bank account for company {0}".format(company)))
+		frappe.throw(_("Please setup a default bank account for company {0}").format(company))
 
 	for account in response.get("accounts"):
 		acc_type = frappe.db.get_value("Account Type", account["type"])
@@ -70,17 +70,17 @@ def add_bank_accounts(response, bank, company):
 		if not acc_subtype:
 			add_account_subtype(account["subtype"])
 
-		if not frappe.db.exists("Bank Account", dict(integration_id=account["id"])):
+		if not account.get("id") or not frappe.db.exists("Bank Account", dict(integration_id=account.get("id"))):
 			try:
 				new_account = frappe.get_doc({
 					"doctype": "Bank Account",
-					"bank": bank["bank_name"],
+					"bank": bank.get("bank_name"),
 					"account": default_gl_account.account,
-					"account_name": account["name"],
-					"account_type": account["type"] or "",
-					"account_subtype": account["subtype"] or "",
-					"mask": account["mask"] or "",
-					"integration_id": account["id"],
+					"account_name": account.get("name"),
+					"account_type": account.get("type"),
+					"account_subtype": account.get("subtype"),
+					"mask": account.get("mask"),
+					"integration_id": account.get("id"),
 					"is_company_account": 1,
 					"company": company
 				})
@@ -93,8 +93,8 @@ def add_bank_accounts(response, bank, company):
 			except Exception:
 				frappe.throw(frappe.get_traceback())
 
-		else:
-			result.append(frappe.db.get_value("Bank Account", dict(integration_id=account["id"]), "name"))
+		elif account.get("id"):
+			result.append(frappe.db.get_value("Bank Account", dict(integration_id=account.get("id")), "name"))
 
 	return result
 
@@ -152,6 +152,9 @@ def get_transactions(bank, bank_account=None, start_date=None, end_date=None):
 		access_token = frappe.db.get_value("Bank", bank, "plaid_access_token")
 		account_id = None
 
+	if not access_token:
+		frappe.throw(_("Please link your bank with Plaid first."))
+
 	plaid = PlaidConnector(access_token)
 	transactions = plaid.get_transactions(start_date=start_date, end_date=end_date, account_id=account_id)
 
@@ -171,7 +174,7 @@ def new_bank_transaction(transaction):
 
 	status = "Pending" if transaction["pending"] == "True" else "Settled"
 
-	if not frappe.db.exists("Bank Transaction", dict(transaction_id=transaction["transaction_id"])):
+	if not frappe.db.exists("Bank Transaction", dict(reference_number=transaction["transaction_id"])):
 		try:
 			new_transaction = frappe.get_doc({
 				"doctype": "Bank Transaction",
@@ -196,8 +199,8 @@ def new_bank_transaction(transaction):
 def automatic_synchronization():
 	settings = frappe.get_doc("Plaid Settings", "Plaid Settings")
 
-	if settings.enabled == 1 and settings.automatic_sync == 1:
-		plaid_accounts = frappe.get_all("Bank Account", filter={"integration_id": ["!=", ""]}, fields=["name", "bank"])
+	if cint(settings.enabled) == 1 and cint(settings.automatic_sync) == 1:
+		plaid_accounts = frappe.get_all("Bank Account", filters={"integration_id": ["!=", ""]}, fields=["name", "bank"])
 
 		for plaid_account in plaid_accounts:
 			frappe.enqueue("erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions", bank=plaid_account.bank, bank_account=plaid_account.name)

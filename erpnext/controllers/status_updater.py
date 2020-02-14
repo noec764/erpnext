@@ -93,8 +93,9 @@ status_map = {
 		["Manufactured", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Manufacture'"]
 	],
 	"Bank Transaction": [
-		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount>0"],
-		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount<=0"]
+		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount!=0"],
+		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount==0"],
+		["Cancelled", "eval:self.docstatus == 2"]
 	]
 }
 
@@ -182,7 +183,7 @@ class StatusUpdater(Document):
 						if args.get('no_allowance'):
 							item['reduce_by'] = item[args['target_field']] - item[args['target_ref_field']]
 							if item['reduce_by'] > .01:
-								self.limits_crossed_error(args, item)
+								self.limits_crossed_error(args, item, "qty")
 
 						elif item[args['target_ref_field']]:
 							self.check_overflow_with_allowance(item, args)

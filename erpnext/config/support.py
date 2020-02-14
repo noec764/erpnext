@@ -69,13 +69,11 @@ def get_data():
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "page",
 					"name": "support-analytics",
-					"label": _("Support Analytics"),
-					"icon": "fa fa-bar-chart"
+					"label": _("Support Analytics")
 				},
 				{
 					"type": "report",
@@ -93,7 +91,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "doctype",

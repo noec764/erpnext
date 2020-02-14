@@ -74,7 +74,7 @@ def create_new_integration_log(event, account):
 		"service_document": event.attributes.get("resource_type"),
 		"service_status": event.attributes.get("action"),
 		"service_id": event.attributes.get("id"),
-		"data": json.dumps(event.attributes),
+		"data": json.dumps(event.attributes, indent=4),
 		"payment_gateway_controller": account
 	})
 

@@ -40,8 +40,8 @@ frappe.ui.form.on('Pricing Rule', {
 		var help_content =
 			`<table class="table table-bordered" style="background-color: #f9f9f9;">
 				<tr><td>
-					<h4>
-						<i class="fa fa-hand-right"></i>
+					<h4 style="padding-inline-start: 20px;">
+						<i class="far fa-sticky-note"></i>
 						${__('Notes')}
 					</h4>
 					<ul>
@@ -60,7 +60,7 @@ frappe.ui.form.on('Pricing Rule', {
 					</ul>
 				</td></tr>
 				<tr><td>
-					<h4><i class="fa fa-question-sign"></i>
+					<h4 style="padding-inline-start: 20px;"><i class="fas fa-question"></i>
 						${__('How Pricing Rule is applied?')}
 					</h4>
 					<ol>

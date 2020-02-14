@@ -5,8 +5,13 @@ def get_data():
 	return [
 		{
 			"label": _("Purchasing"),
-			"icon": "fa fa-star",
 			"items": [
+				{
+					"type": "doctype",
+					"name": "Supplier Quotation",
+					"dependencies": ["Item", "Supplier"],
+					"description": _("Quotations received from Suppliers."),
+				},
 				{
 					"type": "doctype",
 					"name": "Purchase Order",
@@ -36,10 +41,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Supplier Quotation",
+					"name": "Blanket Order",
+					"onboard": 1,
 					"dependencies": ["Item", "Supplier"],
-					"description": _("Quotations received from Suppliers."),
-				},
+					"description": _("Blanket order."),
+				}
 			]
 		},
 		{
@@ -71,7 +77,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Item Group",
-					"icon": "fa fa-sitemap",
 					"label": _("Item Group"),
 					"link": "Tree/Item Group",
 					"description": _("Tree of Item Groups."),
@@ -90,7 +95,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
@@ -140,7 +144,6 @@ def get_data():
 		},
 		{
 			"label": _("Key Reports"),
-			"icon": "fa fa-table",
 			"items": [
 				{
 					"type": "report",
@@ -207,7 +210,6 @@ def get_data():
 		},
 		{
 			"label": _("Other Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",

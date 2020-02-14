@@ -5,7 +5,6 @@ def get_data():
 	return [
 		{
 			"label": _("Sales"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",
@@ -36,6 +35,12 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Subscription",
+					"description": _("Manage Subscriptions."),
+					"dependencies": ["Item", "Customer"],
+				},
+				{
+					"type": "doctype",
 					"name": "Blanket Order",
 					"description": _("Blanket Orders from Customers."),
 					"onboard": 1,
@@ -51,26 +56,10 @@ def get_data():
 					"type": "doctype",
 					"label": _("Sales Person"),
 					"name": "Sales Person",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Sales Person",
 					"description": _("Manage Sales Person Tree."),
 					"dependencies": ["Item", "Customer"],
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Territory Target Variance (Item Group-Wise)",
-					"route": "#query-report/Territory Target Variance Item Group-Wise",
-					"doctype": "Territory",
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Sales Person Target Variance (Item Group-Wise)",
-					"route": "#query-report/Sales Person Target Variance Item Group-Wise",
-					"doctype": "Sales Person",
-					"dependencies": ["Sales Person"],
-				},
+				}
 			]
 		},
 		{
@@ -99,7 +88,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Item Group",
-					"icon": "fa fa-sitemap",
 					"label": _("Item Group"),
 					"link": "Tree/Item Group",
 					"description": _("Tree of Item Groups."),
@@ -137,7 +125,6 @@ def get_data():
 		},
 		{
 			"label": _("Settings"),
-			"icon": "fa fa-cog",
 			"items": [
 				{
 					"type": "doctype",
@@ -167,7 +154,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Customer Group"),
 					"name": "Customer Group",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Customer Group",
 					"description": _("Manage Customer Group Tree."),
 				},
@@ -185,7 +171,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Territory"),
 					"name": "Territory",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Territory",
 					"description": _("Manage Territory Tree."),
 				},
@@ -194,11 +179,15 @@ def get_data():
 					"name": "Campaign",
 					"description": _("Sales campaigns."),
 				},
+				{
+					"type": "doctype",
+					"name": "Brand",
+					"description": _("Brand"),
+				}
 			]
 		},
 		{
 			"label": _("Key Reports"),
-			"icon": "fa fa-table",
 			"items": [
 				{
 					"type": "report",
@@ -211,7 +200,6 @@ def get_data():
 					"type": "page",
 					"name": "sales-funnel",
 					"label": _("Sales Funnel"),
-					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
 				{
@@ -219,7 +207,6 @@ def get_data():
 					"is_query_report": True,
 					"name": "Customer Acquisition and Loyalty",
 					"doctype": "Customer",
-					"icon": "fa fa-bar-chart",
 				},
 				{
 					"type": "report",
@@ -231,12 +218,6 @@ def get_data():
 					"type": "report",
 					"is_query_report": True,
 					"name": "Ordered Items To Be Delivered",
-					"doctype": "Sales Order"
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
-					"name": "Sales Person-wise Transaction Summary",
 					"doctype": "Sales Order"
 				},
 				{
@@ -257,11 +238,17 @@ def get_data():
 					"name": "Sales Order Trends",
 					"doctype": "Sales Order"
 				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Sales Person-wise Transaction Summary",
+					"doctype": "Sales Order",
+					"dependencies": ["Sales Person"]
+				}
 			]
 		},
 		{
 			"label": _("Other Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",
@@ -314,7 +301,20 @@ def get_data():
 					"is_query_report": True,
 					"name": "Sales Partners Commission",
 					"doctype": "Customer"
-				}
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Territory Target Variance Based On Item Group",
+					"doctype": "Territory",
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Sales Person Target Variance Based On Item Group",
+					"doctype": "Sales Person",
+					"dependencies": ["Sales Person"],
+				},
 			]
 		},
 		

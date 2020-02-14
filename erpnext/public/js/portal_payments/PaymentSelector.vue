@@ -3,14 +3,14 @@
 		<div v-if="error" class="col-12 text-center justify-content-center align-self-center">
 			<h2>{{ error }}</h2>
 		</div>
-		<template v-else>
+		<template v-else-if="formattedAmount">
 			<div class="col-12 mb-4 text-center align-self-center">
 				<h2>{{ __("Payment for") }} {{ doctype }} {{ docname }}</h2>
 			</div>
 			<div class="col-12 mb-2 mx-auto" :class="'col-md-' + Math.max((12/Math.max(paymentGateways.length, 2)), 3)" v-for="(gateway, index) in paymentGateways" :key="index">
 				<div class="card">
 					<div class="card-body text-center">
-						<i :class="gateway.icon in iconMap ? iconMap[gateway.icon] : 'fa fa-credit-card'"></i>
+						<i :class="gateway.icon in iconMap ? iconMap[gateway.icon] : 'far fa-credit-card'"></i>
 						<h5 class="card-title my-2">{{ gateway.title }}</h5>
 						<a href="#" @click="getPaymentRequest(gateway.name)" class="btn btn-primary">{{ __("Pay") }} {{ formattedAmount }}</a>
 					</div>
@@ -27,14 +27,15 @@ export default {
 		return {
 			paymentGateways: [],
 			iconMap: {
-				"Credit Card": "fa fa-credit-card",
-				"Wire Transfer": "fa fa-exchange",
-				"Paypal": "fa fa-paypal"
+				"Credit Card": "far fa-credit-card",
+				"Wire Transfer": "fas fa-exchange-alt",
+				"Paypal": "fab fa-cc-paypal"
 			},
 			error: null,
 			formattedAmount: null,
 			docname: null,
-			doctype: null
+			doctype: null,
+			subject: null
 		}
 	},
 	mounted() {

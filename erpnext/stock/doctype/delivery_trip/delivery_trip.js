@@ -180,6 +180,20 @@ frappe.ui.form.on('Delivery Stop', {
 		}
 	},
 
+	driver: function (frm) {
+		if (frm.doc.driver) {
+			frappe.call({
+				method: "erpnext.stock.doctype.delivery_trip.delivery_trip.get_driver_email",
+				args: {
+					driver: frm.doc.driver
+				},
+				callback: (data) => {
+					frm.set_value("driver_email", data.message.email);
+				}
+			});
+		};
+	},
+
 	contact: function (frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
 		if (row.contact) {

@@ -23,13 +23,13 @@ def get_default_dashboards():
 		"Dashboards": [
 			{
 				"doctype": "Dashboard",
-				"dashboard_name": "Accounts",
+				"dashboard_name": _("Accounts"),
 				"charts": [
-					{ "chart": "Outgoing Bills (Sales Invoice)" },
-					{ "chart": "Incoming Bills (Purchase Invoice)" },
-					{ "chart": "Bank Balance" },
-					{ "chart": "Income" },
-					{ "chart": "Expenses" }
+					{ "chart": _("Outgoing Bills (Sales Invoice)") },
+					{ "chart": _("Incoming Bills (Purchase Invoice)") },
+					{ "chart": _("Bank Balance") },
+					{ "chart": _("Income") },
+					{ "chart": _("Expenses") }
 				]
 			}
 		],

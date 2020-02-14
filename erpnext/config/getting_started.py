@@ -35,7 +35,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "Account",
-					"icon": "fa fa-sitemap",
 					"label": _("Chart of Accounts"),
 					"route": "#Tree/Account",
 					"description": _("Tree of financial accounts."),
@@ -121,7 +120,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Customer Group"),
 					"name": "Customer Group",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Customer Group",
 					"description": _("Manage Customer Group Tree."),
 					"onboard": 1,
@@ -130,7 +128,6 @@ def get_data():
 					"type": "doctype",
 					"label": _("Territory"),
 					"name": "Territory",
-					"icon": "fa fa-sitemap",
 					"link": "Tree/Territory",
 					"description": _("Manage Territory Tree."),
 					"onboard": 1,

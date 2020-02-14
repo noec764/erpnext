@@ -9,6 +9,8 @@ from frappe.utils import nowdate, getdate
 def execute(filters=None):
 	if not filters: filters = {}
 
+	filters["account"] = frappe.db.get_value("Bank Account", filters.bank_account, "account")
+
 	columns = get_columns()
 	data = get_entries(filters)
 
@@ -49,8 +51,40 @@ def get_entries(filters):
 			if(paid_from=%(account)s, paid_amount * -1, received_amount)
 		FROM 
 			`tabPayment Entry`
-		WHERE 
+		WHERE
 			docstatus=1 and (paid_from = %(account)s or paid_to = %(account)s) {0}
 			order by posting_date DESC, name DESC""".format(conditions), filters, as_list=1)
 
-	return sorted(journal_entries + payment_entries, key=lambda k: k[2] or getdate(nowdate()))
+	purchase_invoices =  frappe.db.sql("""SELECT
+			"Purchase Invoice", name, posting_date, remarks, clearance_date, supplier,
+			base_paid_amount * -1
+		FROM
+			`tabPurchase Invoice`
+		WHERE
+			docstatus=1 and is_paid=1 and cash_bank_account=%(account)s {0}
+			order by posting_date DESC, name DESC""".format(conditions), filters, as_list=1)
+
+	sales_invoices =  frappe.db.sql("""SELECT
+			"Sales Invoice", si.name, si.posting_date, si.remarks, sip.clearance_date, si.customer,
+			sip.base_amount
+		FROM
+			`tabSales Invoice Payment` sip
+		LEFT JOIN
+			`tabSales Invoice` si
+		ON
+			si.name = sip.parent
+		WHERE
+			si.docstatus=1 and si.is_pos=1 and sip.account=%(account)s {0}
+			order by si.posting_date DESC, si.name DESC""".format(conditions), filters, as_list=1)
+
+	mops = tuple([frappe.db.escape(x.parent) for x in frappe.get_all("Mode of Payment Account", {"default_account": filters.get("account")}, "parent")])
+	expense_claims =  frappe.db.sql("""SELECT
+			"Expense Claim", name, posting_date, remark, clearance_date, employee,
+			total_amount_reimbursed
+		FROM
+			`tabExpense Claim`
+		WHERE
+			docstatus=1 and mode_of_payment in ({1}) {0}
+			order by posting_date DESC, name DESC""".format(conditions, ", ".join(mops)), filters, as_list=1)
+
+	return sorted(journal_entries + payment_entries + purchase_invoices + sales_invoices, key=lambda k: k[2] or getdate(nowdate()))

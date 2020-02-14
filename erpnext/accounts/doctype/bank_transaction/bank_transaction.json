@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2018-10-22 18:19:02.784533",
@@ -21,8 +22,11 @@
   "section_break_10",
   "description",
   "section_break_14",
-  "transaction_id",
   "payment_entries",
+  "section_break_17",
+  "total_debit",
+  "column_break_19",
+  "total_credit",
   "section_break_18",
   "allocated_amount",
   "amended_from",
@@ -45,6 +49,7 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Date"
   },
   {
@@ -58,7 +63,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nPending\nSettled\nUnreconciled\nReconciled",
+   "options": "\nPending\nSettled\nUnreconciled\nReconciled\nCancelled",
    "read_only": 1
   },
   {
@@ -111,24 +116,18 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Description"
   },
   {
    "fieldname": "section_break_14",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "options": "noBottomBorder"
   },
   {
    "fieldname": "reference_number",
    "fieldtype": "Data",
-   "label": "Reference Number",
-   "unique": 1
-  },
-  {
-   "fieldname": "transaction_id",
-   "fieldtype": "Data",
-   "label": "Transaction ID",
-   "read_only": 1,
-   "unique": 1
+   "label": "Reference Number"
   },
   {
    "allow_on_submit": 1,
@@ -142,9 +141,12 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "allocated_amount",
    "fieldtype": "Currency",
-   "label": "Allocated Amount"
+   "hidden": 1,
+   "label": "Allocated Amount",
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -160,13 +162,39 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "unallocated_amount",
    "fieldtype": "Currency",
-   "label": "Unallocated Amount"
+   "label": "Difference",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break",
+   "options": "noBottomBorder"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_debit",
+   "fieldtype": "Currency",
+   "label": "Total Debit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_19",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_credit",
+   "fieldtype": "Currency",
+   "label": "Total Credit",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-11-07 11:09:38.699776",
+ "links": [],
+ "modified": "2020-01-07 11:00:57.414755",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

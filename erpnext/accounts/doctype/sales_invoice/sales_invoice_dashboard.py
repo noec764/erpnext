@@ -11,6 +11,7 @@ def get_data():
 			'Payment Request': 'reference_name',
 			'Sales Invoice': 'return_against',
 			'Auto Repeat': 'reference_document',
+			'Bank Transaction': 'payment_entry'
 		},
 		'internal_links': {
 			'Sales Order': ['items', 'sales_order']
@@ -18,7 +19,7 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Payment'),
-				'items': ['Payment Entry', 'Payment Request', 'Journal Entry', 'Invoice Discounting']
+				'items': ['Payment Entry', 'Payment Request', 'Journal Entry', 'Invoice Discounting', 'Bank Transaction']
 			},
 			{
 				'label': _('Reference'),

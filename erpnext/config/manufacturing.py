@@ -23,7 +23,6 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "BOM Browser",
-					"icon": "fa fa-sitemap",
 					"label": _("BOM Browser"),
 					"description": _("Tree of Bill of Materials"),
 					"link": "Tree/BOM",
@@ -50,7 +49,6 @@ def get_data():
 		},
 		{
 			"label": _("Production"),
-			"icon": "fa fa-star",
 			"items": [
 				{
 					"type": "doctype",
@@ -87,7 +85,6 @@ def get_data():
 		},
 		{
 			"label": _("Tools"),
-			"icon": "fa fa-wrench",
 			"items": [
 				{
 					"type": "doctype",
@@ -115,7 +112,6 @@ def get_data():
 		},
 		{
 			"label": _("Reports"),
-			"icon": "fa fa-list",
 			"items": [
 				{
 					"type": "report",

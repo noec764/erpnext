@@ -80,14 +80,14 @@ erpnext.MarkedEmployee = Class.extend({
 
 		var row;
 		$.each(employee, function(i, m) {
-			var attendance_icon = "fa fa-check";
+			var attendance_icon = "far fa-check-square";
 			var color_class = "";
 			if(m.status == "Absent") {
-				attendance_icon = "fa fa-check-empty"
+				attendance_icon = "far fa-square"
 				color_class = "text-muted";
 			}
 			else if(m.status == "Half Day") {
-				attendance_icon = "fa fa-check-minus"
+				attendance_icon = "far fa-minus-square"
 			}
 
 			if (i===0 || i % 4===0) {
@@ -124,8 +124,10 @@ erpnext.EmployeeSelector = Class.extend({
 
 		var mark_employee_toolbar = $('<div class="col-sm-12 bottom-toolbar">\
 			<button class="btn btn-primary btn-mark-present btn-xs"></button>\
-			<button class="btn btn-default btn-mark-absent btn-xs"></button>\
-			<button class="btn btn-default btn-mark-half-day btn-xs"></button></div>')
+			<button class="btn btn-primary btn-mark-work-from-home btn-xs"></button>\
+			<button class="btn btn-warning btn-mark-half-day btn-xs"></button>\
+			<button class="btn btn-danger btn-mark-absent btn-xs"></button>\
+			</div>');
 
 		employee_toolbar.find(".btn-add")
 			.html(__('Check all'))
@@ -223,6 +225,31 @@ erpnext.EmployeeSelector = Class.extend({
 				});
 			});
 
+
+		mark_employee_toolbar.find(".btn-mark-work-from-home")
+			.html(__('Mark Work From Home'))
+			.on("click", function() {
+				var employee_work_from_home = [];
+				$(me.wrapper).find('input[type="checkbox"]').each(function(i, check) {
+					if($(check).is(":checked")) {
+						employee_work_from_home.push(employee[i]);
+					}
+				});
+				frappe.call({
+					method: "erpnext.hr.doctype.employee_attendance_tool.employee_attendance_tool.mark_employee_attendance",
+					args:{
+						"employee_list":employee_work_from_home,
+						"status":"Work From Home",
+						"date":frm.doc.date,
+						"company":frm.doc.company
+					},
+
+					callback: function(r) {
+						erpnext.employee_attendance_tool.load_employees(frm);
+
+					}
+				});
+			});
 
 		var row;
 		$.each(employee, function(i, m) {
