@@ -60,7 +60,7 @@ class StripeChargeWebhookHandler(WebhooksController):
 			self.stripe_subscription = self.stripe_settings.stripe.Subscription.retrieve(
 				self.stripe_invoice.get("subscription")
 			)
-			self.metadata = getattr(self.subscription, "metadata")
+			self.metadata = getattr(self.stripe_subscription, "metadata")
 
 	def add_fees_before_submission(self):
 		if self.charge:
