@@ -92,7 +92,7 @@ class StripeChargeWebhookHandler(WebhooksController):
 				self.payment_entry.set_amounts()
 
 	def submit_stripe_payment(self):
-		if not frappe.get_all("Integration Request", filters={"service_id": self.integration_request.get("service_id")}):
+		if len(frappe.get_all("Integration Request", filters={"service_id": self.integration_request.get("service_id")})) == 1:
 			self.create_payment()
 			self.submit_payment()
 		else:
