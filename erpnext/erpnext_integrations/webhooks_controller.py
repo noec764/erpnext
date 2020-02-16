@@ -84,7 +84,8 @@ class WebhooksController():
 	def trigger_subscription_events(self):
 		if self.metadata.get("reference_doctype") == "Subscription":
 			self.subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
-			self.subscription.run_method("generate_invoice", dict(payment_entry=self.payment_entry.name))
+			if self.subscription.status == 'Active':
+				self.subscription.run_method("process_active_subscription", dict(payment_entry=self.payment_entry.name))
 
 	def change_status(self):
 		self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
