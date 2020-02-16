@@ -14,9 +14,7 @@ EVENT_MAP = {
 	'charge.expired': 'cancel_payment',
 	'charge.failed': 'cancel_payment',
 	'charge.pending': 'create_payment',
-	'charge.refunded': 'cancel_payment',
-	'charge.succeeded': 'submit_payment',
-	'charge.updated': 'create_payment'
+	'charge.succeeded': 'submit_stripe_payment'
 }
 
 class StripeChargeWebhookHandler(WebhooksController):
@@ -92,3 +90,10 @@ class StripeChargeWebhookHandler(WebhooksController):
 				})
 
 				self.payment_entry.set_amounts()
+
+	def submit_stripe_payment(self):
+		if not frappe.get_all("Integration Request", filters={"service_id": self.integration_request.get("service_id")}):
+			self.create_payment()
+			self.submit_payment()
+		else:
+			self.submit_payment()
