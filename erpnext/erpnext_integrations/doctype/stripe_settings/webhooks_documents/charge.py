@@ -41,14 +41,26 @@ class StripeChargeWebhookHandler(WebhooksController):
 			dict(gateway_settings="Stripe Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
 		self.get_charge()
+		self.get_invoice()
 		self.get_metadata()
 
 	def get_charge(self):
 		charge_id = self.data.get("data", {}).get("object", {}).get("id")
 		self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
 
+	def get_invoice(self):
+		self.invoice = self.stripe_settings.stripe.Invoice.retrieve(
+			self.charge.get("invoice")
+		)
+
 	def get_metadata(self):
 		self.metadata = getattr(self.charge, "metadata")
+
+		if not self.metadata:
+			self.subscription = self.stripe_settings.stripe.Subscription.retrieve(
+				self.invoice.get("subscription")
+			)
+			self.metadata = getattr(self.subscription, "metadata")
 
 	def add_fees_before_submission(self):
 		if self.charge:
