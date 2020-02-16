@@ -86,10 +86,10 @@ def upload_ofx_bank_statement():
 			stmts = ofx.statements
 
 			for stmt in stmts:
-				txs = stmt.transactions
+				txs = stmt.transactions or []
 				for transaction in txs:
 					data.append(make_transaction_row(transaction, stmt.curdef))
-
+	
 		return {"columns": columns, "data": data}
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
