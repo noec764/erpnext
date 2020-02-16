@@ -49,7 +49,7 @@ class StripeChargeWebhookHandler(WebhooksController):
 		self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
 
 	def get_invoice(self):
-		self.invoice = self.stripe_settings.stripe.Invoice.retrieve(
+		self.stripe_invoice = self.stripe_settings.stripe.Invoice.retrieve(
 			self.charge.get("invoice")
 		)
 
@@ -57,8 +57,8 @@ class StripeChargeWebhookHandler(WebhooksController):
 		self.metadata = getattr(self.charge, "metadata")
 
 		if not self.metadata:
-			self.subscription = self.stripe_settings.stripe.Subscription.retrieve(
-				self.invoice.get("subscription")
+			self.stripe_subscription = self.stripe_settings.stripe.Subscription.retrieve(
+				self.stripe_invoice.get("subscription")
 			)
 			self.metadata = getattr(self.subscription, "metadata")
 
