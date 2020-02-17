@@ -4,6 +4,7 @@ def execute():
     frappe.reload_doctype("Subscription")
     frappe.reload_doctype("Subscription Plan")
     frappe.reload_doctype("Subscription Plan Detail")
+    frappe.reload_doc("accounts", "doctype", "subscription_event")
 
     subscriptions = frappe.get_all("Subscription")
     for subscription in subscriptions:
