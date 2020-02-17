@@ -65,16 +65,17 @@ class PaymentRequest(Document):
 			frappe.throw(_("Please add at least one payment gateway"))
 
 	def validate_subscription_gateways(self):
-		plans = self.get_subscription_payment_plans()
-		selected_gateways = set([x.payment_gateway for x in self.payment_gateways])
+		if self.is_linked_to_a_subscription():
+			plans = self.get_subscription_payment_plans()
+			selected_gateways = set([x.payment_gateway for x in self.payment_gateways])
 
-		if selected_gateways:
-			gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings"])
-			for gateway in gateways:
-				if gateway.gateway_settings == "Stripe Settings":
-					stripe_gateway = frappe.get_doc("Payment Gateway", gateway.name)
-					for plan in plans:
-						stripe_gateway.validate_subscription_plan(self.currency, plan.stripe_plan)
+			if selected_gateways:
+				gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings"])
+				for gateway in gateways:
+					if gateway.gateway_settings == "Stripe Settings":
+						stripe_gateway = frappe.get_doc("Payment Gateway", gateway.name)
+						for plan in plans:
+							stripe_gateway.validate_subscription_plan(self.currency, plan.stripe_plan)
 	
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\

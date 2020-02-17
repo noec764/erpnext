@@ -50,7 +50,7 @@ frappe.ready(() => {
 					reqd: 1,
 					options: 'Country',
 					only_select: 1
-				}
+				},
 				{
 					fieldname: "column_break0",
 					fieldtype: "Column Break",
