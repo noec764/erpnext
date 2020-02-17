@@ -85,12 +85,12 @@ class Subscription(Document):
 		elif self.status == 'Trial':
 			self.set_subscription_status()
 
-	def process_active_subscription(self):
+	def process_active_subscription(self, payment_entry=None):
 		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
 			self.set_plan_details_status()
 			self.generate_sales_order()
 			if not self.has_invoice_for_period():
-				self.generate_invoice()
+				self.generate_invoice(payment_entry=payment_entry)
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
 			else:
@@ -103,10 +103,10 @@ class Subscription(Document):
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
-				self.generate_invoice()
+				self.generate_invoice(payment_entry=payment_entry)
 
 			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
-				self.generate_invoice()
+				self.generate_invoice(payment_entry=payment_entry)
 
 		self.save()
 
