@@ -11,12 +11,5 @@ frappe.views.calendar["Item Booking"] = {
 		"rrule": "rrule",
 		"color": "color"
 	},
-	filters: [
-		{
-			"fieldtype": "Link",
-			"fieldname": "item",
-			"options": "Item",
-			"label": __("Item")
-		}
-	]
+	filters: [["Item Booking", "status","!=", "Cancelled"]]
 };
