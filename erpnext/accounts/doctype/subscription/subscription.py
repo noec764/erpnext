@@ -517,6 +517,9 @@ class Subscription(Document):
 	def simulated_grand_total(self):
 		try:
 			invoice = self.generate_invoice(simulate=True)
+			# Hack to avoid mandatory sales orders and delivery notes
+			invoice.is_pos = True
+			invoice.update_stock = True
 			invoice._action = "save"
 			invoice.run_method("validate")
 
