@@ -100,7 +100,7 @@ def make_transaction_row(transaction, currency=None):
 		"id": transaction.fitid,
 		"type": transaction.trntype,
 		"date": formatdate(transaction.dtposted, "YYYY-MM-dd"),
-		"description": transaction.name + " | " + transaction.memo,
+		"description": (transaction.name or "") + " | " + (transaction.memo or ""),
 		"debit": abs(transaction.trnamt) if flt(transaction.trnamt) < 0 else 0,
 		"credit": transaction.trnamt if flt(transaction.trnamt) > 0 else 0,
 		"currency": currency
