@@ -39,7 +39,7 @@ def upload_csv_bank_statement():
 
 @frappe.whitelist()
 def upload_ofx_bank_statement():
-	parser = OFXTree()
+	ofx_parser = OFXTree()
 	columns = [
 		{
 			"field": "id",
@@ -81,8 +81,8 @@ def upload_ofx_bank_statement():
 	try:
 		from io import BytesIO
 		with BytesIO(frappe.local.uploaded_file) as file:
-			parser.parse(file)
-			ofx = parser.convert()
+			ofx_parser.parse(file)
+			ofx = ofx_parser.convert()
 			stmts = ofx.statements
 
 			for stmt in stmts:
@@ -91,8 +91,9 @@ def upload_ofx_bank_statement():
 					data.append(make_transaction_row(transaction, stmt.curdef))
 	
 		return {"columns": columns, "data": data}
-	except Exception:
+	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
+		frappe.throw(_("OFX Parser Error. Please contact the support."))
 
 def make_transaction_row(transaction, currency=None):
 	return {

@@ -9,6 +9,9 @@
                 @accountSelected="accountSelection"
             />
         </div>
+        <div class="flex flex-wrap account-preview justify-center" v-if="!bank_accounts.length">
+            <p>{{ __("Please add at least one company bank account. 'Is company account' must be checked.") }}</p>
+        </div>
         <file-uploader
             v-show="!showData && (selectedBankAccount || bank_accounts.length == 1) && upload_type!='plaid'"
             :on_success="onSuccess"
