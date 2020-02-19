@@ -190,6 +190,9 @@ class Subscription(Document):
 		else:
 			return False
 
+	def is_cancelled(self):
+		return getdate(self.cancellation_date) <= getdate(nowdate()) if self.cancellation_date else False
+
 	def validate_trial_period(self):
 		if self.trial_period_start and self.trial_period_end:
 			if getdate(self.trial_period_end) < getdate(self.trial_period_start):
@@ -524,6 +527,10 @@ class Subscription(Document):
 			invoice.run_method("validate")
 
 			return invoice.grand_total
+		except erpnext.exceptions.PartyDisabled:
+			if not self.is_cancelled():
+				self.reload()
+				self.cancel_subscription()
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
 			return

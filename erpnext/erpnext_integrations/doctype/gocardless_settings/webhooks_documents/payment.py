@@ -60,24 +60,24 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.gocardless_payment_document = self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
 
 	def get_payout(self):
-		self.gocardless_payout = self.data.get("links", {}).get("payout")
+		self.gocardless_payout = self.gocardless_payment_document.get("links", {}).get("payout")
 
 	def get_metadata(self):
 		self.metadata = getattr(self.gocardless_payment_document, "metadata")
 
 	def add_fees_before_submission(self):
-		self.get_payout()
-		if self.gocardless_payout:
-			payout_items = self.gocardless_settings.get_payout_items_list({"payout": self.gocardless_payout})
+		if self.gocardless_payment_document:
+			transaction_fees = flt(getattr(self.gocardless_payment_document, "transaction_fee"))
+			app_fees = flt(getattr(self.gocardless_payment_document, "app_fee"))
+			surcharge_fees = flt(getattr(getattr(self.gocardless_payment_document, "surcharge_fee_summary"), "chargeback_fee"))
+				+ flt(getattr(getattr(self.gocardless_payment_document, "app_fee"), "failure_fee"))
+			amount = flt(getattr(self.gocardless_payment_document, "amount"))
+			amount_refunded = flt(getattr(self.gocardless_payment_document, "amount_refunded"))
 
-			output = ""
-			for p in payout_items:
-				output += str(p.__dict__)
-			output_as_json = frappe.parse_json(output)
-			self.integration_request.db_set("output", json.dumps(output_as_json, indent=4))
+			self.integration_request.db_set("output", json.dumps(self.gocardless_payment_document.__dict__, indent=4))
 
-			self.base_amount = self.gocardless_settings.get_base_amount(payout_items, self.gocardless_payment)
-			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items, self.gocardless_payment)
+			self.base_amount = amount - amount_refunded - transaction_fees - app_fees - surcharge_fees
+			self.fee_amount = transaction_fees + app_fees + surcharge_fees
 			#TODO: Handle exchange rates
 			# self.exchange_rate = self.gocardless_settings.get_exchange_rate(payout)
 
