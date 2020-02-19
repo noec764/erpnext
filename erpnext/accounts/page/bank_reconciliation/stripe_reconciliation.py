@@ -112,7 +112,7 @@ class StripeReconciliation:
 						or_filters=[{reference_field: ("like", transaction.get("charge", {}).get("id"))}, \
 						{reference_field: ("like", transaction.get("charge", {}).get("invoice"))}, \
 						{reference_field: ("like", transaction.get("charge", {}).get("payment_intent"))}],
-						fields=["*"], debug=True)]
+						fields=["*"])]
 					self.documents.extend(documents)
 
 	def get_reference_field(self, doctype):
