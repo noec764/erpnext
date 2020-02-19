@@ -43,6 +43,16 @@ class Quotation(SellingController):
 		if self.quotation_to == "Lead" and self.party_name:
 			frappe.get_doc("Lead", self.party_name).set_status(update=True)
 
+	def update_item_bookings(self):
+		for item in self.items:
+			if item.item_booking:
+				booking = frappe.get_doc("Item Booking", item.item_booking)
+				booking.party_type = self.quotation_to
+				booking.party_name = self.party_name
+				booking.billing_qty = item.qty
+				booking.sales_uom = item.uom
+				booking.save(ignore_permissions=True)
+
 	def set_customer_name(self):
 		if self.party_name and self.quotation_to == 'Customer':
 			self.customer_name = frappe.db.get_value("Customer", self.party_name, "customer_name")
@@ -91,6 +101,7 @@ class Quotation(SellingController):
 		#update enquiry status
 		self.update_opportunity()
 		self.update_lead()
+		self.update_item_bookings()
 
 	def on_cancel(self):
 		super(Quotation, self).on_cancel()

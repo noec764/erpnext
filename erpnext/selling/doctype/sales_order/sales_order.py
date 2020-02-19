@@ -34,6 +34,7 @@ class SalesOrder(SellingController):
 
 	def validate(self):
 		super(SalesOrder, self).validate()
+		self.set_delivery_date_for_item_bookings()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
@@ -99,10 +100,15 @@ class SalesOrder(SellingController):
 					frappe.msgprint(_("Quotation {0} not of type {1}")
 						.format(d.prevdoc_docname, self.order_type))
 
+	def set_delivery_date_for_item_bookings(self):
+		for d in self.get("items"):
+			if d.get("item_booking"):
+				d.delivery_date = frappe.db.get_value("Item Booking", d.get("item_booking"), "starts_on")
+
 	def validate_delivery_date(self):
+		delivery_date_list = [d.delivery_date for d in self.get("items") if d.delivery_date]
+		max_delivery_date = max(delivery_date_list) if delivery_date_list else None
 		if self.order_type == 'Sales' and not self.skip_delivery_note:
-			delivery_date_list = [d.delivery_date for d in self.get("items") if d.delivery_date]
-			max_delivery_date = max(delivery_date_list) if delivery_date_list else None
 			if not self.delivery_date:
 				self.delivery_date = max_delivery_date
 			if self.delivery_date:
@@ -116,6 +122,8 @@ class SalesOrder(SellingController):
 					self.delivery_date = max_delivery_date
 			else:
 				frappe.throw(_("Please enter Delivery Date"))
+		elif max_delivery_date:
+			self.delivery_date = max_delivery_date
 
 		self.validate_sales_mntc_quotation()
 
