@@ -76,8 +76,8 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 			self.integration_request.db_set("output", json.dumps(self.gocardless_payment_document.__dict__, indent=4))
 
-			self.base_amount = amount - amount_refunded - transaction_fees - app_fees - surcharge_fees
-			self.fee_amount = transaction_fees + app_fees + surcharge_fees
+			self.base_amount = (amount - amount_refunded - transaction_fees - app_fees - surcharge_fees) / 100
+			self.fee_amount = (transaction_fees + app_fees + surcharge_fees) / 100
 			#TODO: Handle exchange rates
 			# self.exchange_rate = self.gocardless_settings.get_exchange_rate(payout)
 
