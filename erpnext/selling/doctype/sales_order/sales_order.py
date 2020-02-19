@@ -102,8 +102,8 @@ class SalesOrder(SellingController):
 
 	def set_delivery_date_for_item_bookings(self):
 		for d in self.get("items"):
-			if d.get("item_booking"):
-				d.delivery_date = frappe.db.get_value("Item Booking", d.get("item_booking"), "starts_on")
+			if d.get("item_booking") and not d.get("delivery_date"):
+				d.delivery_date = getdate(frappe.db.get_value("Item Booking", d.get("item_booking"), "starts_on"))
 
 	def validate_delivery_date(self):
 		delivery_date_list = [d.delivery_date for d in self.get("items") if d.delivery_date]
@@ -183,6 +183,7 @@ class SalesOrder(SellingController):
 		self.update_prevdoc_status('submit')
 
 		self.update_blanket_order()
+		self.update_item_bookings()
 
 		update_linked_doc(self.doctype, self.name, self.inter_company_order_reference)
 		if self.coupon_code:
@@ -470,6 +471,11 @@ class SalesOrder(SellingController):
 				frappe.throw(_("Cannot ensure delivery by Serial No as \
 				Item {0} is added with and without Ensure Delivery by \
 				Serial No.").format(item.item_code))
+
+	def update_item_bookings(self):
+		for d in self.get("items"):
+			if d.get("item_booking"):
+				frappe.db.set_value("Item Booking", d.get("item_booking"), "status", "Confirmed")
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
