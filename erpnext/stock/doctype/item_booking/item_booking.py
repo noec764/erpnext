@@ -541,8 +541,6 @@ def make_quotation(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	doc = frappe.get_doc(doclist).insert()
-	frappe.db.set_value("Item Booking", source_name, "reference_doctype", doc.doctype)
-	frappe.db.set_value("Item Booking", source_name, "reference_name", doc.name)
 
 	return doc
 

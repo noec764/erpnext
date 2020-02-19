@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
  "beta": 1,
@@ -111,6 +112,8 @@
   },
   {
    "allow_on_submit": 1,
+   "fetch_from": "item.sales_uom",
+   "fetch_if_empty": 1,
    "fieldname": "sales_uom",
    "fieldtype": "Link",
    "label": "Sales UOM",
@@ -125,6 +128,7 @@
   },
   {
    "allow_on_submit": 1,
+   "default": "1",
    "fieldname": "billing_qty",
    "fieldtype": "Float",
    "label": "Billing Qty"
@@ -239,7 +243,8 @@
    "options": "In Cart\nNot confirmed\nConfirmed\nCancelled"
   }
  ],
- "modified": "2019-11-26 14:58:22.734951",
+ "links": [],
+ "modified": "2020-02-18 15:59:53.467709",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Booking",
@@ -306,6 +311,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "title",

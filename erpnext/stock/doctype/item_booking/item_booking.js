@@ -59,7 +59,7 @@ frappe.ui.form.on('Item Booking', {
 			clearInterval(frm.delayInfo)
 		}
 
-		if (!frm.is_new()) {
+		if (!frm.is_new() && frm.doc.status === "In Cart") {
 			frappe.db.get_single_value("Stock settings", "clear_item_booking_draft_duration")
 				.then(r => {
 					frm.delayInfo && clearInterval(frm.delayInfo);
