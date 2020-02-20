@@ -69,7 +69,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		if self.gocardless_payment_document:
 			transaction_fees = flt(getattr(self.gocardless_payment_document, "transaction_fee"))
 			app_fees = flt(getattr(self.gocardless_payment_document, "app_fee"))
-			surcharge_fees = flt(getattr(getattr(self.gocardless_payment_document, "surcharge_fee_summary"), "chargeback_fee"))
+			surcharge_fees = flt(getattr(getattr(self.gocardless_payment_document, "surcharge_fee_summary"), "chargeback_fee"))\
 				+ flt(getattr(getattr(self.gocardless_payment_document, "app_fee"), "failure_fee"))
 			amount = flt(getattr(self.gocardless_payment_document, "amount"))
 			amount_refunded = flt(getattr(self.gocardless_payment_document, "amount_refunded"))
