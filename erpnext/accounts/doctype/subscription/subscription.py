@@ -88,7 +88,6 @@ class Subscription(Document):
 	def process_active_subscription(self, payment_entry=None):
 		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
 			self.set_plan_details_status()
-			self.generate_sales_order()
 			if not self.has_invoice_for_period():
 				self.generate_invoice(payment_entry=payment_entry)
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
@@ -99,7 +98,6 @@ class Subscription(Document):
 
 		elif self.generate_invoice_at_period_start:
 			self.set_plan_details_status()
-			self.generate_sales_order()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
@@ -220,6 +218,7 @@ class Subscription(Document):
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		sales_order = self.set_subscription_invoicing_details(sales_order)
 		sales_order.currency = self.currency
+		sales_order.order_type = "Maintenance"
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.set_missing_values()
@@ -545,16 +544,16 @@ class Subscription(Document):
 					gateway_settings.run_method('on_subscription_update', self)
 
 	def is_payable(self):
-		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
-			if not self.has_invoice_for_period():
-				return True
-		elif self.generate_invoice_at_period_start:
-			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
-				return True
-			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
-				return True
-
-		return False
+		if frappe.get_all("Subscription Event",
+			filters={
+				"event_type": "Payment request created",
+				"period_start": self.current_invoice_start ,
+				"period_end": self.current_invoice_end
+			}
+		):
+			return False
+		else:
+			return True
 
 	def add_subscription_event(self, event_type, **kwargs):
 		if self.name:
@@ -767,6 +766,12 @@ def check_gateway_payments():
 			})
 			pr.ignore_permissions = True
 			pr.insert()
+
+			self.add_subscription_event("Payment request created", **{
+				"document_type": "Payment Request",
+				"document_name": pr.name
+			})
+
 			if pr.payment_gateways and float(pr.grand_total) > 0:
 				pr.submit()
 				pr.run_method("process_payment_immediately")
