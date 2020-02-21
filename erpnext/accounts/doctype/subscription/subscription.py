@@ -544,6 +544,9 @@ class Subscription(Document):
 					gateway_settings.run_method('on_subscription_update', self)
 
 	def is_payable(self):
+		if self.is_cancelled():
+			return False
+
 		if frappe.get_all("Subscription Event",
 			filters={
 				"event_type": "Payment request created",
@@ -771,11 +774,11 @@ def check_gateway_payments():
 				"dt": doc.doctype,
 				"dn": doc.name,
 				"party_type": "Customer",
-				"party": doc.customer
+				"party": doc.customer,
+				"submit_doc": True,
+				"mute_email": True
 			})
-			pr.ignore_permissions = True
-			pr.insert()
 
-			if pr.payment_gateways and float(pr.grand_total) > 0:
-				pr.submit()
-				pr.run_method("process_payment_immediately")
+			if pr.get("payment_gateways") and float(pr.get("grand_total")) > 0:
+				doc = frappe.get_doc("Payment Request", pr.get("name"))
+				doc.run_method("process_payment_immediately")

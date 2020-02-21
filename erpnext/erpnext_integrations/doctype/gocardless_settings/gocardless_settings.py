@@ -82,7 +82,7 @@ class GoCardlessSettings(PaymentGatewayController):
 
 		except Exception:
 			frappe.log_error(frappe.get_traceback(),\
-				_("GoCardless direct processing failed for {0}".format(customer_data.customer_name)))
+				_("GoCardless direct processing failed for {0}".format(data.reference_name)))
 
 	def check_mandate_validity(self, data):
 		if frappe.db.exists("Sepa Mandate", dict(customer=data.get('payer_name'),\
