@@ -84,7 +84,7 @@ rename_map = {
 	"Appraisal Template": [
 		["kra_sheet", "goals"]
 	],
-	"Bank Reconciliation": [
+	"Bank Clearance": [
 		["entries", "journal_entries"]
 	],
 	"C-Form": [

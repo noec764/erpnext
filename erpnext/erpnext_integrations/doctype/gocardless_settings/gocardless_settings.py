@@ -45,6 +45,9 @@ class GoCardlessSettings(PaymentGatewayController):
 		create_payment_gateway('GoCardless-' + self.gateway_name, settings='GoCardLess Settings', controller=self.gateway_name)
 		call_hook_method('payment_gateway_enabled', gateway='GoCardless-' + self.gateway_name)
 
+	def validate_subscription_plan(self, currency, plan):
+		pass
+
 	def on_payment_request_submission(self, data):
 		try:
 			customer_query = "customer_name as payer_name" if data.reference_doctype !=  "Subscription" else "customer as payer_name"

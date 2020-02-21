@@ -12,9 +12,10 @@ from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 EVENT_MAP = {
 	'created': 'create_payment',
 	'submitted': 'create_payment',
-	'confirmed': 'submit_payment',
+	'confirmed': 'create_payment',
 	'cancelled': 'cancel_payment',
-	'failed': 'cancel_payment'
+	'failed': 'cancel_payment',
+	'paid_out': 'submit_payment'
 }
 
 class GoCardlessPaymentWebhookHandler(WebhooksController):
@@ -60,7 +61,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.gocardless_payment_document = self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
 
 	def get_payout(self):
-		self.gocardless_payout = self.data.get("links", {}).get("payout")
+		self.gocardless_payout = self.gocardless_payment_document.get("links", {}).get("payout")
 
 	def get_metadata(self):
 		self.metadata = getattr(self.gocardless_payment_document, "metadata")

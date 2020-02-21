@@ -14,9 +14,7 @@ EVENT_MAP = {
 	'charge.expired': 'cancel_payment',
 	'charge.failed': 'cancel_payment',
 	'charge.pending': 'create_payment',
-	'charge.refunded': 'cancel_payment',
-	'charge.succeeded': 'submit_payment',
-	'charge.updated': 'create_payment'
+	'charge.succeeded': 'submit_stripe_payment'
 }
 
 class StripeChargeWebhookHandler(WebhooksController):
@@ -41,14 +39,26 @@ class StripeChargeWebhookHandler(WebhooksController):
 			dict(gateway_settings="Stripe Settings", gateway_controller=self.integration_request.get("payment_gateway_controller")))
 
 		self.get_charge()
+		self.get_invoice()
 		self.get_metadata()
 
 	def get_charge(self):
 		charge_id = self.data.get("data", {}).get("object", {}).get("id")
 		self.charge = self.stripe_settings.get_charge_on_stripe(charge_id)
 
+	def get_invoice(self):
+		self.stripe_invoice = self.stripe_settings.stripe.Invoice.retrieve(
+			self.charge.get("invoice")
+		)
+
 	def get_metadata(self):
 		self.metadata = getattr(self.charge, "metadata")
+
+		if not self.metadata:
+			self.stripe_subscription = self.stripe_settings.stripe.Subscription.retrieve(
+				self.stripe_invoice.get("subscription")
+			)
+			self.metadata = getattr(self.stripe_subscription, "metadata")
 
 	def add_fees_before_submission(self):
 		if self.charge:
@@ -80,3 +90,10 @@ class StripeChargeWebhookHandler(WebhooksController):
 				})
 
 				self.payment_entry.set_amounts()
+
+	def submit_stripe_payment(self):
+		if len(frappe.get_all("Integration Request", filters={"service_id": self.integration_request.get("service_id")})) == 1:
+			self.create_payment()
+			self.submit_payment()
+		else:
+			self.submit_payment()

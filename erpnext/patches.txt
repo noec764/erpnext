@@ -624,6 +624,7 @@ erpnext.patches.v12_0.set_cost_center_in_child_table_of_expense_claim
 erpnext.patches.v12_0.set_lead_title_field
 erpnext.patches.v12_0.set_permission_einvoicing
 erpnext.patches.v12_0.set_job_offer_applicant_email
+erpnext.patches.v12_0.create_irs_1099_field_united_states
 
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
@@ -652,3 +653,5 @@ erpnext.patches.dokos.v1_1.move_item_booking_to_quotation_item
 erpnext.patches.dokos.v1_2.set_item_booking_status
 erpnext.patches.dokos.v1_3.bank_transaction_enhancements
 erpnext.patches.dokos.v1_3.reset_user_last_version
+execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation")
+erpnext.patches.dokos.v1_3.subscription_plans_refactor

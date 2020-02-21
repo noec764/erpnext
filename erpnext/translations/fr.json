@@ -269,6 +269,7 @@
     },
     "DocType: Appointment": {
         "Appointment": "Rendez-vous",
+        "Appointment With": "Rendez-vous avec",
         "CRM": "CRM",
         "Calendar Event": "Evénement du calendrier",
         "Closed": "Fermé",
@@ -280,6 +281,7 @@
         "Linked Documents": "Documents liés",
         "Name": "Nom",
         "Open": "Ouvert",
+        "Party": "Tiers",
         "Phone Number": "Numéro de téléphone",
         "Sales Manager": "Responsable commercial",
         "Sales User": "Commercial",
@@ -290,12 +292,25 @@
         "Unverified": "Non vérifié"
     },
     "DocType: Appointment Booking Settings": {
+        "Agent Details": "Détails de l'agent",
+        "Agents": "Agents",
+        "Appointment Booking Settings": "Paramètres de prise de rendez-vous",
+        "Appointment Details": "Détails du rendez-vous",
+        "Appointment Duration (In Minutes)": "Durée du rendez-voys (en minutes)",
         "Availability Of Slots": "Disponibilité des créneaux",
         "CRM": "CRM",
+        "Enable Appointment Scheduling": "Autoriser la prise de rendez-vous",
         "Guest": "Invité",
         "HR Manager": "Responsable RH",
         "Holiday List": "Liste de Vacances",
+        "Leave blank for home.\nThis is relative to site URL, for example \"about\" will redirect to \"https://yoursitename.com/about\"": "Laisser vide pour la page d'accueil. Relatif à l'URL du site, par exemple \"contact\" redirigera vers \"https://votresite.com/contact\"",
+        "Notify Via Email": "Notifier par email",
+        "Notify customer and agent via email on the day of the appointment.": "Notifier le client et l'agent par email le jour du rendez-vous",
+        "Number of Concurrent Appointments": "Nombre de rendez-vous simultanés",
+        "Number of days appointments can be booked in advance": "Permettre la prise de rendez-vous X jours en avance",
         "Sales Manager": "Responsable commercial",
+        "Success Redirect URL": "URL de redirection en cas de succès",
+        "Success Settings": "Paramètre de succès",
         "System Manager": "Responsable système"
     },
     "DocType: Appointment Booking Slots": {
@@ -677,6 +692,7 @@
         "Shift": "Quarts",
         "Status": "Statut",
         "System Manager": "Responsable système",
+        "Work From Home": "Télétravail",
         "Working Hours": "Heures de Travail"
     },
     "DocType: Attendance Request": {
@@ -955,6 +971,7 @@
         "Integration ID": "ID d'intégration",
         "Is Company Account": "Est le compte de l'entreprise",
         "Is Default": "Par défaut",
+        "Is Default Account": "Est le compte par défaut",
         "Is the Default Account": "Est-ce le compte par défaut",
         "Last Integration Date": "Date de dernière intégration",
         "Mask": "Masque",
@@ -963,6 +980,35 @@
         "Party Type": "Type de tiers",
         "SWIFT number": "Numéro SWIFT",
         "Website": "Site web"
+    },
+    "DocType: Bank Clearance": {
+        "Account Currency": "Compte Devise",
+        "Accounts": "Comptes",
+        "Accounts User": "Comptable",
+        "Bank Account": "Compte bancaire",
+        "Bank Account No": "No de compte bancaire",
+        "Bank Clearance": "Date de rapprochement bancaire",
+        "From Date": "Date de début",
+        "Get Payment Entries": "Obtenir les écritures de paiement",
+        "Include POS Transactions": "Inclure les transactions du point de vente",
+        "Include Reconciled Entries": "Inclure les Écritures Réconciliées",
+        "Payment Entries": "Écritures de paiement",
+        "Select account head of the bank where cheque was deposited.": "Sélectionner le compte principal de la banque où le chèque a été déposé.",
+        "To Date": "Date de fin",
+        "Total Amount": "Montant Total",
+        "Update Clearance Date": "Mettre à jour la date de rapprochement"
+    },
+    "DocType: Bank Clearance Detail": {
+        "Accounts": "Comptes",
+        "Against Account": "Pour le Compte",
+        "Amount": "Montant",
+        "Bank Clearance Detail": "Détails de la date de rapprochement bancaire",
+        "Cheque Date": "Date du Chèque",
+        "Cheque Number": "Numéro de Chèque",
+        "Clearance Date": "Date de rapprochement",
+        "Payment Document": "Document de paiement",
+        "Payment Entry": "Écriture de Paiement",
+        "Posting Date": "Date de comptabilisation"
     },
     "DocType: Bank Guarantee": {
         "Account": "Compte",
@@ -1711,6 +1757,7 @@
         "Customer Primary Address": "Adresse principale du client",
         "Customer Primary Contact": "Contact principal du client",
         "Default Bank Account": "Compte Bancaire par Défaut",
+        "Default Company Bank Account": "Compte bancaire par défaut de la société",
         "Default Payment Terms Template": "Modèle de termes de paiement par défaut",
         "Default Price List": "Liste des Prix par Défaut",
         "Disabled": "Désactiver",
@@ -1757,6 +1804,7 @@
         "Website": "Site web"
     },
     "DocType: Customer Credit Limit": {
+        "Bypass Credit Limit Check at Sales Order": "Contourner la vérification de la limite de crédit dans la commande client",
         "Bypass credit limit check": "Outrepasser la vérification de limite de crédit",
         "Bypass credit limit_check": "Outrepasser les vérification de limites de crédit",
         "Company": "Société",
@@ -2202,6 +2250,7 @@
     "DocType: Driving License Category": {
         "Class": "Classe",
         "Description": "Description",
+        "Driver licence class": "Classe de permis de conduire",
         "Driving License Category": "Catégorie de permis de conduire",
         "Expiry Date": "Date d'expiration",
         "HR": "RH",
@@ -3154,6 +3203,7 @@
         "HR Settings": "Paramètres RH",
         "Hiring Settings": "Paramètres de recrutement",
         "If checked, Total no. of Working Days will include holidays, and this will reduce the value of Salary Per Day": "Si cochée, Le nombre total de Jours Ouvrés comprendra les vacances, ce qui réduira la valeur du Salaire Par Jour",
+        "If checked, hides and disables Rounded Total field in Salary Slips": "Si coché, le champ total arrondi sera caché dans les fiches de paie",
         "Include holidays in Total no. of Working Days": "Inclure les vacances dans le nombre total de Jours Ouvrés",
         "Leave Approval Notification Template": "Modèle de notification d'approbation de congés",
         "Leave Approver Mandatory In Leave Application": "Approbateur de congés obligatoire dans une demande de congé",
@@ -3163,7 +3213,9 @@
         "Naming Series": "Nom de série",
         "Password Policy": "Politique de mots de passe",
         "Payroll Settings": "Paramètres de Paie",
+        "Restrict Backdated Leave Application": "Ne pas autoriser les demandes de congés antidatées",
         "Retirement Age": "Âge de la Retraite",
+        "Role Allowed to Create Backdated Leave Application": "Rôle autorisé à créer des demandes de congés antidatées",
         "Show Leaves Of All Department Members In Calendar": "Afficher les congés de tous les membres du département dans le calendrier",
         "Stop Birthday Reminders": "Arrêter les Rappels d'Anniversaire",
         "System Manager": "Responsable système",
@@ -3261,6 +3313,7 @@
     },
     "DocType: Import Supplier Invoice": {
         "ACC-PINV-.YYYY.-": "ACC-PINV-.YYYY.-",
+        "Click on Import Invoices button once the zip file has been attached to the document. Any errors related to processing will be shown in the Error Log.": "Cliquer sur le bouton Importer des factures une fois que le zip a été attaché au document. Toute erreur liée à l'analyse du fichier sera visible dans le journal des erreurs.",
         "Company": "Société",
         "Default Buying Price List": "Liste de prix d'achat par défaut",
         "Import Invoices": "Importer des factures",
@@ -3525,6 +3578,7 @@
         "Max Sample Quantity": "Quantité maximum d'échantillon",
         "Maximum sample quantity that can be retained": "Quantité maximale d'échantillon pouvant être conservée",
         "Minimum Order Qty": "Qté de Commande Minimum",
+        "Minimum quantity should be as per Stock UOM": "La quantité minimum doit correspondre à l'unité de mesure du stock",
         "Moving Average": "Moyenne Mobile",
         "No of Months": "Nombre de mois",
         "Opening Stock": "Stock d'Ouverture",
@@ -3982,6 +4036,7 @@
     "DocType: Job Offer": {
         "Accepted": "Accepté",
         "Amended From": "Modifié depuis",
+        "Applicant Email Address": "Adresse email du postulant",
         "Applicant Name": "Nom du Candidat",
         "Awaiting Response": "Attente de Réponse",
         "Company": "Société",
@@ -4809,16 +4864,22 @@
         "Capacity Planning For (Days)": "Planification de Capacité Pendant (Jours)",
         "Default 10 mins": "10 minutes Par Défaut",
         "Default Finished Goods Warehouse": "Entrepôt de Produits Finis par Défaut",
+        "Default Scrap Warehouse": "Entrepôt de rebut par défaut",
+        "Default Warehouses for Production": "Entrepôts par défaut pour la production",
         "Default Work In Progress Warehouse": "Entrepôt de Travail en Cours par Défaut",
+        "Disable Capacity Planning": "Désactiver la planification de capacité",
         "Disable Capacity Planning and Time Tracking": "Désactiver la Plannification de Capacité et la Gestion du Temps",
         "Disables creation of time logs against Work Orders. Operations shall not be tracked against Work Order": "Désactive la création de journaux de temps depuis les ordres de travail. Les opérations ne doivent pas être suivies par ordre de travail",
         "Manufacturing": "Production",
         "Manufacturing Manager": "Responsable de production",
         "Manufacturing Settings": "Paramètres de Production",
         "Material Transferred for Manufacture": "Matériel Transféré pour la Production",
+        "Other Settings": "Autres paramètres",
+        "Over Production for Sales and Work Order": "Sur production pour la vente et les ordres de travail",
         "Overproduction Percentage For Sales Order": "Pourcentage de surproduction pour les commandes client",
         "Overproduction Percentage For Work Order": "Pourcentage de surproduction pour les ordres de travail",
         "Plan time logs outside Workstation Working Hours.": "Autoriser les feuilles de temps en dehors des heures de travail de la station de travail.",
+        "Raw Materials Consumption": "Consommation de matière première brute",
         "Time Between Operations (in mins)": "Temps entre les opérations (en min)",
         "Try planning operations for X days in advance.": "Essayez de planifer des opérations X jours à l'avance.",
         "Update BOM Cost Automatically": "Mettre à jour automatiquement le coût de la LDM",
@@ -5219,6 +5280,7 @@
         "Print Settings": "Paramètres d'impression",
         "Sales Invoice Payment": "Paiement de la Facture de vente",
         "Series": "Série",
+        "Tax Category": "Catégorie de taxe",
         "Taxes and Charges": "Taxes et Frais",
         "Terms and Conditions": "Termes et conditions",
         "Territory": "Région",
@@ -5252,6 +5314,7 @@
         "Stock User": "Chargé des stocks"
     },
     "DocType: Packed Item": {
+        "Actual Batch Quantity": "Quantité en lot réelle",
         "Actual Qty": "Quantité Réelle",
         "Batch No": "N° du lot",
         "Description": "Description",
@@ -5761,7 +5824,10 @@
         "Plaid Secret": "Secret Plaid",
         "Plaid Settings": "Paramètres Plaid",
         "Synchronize all accounts every hour": "Synchroniser tous les comptes toutes les heures",
-        "System Manager": "Responsable système"
+        "System Manager": "Responsable système",
+        "development": "development",
+        "production": "production",
+        "sandbox": "sandbox"
     },
     "DocType: Portal Payment Gateways": {
         "Accounts": "Comptes",
@@ -5944,6 +6010,7 @@
         "Completed": "Terminé",
         "Customer": "Client",
         "Download Materials Required": "Télécharge les matériaux requis",
+        "Download Required Materials": "Télécharger les matériaux nécessaires",
         "Draft": "Brouillon",
         "Filters": "Filtres",
         "For Warehouse": "Pour l’Entrepôt",
@@ -5984,6 +6051,7 @@
         "Stopped": "Arrêté",
         "Submitted": "Soumis",
         "To Date": "Date de fin",
+        "To know more about projected quantity, <a href=\"https://erpnext.com/docs/user/manual/en/stock/projected-quantity\" style=\"text-decoration: underline;\" target=\"_blank\">click here</a>.": "Pour en savoir plus sur les quantités projetés, <a href=\"https://erpnext.com/docs/user/manual/en/stock/projected-quantity\" style=\"text-decoration: underline;\" target=\"_blank\">cliquez ici</a>.",
         "Total Planned Qty": "Quantité totale prévue",
         "Total Produced Qty": "Quantité totale produite",
         "Warehouse": "Entrepôt"
@@ -6474,6 +6542,7 @@
         "Purchase Order": "Commande fournisseur",
         "Purchase Order Item": "Article de la commande fournisseur",
         "Purchase Receipt": "Reçu d’Achat",
+        "Purchase Receipt Detail": "Détails du reçu d'achat",
         "Qty": "Qté",
         "Quality Inspection": "Inspection de la Qualité",
         "Quantity and Rate": "Quantité et Taux",
@@ -6584,6 +6653,7 @@
         "Select Shipping Address": "Sélectionner l'Adresse de livraison",
         "Select Supplier Address": "Sélectionner l'Adresse du Fournisseur",
         "Series": "Série",
+        "Set Reserve Warehouse": "Définir un entrepôt de réserve",
         "Set Target Warehouse": "Définir l'entrepôt cible",
         "Shipping Address": "Adresse de livraison",
         "Shipping Rule": "Règle de Livraison",
@@ -6622,6 +6692,7 @@
     "DocType: Purchase Order Item": {
         "Accounting Details": "Détails Comptabilité",
         "Accounting Dimensions ": "Dimensions comptables",
+        "Against Blanket Order": "Pour la commande avec limites",
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
         "BOM": "LDM (Liste de Matériaux)",
@@ -7194,6 +7265,7 @@
         "old_parent": "ancien parent"
     },
     "DocType: Quality Procedure Process": {
+        "Child Procedure": "Procédure enfant",
         "Link existing Quality Procedure.": "Lier une procédure de qualité existante",
         "Procedure": "Procédure",
         "Process Description": "Description du processus",
@@ -7210,6 +7282,7 @@
         "Open": "Ouvert",
         "Procedure": "Procédure",
         "Quality Management": "Gestion de la Qualité",
+        "Quality Manager": "Responsable Qualité",
         "Quality Review": "Revue de la qualité",
         "Review": "Revue",
         "Reviews": "Revues",
@@ -8233,6 +8306,7 @@
     "DocType: Sales Order Item": {
         "Actual Qty": "Quantité Réelle",
         "Additional Notes": "Notes additionnelles",
+        "Against Blanket Order": "Pour la commande avec limites",
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
         "Basic Rate (Company Currency)": "Taux de Base (Devise de la Société )",
@@ -9318,8 +9392,18 @@
     "DocType: Subscription Event": {
         "Accounts": "Comptes",
         "Amended From": "Modifié depuis",
+        "Created document name": "Nom du document créé",
+        "Created document type": "Type de document créé",
         "Date": "Date",
+        "Event Type": "Type d'événement",
+        "New period": "Nouvelle période",
+        "Payment request created": "Demande de paiement créée",
+        "Period end date": "Date de fin de la période",
+        "Period start date": "Date de début de la période",
+        "Sales invoice created": "Facture de vente créée",
+        "Sales order created": "Commande client créée",
         "Subscription": "Abonnement",
+        "Subscription Event": "Evénement d'abonnement",
         "System Manager": "Responsable système"
     },
     "DocType: Subscription Gateway Plans": {
@@ -10538,12 +10622,17 @@
         "Series": "Série",
         "Settings": "Paramètres",
         "Skip Material Transfer to WIP Warehouse": "Ignorer le transfert de matériaux à l'entrepôt de travaux en cours",
+        "Source Warehouse": "Entrepôt Source",
         "Status": "Statut",
         "Stock UOM": "Unité de mesure du stock",
         "Stock User": "Chargé des stocks",
         "Stopped": "Arrêté",
         "Submitted": "Soumis",
         "Target Warehouse": "Entrepôt Cible",
+        "This is a location where final product stored.": "Lieu où le produit final est stocké.",
+        "This is a location where operations are executed.": "Lieu où les opérations sont exécutées.",
+        "This is a location where raw materials are available.": "Lieu où les matières premières sont disponibles.",
+        "This is a location where scraped materials are stored.": "Lieu où le rebut est stocké.",
         "Time": "Temps",
         "Total Operating Cost": "Coût d'Exploitation Total",
         "Transfer Material Against": "Transférer le matériel contre",
@@ -11050,6 +11139,9 @@
     "Report: Stock Projected Qty": {
         "Stock Projected Qty": "Projections de stock"
     },
+    "Report: Stock and Account Value Comparison": {
+        "Stock and Account Value Comparison": "Comparaison entre les stocks et la comptabilité"
+    },
     "Report: Subcontracted Item To Be Received": {
         "Subcontracted Item To Be Received": "Articles sous-traités à recevoir"
     },
@@ -11073,6 +11165,9 @@
     },
     "Report: Territory Target Variance Based On Item Group": {
         "Territory Target Variance Based On Item Group": "Variance des objectifs territoriaux par groupe d'article"
+    },
+    "Report: Territory-wise Sales": {
+        "Territory-wise Sales": "Ventes par territoire"
     },
     "Report: Total Stock Summary": {
         "Total Stock Summary": "Solde total des stock"
@@ -11387,6 +11482,15 @@
         "BankAccount.validate_iban() failed for empty IBAN": "BankAccount.validate_iban() a échoué car l'IBAN est vide",
         "BankAccount.validate_iban() failed for valid IBAN {}": "BankAccount.validate_iban() a rejeté l'IBAN valide {}"
     },
+    "apps/erpnext/erpnext/accounts/doctype/bank_clearance/bank_clearance.py": {
+        "Bank Account, From Date and To Date are Mandatory": "Le compte bancaire et les dates de début et de fin sont obligatoires",
+        "Clearance Date not mentioned": "Date de rapprochement non indiquée",
+        "Clearance Date updated": "Date de rapprochement mise à jour",
+        "Cr": "Cr",
+        "Dr": "déb.",
+        "Row #{0}: Clearance date {1} cannot be before Cheque Date {2}": "Ligne #{0} : La date de rapprochement {1} ne peut pas être antérieure à la Date du Chèque {2}",
+        "Row #{0}: Payment document is required to complete the transaction": "Ligne #{0}: un document de paiement est nécessaire pour compléter cette transaction"
+    },
     "apps/erpnext/erpnext/accounts/doctype/bank_guarantee/bank_guarantee.py": {
         "Enter the Bank Guarantee Number before submittting.": "Entrez le numéro de garantie bancaire avant de valider.",
         "Enter the name of the Beneficiary before submittting.": "Entrez le nom du bénéficiaire avant de valider.",
@@ -11407,6 +11511,8 @@
         "Make payment entry": "Créer une écriture de paiement"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction.py": {
+        "A bank transaction exists already with the same reference number for this bank account": "Une transaction bancaire existe déjà avec le même numéro de référénce pour ce compte bancaire.",
+        "The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.": "Le montant alloué ({0} est supérieur au montant non rapproché ({1}) pour {2} {3}",
         "The following entries exist already with the same date, debit, credit and currency:<br>{0}": "Les écritures suivantes existent déjà avec la même date, débit, crédit et devise:<br>{0}",
         "The total allocated amount ({0}) is greated than the paid amount ({1}).": "Le montant total alloué ({0}) est supérieur au montant payé ({1})"
     },
@@ -11483,7 +11589,8 @@
         "Number of root accounts cannot be less than 4": "Le nombre de comptes racines ne peut pas être inférieur à 4",
         "Please identify/create Account (Group) for type - {0}": "Veuillez identifier/créer un groupe de comptes de type - {0}",
         "Please identify/create Account (Ledger) for type - {0}": "Veuillez identifier/créer un compte comptable de type - {0}",
-        "Start entering data from here : ": "Veuillez commencer à entrer des données ci-dessous :"
+        "Start entering data from here : ": "Veuillez commencer à entrer des données ci-dessous :",
+        "The parent account {0} does not exists": "Le compte parent {0} n'existe pas"
     },
     "apps/erpnext/erpnext/accounts/doctype/cheque_print_template/cheque_print_template.js": {
         "Account Pay Only": "Compte Bénéficiaire Seulement",
@@ -11869,6 +11976,7 @@
         "See payment link": "Voir le lien de paiement",
         "Sending": "Envoir en cours",
         "Start date for the payment gateway subscription": "Date de début de l'abonnement pour la passerelle de paiement",
+        "This payment request is linked to subscription <a href=\"/desk#Form/Subscription/{0}\">{0}</a>": "Cette demande de paiement est liée à l'abonnement <a href=\"/desk#Form/Subscription/{0}\">{0}</a>",
         "This reference is linked to subscription <a href=\"/desk#Form/Subscription/{0}\">{0}</a>": "Cette référence est liée à l'abonnement <a href=\"/desk#Form/Subscription/{0}\">{0}</a>",
         "This reference is linked to subscription {0}": "Ce document de référence est lié à l'abonnement {0}",
         "This subscription invoicing period ends on {0}.": "La période de facturation de cet abonnement termine le {0}",
@@ -11983,6 +12091,7 @@
         "Min Amt can not be greater than Max Amt": "Le montant minimum ne peut pas être supérieur au montant maximum",
         "Min Qty can not be greater than Max Qty": "Qté Min ne peut pas être supérieure à Qté Max",
         "Multiple Price Rules exists with same criteria, please resolve conflict by assigning priority. Price Rules: {0}": "Plusieurs Règles de Prix existent avec les mêmes critères, veuillez résoudre les conflits en attribuant des priorités. Règles de Prix : {0}",
+        "Rate or Discount is required for the price discount.": "Prix unitaire ou remise nécessaire pour les remises sur les prix",
         "Selling must be checked, if Applicable For is selected as {0}": "Vente doit être vérifiée, si \"Applicable pour\" est sélectionné comme {0}",
         "Valid from and valid upto fields are mandatory for the cumulative": "Les champs 'Valide à partir de' et 'Valide jusqu'au' sont obligatoire pour l'option 'Est cumulatif'",
         "Valid from date must be less than valid upto date": "Le champ 'Valide à partir de' doit être inférieur au champ Valide jusqu'au'",
@@ -11991,6 +12100,7 @@
         "{0} is required": "{0} est obligatoire"
     },
     "apps/erpnext/erpnext/accounts/doctype/pricing_rule/utils.py": {
+        "Free item not set in the pricing rule {0}": "L'article gratuit n'est pas défini dans la règle de tarification {0}",
         "If you {0} {1} quantities of the item <b>{2}</b>, the scheme <b>{3}</b>\n\t\t\twill be applied on the item.": "Si vous {0} {1} quantités de l'article <b>{2}</b>, le schéma <b>{3}</b>\n\t\t\t sera appliqué sur l'article.",
         "If you {0} {1} worth item <b>{2}</b>, the scheme <b>{3}</b> will be applied on the item.\n\t\t\t\t": "Si vous {0} {1} d'article <b>{2}</b>, le schéma <b>{3}</b>\n\t\t\t sera appliqué sur l'article.\n\t\t\t\t",
         "Invalid {0}": "Invalide {0}",
@@ -12123,10 +12233,13 @@
         "POS Profile is required to use Point-of-Sale": "Un profil PDV est requis pour utiliser le point de vente"
     },
     "apps/erpnext/erpnext/accounts/doctype/sales_invoice/regional/india.js": {
+        "Create": "Créer",
         "Make": "Action",
         "Please enable pop-ups": "Veuillez activer les popups"
     },
     "apps/erpnext/erpnext/accounts/doctype/sales_invoice/regional/india_list.js": {
+        "E-Way Bill JSON can only be generated from a submitted document": "Une facture E-Way JSON ne peut être générée que depuis un document validé",
+        "Generate E-Way Bill JSON": "Génére une facture E-Way JSON",
         "Generate e-Way Bill JSON": "Générer une facture e-way en JSON",
         "Please enable pop-ups": "Veuillez activer les popups",
         "e-Way Bill JSON can only be generated from a submitted document": "Les factures e-way en JSON ne peuvent être générées que depuis un document validé"
@@ -12207,6 +12320,7 @@
         "Row #{0} (Payment Table): Amount must be negative": "Row # {0} (Table de paiement): le montant doit être négatif",
         "Row #{0} (Payment Table): Amount must be positive": "Ligne #{0} (Table de paiement): Le montant doit être positif",
         "Row #{0}: Asset {1} cannot be submitted, it is already {2}": "Ligne #{0} : L’Actif {1} ne peut pas être soumis, il est déjà {2}",
+        "Row #{0}: Cost Center {1} does not belong to company {2}": "Ligne #{0}: Le centre de coûts {1} n'appartient pas à la société {2}",
         "Row {0}: {1} Serial numbers required for Item {2}. You have provided {3}.": "Ligne {0}: {1} Numéros de série requis pour l'article {2}. Vous en avez fourni {3}.",
         "Sales Order {0} is not submitted": "Commande Client {0} n'a pas été transmise",
         "Select change amount account": "Sélectionner le compte de change",
@@ -12251,6 +12365,7 @@
         "All missing SEPA payment entries have been generated": "Tous les paiement Sepa manquants ont été générés",
         "Automatically generate payment entries for all unpaid sales invoice with a due date between {0} and {1} for customers with a valid Sepa mandate ?": "Générer automatiquement les écritures de paiement pour toutes les factures impayées ayant une date d'échéance entre le {0} et le {1} pour les clients ayant un mandat sepa valide ?",
         "Generate SEPA Payments": "Générer les paiement Sepa",
+        "Please create <a href='/desk#List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}": "Veuillez créer des <a href='/desk#List/Sepa Direct Debit Settings/List'>paramètres Sepa Direct Debit</a> pour la société {0}",
         "Please select a direct debit type": "Veuillez sélectionner un type de prélèvement",
         "Your XML has been generated and added to the toolbar": "Votre XML a été généré et ajouté à la barre latérale"
     },
@@ -12541,7 +12656,7 @@
         "Accounting entries have already been made in currency {0} for company {1}. Please select a receivable or payable account with currency {0}.": "Des écritures comptables ont déjà été réalisées en devise {0} pour la société {1}. Veuillez sélectionner un compte de crédit ou de débit  en devise {0}.",
         "Billing currency must be equal to either default company's currency or party account currency": "La devise de facturation doit être égale à la devise de la société par défaut ou à la devise du compte du partenaire",
         "Due / Reference Date cannot be after {0}": "Date d’échéance / de référence ne peut pas être après le {0}",
-        "Due Date cannot be before Posting / Supplier Invoice Date": "La date d'échéance ne peut pas être avant la date de comptabilisation / date de la facture fournisseur",
+        "Due Date cannot be before Posting / Supplier Invoice Date": "La date d'échéance de paiement ne peut pas être avant la date de comptabilisation / date de la facture fournisseur",
         "Not permitted for {0}": "Non autorisé pour {0}",
         "Note: Due / Reference Date exceeds allowed customer credit days by {0} day(s)": "Remarque : Date de Référence / d’Échéance dépasse le nombre de jours de crédit client autorisé de {0} jour(s)",
         "Please select a Company": "Veuillez sélectionner une Société",
@@ -13547,9 +13662,11 @@
         "All the depreciations has been booked": "Toutes les dépréciations ont été comptabilisées",
         "Asset Movement record {0} created": "Registre de Mouvement de l'Actif {0} créé",
         "Asset cannot be cancelled, as it is already {0}": "L'actif ne peut être annulé, car il est déjà {0}",
+        "Asset has multiple Asset Movement Entries which has to be \\\n\t\t\t\tcancelled manually to cancel this asset.": "Cet actif est lié à plusieurs écritures de mouvement d'actif qui doivent être annulées manuellement avant de l'annuler.",
         "Atleast one asset has to be selected.": "Au moins un actif doit être sélectionné",
         "Available for use date is required": "La date de mise en service est nécessaire",
         "Available-for-use Date should be after purchase date": "La date de disponibilité devrait être postérieure à la date d'achat",
+        "Company of asset {0} and purchase document {1} doesn't matches.": "Les sociétés de l'actif {0} et du document d'achat {1} ne correspondent pas",
         "Depreciation Row {0}: Depreciation Start Date is entered as past date": "Ligne de d'amortissement {0}: La date de début de l'amortissement est dans le passé",
         "Depreciation Row {0}: Expected value after useful life must be greater than or equal to {1}": "Ligne d'amortissement {0}: la valeur attendue après la durée de vie utile doit être supérieure ou égale à {1}",
         "Depreciation Row {0}: Next Depreciation Date cannot be before Available-for-use Date": "Ligne d'amortissement {0}: La date d'amortissement suivante ne peut pas être antérieure à la date de mise en service",
@@ -13564,9 +13681,11 @@
         "Opening Accumulated Depreciation must be less than equal to {0}": "Amortissement Cumulé d'Ouverture doit être inférieur ou égal à {0}",
         "Please create purchase receipt or purchase invoice for the item {0}": "Veuillez créer un reçu d'achat ou une facture d'achat pour l'article {0}",
         "Please set Number of Depreciations Booked": "Veuillez définir le Nombre d’Amortissements Comptabilisés",
+        "Purchase Invoice cannot be made against an existing asset {0}": "La facture d'achat ne peut pas être émise pour l'actif existant {0}",
         "Row {0}: Depreciation Start Date is required": "Ligne {0}: la date de début de l'amortissement est obligatoire",
         "Row {0}: Expected Value After Useful Life must be less than Gross Purchase Amount": "Ligne {0}: la valeur attendue après la durée de vie utile doit être inférieure au montant brut de l'achat",
         "Set {0} in asset category {1} or company {2}": "Définissez {0} dans la catégorie d'actifs {1} ou la société {2}",
+        "Set {0} in company {1}": "Définir {0} dans la société {1}",
         "Update stock must be enable for the purchase invoice {0}": "La mise à jour du stock doit être activée pour la facture d'achat {0}",
         "Warning": "Attention"
     },
@@ -13616,15 +13735,28 @@
         "Pending": "En attente"
     },
     "apps/erpnext/erpnext/assets/doctype/asset_movement/asset_movement.py": {
+        "Asset {0} cannot be received at a location and \\\n\t\t\t\t\t\t\tgiven to employee in a single movement": "L'actif {0] ne peut pas être reçu dans un lieu et donné à un employé via un seul mouvement d'actif",
         "Asset {0} does not belong to company {1}": "L'actif {0} ne fait pas partie à la société {1}",
+        "Asset {0} does not belongs to the custodian {1}": "L'actif {0} n'appartient pas au responsable {1}",
+        "Asset {0} does not belongs to the location {1}": "L'actif {0} n'appartient pas au lieu {1}",
         "Either location or employee must be required": "La localisation ou l'employé sont requis",
+        "Employee is required while issuing Asset {0}": "Un employé est requis pour sortir l'actif {0}",
+        "Employee {0} does not belongs to the company {1}": "L'employé {0} n'appartient pas à la société {1}",
+        "From employee is required while receiving Asset {0} to a target location": "L'employé source est nécessaire pour recevoir l'actif {0} dans le lieu cible",
+        "Issuing cannot be done to a location. \\\n\t\t\t\t\t\tPlease enter employee who has issued Asset {0}": "Il n'est pas possible de sortir un actif vers un lieu. Veuillez sélectionner l'employé qui a sorti l'actif {0}.",
         "Number of serial nos and quantity must be the same": "Le nombre de numéros de série et la quantité doivent être les mêmes",
         "Serial no is required for the asset {0}": "Le numéro de série est requis pour l'actif {0}",
         "Serial nos {0} does not belongs to the location {1}": "Les numéros de série {0} n'appartiennent pas au lieu {1}",
+        "Source Location is required for the Asset {0}": "Le lieu source est nécessaire pour l'actif {0}",
         "Source Location is required for the asset {0}": "La localisation source est requis pour l'actif {0}",
         "Source and Target Location cannot be same": "Les localisations source et cible ne peuvent pas être identiques",
         "Target Location is required for the asset {0}": "La localisation cible est requise pour l'actif {0}",
-        "{0} asset cannot be transferred": "{0} actif ne peut pas être transféré"
+        "Target Location is required while receiving Asset {0} from an employee": "Le lieu cible est requis pour recevoir l'actif {0} d'un employé",
+        "Target Location is required while transferring Asset {0}": "Le lieu cible est requis pour transférer l'actif {0}",
+        "Target Location or To Employee is required while receiving Asset {0}": "Le lieu cible ou l'employé cible est requis pour recevoir l'actif {0}",
+        "Transferring cannot be done to an Employee. \\\n\t\t\t\t\t\tPlease enter location where Asset {0} has to be transferred": "Il n'est pas possible de transférer un actif à un employé. Veuillez sélectionner le lieu où l'actif {0} doit être transféré.",
+        "{0} asset cannot be transferred": "{0} actif ne peut pas être transféré",
+        "{0} will be cancelled automatically on asset cancellation as it was \\\n\t\t\t\t\tauto generated for Asset {1}": "{0} sera automatiquement annulé à l'annulation de l'actif car il a été généré automatiquement pour l'actif {1}"
     },
     "apps/erpnext/erpnext/assets/doctype/asset_repair/asset_repair.py": {
         "Please select Completion Date for Completed Repair": "Veuillez sélectionner la date d'achèvement pour la réparation terminée"
@@ -13635,6 +13767,7 @@
         "Pending": "En attente"
     },
     "apps/erpnext/erpnext/assets/doctype/asset_value_adjustment/asset_value_adjustment.py": {
+        "Asset Value Adjustment cannot be posted before Asset's purchase date <b>{0}</b>.": "L'ajustement de valeur de l'actif ne peut pas être posté avant la date d'achat de l'actif <b>{0}</b>.",
         "Cancel the journal entry {0} first": "Annuler d'abord l'Écriture de journal {0}"
     },
     "apps/erpnext/erpnext/assets/doctype/location/location_tree.js": {
@@ -13642,9 +13775,13 @@
         "New Location": "Nouveau lieu"
     },
     "apps/erpnext/erpnext/assets/report/fixed_asset_register/fixed_asset_register.js": {
+        "Asset Category": "Catégorie d'actif",
+        "Available For Use Date": "Date de mise en service",
         "Company": "Société",
         "Date": "Date",
         "Finance Book": "Livre comptable",
+        "Is Existing Asset": "Est Actif Existant",
+        "Purchase Date": "Date d'achat",
         "Status": "Statut"
     },
     "apps/erpnext/erpnext/assets/report/fixed_asset_register/fixed_asset_register.py": {
@@ -13656,8 +13793,10 @@
         "Cost Center": "Centre de coûts",
         "Current Value": "Valeur actuelle",
         "Department": "Département",
+        "Depreciated Amount": "Montant amorti",
         "Gross Purchase Amount": "Montant d'achat brut",
         "Location": "Lieu",
+        "Opening Accumulated Depreciation": "Amortissement Cumulé d'Ouverture",
         "Purchase Date": "Date d'achat",
         "Status": "Statut",
         "Vendor Name": "Nom du fournisseur"
@@ -14057,7 +14196,7 @@
         "To Bill": "À Facturer",
         "Tree of financial Cost Centers.": "Arbre des Centres de Coûts financiers.",
         "Tree of financial accounts.": "Arbre des comptes financiers.",
-        "Update Bank Transaction Dates": "Rapprochement bancaire manuel",
+        "Update Bank Transaction Dates": "Mettre à jour les dates de rapprochement bancaire",
         "Update bank payment dates with journals.": "Mettre à jour les dates de paiement bancaires avec les journaux.",
         "e.g. Bank, Cash, Credit Card": "e.g. Cash, Banque, Carte de crédit"
     },
@@ -14098,6 +14237,7 @@
         "Multi Currency": "Multi-devise",
         "Opening and Closing": "A-nouveaux et clôture",
         "Payment Request": "Demande de paiement",
+        "Payment Terms Templates": "Modèles de termes de paiement",
         "Payment Terms based on conditions": "Termes de paiement basées sur des conditions",
         "Profitability": "Profitabilité",
         "Reports": "Rapports",
@@ -14121,7 +14261,7 @@
         "Terms and Conditions Template": "Modèle des termes et Conditions",
         "Tree of financial Cost Centers.": "Arbre des centres de coûts financiers.",
         "Tree of financial accounts.": "Arbre des comptes financiers.",
-        "Update Bank Transaction Dates": "Rapprochement bancaire manuel",
+        "Update Bank Transaction Dates": "Mettre à jour les dates de rapprochement bancaire",
         "Update bank payment dates with journals.": "Mettre à jour les dates de paiement bancaires avec les journaux.",
         "e.g. Bank, Cash, Credit Card": "e.g. Cash, Banque, Carte de crédit"
     },
@@ -14136,6 +14276,7 @@
         "All Contacts.": "Tous les contacts.",
         "All Products or Services.": "Tous les produits ou services.",
         "All Supplier scorecards.": "Toutes les fiches d'évaluation fournisseurs.",
+        "Blanket order.": "Commande avec limites",
         "Bundle items at time of sale.": "Grouper les articles au moment de la vente.",
         "Default settings for buying transactions.": "Paramètres par défaut pour les transactions d'achat.",
         "Help": "Aide",
@@ -14346,6 +14487,7 @@
         "All Contacts.": "Tous les Contacts.",
         "All Products or Services.": "Tous les Produits ou Services.",
         "Blanket Orders from Customers.": "Commandes avec limite des clients",
+        "Brand": "Marque",
         "Bundle items at time of sale.": "Grouper les articles au moment de la vente.",
         "Confirmed orders from Customers.": "Commandes confirmées des clients.",
         "Customer Addresses And Contacts": "Adresses et Contacts des Clients",
@@ -14472,12 +14614,22 @@
         "Row #{0}: Asset {1} does not linked to Item {2}": "Ligne #{0} : L’Actif {1} n’est pas lié à l'Article {2}",
         "Row #{0}: Asset {1} is already {2}": "Ligne #{0} : L’Actif {1} est déjà {2}",
         "Row #{0}: Asset {1} must be submitted": "Ligne #{0} : L’Article {1} doit être soumis",
+        "Row #{0}: Cannot delete item {1} which has already been billed.": "Ligne #{0}: Impossible de supprimer l'article {1} déjà facturé.",
+        "Row #{0}: Cannot delete item {1} which has already been delivered": "Ligne #{0}: Impossible de supprimer l'article {1} déjà livré.",
+        "Row #{0}: Cannot delete item {1} which has already been received": "Ligne #{0}: Impossible de supprimer l'article {1} déjà reçu.",
+        "Row #{0}: Cannot delete item {1} which has work order assigned to it.": "Ligne #{0}: Impossible de supprimer l'article {1} lié à un ordre de travail.",
+        "Row #{0}: Cannot delete item {1} which is assigned to customer's purchase order.": "Ligne #{0}: Impossible de supprimer l'article {1} assigné à la commande fournisseur du client.",
         "Row #{0}: Cannot set Rate if amount is greater than billed amount for Item {1}.": "Ligne n ° {0}: impossible de définir le tarif si le montant est supérieur au montant facturé pour l'élément {1}.",
         "Row #{0}: Posting Date must be same as purchase date {1} of asset {2}": "Ligne #{0} : La Date de comptabilisation doit être la même que la date d'achat {1} de l’actif {2}",
         "Row #{0}: Purchase Invoice cannot be made against an existing asset {1}": "Ligne #{0} : La Facture d'Achat ne peut être faite pour un actif existant {1}",
         "Row #{0}: Qty must be 1, as item is a fixed asset. Please use separate row for multiple qty.": "Ligne #{0} : Qté doit égale à 1, car l’Article est un actif immobilisé. Veuillez utiliser une ligne distincte pour une qté multiple.",
-        "Row {0}: Due Date cannot be before posting date": "Ligne {0}: la date d'échéance ne peut pas être antérieure à la date d'envoi",
+        "Row #{0}: Service End Date cannot be before Invoice Posting Date": "Ligne #{0}: La date de fin du service ne peut pas être avant la date de comptabilisation",
+        "Row #{0}: Service Start Date cannot be greater than Service End Date": "Ligne #{0}: La date de début du service ne peut pas être plus grande que la date de fin du service",
+        "Row #{0}: Service Start and End Date is required for deferred accounting": "Ligne #{0}: La date de début et la date de fin sont nécessaires pour la comptabilisation différée",
+        "Row {0}: Due Date cannot be before posting date": "Ligne {0}: la date d'échéance de paiement ne peut pas être antérieure à la date de comptabilisation",
+        "Row {0}: user has not applied the rule {1} on the item {2}": "Ligne #{0}: L'utilisateur n'a pas appliqué la règle {1} sur l'article {2}",
         "Rows with duplicate due dates in other rows were found: {0}": "Des lignes avec des dates d'échéance en double dans les autres lignes ont été trouvées: {0}",
+        "The field 'is_paid' should not be used anymore. Please create payment entry linked to this document.": "Le champ 'est payé' ne doit plus être utilisé. Veuillez créer une écriture de paiement liée à ce document.",
         "To include tax in row {0} in Item rate, taxes in rows {1} must also be included": "Pour inclure la taxe de la ligne {0} dans le prix de l'Article, les taxes des lignes {1} doivent également être incluses",
         "Total Payment Amount in Payment Schedule must be equal to Grand / Rounded Total": "Le montant total du paiement dans l'échéancier doit être égal au Total Général / Total Arrondi",
         "Total advance ({0}) against Order {1} cannot be greater than the Grand Total ({2})": "Avance totale ({0}) pour la Commande {1} ne peut pas être supérieure au Total Général ({2})",
@@ -14491,6 +14643,8 @@
     "apps/erpnext/erpnext/controllers/buying_controller.py": {
         "Accepted + Rejected Qty must be equal to Received quantity for Item {0}": "La Qté Acceptée + Rejetée doit être égale à la quantité Reçue pour l'Article {0}",
         "Asset {0} created": "Actif {0} créé",
+        "Assets not created for <b>{0}</b>. You will have to create asset manually.": "Actifs non créés pour <b>{0}</b>. Vous devez créer les actifs manuellement.",
+        "Cannot cancel this document as it is linked with submitted asset {0}.\\\n\t\t\t\t\t\t\t\tPlease cancel the it to continue.": "Impossible d'annuler ce document car il est lié à l'actif validé {0}. Veuillez l'annuler pour continuer.",
         "Following item {0} is not marked as {1} item. You can enable them as {1} item from its Item master": "L'élément suivant {0} n'est pas marqué comme élément {1}. Vous pouvez les activer en tant qu'élément {1} à partir de sa fiche article.",
         "Following items {0} are not marked as {1} item. You can enable them as {1} item from its Item master": "Les éléments suivants {0} ne sont pas marqués comme {1} élément. Vous pouvez les activer en tant qu'élément {1} à partir de sa fiche article.",
         "From {0} | {1} {2}": "Du {0} | {1} {2}",
@@ -14505,10 +14659,12 @@
         "Row #{0}: {1} can not be negative for item {2}": "Ligne #{0} : {1} ne peut pas être négatif pour l’article {2}",
         "Row {0}: Conversion Factor is mandatory": "Ligne {0} : Le Facteur de Conversion est obligatoire",
         "Row {0}: Enter location for the asset item {1}": "Ligne {0}: entrez la localisation de l'actif {1}",
+        "Row {1}: Asset Naming Series is mandatory for the auto creation for item {0}": "Ligne {1}: Un nom de série est nécessaire pour la création automatique pour l'article {0}",
         "Serial no is mandatory for the item {0}": "Le numéro de série est obligatoire pour l'article {0}",
         "Specified BOM {0} does not exist for Item {1}": "La LDM {0} spécifiée n'existe pas pour l'Article {1}",
         "Supplier Warehouse mandatory for sub-contracted Purchase Receipt": "Entrepôt Fournisseur obligatoire pour les Reçus d'Achat sous-traités",
         "Tax Category has been changed to \"Total\" because all the Items are non-stock items": "La Catégorie de Taxe a été changée à \"Total\" car tous les articles sont des articles hors stock",
+        "{0} Asset{2} Created for <b>{1}</b>": "{0} actif {2} créé pour <b>{1}</b>",
         "{0} {1} is cancelled or closed": "{0} {1} est annulé ou fermé",
         "{0} {1} is {2}": "{0} {1} est {2}"
     },
@@ -14569,6 +14725,7 @@
         "Expense or Difference account is mandatory for Item {0} as it impacts overall stock value": "Compte de Charge et d'Écarts est obligatoire pour objet {0} car il impacte la valeur globale des actions",
         "Quality Inspection required for Item {0} to submit": "Inspection de qualité obligatoire pour pouvoir valider l'article {0}",
         "Quality Inspection: {0} is not submitted for the item: {1} in row {2}": "Inspection de qualité: {0} n'est pas validée pour l'article: {1} dans la ligne {2}",
+        "Row #{0}: Serial No {1} does not belong to Batch {2}": "Ligne #{0}: Le numéro de série {1} n'appartient pas au lot {2}",
         "Row {0}: Quality Inspection rejected for item {1}": "Ligne {0}: Inspection de qualité refusée pour l'article {1}",
         "Warehouse {0} is not linked to any account, please mention the account in  the warehouse record or set default inventory account in company {1}.": "L'Entrepôt {0} n'est lié à aucun compte, veuillez mentionner ce compte dans la fiche de l'Entrepôt ou définir un compte d'Entrepôt par défaut dans la Société {1}.",
         "{0} {1}: Cost Center is mandatory for Item {2}": "{0} {1}: Centre de coûts est obligatoire pour l’Article {2}"
@@ -14577,6 +14734,7 @@
         "Advance amount cannot be greater than {0} {1}": "Montant de l'avance ne peut être supérieur à {0} {1}",
         "Item": "Article",
         "Please select Apply Discount On": "Veuillez sélectionnez Appliquer Remise Sur",
+        "Row {0}: Invalid Item Tax Template for item {1}": "Ligne #{0}: Modèle de taxes d'article invalide pour l'article {1}",
         "Taxable Amount": "Montant Taxable"
     },
     "apps/erpnext/erpnext/controllers/trends.py": {
@@ -14597,6 +14755,10 @@
     },
     "apps/erpnext/erpnext/crm/doctype/appointment/appointment.py": {
         "Appointment Confirmation": "Confirmation de rendez-vous"
+    },
+    "apps/erpnext/erpnext/crm/doctype/appointment_booking_settings/appointment_booking_settings.py": {
+        "<b>From Time</b> cannot be later than <b>To Time</b> for {0}": "<b>La date de début</b> ne peut pas être après la <b>date de fin</b> pour {0}",
+        "The difference between from time and To Time must be a multiple of Appointment": "La différence entre la date de début et la date fin doit être un multiple de la durée standard d'un rendez-vous"
     },
     "apps/erpnext/erpnext/crm/doctype/contract/contract.py": {
         "End Date cannot be before Start Date.": "La date de fin ne peut pas être antérieure à la date de début."
@@ -14803,6 +14965,7 @@
         "GoCardless invoice submission error": "Erreur de validation d'une facture GoCardless",
         "GoCardless subscription {0} is not linked to a subscription in dokos": "L'abonnement GoCardless {0} n'est lié à aucun abonnement dans dokos",
         "GoCardless webhook action error": "Erreur de traitement d'un webhook GoCardless",
+        "No payment reference and metadata found in this webhook": "Aucune référence de paiement et métadata trouvé dans ce webhook",
         "Sales invoice {0} is already cancelled": "La facture de vente {0} est déjà annulée",
         "Several subscriptions are linked to GoCardless subscription {0}": "Plusieurs abonnements sont liés à l'abonnement GoCardless {0}",
         "The corresponding invoice could not be found": "Aucune facture correspondante n'a pu être trouvée"
@@ -14878,6 +15041,7 @@
         "Payment plan {0} is no longer active.": "Le plan de paiement {0} n'est plus actif",
         "Please select another payment method. Stripe does not support transactions in currency '{0}'": "Veuillez sélectionner une autre méthode de paiement. Stripe ne supporte pas les transaction en devise '{0}'",
         "Reference document doesn't have the 'get_subscription_plans_details' method to process subscriptions": "Le document de référence n'a pas la méthode 'get_subscription_plans_details' permettant de traiter les abonnement",
+        "Reference document is not linked to Stripe payment plans": "Le document de référence n'est pas lié à un plan de paiement Stripe",
         "Server Error": "Erreur de serveur",
         "Stripe charge creation error": "Erreur lors de la création d'une charge Stripe",
         "Stripe charge error": "Erreur liée à une charge Stripe",
@@ -14915,6 +15079,9 @@
         "The total amount in this document and in the sales invoice don't match": "Le montant total dans ce document et dans la facture de vente ne correspondent pas",
         "There is a mismatch between the reference in this document and the current invoice {1} linked to subscription {0}": "Il y a une différence entre la référence dans ce document et la facture de la période en cours ({1}) liée à l'abonnement {0}",
         "This type of event is not handled by dokos": "Ce type d'événement n'est pas géré par dokos"
+    },
+    "apps/erpnext/erpnext/erpnext_integrations/doctype/stripe_settings/webhooks_documents/charge.py": {
+        "No metadata found in this webhook": "Aucune métadata trouvée dans ce webhook"
     },
     "apps/erpnext/erpnext/erpnext_integrations/doctype/stripe_settings/webhooks_documents/invoice.py": {
         "Sales invoice {0} is already cancelled": "La facture de vente {0} est déjà annulée",
@@ -14974,6 +15141,7 @@
         "Subscription {0} has already invoice {1} for the current period": "L'abonnement {0} a déjà la facture {1} pour la période en cours",
         "Subscription {0} has already invoice {1} for the current period, but the invoice references don't match. Please check your subscription.": "L'abonnement {0} a déjà la facture {1} pour la période en cours, mais les références de facture ne correspondent pas. Veuillez vérifier votre abonnement.",
         "The corresponding invoice could not be found": "La facture correspondante n'a pas pu être trouvée",
+        "The reference doctype should be a Payment Request or a Subscription": "Le type de document de référence doit être une demande de paiement ou un abonnement",
         "This type of event is not handled by dokos": "Ce type d'événement n'est pas géré par dokos"
     },
     "apps/erpnext/erpnext/hooks.py": {
@@ -15028,7 +15196,11 @@
     "apps/erpnext/erpnext/hr/doctype/attendance/attendance_list.js": {
         "Attendance Marked": "Présence enregistrée",
         "For Employee": "Employé",
-        "Status": "Statut"
+        "For Month": "Pour le mois",
+        "Mark Attendance": "Marquer la présence",
+        "Mark attendance as <b>": "Marquer la présence comme <b>",
+        "Status": "Statut",
+        "Unmarked Attendance for days": "Présence non enregistrée les jours suivants"
     },
     "apps/erpnext/erpnext/hr/doctype/attendance_request/attendance_request.py": {
         "Attendance not submitted for {0} as it is a Holiday.": "Présence de {0} non soumise car il s'agit d'un jour férié.",
@@ -15081,6 +15253,7 @@
         "Please set a default Holiday List for Employee {0} or Company {1}": "Veuillez définir une Liste de Vacances par défaut pour l'Employé {0} ou la Société {1}",
         "Please setup Employee Naming System in Human Resource > HR Settings": "Veuillez définir un système de nommage des employés via Ressources Humaines > Paramètres RH",
         "Relieving Date must be greater than Date of Joining": "La Date de Relève doit être postérieure à la Date d’Embauche",
+        "Relieving Date must be greater than or equal to Date of Joining": "La date de départ de l'entreprise doit être supérieure ou égale à la date de démarrage dans l'entreprise.",
         "User {0} does not exist": "Utilisateur {0} n'existe pas",
         "User {0} is already assigned to Employee {1}": "Utilisateur {0} est déjà attribué à l'Employé {1}",
         "User {0} is disabled": "Utilisateur {0} est désactivé"
@@ -15109,6 +15282,7 @@
     },
     "apps/erpnext/erpnext/hr/doctype/employee_advance/employee_advance.py": {
         "Advance account currency should be same as company currency {0}": "La devise du compte d'avance doit être la même que la devise de la société {0}",
+        "Return amount cannot be greater unclaimed amount": "Le montant remboursé ne peut pas être supérieur au montant non réclamé.",
         "Row {0}# Paid Amount cannot be greater than requested advance amount": "La ligne {0} # Montant payé ne peut pas être supérieure au montant de l'avance demandée"
     },
     "apps/erpnext/erpnext/hr/doctype/employee_attendance_tool/employee_attendance_tool.js": {
@@ -15116,6 +15290,7 @@
         "Mark Absent": "Marquer Absent",
         "Mark Half Day": "Marquer Demi-Journée",
         "Mark Present": "Marquer Présent",
+        "Mark Work From Home": "Marquer comme travaillant de la maison",
         "Uncheck all": "Décocher tout"
     },
     "apps/erpnext/erpnext/hr/doctype/employee_benefit_application/employee_benefit_application.py": {
@@ -15327,6 +15502,7 @@
         "Leave of type {0} cannot be longer than {1}": "Les Congés de type {0} ne peuvent pas être plus long que {1}",
         "Note: There is not enough leave balance for Leave Type {0}": "Remarque : Le solde de congé est insuffisant pour le Type de congé {0}",
         "Only Leave Applications with status 'Approved' and 'Rejected' can be submitted": "Seules les Demandes de Congés avec le statut 'Appouvée' ou 'Rejetée' peuvent être soumises",
+        "Only users with the {0} role can create backdated leave applications": "Seuls les utilisateurs avec le rôle {0} peuvent créer des demandes de congés antidatées.",
         "Optional Holiday List not set for leave period {0}": "Une liste de vacances facultative n'est pas définie pour la période de congé {0}",
         "Please set default template for Leave Approval Notification in HR Settings.": "Veuillez définir un modèle par défaut pour les notifications d'autorisation de congés dans les paramètres RH.",
         "Please set default template for Leave Status Notification in HR Settings.": "Veuillez définir un modèle par défaut pour la notification de statut de congés dans les paramètres RH.",
@@ -15616,7 +15792,9 @@
         "Event Location": "Lieu de l'Événement",
         "Event Name": "Nom de l'Événement",
         "Start Time": "Date de début",
-        "Training Event": "Évènement de Formation"
+        "Timing": "Heure",
+        "Training Event": "Évènement de Formation",
+        "Training Event:": "Evénement de formation"
     },
     "apps/erpnext/erpnext/hr/page/team_updates/team_updates.js": {
         "Daily Work Summary Group": "Groupe de récapitulatif quotidien",
@@ -15881,6 +16059,7 @@
         "Browse BOM": "Parcourir la LDM",
         "Create": "Créer",
         "Duplicate": "Dupliquer",
+        "Enter Value": "Entrer une valeur",
         "Qty To Manufacture": "Quantité À Produire",
         "Quality Inspection": "Inspection de la Qualité",
         "Update Cost": "Mettre à jour le Coût",
@@ -15888,6 +16067,7 @@
         "You can not change rate if BOM mentioned agianst any item": "Vous ne pouvez pas modifier le taux si la LDM est mentionnée pour un article"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom.py": {
+        "A BOM with name {0} already exists for item {1}.\n\t\t\t\t\t<br> Did you rename the item? Please contact Administrator / Tech support\n\t\t\t\t": "Une nomenclature avec le nom {0} existe déjà pour l'article {1}. Avez vous renommé l'article ? Veuillez contacter votre administrateur / support technique.",
         "All BOMs": "Toutes les LDM",
         "BOM #{0}: Raw material cannot be same as main Item": "LDM # {0}: La matière première ne peut pas être identique à l'article principal",
         "BOM recursion: {0} cannot be parent or child of {1}": "Récursion de liste de matériaux: {0} ne peut pas être le parent ou l'enfant de {1}",
@@ -15901,6 +16081,8 @@
         "Currency of the price list {0} must be {1} or {2}": "La devise de la liste de prix {0} doit être {1} ou {2}",
         "Item {0} does not exist in the system or has expired": "L'article {0} n'existe pas dans le système ou a expiré",
         "Item: {0} does not exist in the system": "Article : {0} n'existe pas dans le système",
+        "Non stock items": "Articles non stockés",
+        "Operating Cost as per Work Order / BOM": "Coûts opérationnels de l'ordre de travail / BOM",
         "Operations cannot be left blank": "Les opérations ne peuvent pas être laissées vides",
         "Please select Price List": "Veuillez sélectionner une Liste de prix",
         "Please select a BOM": "Veuillez sélectionner une LDM",
@@ -15948,6 +16130,7 @@
         "Complete Job": "Job complet",
         "Completed Quantity": "Quantité produite",
         "Employee": "Employé",
+        "Enter Value": "Entrer une valeur",
         "Material Request": "Demande de matériel",
         "Material Transfer": "Transfert de matériel",
         "Pause": "Pause",
@@ -15959,6 +16142,7 @@
         "Row {0} : Operation is required against the raw material item {1}": "Ligne {0}: l'opération est requise pour l'article de matière première {1}",
         "Row {0}: From Time and To Time of {1} is overlapping with {2}": "Ligne {0} : Heure de Début et Heure de Fin de {1} sont en conflit avec {2}",
         "Row {0}: From time must be less than to time": "Ligne {0}: L'heure de début doit être inférieure à l'heure de fin",
+        "The total completed qty({0}) must be equal to qty to manufacture({1})": "La quantité terminée ({0}) doit être égale à la quantité à produire ({1})",
         "Time logs are required for job card {0}": "Des feuilles de temps sont nécessaires pour la carte de travail {0}",
         "Total completed qty can not be greater than for quantity": "La quantité complétée totale ne peut pas être supérieure à la quantité demandée",
         "Total completed qty must be greater than zero": "La quantité complétée totale doit être supérieure à zéro"
@@ -16000,6 +16184,7 @@
     "apps/erpnext/erpnext/manufacturing/doctype/production_plan/production_plan.py": {
         "As raw materials projected quantity is more than required quantity, there is no need to create material request.\n\t\t\tStill if you want to make material request, kindly enable <b>Ignore Existing Projected Quantity</b> checkbox": "La quantité de matières premières projetée étant supérieure à la quantité requise, il n'y pas besoin de créer une demande de matériel.\n\t\t\tCependant, si vous souhaitez faire une demande de matériel, veuillez activer la case <b>Ignorer les quantités projetées en cours</b>",
         "For row {0}: Enter Planned Qty": "A la ligne {0}: Entrez la quantité planifiée",
+        "Items are required to pull the raw materials which is associated with it.": "Des articles sont nécessaires pour récupérer les matières premières qui leur sont associées.",
         "No Work Orders created": "Aucun ordre de travail créé",
         "No material request created": "Aucune demande de matériel créée",
         "Please enter Material Requests in the above table": "Veuillez entrer les Demandes de Matériel dans le tableau ci-dessus",
@@ -16047,24 +16232,29 @@
         "Stop": "Stop",
         "Submit this Work Order for further processing.": "Valider cet ordre de travail pour continuer son traitement.",
         "Workstation": "Station de travail",
+        "{0} Operations: {1}": "Opérations {0}: {1}",
         "{0} items in progress": "{0} articles en cours",
         "{0} items produced": "{0} articles produits"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/work_order/work_order.py": {
         "Cannot cancel because submitted Stock Entry {0} exists": "Impossible d'annuler car l'Écriture de stock soumise {0} existe",
         "Cannot produce more Item {0} than Sales Order quantity {1}": "Impossible de produire plus d'Article {0} que la quantité {1} de la commande fournisseur",
+        "Capacity Planning Error, planned start time can not be same as end time": "Erreur de planification: L'heure de début ne peut pas être identique à l'heure de fin.",
         "Completed Qty can not be greater than 'Qty to Manufacture'": "Qté Terminée ne peut pas être supérieure à \"Quantité de Production\"",
         "Default BOM for {0} not found": "LDM par défaut {0} introuvable",
         "Default BOM not found for Item {0} and Project {1}": "La LDM par défaut n'a pas été trouvée pour l'Article {0} et le Projet {1}",
         "For Warehouse is required before Submit": "Pour l’Entrepôt est requis avant de Valider",
+        "For operation {0}: Quantity ({1}) can not be greater than pending quantity({2})": "Pour l'opération {0}: La quantité ({1}) ne peut pas être supérieure à la quantité en attente ({2})",
         "Job card {0} created": "Carte de travail {0} créée",
         "Not permitted": "Non autorisé",
         "Operation Time must be greater than 0 for Operation {0}": "Temps de l'Opération doit être supérieur à 0 pour l'Opération {0}",
+        "Quantity to Manufacture can not be zero for the operation {0}": "La quantité à produire ne peut pas être zéro pour l'opération {0}",
         "Quantity to Manufacture must be greater than 0.": "La quantité à produire doit être supérieur à 0.",
         "Row {0}: select the workstation against the operation {1}": "Ligne {0}: sélectionnez le poste de travail en fonction de l'opération {1}",
         "Sales Order {0} is not valid": "Commande Client {0} invalide",
         "Sales Order {0} is {1}": "Commande Client {0} est {1}",
         "Stopped Work Order cannot be cancelled, Unstop it first to cancel": "Un ordre de travail arrêté ne peut être annulé, Re-démarrez le pour pouvoir l'annuler",
+        "Unable to find the time slot in the next {0} days for the operation {1}.": "Impossible de trouver un créneau disponible dans les {0} prochains jours pour l'opération {1}.",
         "Work Order cannot be raised against a Item Template": "Un ordre de travail ne peut pas être créé pour un modèle d'article",
         "Work Order has been {0}": "L'ordre de travail a été {0}",
         "Work-in-Progress Warehouse is required before Submit": "L'entrepôt des Travaux en Cours est nécessaire avant de Valider",
@@ -16278,6 +16468,7 @@
         "'Actual Start Date' can not be greater than 'Actual End Date'": "\"Date de Début Réelle\" ne peut être postérieure à \"Date de Fin Réelle\"",
         "'Expected Start Date' can not be greater than 'Expected End Date'": "'Date de Début Prévue' ne peut pas être postérieure à 'Date de Fin Prévue'",
         "Cannot close task {0} as its dependant task {1} is not closed.": "La tâche {0} ne peut pas être fermée car elle dépend de la tâche {1} qui n'est pas fermée.",
+        "Cannot complete task {0} as its dependant task {1} are not completed / cancelled.": "Impossible de terminer la tâche {0} car la tâche dépendant {1} n'est pas terminée / annulée.",
         "Child Task exists for this Task. You can not delete this Task.": "Une tâche enfant existe pour cette tâche. Vous ne pouvez pas supprimer cette tâche.",
         "Circular Reference Error": "Erreur de Référence Circulaire",
         "Progress % for a task cannot be more than 100.": "% de Progression pour une tâche ne peut pas être supérieur à 100.",
@@ -16494,6 +16685,7 @@
         "Invalid Blanket Order for the selected Customer and Item": "Commande avec limites non valide pour le client et l'article sélectionnés",
         "It is needed to fetch Item Details.": "Nécessaire pour aller chercher les Détails de l'Article.",
         "Please enter Item Code to get batch no": "Veuillez entrer le Code d'Article pour obtenir n° de lot",
+        "Please enter Item Code to get item taxes": "Veuille entrer un code d'article pour obtenir les taxes de l'article",
         "Please set 'Apply Additional Discount On'": "Veuillez définir ‘Appliquer Réduction Supplémentaire Sur ‘",
         "Please set recurring after saving": "Veuillez définir la récurrence après avoir sauvegardé",
         "Please specify": "Veuillez définir",
@@ -16858,8 +17050,19 @@
         "Please enter GSTIN and state for the Company Address {0}": "Veuillez entrer un n° GSTIN et un état dans l'adresse de la société {0}",
         "Please set account heads in GST Settings for Compnay {0}": "Veuillez définir les comptes comptables à utiliser pour la société {0} dans les paramètres GST"
     },
+    "apps/erpnext/erpnext/regional/doctype/import_supplier_invoice/import_supplier_invoice.py": {
+        "Country Code in File does not match with country code set up in the system": "Le code pays dans le fichier ne correspond pas au code pays paramétré dans le système.",
+        "Please set default UOM in Stock Settings": "Veuillez définir une unité de mesure par défaut dans les paramètres des stocks",
+        "Processing XML Files": "Fichiers XML en cours d'analyse",
+        "There is some problem with the file url: {0}": "Il y a un problème avec le fichier: {0}",
+        "XML Files Processed": "Fichiers XML analysés"
+    },
     "apps/erpnext/erpnext/regional/india/utils.py": {
         "Distance cannot be greater than 4000 kms": "La distance ne peut pas être supérieure à 4000 kms",
+        "E-Way Bill JSON can only be generated from Sales Invoice": "Les facture JSON E-Way ne peuvent être générées que par une facture de vente",
+        "E-Way Bill JSON can only be generated from submitted document": "Les facture JSON E-Way ne peuvent être générées que par un document validé",
+        "E-Way Bill JSON cannot be generated for Sales Return as of now": "Les facture JSON E-Way ne peuvent pas être générées par une note de crédit pour le moment",
+        "E-Way Bill already exists for this document": "Une facture JSON E-Way existe pour ce document",
         "Either GST Transporter ID or Vehicle No is required if Mode of Transport is Road": "L'identifiant du transporteur GST ou le n° de véhicue est obligatoire si le mode de transport est la route",
         "GST HSN Code does not exist for one or more items": "Le code GST HSN n'existe pas pour un ou plusieurs articles",
         "HSN/SAC": "HSN / SAC",
@@ -16878,13 +17081,16 @@
         "Salary Structure must be submitted before submission of Tax Ememption Declaration": "La structure salariale doit être validée avant la validation de la déclaration d'exemption de taxes",
         "Taxable Amount": "Montant Taxable",
         "Transport Receipt No and Date are mandatory for your chosen Mode of Transport": "Un n° de reçu de transport et une date sont obligatoires pour le mode de transport sélectionné",
+        "Unsupported GST Category for E-Way Bill JSON generation": "Catégorie GST non supportée pour la génération de facture JSON E-Way",
         "Unsupported GST Category for e-Way Bill JSON generation": "Catégorie GST non supportée pour la génération de la facture e-Way JSON",
         "Vehicle Type is required if Mode of Transport is Road": "Le type de véhicule est obligatoire si le mode de transport est la route",
+        "You must be a registered supplier to generate E-Way Bill": "Vous devez être un fournisseur enregistré pour générer une facture E-Way",
         "You must be a registered supplier to generate e-Way Bill": "Vous devez être un fournisseur enregistré pour générer une facture e-Way",
         "e-Way Bill JSON can only be generated from Sales Invoice": "Une facture e-Way JSON ne peut être générée que depuis une facture de vente",
         "e-Way Bill JSON can only be generated from submitted document": "Une facture e-Way JSON ne peut être générée que depuis un document validé",
         "e-Way Bill JSON cannot be generated for Sales Return as of now": "Une facture e-Way JSON ne peut pas encore être générée depuis un avoir",
         "e-Way Bill already exists for this document": "Une facture e-Way JSON existe déjà pour ce document",
+        "{} is required to generate E-Way Bill JSON": "{} est requis pour générer une facture JSON E-Way",
         "{} is required to generate e-Way Bill JSON": "{} est requis pour générer une facture e-Way JSON"
     },
     "apps/erpnext/erpnext/regional/italy/sales_invoice.js": {
@@ -17050,7 +17256,8 @@
         "Following accounts might be selected in GST Settings:": "Les comptes suivants peuvent être sélectionnés dans les paramètres GST:",
         "Please set B2C Limit in GST Settings.": "Veuillez définir la limite B2C dans les paramètres GST.",
         "Please set GST Accounts in GST Settings": "Veuillez définir les comptes GST dans les paramètres de la GST",
-        "Please set valid GSTIN No. in Company Address": "Veuillez définir un N° GSTIN valide dans l'adresse de la société"
+        "Please set valid GSTIN No. in Company Address": "Veuillez définir un N° GSTIN valide dans l'adresse de la société",
+        "Please set valid GSTIN No. in Company Address for company {0}": "Veuillez définir un N° GSTIN valide dans l'adresse de la société pour la société {0}"
     },
     "apps/erpnext/erpnext/regional/report/gstr_2/gstr_2.js": {
         "Company": "Société",
@@ -17108,7 +17315,8 @@
         "New credit limit is less than current outstanding amount for the customer. Credit limit has to be atleast {0}": "Nouvelle limite de crédit est inférieure à l'encours actuel pour le client. Limite de crédit doit être au moins de {0}",
         "Please contact to the user who have Sales Master Manager {0} role": "Veuillez contactez l'utilisateur qui a le rôle de Directeur des Ventes {0}",
         "Please mention the Lead Name in Lead {0}": "Veuillez mentionner le nom du Prospect dans le Prospect {0}",
-        "Total contribution percentage should be equal to 100": "Le pourcentage total de contribution doit être égal à 100"
+        "Total contribution percentage should be equal to 100": "Le pourcentage total de contribution doit être égal à 100",
+        "{0} is not a company bank account": "{0} n'est pas un compte bancaire de la société"
     },
     "apps/erpnext/erpnext/selling/doctype/customer/customer_dashboard.py": {
         "Orders": "Commandes",
@@ -17672,6 +17880,17 @@
         "Target On": "Cible Sur",
         "Yearly": "Annuel"
     },
+    "apps/erpnext/erpnext/selling/report/territory_wise_sales/territory_wise_sales.js": {
+        "Company": "Société",
+        "Transaction Date": "Date de la transaction"
+    },
+    "apps/erpnext/erpnext/selling/report/territory_wise_sales/territory_wise_sales.py": {
+        "Billing Amount": "Montant de Facturation",
+        "Opportunity Amount": "Montant de l'opportunité",
+        "Order Amount": "Montant de la commande",
+        "Quotation Amount": "Montant du devis",
+        "Territory": "Région"
+    },
     "apps/erpnext/erpnext/selling/sales_common.js": {
         "Actual type tax cannot be included in Item rate in row {0}": "Le type de taxe réel ne peut pas être inclus dans le prix de l'Article à la ligne {0}",
         "An error occurred during the update process": "Une erreur s'est produite lors du processus de mise à jour",
@@ -17752,6 +17971,7 @@
         "Finished Goods": "Produits Finis",
         "Gain/Loss on Asset Disposal": "Gain/Perte sur Cessions des Immobilisations",
         "Main": "Principal",
+        "Parent Company must be a group company": "La société parente doit être une société groupe",
         "Payroll Payable": "Paie à Payer",
         "Please select Existing Company for creating Chart of Accounts": "Veuillez sélectionner une Société Existante pour créer un Plan de Compte",
         "Sales": "Ventes",
@@ -18437,8 +18657,10 @@
         "Please enter Receipt Document": "Veuillez entrer le Document de Réception",
         "Receipt document must be submitted": "Le reçu doit être soumis",
         "Row {0}: Cost center is required for an item {1}": "Ligne {0}: le Centre de coûts est requis pour un article {1}",
+        "There are not enough asset created or linked to {0}. \\\n\t\t\t\t\t\tPlease create or link {1} Assets with respective document.": "Il n'y a pas assez d'actifs créés ou liés à {0}. Veuillez créer ou lier {1} actifs avec leurs documents respectifs.",
         "Total Applicable Charges in Purchase Receipt Items table must be same as Total Taxes and Charges": "Total des Frais Applicables dans la Table des Articles de Reçus d’Achat doit être égal au Total des taxes et frais",
-        "Total {0} for all items is zero, may be you should change 'Distribute Charges Based On'": "Le Total {0} pour tous les articles est nul, peut-être devriez-vous modifier ‘Distribuez les Frais sur la Base de’"
+        "Total {0} for all items is zero, may be you should change 'Distribute Charges Based On'": "Le Total {0} pour tous les articles est nul, peut-être devriez-vous modifier ‘Distribuez les Frais sur la Base de’",
+        "{2} <b>{0}</b> has submitted Assets.\\\n\t\t\t\t\t\t\t\tRemove Item <b>{1}</b> from table to continue.": "{2} <b>{0}</b> a soumis des actifs. Supprimer l'article <b>{1}</b> du tableau pour continuer."
     },
     "apps/erpnext/erpnext/stock/doctype/material_request/material_request.js": {
         "Actual type tax cannot be included in Item rate in row {0}": "Le type de taxe réel ne peut pas être inclus dans le prix de l'Article à la ligne {0}",
@@ -18454,7 +18676,9 @@
         "Cannot select charge type as 'On Previous Row Amount' or 'On Previous Row Total' for first row": "Impossible de sélectionner le type de charge comme étant «Le Montant de la Ligne Précédente» ou «Montant Total de la Ligne Précédente» pour la première ligne",
         "Company field is required": "Le champs Société est obligatoire",
         "Create": "Créer",
+        "Enter Supplier": "Entrer un fournisseur",
         "Fetch exploded BOM (including sub-assemblies)": "Récupérer la LDM éclatée (y compris les sous-ensembles)",
+        "For Default Supplier (Optional)": "Pour le fournisseur par défaut (optionnel)",
         "For Default Supplier (optional)": "Pour le fournisseur par défaut (facultatif)",
         "For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included": "Pour la ligne {0} dans {1}. Pour inclure {2} dans le prix de l'Article, les lignes {3} doivent également être incluses",
         "Get Items": "Obtenir les articles",
@@ -18476,6 +18700,7 @@
         "Request for Quotation": "Appel d'offre",
         "Row #{0}: {1} can not be negative for item {2}": "Ligne #{0} : {1} ne peut pas être négatif pour l’article {2}",
         "Sales Order": "Commande client",
+        "Select a Supplier from the Default Supplier List of the items below.": "Sélectionnez un fournisseur dans la liste des fournisseurs par défaut pour les articles ci-dessous.",
         "Stop": "Stop",
         "Supplier Quotation": "Devis Fournisseur",
         "Transfer Material": "Transfert de matériel",
@@ -18655,6 +18880,7 @@
         "Serial no {0} has been already returned": "Le numéro de série {0} a déjà été renvoyé",
         "Sorry, Serial Nos cannot be merged": "Désolé, les N° de série ne peut pas être fusionnés",
         "The following serial numbers were created: <br> {0}": "Les numéros de séries suivants ont été créés: <br> {0}",
+        "The following serial numbers were created: <br><br> {0}": "Les numéros de série suivants on été créés: <br><br> {0}",
         "Warehouse cannot be changed for Serial No.": "L'entrepôt ne peut être modifié pour le N° de série",
         "{0} Created": "{0} créé",
         "{0} Serial Numbers required for Item {1}. You have provided {2}.": "{0} Numéros de Série requis pour objet {1}. Vous en avez fourni {2}."
@@ -18707,6 +18933,7 @@
         "For Quantity (Manufactured Qty) is mandatory": "Pour Quantité (Qté Produite) est obligatoire",
         "For job card {0}, you can only make the 'Material Transfer for Manufacture' type stock entry": "Pour la carte de travail {0}, vous ne pouvez faire qu'une écriture de stock de type 'Transfert de matériel pour la production'.",
         "For quantity {0} should not be grater than work order quantity {1}": "La quantité {0} ne doit pas être supérieure à la quantité de l'ordre de travail {1}",
+        "For quantity {0} should not be greater than work order quantity {1}": "La quantité {0} ne doit pas être supérieure à la quantité de l'ordre de travail {1}",
         "Goods are already received against the outward entry {0}": "Biens déjà reçus pour l'écriture sortante {0}",
         "Insufficient Stock": "Stock Insuffisant",
         "Item or Warehouse for row {0} does not match Material Request": "L'Article ou l'Entrepôt pour la ligne {0} ne correspond pas avec la Requête de Matériel",
@@ -18736,6 +18963,7 @@
         "Transaction not allowed against stopped Work Order {0}": "La transaction n'est pas autorisée pour l'ordre de travail arrêté {0}",
         "UOM coversion factor required for UOM: {0} in Item: {1}": "Facteur de coversion Unité de mesure requis pour l'Unité de mesure : {0} dans l'Article : {1}",
         "Work Order {0} must be submitted": "L'ordre de travail {0} doit être soumis",
+        "Work Order {0}: Job Card not found for the operation {1}": "Ordre de travail {0}: Carte de travail introuvable pour l'opération {1}",
         "Work Order {0}: Job card not found for the operation {1}": "Order de travail {0}: Carte de travail introuvable pour l'opération {1}",
         "Work Order {0}: job card not found for the operation {1}": "Ordre de travail {0}: Carte de travail introuvable pour l'opération {1}",
         "{0} is not a stock Item": "{0} n'est pas un Article de stock"
@@ -18799,6 +19027,7 @@
         "Both Warehouse must belong to same Company": "Les deux Entrepôt doivent appartenir à la même Société",
         "Child warehouse exists for this warehouse. You can not delete this warehouse.": "Un entrepôt enfant existe pour cet entrepôt. Vous ne pouvez pas supprimer cet entrepôt.",
         "Warehouse can not be deleted as stock ledger entry exists for this warehouse.": "L'entrepôt ne peut pas être supprimé car une écriture existe dans le Livre d'Inventaire pour cet entrepôt.",
+        "Warehouse not found against the account {0}": "Entrepôt non trouvé pour le compte {0}",
         "Warehouse {0} can not be deleted as quantity exists for Item {1}": "L'entrepôt {0} ne peut pas être supprimé car il existe une quantité pour l'Article {1}",
         "Warehouse {0} does not exist": "L'entrepôt {0} n'existe pas",
         "Warehouses with child nodes cannot be converted to ledger": "Les entrepôts avec nœuds enfants ne peuvent pas être convertis en livre",
@@ -19058,8 +19287,12 @@
         "Company": "Société"
     },
     "apps/erpnext/erpnext/stock/report/stock_and_account_value_comparison/stock_and_account_value_comparison.py": {
+        "Account Value": "Valeur du compte",
+        "Difference Value": "Différence de valeur",
+        "Perpetual inventory required for the company {0} to view this report.": "L'inventaire permanent est nécessaire pour la société {0} pour voir ce rapport.",
         "Posting Date": "Date de comptabilisation",
         "Posting Time": "Heure de comptabilisation",
+        "Stock Ledger ID": "ID du livre d'inventaire",
         "Stock Value": "Valeur du Stock",
         "Voucher No": "N° de référence",
         "Voucher Type": "Type de Référence"
@@ -19308,7 +19541,11 @@
         "Date": "Date"
     },
     "apps/erpnext/erpnext/templates/emails/confirm_appointment.html": {
-        "Dear": "Cher·e"
+        "A new appointment has been created for you with {0}": "Un nouveau rendez-vous a été créé pour vous avec {1}",
+        "Click on the link below to verify your email and confirm the appointment": "Cliquez sur le lien ci-dessous pour vérifier votre email et confirmer votre rendez-vous",
+        "Dear": "Cher·e",
+        "Verify Email": "Vérification de l'email",
+        "You can also copy-paste this link in your browser": "Vous pouvez aussi copier-coller ce lien dans votre navigateur"
     },
     "apps/erpnext/erpnext/templates/emails/reorder_item.html": {
         "Following Material Requests have been raised automatically based on Item's re-order level": "Les Demandes de Matériel suivantes ont été créées automatiquement sur la base du niveau de réapprovisionnement de l’Article",
@@ -19845,6 +20082,9 @@
     "apps/erpnext/erpnext/www/book_appointment/index.html": {
         "Book Appointment": "Prendre un rendez-vous"
     },
+    "apps/erpnext/erpnext/www/book_appointment/verify/index.html": {
+        "Verify Email": "Vérification de l'email"
+    },
     "apps/erpnext/erpnext/www/me.html": {
         "Add a new card": "Ajouter une nouvelle carte",
         "Add this card": "Ajouter cette carte",
@@ -19900,6 +20140,7 @@
         "Search for a specific bank transaction": "Chercher une transaction en particulier",
         "Search for a specific document": "Chercher un document en particulier",
         "Show the full list": "Voir la liste complète",
+        "Stripe transactions reconciliation in progress": "Rapprochement Stripe en cours",
         "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
         "Unreconciled": "Non rapproché",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document.",
@@ -19911,19 +20152,40 @@
     },
     "sites/assets/js/bank-transaction-importer.min.js": {
         "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
+        "Attach a web link": "Attacher un lien web",
         "Bank transactions creation in progress. Please wait...": "Création des transactions bancaire en cours. Veuillez patienter...",
+        "Click on a file to select it.": "Cliquer sur un fichier pour le sélectionner",
+        "Click on the lock icon to toggle public/private": "Cliquer sur l'icône cadenas pour changer public/privé",
+        "Drag and drop files, ": "Glisser/déposer des fichiers",
+        "Drop files here": "Déposez des fichiers ici",
         "Home": "Accueil",
+        "Invalid URL": "URL invalide",
+        "Make all attachments private": "Rendre toutes les pièces jointes privées",
         "New Transactions": "Créer des transactions",
         "Not permitted": "Non autorisé",
+        "Please <a href=\\": "Veuillez <a href=\\",
         "Please check the error log for details about the import errors": "Veuillez vérifier le journal des erreurs pour plus de détails sur les erreurs lors de l'import",
         "Rows per page": "Lignes par page",
+        "Search by filename or extension": "Chercher par nom de fichier ou extension",
         "Submit": "Valider",
         "Synchronize": "Synchroniser",
         "Synchronize an account": "Synchroniser un compte",
+        "Toggle Public/Private": "Changer public/privé",
         "Upload New Bank Transactions": "Télécharger de nouvelles transactions bancaires",
+        "Upload failed": "Le téléchargement a échoué",
+        "Upload file": "Télécharger un fichier",
+        "Upload {0} files": "Télécharger {0} fichiers",
+        "Uploaded successfully": "Téléchargement réussi",
+        "Uploading {0} of {1}": "Téléchargement de {0} sur {1}",
+        "Web Link": "Lien web",
+        "browse,": "naviguer",
+        "choose an": "choisir un",
         "next": "suiv.",
         "of": "de",
+        "or attach a": "ou attacher un",
         "prev": "préc.",
+        "uploaded file": "fichier téléchargé",
+        "web link": "lien web",
         "← Back to upload files": "← Retour au téléchargement de fichiers"
     },
     "sites/assets/js/booking-dialog.min.js": {
@@ -19997,6 +20259,7 @@
         "Pay": "Payer",
         "Phone": "Téléphone",
         "Please enter Item Code to get batch no": "Veuillez entrer le Code d'Article pour obtenir n° de lot",
+        "Please enter Item Code to get item taxes": "Veuille entrer un code d'article pour obtenir les taxes de l'article",
         "Please enter {0} first": "Veuillez d’abord entrer {0}",
         "Please select Apply Discount On": "Veuillez sélectionnez Appliquer Remise Sur",
         "Please select {0}": "Veuillez sélectionner {0}",

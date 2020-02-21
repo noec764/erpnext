@@ -120,10 +120,15 @@ frappe.ui.form.on("Leave Application", {
 	},
 
 	half_day_date_setup(frm) {
-		if (frm.doc.from_date == frm.doc.to_date) {
-			frm.set_value("half_day_date", frm.doc.from_date);
+		if (frm.doc.half_day) {
+			if (frm.doc.from_date == frm.doc.to_date) {
+				frm.set_value("half_day_date", frm.doc.from_date);
+			}
+			else {
+				frm.trigger("half_day_datepicker");
+			}
 		} else {
-			frm.trigger("half_day_datepicker");
+			frm.set_value("half_day_date", "");
 		}
 	},
 

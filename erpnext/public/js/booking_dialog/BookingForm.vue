@@ -199,8 +199,8 @@ export default {
 		},
 		bookNewSlot(event) {
 			frappe.call("erpnext.stock.doctype.item_booking.item_booking.book_new_slot", {
-				start: moment(event.event.start).format("YYYY-MM-DD H:mm:SS"),
-				end: moment(event.event.end).format("YYYY-MM-DD H:mm:SS"),
+				start: moment.utc(event.event.start).format("YYYY-MM-DD H:mm:SS"),
+				end: moment.utc(event.event.end).format("YYYY-MM-DD H:mm:SS"),
 				item: this.item,
 				uom: this.uom
 			}).then(r => {

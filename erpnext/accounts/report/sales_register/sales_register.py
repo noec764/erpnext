@@ -175,7 +175,7 @@ def get_columns(invoice_list, additional_table_columns):
 			'label': _("Project"),
 			'fieldname': 'project',
 			'fieldtype': 'Link',
-			'options': 'project',
+			'options': 'Project',
 			'width': 80
 		},
 		{

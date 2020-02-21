@@ -5,7 +5,7 @@ frappe.ui.form.on('Subscription', {
 	setup: function(frm) {
 		frm.trigger('setup_listeners');
 
-		frm.set_indicator_formatter('plan', function(doc) {
+		frm.set_indicator_formatter('item', function(doc) {
 			return (doc.status == "Active") ? "green" : "darkgrey";
 		});
 
@@ -28,6 +28,14 @@ frappe.ui.form.on('Subscription', {
 				});
 			}
 		}
+
+		frm.set_query('uom', 'plans', function(doc, cdt, cdn) {
+			const row = locals[cdt][cdn];
+			return {
+				query:"erpnext.accounts.doctype.pricing_rule.pricing_rule.get_item_uoms",
+				filters: {value: row.item, apply_on: 'Item Code'}
+			}
+		});
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
@@ -177,23 +185,27 @@ frappe.ui.form.on('Subscription', {
 				"name": frm.doc.name
 			}
 		}).then(r => {
-			console.log(r)
 			const doclist = frappe.model.sync(r.message);
 			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 		});
+	},
+	subscription_plan(frm) {
+		if (frm.doc.subscription_plan) {
+			frappe.model.with_doc("Subscription Plan", frm.doc.subscription_plan, function() {
+				const plan = frappe.get_doc("Subscription Plan", frm.doc.subscription_plan);
+				frm.doc.plans.push.apply(frm.doc.plans, plan.subscription_plans_template);
+				frm.refresh_field("plans");
+			})
+		}
 	}
 });
 
 frappe.ui.form.on('Subscription Plan Detail', {
-	plan: function(frm, cdt, cdn) {
+	item: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn]
-		frappe.db.get_value("Subscription Plan", row.plan, "item", r => {
-			if (r&&r.item) {
-				frappe.db.get_value("Item", r.item, "description", r => {
-					if (r&&r.description) {
-						frappe.model.set_value(cdt, cdn, "description", r.description);
-					}
-				})
+		frappe.db.get_value("Item", row.item, "description", r => {
+			if (r&&r.description) {
+				frappe.model.set_value(cdt, cdn, "description", r.description);
 			}
 		})
 	}

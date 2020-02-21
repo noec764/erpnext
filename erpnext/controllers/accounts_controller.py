@@ -873,7 +873,9 @@ class AccountsController(TransactionBase):
 	def cancel_linked_subscription_events(self):
 		events = frappe.get_all("Subscription Event", filters={"document_type": self.doctype, "document_name": self.name})
 		for event in events:
-			frappe.get_doc("Subscription Event", event.name).cancel()
+			e = frappe.get_doc("Subscription Event", event.name)
+			e.flags.ignore_permissions = True
+			e.cancel()
 
 @frappe.whitelist()
 def get_tax_rate(account_head):
@@ -1144,6 +1146,7 @@ def set_sales_order_defaults(parent_doctype, parent_doctype_name, child_docname,
 	child_item.reqd_by_date = p_doctype.delivery_date
 	child_item.uom = item.stock_uom
 	child_item.conversion_factor = get_conversion_factor(item_code, item.stock_uom).get("conversion_factor") or 1.0
+	child_item.warehouse = p_doctype.set_warehouse or p_doctype.items[0].warehouse
 	return child_item
 
 

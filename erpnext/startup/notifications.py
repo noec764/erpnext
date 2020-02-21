@@ -56,7 +56,7 @@ def get_notification_config():
 			"BOM": {"docstatus": 0},
 			"Timesheet": {"status": "Draft"},
 			"Sepa Direct Debit": {"docstatus": 0},
-			"Bank Transaction": {"unallocated_amount": ["!=", 0]}
+			"Bank Transaction": {"unallocated_amount": ["!=", 0], "docstatus": 1}
 		},
 
 		"targets": {

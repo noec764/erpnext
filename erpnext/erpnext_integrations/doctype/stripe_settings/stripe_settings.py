@@ -76,11 +76,8 @@ class StripeSettings(PaymentGatewayController):
 				frappe.throw(_("Payment plan {0} is in currency {1}, not {2}.")\
 					.format(plan, stripe_plan.currency.upper(), currency))
 			return stripe_plan
-		except frappe.ValidationError:
-			return
-		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("Stripe plan verification error"))
-			frappe.throw(_("An error occured while trying to fetch your payment plan on Stripe.<br>Please check your error logs."))
+		except stripe.error.InvalidRequestError as e:
+			frappe.throw(_("Invalid Stripe plan or currency: {0} - {1}").format(plan, currency))
 
 	def get_payment_url(self, **kwargs):
 		return get_url("./integrations/stripe_checkout?{0}".format(urlencode(kwargs)))

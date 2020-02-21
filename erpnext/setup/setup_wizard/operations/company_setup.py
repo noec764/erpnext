@@ -65,6 +65,31 @@ def create_bank_account(args):
 				# bank account same as a CoA entry
 				pass
 
+def create_bank_and_bank_account(bank_account_name, account):
+	bank = frappe.get_doc({
+		"doctype": "Bank",
+		"bank_name": bank_account_name
+	})
+
+	try:
+		bank.insert()
+	except frappe.DuplicateEntryError:
+		pass
+
+	bank_account = frappe.get_doc({
+		"doctype": "Bank Account",
+		"account_name": bank_account_name,
+		"bank": bank.name,
+		"account": account,
+		"is_default": 1,
+		"is_company_account": 1
+	})
+
+	try:
+		bank_account.insert()
+	except frappe.DuplicateEntryError:
+		pass
+
 def create_email_digest():
 	from frappe.utils.user import get_system_managers
 	system_managers = get_system_managers(only_name=True)

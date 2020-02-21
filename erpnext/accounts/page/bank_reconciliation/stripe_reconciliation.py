@@ -109,8 +109,9 @@ class StripeReconciliation:
 					reference_field = self.get_reference_field(doctype)
 					documents = [dict(x, **{"doctype": doctype}) for x in frappe.get_all(doctype, \
 						filters={"unreconciled_amount": ("!=", 0), "docstatus": 1}, \
-						or_filters={reference_field: ("like", transaction.get("charge", {}).get("id")), \
-						reference_field: ("like", transaction.get("charge", {}).get("invoice"))},
+						or_filters=[{reference_field: ("like", transaction.get("charge", {}).get("id"))}, \
+						{reference_field: ("like", transaction.get("charge", {}).get("invoice"))}, \
+						{reference_field: ("like", transaction.get("charge", {}).get("payment_intent"))}],
 						fields=["*"])]
 					self.documents.extend(documents)
 
