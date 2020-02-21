@@ -562,8 +562,7 @@ class Subscription(Document):
 				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Order", "reference_name": doc}):
 					return False
 
-		else:
-			return True
+		return True
 
 	def add_subscription_event(self, event_type, **kwargs):
 		if self.name:
@@ -776,11 +775,6 @@ def check_gateway_payments():
 			})
 			pr.ignore_permissions = True
 			pr.insert()
-
-			self.add_subscription_event("Payment request created", **{
-				"document_type": "Payment Request",
-				"document_name": pr.name
-			})
 
 			if pr.payment_gateways and float(pr.grand_total) > 0:
 				pr.submit()

@@ -95,6 +95,8 @@ class PaymentRequest(Document):
 
 	def on_submit(self):
 		self.db_set('status', 'Initiated')
+		if self.is_linked_to_a_subscription():
+			self.create_subscription_event()
 
 		send_mail = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
@@ -393,6 +395,14 @@ class PaymentRequest(Document):
 		except Exception as e:
 			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
 			frappe.throw(e, _("Payment gateways validation error"))
+
+	def create_subscription_event(self):
+		subscription = frappe.get_doc("Subscription", self.is_linked_to_a_subscription())
+		subscription.add_subscription_event("Payment request created", **{
+			"document_type": "Payment Request",
+			"document_name": self.name
+		})
+
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
