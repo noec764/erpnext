@@ -552,6 +552,16 @@ class Subscription(Document):
 			}
 		):
 			return False
+
+		elif self.get_current_documents("Sales Invoice") or self.get_current_documents("Sales Order"):
+			for doc in self.get_current_documents("Sales Invoice"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Invoice", "reference_name": doc}):
+					return False
+
+			for doc in self.get_current_documents("Sales Order"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Order", "reference_name": doc}):
+					return False
+
 		else:
 			return True
 

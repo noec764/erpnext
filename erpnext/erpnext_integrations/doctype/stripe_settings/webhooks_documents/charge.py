@@ -71,6 +71,8 @@ class StripeChargeWebhookHandler(WebhooksController):
 			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
+			self.payment_entry.mode_of_payment = gateway_defaults.get("mode_of_payment")
+
 			if self.exchange_rate:
 				self.payment_entry.update({
 					"target_exchange_rate": self.exchange_rate,
