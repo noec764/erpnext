@@ -74,8 +74,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 			output = ""
 			for p in payout_items:
 				output += str(p.__dict__)
-			output_as_json = frappe.parse_json(output)
-			self.integration_request.db_set("output", json.dumps(output_as_json, indent=4))
+			self.integration_request.db_set("output", output)
 
 			self.base_amount = self.gocardless_settings.get_base_amount(payout_items, self.gocardless_payment)
 			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items, self.gocardless_payment)
