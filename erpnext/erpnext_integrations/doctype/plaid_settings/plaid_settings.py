@@ -10,6 +10,7 @@ from frappe.model.document import Document
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
 from erpnext.erpnext_integrations.doctype.plaid_settings.plaid_connector import PlaidConnector
 from frappe.utils import getdate, formatdate, today, add_months, cint
+from frappe.desk.doctype.tag.tag import add_tag
 
 class PlaidSettings(Document):
 	pass
@@ -130,9 +131,8 @@ def sync_transactions(bank, bank_account):
 	try:
 		transactions = get_transactions(bank=bank, bank_account=bank_account, start_date=start_date, end_date=end_date)
 		result = []
-		if transactions:
-			for transaction in transactions:
-				result.append(new_bank_transaction(transaction))
+		for transaction in reversed(transactions):
+			result.append(new_bank_transaction(transaction))
 
 		frappe.db.set_value("Bank Account", bank_account, "last_integration_date", getdate(end_date))
 
@@ -174,6 +174,13 @@ def new_bank_transaction(transaction):
 
 	status = "Pending" if transaction["pending"] == "True" else "Settled"
 
+	try:
+		tags  = []
+		tags += transaction["category"]
+		tags += ["Plaid Cat. {}".format(transaction["category_id"])]
+	except KeyError:
+		pass
+
 	if not frappe.db.exists("Bank Transaction", dict(reference_number=transaction["transaction_id"])):
 		try:
 			new_transaction = frappe.get_doc({
@@ -184,10 +191,14 @@ def new_bank_transaction(transaction):
 				"debit": debit,
 				"credit": credit,
 				"currency": transaction["iso_currency_code"],
+				"reference_number": transaction["transaction_id"],
 				"description": transaction["name"]
 			})
 			new_transaction.insert()
 			new_transaction.submit()
+
+			for tag in tags:
+				add_tag(tag, "Bank Transaction", new_transaction.name)
 
 			result.append(new_transaction.name)
 
