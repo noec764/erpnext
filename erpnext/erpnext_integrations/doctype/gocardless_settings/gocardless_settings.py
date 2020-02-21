@@ -60,7 +60,7 @@ class GoCardlessSettings(PaymentGatewayController):
 	def immediate_payment_processing(self, data):
 		try:
 			customer_data = frappe.db.get_value(data.reference_doctype, data.reference_name,\
-				["company", "customer_name"], as_dict=1)
+				["company", "customer"], as_dict=1)
 
 			data = {
 				"amount": cint(flt(data.grand_total, data.precision("grand_total")) * 100),
@@ -69,7 +69,7 @@ class GoCardlessSettings(PaymentGatewayController):
 				"reference_doctype": data.doctype,
 				"reference_docname": data.name,
 				"payer_email": data.email_to or frappe.session.user,
-				"payer_name": customer_data.customer_name,
+				"payer_name": customer_data.customer,
 				"order_id": data.name,
 				"currency": data.currency
 			}
