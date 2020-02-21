@@ -155,6 +155,7 @@
   "select_print_heading",
   "more_information",
   "inter_company_invoice_reference",
+  "is_internal_customer",
   "customer_group",
   "campaign",
   "is_discounted",
@@ -1594,6 +1595,14 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+    "default": "0",
+    "fetch_from": "customer.is_internal_customer",
+    "fieldname": "is_internal_customer",
+    "fieldtype": "Check",
+    "label": "Is Internal Customer",
+    "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
