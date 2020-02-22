@@ -39,14 +39,14 @@ class WebhooksController():
 				pr = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = pr.run_method("create_payment_entry", submit=False)
 				self.payment_entry.reference_no = self.integration_request.get("service_id")
-				self.payment_entry.insert()
+				self.payment_entry.insert(ignore_permissions=True)
 				self.set_as_completed()
 
 			elif self.metadata.get("reference_doctype") == "Subscription":
 				subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = subscription.run_method("create_payment")
 				self.payment_entry.reference_no = self.integration_request.get("service_id")
-				self.payment_entry.insert()
+				self.payment_entry.insert(ignore_permissions=True)
 				self.set_as_completed()
 
 			else:
