@@ -88,7 +88,6 @@ class Subscription(Document):
 	def process_active_subscription(self, payment_entry=None):
 		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
 			self.set_plan_details_status()
-			self.generate_sales_order()
 			if not self.has_invoice_for_period():
 				self.generate_invoice(payment_entry=payment_entry)
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
@@ -99,7 +98,6 @@ class Subscription(Document):
 
 		elif self.generate_invoice_at_period_start:
 			self.set_plan_details_status()
-			self.generate_sales_order()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
 				self.generate_sales_order()
@@ -190,6 +188,9 @@ class Subscription(Document):
 		else:
 			return False
 
+	def is_cancelled(self):
+		return getdate(self.cancellation_date) <= getdate(nowdate()) if self.cancellation_date else False
+
 	def validate_trial_period(self):
 		if self.trial_period_start and self.trial_period_end:
 			if getdate(self.trial_period_end) < getdate(self.trial_period_start):
@@ -217,6 +218,7 @@ class Subscription(Document):
 		sales_order.delivery_date = self.current_invoice_start if self.generate_invoice_at_period_start else self.current_invoice_end
 		sales_order = self.set_subscription_invoicing_details(sales_order)
 		sales_order.currency = self.currency
+		sales_order.order_type = "Maintenance"
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.set_missing_values()
@@ -524,6 +526,10 @@ class Subscription(Document):
 			invoice.run_method("validate")
 
 			return invoice.grand_total
+		except erpnext.exceptions.PartyDisabled:
+			if not self.is_cancelled():
+				self.reload()
+				self.cancel_subscription()
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
 			return
@@ -538,16 +544,28 @@ class Subscription(Document):
 					gateway_settings.run_method('on_subscription_update', self)
 
 	def is_payable(self):
-		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
-			if not self.has_invoice_for_period():
-				return True
-		elif self.generate_invoice_at_period_start:
-			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
-				return True
-			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
-				return True
+		if self.is_cancelled():
+			return False
 
-		return False
+		if frappe.get_all("Subscription Event",
+			filters={
+				"event_type": "Payment request created",
+				"period_start": self.current_invoice_start ,
+				"period_end": self.current_invoice_end
+			}
+		):
+			return False
+
+		elif self.get_current_documents("Sales Invoice") or self.get_current_documents("Sales Order"):
+			for doc in self.get_current_documents("Sales Invoice"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Invoice", "reference_name": doc}):
+					return False
+
+			for doc in self.get_current_documents("Sales Order"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Order", "reference_name": doc}):
+					return False
+
+		return True
 
 	def add_subscription_event(self, event_type, **kwargs):
 		if self.name:
@@ -756,10 +774,11 @@ def check_gateway_payments():
 				"dt": doc.doctype,
 				"dn": doc.name,
 				"party_type": "Customer",
-				"party": doc.customer
+				"party": doc.customer,
+				"submit_doc": True,
+				"mute_email": True
 			})
-			pr.ignore_permissions = True
-			pr.insert()
-			if pr.payment_gateways and float(pr.grand_total) > 0:
-				pr.submit()
-				pr.run_method("process_payment_immediately")
+
+			if pr.get("payment_gateways") and float(pr.get("grand_total")) > 0:
+				doc = frappe.get_doc("Payment Request", pr.get("name"))
+				doc.run_method("process_payment_immediately")

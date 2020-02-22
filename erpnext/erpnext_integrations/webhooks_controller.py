@@ -31,8 +31,7 @@ class WebhooksController():
 			try:
 				method()
 			except Exception as e:
-				print(frappe.get_traceback())
-				self.set_as_failed(e)
+				self.set_as_failed(frappe.get_traceback())
 
 	def create_payment(self):
 		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):

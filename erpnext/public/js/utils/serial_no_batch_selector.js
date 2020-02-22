@@ -90,7 +90,8 @@ erpnext.SerialNoBatchSelector = Class.extend({
 						args: {
 							qty: qty,
 							item_code: me.item_code,
-							warehouse: me.warehouse_details.name
+							warehouse: me.warehouse_details.name,
+							batch_no: me.item.batch_no || null
 						}
 					});
 
@@ -108,7 +109,7 @@ erpnext.SerialNoBatchSelector = Class.extend({
 			}
 		];
 
-		if (this.has_batch) {
+		if (this.item.batch_no) {
 			title = __("Select Batch Numbers");
 			fields = fields.concat(this.get_batch_fields());
 		} else {

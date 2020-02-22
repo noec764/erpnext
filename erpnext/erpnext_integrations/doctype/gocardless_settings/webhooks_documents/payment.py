@@ -12,9 +12,10 @@ from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 EVENT_MAP = {
 	'created': 'create_payment',
 	'submitted': 'create_payment',
-	'confirmed': 'submit_payment',
+	'confirmed': 'create_payment',
 	'cancelled': 'cancel_payment',
-	'failed': 'cancel_payment'
+	'failed': 'cancel_payment',
+	'paid_out': 'submit_payment'
 }
 
 class GoCardlessPaymentWebhookHandler(WebhooksController):
@@ -35,7 +36,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 			self.handle_payment_update()
 			self.add_reference_to_integration_request()
 		else:
-			self.set_as_failed(_("No payment reference and metadata found in this webhook"))
+			self.set_as_completed(_("No payment reference and metadata found in this webhook"))
 
 	def init_handler(self):
 		self.gocardless_settings = frappe.get_doc("GoCardless Settings", self.integration_request.get("payment_gateway_controller"))
@@ -60,7 +61,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.gocardless_payment_document = self.gocardless_settings.get_payments_on_gocardless(id=self.gocardless_payment) if self.gocardless_payment else {}
 
 	def get_payout(self):
-		self.gocardless_payout = self.data.get("links", {}).get("payout")
+		self.gocardless_payout = self.data.get("links", {}).get("payout") or getattr(getattr(self.gocardless_payment_document, "links"), "payout")
 
 	def get_metadata(self):
 		self.metadata = getattr(self.gocardless_payment_document, "metadata")
@@ -73,8 +74,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 			output = ""
 			for p in payout_items:
 				output += str(p.__dict__)
-			output_as_json = frappe.parse_json(output)
-			self.integration_request.db_set("output", json.dumps(output_as_json, indent=4))
+			self.integration_request.db_set("output", output)
 
 			self.base_amount = self.gocardless_settings.get_base_amount(payout_items, self.gocardless_payment)
 			self.fee_amount = self.gocardless_settings.get_fee_amount(payout_items, self.gocardless_payment)
@@ -84,6 +84,8 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 			#TODO: Commonify with payment request
 			gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
+
+			self.payment_entry.mode_of_payment = gateway_defaults.get("mode_of_payment")
 
 			#TODO: Handle exchange rates
 			# if self.exchange_rate:

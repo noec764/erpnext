@@ -8,6 +8,7 @@
  "field_order": [
   "naming_series",
   "customer",
+  "customer_name",
   "cb_1",
   "company",
   "currency",
@@ -357,10 +358,17 @@
    "fieldtype": "Link",
    "label": "Subscription Plan",
    "options": "Subscription Plan"
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2020-02-12 19:29:28.522388",
+ "modified": "2020-02-21 18:13:27.898033",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
