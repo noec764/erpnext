@@ -129,7 +129,6 @@ class Asset(AccountsController):
 			"""SELECT asm.name, asm.docstatus
 			FROM `tabAsset Movement` asm, `tabAsset Movement Item` asm_item
 			WHERE asm_item.parent=asm.name and asm_item.asset=%s and asm.docstatus=1""", self.name, as_dict=1)
-
 		if len(movements) > 1:
 			frappe.throw(_('Asset has multiple Asset Movement Entries which has to be \
 				cancelled manually to cancel this asset.'))
@@ -264,7 +263,7 @@ class Asset(AccountsController):
 							else:
 								date = add_months(monthly_schedule_date, r)
 								amount = depreciation_amount / month_range
-							
+
 							self.append("schedules", {
 								"schedule_date": date,
 								"depreciation_amount": amount,
@@ -519,6 +518,7 @@ def update_maintenance_status():
 			asset.set_status('Out of Order')
 
 def make_post_gl_entry():
+
 	asset_categories = frappe.db.get_all('Asset Category', fields = ['name', 'enable_cwip_accounting'])
 
 	for asset_category in asset_categories:
@@ -671,10 +671,8 @@ def make_asset_movement(assets, purpose=None):
 
 	asset_movement = frappe.new_doc("Asset Movement")
 	asset_movement.quantity = len(assets)
-
 	for asset in assets:
 		asset = frappe.get_doc('Asset', asset.get('name'))
-
 		asset_movement.company = asset.get('company')
 		asset_movement.append("assets", {
 			'asset': asset.get('name'),
