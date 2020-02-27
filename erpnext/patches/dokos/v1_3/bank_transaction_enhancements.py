@@ -2,16 +2,20 @@ import frappe
 from frappe.utils import flt
 
 def execute():
-	frappe.reload_doctype("Bank Transaction")
-	frappe.reload_doctype("Payment Entry")
-	frappe.reload_doctype("Sales Invoice")
-	frappe.reload_doctype("Purchase Invoice")
-	frappe.reload_doctype("Expense Claim")
-	frappe.reload_doctype("Journal Entry")
+	frappe.reload_doc("accounts", "doctype", "bank_transaction")
+	frappe.reload_doc("accounts", "doctype", "bank_transaction_payments")
+	frappe.reload_doc("accounts", "doctype", "payment_entry")
+	frappe.reload_doc("accounts", "doctype", "sales_invoice")
+	frappe.reload_doc("accounts", "doctype", "purchase_invoice")
+	frappe.reload_doc("hr", "doctype", "expense_claim")
+	frappe.reload_doc("accounts", "doctype", "journal_entry")
 
-	for transaction in frappe.get_all("Bank Transaction", filters={"transaction_id": ("!=", "")}, fields=["name", "transaction_id", "reference_number"]):
-		if not transaction.reference_number:
-			frappe.db.set_value("Bank Transaction", transaction.name, "reference_number", "transaction_id")
+	try:
+		for transaction in frappe.get_all("Bank Transaction", filters={"transaction_id": ("!=", "")}, fields=["name", "transaction_id", "reference_number"]):
+			if not transaction.reference_number:
+				frappe.db.set_value("Bank Transaction", transaction.name, "reference_number", "transaction_id")
+	except Exception:
+		pass
 
 	for payment_entry in frappe.get_all("Payment Entry", \
 		filters={"docstatus": 1, "clearance_date": ["is", "not set"]}, fields=["paid_amount", "received_amount", "payment_type", "name"]):

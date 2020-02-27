@@ -241,7 +241,7 @@ def get_entries_not_reflected(filters):
 	return sorted(list(je_entries)+list(pe_entries), key=lambda k: k['posting_date'] or getdate(nowdate()))
 
 def get_balance_row(label, amount, account_currency):
-	if amount > 0:
+	if flt(amount) > 0:
 		return {
 			"payment_entry": frappe.bold(label),
 			"debit": amount,

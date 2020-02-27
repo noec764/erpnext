@@ -12,4 +12,7 @@ def execute():
         stock_settings.stock_uom = None
     stock_settings.flags.ignore_mandatory = True
     stock_settings.action_if_quality_inspection_is_not_submitted = "Stop"
-    stock_settings.save()
+    try:
+        stock_settings.save()
+    except frappe.ValidationError:
+        pass
