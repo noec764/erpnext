@@ -18,17 +18,20 @@ import warnings
 
 class PaymentRequest(Document):
 	def before_insert(self):
-		self.generate_payment_key()
+		if not self.no_payment_link:
+			self.generate_payment_key()
 
 	def validate(self):
 		if self.get("__islocal"):
 			self.status = 'Draft'
 		self.validate_reference_document()
 		self.validate_payment_request_amount()
-		self.validate_payment_gateways()
-		self.validate_subscription_gateways()
-		self.validate_existing_gateway()
-		self.validate_currency()
+
+		if not self.no_payment_link:
+			self.validate_payment_gateways()
+			self.validate_subscription_gateways()
+			self.validate_existing_gateway()
+			self.validate_currency()
 
 	def validate_reference_document(self):
 		if not self.reference_doctype or not self.reference_name:
