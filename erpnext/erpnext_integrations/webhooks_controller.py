@@ -110,4 +110,5 @@ class WebhooksController():
 	def set_as_completed(self, message=None):
 		if message:
 			self.integration_request.db_set("error", str(message))
+		self.integration_request.reload()
 		self.integration_request.update_status({}, "Completed")
