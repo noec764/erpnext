@@ -13,9 +13,11 @@ form_grid_templates = {
 
 class BankClearance(Document):
 	def get_payment_entries(self):
-		if not (self.bank_account and self.from_date and self.to_date):
-			msgprint(_("Bank Account, From Date and To Date are Mandatory"))
-			return
+		if not (self.from_date and self.to_date):
+			frappe.throw(_("From Date and To Date are Mandatory"))
+
+		if not self.account:
+			frappe.throw(_("Account is mandatory to get payment entries"))
 
 		condition = ""
 		if not self.include_reconciled_entries:
@@ -55,10 +57,10 @@ class BankClearance(Document):
 			from `tabPayment Entry`
 			where
 				(paid_from=%(account)s or paid_to=%(account)s) and docstatus=1
-				and posting_date >= %(from)s and posting_date <= %(to)s {0}
+				and posting_date >= %(from)s and posting_date <= %(to)s {condition}
 			order by
 				posting_date ASC, name DESC
-		""".format(condition),
+		""".format(condition=condition),
 		        {"account":self.bank_account, "from":self.from_date,
 				"to":self.to_date, "bank_account_no": self.bank_account_no}, as_dict=1)
 
