@@ -155,13 +155,6 @@ def get_data():
 				{
 					"type": "report",
 					"is_query_report": True,
-					"name": "Supplier-Wise Sales Analytics",
-					"reference_doctype": "Stock Ledger Entry",
-					"onboard": 1
-				},
-				{
-					"type": "report",
-					"is_query_report": True,
 					"name": "Purchase Order Trends",
 					"reference_doctype": "Purchase Order",
 					"onboard": 1,
@@ -180,6 +173,16 @@ def get_data():
 					"reference_doctype": "Material Request",
 					"onboard": 1,
 				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Address And Contacts",
+					"label": _("Supplier Addresses And Contacts"),
+					"reference_doctype": "Address",
+					"route_options": {
+						"party_type": "Supplier"
+					}
+				}
 			]
 		},
 		{
@@ -228,18 +231,15 @@ def get_data():
 				{
 					"type": "report",
 					"is_query_report": True,
-					"name": "Material Requests for which Supplier Quotations are not created",
-					"reference_doctype": "Material Request"
+					"name": "Supplier-Wise Sales Analytics",
+					"reference_doctype": "Stock Ledger Entry",
+					"onboard": 1
 				},
 				{
 					"type": "report",
 					"is_query_report": True,
-					"name": "Address And Contacts",
-					"label": _("Supplier Addresses And Contacts"),
-					"reference_doctype": "Address",
-					"route_options": {
-						"party_type": "Supplier"
-					}
+					"name": "Material Requests for which Supplier Quotations are not created",
+					"reference_doctype": "Material Request"
 				}
 			]
 		},
