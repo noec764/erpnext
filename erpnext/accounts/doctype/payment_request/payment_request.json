@@ -8,6 +8,7 @@
   "status",
   "transaction_date",
   "payment_key",
+  "no_payment_link",
   "column_break_2",
   "naming_series",
   "reference_doctype",
@@ -27,10 +28,10 @@
   "column_break_17",
   "payment_gateway_account",
   "recipient_and_message",
-  "email_to",
-  "column_break_9",
-  "print_format",
   "mute_email",
+  "column_break_9",
+  "email_to",
+  "print_format",
   "make_sales_invoice",
   "section_break_10",
   "email_template",
@@ -109,11 +110,13 @@
    "label": "Recipient Message And Payment Details"
   },
   {
+   "depends_on": "eval:!doc.mute_email",
    "fieldname": "print_format",
    "fieldtype": "Select",
    "label": "Attachment Print Format"
   },
   {
+   "depends_on": "eval:!doc.mute_email",
    "fieldname": "email_to",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -177,6 +180,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.no_payment_link",
    "fieldname": "section_break_7",
    "fieldtype": "Section Break",
    "label": "Payment Gateways"
@@ -228,6 +232,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.no_payment_link",
    "fieldname": "section_break_15",
    "fieldtype": "Section Break"
   },
@@ -245,6 +250,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.no_payment_link",
    "description": "Fees included in the total amount",
    "fieldname": "fee_amount",
    "fieldtype": "Currency",
@@ -264,12 +270,18 @@
    "hidden": 1,
    "label": "Exchange Rate",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "no_payment_link",
+   "fieldtype": "Check",
+   "label": "Do not create a payment link"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-24 08:56:45.962409",
- "modified_by": "chdecultot@dokos.io",
+ "modified": "2020-02-29 17:24:58.775495",
+ "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",
  "owner": "Administrator",

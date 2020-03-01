@@ -47,7 +47,8 @@ def get_data(filters):
 
 	for d in gl_entries:
 		asset_data = assets_details.get(d.against_voucher)
-		if not asset_data.get("accumulated_depreciation_amount"):
+		asset_data.accumulated_depreciation_amount = asset_data.get("opening_accumulated_depreciation")
+		if not asset_data.accumulated_depreciation_amount:
 			asset_data.accumulated_depreciation_amount = d.debit
 		else:
 			asset_data.accumulated_depreciation_amount += d.debit
@@ -68,7 +69,7 @@ def get_data(filters):
 def get_assets_details(assets):
 	assets_details = {}
 
-	fields = ["name as asset", "gross_purchase_amount",
+	fields = ["name as asset", "gross_purchase_amount", "opening_accumulated_depreciation",
 		"asset_category", "status", "depreciation_method", "purchase_date"]
 
 	for d in frappe.get_all("Asset", fields = fields, filters = {'name': ('in', assets)}):

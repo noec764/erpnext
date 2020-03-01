@@ -29,7 +29,6 @@ frappe.listview_settings['Bank Transaction'] = {
 		});
 	},
 	on_update: function(list_view) {
-		console.log("UPDATE")
 		list_view.refresh()
 	}
 };

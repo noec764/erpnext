@@ -18,17 +18,20 @@ import warnings
 
 class PaymentRequest(Document):
 	def before_insert(self):
-		self.generate_payment_key()
+		if not self.no_payment_link:
+			self.generate_payment_key()
 
 	def validate(self):
 		if self.get("__islocal"):
 			self.status = 'Draft'
 		self.validate_reference_document()
 		self.validate_payment_request_amount()
-		self.validate_payment_gateways()
-		self.validate_subscription_gateways()
-		self.validate_existing_gateway()
-		self.validate_currency()
+
+		if not self.no_payment_link:
+			self.validate_payment_gateways()
+			self.validate_subscription_gateways()
+			self.validate_existing_gateway()
+			self.validate_currency()
 
 	def validate_reference_document(self):
 		if not self.reference_doctype or not self.reference_name:
@@ -95,6 +98,8 @@ class PaymentRequest(Document):
 
 	def on_submit(self):
 		self.db_set('status', 'Initiated')
+		if self.is_linked_to_a_subscription():
+			self.create_subscription_event()
 
 		send_mail = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
@@ -393,6 +398,14 @@ class PaymentRequest(Document):
 		except Exception as e:
 			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
 			frappe.throw(e, _("Payment gateways validation error"))
+
+	def create_subscription_event(self):
+		subscription = frappe.get_doc("Subscription", self.is_linked_to_a_subscription())
+		subscription.add_subscription_event("Payment request created", **{
+			"document_type": "Payment Request",
+			"document_name": self.name
+		})
+
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):

@@ -31,8 +31,7 @@ class WebhooksController():
 			try:
 				method()
 			except Exception as e:
-				print(frappe.get_traceback())
-				self.set_as_failed(e)
+				self.set_as_failed(frappe.get_traceback())
 
 	def create_payment(self):
 		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
@@ -40,14 +39,14 @@ class WebhooksController():
 				pr = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = pr.run_method("create_payment_entry", submit=False)
 				self.payment_entry.reference_no = self.integration_request.get("service_id")
-				self.payment_entry.insert()
+				self.payment_entry.insert(ignore_permissions=True)
 				self.set_as_completed()
 
 			elif self.metadata.get("reference_doctype") == "Subscription":
 				subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = subscription.run_method("create_payment")
 				self.payment_entry.reference_no = self.integration_request.get("service_id")
-				self.payment_entry.insert()
+				self.payment_entry.insert(ignore_permissions=True)
 				self.set_as_completed()
 
 			else:
@@ -111,4 +110,5 @@ class WebhooksController():
 	def set_as_completed(self, message=None):
 		if message:
 			self.integration_request.db_set("error", str(message))
+		self.integration_request.reload()
 		self.integration_request.update_status({}, "Completed")

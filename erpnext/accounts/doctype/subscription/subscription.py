@@ -80,7 +80,7 @@ class Subscription(Document):
 			self.cancel_subscription()
 
 		if self.status == 'Active':
-			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+			if not (self.payment_gateway and self.payment_gateway_reference):
 				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_subscription_status()
@@ -455,7 +455,7 @@ class Subscription(Document):
 				self.cancellation_date = self.current_invoice_end
 
 			if generate_invoice and not self.generate_invoice_at_period_start \
-				and not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+				and not (self.payment_gateway and self.payment_gateway_reference):
 				self.generate_invoice(prorate=self.prorate_invoice)
 
 			self.save()
@@ -487,7 +487,6 @@ class Subscription(Document):
 		invoice = self.get_current_invoice()
 		if invoice:
 			return invoice.precision('grand_total')
-
 
 	def get_prorata_factor(self):
 		consumed = flt(date_diff(self.cancellation_date, self.current_invoice_start) + 1)
@@ -544,6 +543,9 @@ class Subscription(Document):
 					gateway_settings.run_method('on_subscription_update', self)
 
 	def is_payable(self):
+		if self.is_cancelled():
+			return False
+
 		if frappe.get_all("Subscription Event",
 			filters={
 				"event_type": "Payment request created",
@@ -552,8 +554,17 @@ class Subscription(Document):
 			}
 		):
 			return False
-		else:
-			return True
+
+		elif self.get_current_documents("Sales Invoice") or self.get_current_documents("Sales Order"):
+			for doc in self.get_current_documents("Sales Invoice"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Invoice", "reference_name": doc}):
+					return False
+
+			for doc in self.get_current_documents("Sales Order"):
+				if frappe.get_all("Payment Request", filters={"reference_doctype": "Sales Order", "reference_name": doc}):
+					return False
+
+		return True
 
 	def add_subscription_event(self, event_type, **kwargs):
 		if self.name:
@@ -762,16 +773,11 @@ def check_gateway_payments():
 				"dt": doc.doctype,
 				"dn": doc.name,
 				"party_type": "Customer",
-				"party": doc.customer
-			})
-			pr.ignore_permissions = True
-			pr.insert()
-
-			self.add_subscription_event("Payment request created", **{
-				"document_type": "Payment Request",
-				"document_name": pr.name
+				"party": doc.customer,
+				"submit_doc": True,
+				"mute_email": True
 			})
 
-			if pr.payment_gateways and float(pr.grand_total) > 0:
-				pr.submit()
-				pr.run_method("process_payment_immediately")
+			if pr.get("payment_gateways") and float(pr.get("grand_total")) > 0:
+				doc = frappe.get_doc("Payment Request", pr.get("name"))
+				doc.run_method("process_payment_immediately")
