@@ -8,7 +8,6 @@
  "field_order": [
   "naming_series",
   "customer",
-  "customer_name",
   "cb_1",
   "company",
   "currency",
@@ -54,8 +53,7 @@
   "payment_gateways_section",
   "payment_gateway",
   "column_break_38",
-  "payment_gateway_reference",
-  "payment_gateway_lifecycle"
+  "payment_gateway_reference"
  ],
  "fields": [
   {
@@ -279,14 +277,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "1",
-   "depends_on": "eval:doc.payment_gateway_reference",
-   "fieldname": "payment_gateway_lifecycle",
-   "fieldtype": "Check",
-   "label": "Use Payment Gateway Lifecycle",
-   "no_copy": 1
-  },
-  {
    "fieldname": "total",
    "fieldtype": "Currency",
    "label": "Plans total",
@@ -358,17 +348,10 @@
    "fieldtype": "Link",
    "label": "Subscription Plan",
    "options": "Subscription Plan"
-  },
-  {
-   "fetch_from": "customer.customer_name",
-   "fieldname": "customer_name",
-   "fieldtype": "Data",
-   "label": "Customer Name",
-   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2020-02-21 18:13:27.898033",
+ "modified": "2020-02-29 17:17:58.887601",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

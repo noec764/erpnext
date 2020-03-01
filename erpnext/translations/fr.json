@@ -5007,6 +5007,7 @@
         "Accounts User": "Comptable",
         "Bank": "Banque",
         "Cash": "Espèces",
+        "Enabled": "Activé",
         "General": "Général",
         "Mode of Payment": "Mode de Paiement",
         "Type": "Type"
@@ -5233,6 +5234,17 @@
         "Accounts": "Comptes",
         "Customer Group": "Groupe de clients",
         "POS Customer Group": "Groupe Clients PDV"
+    },
+    "DocType: POS Field": {
+        "Accounts": "Comptes",
+        "Default Value": "Valeur par défaut",
+        "Fieldname": "Nom du champ",
+        "Fieldtype": "Type de champ",
+        "Label": "Libellé",
+        "Mandatory": "Obligatoire",
+        "Options": "Options",
+        "POS Field": "Champ du point de vente",
+        "Read Only": "Lecture seule"
     },
     "DocType: POS Item Group": {
         "Accounts": "Comptes",
@@ -5594,6 +5606,7 @@
         "Bank Account No": "No de compte bancaire",
         "Branch Code": "Code de la branche",
         "Cancelled": "Annulé",
+        "Do not create a payment link": "Ne pas créer de lien de paiement",
         "Draft": "Brouillon",
         "Exchange Rate": "Taux de change",
         "Failed": "Échec",
@@ -6328,6 +6341,7 @@
         "Warehouse": "Entrepôt"
     },
     "DocType: Purchase Invoice": {
+        "ACC-PINV-.YYYY.-": "ACC-PINV-.YYYY.-",
         "Accounting Dimensions ": "Dimensions comptables",
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
@@ -9343,6 +9357,8 @@
         "Additional DIscount Amount": "Montant de la réduction additionnelle",
         "Additional DIscount Percentage": "Pourcentage de réduction additionnel",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
+        "Billing Interval": "Intervalle de facturation",
+        "Billing Interval Count": "Fréquence de facturation",
         "Cancel At End Of Period": "Annuler à la fin de la période",
         "Cancellation Date": "Date d'annulation",
         "Cancelled": "Annulé",
@@ -9351,12 +9367,14 @@
         "Current Invoicing Period End Date": "Date de fin de la période de facturation en cours",
         "Current Invoicing Period Start Date": "Date de début de la période de facturation en cours",
         "Customer": "Client",
+        "Day": "Jour",
         "Days Until Due": "Jours avant échéance",
         "Discounts": "Réductions",
         "Generate a sales order at beginning Of period": "Générer une commande client au début de la période",
         "Generate the invoice at beginning of period": "Générer une facture au début de la période",
         "Grand Total": "Total TTC",
         "Invoices": "Factures",
+        "Month": "Mois",
         "Naming Series": "Nom de série",
         "Net Total": "Total Net",
         "Net total": "Total net",
@@ -9377,6 +9395,7 @@
         "Submit invoice automatically": "Valider la facture automatiquement",
         "Subscription": "Abonnement",
         "Subscription Period": "Période d'abonnement",
+        "Subscription Plan": "Plan d'abonnement",
         "Subscription Start Date": "Date de début de l'abonnement",
         "System Manager": "Responsable système",
         "Taxes": "Taxes",
@@ -9387,7 +9406,9 @@
         "Trial Period Start Date": "Date de début de la période d'essai",
         "Trial Validated": "Essai validé",
         "Unpaid": "Impayé",
-        "Use Payment Gateway Lifecycle": "Suivre le cycle de facturation de la passerelle de paiement"
+        "Use Payment Gateway Lifecycle": "Suivre le cycle de facturation de la passerelle de paiement",
+        "Week": "Semaine",
+        "Year": "Année"
     },
     "DocType: Subscription Event": {
         "Accounts": "Comptes",
@@ -9434,23 +9455,32 @@
         "Price Determination": "Détermination du prix",
         "Price List": "Liste de prix",
         "Subscription Plan": "Plan d'abonnement",
+        "Subscription Plans Template": "Modèle de plans d'abonnement",
         "System Manager": "Responsable système",
         "UOM": "Unité de mesure",
         "Week": "Semaine",
         "Year": "Année"
     },
     "DocType: Subscription Plan Detail": {
+        "Accounting Dimensions": "Dimensions comptables",
         "Accounts": "Comptes",
         "Active": "Actif",
+        "Based on price list": "Sur la base de la liste de prix",
         "Description": "Description",
+        "Fixed rate": "Prix unitaire fixe",
         "From Date": "Date de début",
         "Inactive": "Inactif",
+        "Item": "Article",
+        "Payment gateways and plans": "Passerelles et plans de paiement",
         "Plan": "Plan",
+        "Price Determination": "Détermination du prix",
         "Quantity": "Quantité",
         "Rate": "Prix unitaire",
         "Status": "Statut",
+        "Stripe Plan": "Plan Stripe",
         "Subscription Plan Detail": "Détail du plan d'abonnement",
-        "To Date": "Date de fin"
+        "To Date": "Date de fin",
+        "Unit of measure": "Unité de mesure"
     },
     "DocType: Supplier": {
         "Accounts": "Comptes",
@@ -11519,6 +11549,7 @@
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_import/BankTransactionImporter.vue": {
         "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
         "Bank transactions creation in progress. Please wait...": "Création des transactions bancaire en cours. Veuillez patienter...",
+        "Please add at least one company bank account. 'Is company account' must be checked.": "Veuillez ajouter au moins un compte bancaire. 'Est le compte de la société' doit être coché.",
         "Please check the error log for details about the import errors": "Veuillez vérifier le journal des erreurs pour plus de détails sur les erreurs lors de l'import",
         "Rows per page": "Lignes par page",
         "next": "suiv.",
@@ -11547,6 +11578,7 @@
         "Debit": "Débit",
         "Description": "Description",
         "OFX Parser Error": "Erreur d'analyse OFX",
+        "OFX Parser Error. Please contact the support.": "Erreur de lecture du fichier OFX. Veuillez contacter le support.",
         "Please upload a csv, xls or xlsx file": "Veuillez télécharger un fichier csv, xls ou xlsx.",
         "Please upload a file first": "Veuillez d'abord télécharger un fichier",
         "Type": "Type"
@@ -12450,6 +12482,7 @@
     },
     "apps/erpnext/erpnext/accounts/doctype/subscription/subscription.py": {
         "Average invoicing": "Facturation moyenne",
+        "Billing Interval Count cannot be less than 1": "L'intervale de facturation ne peut être inférieur à 1",
         "Both Trial Period Start Date and Trial Period End Date must be set": "La date de début de la période d'essai et la date de fin de la période d'essai doivent être définies",
         "Invoice generation error for subscription {0}": "Erreur de génération de facture pour l'abonnement {0}",
         "Invoiced": "Facturé",
@@ -13238,20 +13271,25 @@
     "apps/erpnext/erpnext/accounts/report/item_wise_purchase_register/item_wise_purchase_register.js": {
         "Company": "Société",
         "Date Range": "Intervalle de dates",
+        "Group By": "Grouper Par",
         "Item": "Article",
         "Mode of Payment": "Mode de Paiement",
         "Supplier": "Fournisseur"
     },
     "apps/erpnext/erpnext/accounts/report/item_wise_purchase_register/item_wise_purchase_register.py": {
+        "% Of Grand Total": "% du total général",
         "Amount": "Montant",
         "Company": "Société",
         "Currency": "Devise",
+        "Description": "Description",
         "Expense Account": "Compte de Charge",
         "Invoice": "Facture",
         "Item Code": "Code de l'Article",
         "Item Group": "Groupe d'article",
         "Item Name": "Nom de l'article",
+        "Mode Of Payment": "Mode de paiement",
         "Mode of Payment": "Mode de Paiement",
+        "Payable Account": "Comptes créditeurs",
         "Posting Date": "Date de comptabilisation",
         "Project": "Projet",
         "Purchase Order": "Commande fournisseur",
@@ -13259,18 +13297,21 @@
         "Rate": "Prix unitaire",
         "Stock Qty": "Qté en Stock",
         "Stock UOM": "Unité de mesure du stock",
-        "Supplier": "Fournisseur"
+        "Supplier": "Fournisseur",
+        "Supplier Name": "Nom du fournisseur"
     },
     "apps/erpnext/erpnext/accounts/report/item_wise_sales_register/item_wise_sales_register.js": {
         "Brand": "Marque",
         "Company": "Société",
         "Customer": "Client",
         "Date Range": "Intervalle de dates",
+        "Group By": "Grouper par",
         "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
         "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/accounts/report/item_wise_sales_register/item_wise_sales_register.py": {
+        "% Of Grand Total": "% du total général",
         "Amount": "Montant",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
@@ -13279,11 +13320,13 @@
         "Customer Group": "Groupe de clients",
         "Customer Name": "Nom du Client",
         "Delivery Note": "Bon de livraison",
+        "Description": "Description",
         "Income Account": "Compte de Produits",
         "Invoice": "Facture",
         "Item Code": "Code de l'Article",
         "Item Group": "Groupe d'article",
         "Item Name": "Nom de l'article",
+        "Mode Of Payment": "Mode de paiement",
         "Mode of Payment": "Mode de Paiement",
         "Posting Date": "Date de comptabilisation",
         "Project": "Projet",
@@ -13292,7 +13335,9 @@
         "Sales Order": "Commande client",
         "Stock Qty": "Qté en Stock",
         "Stock UOM": "Unité de mesure du stock",
-        "Territory": "Région"
+        "Territory": "Région",
+        "Total": "Total",
+        "Total Tax": "Total des taxes"
     },
     "apps/erpnext/erpnext/accounts/report/ordered_items_to_be_billed/ordered_items_to_be_billed.py": {
         "Amount": "Montant",
@@ -13959,6 +14004,7 @@
         "Series is mandatory": "Série est obligatoire"
     },
     "apps/erpnext/erpnext/buying/doctype/supplier/supplier_dashboard.py": {
+        "Bank": "Banque",
         "Orders": "Commandes",
         "Payments": "Paiements",
         "Pricing": "Tarification",
@@ -14505,6 +14551,7 @@
         "Manage Customer Group Tree.": "Gérer l'Arborescence des Groupes de Clients.",
         "Manage Sales Partners.": "Gérer les Partenaires Commerciaux.",
         "Manage Sales Person Tree.": "Gérer l'Arborescence des Vendeurs.",
+        "Manage Subscriptions.": "Gérer des abonnements",
         "Manage Territory Tree.": "Gérer l’Arborescence des Régions.",
         "Multiple Item prices.": "Plusieurs Prix d'Articles.",
         "Other Reports": "Autres Rapports",
@@ -15034,6 +15081,7 @@
     "apps/erpnext/erpnext/erpnext_integrations/doctype/stripe_settings/stripe_settings.py": {
         "An error occured while trying to fetch your payment plan on Stripe.<br>Please check your error logs.": "Une erreur a empếché la récupération de votre plan de paiement sur Stripe.<br>Veuillez regarder dans vos logs d'erreur.",
         "For currency {0}, the minimum transaction amount should be {1}": "Pour la devise {0}, le montant minimum de chaque transaction doit être {0}",
+        "Invalid Stripe plan or currency: {0} - {1}": "Plan Stripe ou devise invalide: {0} - {1}",
         "It seems that there is an issue with our Stripe integration.<br>In case of failure, the amount will get refunded to your account.": "Il semble qu'il y ait un problème avec notre passerelle de paiement.<br>En cas d'échec, le montant débité vous sera remboursé.",
         "It seems that your payment has not been fully accepted by your bank.<br>We will get in touch with you as soon as possible.": "Il semble que votre paiement n'a pa été complètement accepté par votre banque.<br>Nous allons prendre contact avec vous dans les plus brefs délais.",
         "Payment error": "Erreur de paiement",
@@ -17209,6 +17257,7 @@
     "apps/erpnext/erpnext/regional/report/gst_itemised_purchase_register/gst_itemised_purchase_register.js": {
         "Company": "Société",
         "Date Range": "Intervalle de dates",
+        "Group By": "Grouper par",
         "Item": "Article",
         "Mode of Payment": "Mode de Paiement",
         "Supplier": "Fournisseur"
@@ -17219,6 +17268,7 @@
         "Company GSTIN": "N° GSTIN de la société",
         "Customer": "Client",
         "Date Range": "Intervalle de dates",
+        "Group By": "Grouper par",
         "Invoice Type": "Type de Facture",
         "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
@@ -18100,6 +18150,7 @@
         "Print taxes with zero amount": "Impression de taxes avec un montant nul"
     },
     "apps/erpnext/erpnext/setup/setup_wizard/data/dashboard_charts.py": {
+        "Accounts": "Comptes",
         "Bank Balance": "Solde Bancaire",
         "Expenses": "Charges",
         "Income": "Revenus",
@@ -19015,6 +19066,8 @@
     },
     "apps/erpnext/erpnext/stock/doctype/stock_settings/stock_settings.py": {
         "Can't change valuation method, as there are transactions against some items which does not have it's own valuation method": "Impossible de modifier la méthode de valorisation, car il existe des transactions sur certains articles ne possèdant pas leur propre méthode de valorisation",
+        "Group Warehouses cannot be used in transactions. Please change the value of {0}": "Les entrepôts groupes ne peuvent pas être utilisés dans les transactions. Veuillez modifier la valeur de {0}",
+        "Incorrect Warehouse": "Entrepôt incorrect",
         "`Freeze Stocks Older Than` should be smaller than %d days.": "`Geler les stocks datant de plus` doit être inférieur à %d jours."
     },
     "apps/erpnext/erpnext/stock/doctype/warehouse/warehouse.js": {

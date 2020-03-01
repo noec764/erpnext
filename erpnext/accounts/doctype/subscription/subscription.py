@@ -80,7 +80,7 @@ class Subscription(Document):
 			self.cancel_subscription()
 
 		if self.status == 'Active':
-			if not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+			if not (self.payment_gateway and self.payment_gateway_reference):
 				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_subscription_status()
@@ -455,7 +455,7 @@ class Subscription(Document):
 				self.cancellation_date = self.current_invoice_end
 
 			if generate_invoice and not self.generate_invoice_at_period_start \
-				and not (self.payment_gateway_reference and self.payment_gateway_lifecycle):
+				and not (self.payment_gateway and self.payment_gateway_reference):
 				self.generate_invoice(prorate=self.prorate_invoice)
 
 			self.save()
@@ -487,7 +487,6 @@ class Subscription(Document):
 		invoice = self.get_current_invoice()
 		if invoice:
 			return invoice.precision('grand_total')
-
 
 	def get_prorata_factor(self):
 		consumed = flt(date_diff(self.cancellation_date, self.current_invoice_start) + 1)
