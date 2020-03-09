@@ -134,10 +134,16 @@ class PaymentRequest(Document):
 	def check_if_immediate_payment_is_autorized(self):
 		try:
 			output = []
-			for gateway in self.payment_gateways:
-				result = self.check_immediate_payment_for_gateway(gateway.payment_gateway)
+			if self.payment_gateway:
+				result = self.check_immediate_payment_for_gateway(self.payment_gateway)
 				if result:
 					output.append(result)
+
+			else:
+				for gateway in self.payment_gateways:
+					result = self.check_immediate_payment_for_gateway(gateway.payment_gateway)
+					if result:
+						output.append(result)
 
 			return output or False
 
