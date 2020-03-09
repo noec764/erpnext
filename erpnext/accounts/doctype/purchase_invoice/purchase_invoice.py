@@ -254,10 +254,22 @@ class PurchaseInvoice(BuyingController):
 				and (not item.po_detail or
 					not frappe.db.get_value("Purchase Order Item", item.po_detail, "delivered_by_supplier")):
 
-				if self.update_stock:
+				if self.update_stock and (not item.from_warehouse):
 					item.expense_account = warehouse_account[item.warehouse]["account"]
 				else:
-					item.expense_account = stock_not_billed_account
+					# check if 'Stock Received But Not Billed' account is credited in Purchase receipt or not
+					if item.purchase_receipt:
+						negative_expense_booked_in_pr = frappe.db.sql("""select name from `tabGL Entry`
+							where voucher_type='Purchase Receipt' and voucher_no=%s and account = %s""",
+							(item.purchase_receipt, stock_not_billed_account))
+
+						if negative_expense_booked_in_pr:
+							item.expense_account = stock_not_billed_account
+					else:
+						# If no purchase receipt present then book expense in 'Stock Received But Not Billed'
+						# This is done in cases when Purchase Invoice is created before Purchase Receipt
+						item.expense_account = stock_not_billed_account
+
 			elif item.is_fixed_asset and not is_cwip_accounting_enabled(asset_category):
 				item.expense_account = get_asset_category_account('fixed_asset_account', item=item.item_code,
 					company = self.company)
@@ -357,7 +369,7 @@ class PurchaseInvoice(BuyingController):
 			self.update_against_document_in_jv()
 			self.update_billing_status_for_zero_amount_refdoc("Purchase Receipt")
 			self.update_billing_status_for_zero_amount_refdoc("Purchase Order")
-		
+
 		self.update_billing_status_in_pr()
 
 		# Updating stock ledger should always be called after updating prevdoc status,
@@ -488,16 +500,47 @@ class PurchaseInvoice(BuyingController):
 					warehouse_debit_amount = self.make_stock_adjustment_entry(gl_entries,
 						item, voucher_wise_stock_value, account_currency)
 
-					gl_entries.append(
-						self.get_gl_dict({
-							"account": item.expense_account,
-							"against": self.supplier,
-							"debit": warehouse_debit_amount,
-							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+					if item.from_warehouse:
+
+						gl_entries.append(self.get_gl_dict({
+							"account":  warehouse_account[item.warehouse]['account'],
+							"against": warehouse_account[item.from_warehouse]["account"],
 							"cost_center": item.cost_center,
-							"project": item.project
-						}, account_currency, item=item)
-					)
+							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+							"debit": warehouse_debit_amount,
+						}, warehouse_account[item.warehouse]["account_currency"], item=item))
+
+						# Intentionally passed negative debit amount to avoid incorrect GL Entry validation
+						gl_entries.append(self.get_gl_dict({
+							"account":  warehouse_account[item.from_warehouse]['account'],
+							"against": warehouse_account[item.warehouse]["account"],
+							"cost_center": item.cost_center,
+							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+							"debit": -1 * flt(item.base_net_amount, item.precision("base_net_amount")),
+						}, warehouse_account[item.from_warehouse]["account_currency"], item=item))
+
+						gl_entries.append(
+							self.get_gl_dict({
+								"account": item.expense_account,
+								"against": self.supplier,
+								"debit": flt(item.base_net_amount, item.precision("base_net_amount")),
+								"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+								"cost_center": item.cost_center,
+								"project": item.project
+							}, account_currency, item=item)
+						)
+
+					else:
+						gl_entries.append(
+							self.get_gl_dict({
+								"account": item.expense_account,
+								"against": self.supplier,
+								"debit": warehouse_debit_amount,
+								"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+								"cost_center": item.cost_center,
+								"project": item.project
+							}, account_currency, item=item)
+						)
 
 					# Amount added through landed-cost-voucher
 					if landed_cost_entries:
@@ -524,6 +567,7 @@ class PurchaseInvoice(BuyingController):
 							"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 							"credit": flt(item.rm_supp_cost)
 						}, warehouse_account[self.supplier_warehouse]["account_currency"], item=item))
+
 				elif not item.is_fixed_asset or (item.is_fixed_asset and not is_cwip_accounting_enabled(asset_category)):
 					expense_account = (item.expense_account
 						if (not item.enable_deferred_expense or self.is_return) else item.deferred_expense_account)
@@ -533,15 +577,13 @@ class PurchaseInvoice(BuyingController):
 					else:
 						amount = flt(item.base_net_amount + item.item_tax_amount, item.precision("base_net_amount"))
 
-					gl_entries.append(
-						self.get_gl_dict({
+					gl_entries.append(self.get_gl_dict({
 							"account": expense_account,
 							"against": self.supplier,
 							"debit": amount,
 							"cost_center": item.cost_center,
 							"project": item.project
-						}, account_currency, item=item)
-					)
+						}, account_currency, item=item))
 
 					# If asset is bought through this document and not linked to PR
 					if self.update_stock and item.landed_cost_voucher_amount:
@@ -761,7 +803,7 @@ class PurchaseInvoice(BuyingController):
 					if i == len(valuation_tax):
 						applicable_amount = amount_including_divisional_loss
 					else:
-						applicable_amount = self.negative_expense_to_be_booked * (amount / total_valuation_amount)
+						applicable_amount = self.negative_expense_to_be_booked * (valuation_tax[tax.name] / total_valuation_amount)
 						amount_including_divisional_loss -= applicable_amount
 
 					gl_entries.append(
@@ -770,7 +812,7 @@ class PurchaseInvoice(BuyingController):
 							"cost_center": tax.cost_center,
 							"against": self.supplier,
 							"credit": applicable_amount,
-							"remarks": self.remarks or _("Accounting Entry for Stock")
+							"remarks": self.remarks or _("Accounting Entry for Stock"),
 						}, item=tax)
 					)
 
@@ -785,7 +827,7 @@ class PurchaseInvoice(BuyingController):
 							"cost_center": tax.cost_center,
 							"against": self.supplier,
 							"credit": valuation_tax[tax.name],
-							"remarks": self.remarks or _("Accounting Entry for Stock")
+							"remarks": self.remarks or "Accounting Entry for Stock"
 						}, item=tax)
 					)
 

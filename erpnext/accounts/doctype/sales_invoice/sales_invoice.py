@@ -1435,7 +1435,7 @@ def get_internal_party(parties, link_doctype, doc):
 def validate_inter_company_transaction(doc, doctype):
 
 	details = get_inter_company_details(doc, doctype)
-	price_list = doc.selling_price_list if doctype in ["Sales Invoice", "Sales Order"] else doc.buying_price_list
+	price_list = doc.selling_price_list if doctype in ["Sales Invoice", "Sales Order", "Delivery Note"] else doc.buying_price_list
 	valid_price_list = frappe.db.get_value("Price List", {"name": price_list, "buying": 1, "selling": 1})
 	if not valid_price_list:
 		frappe.throw(_("Selected Price List should have buying and selling fields checked."))

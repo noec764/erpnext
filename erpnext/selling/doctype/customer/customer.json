@@ -208,8 +208,7 @@
       "fieldtype": "Link",
       "ignore_user_permissions": 1,
       "label": "Represents Company",
-      "options": "Company",
-      "unique": 1
+      "options": "Company"
      },
      {
       "depends_on": "represents_company",
@@ -472,7 +471,7 @@
     "idx": 363,
     "image_field": "image",
     "links": [],
-    "modified": "2020-01-29 20:36:37.879581",
+    "modified": "2020-02-21 20:36:37.879581",
     "modified_by": "Administrator",
     "module": "Selling",
     "name": "Customer",

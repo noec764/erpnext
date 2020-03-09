@@ -17,3 +17,4 @@ Regional
 ERPNext Integrations
 Quality Management
 Communication
+Loan Management

@@ -1597,12 +1597,12 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fetch_from": "customer.is_internal_customer",
-   "fieldname": "is_internal_customer",
-   "fieldtype": "Check",
-   "label": "Is Internal Customer",
-   "read_only": 1
+    "default": "0",
+    "fetch_from": "customer.is_internal_customer",
+    "fieldname": "is_internal_customer",
+    "fieldtype": "Check",
+    "label": "Is Internal Customer",
+    "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
