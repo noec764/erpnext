@@ -104,6 +104,7 @@ class Subscription(Document):
 				self.generate_invoice(payment_entry=payment_entry)
 
 			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
+				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
 
 		self.save()
@@ -147,9 +148,11 @@ class Subscription(Document):
 		return data
 
 	def set_subscription_status(self):
-		if self.is_trial() and self.status != 'Trial':
+		if self.is_cancelled() and self.status != 'Cancelled':
+			self.db_set('status', 'Cancelled')
+		elif not self.is_cancelled() and self.is_trial() and self.status != 'Trial':
 			self.db_set('status', 'Trial')
-		elif not self.is_trial() and self.status != 'Cancelled':
+		elif not self.is_cancelled() and not self.is_trial() and self.status != 'Cancelled':
 			self.db_set('status', 'Active')
 
 		self.reload()
