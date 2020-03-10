@@ -65,7 +65,7 @@ class WebhooksController():
 				self.payment_entry.reference_date = posting_date
 				if hasattr(self, 'add_fees_before_submission'):
 					self.add_fees_before_submission()
-				self.flags.ignore_permissions = True
+				self.payment_entry.flags.ignore_permissions = True
 				self.payment_entry.submit()
 				self.trigger_subscription_events()
 
