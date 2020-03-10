@@ -156,6 +156,30 @@ class PaymentRequest(Document):
 		if hasattr(controller, 'on_payment_request_submission'):
 			return controller.on_payment_request_submission(self)
 
+	@frappe.whitelist()
+	def process_payment_immediately(self):
+		try:
+			if self.payment_gateway:
+				result = self.get_immediate_payment_for_gateway(self.payment_gateway)
+				if result:
+					return result
+
+			for gateway in self.payment_gateways:
+				result = self.get_immediate_payment_for_gateway(gateway.payment_gateway)
+				if result:
+					return result
+
+			return
+
+		except Exception as e:
+			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
+			frappe.throw(e, _("Payment gateways validation error"))
+
+	def get_immediate_payment_for_gateway(self, gateway):
+		controller = get_payment_gateway_controller(gateway)
+		if hasattr(controller, 'immediate_payment_processing'):
+			return controller.immediate_payment_processing(self)
+
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
 
@@ -388,22 +412,6 @@ class PaymentRequest(Document):
 		subscription = self.is_linked_to_a_subscription()
 		if subscription:
 			return frappe.get_doc("Subscription", subscription)
-
-	@frappe.whitelist()
-	def process_payment_immediately(self):
-		try:
-			result = []
-			for gateway in self.payment_gateways:
-				controller = get_payment_gateway_controller(gateway.payment_gateway)
-				if hasattr(controller, 'immediate_payment_processing'):
-					result.append(controller.immediate_payment_processing(self))
-					break
-
-			return result
-
-		except Exception as e:
-			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
-			frappe.throw(e, _("Payment gateways validation error"))
 
 	def create_subscription_event(self):
 		subscription = frappe.get_doc("Subscription", self.is_linked_to_a_subscription())
