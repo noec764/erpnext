@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap justify-center align-center">
-                <a type="button" class="btn btn-success" :disabled="is_reconciliation_disabled" @click="reconcile_entries"><span>{{ __("Reconcile") }}</span><i class='uil uil-check'></i></a>
+                <a type="button" class="btn btn-success" :disabled="is_reconciliation_disabled || btn_clicked" @click="reconcile_entries"><span>{{ btn_clicked ? __("In progress...") : __("Reconcile") }}</span><i v-show="!btn_clicked" class='uil uil-check'></i></a>
             </div>
         </div>
     </div>
@@ -33,6 +33,7 @@ export default {
     },
     data() {
         return {
+            btn_clicked: false
         }
     },
     computed: {
@@ -64,6 +65,7 @@ export default {
     },
     methods: {
         reconcile_entries: function() {
+            this.btn_clicked = true;
             if ((this.selected_transactions.length == 1 && this.selected_documents.length >= 1)
                 || (this.selected_transactions.length >= 1 && this.selected_documents.length == 1)) {
                     if (["Sales Invoice", "Purchase Invoice"].includes(this.selected_documents[0]["doctype"]) && !this.is_pos.length) {
@@ -75,6 +77,7 @@ export default {
                     }
             } else {
                 frappe.msgprint(__("You can only reconcile one bank transaction with several documents or several bank transactions with one document."))
+                this.btn_clicked = false;
             }
         },
         call_reconciliation: function() {
@@ -82,6 +85,7 @@ export default {
                 {bank_transactions: this.selected_transactions, documents: !this.is_pos.length ? this.selected_documents : this.is_pos}
             ).then((result) => {
                 this.$emit('resetList')
+                this.btn_clicked = false;
                 frappe.show_alert({message: __(`${this.selected_documents.length} documents reconciled`), indicator: "green"})
             })
         }
