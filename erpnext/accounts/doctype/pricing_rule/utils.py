@@ -256,7 +256,7 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 
 def validate_quantity_and_amount_for_suggestion(args, qty, amount, item_code, transaction_type):
 	fieldname, msg = '', ''
-	type_of_transaction = 'purcahse' if transaction_type == "buying" else "sale"
+	type_of_transaction = 'purchase' if transaction_type == 'buying' else 'sale'
 
 	for field, value in {'min_qty': qty, 'min_amt': amount}.items():
 		if (args.get(field) and value < args.get(field)
@@ -495,7 +495,7 @@ def get_product_discount_rule(pricing_rule, item_details, doc=None):
 
 	item_details.free_item_data.update(item_data)
 	item_details.free_item_data['uom'] = pricing_rule.free_item_uom or item_data.stock_uom
-	item_details.free_item_data['conversion_factor'] = get_conversion_factor(free_item, 
+	item_details.free_item_data['conversion_factor'] = get_conversion_factor(free_item,
 		item_details.free_item_data['uom']).get("conversion_factor", 1)
 
 	if item_details.get("parenttype") == 'Purchase Order':
