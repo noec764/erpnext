@@ -12,17 +12,17 @@ frappe.query_reports["Accounts Payable"] = {
 			"default": frappe.defaults.get_user_default("Company")
 		},
 		{
+			"fieldname":"report_date",
+			"label": __("Posting Date"),
+			"fieldtype": "Date",
+			"default": frappe.datetime.get_today()
+		},
+		{
 			"fieldname":"ageing_based_on",
 			"label": __("Ageing Based On"),
 			"fieldtype": "Select",
 			"options": 'Posting Date\nDue Date\nSupplier Invoice Date',
-			"default": "Posting Date"
-		},
-		{
-			"fieldname":"report_date",
-			"label": __("As on Date"),
-			"fieldtype": "Date",
-			"default": frappe.datetime.get_today()
+			"default": "Due Date"
 		},
 		{
 			"fieldname":"range1",
@@ -117,6 +117,7 @@ frappe.query_reports["Accounts Payable"] = {
 			"hidden": 1
 		}
 	],
+
 	"formatter": function(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (data && data.bold) {
@@ -125,6 +126,7 @@ frappe.query_reports["Accounts Payable"] = {
 		}
 		return value;
 	},
+
 	onload: function(report) {
 		report.page.add_inner_button(__("Accounts Payable Summary"), function() {
 			var filters = report.get_values();
@@ -141,4 +143,3 @@ erpnext.dimension_filters.forEach((dimension) => {
 		"options": dimension["document_type"]
 	});
 });
-

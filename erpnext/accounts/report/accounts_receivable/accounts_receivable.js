@@ -12,17 +12,17 @@ frappe.query_reports["Accounts Receivable"] = {
 			"default": frappe.defaults.get_user_default("Company")
 		},
 		{
+			"fieldname":"report_date",
+			"label": __("Posting Date"),
+			"fieldtype": "Date",
+			"default": frappe.datetime.get_today()
+		},
+		{
 			"fieldname":"ageing_based_on",
 			"label": __("Ageing Based On"),
 			"fieldtype": "Select",
 			"options": 'Posting Date\nDue Date',
-			"default": "Posting Date"
-		},
-		{
-			"fieldname":"report_date",
-			"label": __("As on Date"),
-			"fieldtype": "Date",
-			"default": frappe.datetime.get_today()
+			"default": "Due Date"
 		},
 		{
 			"fieldname":"range1",
@@ -84,7 +84,6 @@ frappe.query_reports["Accounts Receivable"] = {
 					frappe.db.get_value('Customer', customer, ["tax_id", "customer_name", "payment_terms"], function(value) {
 						frappe.query_report.set_filter_value('tax_id', value["tax_id"]);
 						frappe.query_report.set_filter_value('customer_name', value["customer_name"]);
-						frappe.query_report.set_filter_value('credit_limit', value["credit_limit"]);
 						frappe.query_report.set_filter_value('payment_terms', value["payment_terms"]);
 					});
 
@@ -149,7 +148,7 @@ frappe.query_reports["Accounts Receivable"] = {
 		},
 		{
 			"fieldname":"show_delivery_notes",
-			"label": __("Show Delivery Notes"),
+			"label": __("Show Linked Delivery Notes"),
 			"fieldtype": "Check",
 		},
 		{
@@ -208,4 +207,3 @@ erpnext.dimension_filters.forEach((dimension) => {
 		"options": dimension["document_type"]
 	});
 });
-
