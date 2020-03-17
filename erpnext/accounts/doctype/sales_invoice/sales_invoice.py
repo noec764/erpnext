@@ -1178,16 +1178,16 @@ class SalesInvoice(SellingController):
 			args = [
 				self.name,
 				self.outstanding_amount,
-				self.is_discounted, 
-				self.is_return, 
-				self.due_date, 
+				self.is_discounted,
+				self.is_return,
+				self.due_date,
 				self.docstatus,
 				precision,
 			]
-			status = get_status(args)
+			self.status = get_status(args)
 
 		if update:
-			self.db_set('status', status, update_modified = update_modified)
+			self.db_set('status', self.status, update_modified = update_modified)
 
 def get_discounting_status(sales_invoice):
 	status = None
