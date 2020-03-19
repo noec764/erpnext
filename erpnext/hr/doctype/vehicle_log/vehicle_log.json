@@ -56,6 +56,8 @@
    "reqd": 1
   },
   {
+   "fetch_from": "license_plate.employee",
+   "fetch_if_empty": 1,
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -73,11 +75,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "license_plate.model",
    "fieldname": "model",
    "fieldtype": "Read Only",
    "label": "Model"
   },
   {
+   "fetch_from": "license_plate.make",   
    "fieldname": "make",
    "fieldtype": "Read Only",
    "label": "Make"
@@ -94,6 +98,7 @@
    "reqd": 1
   },
   {
+   "fetch_from": "license_plate.last_odometer",
    "fieldname": "odometer",
    "fieldtype": "Int",
    "label": "Current Odometer value ",
@@ -165,7 +170,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-28 12:43:34.419647",
+ "modified": "2020-03-18 16:45:45.060761",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Vehicle Log",
