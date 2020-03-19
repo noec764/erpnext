@@ -22,7 +22,7 @@ def get(chart_name = None, chart = None, no_cache = None, filters = None, from_d
 
 	timespan = chart.timespan
 	timegrain = chart.time_interval
-	filters = frappe.parse_json(chart.filters_json)
+	filters = frappe.parse_json(filters) or frappe.parse_json(chart.filters_json)
 
 	account = filters.get("account")
 	company = filters.get("company")
