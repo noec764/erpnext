@@ -46,8 +46,7 @@ def get_columns(filters):
 		"CompAuxNum" + "::90", "CompAuxLib" + "::90",
 		"PieceRef" + "::90", "PieceDate" + "::90",
 		"EcritureLib" + "::90", "Debit" + "::90", "Credit" + "::90",
-		"EcritureLet" + "::90", "DateLet" +
-		"::90", "ValidDate" + "::90",
+		"EcritureLet" + "::90", "DateLet" + "::90", "ValidDate" + "::90",
 		"Montantdevise" + "::90", "Idevise" + "::90"
 	]
 
@@ -105,8 +104,9 @@ def get_result_as_list(data, filters):
 	company_currency = frappe.get_cached_value('Company',  filters.company,  "default_currency")
 	accounts = frappe.get_all("Account", filters={"Company": filters.company}, fields=["name", "account_number"])
 
-	for d in data:
+	party_data = [x for x in data if x.get("against_voucher")]
 
+	for d in data:
 		JournalCode = re.split("-|/|[0-9]", d.get("voucher_no"))[0]
 
 		if d.get("voucher_no").startswith("{0}-".format(JournalCode)) or d.get("voucher_no").startswith("{0}/".format(JournalCode)):
@@ -164,14 +164,28 @@ def get_result_as_list(data, filters):
 
 		Idevise = d.get("account_currency")
 
+		DateLet = get_date_let(d, party_data) if d.get("against_voucher") else None
+		EcritureLet = d.get("against_voucher", "") if DateLet else ""
+
 		if Idevise != company_currency:
 			Montantdevise = '{:.2f}'.format(d.get("debitCurr")).replace(".", ",") if d.get("debitCurr") != 0 else '{:.2f}'.format(d.get("creditCurr")).replace(".", ",")
 		else:
 			Montantdevise = '{:.2f}'.format(d.get("debit")).replace(".", ",") if d.get("debit") != 0 else '{:.2f}'.format(d.get("credit")).replace(".", ",")
 
 		row = [JournalCode, d.get("voucher_type"), EcritureNum, EcritureDate, CompteNum, d.get("account"), CompAuxNum, CompAuxLib,
-			   PieceRef, PieceDate, EcritureLib, debit, credit, "", "", ValidDate, Montantdevise, Idevise]
+			   PieceRef, PieceDate, EcritureLib, debit, credit, EcritureLet, DateLet or "", ValidDate, Montantdevise, Idevise]
 
 		result.append(row)
 
 	return result
+
+def get_date_let(d, data):
+	let_dates = [x.get("GlPostDate") for x in data if (x.get("against_voucher") == d.get("against_voucher") and x.get("against_voucher_type") == d.get("against_voucher_type") and x.get("party") == d.get("party"))]
+
+	if not let_dates or len(let_dates) == 1:
+		let_vouchers = frappe.get_all("GL Entry", filters={"against_voucher": d.get("against_voucher"), "against_voucher_type": d.get("against_voucher_type"), "party": d.get("party")}, fields=["posting_date"])
+
+		if len(let_vouchers) > 1:
+			return format_datetime(max([x.get("posting_date") for x in let_vouchers]), "yyyyMMdd")
+
+	return format_datetime(max(let_dates), "yyyyMMdd") if len(let_dates) > 1 else None
