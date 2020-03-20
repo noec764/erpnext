@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
@@ -119,7 +120,6 @@
    "no_copy": 1
   },
   {
-   "default": "Sales",
    "fieldname": "opportunity_type",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -158,9 +158,9 @@
    "read_only": 1
   },
   {
-    "fieldname": "expected_closing",
-    "fieldtype": "Date",
-    "label": "Expected Closing Date"
+   "fieldname": "expected_closing",
+   "fieldtype": "Date",
+   "label": "Expected Closing Date"
   },
   {
    "collapsible": 1,
@@ -227,7 +227,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Prospecting",
    "fieldname": "sales_stage",
    "fieldtype": "Link",
    "label": "Sales Stage",
@@ -418,7 +417,8 @@
  ],
  "icon": "fa fa-info-sign",
  "idx": 195,
- "modified": "2019-09-30 12:58:37.385400",
+ "links": [],
+ "modified": "2020-03-20 17:57:13.833359",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",
