@@ -21,7 +21,7 @@ def execute(filters=None):
 
 def validate_filters(filters):
 	''' Validate if dates are properly set '''
-	if filters.from_date > filters.to_date:
+	if getdate(filters.from_date) > getdate(filters.to_date):
 		frappe.throw(_("From Date must be before To Date"))
 
 def set_filters(filters):
