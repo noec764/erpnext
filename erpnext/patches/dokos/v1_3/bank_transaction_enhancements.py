@@ -23,13 +23,13 @@ def execute():
 			flt(payment_entry.paid_amount) if payment_entry.payment_type == "Pay" else flt(payment_entry.received_amount))
 
 	for sales_invoice_payment in frappe.get_all("Sales Invoice Payment", \
-		filters={"mode_of_payment": ["is", "set"], "clearance_date": ["is", "not set"]}, fields=["sum(amount) as amount", "parent"], group_by="parent"):
+		filters={"mode_of_payment": ["is", "set"], "clearance_date": ["is", "not set"]}, fields=["sum(base_amount) as amount", "parent"], group_by="parent"):
 		is_return = frappe.db.get_value("Sales Invoice", sales_invoice_payment.parent, "is_return")
 		frappe.db.set_value("Sales Invoice", sales_invoice_payment.parent, "unreconciled_amount", \
-			(flt(sales_invoice_payment.base_amount) * -1) if is_return else flt(sales_invoice_payment.base_amount))
+			(flt(sales_invoice_payment.amount) * -1) if is_return else flt(sales_invoice_payment.amount))
 
 	for purchase_invoice in frappe.get_all("Purchase Invoice", \
-		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]}, fields=["paid_amount", "name", "is_return"]):
+		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]}, fields=["base_paid_amount", "name", "is_return"]):
 		frappe.db.set_value("Purchase Invoice", purchase_invoice.name, "unreconciled_amount", \
 			(flt(purchase_invoice.base_paid_amount) * -1) if purchase_invoice.is_return else flt(purchase_invoice.base_paid_amount))
 

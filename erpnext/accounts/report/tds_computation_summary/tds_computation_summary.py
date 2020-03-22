@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import flt
-from erpnext.accounts.utils import get_fiscal_year
+from erpnext.accounts.utils import get_fiscal_year, getdate
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category \
 	import get_advance_vouchers, get_debit_note_amount
 
@@ -18,7 +18,7 @@ def execute(filters=None):
 
 def validate_filters(filters):
 	''' Validate if dates are properly set and lie in the same fiscal year'''
-	if filters.from_date > filters.to_date:
+	if getdate(filters.from_date) > getdate(filters.to_date):
 		frappe.throw(_("From Date must be before To Date"))
 
 	from_year = get_fiscal_year(filters.from_date)[0]
