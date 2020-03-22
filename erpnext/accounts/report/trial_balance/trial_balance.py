@@ -37,7 +37,7 @@ def validate_filters(filters):
 	filters.from_date = getdate(filters.from_date)
 	filters.to_date = getdate(filters.to_date)
 
-	if filters.from_date > filters.to_date:
+	if getdate(filters.from_date) > getdate(filters.to_date):
 		frappe.throw(_("From Date cannot be greater than To Date"))
 
 	if (filters.from_date < filters.year_start_date) or (filters.from_date > filters.year_end_date):

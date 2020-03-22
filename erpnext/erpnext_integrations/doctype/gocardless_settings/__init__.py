@@ -17,7 +17,6 @@ def webhooks():
 		return
 
 	account, events = get_events(r)
-
 	for event in events:
 		try:
 			doc = create_new_integration_log(event, account)
@@ -81,5 +80,6 @@ def create_new_integration_log(event, account):
 	integration_request.flags._name = event.attributes.get("id")
 
 	integration_request.insert(ignore_permissions=True)
+	frappe.db.commit()
 
 	return integration_request

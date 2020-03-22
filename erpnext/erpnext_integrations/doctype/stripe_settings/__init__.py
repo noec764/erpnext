@@ -81,5 +81,6 @@ def create_new_integration_log(event, account):
 		integration_request.flags._name = event.id
 
 	integration_request.insert(ignore_permissions=True)
+	frappe.db.commit()
 
 	return integration_request

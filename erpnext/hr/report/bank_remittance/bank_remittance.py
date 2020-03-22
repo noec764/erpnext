@@ -8,6 +8,7 @@ import itertools
 from frappe import _, get_all
 
 def execute(filters=None):
+	company_country = frappe.db.get_value("Company", filters.company, "country")
 	columns = [
 		{
 			"label": _("Payroll Number"),
@@ -52,6 +53,7 @@ def execute(filters=None):
 			"label": _("IFSC Code"),
 			"fieldtype": "Data",
 			"fieldname": "bank_code",
+			"hidden": company_country != "India",
 			"width": 100
 		},
 		{
@@ -73,7 +75,8 @@ def execute(filters=None):
 	accounts = get_bank_accounts()
 	payroll_entries = get_payroll_entries(accounts, filters)
 	salary_slips = get_salary_slips(payroll_entries)
-	get_emp_bank_ifsc_code(salary_slips)
+	if company_country == "India":
+		get_emp_bank_ifsc_code(salary_slips)
 
 	for salary in salary_slips:
 		if salary.bank_name and salary.bank_account_no and salary.debit_acc_no and salary.status in ["Submitted", "Paid"]:
@@ -83,7 +86,7 @@ def execute(filters=None):
 				"payment_date": frappe.utils.formatdate(salary.modified.strftime('%Y-%m-%d')),
 				"bank_name": salary.bank_name,
 				"employee_account_no": salary.bank_account_no,
-				"bank_code": salary.ifsc_code,
+				"bank_code": salary.get("ifsc_code"),
 				"employee_name": salary.employee+": " + salary.employee_name,
 				"currency": frappe.get_cached_value('Company', filters.company, 'default_currency'),
 				"amount": salary.net_pay,
