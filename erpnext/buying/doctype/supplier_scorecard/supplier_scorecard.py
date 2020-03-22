@@ -20,9 +20,7 @@ class SupplierScorecard(Document):
 		self.update_standing()
 
 	def on_update(self):
-		score = make_all_scorecards(self.name)
-		if score > 0:
-			self.save()
+		self.make_all_scorecards()
 
 	def validate_standings(self):
 		# Check that there are no overlapping scores and check that there are no missing scores
@@ -98,6 +96,53 @@ class SupplierScorecard(Document):
 					self.set(fieldname, standing.get(fieldname))
 					frappe.db.set_value("Supplier", self.supplier, fieldname, self.get(fieldname))
 
+	def make_all_scorecards(self):
+		supplier = frappe.get_doc('Supplier',self.supplier)
+
+		start_date = getdate(supplier.creation)
+		end_date = get_scorecard_date(self.period, start_date)
+		todays = getdate(nowdate())
+
+		scp_count = 0
+		first_start_date = todays
+		last_end_date = todays
+
+		while (start_date < todays) and (end_date <= todays):
+			# check to make sure there is no scorecard period already created
+			scorecards = frappe.db.sql("""
+				SELECT
+					scp.name
+				FROM
+					`tabSupplier Scorecard Period` scp
+				WHERE
+					scp.scorecard = %(sc)s
+					AND scp.docstatus = 1
+					AND (
+						(scp.start_date > %(end_date)s
+						AND scp.end_date < %(start_date)s)
+					OR
+						(scp.start_date < %(end_date)s
+						AND scp.end_date > %(start_date)s))
+				ORDER BY
+					scp.end_date DESC""",
+					{"sc": self.name, "start_date": start_date, "end_date": end_date}, as_dict=1)
+			if len(scorecards) == 0:
+				period_card = make_supplier_scorecard(self.name, None)
+				period_card.start_date = start_date
+				period_card.end_date = end_date
+				period_card.submit()
+				scp_count = scp_count + 1
+				if start_date < first_start_date:
+					first_start_date = start_date
+				last_end_date = end_date
+
+			start_date = getdate(add_days(end_date,1))
+			end_date = get_scorecard_date(self.period, start_date)
+		if scp_count > 0:
+			self.save()
+			frappe.msgprint(_("Created {0} scorecards for {1} between: ").format(scp_count, self.supplier) + str(first_start_date) + " - " + str(last_end_date))
+		return scp_count
+
 
 @frappe.whitelist()
 def get_timeline_data(doctype, name):
@@ -135,60 +180,7 @@ def refresh_scorecards():
 			`tabSupplier Scorecard` sc""",
 			{}, as_dict=1)
 	for sc in scorecards:
-		# Check to see if any new scorecard periods are created
-		if make_all_scorecards(sc.name) > 0:
-			# Save the scorecard to update the score and standings
-			frappe.get_doc("Supplier Scorecard", sc.name).save()
-
-
-@frappe.whitelist()
-def make_all_scorecards(docname):
-
-	sc = frappe.get_doc('Supplier Scorecard', docname)
-	supplier = frappe.get_doc('Supplier',sc.supplier)
-
-	start_date = getdate(supplier.creation)
-	end_date = get_scorecard_date(sc.period, start_date)
-	todays = getdate(nowdate())
-
-	scp_count = 0
-	first_start_date = todays
-	last_end_date = todays
-
-	while (start_date < todays) and (end_date <= todays):
-		# check to make sure there is no scorecard period already created
-		scorecards = frappe.db.sql("""
-			SELECT
-				scp.name
-			FROM
-				`tabSupplier Scorecard Period` scp
-			WHERE
-				scp.scorecard = %(sc)s
-				AND scp.docstatus = 1
-				AND (
-					(scp.start_date > %(end_date)s
-					AND scp.end_date < %(start_date)s)
-				OR
-					(scp.start_date < %(end_date)s
-					AND scp.end_date > %(start_date)s))
-			ORDER BY
-				scp.end_date DESC""",
-				{"sc": docname, "start_date": start_date, "end_date": end_date}, as_dict=1)
-		if len(scorecards) == 0:
-			period_card = make_supplier_scorecard(docname, None)
-			period_card.start_date = start_date
-			period_card.end_date = end_date
-			period_card.submit()
-			scp_count = scp_count + 1
-			if start_date < first_start_date:
-				first_start_date = start_date
-			last_end_date = end_date
-
-		start_date = getdate(add_days(end_date,1))
-		end_date = get_scorecard_date(sc.period, start_date)
-	if scp_count > 0:
-		frappe.msgprint(_("Created {0} scorecards for {1} between: ").format(scp_count, sc.supplier) + str(first_start_date) + " - " + str(last_end_date))
-	return scp_count
+		frappe.enqueue_doc("Supplier Scorecard", sc.name, "make_all_scorecards", queue="long", timeout=3600)
 
 def get_scorecard_date(period, start_date):
 	if period == 'Per Week':
