@@ -16,7 +16,7 @@ class BankClearance(Document):
 		if not (self.from_date and self.to_date):
 			frappe.throw(_("From Date and To Date are Mandatory"))
 
-		if not self.account:
+		if not self.bank_account:
 			frappe.throw(_("Account is mandatory to get payment entries"))
 
 		condition = ""
