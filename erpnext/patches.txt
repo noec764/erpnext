@@ -626,6 +626,7 @@ erpnext.patches.v12_0.set_lead_title_field
 erpnext.patches.v12_0.set_permission_einvoicing
 erpnext.patches.v12_0.set_job_offer_applicant_email
 erpnext.patches.v12_0.create_irs_1099_field_united_states
+erpnext.patches.v12_0.move_bank_account_swift_number_to_bank
 
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
