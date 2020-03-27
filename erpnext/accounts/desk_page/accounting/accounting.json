@@ -76,21 +76,21 @@
  "charts": [
   {
    "chart_name": "Bank Balance",
-   "label": "Bank Balance",
-   "size": "Full"
+   "label": "Bank Balance"
   }
  ],
+ "color": "#3498db",
  "creation": "2020-03-02 15:41:59.515192",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Desk Page",
  "extends_another_page": 0,
- "icon": "",
+ "icon": "fas fa-book",
  "idx": 0,
  "is_standard": 1,
  "label": "Accounting",
- "modified": "2020-03-12 16:30:35.580450",
+ "modified": "2020-03-27 13:37:47.746854",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",

@@ -37,21 +37,21 @@
  "charts": [
   {
    "chart_name": "Expenses",
-   "label": "Expenses",
-   "size": "Full"
+   "label": "Expenses"
   }
  ],
+ "color": "#c0392b",
  "creation": "2020-01-28 11:50:26.195467",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Desk Page",
  "extends_another_page": 0,
- "icon": "",
+ "icon": "fas fa-shopping-bag",
  "idx": 0,
  "is_standard": 1,
  "label": "Buying",
- "modified": "2020-03-12 16:30:40.779078",
+ "modified": "2020-03-27 13:40:48.533601",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
