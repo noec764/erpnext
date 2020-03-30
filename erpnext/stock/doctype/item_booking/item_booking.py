@@ -6,13 +6,11 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime, format_datetime
+from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime
 import datetime
 from datetime import timedelta, date
 import calendar
 import json
-from frappe.desk.calendar import get_rrule
-from dateutil import parser
 from erpnext.shopping_cart.cart import _get_cart_quotation
 from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.product_info import get_product_info_for_website

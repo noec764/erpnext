@@ -40,6 +40,11 @@ class Subscription(Document):
 		self.set_subscription_status()
 		self.update_payment_gateway_subscription()
 
+	def on_trash(self):
+		events = frappe.get_all("Subscription Event", filters={"subscription": self.name})
+		for event in events:
+			frappe.delete_doc("Subscription Event", event.name, force=True)
+
 	def update_subscription_period(self, date=None):
 		start_date = self.current_invoice_start
 		end_date = self.current_invoice_end
