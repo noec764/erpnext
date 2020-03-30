@@ -605,11 +605,11 @@ class AccountsController(TransactionBase):
 				unlink_ref_doc_from_payment_entries(self)
 
 		if self.doctype in ["Sales Order", "Sales Invoice", "Payment Entry"]:
-			self.cancel_linked_subscription_events()
+			self.delete_linked_subscription_events(True)
 
 	def on_trash(self):
 		if self.doctype in ["Sales Order", "Sales Invoice", "Payment Entry"]:
-			self.cancel_linked_subscription_events()
+			self.delete_linked_subscription_events()
 
 	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on, parentfield):
 		from erpnext.controllers.status_updater import get_allowance_for
@@ -870,12 +870,17 @@ class AccountsController(TransactionBase):
 		else:
 			return frappe.db.get_single_value("Global Defaults", "disable_rounded_total")
 
-	def cancel_linked_subscription_events(self):
-		events = frappe.get_all("Subscription Event", filters={"document_type": self.doctype, "document_name": self.name})
+	def delete_linked_subscription_events(self, cancel_only=False):
+		events = frappe.get_all("Subscription Event", filters={"document_type": self.doctype, "document_name": self.name}, fields=["name", "docstatus"])
 		for event in events:
-			e = frappe.get_doc("Subscription Event", event.name)
-			e.flags.ignore_permissions = True
-			e.cancel()
+			# For retro-compatibility
+			if event.docstatus == 1:
+				e = frappe.get_doc("Subscription Event", event.name)
+				e.flags.ignore_permissions = True
+				e.cancel()
+
+			if not cancel_only:
+				frappe.delete_doc("Subscription Event", event.name)
 
 @frappe.whitelist()
 def get_tax_rate(account_head):
