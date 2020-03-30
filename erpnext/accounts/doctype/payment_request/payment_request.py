@@ -120,6 +120,11 @@ class PaymentRequest(Document):
 		self.check_if_payment_entry_exists()
 		self.set_as_cancelled()
 
+	def on_trash(self):
+		events = frappe.get_all("Subscription Event", filters={"document_type": "Payment Request", "document_name": self.name})
+		for event in events:
+			frappe.delete_doc("Subscription Event", event.name, force=True)
+
 	def make_invoice(self):
 		if self.reference_doctype == "Sales Order":
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
