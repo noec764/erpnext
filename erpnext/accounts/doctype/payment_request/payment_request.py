@@ -117,12 +117,21 @@ class PaymentRequest(Document):
 			self.send_email(communication)
 
 	def on_cancel(self):
+		self.delete_linked_subscription_events(True)
 		self.check_if_payment_entry_exists()
 		self.set_as_cancelled()
 
 	def on_trash(self):
-		events = frappe.get_all("Subscription Event", filters={"document_type": "Payment Request", "document_name": self.name})
+		self.delete_linked_subscription_events()
+
+	def delete_linked_subscription_events(self, cancel_only=False):
+		events = frappe.get_all("Subscription Event", filters={"document_type": "Payment Request", "document_name": self.name}, fields=["name", "docstatus"])
 		for event in events:
+			if event.docstatus == 1:
+				e = frappe.get_doc("Subscription Event", event.name)
+				e.flags.ignore_permissions = True
+				e.cancel()
+
 			frappe.delete_doc("Subscription Event", event.name, force=True)
 
 	def make_invoice(self):
