@@ -472,7 +472,7 @@ def make_payment_request(**args):
 		pr.update({
 			"currency": ref_doc.currency,
 			"grand_total": grand_total,
-			"email_to": args.recipient_id or "",
+			"email_to": args.recipient_id or ref_doc.owner,
 			"subject": _("Payment Request for {0}").format(args.dn),
 			"reference_doctype": args.dt,
 			"reference_name": args.dn
