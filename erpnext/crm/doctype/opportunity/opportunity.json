@@ -352,7 +352,6 @@
    "options": "Lead Source"
   },
   {
-   "depends_on": "eval: doc.source==\"Campaign\"",
    "description": "Enter name of campaign if source of enquiry is campaign",
    "fieldname": "campaign",
    "fieldtype": "Link",
