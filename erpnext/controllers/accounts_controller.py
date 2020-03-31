@@ -745,8 +745,8 @@ class AccountsController(TransactionBase):
 				if (party_account_currency
 						and party_account_currency != self.company_currency
 						and self.currency != party_account_currency):
-					frappe.throw(_("Accounting Entry for {0}: {1} can only be made in currency: {2}")
-								 .format(party_type, party, party_account_currency), InvalidCurrency)
+					frappe.throw(_("{0} {1} has accounting entries in currency {2} for company {3}. Please select a receivable or payable account with currency {2}.")
+						.format(frappe.bold(party_type), frappe.bold(party), frappe.bold(existing_gle_currency), frappe.bold(company)), InvalidAccountCurrency)
 
 				# Note: not validating with gle account because we don't have the account
 				# at quotation / sales order level and we shouldn't stop someone
