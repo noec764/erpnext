@@ -104,19 +104,20 @@ class Opportunity(TransactionBase):
 			frappe.throw(_("Cannot declare as lost, because Quotation has been made."))
 
 	def has_active_quotation(self):
-		if not self.with_items:
-			return frappe.get_all('Quotation',
-				{
-					'opportunity': self.name,
-					'status': ("not in", ['Lost', 'Closed']),
-					'docstatus': 1
-				}, 'name')
-		else:
-			return frappe.db.sql("""
+		output = frappe.get_all('Quotation',
+			{
+				'opportunity': self.name,
+				'status': ("not in", ['Lost', 'Closed']),
+				'docstatus': 1
+			}, 'name')
+		if not output:
+			output = frappe.db.sql("""
 				select q.name
 				from `tabQuotation` q, `tabQuotation Item` qi
 				where q.name = qi.parent and q.docstatus=1 and qi.prevdoc_docname =%s
 				and q.status not in ('Lost', 'Closed')""", self.name)
+
+		return output
 
 	def has_ordered_quotation(self):
 		return frappe.db.sql("""

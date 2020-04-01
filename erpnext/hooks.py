@@ -275,7 +275,9 @@ scheduler_events = {
 		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_integrated_documents",
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
-		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts"
+		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
+		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
+		"erpnext.accounts.doctype.subscription.subscription.check_gateway_payments"
 	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",
@@ -306,8 +308,6 @@ scheduler_events = {
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
 		"erpnext.hr.utils.generate_leave_encashment",
 		"erpnext.projects.doctype.project.project.update_project_sales_billing",
-		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
-		"erpnext.accounts.doctype.subscription.subscription.check_gateway_payments",
 		"erpnext.loan_management.doctype.loan_security_shortfall.loan_security_shortfall.check_for_ltv_shortfall",
 		"erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual.make_accrual_interest_entry_for_term_loans"
 	],
