@@ -437,7 +437,9 @@ class Subscription(Document):
 
 	def get_current_documents(self, doctype):
 		events = frappe.get_all("Subscription Event",
-			filters={"subscription": self.name, "document_type": doctype, "event_type": f"{doctype.capitalize()} created"},
+			filters={"subscription": self.name, "document_type": doctype,
+				"period_start": self.current_invoice_start, "period_end": self.current_invoice_end,
+				"event_type": f"{doctype.capitalize()} created"},
 			fields=["document_name"])
 		if events:
 			return [x.document_name for x in events]
@@ -788,9 +790,10 @@ def check_gateway_payments():
 				"party_type": "Customer",
 				"party": doc.customer,
 				"submit_doc": True,
-				"mute_email": True
+				"mute_email": True,
+				"payment_gateway": doc.payment_gateway
 			})
 
-			if pr.get("payment_gateways") and float(pr.get("grand_total")) > 0:
+			if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:
 				doc = frappe.get_doc("Payment Request", pr.get("name"))
 				doc.run_method("process_payment_immediately")
