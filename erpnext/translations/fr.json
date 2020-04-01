@@ -79,6 +79,7 @@
     "DocType: Accounting Dimension": {
         "Accounting Dimension": "Dimension comptable",
         "Accounts": "Comptes",
+        "Accounts Manager": "Responsable comptable",
         "Dimension Defaults": "Paramètres par défaut des dimensions",
         "Dimension Name": "Nom de la dimension",
         "Disable": "Désactiver",
@@ -326,6 +327,28 @@
         "To Time": "Horaire de fin",
         "Tuesday": "Mardi",
         "Wednesday": "Mercredi"
+    },
+    "DocType: Appointment Letter": {
+        "Applicant Name": "Nom du Candidat",
+        "Company": "Société",
+        "HR": "RH",
+        "HR Manager": "Responsable RH",
+        "Introduction": "Introduction",
+        "Job Applicant": "Demandeur d'Emploi",
+        "System Manager": "Responsable système",
+        "Terms": "Termes"
+    },
+    "DocType: Appointment Letter Template": {
+        "HR": "RH",
+        "HR Manager": "Responsable RH",
+        "Introduction": "Introduction",
+        "System Manager": "Responsable système",
+        "Terms": "Termes"
+    },
+    "DocType: Appointment Letter content": {
+        "Description": "Description",
+        "HR": "RH",
+        "Title": "Titre"
     },
     "DocType: Appraisal": {
         "Amended From": "Modifié depuis",
@@ -938,13 +961,20 @@
     },
     "DocType: Bank": {
         "Accounts": "Comptes",
+        "Address HTML": "Adresse HTML",
+        "Address and Contact": "Adresse et Contact",
         "Bank": "Banque",
+        "Bank Details": "Détails de la banque",
         "Bank Logo": "Logo de la banque",
         "Bank Name": "Nom de la Banque",
         "Bank Transaction Mapping": "Mapping des transactions bancaires",
+        "Branch Code": "Code de la branche",
+        "Contact HTML": "HTML du Contact",
         "Data Import Configuration": "Configuration pour l'import de données",
         "Plaid Access Token": "Jeton d'accès Plaid",
-        "System Manager": "Responsable système"
+        "SWIFT number": "Numéro SWIFT",
+        "System Manager": "Responsable système",
+        "Website": "Site web"
     },
     "DocType: Bank Account": {
         "Account": "Compte",
@@ -1404,6 +1434,7 @@
         "Chart Tree": "Arbre du plan comptable",
         "Chart of Accounts Importer": "Outil d'import de plan comptable",
         "Company": "Société",
+        "Download Template": "Télécharger le modèle",
         "Import Chart of Accounts from a csv file": "Importer le plan comptable depuis un fichier CSV"
     },
     "DocType: Cheque Print Template": {
@@ -1941,6 +1972,7 @@
         "In Words will be visible once you save the Delivery Note.": "En Toutes Lettres. Sera visible une fois que vous enregistrez le Bon de livraison.",
         "Installation Status": "Etat de l'Installation",
         "Instructions": "Instructions",
+        "Is Internal Customer": "Est un client interne",
         "Is Return": "Est un Retour",
         "Issue Credit Note": "Note de crédit d'émission",
         "Items": "Articles",
@@ -4562,7 +4594,9 @@
         "Applicant": "Candidat",
         "Applicant Name": "Nom du Candidat",
         "Applicant Type": "Type de demandeur",
+        "Closed": "Fermé",
         "Company": "Société",
+        "Customer": "Client",
         "Disbursed": "Décaissé",
         "Disbursement Date": "Date de déboursement",
         "Employee": "Employé",
@@ -4593,6 +4627,7 @@
         "Status": "Statut",
         "Total Amount Paid": "Montant total payé",
         "Total Interest Payable": "Total des Intérêts à Payer",
+        "Total Payable Amount": "Montant Total Créditeur",
         "Total Payment": "Paiement Total",
         "Totals": "Totaux"
     },
@@ -4603,6 +4638,7 @@
         "Applicant Type": "Type de demandeur",
         "Approved": "Approuvé",
         "Company": "Société",
+        "Customer": "Client",
         "Employee": "Employé",
         "HR": "RH",
         "HR Manager": "Responsable RH",
@@ -4610,6 +4646,7 @@
         "Loan Application": "Demande de prêt",
         "Loan Info": "Infos sur le Prêt",
         "Loan Type": "Type de Prêt",
+        "Maximum Loan Amount": "Montant Max du Prêt",
         "Member": "Membre",
         "Monthly Repayment Amount": "Montant du Remboursement Mensuel",
         "Open": "Ouvert",
@@ -4627,15 +4664,123 @@
         "Total Payable Amount": "Montant Total Créditeur",
         "Total Payable Interest": "Total des Intérêts Créditeurs"
     },
+    "DocType: Loan Disbursement": {
+        "Accounting Dimensions": "Dimensions comptables",
+        "Amended From": "Modifié depuis",
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Bank Account": "Compte bancaire",
+        "Company": "Société",
+        "Cost Center": "Centre de coûts",
+        "Customer": "Client",
+        "Customer Details": "Détails du client",
+        "Disbursement Date": "Date de déboursement",
+        "Employee": "Employé",
+        "Member": "Membre",
+        "Posting Date": "Date de comptabilisation",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Interest Accrual": {
+        "Amended From": "Modifié depuis",
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société",
+        "Customer": "Client",
+        "Employee": "Employé",
+        "Interest Amount": "Montant d'Intérêts",
+        "Interest Income Account": "Compte d'Intérêts Créditeurs",
+        "Is Paid": "Est Payé",
+        "Loan": "Prêt",
+        "Loan Account": "Compte de prêt",
+        "Member": "Membre",
+        "Posting Date": "Date de comptabilisation",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Repayment": {
+        "Accounting Dimensions": "Dimensions comptables",
+        "Amended From": "Modifié depuis",
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société",
+        "Cost Center": "Centre de coûts",
+        "Customer": "Client",
+        "Due Date": "Date d'échéance de paiement",
+        "Employee": "Employé",
+        "Loan Repayment": "Remboursement de prêt",
+        "Loan Type": "Type de Prêt",
+        "Member": "Membre",
+        "Payable Amount": "Montant à payer",
+        "Payment Type": "Type de Paiement",
+        "Posting Date": "Date de comptabilisation",
+        "Reference Date": "Date de référence",
+        "Reference Number": "Numéro de Référence",
+        "References": "Références",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Security": {
+        "Disabled": "Désactiver",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Security Pledge": {
+        "Amended From": "Modifié depuis",
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société",
+        "Customer": "Client",
+        "Employee": "Employé",
+        "Loan": "Prêt",
+        "Loan Application": "Demande de prêt",
+        "Member": "Membre",
+        "Status": "Statut",
+        "System Manager": "Responsable système",
+        "Totals": "Totaux"
+    },
+    "DocType: Loan Security Price": {
+        "System Manager": "Responsable système",
+        "UOM": "Unité de mesure",
+        "Valid From": "Valide à Partir de",
+        "Valid Upto": "Valide Jusqu'au"
+    },
+    "DocType: Loan Security Shortfall": {
+        "Completed": "Terminé",
+        "Loan Amount": "Montant du Prêt",
+        "Pending": "En attente",
+        "Status": "Statut",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Security Type": {
+        "Disabled": "Désactiver",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Loan Security Unpledge": {
+        "Amended From": "Modifié depuis",
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Approved": "Approuvé",
+        "Company": "Société",
+        "Customer": "Client",
+        "Employee": "Employé",
+        "Loan": "Prêt",
+        "Member": "Membre",
+        "Status": "Statut",
+        "System Manager": "Responsable système"
+    },
     "DocType: Loan Type": {
+        "Account Details": "Détails du compte",
+        "Amended From": "Modifié depuis",
+        "Company": "Société",
         "Description": "Description",
         "Disabled": "Désactiver",
         "Employee": "Employé",
         "HR": "RH",
         "HR Manager": "Responsable RH",
+        "Interest Income Account": "Compte d'Intérêts Créditeurs",
+        "Loan Account": "Compte de prêt",
         "Loan Name": "Nom du Prêt",
         "Loan Type": "Type de Prêt",
         "Maximum Loan Amount": "Montant Max du Prêt",
+        "Mode of Payment": "Mode de Paiement",
+        "Payment Account": "Compte de Paiement",
         "Rate of Interest (%) Yearly": "Taux d'Intérêt (%) Annuel"
     },
     "DocType: Location": {
@@ -5842,6 +5987,11 @@
         "production": "production",
         "sandbox": "sandbox"
     },
+    "DocType: Pledge": {
+        "Amount": "Montant",
+        "Quantity": "Quantité",
+        "UOM": "Unité de mesure"
+    },
     "DocType: Portal Payment Gateways": {
         "Accounts": "Comptes",
         "Payment Gateway": "Passerelle de paiement",
@@ -5993,6 +6143,16 @@
         "Description": "Description",
         "Print Heading": "Titre d'impression",
         "Setup": "Configuration",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Process Loan Interest Accrual": {
+        "Amended From": "Modifié depuis",
+        "Loan Type": "Type de Prêt",
+        "Posting Date": "Date de comptabilisation",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Process Loan Security Shortfall": {
+        "Amended From": "Modifié depuis",
         "System Manager": "Responsable système"
     },
     "DocType: Product Bundle": {
@@ -6340,6 +6500,10 @@
         "UOM": "Unité de mesure",
         "Warehouse": "Entrepôt"
     },
+    "DocType: Proposed Pledge": {
+        "Amount": "Montant",
+        "Quantity": "Quantité"
+    },
     "DocType: Purchase Invoice": {
         "ACC-PINV-.YYYY.-": "ACC-PINV-.YYYY.-",
         "Accounting Dimensions ": "Dimensions comptables",
@@ -6390,6 +6554,7 @@
         "In Words": "En Toutes Lettres",
         "In Words (Company Currency)": "En Toutes Lettres (Devise Société)",
         "Inter Company Invoice Reference": "Référence de facture inter-sociétés",
+        "Is Internal Supplier": "Est un fournisseur interne",
         "Is Opening": "Écriture d'Ouverture",
         "Is Paid": "Est Payé",
         "Is Return (Debit Note)": "Est une note de débit",
@@ -6575,6 +6740,7 @@
         "Service Stop Date": "Date d'arrêt du service",
         "Stock Qty": "Qté en Stock",
         "Stock UOM": "Unité de mesure du stock",
+        "Supplier Warehouse": "Entrepôt Fournisseur",
         "Tax detail table fetched from item master as a string and stored in this field.\nUsed for Taxes and Charges": "La table de détails de taxe est récupérée depuis les données de base de l'article comme une chaîne de caractères et stockée dans ce champ.\nElle est utilisée pour les Taxes et Frais.",
         "Total Weight": "Poids total",
         "UOM": "Unité de mesure",
@@ -6972,6 +7138,7 @@
         "Stock": "Stock",
         "Stock UOM": "Unité de mesure du stock",
         "Supplier Part Number": "Numéro de Pièce du Fournisseur",
+        "Supplier Warehouse": "Entrepôt Fournisseur",
         "Tax detail table fetched from item master as a string and stored in this field.\nUsed for Taxes and Charges": "Tableau de détails des taxes récupéré depuis les données de base de l'article et enregistré dans ce champ.\nUtilisé pour les taxes et frais.",
         "Total Weight": "Poids total",
         "UOM": "Unité de mesure",
@@ -7816,6 +7983,7 @@
         "Interest Income Account": "Compte d'Intérêts Créditeurs",
         "Loan": "Prêt",
         "Loan Account": "Compte de prêt",
+        "Loan Type": "Type de Prêt",
         "Principal Amount": "Montant Principal",
         "Salary Slip Loan": "Avance sur salaire",
         "Total Payment": "Paiement Total"
@@ -7955,6 +8123,7 @@
         "Include Payment (POS)": "Paiement inclus (Point de vente)",
         "Inter Company Invoice Reference": "Référence de facture inter-sociétés",
         "Is Discounted": "Est affacturée",
+        "Is Internal Customer": "Est un client interne",
         "Is Opening Entry": "Est une écriture d'à-nouveaux",
         "Is Return (Credit Note)": "Est un avoir (note de crédit)",
         "Items": "Articles",
@@ -8507,6 +8676,15 @@
         "Sales Person": "Vendeur",
         "Sales Team": "Équipe des Ventes",
         "Selling": "Vente"
+    },
+    "DocType: Sanctioned Loan Amount": {
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société",
+        "Customer": "Client",
+        "Employee": "Employé",
+        "Member": "Membre",
+        "System Manager": "Responsable système"
     },
     "DocType: Selling Settings": {
         "Allow Item to be added multiple times in a transaction": "Autoriser un article à être ajouté plusieurs fois dans une transaction",
@@ -10367,6 +10545,10 @@
         "UOM Conversion Factor": "Facteur de conversion de l'unité de mesure",
         "Value": "Valeur"
     },
+    "DocType: Unpledge": {
+        "Quantity": "Quantité",
+        "UOM": "Unité de mesure"
+    },
     "DocType: Upload Attendance": {
         "Attendance From Date": "Présence Depuis",
         "Attendance To Date": "Présence Jusqu'à",
@@ -11518,6 +11700,7 @@
         "Clearance Date updated": "Date de rapprochement mise à jour",
         "Cr": "Cr",
         "Dr": "déb.",
+        "From Date and To Date are Mandatory": "La date de début et la date de fin sont obligatoires",
         "Row #{0}: Clearance date {1} cannot be before Cheque Date {2}": "Ligne #{0} : La date de rapprochement {1} ne peut pas être antérieure à la Date du Chèque {2}",
         "Row #{0}: Payment document is required to complete the transaction": "Ligne #{0}: un document de paiement est nécessaire pour compléter cette transaction"
     },
@@ -11607,6 +11790,7 @@
     "apps/erpnext/erpnext/accounts/doctype/chart_of_accounts_importer/chart_of_accounts_importer.js": {
         "All Accounts": "Tous les comptes",
         "Creating Accounts...": "Création des comptes...",
+        "Download Template": "Télécharger le modèle",
         "Download template": "Télécharger le modèle",
         "Import Successfull": "Import réussi",
         "Reset": "Réinitialiser",
@@ -12774,6 +12958,7 @@
         "Cost Center": "Centre de coûts",
         "Finance Book": "Livre comptable",
         "Payment Terms Template": "Modèle de termes de paiement",
+        "Posting Date": "Date de comptabilisation",
         "Supplier": "Fournisseur",
         "Supplier Group": "Groupe de fournisseurs",
         "Tax Id": "N° TVA"
@@ -12791,6 +12976,7 @@
         "Date": "Date",
         "Finance Book": "Livre comptable",
         "Payment Terms Template": "Modèle de termes de paiement",
+        "Posting Date": "Date de comptabilisation",
         "Supplier": "Fournisseur",
         "Supplier Group": "Groupe de fournisseurs"
     },
@@ -12850,6 +13036,7 @@
         "Finance Book": "Livre comptable",
         "Payment Tems": "Termes de paiement",
         "Payment Terms Template": "Modèle de termes de paiement",
+        "Posting Date": "Date de comptabilisation",
         "Sales Partner": "Partenaire Commercial",
         "Sales Person": "Vendeur",
         "Show Delivery Notes": "Afficher les bons de livraison",
@@ -12904,6 +13091,7 @@
         "Date": "Date",
         "Finance Book": "Livre comptable",
         "Payment Terms Template": "Modèle de termes de paiement",
+        "Posting Date": "Date de comptabilisation",
         "Sales Partner": "Partenaire Commercial",
         "Sales Person": "Vendeur",
         "Territory": "Région"
@@ -13392,6 +13580,7 @@
     "apps/erpnext/erpnext/accounts/report/profit_and_loss_statement/profit_and_loss_statement.py": {
         "Expense": "Charges",
         "Income": "Revenus",
+        "Net Profit": "Bénéfice net",
         "Net Profit/Loss": "Bénéfice / Perte net·te",
         "Profit for the year": "Bénéfice de l'exercice"
     },
@@ -14463,6 +14652,10 @@
         "Payments": "Paiements",
         "Settings": "Paramètres",
         "Stripe payment gateway settings": "Paramètres de la passerelle de paiement Stripe"
+    },
+    "apps/erpnext/erpnext/config/loan_management.py": {
+        "Loan": "Prêt",
+        "Reports": "Rapports"
     },
     "apps/erpnext/erpnext/config/manufacturing.py": {
         "All Products or Services.": "Tous les Produits ou Services.",
@@ -16054,6 +16247,72 @@
         "To date can not be less than from date": "La date de fin ne peut être antérieure à la date de début",
         "To date can not greater than employee's relieving date": "La date de fin ne peut pas dépasser la date de libération de l'employé"
     },
+    "apps/erpnext/erpnext/loan_management/doctype/loan/loan.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "Create": "Créer",
+        "Loan Repayment": "Remboursement de prêt",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan/loan.py": {
+        "Account {0} does not belongs to company {1}": "Le compte {0} n'appartient pas à la société {1}",
+        "Monthly Repayment Amount cannot be greater than Loan Amount": "Montant du Remboursement Mensuel ne peut pas être supérieur au Montant du Prêt",
+        "Please enter Repayment Periods": "Veuillez entrer les Périodes de Remboursement",
+        "Please enter repayment Amount": "Veuillez entrer le Montant de remboursement"
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan_application/loan_application.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "Create": "Créer",
+        "Loan": "Prêt",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan_application/loan_application.py": {
+        "Loan Amount cannot exceed Maximum Loan Amount of {0}": "Le Montant du prêt ne peut pas dépasser le Montant Maximal du Prêt de {0}",
+        "Repayment Amount must be greater than ": "Le montant du remboursement doit être supérieur à "
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan_disbursement/loan_disbursement.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan_interest_accrual/loan_interest_accrual.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/doctype/loan_repayment/loan_repayment.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/loan_common.js": {
+        "Accounting Ledger": "Livre des Comptes",
+        "View": "Voir"
+    },
+    "apps/erpnext/erpnext/loan_management/report/loan_repayment_and_closure/loan_repayment_and_closure.js": {
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société"
+    },
+    "apps/erpnext/erpnext/loan_management/report/loan_repayment_and_closure/loan_repayment_and_closure.py": {
+        "Applicant": "Candidat",
+        "Currency": "Devise",
+        "Interest Amount": "Montant d'Intérêts",
+        "Loan Repayment": "Remboursement de prêt",
+        "Paid Amount": "Montant payé",
+        "Payable Amount": "Montant à payer",
+        "Payment Type": "Type de Paiement",
+        "Posting Date": "Date de comptabilisation",
+        "Principal Amount": "Montant Principal"
+    },
+    "apps/erpnext/erpnext/loan_management/report/loan_security_status/loan_security_status.js": {
+        "Applicant": "Candidat",
+        "Applicant Type": "Type de demandeur",
+        "Company": "Société"
+    },
+    "apps/erpnext/erpnext/loan_management/report/loan_security_status/loan_security_status.py": {
+        "Applicant": "Candidat",
+        "Currency": "Devise",
+        "Loan": "Prêt",
+        "Quantity": "Quantité",
+        "Status": "Statut"
+    },
     "apps/erpnext/erpnext/maintenance/doctype/maintenance_schedule/maintenance_schedule.js": {
         "Create": "Créer",
         "Create Maintenance Visit": "Créer une visite de maintenance",
@@ -17170,7 +17429,8 @@
     "apps/erpnext/erpnext/regional/report/datev/datev.js": {
         "Company": "Société",
         "From Date": "Date de début",
-        "To Date": "Date de fin"
+        "To Date": "Date de fin",
+        "Voucher Type": "Type de Référence"
     },
     "apps/erpnext/erpnext/regional/report/datev/datev.py": {
         "<b>Company</b> is a mandatory filter.": "<b>Société</b> est un filtre obligatoire.",
@@ -18478,6 +18738,7 @@
         "Please select Charge Type first": "Veuillez d’abord sélectionner le Type de Facturation",
         "Please select the Company first": "Veuillez sélectionner la Société en premier",
         "Please specify a valid Row ID for row {0} in table {1}": "Veuillez spécifier un N° de Ligne valide pour la ligne {0} de la table {1}",
+        "Purchase Receipt": "Reçu d’Achat",
         "Reopen": "Ré-ouvrir",
         "Sales Invoice": "Facture de vente",
         "Sales Order": "Commande client",
@@ -18517,6 +18778,10 @@
         "Create Delivery Trip": "Créer un tournée de livraison",
         "Return": "Retour",
         "To Bill": "À Facturer"
+    },
+    "apps/erpnext/erpnext/stock/doctype/delivery_note/regional/india.js": {
+        "Create": "Créer",
+        "Please enable pop-ups": "Veuillez activer les popups"
     },
     "apps/erpnext/erpnext/stock/doctype/delivery_trip/delivery_trip.js": {
         "Cannot Calculate Arrival Time as Driver Address is Missing.": "Le système n'a pas pu calculer l'heure d'arrivée car l'adresse du livreur est manquante",
@@ -18847,6 +19112,7 @@
         "Close": "Fermer",
         "Create": "Créer",
         "Debit Note": "Note de débit",
+        "Delivery Note": "Bon de livraison",
         "For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included": "Pour la ligne {0} dans {1}. Pour inclure {2} dans le prix de l'Article, les lignes {3} doivent également être incluses",
         "Get Items": "Obtenir les articles",
         "Get Items from Product Bundle": "Obtenir les Articles du Produit Groupé",
