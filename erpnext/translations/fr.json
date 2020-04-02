@@ -13861,14 +13861,14 @@
         "All Accounts": "Tous les comptes",
         "Allocated amount cannot be greater than unadjusted amount": "Le montant alloué ne peut pas être supérieur au montant du document",
         "Allocated amount cannot be negative": "Le montant alloué ne peut pas être négatif",
-        "Journal Entries {0} are un-linked": "Les Écritures de Journal {0} ne sont pas liées",
-        "Payment Entries {0} are un-linked": "Écritures de Paiement {0} ne sont pas liées",
-        "Payment Entry has been modified after you pulled it. Please pull it again.": "L’Écriture de Paiement a été modifié après que vous l’ayez récupérée. Veuillez la récupérer à nouveau.",
-        "Payment Gateway Account not created, please create one manually.": "Le Compte Passerelle de Paiement n’existe pas, veuillez en créer un manuellement.",
+        "Journal Entries {0} are un-linked": "Les écritures de journal associées ({0}) on été déliées",
+        "Payment Entries {0} are un-linked": "Les écritures de paiement associées ({0}) on été déliées",
+        "Payment Entry has been modified after you pulled it. Please pull it again.": "L’écriture de paiement a été modifiée après que vous l’ayez récupérée. Veuillez la récupérer à nouveau.",
+        "Payment Gateway Account not created, please create one manually.": "Le compte pour la passerelle de paiement n’existe pas, veuillez en créer un manuellement.",
         "Please set default {0} in Company {1}": "Veuillez définir {0} par défaut dans la Société {1}",
-        "{0} '{1}' not in Fiscal Year {2}": "{0} '{1}' n'est pas dans l’Exercice {2}",
+        "{0} '{1}' not in Fiscal Year {2}": "{0} '{1}' n'est pas dans l’exercice {2}",
         "{0} Number {1} already used in account {2}": "{0} Numéro {1} déjà utilisé dans le compte {2}",
-        "{0} {1} not in any active Fiscal Year.": "{0} {1} dans aucun Exercice actif."
+        "{0} {1} not in any active Fiscal Year.": "{0} {1} dans aucun exercice actif."
     },
     "apps/erpnext/erpnext/assets/doctype/asset/asset.js": {
         "Asset Maintenance": "Maintenance des Actifs",
