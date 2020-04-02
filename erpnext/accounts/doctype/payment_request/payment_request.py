@@ -541,14 +541,20 @@ def get_existing_payment_request_amount(ref_dt, ref_dn):
 
 def get_gateway_details(args):
 	"""return gateway and payment account of default payment gateway"""
+	filters = {}
+	if args.get("currency"):
+		filters.update({"currency": args.get("currency")})
+
 	if args.get("payment_gateway"):
-		return get_payment_gateway_account(args.get("payment_gateway"))
+		filters.update({"payment_gateway": args.get("payment_gateway")})
+		return get_payment_gateway_account(filters)
 
 	if args.order_type == "Shopping Cart":
 		payment_gateway_account = frappe.get_doc("Shopping Cart Settings").payment_gateway_account
 		return get_payment_gateway_account(payment_gateway_account)
 
-	gateway_account = get_payment_gateway_account({"is_default": 1})
+	filters.update({"is_default": 1})
+	gateway_account = get_payment_gateway_account(filters)
 
 	return gateway_account
 

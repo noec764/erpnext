@@ -791,7 +791,8 @@ def check_gateway_payments():
 				"party": doc.customer,
 				"submit_doc": True,
 				"mute_email": True,
-				"payment_gateway": doc.payment_gateway
+				"payment_gateway": doc.payment_gateway,
+				"currency": doc.currency
 			})
 
 			if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:
