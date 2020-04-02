@@ -32,7 +32,6 @@ class Subscription(Document):
 		self.get_subscription_rates()
 		self.validate_interval_count()
 		self.validate_trial_period()
-		self.validate_plans_pricing_rule()
 		self.validate_subscription_period()
 		self.simulate_grand_total_calculation()
 
@@ -126,11 +125,6 @@ class Subscription(Document):
 
 		end_date = getdate(end_date)
 		return getdate(nowdate()) > getdate(end_date)
-
-	def validate_plans_pricing_rule(self):
-		rules = self.get_plans_pricing_rules()
-		if len(rules) > 1:
-			frappe.throw(_("Please select plans with the same price determination rule"))
 
 	def get_plans_pricing_rules(self):
 		rules = set()
@@ -341,7 +335,7 @@ class Subscription(Document):
 		document.customer_group, document.territory = frappe.db.get_value("Customer", self.customer, ["customer_group", "territory"])
 		document.set_missing_lead_customer_details()
 		document.subscription = self.name
-		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and self.get_plans_pricing_rules().pop() == "Fixed rate" else 0
+		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and "Fixed rate" in list(self.get_plans_pricing_rules()) else 0
 
 		# Subscription is better suited for service items. It won't update `update_stock`
 		# for that reason
