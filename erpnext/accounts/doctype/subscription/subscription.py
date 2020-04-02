@@ -57,6 +57,7 @@ class Subscription(Document):
 
 		if start_date != self.current_invoice_start or end_date != self.current_invoice_end:
 			self.add_subscription_event("New period")
+		self.save()
 
 	def validate_subscription_period(self):
 		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end) and not self.is_trial():
