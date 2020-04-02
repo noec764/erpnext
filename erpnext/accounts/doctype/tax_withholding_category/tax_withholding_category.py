@@ -118,7 +118,7 @@ def get_tds_amount(ref_doc, tax_details, fiscal_year_details):
 		debit_note_amount = get_debit_note_amount(ref_doc.supplier, year_start_date, year_end_date)
 		supplier_credit_amount -= debit_note_amount
 
-		if ((tax_details.get('threshold', 0) and supplier_credit_amount >= tax_details.threshold)
+		if ((supplier_credit_amount >= flt(tax_details.get('threshold', 0)))
 			or (tax_details.get('cumulative_threshold', 0) and supplier_credit_amount >= tax_details.cumulative_threshold)):
 			tds_amount = _get_tds(supplier_credit_amount)
 
