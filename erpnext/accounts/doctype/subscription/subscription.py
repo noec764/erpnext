@@ -565,7 +565,8 @@ class Subscription(Document):
 			filters={
 				"event_type": "Payment request created",
 				"period_start": self.current_invoice_start ,
-				"period_end": self.current_invoice_end
+				"period_end": self.current_invoice_end,
+				"subscription": self.name
 			}
 		):
 			return False
