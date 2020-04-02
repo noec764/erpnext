@@ -70,6 +70,7 @@ class WebhooksController():
 				self.trigger_subscription_events()
 
 			self.set_as_completed()
+			self.close_related_payment_request()
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(self.integration_request.get("service_id")))
 
@@ -113,3 +114,18 @@ class WebhooksController():
 			self.integration_request.db_set("error", str(message))
 		self.integration_request.reload()
 		self.integration_request.update_status({}, "Completed")
+
+	def close_related_payment_request(self):
+		integration_requests = frappe.get_all("Integration Request",
+			filters={
+				"service_document": self.integration_request.get("service_document"),
+				"service_id": self.integration_request.get("service_id"),
+				"status": "Pending"
+			},
+			fields=["name", "reference_doctype", "reference_docname"])
+
+		for integration_request in integration_requests:
+			frappe.get_doc("Integration Request", integration_request.name).update_status({}, "Completed")
+			if integration_request.reference_doctype == "Payment Request":
+				frappe.db.set_status("Payment Request", integration_request.reference_docname, "status", "Paid")
+
