@@ -6,6 +6,8 @@
 from __future__ import unicode_literals
 import frappe
 
+from frappe import _
+
 from frappe.model.document import Document
 from frappe.model.rename_doc import bulk_rename
 
@@ -14,8 +16,8 @@ class RenameTool(Document):
 
 @frappe.whitelist()
 def get_doctypes():
-	return frappe.db.sql_list("""select name from tabDocType
-		where allow_rename=1 and module!='Core' order by name""")
+	return sorted(frappe.db.sql_list("""select name from tabDocType
+		where allow_rename=1 and module!='Core' order by name"""), key=lambda x:_(x))
 
 @frappe.whitelist()
 def upload(select_doctype=None, rows=None):
