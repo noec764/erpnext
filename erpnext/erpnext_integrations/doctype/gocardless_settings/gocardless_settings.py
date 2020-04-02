@@ -62,23 +62,23 @@ class GoCardlessSettings(PaymentGatewayController):
 			customer_data = frappe.db.get_value(data.reference_doctype, data.reference_name,\
 				["company", "customer"], as_dict=1)
 
-			data = {
+			processed_data = {
 				"amount": cint(flt(data.grand_total, data.precision("grand_total")) * 100),
 				"title": customer_data.company.encode("utf-8"),
 				"description": data.subject.encode("utf-8"),
-				"reference_doctype": data.doctype,
-				"reference_docname": data.name,
+				"reference_doctype": data.reference_doctype if data.reference_doctype=="Subscription" else data.doctype,
+				"reference_docname": data.reference_name if data.reference_doctype=="Subscription" else data.name,
 				"payer_email": data.email_to or frappe.session.user,
 				"payer_name": customer_data.customer,
 				"order_id": data.name,
 				"currency": data.currency
 			}
 
-			valid_mandate = self.check_mandate_validity(data)
+			valid_mandate = self.check_mandate_validity(processed_data)
 			if valid_mandate:
-				data.update(valid_mandate)
+				processed_data.update(valid_mandate)
 
-				return self.create_payment_request(data)
+				return self.create_payment_request(processed_data)
 
 		except Exception:
 			frappe.log_error(frappe.get_traceback(),\
