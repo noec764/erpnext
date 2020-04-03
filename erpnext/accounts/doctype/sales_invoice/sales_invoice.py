@@ -418,23 +418,24 @@ class SalesInvoice(SellingController):
 			if pos.get('account_for_change_amount'):
 				self.account_for_change_amount = pos.get('account_for_change_amount')
 
-			for fieldname in ('territory', 'naming_series', 'currency', 'taxes_and_charges', 'letter_head', 'tc_name',
-				'company', 'select_print_heading', 'cash_bank_account', 'company_address',
-				'write_off_account', 'write_off_cost_center', 'apply_discount_on', 'cost_center'):
+			for fieldname in ('territory', 'naming_series', 'currency', 'letter_head', 'tc_name',
+				'company', 'select_print_heading', 'cash_bank_account', 'write_off_account', 'taxes_and_charges',
+				'write_off_cost_center', 'apply_discount_on', 'cost_center'):
 					if (not for_validate) or (for_validate and not self.get(fieldname)):
 						self.set(fieldname, pos.get(fieldname))
 
 			if pos.get("company_address"):
 				self.company_address = pos.get("company_address")
 
-			customer_price_list, customer_group = frappe.get_value("Customer", self.customer, ['default_price_list', 'customer_group'])
+			if self.customer:
+				customer_price_list, customer_group = frappe.get_value("Customer", self.customer, ['default_price_list', 'customer_group'])
 
-			customer_group_price_list = frappe.get_value("Customer Group", customer_group, 'default_price_list')
+				customer_group_price_list = frappe.get_value("Customer Group", customer_group, 'default_price_list')
 
-			selling_price_list = customer_price_list or customer_group_price_list or pos.get('selling_price_list')
+				selling_price_list = customer_price_list or customer_group_price_list or pos.get('selling_price_list')
 
-			if selling_price_list:
-				self.set('selling_price_list', selling_price_list)
+				if selling_price_list:
+					self.set('selling_price_list', selling_price_list)
 
 			if not for_validate:
 				self.update_stock = cint(pos.get("update_stock"))
