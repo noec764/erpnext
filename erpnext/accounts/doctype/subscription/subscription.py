@@ -57,7 +57,6 @@ class Subscription(Document):
 
 		if start_date != self.current_invoice_start or end_date != self.current_invoice_end:
 			self.add_subscription_event("New period")
-		self.save()
 
 	def validate_subscription_period(self):
 		if self.trial_period_start and getdate(self.trial_period_end) >= getdate(self.current_invoice_end) and not self.is_trial():
@@ -101,15 +100,18 @@ class Subscription(Document):
 			if not self.has_invoice_for_period():
 				self.generate_invoice(payment_entry=payment_entry)
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 			else:
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 
 		elif self.generate_invoice_at_period_start:
 			self.set_plan_details_status()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
 
