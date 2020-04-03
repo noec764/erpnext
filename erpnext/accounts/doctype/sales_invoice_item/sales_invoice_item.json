@@ -146,6 +146,7 @@
    "oldfieldtype": "Text",
    "print_width": "200px",
    "reqd": 1,
+   "translatable": 1,
    "width": "200px"
   },
   {
@@ -788,7 +789,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2019-12-04 12:22:38.517710",
+ "modified": "2020-04-03 12:22:57.875455",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",
