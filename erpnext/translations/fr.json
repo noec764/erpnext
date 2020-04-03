@@ -12784,7 +12784,7 @@
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationActions.vue": {
         "Bank Transactions": "Transactions bancaires",
         "Documents": "Documents",
-        "Reconcile": "Réconcilier",
+        "Reconcile": "Rapprocher",
         "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document."
     },
@@ -20450,7 +20450,7 @@
         "Party": "Tiers",
         "Please select company first": "Veuillez d'abord sélectionner la société",
         "Please select only one bank transaction and multiple documents or multiple bank transactions and only one document.": "Veuillez sélectionner une seule transaction bancaire et plusieurs documents ou plusieurs transactions bancaires et un seul document.",
-        "Reconcile": "Réconcilier",
+        "Reconcile": "Rapprocher",
         "Reconcile Stripe Transactions": "Rapprocher les transactions Stripe",
         "Reconciled": "Rapproché",
         "Reference": "Référence",
