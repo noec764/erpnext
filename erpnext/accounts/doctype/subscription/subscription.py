@@ -119,8 +119,6 @@ class Subscription(Document):
 				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
 
-		self.save()
-
 	@staticmethod
 	def period_has_passed(end_date):
 		if not end_date:

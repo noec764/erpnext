@@ -1689,7 +1689,7 @@
         "Read by Recipient": "Lire par le Destinataires",
         "Read by Recipient On": "Lu par le Destinataires sur",
         "Received": "Reçu",
-        "Recipient Unsubscribed": "Destinataires Désinscrit",
+        "Recipient Unsubscribed": "Destinataires désabonné",
         "Reference": "Référence",
         "Reference DocType": "DocType de la Référence",
         "Reference Name": "Nom du document de référence",
@@ -1869,7 +1869,7 @@
         "Salutation": "Salutations",
         "Status": "Statut",
         "System Manager": "Responsable Système",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "User ID": "ID de l'Utilisateur"
     },
     "DocType: Contact Us Settings": {
@@ -3393,7 +3393,7 @@
         "Email Group": "Groupe Email",
         "Email Group Member": "Membre du Groupe Email",
         "Newsletter Manager": "Responsable de la Newsletter",
-        "Unsubscribed": "Désinscrit"
+        "Unsubscribed": "Désabonné"
     },
     "DocType: Email Queue": {
         "Add Unsubscribe Link": "Ajouter le Lien Se Désinscrire",
@@ -3574,7 +3574,7 @@
         "Status": "Statut",
         "System User (login) ID. If set, it will become default for all HR forms.": "L'ID (de connexion) de l'Utilisateur Système. S'il est défini, il deviendra la valeur par défaut pour tous les formulaires des RH.",
         "This will restrict user access to other employee records": "Cela limitera l'accès des utilisateurs aux données des autres employés",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "User ID": "ID de l'Utilisateur",
         "Valid Upto": "Valide Jusqu'au",
         "Widowed": "Veuf",
@@ -5321,7 +5321,7 @@
         "Suggestions": "Suggestions",
         "System Manager": "Responsable Système",
         "Territory": "Région",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "Website": "Site Web"
     },
     "DocType: Lead Source": {
@@ -11177,7 +11177,7 @@
         "Third Party Authentication": "Authentification Tierce",
         "Tile": "Mosaïque",
         "Timezone": "Fuseau Horaire",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "User": "Utilisateur",
         "User Defaults": "Profil par Défaut",
         "User Emails": "Les Emails de l'Utilisateur",
@@ -19945,7 +19945,7 @@
         "Delete this record to allow sending to this email address": "Supprimer cet enregistrement pour permettre l'envoi à cette adresse Email",
         "Left this conversation": "A quitté cette conversation",
         "Reference DocType and Reference Name are required": "DocType de la Référence et le Nom du document de référence sont nécessaires",
-        "{0} already unsubscribed": "{0} déjà désinscrit",
+        "{0} already unsubscribed": "{0} déjà désabonné",
         "{0} already unsubscribed for {1} {2}": "{0} déjà désabonné pour {1} {2}"
     },
     "apps/frappe/frappe/email/doctype/newsletter/newsletter.js": {
@@ -19999,7 +19999,7 @@
         "This email was sent to {0}": "Cet email a été envoyé à {0}",
         "This email was sent to {0} and copied to {1}": "Cet email a été envoyé à {0} et une copie à {1}",
         "Unsubscribe": "Se Désinscrire",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "{0} has left the conversation in {1} {2}": "{0} a quitté la conversation dans {1} {2}",
         "{0} to stop receiving emails of this type": "{0} pour arrêter de recevoir des emails de ce type"
     },

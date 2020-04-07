@@ -2304,7 +2304,7 @@
         "Start Date": "Date de début",
         "Status": "Statut",
         "System Manager": "Responsable système",
-        "Unsubscribed": "Désinscrit"
+        "Unsubscribed": "Désabonné"
     },
     "DocType: Email Digest": {
         "Accounts": "Comptes",
@@ -2475,7 +2475,7 @@
         "Status": "Statut",
         "System User (login) ID. If set, it will become default for all HR forms.": "L'ID (de connexion) de l'Utilisateur Système. S'il est défini, il deviendra la valeur par défaut pour tous les formulaires des RH.",
         "This will restrict user access to other employee records": "Cela limitera l'accès des utilisateurs aux données des autres employés",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "User ID": "ID Utilisateur",
         "Valid Upto": "Valide Jusqu'au",
         "Widowed": "Veuf",
@@ -4352,7 +4352,7 @@
         "System Manager": "Responsable système",
         "Territory": "Région",
         "Title": "Titre",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "Website": "Site web"
     },
     "DocType: Lead Source": {
