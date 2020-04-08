@@ -8,7 +8,7 @@
 	<h6 class="text-uppercase">{{ _("Shipping Address") }}</h6>
 	<div class="row no-gutters" data-fieldname="shipping_address_name">
 		{% for address in shipping_addresses %}
-			<div class="mr-3 mb-3 w-25" data-address-name="{{address.name}}" {% if doc.shipping_address_name == address.name %} data-active {% endif %}>
+			<div class="mr-3 mb-3 w-25" data-address-name="{{address.name}}" data-address-type="shipping" {% if doc.shipping_address_name == address.name %} data-active {% endif %}>
 				{% include "templates/includes/cart/address_card.html" %}
 			</div>
 		{% endfor %}
@@ -18,7 +18,7 @@
 	<h6 class="text-uppercase">{{ _("Billing Address") }}</h6>
 	<div class="row no-gutters" data-fieldname="customer_address">
 		{% for address in billing_addresses %}
-			<div class="mr-3 mb-3 w-25" data-address-name="{{address.name}}" {% if doc.customer_address == address.name %} data-active {% endif %}>
+			<div class="mr-3 mb-3 w-25" data-address-name="{{address.name}}" data-address-type="billing" {% if doc.customer_address == address.name %} data-active {% endif %}>
 				{% include "templates/includes/cart/address_card.html" %}
 			</div>
 		{% endfor %}

@@ -81,8 +81,17 @@ frappe.ready(() => {
 			primary_action: (values) => {
 				frappe.call('erpnext.shopping_cart.cart.add_new_address', { doc: values })
 					.then(r => {
-						d.hide();
-						window.location.reload();
+						frappe.call({
+							method: "erpnext.shopping_cart.cart.update_cart_address",
+							args: {
+								address_type: r.message.address_type,
+								address_name: r.message.name
+							},
+							callback: function (r) {
+								d.hide();
+								window.location.reload();
+							}
+						});
 					});
 			}
 		})
