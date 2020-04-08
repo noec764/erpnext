@@ -34,6 +34,7 @@
      "notes",
      "address_info",
      "address_html",
+     "address_type",
      "address_title",
      "address_line1",
      "address_line2",
@@ -426,13 +427,21 @@
       "fieldname": "contact_section",
       "fieldtype": "Section Break",
       "label": "Contact"
+     },
+     {
+        "default": "Billing",
+        "depends_on": "eval: doc.__islocal",
+        "fieldname": "address_type",
+        "fieldtype": "Select",
+        "label": "Address Type",
+        "options": "Billing\nShipping\nOffice\nPersonal\nPlant\nPostal\nShop\nSubsidiary\nWarehouse\nCurrent\nPermanent\nOther"
      }
     ],
     "icon": "fa fa-user",
     "idx": 5,
     "image_field": "image",
     "links": [],
-    "modified": "2020-01-13 16:16:48.885228",
+    "modified": "2020-04-06 20:26:11.687110",
     "modified_by": "Administrator",
     "module": "CRM",
     "name": "Lead",
