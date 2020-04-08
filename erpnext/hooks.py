@@ -51,8 +51,6 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
 
-email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
-
 calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
 gcalendar_integrations = {
 	"Item Booking": {
@@ -61,7 +59,6 @@ gcalendar_integrations = {
 		"pull_delete": "erpnext.stock.doctype.item_booking.item_booking.cancel_event_in_calendar"
 	}
 }
-
 
 domains = {
 	'Distribution': 'erpnext.domains.distribution',
