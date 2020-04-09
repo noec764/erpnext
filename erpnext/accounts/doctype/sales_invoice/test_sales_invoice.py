@@ -1702,7 +1702,7 @@ class TestSalesInvoice(unittest.TestCase):
 			})
 
 			customer.append("companies", {
-				"company": "Wind Power LLC"
+				"company": "Wind Power"
 			})
 
 			customer.insert()
@@ -1713,7 +1713,7 @@ class TestSalesInvoice(unittest.TestCase):
 				"supplier_name": "_Test Internal Supplier",
 				"doctype": "Supplier",
 				"is_internal_supplier": 1,
-				"represents_company": "Wind Power LLC"
+				"represents_company": "Wind Power"
 			})
 
 			supplier.append("companies", {
@@ -1723,7 +1723,7 @@ class TestSalesInvoice(unittest.TestCase):
 			supplier.insert()
 
 		si = create_sales_invoice(
-			company = "Wind Power LLC",
+			company = "Wind Power",
 			customer = "_Test Internal Customer",
 			debit_to = "Debtors - WP",
 			warehouse = "Stores - WP",
