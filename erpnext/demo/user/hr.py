@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import frappe, erpnext
+from frappe import _
 import random
 import datetime
 from frappe.utils import random_string, add_days, get_last_day, getdate
@@ -13,6 +14,7 @@ from erpnext.hr.doctype.leave_application.leave_application import (get_leave_ba
 
 def work():
 	frappe.set_user(frappe.db.get_global('demo_hr_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_hr_user'))
 	year, month = frappe.flags.current_date.strftime("%Y-%m").split("-")
 	setup_department_approvers()
 	mark_attendance()
@@ -96,9 +98,10 @@ def get_expenses():
 		expenses.append({
 			"expense_date": frappe.flags.current_date,
 			"expense_type": expense_type.name,
-			"default_account": expense_type.default_account or "Miscellaneous Expenses - WPL",
+			"default_account": expense_type.default_account or _("Miscellaneous Expenses") + " - WP",
 			"amount": claim_amount,
-			"sanctioned_amount": claim_amount
+			"sanctioned_amount": claim_amount,
+			"cost_center": get_random("Cost Center")
 		})
 
 	return expenses
@@ -209,7 +212,7 @@ def mark_attendance():
 			frappe.db.commit()
 
 def setup_department_approvers():
-	for d in frappe.get_all('Department', filters={'department_name': ['!=', 'All Departments']}):
+	for d in frappe.get_all('Department', filters={'department_name': ['!=', _('All Departments')]}):
 		doc = frappe.get_doc('Department', d.name)
 		doc.append("leave_approvers", {'approver': frappe.session.user})
 		doc.append("expense_approvers", {'approver': frappe.session.user})

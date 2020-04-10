@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import erpnext
 import frappe
+from frappe import _
 import random
 from frappe.utils import random_string
 from frappe.desk import query_report
@@ -19,6 +20,7 @@ from erpnext.stock.doctype.purchase_receipt.purchase_receipt import make_purchas
 
 def work():
 	frappe.set_user(frappe.db.get_global('demo_accounts_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_accounts_user'))
 
 	if random.random() <= 0.6:
 		report = "Ordered Items to be Billed"
@@ -26,7 +28,9 @@ def work():
 				if r[0]!="Total"]))[:random.randint(1, 5)]:
 			try:
 				si = frappe.get_doc(make_sales_invoice(so))
+				si.set_posting_time = True
 				si.posting_date = frappe.flags.current_date
+				si.payment_schedule = []
 				for d in si.get("items"):
 					if not d.income_account:
 						d.income_account = "Sales - {}".format(frappe.get_cached_value('Company',  si.company,  'abbr'))
@@ -42,6 +46,7 @@ def work():
 			if r[0]!="Total"]))[:random.randint(1, 5)]:
 			try:
 				pi = frappe.get_doc(make_purchase_invoice(pr))
+				pi.set_posting_time = True
 				pi.posting_date = frappe.flags.current_date
 				pi.bill_no = random_string(6)
 				pi.insert()
@@ -64,7 +69,7 @@ def work():
 			si = frappe.get_doc("Sales Invoice", sales_invoice_name)
 			if si.outstanding_amount > 0:
 				payment_request = make_payment_request(dt="Sales Invoice", dn=si.name, recipient_id=si.contact_email,
-					submit_doc=True, mute_email=True, use_dummy_message=True)
+					no_payment_link=1, submit_doc=True, mute_email=True, use_dummy_message=True)
 
 				payment_entry = frappe.get_doc(make_payment_entry(payment_request.name))
 				payment_entry.posting_date = frappe.flags.current_date
@@ -107,6 +112,7 @@ def make_pos_invoice():
 		filters = [["per_billed", "<", "100"]]):
 		si = frappe.get_doc(make_sales_invoice(data.name))
 		si.is_pos =1
+		si.set_posting_time = True
 		si.posting_date = frappe.flags.current_date
 		for d in si.get("items"):
 			if not d.income_account:

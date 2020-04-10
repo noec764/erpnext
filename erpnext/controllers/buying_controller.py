@@ -263,7 +263,7 @@ class BuyingController(StockController):
 		if self.is_subcontracted == "No" and self.get("supplied_items"):
 			self.set('supplied_items', [])
 
-	def update_raw_materials_supplied_based_on_stock_entries(self, raw_material_table):
+	def update_raw_materials_supplied_based_on_stock_entries(self):
 		self.set('supplied_items', [])
 		purchase_orders = set([d.purchase_order for d in self.items])
 

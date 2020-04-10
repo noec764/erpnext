@@ -1,9 +1,10 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
+# Copyright (c) 2020, Dokos SAS and Contributors
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
 
 import frappe, random, erpnext
+from frappe import _
 from frappe.utils import flt
 from frappe.utils.make_random import add_random_children, get_random
 from erpnext.setup.utils import get_exchange_rate
@@ -12,19 +13,20 @@ from erpnext.accounts.doctype.payment_request.payment_request import make_paymen
 
 def work(domain="Manufacturing"):
 	frappe.set_user(frappe.db.get_global('demo_sales_user_2'))
+	frappe.set_user_lang(frappe.db.get_global('demo_sales_user_2'))
 
 	for i in range(random.randint(1,7)):
 		if random.random() < 0.5:
 			make_opportunity(domain)
 
-	for i in range(random.randint(1,3)):
+	for i in range(random.randint(1,7)):
 		if random.random() < 0.5:
 			make_quotation(domain)
 
 	try:
 		lost_reason = frappe.get_doc({
 			"doctype": "Opportunity Lost Reason",
-			"lost_reason": "Did not ask"
+			"lost_reason": _("Did not ask")
 		})
 		lost_reason.save(ignore_permissions=True)
 	except frappe.exceptions.DuplicateEntryError:
@@ -35,14 +37,14 @@ def work(domain="Manufacturing"):
 		for i in range(random.randint(1,3)):
 			quotation = get_random('Quotation', doc=True)
 			if quotation and quotation.status == 'Submitted':
-				quotation.declare_order_lost([{'lost_reason': 'Did not ask'}])
+				quotation.declare_order_lost([{'lost_reason': _('Did not ask')}])
 
 		for i in range(random.randint(1,3)):
 			opportunity = get_random('Opportunity', doc=True)
 			if opportunity and opportunity.status in ('Open', 'Replied'):
-				opportunity.declare_enquiry_lost([{'lost_reason': 'Did not ask'}])
+				opportunity.declare_enquiry_lost([{'lost_reason': _('Did not ask')}])
 
-	for i in range(random.randint(1,3)):
+	for i in range(random.randint(1,7)):
 		if random.random() < 0.6:
 			make_sales_order()
 
@@ -67,7 +69,7 @@ def make_opportunity(domain):
 		"doctype": "Opportunity",
 		"opportunity_from": "Customer",
 		"party_name": frappe.get_value("Customer", get_random("Customer"), 'name'),
-		"opportunity_type": "Sales",
+		"opportunity_type": _("Sales"),
 		"with_items": 1,
 		"transaction_date": frappe.flags.current_date,
 	})
@@ -87,6 +89,8 @@ def make_quotation(domain):
 	if opportunity:
 		from erpnext.crm.doctype.opportunity.opportunity import make_quotation
 		qtn = frappe.get_doc(make_quotation(opportunity))
+		qtn.transaction_date = frappe.flags.current_date
+		qtn.order_type = "Sales"
 		qtn.insert()
 		frappe.db.commit()
 		qtn.submit()
@@ -126,12 +130,13 @@ def make_quotation(domain):
 		frappe.db.commit()
 
 def make_sales_order():
-	q = get_random("Quotation", {"status": "Submitted"})
+	q = get_random("Quotation", {"docstatus": 1})
 	if q:
 		from erpnext.selling.doctype.quotation.quotation import make_sales_order as mso
 		so = frappe.get_doc(mso(q))
 		so.transaction_date = frappe.flags.current_date
 		so.delivery_date = frappe.utils.add_days(frappe.flags.current_date, 10)
+		so.payment_schedule = []
 		so.insert()
 		frappe.db.commit()
 		so.submit()

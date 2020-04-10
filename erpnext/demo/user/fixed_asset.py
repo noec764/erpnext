@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 
 import frappe
+from frappe import _
 from frappe.utils.make_random import get_random
 from erpnext.assets.doctype.asset.asset import make_sales_invoice
 from erpnext.assets.doctype.asset.depreciation import post_depreciation_entries, scrap_asset
@@ -12,6 +13,7 @@ from erpnext.assets.doctype.asset.depreciation import post_depreciation_entries,
 
 def work():
 	frappe.set_user(frappe.db.get_global('demo_accounts_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_accounts_user'))
 
 	# Enable booking asset depreciation entry automatically
 	frappe.db.set_value("Accounts Settings", None, "book_asset_depreciation_entry_automatically", 1)
@@ -20,7 +22,7 @@ def work():
 	post_depreciation_entries()
 
 	# scrap a random asset
-	frappe.db.set_value("Company", "Wind Power LLC", "disposal_account", "Gain/Loss on Asset Disposal - WPL")
+	frappe.db.set_value("Company", "Wind Power", "disposal_account", _("Gain/Loss on Asset Disposal") + " - WP")
 
 	asset = get_random_asset()
 	scrap_asset(asset.name)
@@ -31,7 +33,7 @@ def work():
 
 def sell_an_asset():
 	asset = get_random_asset()
-	si = make_sales_invoice(asset.name, asset.item_code, "Wind Power LLC")
+	si = make_sales_invoice(asset.name, asset.item_code, "Wind Power")
 	si.customer = get_random("Customer")
 	si.get("items")[0].rate = asset.value_after_depreciation * 0.8 \
 		if asset.value_after_depreciation else asset.gross_purchase_amount * 0.9

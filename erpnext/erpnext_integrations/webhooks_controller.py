@@ -34,7 +34,7 @@ class WebhooksController():
 				self.set_as_failed(frappe.get_traceback())
 
 	def create_payment(self):
-		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=1)):
+		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
 			if self.metadata.get("reference_doctype") == "Payment Request":
 				pr = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = pr.run_method("create_payment_entry", submit=False)
@@ -52,7 +52,7 @@ class WebhooksController():
 			else:
 				self.set_as_failed(_("The reference doctype should be a Payment Request or a Subscription"))
 		else:
-			self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=1))
+			self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id")))
 			self.set_as_completed()
 
 	def submit_payment(self):

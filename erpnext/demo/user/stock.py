@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals
 
 import frappe, random, erpnext
+from frappe import _
 from frappe.desk import query_report
 from erpnext.stock.stock_ledger import NegativeStockError
 from erpnext.stock.doctype.serial_no.serial_no import SerialNoRequiredError, SerialNoQtyError
@@ -13,6 +14,7 @@ from erpnext.stock.doctype.purchase_receipt.purchase_receipt import make_purchas
 
 def work():
 	frappe.set_user(frappe.db.get_global('demo_manufacturing_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_manufacturing_user'))
 
 	make_purchase_receipt()
 	make_delivery_note()
@@ -30,7 +32,7 @@ def make_purchase_receipt():
 			pr = frappe.get_doc(make_purchase_receipt(po))
 
 			if pr.is_subcontracted=="Yes":
-				pr.supplier_warehouse = "Supplier - WPL"
+				pr.supplier_warehouse = _("Supplier") + " - WP"
 
 			pr.posting_date = frappe.flags.current_date
 			pr.insert()
@@ -54,8 +56,8 @@ def make_delivery_note():
 			dn.posting_date = frappe.flags.current_date
 			for d in dn.get("items"):
 				if not d.expense_account:
-					d.expense_account = ("Cost of Goods Sold - {0}".format(
-						frappe.get_cached_value('Company',  dn.company,  'abbr')))
+					d.expense_account = _("Cost of Goods Sold") + " - {0}".format(
+						frappe.get_cached_value('Company',  dn.company,  'abbr'))
 
 			try:
 				dn.insert()
@@ -73,7 +75,7 @@ def make_stock_reconciliation():
 		stock_reco = frappe.new_doc("Stock Reconciliation")
 		stock_reco.posting_date = frappe.flags.current_date
 		stock_reco.company = erpnext.get_default_company()
-		stock_reco.get_items_for("Stores - WPL")
+		stock_reco.get_items_for(_("Stores") + " - WP")
 		if stock_reco.items:
 			for item in stock_reco.items:
 				if item.qty:

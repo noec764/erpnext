@@ -471,6 +471,7 @@ def make_payment_request(**args):
 		pr = frappe.new_doc("Payment Request")
 		pr.update({
 			"currency": ref_doc.currency,
+			"no_payment_link": args.no_payment_link,
 			"grand_total": grand_total,
 			"email_to": args.recipient_id or ref_doc.owner,
 			"subject": _("Payment Request for {0}").format(args.dn),
@@ -560,8 +561,7 @@ def get_gateway_details(args):
 
 def get_payment_gateway_account(args):
 	return frappe.db.get_value("Payment Gateway Account", args,
-		["name", "payment_gateway", "message"],
-			as_dict=1)
+		["name", "payment_gateway"], as_dict=1)
 
 @frappe.whitelist()
 def get_print_format_list(ref_doctype):

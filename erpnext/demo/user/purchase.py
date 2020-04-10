@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 import frappe, random, json, erpnext
+from frappe import _
 from frappe.utils.make_random import how_many, get_random
 from frappe.desk import query_report
 from erpnext.setup.utils import get_exchange_rate
@@ -15,6 +16,7 @@ from erpnext.buying.doctype.request_for_quotation.request_for_quotation import \
 
 def work():
 	frappe.set_user(frappe.db.get_global('demo_purchase_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_purchase_user'))
 
 	if random.random() < 0.6:
 		report = "Items To Be Requested"
@@ -157,8 +159,8 @@ def make_subcontract():
 		# transfer material for sub-contract
 		rm_items = get_rm_item(po.items[0], po.supplied_items[0])
 		stock_entry = frappe.get_doc(make_rm_stock_entry(po.name, json.dumps([rm_items])))
-		stock_entry.from_warehouse = "Stores - WPL"
-		stock_entry.to_warehouse = "Supplier - WPL"
+		stock_entry.from_warehouse = _("Stores") + " - WP"
+		stock_entry.to_warehouse = _("Supplier") + " - WP"
 		stock_entry.insert()
 
 def get_rm_item(items, supplied_items):

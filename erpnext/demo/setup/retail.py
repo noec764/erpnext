@@ -15,7 +15,7 @@ def setup_data():
 	frappe.clear_cache()
 
 def setup_item():
-	items = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', 'item.json')).read())
+	items = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', frappe.flags.demo_lang, 'item.json')).read())
 	for i in items:
 		if not i.get("domain") == "Retail": continue
 		item = frappe.new_doc('Item')

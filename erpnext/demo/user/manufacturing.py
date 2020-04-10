@@ -4,8 +4,10 @@
 from __future__ import unicode_literals
 
 import frappe, random, erpnext
+from frappe import _
 from datetime import timedelta
 from frappe.utils.make_random import how_many
+from frappe.utils import get_datetime
 from frappe.desk import query_report
 from erpnext.manufacturing.doctype.workstation.workstation import WorkstationHolidayError
 from erpnext.manufacturing.doctype.work_order.test_work_order import make_wo_order_test_record
@@ -14,6 +16,7 @@ def work():
 	if random.random() < 0.3: return
 
 	frappe.set_user(frappe.db.get_global('demo_manufacturing_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_manufacturing_user'))
 	if not frappe.get_all('Sales Order'): return
 
 	from erpnext.projects.doctype.timesheet.timesheet import OverlapError
@@ -22,7 +25,7 @@ def work():
 	ppt.company = erpnext.get_default_company()
 	# ppt.use_multi_level_bom = 1 #refactored
 	ppt.get_items_from = "Sales Order"
-	# ppt.purchase_request_for_warehouse = "Stores - WPL" # refactored
+	# ppt.purchase_request_for_warehouse = "Stores - WP" # refactored
 	ppt.run_method("get_open_sales_orders")
 	if not ppt.get("sales_orders"): return
 	ppt.run_method("get_items")
@@ -35,7 +38,7 @@ def work():
 	# submit work orders
 	for pro in frappe.db.get_values("Work Order", {"docstatus": 0}, "name"):
 		b = frappe.get_doc("Work Order", pro[0])
-		b.wip_warehouse = "Work in Progress - WPL"
+		b.wip_warehouse = "Work in Progress - WP"
 		b.submit()
 		frappe.db.commit()
 
@@ -57,10 +60,10 @@ def work():
 
 	for bom in frappe.get_all('BOM', fields=['item'], filters = {'with_operations': 1}):
 		pro_order = make_wo_order_test_record(item=bom.item, qty=2,
-			source_warehouse="Stores - WPL", wip_warehouse = "Work in Progress - WPL",
-			fg_warehouse = "Stores - WPL", company = erpnext.get_default_company(),
+			source_warehouse=_("Stores") + " - WP", wip_warehouse = _("Work in Progress") + " - WP",
+			fg_warehouse = _("Stores") + " - WP", company = erpnext.get_default_company(),
 			stock_uom = frappe.db.get_value('Item', bom.item, 'stock_uom'),
-			planned_start_date = frappe.flags.current_date)
+			planned_start_date = get_datetime(frappe.flags.current_date))
 
 	# submit job card
 	if random.random() < 0.4:
@@ -77,7 +80,7 @@ def make_stock_entry_from_pro(pro_id, purpose):
 		st.posting_date = frappe.flags.current_date
 		st.fiscal_year = str(frappe.flags.current_date.year)
 		for d in st.get("items"):
-			d.cost_center = "Main - " + frappe.get_cached_value('Company',  st.company,  'abbr')
+			d.cost_center = _("Main") + " - " + frappe.get_cached_value('Company',  st.company,  'abbr')
 		st.insert()
 		frappe.db.commit()
 		st.submit()
