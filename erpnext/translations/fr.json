@@ -12785,7 +12785,7 @@
         "Bank Transactions": "Transactions bancaires",
         "Documents": "Documents",
         "Reconcile": "Rapprocher",
-        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
+        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. Confirmez-vous ?",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document."
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationInfo.vue": {
@@ -20460,7 +20460,7 @@
         "Search for a specific document": "Chercher un document en particulier",
         "Show the full list": "Voir la liste complète",
         "Stripe transactions reconciliation in progress": "Rapprochement Stripe en cours",
-        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
+        "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. Confirmez-vous ?",
         "Unreconciled": "Non rapproché",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document.",
         "clear": "réinitialiser",
