@@ -68,7 +68,7 @@ export default {
             this.btn_clicked = true;
             if ((this.selected_transactions.length == 1 && this.selected_documents.length >= 1)
                 || (this.selected_transactions.length >= 1 && this.selected_documents.length == 1)) {
-                    if (["Sales Invoice", "Purchase Invoice"].includes(this.selected_documents[0]["doctype"]) && !this.is_pos.length) {
+                    if (["Sales Invoice", "Purchase Invoice", "Expense Claim"].includes(this.selected_documents[0]["doctype"]) && !this.is_pos.length) {
                         frappe.confirm(__("This action will create a new payment entry. Do you confirm ?"), () => {
                             this.call_reconciliation()
                         });
@@ -87,6 +87,8 @@ export default {
                 this.$emit('resetList')
                 this.btn_clicked = false;
                 frappe.show_alert({message: __(`${this.selected_documents.length} documents reconciled`), indicator: "green"})
+            }).catch(r => {
+                this.btn_clicked = false;
             })
         }
     }

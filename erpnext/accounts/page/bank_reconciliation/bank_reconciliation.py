@@ -16,7 +16,7 @@ PARTY_FIELD = {
 	"Journal Entry": "party",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
-	"Expense Claim": "Employee"
+	"Expense Claim": "employee"
 }
 
 PARTY_TYPES = {
@@ -30,7 +30,7 @@ DATE_FIELD = {
 	"Journal Entry": "cheque_date",
 	"Sales Invoice": "due_date",
 	"Purchase Invoice": "due_date",
-	"Expense Claim": "total_claimed_amount"
+	"Expense Claim": "posting_date"
 }
 
 @frappe.whitelist()
@@ -94,7 +94,7 @@ class BankReconciliation:
 			setattr(self, fielname, next(iter(value)))
 
 	def reconcile(self):
-		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
+		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice", "Expense Claim"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
 			self.check_unique_values()
 			self.make_payment_entries()
 			self.reconcile_created_payments()
@@ -194,9 +194,8 @@ class BankReconciliation:
 		account_currency = frappe.db.get_value("Account", bank_account.account, "account_currency")
 
 		paid_amount = received_amount = 0
-		outstanding_amount = sum([x.get("outstanding_amount") for x in self.documents])
 		amount_to_pay_or_receive = abs(transaction.get("unallocated_amount")) \
-				if abs(transaction.get("unallocated_amount")) <= outstanding_amount else outstanding_amount
+				if abs(transaction.get("unallocated_amount")) <= total_outstanding_amount else total_outstanding_amount
 		if party_account_currency == account_currency:
 			paid_amount = received_amount = amount_to_pay_or_receive
 		elif payment_type == "Receive":

@@ -21,7 +21,7 @@ PARTY_FIELD = {
 	"Journal Entry": "against",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
-	"Expense Claim": "Employee"
+	"Expense Claim": "employee_name"
 }
 
 PARTY_TYPES = {
@@ -66,7 +66,6 @@ class BankTransactionMatch:
 		result = amount_matches + similar_transactions_matches
 		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
 			key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)
-
 		return [dict(x, **{"vgtSelected": True}) for x in output] if len(output) == 1 else self.check_matching_dates(output)
 
 	def get_linked_documents(self, document_names=None, unreconciled=True, filters=None):
@@ -141,7 +140,7 @@ class BankTransactionMatch:
 
 		elif self.document_type == "Expense Claim":
 			return [dict(x, **{
-				"amount": x.get("unreconciled_amount", 0) * -1,
+				"amount": x.get("total_amount_reimbursed", 0) - x.get("total_sanctioned_amount", 0),
 				"party": x.get(party_field),
 				"reference_date": x.get(date_field), \
 				"reference_string": x.get(reference_field)
@@ -206,7 +205,7 @@ class BankTransactionMatch:
 			"Journal Entry": "cheque_date",
 			"Sales Invoice": "due_date",
 			"Purchase Invoice": "due_date",
-			"Expense Claim": "total_claimed_amount"
+			"Expense Claim": "posting_date"
 		}.get(self.document_type)
 
 	def get_reference_field(self):
