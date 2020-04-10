@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import random, json
 import frappe
+from frappe import _
 from frappe.utils import nowdate, add_days
 from erpnext.demo.setup.setup_data import import_json
 from erpnext.demo.domains import data
@@ -42,19 +43,22 @@ def setup_workstation():
 
 def show_item_groups_in_website():
 	"""set show_in_website=1 for Item Groups"""
-	products = frappe.get_doc("Item Group", "Products")
+	products = frappe.get_doc("Item Group", _("Products"))
 	products.show_in_website = 1
 	products.route = 'products'
 	products.save()
 
 def setup_asset():
-	assets = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', 'asset.json')).read())
+	frappe.get_doc({"doctype": "Location", "location_name": "Siège"}).insert()
+	frappe.db.commit()
+
+	assets = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', frappe.flags.demo_lang, 'asset.json')).read())
 	for d in assets:
 		asset = frappe.new_doc('Asset')
 		asset.update(d)
 		asset.purchase_date = add_days(nowdate(), -random.randint(20, 1500))
 		asset.next_depreciation_date = add_days(asset.purchase_date, 30)
-		asset.warehouse = "Stores - WPL"
+		asset.warehouse = _("Stores") + " - WP"
 		asset.set_missing_values()
 		asset.make_depreciation_schedule()
 		asset.flags.ignore_validate = True
@@ -63,7 +67,7 @@ def setup_asset():
 		asset.submit()
 
 def setup_item():
-	items = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', 'item.json')).read())
+	items = json.loads(open(frappe.get_app_path('erpnext', 'demo', 'data', frappe.flags.demo_lang, 'item.json')).read())
 	for i in items:
 		item = frappe.new_doc('Item')
 		item.update(i)
@@ -130,10 +134,10 @@ def setup_item_price():
 		for item, rate in iteritems(locals().get(price_list)):
 			frappe.get_doc({
 				"doctype": "Item Price",
-				"price_list": price_list.replace("_", " ").title(),
+				"price_list": _(price_list.replace("_", " ").title()),
 				"item_code": item,
 				"selling": 1 if price_list=="standard_selling" else 0,
 				"buying": 1 if price_list=="standard_buying" else 0,
 				"price_list_rate": rate,
-				"currency": "USD"
+				"currency": "EUR"
 			}).insert()

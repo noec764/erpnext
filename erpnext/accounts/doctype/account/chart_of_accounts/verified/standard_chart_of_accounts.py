@@ -81,6 +81,9 @@ def get():
 	    },
 	    _("Expenses"): {
 	        _("Direct Expenses"): {
+				_("Direct Expenses Account"): {
+					"account_type": "Expense Account"
+				},
 	            _("Stock Expenses"): {
 	                _("Cost of Goods Sold"): {
 	                    "account_type": "Cost of Goods Sold"

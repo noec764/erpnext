@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import frappe, sys
 import erpnext
 import frappe.utils
-from erpnext.demo.user import hr, sales, purchase, manufacturing, stock, accounts, projects, fixed_asset
+from erpnext.demo.user import hr, sales, purchase, manufacturing, stock, accounts, projects, fixed_asset, dashboard
 from erpnext.demo.setup import manufacture, setup_data, retail
 """
 Make a demo
@@ -22,10 +22,13 @@ bench --site demo.erpnext.dev execute erpnext.demo.demo.simulate
 
 """
 
-def make(domain='Manufacturing', days=100):
+def make(domain='Manufacturing', days=100, lang='en'):
 	frappe.flags.domain = domain
 	frappe.flags.mute_emails = True
+	frappe.flags.demo_lang = lang
+
 	setup_data.setup(domain)
+
 	if domain== 'Manufacturing':
 		manufacture.setup_data()
 	elif domain == "Retail":
@@ -60,6 +63,7 @@ def simulate(domain='Manufacturing', days=100):
 		runs_for = frappe.utils.date_diff(frappe.utils.nowdate(), current_date)
 		# runs_for = 100
 
+	dashboard.work()
 	fixed_asset.work()
 	for i in range(runs_for):
 		sys.stdout.write("\rSimulating {0}: Day {1}".format(
