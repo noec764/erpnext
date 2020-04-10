@@ -57,7 +57,7 @@ def work():
 	if random.random() < 0.4:
 		for pro in query_report.run("Work Orders in Progress")["result"][:how_many("Stock Entry for FG")]:
 			make_stock_entry_from_pro(pro[0], "Manufacture")
-	print(type(frappe.flags.current_date))
+
 	for bom in frappe.get_all('BOM', fields=['item'], filters = {'with_operations': 1}):
 		pro_order = make_wo_order_test_record(item=bom.item, qty=2,
 			source_warehouse=_("Stores") + " - WP", wip_warehouse = _("Work in Progress") + " - WP",

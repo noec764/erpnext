@@ -11,7 +11,10 @@ def work():
     users = frappe.get_all("User", filters={"user_type": "System User", "name": ("not in", ("Guest", "Administrator"))})
     for user in users:
         frappe.set_user(user.name)
-        create_user_desk(user.name)
+        try:
+            create_user_desk(user.name)
+        except frappe.DuplicateEntryError:
+            pass
 
         for chart in frappe.get_all("Dashboard Chart"):
                 widget = WidgetCreator("Desk", user=user.name)
