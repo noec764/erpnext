@@ -524,8 +524,7 @@
   {
    "fieldname": "manufacturer_part_no",
    "fieldtype": "Data",
-   "label": "Manufacturer Part Number",
-   "read_only": 1
+   "label": "Manufacturer Part Number"
   },
   {
    "fieldname": "column_break_15",
@@ -535,7 +534,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-04-03 12:26:12.356401",
+ "modified": "2020-04-16 12:26:12.356401",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier Quotation Item",

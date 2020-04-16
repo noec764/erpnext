@@ -10,7 +10,8 @@
   "manufacturer_part_no",
   "column_break_3",
   "item_name",
-  "description"
+  "description",
+  "is_default"
  ],
  "fields": [
   {
@@ -52,9 +53,16 @@
    "fieldtype": "Small Text",
    "label": "Description",
    "read_only": 1
+  },
+  {
+    "default": "0",
+    "fieldname": "is_default",
+    "fieldtype": "Check",
+    "in_list_view": 1,
+    "label": "Is Default"
   }
  ],
- "modified": "2019-06-06 19:07:31.175919",
+ "modified": "2020-04-16 19:07:31.175919",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Manufacturer",
