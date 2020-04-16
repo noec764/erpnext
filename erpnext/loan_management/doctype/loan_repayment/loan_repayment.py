@@ -275,6 +275,7 @@ def get_amounts(amounts, against_loan, posting_date, payment_type):
 
 		pending_accrual_entries.setdefault(entry.name,
 			flt(entry.interest_amount) + flt(entry.payable_principal_amount))
+
 		final_due_date = due_date
 
 	pending_principal_amount = against_loan_doc.total_payment - against_loan_doc.total_principal_paid - against_loan_doc.total_interest_payable
