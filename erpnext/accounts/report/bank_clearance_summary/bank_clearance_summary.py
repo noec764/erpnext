@@ -78,6 +78,8 @@ def get_entries(filters):
 			order by si.posting_date DESC, si.name DESC""".format(conditions), filters, as_list=1)
 
 	mops = tuple([frappe.db.escape(x.parent) for x in frappe.get_all("Mode of Payment Account", {"default_account": filters.get("account")}, "parent")])
+	if not mops:
+		frappe.throw(_("Please create at least one mode of payment for this bank account first"))
 	expense_claims =  frappe.db.sql("""SELECT
 			"Expense Claim", name, posting_date, remark, clearance_date, employee,
 			total_amount_reimbursed
