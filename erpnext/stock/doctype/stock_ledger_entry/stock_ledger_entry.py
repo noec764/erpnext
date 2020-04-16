@@ -72,7 +72,7 @@ class StockLedgerEntry(Document):
 			frappe.throw(_("Actual Qty is mandatory"))
 
 	def validate_item(self):
-		item_det = frappe.db.sql("""select name, has_batch_no, docstatus,
+		item_det = frappe.db.sql("""select name, item_name, has_batch_no, docstatus,
 			is_stock_item, has_variants, stock_uom, create_new_batch
 			from tabItem where name=%s""", self.item_code, as_dict=True)
 
