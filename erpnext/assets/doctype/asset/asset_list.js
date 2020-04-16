@@ -30,7 +30,6 @@ frappe.listview_settings['Asset'] = {
 
 		} else if (doc.status === "Draft") {
 			return [__("Draft"), "red", "status,=,Draft"];
-
 		}
 	},
 	onload: function(me) {
@@ -50,5 +49,5 @@ frappe.listview_settings['Asset'] = {
 				}
 			});
 		});
-	}
+	},
 }

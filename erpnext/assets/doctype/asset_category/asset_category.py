@@ -43,6 +43,7 @@ class AssetCategory(Document):
 def get_asset_category_account(fieldname, item=None, asset=None, account=None, asset_category = None, company = None):
 	if item and frappe.db.get_value("Item", item, "is_fixed_asset"):
 		asset_category = frappe.db.get_value("Item", item, ["asset_category"])
+
 	elif not asset_category or not company:
 		if account:
 			if frappe.db.get_value("Account", account, "account_type") != "Fixed Asset":

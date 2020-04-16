@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe, erpnext, math, json
 from frappe import _
 from six import string_types
-from frappe.utils import flt, add_months, cint, nowdate, getdate, today, date_diff, month_diff, add_days
+from frappe.utils import flt, add_months, cint, nowdate, getdate, today, date_diff, month_diff, add_days, get_last_day
 from frappe.model.document import Document
 from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
 from erpnext.assets.doctype.asset.depreciation \
@@ -194,8 +194,11 @@ class Asset(AccountsController):
 					d.total_number_of_depreciations, d)
 
 				if not has_pro_rata or n < cint(number_of_pending_depreciations) - 1:
-					schedule_date = add_months(d.depreciation_start_date,
-						n * cint(d.frequency_of_depreciation))
+					if d.depreciation_method == "Prorated Straight Line (360 Days)" and self.schedules:
+						schedule_date = add_months(self.schedules[-1].schedule_date, cint(d.frequency_of_depreciation))
+					else:
+						schedule_date = add_months(d.depreciation_start_date,
+							n * cint(d.frequency_of_depreciation))
 
 					# schedule date will be a year later from start date
 					# so monthly schedule date is calculated by removing 11 months from it
@@ -220,7 +223,11 @@ class Asset(AccountsController):
 
 					monthly_schedule_date = add_months(schedule_date, 1)
 
-					schedule_date = add_days(schedule_date, days)
+					if d.depreciation_method == "Prorated Straight Line (360 Days)":
+						schedule_date = add_months(self.available_for_use_date,
+							n * cint(d.frequency_of_depreciation))
+					else:
+						schedule_date = add_days(schedule_date, days)
 					last_schedule_date = schedule_date
 
 				if not depreciation_amount: continue
@@ -284,7 +291,10 @@ class Asset(AccountsController):
 		has_pro_rata = False
 
 		days = date_diff(row.depreciation_start_date, self.available_for_use_date) + 1
-		total_days = get_total_days(row.depreciation_start_date, row.frequency_of_depreciation)
+		if row.depreciation_method == "Prorated Straight Line (360 Days)":
+			total_days = 360
+		else:
+			total_days = get_total_days(row.depreciation_start_date, row.frequency_of_depreciation)
 
 		if days < total_days:
 			has_pro_rata = True
@@ -373,6 +383,8 @@ class Asset(AccountsController):
 
 			depreciation_amount = (flt(row.value_after_depreciation) -
 				flt(row.expected_value_after_useful_life)) / depreciation_left
+		elif row.depreciation_method == 'Prorated Straight Line (360 Days)':
+			return flt(row.value_after_depreciation) * (1.0 / cint(row.total_number_of_depreciations))
 		else:
 			depreciation_amount = flt(depreciable_value * (flt(row.rate_of_depreciation) / 100), precision)
 
@@ -687,9 +699,15 @@ def is_cwip_accounting_enabled(asset_category):
 	return cint(frappe.db.get_value("Asset Category", asset_category, "enable_cwip_accounting"))
 
 def get_pro_rata_amt(row, depreciation_amount, from_date, to_date):
-	days = date_diff(to_date, from_date)
 	months = month_diff(to_date, from_date)
-	total_days = get_total_days(to_date, row.frequency_of_depreciation)
+	if row.depreciation_method == "Prorated Straight Line (360 Days)":
+		todate = get_last_day(from_date) if getdate(to_date).month == 12 else to_date
+		fromdate = get_last_day(to_date) if getdate(from_date).month == 12 else from_date
+		days = date_diff(todate, fromdate) + (cint(months) - 1) * 30
+		total_days = min(get_total_days(to_date, row.frequency_of_depreciation), 360)
+	else:
+		total_days = get_total_days(to_date, row.frequency_of_depreciation)
+		days = date_diff(to_date, from_date)
 
 	return (depreciation_amount * flt(days)) / flt(total_days), days, months
 
