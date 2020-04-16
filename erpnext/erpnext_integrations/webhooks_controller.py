@@ -34,7 +34,7 @@ class WebhooksController():
 				self.set_as_failed(frappe.get_traceback())
 
 	def create_payment(self):
-		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
+		if not frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=("!=", 2))):
 			if self.metadata.get("reference_doctype") == "Payment Request":
 				pr = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 				self.payment_entry = pr.run_method("create_payment_entry", submit=False)
@@ -56,20 +56,24 @@ class WebhooksController():
 			self.set_as_completed()
 
 	def submit_payment(self):
-		if frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"))):
+		if frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=0)):
 			posting_date = getdate(frappe.parse_json(self.integration_request.data).get("created_at"))
-			self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id")))
+			self.payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=0))
+			self.payment_entry.posting_date = posting_date
+			self.payment_entry.reference_date = posting_date
 
-			if self.payment_entry.docstatus < 1:
-				self.payment_entry.posting_date = posting_date
-				self.payment_entry.reference_date = posting_date
-				if hasattr(self, 'add_fees_before_submission'):
-					self.add_fees_before_submission()
-				self.payment_entry.flags.ignore_permissions = True
-				self.payment_entry.submit()
-				self.trigger_subscription_events()
+			if hasattr(self, 'add_fees_before_submission'):
+				self.add_fees_before_submission()
+			self.payment_entry.flags.ignore_permissions = True
+			self.payment_entry.submit()
+
+			self.trigger_subscription_events()
 
 			self.set_as_completed()
+			self.close_related_payment_request()
+		elif frappe.db.exists("Payment Entry", dict(reference_no=self.integration_request.get("service_id"), docstatus=1)):
+			self.set_as_completed()
+			self.close_related_payment_request()
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(self.integration_request.get("service_id")))
 
@@ -86,6 +90,7 @@ class WebhooksController():
 			self.subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 			if self.subscription.status == 'Active':
 				self.subscription.run_method("process_active_subscription", payment_entry=self.payment_entry.name)
+				frappe.db.commit()
 
 	def change_status(self):
 		self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
@@ -113,3 +118,18 @@ class WebhooksController():
 			self.integration_request.db_set("error", str(message))
 		self.integration_request.reload()
 		self.integration_request.update_status({}, "Completed")
+
+	def close_related_payment_request(self):
+		integration_requests = frappe.get_all("Integration Request",
+			filters={
+				"service_document": self.integration_request.get("service_document"),
+				"service_id": self.integration_request.get("service_id"),
+				"status": "Pending"
+			},
+			fields=["name", "reference_doctype", "reference_docname"])
+
+		for integration_request in integration_requests:
+			frappe.get_doc("Integration Request", integration_request.name).update_status({}, "Completed")
+			if integration_request.reference_doctype == "Payment Request":
+				frappe.db.set_status("Payment Request", integration_request.reference_docname, "status", "Paid")
+

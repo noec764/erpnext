@@ -2272,7 +2272,7 @@
         "Start Date": "Date de début",
         "Status": "Statut",
         "System Manager": "Responsable système",
-        "Unsubscribed": "Désinscrit"
+        "Unsubscribed": "Désabonné"
     },
     "DocType: Email Digest": {
         "Accounts": "Comptes",
@@ -2322,7 +2322,7 @@
         "Tools": "Outils",
         "Upcoming Calendar Events": "Prochains événements du calendrier",
         "Weekly": "Hebdomadaire",
-        "Work in Progress": "Travail en cours"
+        "Work in Progress": "Travaux en cours"
     },
     "DocType: Employee": {
         "A+": "A +",
@@ -2443,7 +2443,7 @@
         "Status": "Statut",
         "System User (login) ID. If set, it will become default for all HR forms.": "L'ID (de connexion) de l'Utilisateur Système. S'il est défini, il deviendra la valeur par défaut pour tous les formulaires des RH.",
         "This will restrict user access to other employee records": "Cela limitera l'accès des utilisateurs aux données des autres employés",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "User ID": "ID Utilisateur",
         "Valid Upto": "Valide Jusqu'au",
         "Widowed": "Veuf",
@@ -4320,7 +4320,7 @@
         "System Manager": "Responsable système",
         "Territory": "Région",
         "Title": "Titre",
-        "Unsubscribed": "Désinscrit",
+        "Unsubscribed": "Désabonné",
         "Website": "Site web"
     },
     "DocType: Lead Source": {
@@ -4866,7 +4866,7 @@
         "Default Finished Goods Warehouse": "Entrepôt de Produits Finis par Défaut",
         "Default Scrap Warehouse": "Entrepôt de rebut par défaut",
         "Default Warehouses for Production": "Entrepôts par défaut pour la production",
-        "Default Work In Progress Warehouse": "Entrepôt de Travail en Cours par Défaut",
+        "Default Work In Progress Warehouse": "Entrepôt de travaux en cours par défaut",
         "Disable Capacity Planning": "Désactiver la planification de capacité",
         "Disable Capacity Planning and Time Tracking": "Désactiver la Plannification de Capacité et la Gestion du Temps",
         "Disables creation of time logs against Work Orders. Operations shall not be tracked against Work Order": "Désactive la création de journaux de temps depuis les ordres de travail. Les opérations ne doivent pas être suivies par ordre de travail",
@@ -6658,7 +6658,7 @@
         "Purchase User": "Acheteur",
         "Raw Materials Supplied": "Matières Premières Fournies",
         "Ref SQ": "Réf SQ",
-        "Reqd By Date": "Requis par Date",
+        "Reqd By Date": "Date de livraison prévue",
         "Rounded Total": "Total Arrondi",
         "Rounded Total (Company Currency)": "Total Arrondi (Devise Société)",
         "Rounding Adjustment": "Arrondi",
@@ -6755,7 +6755,7 @@
         "Rate": "Prix unitaire",
         "Rate (Company Currency)": "Prix (Devise Société)",
         "Received Qty": "Qté Reçue",
-        "Reqd By Date": "Requis par Date",
+        "Reqd By Date": "Date de livraison prévue",
         "Returned Qty": "Qté Retournée",
         "Sales Order": "Commande client",
         "Sales Order Item": "Article de la commande client",
@@ -6965,7 +6965,7 @@
         "Rejected Quantity": "Quantité Rejetée",
         "Rejected Serial No": "N° de série Rejeté",
         "Rejected Warehouse": "Entrepôt Rejeté",
-        "Required By": "Requis Par",
+        "Required By": "Demandé pour le",
         "Retain Sample": "Conserver l'échantillon",
         "Sample Quantity": "Quantité d'échantillon",
         "Serial No": "N° de série",
@@ -10556,7 +10556,7 @@
         "Warranty / AMC Status": "Garantie / Statut AMC",
         "Warranty Claim": "Réclamation de Garantie",
         "Warranty Expiry Date": "Date d'Expiration de la Garantie",
-        "Work In Progress": "Travaux En Cours"
+        "Work In Progress": "Travaux en cours"
     },
     "DocType: Website Attribute": {
         "Attribute": "Attribut",
@@ -10714,9 +10714,9 @@
         "Planned Start Time": "Heure de Début Prévue",
         "Status": "Statut",
         "Updated via 'Time Log'": "Mis à jour via 'Journal du Temps'",
-        "Work In Progress": "Travaux En Cours",
+        "Work In Progress": "Travaux en cours",
         "Work Order Operation": "Opération d'ordre de travail",
-        "Work in Progress": "Travail en cours",
+        "Work in Progress": "Travaux en cours",
         "Workstation": "Station de travail",
         "in Minutes": "en minutes",
         "in Minutes\nUpdated via 'Time Log'": "en Minutes Mises à Jour via le 'Journal des Temps'"
@@ -11380,7 +11380,7 @@
         "Secured Loans": "Prêts Garantis",
         "Securities and Deposits": "Titres et Dépôts",
         "Service": "Service",
-        "Softwares": "Softwares",
+        "Softwares": "Logiciels",
         "Source of Funds (Liabilities)": "Source des Fonds (Passif)",
         "Stock Adjustment": "Ajustement du Stock",
         "Stock Assets": "Actifs du Stock",
@@ -11461,7 +11461,7 @@
         "Secured Loans": "Prêts Garantis",
         "Securities and Deposits": "Titres et Dépôts",
         "Service": "Service",
-        "Softwares": "Softwares",
+        "Softwares": "Logiciels",
         "Source of Funds (Liabilities)": "Source des Fonds (Passif)",
         "Stock Adjustment": "Ajustement du Stock",
         "Stock Assets": "Actifs du Stock",
@@ -14696,13 +14696,13 @@
         "Following items {0} are not marked as {1} item. You can enable them as {1} item from its Item master": "Les éléments suivants {0} ne sont pas marqués comme {1} élément. Vous pouvez les activer en tant qu'élément {1} à partir de sa fiche article.",
         "From {0} | {1} {2}": "Du {0} | {1} {2}",
         "Please enter 'Is Subcontracted' as Yes or No": "Veuillez entrer Oui ou Non pour 'Est sous-traitée'",
-        "Please enter Reqd by Date": "Veuillez entrer Reqd par date",
+        "Please enter Reqd by Date": "Veuillez entrer une date de livraison prévue",
         "Please select BOM in BOM field for Item {0}": "Veuillez sélectionner une LDM dans le champ LDM pour l’Article {0}",
         "Purchase Order": "Commande fournisseur",
         "Reserved Warehouse is mandatory for Item {0} in Raw Materials supplied": "L'entrepôt réservé est obligatoire pour l'article {0} dans les matières premières fournies",
         "Row #{0}: Rejected Qty can not be entered in Purchase Return": "Ligne #{0} : Qté Rejetée ne peut pas être entrée dans le Retour d’Achat",
         "Row #{0}: Rejected Warehouse is mandatory against rejected Item {1}": "Ligne #{0} : Entrepôt de Rejet est obligatoire pour l’Article rejeté {1}",
-        "Row #{0}: Reqd by Date cannot be before Transaction Date": "La ligne # {0}: Reqd par date ne peut pas être antérieure à la date de la transaction",
+        "Row #{0}: Reqd by Date cannot be before Transaction Date": "La ligne # {0}: la date de livraison prévue ne peut pas être antérieure à la date de la transaction",
         "Row #{0}: {1} can not be negative for item {2}": "Ligne #{0} : {1} ne peut pas être négatif pour l’article {2}",
         "Row {0}: Conversion Factor is mandatory": "Ligne {0} : Le Facteur de Conversion est obligatoire",
         "Row {0}: Enter location for the asset item {1}": "Ligne {0}: entrez la localisation de l'actif {1}",
@@ -16206,7 +16206,7 @@
         "Completed": "Terminé",
         "Material Transferred": "Matériel transféré",
         "Open": "Ouvert",
-        "Work In Progress": "Travaux En Cours"
+        "Work In Progress": "Travaux en cours"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/operation/operation_dashboard.py": {
         "Manufacture": "Production"
@@ -18028,7 +18028,7 @@
         "Sales Account": "Compte de vente",
         "Set default inventory account for perpetual inventory": "Configurer le compte d'inventaire par défaut pour l'inventaire perpétuel",
         "Stores": "Magasins",
-        "Work In Progress": "Travaux En Cours",
+        "Work In Progress": "Travaux en cours",
         "Write Off": "Reprise"
     },
     "apps/erpnext/erpnext/setup/doctype/company/company_dashboard.py": {
@@ -18277,7 +18277,7 @@
         "Engineer": "Ingénieur",
         "Equity": "Capitaux propres",
         "Execution": "Exécution",
-        "Extra Large": "Extra Large",
+        "Extra Large": "Extra Grand",
         "Extra Small": "Très Petit",
         "Food": "Alimentation",
         "Full-time": "Temps Plein",
@@ -19647,7 +19647,7 @@
         "For Warehouse": "Pour l’Entrepôt",
         "Item": "Article",
         "Qty": "Qté",
-        "Reqd By Date": "Requis par Date",
+        "Reqd By Date": "Date de livraison prévue",
         "Required On": "Requis Pour",
         "Warehouse": "Entrepôt"
     },

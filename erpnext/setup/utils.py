@@ -30,7 +30,7 @@ def before_tests():
 		setup_complete({
 			"currency"			:"USD",
 			"full_name"			:"Test User",
-			"company_name"		:"Wind Power LLC",
+			"company_name"		:"Wind Power",
 			"timezone"			:"America/New_York",
 			"company_abbr"		:"WP",
 			"industry"			:"Manufacturing",

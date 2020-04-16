@@ -101,23 +101,24 @@ class Subscription(Document):
 			if not self.has_invoice_for_period():
 				self.generate_invoice(payment_entry=payment_entry)
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 			else:
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 
 		elif self.generate_invoice_at_period_start:
 			self.set_plan_details_status()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
 				self.update_subscription_period(add_days(self.current_invoice_end, 1))
+				self.save()
 				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
 
 			elif not self.has_invoice_for_period() and self.period_has_passed(add_days(self.current_invoice_start, -1)):
 				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
-
-		self.save()
 
 	@staticmethod
 	def period_has_passed(end_date):
@@ -565,7 +566,8 @@ class Subscription(Document):
 			filters={
 				"event_type": "Payment request created",
 				"period_start": self.current_invoice_start ,
-				"period_end": self.current_invoice_end
+				"period_end": self.current_invoice_end,
+				"subscription": self.name
 			}
 		):
 			return False
@@ -791,7 +793,8 @@ def check_gateway_payments():
 				"party": doc.customer,
 				"submit_doc": True,
 				"mute_email": True,
-				"payment_gateway": doc.payment_gateway
+				"payment_gateway": doc.payment_gateway,
+				"currency": doc.currency
 			})
 
 			if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:

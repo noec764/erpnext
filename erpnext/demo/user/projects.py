@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 import frappe, erpnext
+from frappe import _
 from frappe.utils import flt
 from frappe.utils.make_random import get_random
 from erpnext.projects.doctype.timesheet.test_timesheet import make_timesheet
@@ -11,6 +12,7 @@ from erpnext.demo.user.hr import make_sales_invoice_for_timesheet
 
 def run_projects(current_date):
 	frappe.set_user(frappe.db.get_global('demo_projects_user'))
+	frappe.set_user_lang(frappe.db.get_global('demo_projects_user'))
 	if frappe.db.get_global('demo_projects_user'):
 		make_project(current_date)
 		make_timesheet_for_projects(current_date)
@@ -34,9 +36,9 @@ def close_tasks(current_date):
 
 def make_project(current_date):
 	if not frappe.db.exists('Project',
-		"New Product Development " + current_date.strftime("%Y-%m-%d")):
+		_("New Product Development") + " " + current_date.strftime("%Y-%m-%d")):
 		project = frappe.get_doc({
 			"doctype": "Project",
-			"project_name": "New Product Development " + current_date.strftime("%Y-%m-%d"),
+			"project_name": _("New Product Development") + " " + current_date.strftime("%Y-%m-%d"),
 		})
 		project.insert()

@@ -13,11 +13,11 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 class TestAccountingPeriod(unittest.TestCase):
     def test_overlap(self):
         ap1 = create_accounting_period(start_date = "2018-04-01",
-            end_date = "2018-06-30", company = "Wind Power LLC")
+            end_date = "2018-06-30", company = "Wind Power")
         ap1.save()
 
         ap2 = create_accounting_period(start_date = "2018-06-30",
-            end_date = "2018-07-10", company = "Wind Power LLC", period_name = "Test Accounting Period 1")
+            end_date = "2018-07-10", company = "Wind Power", period_name = "Test Accounting Period 1")
         self.assertRaises(OverlapError, ap2.save)
 
     def test_accounting_period(self):

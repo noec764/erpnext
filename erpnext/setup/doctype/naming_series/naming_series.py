@@ -44,7 +44,7 @@ class NamingSeries(Document):
 		prefixes = "\n".join(sorted(prefixes))
 
 		return {
-			"transactions": "\n".join([''] + sorted(doctypes)),
+			"transactions": "\n".join([''] + sorted(doctypes, key=lambda x: _(x))),
 			"prefixes": prefixes
 		}
 

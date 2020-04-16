@@ -73,7 +73,7 @@ def create_asset_data():
 			'doctype': 'Location',
 			'location_name': 'Test Location'
 		}).insert()
-
+	
 	if not frappe.db.exists("Item", "Photocopier"):
 		meta = frappe.get_meta('Asset')
 		naming_series = meta.get_field("naming_series").options
