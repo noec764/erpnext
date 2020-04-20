@@ -43,6 +43,7 @@ class BankTransactionMatch:
 		self.amount = sum([x.get("amount") for x in self.bank_transactions]) or 0
 		self.currency = self.bank_transactions[0]["currency"] if self.bank_transactions else None
 		self.bank_account = self.bank_transactions[0]["bank_account"] if self.bank_transactions else None
+		self.account = frappe.db.get_value("Bank Account", self.bank_account, "account") if self.bank_account else None
 		self.company = frappe.db.get_value("Bank Account", self.bank_account, "company") if self.bank_account else get_default_company()
 
 	def get_linked_payments(self):
@@ -102,7 +103,7 @@ class BankTransactionMatch:
 
 		if self.document_type == "Payment Entry":
 			for result in query_result:
-				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency):
+				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency and result.get("paid_from") == self.account):
 					filtered_result.append(dict(result, **{
 						"amount": result.get("unreconciled_amount", 0) * -1,\
 						"party": result.get(party_field),\
@@ -110,9 +111,17 @@ class BankTransactionMatch:
 						"reference_string": result.get(reference_field)
 					}))
 
-				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
+				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency and result.get("paid_to") == self.account):
 					filtered_result.append(dict(result, **{
 						"amount": result.get("unreconciled_amount", 0),\
+						"party": result.get(party_field),\
+						"reference_date": result.get(date_field), \
+						"reference_string": result.get(reference_field)
+					}))
+
+				elif (result.get("payment_type") == "Internal Transfer" and (result.get("paid_to") == self.account or result.get("paid_from") == self.account)):
+					filtered_result.append(dict(result, **{
+						"amount": result.get("unreconciled_amount", 0) * (1 if result.get("paid_to") == self.account else -1),\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
 						"reference_string": result.get(reference_field)
@@ -152,9 +161,7 @@ class BankTransactionMatch:
 		return filtered_result
 
 	def get_linked_journal_entries(self, document_names=None, unreconciled=True, filters=None):
-		account = frappe.db.get_value("Bank Account", self.bank_account, "account")
-
-		child_query_filters = {"account_currency": self.currency, "account": account}
+		child_query_filters = {"account_currency": self.currency, "account": self.account}
 		parent_query_filters = {"company": self.company}
 
 		if unreconciled:
