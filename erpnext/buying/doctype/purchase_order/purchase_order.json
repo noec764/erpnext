@@ -64,9 +64,9 @@
   "base_total",
   "base_net_total",
   "column_break_26",
+  "total_net_weight",
   "total",
   "net_total",
-  "total_net_weight",
   "taxes_section",
   "tax_category",
   "column_break_50",
@@ -171,8 +171,8 @@
    "search_index": 1
   },
   {
-   "description": "Fetch items based on Default Supplier.",
    "depends_on": "eval:doc.supplier && doc.docstatus===0 && (!(doc.items && doc.items.length) || (doc.items.length==1 && !doc.items[0].item_code))",
+   "description": "Fetch items based on Default Supplier.",
    "fieldname": "get_items_from_open_material_requests",
    "fieldtype": "Button",
    "label": "Get Items from Open Material Requests"
@@ -1056,7 +1056,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-14 18:54:39.694448",
+ "modified": "2020-04-17 13:04:28.185197",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
