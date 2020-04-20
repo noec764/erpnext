@@ -10,5 +10,3 @@ frappe.listview_settings['BOM'] = {
 		}
 	}
 };
-
-frappe.help.youtube_id["BOM"] = "hDV0c1OeWLo";
