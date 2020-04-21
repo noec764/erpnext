@@ -103,16 +103,16 @@ class Subscription(Document):
 			self.set_plan_details_status()
 			if not self.has_invoice_for_period():
 				self.generate_invoice(payment_entry=payment_entry)
-				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=False)
+				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=True)
 				self.generate_sales_order()
 			else:
-				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=False)
+				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=True)
 				self.generate_sales_order()
 
 		elif self.generate_invoice_at_period_start:
 			self.set_plan_details_status()
 			if self.has_invoice_for_period() and self.period_has_passed(self.current_invoice_end):
-				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=False)
+				self.update_subscription_period(add_days(self.current_invoice_end, 1), commit=True)
 				self.generate_sales_order()
 				self.generate_invoice(payment_entry=payment_entry)
 
@@ -489,7 +489,7 @@ class Subscription(Document):
 			self.status = 'Active'
 			self.cancellation_date = None
 			self.prorate_invoice = 0
-			self.update_subscription_period(nowdate(), commit=False)
+			self.update_subscription_period(nowdate(), commit=True)
 		else:
 			frappe.throw(_('You cannot restart a Subscription that is not cancelled.'))
 
