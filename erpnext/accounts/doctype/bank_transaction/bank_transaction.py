@@ -86,7 +86,7 @@ class BankTransaction(StatusUpdater):
 		if not clear:
 			self.set_payment_entries_clearance_date(True)
 
-		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status()
+		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status(update=True)
 
 	def set_allocation_in_bank_transaction(self):
 		allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])\

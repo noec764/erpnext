@@ -312,13 +312,18 @@ class PaymentEntry(AccountsController):
 				frappe.db.sql(""" UPDATE `tabPayment Schedule` SET paid_amount = `paid_amount` + %s
 						WHERE parent = %s and payment_term = %s""", (amount, key[1], key[0]))
 	
-	def set_status(self):
+	def set_status(self, update=False):
 		if self.docstatus == 2:
-			self.status = 'Cancelled'
+			status = 'Cancelled'
 		elif self.docstatus == 1:
-			self.status = 'Reconciled' if self.unreconciled_amount <= 0 else 'Unreconciled'
+			status = 'Reconciled' if self.unreconciled_amount <= 0 else 'Unreconciled'
 		else:
-			self.status = 'Draft'
+			status = 'Draft'
+
+		if update:
+			self.db_set("status", self.status)
+
+		self.status = status
 
 	def set_amounts(self):
 		self.set_amounts_in_company_currency()
