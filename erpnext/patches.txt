@@ -633,6 +633,7 @@ erpnext.patches.v12_0.recalculate_requested_qty_in_bin
 erpnext.patches.v12_0.set_total_batch_quantity
 erpnext.patches.v12_0.rename_mws_settings_fields
 erpnext.patches.v12_0.set_updated_purpose_in_pick_list
+erpnext.patches.v12_0.repost_stock_ledger_entries_for_target_warehouse
 
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
