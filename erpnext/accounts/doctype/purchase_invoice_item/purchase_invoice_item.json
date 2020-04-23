@@ -565,9 +565,6 @@
    "fieldname": "item_group",
    "fieldtype": "Data",
    "label": "Item Group",
-   "oldfieldname": "item_group",
-   "oldfieldtype": "Link",
-   "options": "Item Group",
    "print_hide": 1,
    "read_only": 1
   },
@@ -781,7 +778,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-04-16 12:25:34.547795",
+ "modified": "2020-04-21 12:25:34.547795",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",
