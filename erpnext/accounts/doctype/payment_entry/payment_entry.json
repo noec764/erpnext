@@ -64,6 +64,7 @@
   "dimension_col_break",
   "cost_center",
   "section_break_12",
+  "status",
   "remarks",
   "column_break_16",
   "letter_head",
@@ -580,12 +581,20 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+    "default": "Draft",
+    "fieldname": "status",
+    "fieldtype": "Select",
+    "label": "Status",
+    "options": "\nDraft\nCancelled\nUnreconciled\nReconciled",
+    "read_only": 1
   }
  ],
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-24 10:36:38.055125",
+ "modified": "2020-04-21 10:36:38.055125",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
