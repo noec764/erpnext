@@ -6,7 +6,9 @@ from __future__ import unicode_literals
 import frappe, erpnext, math, json
 from frappe import _
 from six import string_types
-from frappe.utils import flt, add_months, cint, nowdate, getdate, today, date_diff, month_diff, add_days, get_last_day
+from collections import defaultdict
+from calendar import monthrange
+from frappe.utils import flt, add_months, cint, nowdate, getdate, today, date_diff, month_diff, add_days, get_last_day, get_first_day
 from frappe.model.document import Document
 from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
 from erpnext.assets.doctype.asset.depreciation \
@@ -58,14 +60,11 @@ class Asset(AccountsController):
 
 	def prepare_depreciation_data(self):
 		if self.calculate_depreciation:
-			self.value_after_depreciation = 0
 			self.set_depreciation_rate()
 			self.make_depreciation_schedule()
 			self.set_accumulated_depreciation()
 		else:
 			self.finance_books = []
-			self.value_after_depreciation = (flt(self.gross_purchase_amount) -
-				flt(self.opening_accumulated_depreciation))
 
 	def validate_item(self):
 		item = frappe.get_cached_value("Item", self.item_code,
@@ -159,8 +158,7 @@ class Asset(AccountsController):
 
 	def set_depreciation_rate(self):
 		for d in self.get("finance_books"):
-			d.rate_of_depreciation = flt(self.get_depreciation_rate(d, on_validate=True),
-				d.precision("rate_of_depreciation"))
+			d.rate_of_depreciation = flt(self.get_depreciation_rate(d, on_validate=True), d.precision("rate_of_depreciation"))
 
 	def make_depreciation_schedule(self):
 		if 'Manual' not in [d.depreciation_method for d in self.finance_books]:
@@ -170,136 +168,7 @@ class Asset(AccountsController):
 			return
 
 		for d in self.get('finance_books'):
-			self.validate_asset_finance_books(d)
-
-			value_after_depreciation = (flt(self.gross_purchase_amount) -
-				flt(self.opening_accumulated_depreciation))
-
-			d.value_after_depreciation = value_after_depreciation
-
-			number_of_pending_depreciations = cint(d.total_number_of_depreciations) - \
-				cint(self.number_of_depreciations_booked)
-
-			has_pro_rata = self.check_is_pro_rata(d)
-
-			if has_pro_rata:
-				number_of_pending_depreciations += 1
-
-			skip_row = False
-			for n in range(number_of_pending_depreciations):
-				# If depreciation is already completed (for double declining balance)
-				if skip_row: continue
-
-				depreciation_amount = self.get_depreciation_amount(value_after_depreciation,
-					d.total_number_of_depreciations, d)
-
-				if not has_pro_rata or n < cint(number_of_pending_depreciations) - 1:
-					if d.depreciation_method == "Prorated Straight Line (360 Days)" and self.schedules:
-						schedule_date = add_months(self.schedules[-1].schedule_date, cint(d.frequency_of_depreciation))
-					else:
-						schedule_date = add_months(d.depreciation_start_date,
-							n * cint(d.frequency_of_depreciation))
-
-					# schedule date will be a year later from start date
-					# so monthly schedule date is calculated by removing 11 months from it
-					monthly_schedule_date = add_months(schedule_date, - d.frequency_of_depreciation + 1)
-
-				# For first row
-				if has_pro_rata and n==0:
-					depreciation_amount, days, months = get_pro_rata_amt(d, depreciation_amount,
-						self.available_for_use_date, d.depreciation_start_date)
-
-					# For first depr schedule date will be the start date
-					# so monthly schedule date is calculated by removing month difference between use date and start date
-					monthly_schedule_date = add_months(d.depreciation_start_date, - months + 1)
-
-				# For last row
-				elif has_pro_rata and n == cint(number_of_pending_depreciations) - 1:
-					to_date = add_months(self.available_for_use_date,
-						n * cint(d.frequency_of_depreciation))
-
-					depreciation_amount, days, months = get_pro_rata_amt(d,
-						depreciation_amount, schedule_date, to_date)
-
-					monthly_schedule_date = add_months(schedule_date, 1)
-
-					if d.depreciation_method == "Prorated Straight Line (360 Days)":
-						schedule_date = add_months(self.available_for_use_date,
-							n * cint(d.frequency_of_depreciation))
-					else:
-						schedule_date = add_days(schedule_date, days)
-					last_schedule_date = schedule_date
-
-				if not depreciation_amount: continue
-				value_after_depreciation -= flt(depreciation_amount,
-					self.precision("gross_purchase_amount"))
-
-				# Adjust depreciation amount in the last period based on the expected value after useful life
-				if d.expected_value_after_useful_life and ((n == cint(number_of_pending_depreciations) - 1
-					and value_after_depreciation != d.expected_value_after_useful_life)
-					or value_after_depreciation < d.expected_value_after_useful_life):
-					depreciation_amount += (value_after_depreciation - d.expected_value_after_useful_life)
-					skip_row = True
-
-				if depreciation_amount > 0:
-					# With monthly depreciation, each depreciation is divided by months remaining until next date
-					if self.allow_monthly_depreciation:
-						# month range is 1 to 12
-						# In pro rata case, for first and last depreciation, month range would be different
-						month_range = months \
-							if (has_pro_rata and n==0) or (has_pro_rata and n == cint(number_of_pending_depreciations) - 1) \
-							else d.frequency_of_depreciation
-
-						for r in range(month_range):
-							if (has_pro_rata and n == 0):
-								# For first entry of monthly depr
-								if r == 0:
-									days_until_first_depr = date_diff(monthly_schedule_date, self.available_for_use_date)
-									per_day_amt = depreciation_amount / days
-									depreciation_amount_for_current_month = per_day_amt * days_until_first_depr
-									depreciation_amount -= depreciation_amount_for_current_month
-									date = monthly_schedule_date
-									amount = depreciation_amount_for_current_month
-								else:
-									date = add_months(monthly_schedule_date, r)
-									amount = depreciation_amount / (month_range - 1)
-							elif (has_pro_rata and n == cint(number_of_pending_depreciations) - 1) and r == cint(month_range) - 1:
-								# For last entry of monthly depr
-								date = last_schedule_date
-								amount = depreciation_amount / month_range
-							else:
-								date = add_months(monthly_schedule_date, r)
-								amount = depreciation_amount / month_range
-
-							self.append("schedules", {
-								"schedule_date": date,
-								"depreciation_amount": amount,
-								"depreciation_method": d.depreciation_method,
-								"finance_book": d.finance_book,
-								"finance_book_id": d.idx
-							})
-					else:
-						self.append("schedules", {
-							"schedule_date": schedule_date,
-							"depreciation_amount": depreciation_amount,
-							"depreciation_method": d.depreciation_method,
-							"finance_book": d.finance_book,
-							"finance_book_id": d.idx
-						})
-
-	def check_is_pro_rata(self, row):
-		has_pro_rata = False
-
-		days = date_diff(row.depreciation_start_date, self.available_for_use_date) + 1
-		if row.depreciation_method == "Prorated Straight Line (360 Days)":
-			total_days = 360
-		else:
-			total_days = get_total_days(row.depreciation_start_date, row.frequency_of_depreciation)
-
-		if days < total_days:
-			has_pro_rata = True
-
-		return has_pro_rata
+			DepreciationSchedule(self, d).create()
 
 	def validate_asset_finance_books(self, row):
 		if flt(row.expected_value_after_useful_life) >= flt(self.gross_purchase_amount):
@@ -329,10 +198,6 @@ class Asset(AccountsController):
 			if cint(self.number_of_depreciations_booked) > cint(row.total_number_of_depreciations):
 				frappe.throw(_("Number of Depreciations Booked cannot be greater than Total Number of Depreciations"))
 
-		if row.depreciation_start_date and getdate(row.depreciation_start_date) < getdate(nowdate()):
-			frappe.msgprint(_("Depreciation Row {0}: Depreciation Start Date is entered as past date")
-				.format(row.idx), title=_('Warning'), indicator='red')
-
 		if row.depreciation_start_date and getdate(row.depreciation_start_date) < getdate(self.purchase_date):
 			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date cannot be before Purchase Date")
 				.format(row.idx))
@@ -343,52 +208,18 @@ class Asset(AccountsController):
 
 	def set_accumulated_depreciation(self, ignore_booked_entry = False):
 		straight_line_idx = [d.idx for d in self.get("schedules") if d.depreciation_method == 'Straight Line']
-		finance_books = []
+		accumulated_depreciations_per_finance_book = defaultdict(dict)
 
 		for i, d in enumerate(self.get("schedules")):
 			if ignore_booked_entry and d.journal_entry:
 				continue
 
-			if d.finance_book_id not in finance_books:
-				accumulated_depreciation = flt(self.opening_accumulated_depreciation)
-				value_after_depreciation = flt(self.get_value_after_depreciation(d.finance_book_id))
-				finance_books.append(d.finance_book_id)
+			if d.finance_book_id not in accumulated_depreciations_per_finance_book:
+				accumulated_depreciations_per_finance_book[d.finance_book_id] = flt(self.opening_accumulated_depreciation)
 
-			depreciation_amount = flt(d.depreciation_amount, d.precision("depreciation_amount"))
-			value_after_depreciation -= flt(depreciation_amount)
-
-			if straight_line_idx and i == max(straight_line_idx) - 1:
-				book = self.get('finance_books')[cint(d.finance_book_id) - 1]
-				depreciation_amount += flt(value_after_depreciation -
-					flt(book.expected_value_after_useful_life), d.precision("depreciation_amount"))
-
-			d.depreciation_amount = depreciation_amount
-			accumulated_depreciation += d.depreciation_amount
-			d.accumulated_depreciation_amount = flt(accumulated_depreciation,
+			accumulated_depreciations_per_finance_book[d.finance_book_id] += d.depreciation_amount
+			d.accumulated_depreciation_amount = flt(accumulated_depreciations_per_finance_book[d.finance_book_id],
 				d.precision("accumulated_depreciation_amount"))
-
-	def get_value_after_depreciation(self, idx):
-		return flt(self.get('finance_books')[cint(idx)-1].value_after_depreciation)
-
-	def get_depreciation_amount(self, depreciable_value, total_number_of_depreciations, row):
-		precision = self.precision("gross_purchase_amount")
-
-		if row.depreciation_method in ("Straight Line", "Manual"):
-			depreciation_left = (cint(row.total_number_of_depreciations) - cint(self.number_of_depreciations_booked))
-
-			if not depreciation_left:
-				frappe.msgprint(_("All the depreciations has been booked"))
-				depreciation_amount = flt(row.expected_value_after_useful_life)
-				return depreciation_amount
-
-			depreciation_amount = (flt(row.value_after_depreciation) -
-				flt(row.expected_value_after_useful_life)) / depreciation_left
-		elif row.depreciation_method == 'Prorated Straight Line (360 Days)':
-			return flt(row.value_after_depreciation) * (1.0 / cint(row.total_number_of_depreciations))
-		else:
-			depreciation_amount = flt(depreciable_value * (flt(row.rate_of_depreciation) / 100), precision)
-
-		return depreciation_amount
 
 	def validate_expected_value_after_useful_life(self):
 		for row in self.get('finance_books'):
@@ -513,7 +344,6 @@ class Asset(AccountsController):
 
 			no_of_years = flt(args.get("total_number_of_depreciations") * flt(args.get("frequency_of_depreciation"))) / 12
 			value = flt(args.get("expected_value_after_useful_life")) / flt(self.gross_purchase_amount)
-
 			# square root of flt(salvage_value) / flt(asset_cost)
 			depreciation_rate = math.pow(value, 1.0/flt(no_of_years, 2))
 
@@ -698,21 +528,160 @@ def make_asset_movement(assets, purpose=None):
 def is_cwip_accounting_enabled(asset_category):
 	return cint(frappe.db.get_value("Asset Category", asset_category, "enable_cwip_accounting"))
 
-def get_pro_rata_amt(row, depreciation_amount, from_date, to_date):
-	months = month_diff(to_date, from_date)
-	if row.depreciation_method == "Prorated Straight Line (360 Days)":
-		todate = get_last_day(from_date) if getdate(to_date).month == 12 else to_date
-		fromdate = get_last_day(to_date) if getdate(from_date).month == 12 else from_date
-		days = date_diff(todate, fromdate) + (cint(months) - 1) * 30
-		total_days = min(get_total_days(to_date, row.frequency_of_depreciation), 360)
-	else:
-		total_days = get_total_days(to_date, row.frequency_of_depreciation)
-		days = date_diff(to_date, from_date)
-
-	return (depreciation_amount * flt(days)) / flt(total_days), days, months
-
 def get_total_days(date, frequency):
-	period_start_date = add_months(date,
-		cint(frequency) * -1)
+	period_start_date = add_months(date, cint(frequency) * -1)
 
 	return date_diff(date, period_start_date)
+
+
+class DepreciationSchedule:
+	def __init__(self, asset, finance_book):
+		self.asset = asset
+		self.finance_book = finance_book
+
+		self.asset.validate_asset_finance_books(self.finance_book)
+
+		self.method = self.finance_book.depreciation_method
+		self.value_to_depreciate = flt(self.asset.gross_purchase_amount) - flt(self.finance_book.expected_value_after_useful_life)
+		self.start_date = self.booking_date = self.booking_calculation_date = None
+		self.coefficient = 0
+		self.skip_row = False
+		self.number_of_depreciations = 0
+		self.depreciations_left = 0
+		self.depreciation_amount = 0
+		self.current_depreciation = 0
+
+	def create(self):
+		self.number_of_depreciations = cint(self.finance_book.total_number_of_depreciations)
+		self.depreciations_left = self.number_of_depreciations
+
+		for self.current_depreciation in range(self.number_of_depreciations):
+			self.prepare_next_depreciation()
+
+			if self.current_depreciation in range(cint(self.asset.number_of_depreciations_booked)):
+				self.depreciations_left -= 1
+				continue
+
+			self.get_depreciation_amount()
+			DepreciationRow(self).create()
+			self.depreciations_left -= 1
+
+	def prepare_next_depreciation(self):
+		if not self.start_date and not self.booking_date:
+			self.start_date = getdate(self.asset.available_for_use_date)
+			self.booking_date = getdate(self.finance_book.depreciation_start_date)
+			self.booking_calculation_date = self.booking_date
+		else:
+			self.get_next_start_date()
+			self.get_next_booking_date()
+
+		self.get_pro_rata_coefficient()
+
+		if self.number_of_depreciations == self.depreciations_left:
+			self.depreciations_basis = cint(self.finance_book.total_number_of_depreciations) if flt(self.coefficient) == 1 else cint(self.finance_book.total_number_of_depreciations) - 1
+
+	def get_next_start_date(self):
+		self.start_date = add_days(self.booking_date, 1)
+
+	def get_next_booking_date(self):
+		if self.depreciations_left == 1:
+			last_booking_date = self.asset.available_for_use_date if self.method == "Prorated Straight Line (360 Days)" else self.finance_book.depreciation_start_date
+			self.booking_date = add_days(add_months(getdate(last_booking_date),\
+				cint(self.finance_book.frequency_of_depreciation) * cint(self.current_depreciation)), -1)
+			self.booking_calculation_date = add_days(add_months(getdate(self.asset.available_for_use_date),\
+				cint(self.finance_book.frequency_of_depreciation) * cint(self.current_depreciation)), -1)
+		else:
+			self.booking_date = add_months(self.booking_date, cint(self.finance_book.frequency_of_depreciation))
+			self.booking_calculation_date = self.booking_date
+
+	def get_depreciation_amount(self):
+		precision = self.asset.precision("gross_purchase_amount")
+
+		if self.method in ("Straight Line", "Manual", "Prorated Straight Line (360 Days)"):
+			self.depreciation_amount = (flt(self.value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
+		else:
+			self.depreciation_amount = flt(self.value_to_depreciate * (flt(self.finance_book.rate_of_depreciation) / 100), precision)
+			self.value_to_depreciate -= self.depreciation_amount
+
+	def get_pro_rata_coefficient(self):
+		if self.method == "Prorated Straight Line (360 Days)":
+			months = abs(month_diff(self.booking_calculation_date, self.start_date))
+
+			# Handle 28th of February
+			booking = 30 if self.booking_calculation_date.month == 2 and self.booking_calculation_date.day == monthrange(self.booking_calculation_date.year, self.booking_calculation_date.month)[1] else self.booking_calculation_date.day
+			start = 30 if self.start_date.month == 2 and self.start_date.day == monthrange(self.start_date.year, self.start_date.month)[1] else self.start_date.day
+
+			if months == 1:
+				days = min(date_diff(self.booking_calculation_date, self.start_date), 30)
+			else:
+				days = (cint(months) - 2) * 30 + min((31 - cint(self.start_date.day)), 30) + min(cint(booking), 30)
+
+			total_days = min(get_total_days(self.booking_calculation_date, self.finance_book.frequency_of_depreciation), 360)
+		else:
+			total_days = min(get_total_days(self.booking_calculation_date, self.finance_book.frequency_of_depreciation), 365)
+			days = date_diff(add_days(self.booking_calculation_date, 1), self.start_date)
+
+		self.coefficient = min(flt(abs(days)) / flt(total_days), 1)
+
+class DepreciationRow:
+	def __init__(self, schedule):
+		self.schedule = schedule
+		self.asset = self.schedule.asset
+		self.months = 0
+		self.monthly_depreciation_amount = 0
+		self.start_date = self.booking_date = None
+
+	def create(self):
+		if self.asset.allow_monthly_depreciation:
+			self.create_monthly_depreciation()
+		else:
+			self.create_yearly_depreciation()
+
+	def create_yearly_depreciation(self):
+		self.asset.append("schedules", {
+			"schedule_date": self.schedule.booking_date,
+			"depreciation_amount": self.schedule.depreciation_amount,
+			"depreciation_method": self.schedule.method,
+			"finance_book": self.schedule.finance_book.finance_book,
+			"finance_book_id": self.schedule.finance_book.idx
+		})
+
+	def create_monthly_depreciation(self):
+		self.months = abs(month_diff(self.schedule.booking_date, self.schedule.start_date))
+		for month in range(self.months):
+			self.get_start_end_date(month)
+			self.get_monthly_amount()
+
+			self.asset.append("schedules", {
+				"schedule_date": self.booking_date,
+				"depreciation_amount": self.monthly_depreciation_amount,
+				"depreciation_method": self.schedule.method,
+				"finance_book": self.schedule.finance_book.finance_book,
+				"finance_book_id": self.schedule.finance_book.idx
+			})
+
+	def get_start_end_date(self, month):
+		self.start_date = add_months(self.schedule.start_date, month)
+
+		if month == 0:
+			self.booking_date = get_last_day(add_months(self.start_date, month))
+		else:
+			self.booking_date = add_months(self.booking_date, 1)
+
+	def get_monthly_amount(self, month=None):
+		self.monthly_depreciation_amount = self.schedule.depreciation_amount / self.months
+
+		if month and month == 0:
+			self.monthly_depreciation_amount = self.monthly_depreciation_amount * self.get_pro_rata_coefficient()
+		elif month and month == (self.months - 1):
+			self.monthly_depreciation_amount = self.monthly_depreciation_amount * self.get_pro_rata_coefficient()
+
+	def get_pro_rata_coefficient(self):
+		if self.method == "Prorated Straight Line (360 Days)":
+			days = min((31 - cint(self.start_date.day)), 30) + min(cint(self.booking_date.day), 30)
+			total_days = 30
+		else:
+			total_days = monthrange(self.booking_date.year, self.booking_date.month)[0]
+			days = date_diff(add_days(self.booking_date, 1), self.start_date)
+
+		self.coefficient = min(flt(abs(days)) / flt(total_days), 1)
