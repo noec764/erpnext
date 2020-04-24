@@ -412,8 +412,11 @@ frappe.ui.form.on('Asset', {
 frappe.ui.form.on('Asset Finance Book', {
 	depreciation_method: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frm.events.set_depreciation_rate(frm, row);
 		frm.events.make_schedules_editable(frm);
+		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
+		if (row.depreciation_method == "Prorated Straight Line (360 Days)") {
+			frappe.model.set_value(cdt, cdn, "frequency_of_depreciation", 12);
+		}
 	},
 
 	expected_value_after_useful_life: function(frm, cdt, cdn) {
@@ -423,12 +426,12 @@ frappe.ui.form.on('Asset Finance Book', {
 
 	frequency_of_depreciation: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frm.events.set_depreciation_rate(frm, row);
+		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
 	},
 
 	total_number_of_depreciations: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frm.events.set_depreciation_rate(frm, row);
+		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
 	},
 
 	rate_of_depreciation: function(frm, cdt, cdn) {
