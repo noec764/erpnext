@@ -438,6 +438,7 @@
         "Out of Order": "Hors service",
         "Partially Depreciated": "Partiellement déprécié",
         "Policy number": "Numéro de politique",
+        "Prorated Straight Line (360 Days)": "Linéaire au prorata (360 jours)",
         "Purchase Date": "Date d'Achat",
         "Purchase Invoice": "Facture d’Achat",
         "Purchase Receipt": "Reçu d’Achat",
@@ -486,6 +487,7 @@
         "Frequency of Depreciation (Months)": "Fréquence des Amortissements (Mois)",
         "In Percentage": "En pourcentage",
         "Manual": "Manuel",
+        "Prorated Straight Line (360 Days)": "Linéaire au prorata (360 jours)",
         "Rate of Depreciation": "Taux de dépréciation",
         "Straight Line": "Linéaire",
         "Total Number of Depreciations": "Nombre Total d’Amortissements",
@@ -2196,6 +2198,7 @@
         "Journal Entry": "Écriture de journal",
         "Make Depreciation Entry": "Créer une Écriture d'Amortissement",
         "Manual": "Manuel",
+        "Prorated Straight Line (360 Days)": "Linéaire au prorata (360 jours)",
         "Schedule Date": "Date du Calendrier",
         "Straight Line": "Linéaire",
         "Written Down Value": "Valeur comptable nette"
@@ -6618,6 +6621,7 @@
         "Draft": "Brouillon",
         "Drop Ship": "Expédition Directe",
         "Exchange Rate": "Taux de change",
+        "Fetch items based on Default Supplier.": "Récupérer les articles sur la base du fournisseur par défaut",
         "From Date": "Date de début",
         "Get Items from Open Material Requests": "Obtenir des Articles de Demandes Matérielles Ouvertes",
         "Grand Total": "Total TTC",
@@ -11339,6 +11343,7 @@
         "Debtors": "Débiteurs",
         "Depreciation": "Amortissement",
         "Direct Expenses": "Charges Directes",
+        "Direct Expenses Account": "Compte de charges directes",
         "Direct Income": "Revenu Direct",
         "Dividends Paid": "Dividendes Payés",
         "Duties and Taxes": "Droits de Douane et Taxes",
@@ -12600,6 +12605,7 @@
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/bank_reconciliation_page/BankReconciliationActions.vue": {
         "Bank Transactions": "Transactions bancaires",
         "Documents": "Documents",
+        "In progress...": "En cours...",
         "Reconcile": "Réconcilier",
         "This action will create a new payment entry. Do you confirm ?": "Cette action va créer un nouvelle écriture de paiement. La confirmez-vous ?",
         "You can only reconcile one bank transaction with several documents or several bank transactions with one document.": "Vous pouvez rapprocher une transaction bancaire avec plusieurs document ou plusieurs transactions bancaires avec un document."
@@ -12984,6 +12990,7 @@
         "Clearance Date": "Date de rapprochement",
         "Payment Document": "Document de paiement",
         "Payment Entry": "Écriture de Paiement",
+        "Please create at least one mode of payment for this bank account first": "Veuillez créer au moins un mode de paiement pour ce compte bancaire",
         "Posting Date": "Date de comptabilisation"
     },
     "apps/erpnext/erpnext/accounts/report/bank_reconciliation_statement/bank_reconciliation_statement.html": {
@@ -14926,12 +14933,59 @@
         "Reference Document": "Document de référence",
         "Reference Name": "Nom du document de référence"
     },
+    "apps/erpnext/erpnext/demo/setup/manufacture.py": {
+        "Products": "Produits",
+        "Stores": "Magasins"
+    },
     "apps/erpnext/erpnext/demo/setup/setup_data.py": {
+        "Basic": "de Base",
         "Calls": "Appels",
+        "Commercial": "Commercial",
+        "Cost of Goods Sold": "Coût des marchandises vendues",
+        "Entertainment Expenses": "Charges de Représentation",
         "Food": "Alimentation",
+        "Income Tax": "Impôt sur le Revenu",
+        "Main": "Principal",
         "Medical": "Médical",
+        "Miscellaneous Expenses": "Charges Diverses",
         "Others": "Autres",
-        "Travel": "Déplacement"
+        "Raw Material": "Matières Premières",
+        "Rest Of The World": "Reste du Monde",
+        "Salary": "Salaire",
+        "Sales Expenses": "Frais de Vente",
+        "Services": "Services",
+        "Supplier": "Fournisseur",
+        "Travel": "Déplacement",
+        "Travel Expenses": "Frais de Déplacement",
+        "Utility Expenses": "Frais de Services d'Utilité Publique"
+    },
+    "apps/erpnext/erpnext/demo/user/fixed_asset.py": {
+        "Gain/Loss on Asset Disposal": "Gain/Perte sur Cessions des Immobilisations"
+    },
+    "apps/erpnext/erpnext/demo/user/hr.py": {
+        "All Departments": "Tous les départements",
+        "Miscellaneous Expenses": "Charges Diverses"
+    },
+    "apps/erpnext/erpnext/demo/user/manufacturing.py": {
+        "Main": "Principal",
+        "Stores": "Magasins",
+        "Work in Progress": "Travaux en cours"
+    },
+    "apps/erpnext/erpnext/demo/user/projects.py": {
+        "New Product Development": "Développement de nouveaux projets"
+    },
+    "apps/erpnext/erpnext/demo/user/purchase.py": {
+        "Stores": "Magasins",
+        "Supplier": "Fournisseur"
+    },
+    "apps/erpnext/erpnext/demo/user/sales.py": {
+        "Did not ask": "Non demandé",
+        "Sales": "Ventes"
+    },
+    "apps/erpnext/erpnext/demo/user/stock.py": {
+        "Cost of Goods Sold": "Coût des marchandises vendues",
+        "Stores": "Magasins",
+        "Supplier": "Fournisseur"
     },
     "apps/erpnext/erpnext/erpnext_integrations/connectors/shopify_connection.py": {
         "Actual": "Réel",
@@ -18767,6 +18821,7 @@
         "Row {0}: Bill of Materials not found for the Item {1}": "Ligne {0} : Liste de Matériaux non trouvée pour l’Article {1}",
         "The following Work Orders were created:": "Les ordres de travail suivants ont été créés:",
         "The total Issue / Transfer quantity {0} in Material Request {1}  \\\n\t\t\t\t\t\t\tcannot be greater than requested quantity {2} for Item {3}": "La quantité totale d’Émission / Transfert {0} dans la Demande de matériel {1} \\ ne peut pas être supérieure à la quantité demandée {2} pour l’Article {3}",
+        "Work Order cannot be created for following reason:": "Les ordres de travail ne peuvent pas être créé pour la raison suivante",
         "{0} Request for {1}": "Demande de {0} pour {1}",
         "{0} for {1}": "{0} pour {1}",
         "{0} is not the default supplier for any items.": "{0} n'est le fournisseur par défaut pour aucun article",
@@ -19594,6 +19649,7 @@
         "Date": "Date"
     },
     "apps/erpnext/erpnext/templates/emails/confirm_appointment.html": {
+        "A new appointment has been created for you on {}": "Un nouveau rendez-vous a été créé pour vous sur {}",
         "A new appointment has been created for you with {0}": "Un nouveau rendez-vous a été créé pour vous avec {1}",
         "Click on the link below to verify your email and confirm the appointment": "Cliquez sur le lien ci-dessous pour vérifier votre email et confirmer votre rendez-vous",
         "Dear": "Cher·e",
@@ -19849,6 +19905,7 @@
     },
     "apps/erpnext/erpnext/templates/pages/demo.html": {
         "Launch Demo": "Démarrer la démo",
+        "Logging In...": "Connexion...",
         "Some functionality is disabled for the demo and the data will be cleared regularly.": "Certaines fonctionnalités sont désactivées pour la démo et les données sont régulièrement réinitialisées",
         "Start a free 30-day trial": "Démarrer un essai gratuit de 30 jours",
         "dokos Demo": "Démo de dokos"
@@ -20178,6 +20235,7 @@
         "Description": "Description",
         "Documents": "Documents",
         "Final balance": "Solde final",
+        "In progress...": "En cours...",
         "Initial balance": "Solde initial",
         "No data available for this period": "Aucune donnée disponible pour cette période",
         "No matching document found for your selection": "Aucune document trouvé pour votre sélection",

@@ -16,21 +16,13 @@ PARTY_FIELD = {
 	"Journal Entry": "party",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
-	"Expense Claim": "Employee"
+	"Expense Claim": "employee"
 }
 
 PARTY_TYPES = {
 	"Sales Invoice": "Customer",
 	"Purchase Invoice": "Supplier",
 	"Expense Claim": "Employee"
-}
-
-DATE_FIELD = {
-	"Payment Entry": "reference_date",
-	"Journal Entry": "cheque_date",
-	"Sales Invoice": "due_date",
-	"Purchase Invoice": "due_date",
-	"Expense Claim": "total_claimed_amount"
 }
 
 @frappe.whitelist()
@@ -94,7 +86,7 @@ class BankReconciliation:
 			setattr(self, fielname, next(iter(value)))
 
 	def reconcile(self):
-		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
+		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice", "Expense Claim"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
 			self.check_unique_values()
 			self.make_payment_entries()
 			self.reconcile_created_payments()
@@ -110,7 +102,7 @@ class BankReconciliation:
 			if abs(self.documents[0]["unreconciled_amount"]) > reconciled_amount:
 				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
 				allocated_amount = min(max(bank_transaction.unallocated_amount, 0), abs(self.documents[0]["unreconciled_amount"]))
-				date_value = self.documents[0][DATE_FIELD.get(self.reconciliation_doctype)]
+				date_value = self.documents[0].get("reference_date")
 				if isinstance(date_value, str):
 					date_value = parse_date(date_value)
 
@@ -129,7 +121,7 @@ class BankReconciliation:
 	def reconcile_one_transaction_with_multiple_documents(self):
 		for document in self.documents:
 			bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
-			date_value = document.get(DATE_FIELD.get(document.get("doctype")))
+			date_value = document.get("reference_date")
 			if isinstance(date_value, str):
 				date_value = parse_date(date_value)
 
@@ -147,7 +139,7 @@ class BankReconciliation:
 	def reconcile_created_payments(self):
 		for transaction, payment in zip(self.bank_transactions, self.payment_entries):
 			bank_transaction = frappe.get_doc("Bank Transaction", transaction.get("name"))
-			date_value = payment.get(DATE_FIELD.get(payment.get("doctype")))
+			date_value = payment.get("reference_date")
 			if isinstance(date_value, str):
 				date_value = parse_date(date_value)
 
