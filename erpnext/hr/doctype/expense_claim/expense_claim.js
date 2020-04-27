@@ -167,6 +167,15 @@ frappe.ui.form.on("Expense Claim", {
 			};
 		});
 
+		frm.set_query("cost_center", function() {
+			return {
+				filters: {
+					"company": frm.doc.company,
+					"is_group": 0
+				}
+			};
+		});
+
 		frm.set_query("payable_account", function() {
 			return {
 				filters: {
