@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "naming_series:",
  "creation": "2016-09-03 14:14:51.788550",
  "doctype": "DocType",
@@ -81,7 +80,7 @@
    "label": "Model"
   },
   {
-   "fetch_from": "license_plate.make",   
+   "fetch_from": "license_plate.make",
    "fieldname": "make",
    "fieldtype": "Read Only",
    "label": "Make"
@@ -98,7 +97,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "license_plate.last_odometer",
    "fieldname": "odometer",
    "fieldtype": "Int",
    "label": "Current Odometer value ",
@@ -157,6 +155,7 @@
    "read_only": 1
   },
   {
+   "fetch_from": "license_plate.last_odometer",
    "fieldname": "last_odometer",
    "fieldtype": "Int",
    "label": "last Odometer Value ",
@@ -169,7 +168,6 @@
   }
  ],
  "is_submittable": 1,
- "links": [],
  "modified": "2020-03-18 16:45:45.060761",
  "modified_by": "Administrator",
  "module": "HR",

@@ -386,7 +386,8 @@ class LeaveApplication(Document):
 			to_date=expiry_date,
 			leaves=(date_diff(expiry_date, self.from_date) + 1) * -1,
 			is_lwp=lwp,
-			holiday_list=get_holiday_list_for_employee(self.employee)
+			holiday_list=get_holiday_list_for_employee(self.employee),
+
 		)
 		create_leave_ledger_entry(self, args, submit)
 
@@ -531,6 +532,7 @@ def get_pending_leaves_for_period(employee, leave_type, from_date, to_date):
 def get_remaining_leaves(allocation, leaves_taken, date, expiry):
 	''' Returns minimum leaves remaining after comparing with remaining days for allocation expiry '''
 	def _get_remaining_leaves(remaining_leaves, end_date):
+
 		if remaining_leaves > 0:
 			remaining_days = date_diff(end_date, date) + 1
 			remaining_leaves = min(remaining_days, remaining_leaves)

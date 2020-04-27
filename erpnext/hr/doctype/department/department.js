@@ -13,7 +13,6 @@ frappe.ui.form.on('Department', {
 			frm.set_read_only();
 			frm.set_intro(__("This is a root department and cannot be edited."));
 		}
-
 	},
 	validate: function(frm) {
 		if(frm.doc.name=="All Departments") {

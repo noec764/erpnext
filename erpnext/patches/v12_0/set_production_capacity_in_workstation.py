@@ -5,4 +5,4 @@ def execute():
     frappe.reload_doc("manufacturing", "doctype", "workstation")
 
     frappe.db.sql(""" UPDATE `tabWorkstation`
-        SET production_capacity = 1 """) 
+        SET production_capacity = 1 """)

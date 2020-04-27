@@ -154,53 +154,53 @@
    "write": 1
   },
   {
-    "create": 1,
-    "delete": 1,
-    "read": 1,
-    "role": "Employee",
-    "write": 1
-   },
-   {
-    "delete": 1,
-    "email": 1,
-    "export": 1,
-    "permlevel": 1,
-    "print": 1,
-    "read": 1,
-    "report": 1,
-    "role": "System Manager",
-    "share": 1,
-    "write": 1
-   },
-   {
-    "delete": 1,
-    "email": 1,
-    "export": 1,
-    "permlevel": 1,
-    "print": 1,
-    "read": 1,
-    "report": 1,
-    "role": "HR Manager",
-    "share": 1,
-    "write": 1
-   },
-   {
-    "delete": 1,
-    "email": 1,
-    "export": 1,
-    "permlevel": 1,
-    "print": 1,
-    "read": 1,
-    "report": 1,
-    "role": "HR User",
-    "share": 1,
-    "write": 1
-   },
-   {
-    "permlevel": 1,
-    "read": 1,
-    "role": "Employee"
-   }
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Employee",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Employee"
+  }
  ],
  "sort_field": "modified",
  "sort_order": "ASC",

@@ -3,7 +3,6 @@
 
 frappe.ui.form.on("Vehicle Log", {
 	refresh: function(frm) {
-
 		if(frm.doc.docstatus == 1) {
 			frm.add_custom_button(__('Expense Claim'), function() {
 				frm.events.expense_claim(frm);

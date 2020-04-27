@@ -27,7 +27,7 @@ class HRSettings(Document):
 		if self.email_salary_slip_to_employee and self.encrypt_salary_slips_in_emails:
 			if not self.password_policy:
 				frappe.throw(_("Password policy for Salary Slips is not set"))
-
+	
 	def on_update(self):
 		self.toggle_rounded_total()
 		frappe.clear_cache()

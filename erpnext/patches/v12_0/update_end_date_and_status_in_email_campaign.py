@@ -1,4 +1,3 @@
-
 from __future__ import unicode_literals
 import frappe
 from frappe.utils import add_days, getdate, today
@@ -22,4 +21,4 @@ def execute():
             elif end_date >= today_date:
                 doc.db_set("status", "In Progress")
             elif end_date < today_date:
-                doc.db_set("status", "Completed")
+                doc.db_set("status", "Completed") 
