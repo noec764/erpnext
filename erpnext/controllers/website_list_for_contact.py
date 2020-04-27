@@ -6,7 +6,7 @@ import json
 import frappe
 from frappe import _
 from frappe.utils import flt, has_common
-from frappe.utils.user import is_website_user
+from frappe.utils.user import is_website_user, is_system_user
 
 def get_list_context(context=None):
 	return {
@@ -30,7 +30,7 @@ def get_transaction_list(doctype, txt=None, filters=None, limit_start=0, limit_p
 	else:
 		filters.append((doctype, 'docstatus', '=', 1))
 
-	if (user != 'Guest' and is_website_user()) or doctype == 'Request for Quotation':
+	if (user != 'Guest' and (is_website_user() or is_system_user())) or doctype == 'Request for Quotation':
 		parties_doctype = 'Request for Quotation Supplier' if doctype == 'Request for Quotation' else doctype
 		# find party for this contact
 		customers, suppliers = get_customers_suppliers(parties_doctype, user)
