@@ -108,5 +108,4 @@ frappe.listview_settings['Attendance'] = {
 			});
 		});
 	}
-
 };
