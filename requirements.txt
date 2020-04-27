@@ -8,3 +8,4 @@ python-stdnum==1.12
 sepaxml==2.2.0
 Unidecode==1.1.1
 WooCommerce==2.1.1
+tweepy==3.8.0

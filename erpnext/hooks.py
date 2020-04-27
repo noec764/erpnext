@@ -263,7 +263,8 @@ auto_cancel_exempted_doctypes= [
 scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
-		"erpnext.stock.doctype.item_booking.item_booking.clear_draft_bookings"
+		"erpnext.stock.doctype.item_booking.item_booking.clear_draft_bookings",
+		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
