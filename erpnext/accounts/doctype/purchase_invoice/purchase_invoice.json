@@ -13,6 +13,7 @@
   "supplier_name",
   "tax_id",
   "due_date",
+  "tax_withholding_category",
   "column_break1",
   "company",
   "posting_date",
@@ -1327,6 +1328,14 @@
    "options": "currency",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+    "fieldname": "tax_withholding_category",
+    "fieldtype": "Link",
+    "hidden": 1,
+    "label": "Tax Withholding Category",
+    "options": "Tax Withholding Category",
+    "print_hide": 1
   }
  ],
  "icon": "fa fa-file-text",
@@ -1334,7 +1343,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-04-21 13:05:25.199832",
+ "modified": "2020-04-18 13:05:25.199832",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
