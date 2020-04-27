@@ -75,7 +75,6 @@ def send_mail(entry, email_campaign):
 	email_template = frappe.get_doc("Email Template", entry.get("email_template"))
 	sender = frappe.db.get_value("User", email_campaign.get("sender"), 'email')
 	context = {"doc": frappe.get_doc(email_campaign.email_campaign_for, email_campaign.recipient)}
-
 	# send mail and link communication to document
 	comm = make(
 		doctype = "Email Campaign",

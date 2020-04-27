@@ -35,8 +35,6 @@ def execute(filters=None):
 			"account_name": "'" + _("Nothing is included in gross") + "'",
 			"account": "'" + _("Nothing is included in gross") + "'"
 		})
-		"account": "'" + _("Nothing is included in gross") + "'"})
-
 		return columns, data
 
 	data.append({
