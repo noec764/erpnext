@@ -48,6 +48,20 @@ frappe.ui.form.on('Bank Transaction', {
 				make_new_doc(frm.doc, "Payment Entry");			
 			});
 		}
+
+		if (frm.doc.status === "Unreconciled" && frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Set status as Closed'), function () {
+				frm.trigger("close_bank_transaction");
+			});
+		}
+	},
+	close_bank_transaction(frm) {
+		return frappe.call({
+			doc: frm.doc,
+			method: 'close_transaction',
+		}).then(r => {
+			frm.refresh();
+		})
 	}
 });
 

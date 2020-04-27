@@ -5,10 +5,16 @@ frappe.provide("erpnext.accounts");
 frappe.listview_settings['Bank Transaction'] = {
 	add_fields: ["unallocated_amount"],
 	get_indicator: function(doc) {
-		if(flt(doc.unallocated_amount)!=0) {
-			return [__("Unreconciled"), "orange", "unallocated_amount,>,0"];
-		} else if(flt(doc.unallocated_amount)==0) {
-			return [__("Reconciled"), "green", "unallocated_amount,=,0"];
+		if (doc.status === "Unreconciled") {
+			return [__("Unreconciled"), "orange", "status,=,Unreconciled"];
+		} else if (doc.status === "Reconciled") {
+			return [__("Reconciled"), "green", "status,=,Reconciled"];
+		} else if (doc.status === "Closed") {
+			return [__("Closed"), "darkgrey", "status,=,Closed"];
+		} else if (doc.status === "Pending") {
+			return [__("Closed"), "blue", "status,=,Pending"];
+		} else if (doc.status === "Settled") {
+			return [__("Closed"), "green", "status,=,Settled"];
 		}
 	},
 	onload: function(list_view) {

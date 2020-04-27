@@ -147,6 +147,10 @@ class BankTransaction(StatusUpdater):
 		self.total_debit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Debit"])
 		self.total_credit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Credit"])
 
+	@frappe.whitelist()
+	def close_transaction(self):
+		self.db_set("status", "Closed")
+
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")
 
