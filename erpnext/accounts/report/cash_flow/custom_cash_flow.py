@@ -334,10 +334,9 @@ def compute_data(filters, company_currency, profit_data, period_list, light_mapp
 
 def execute(filters=None):
 	if not filters.periodicity: filters.periodicity = "Monthly"
-	period_list = get_period_list(
-		filters.from_fiscal_year, filters.to_fiscal_year, filters.periodicity,
-		filters.accumulated_values, filters.company
-	)
+	period_list = get_period_list(filters.from_fiscal_year, filters.to_fiscal_year,
+		filters.period_start_date, filters.period_end_date, filters.filter_based_on,
+		filters.periodicity, company=filters.company)
 
 	mappers = get_mappers_from_db()
 

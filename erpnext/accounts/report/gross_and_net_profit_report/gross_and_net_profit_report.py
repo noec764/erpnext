@@ -11,7 +11,8 @@ import copy
 
 def execute(filters=None):
 	period_list = get_period_list(filters.from_fiscal_year, filters.to_fiscal_year,
-		filters.periodicity, filters.accumulated_values, filters.company)
+		filters.period_start_date, filters.period_end_date, filters.filter_based_on, filters.periodicity,
+		company=filters.company)
 
 	columns, data = [], []
 
@@ -24,7 +25,6 @@ def execute(filters=None):
 		ignore_closing_entries=True, ignore_accumulated_values_for_fy= True, total= False)
 
 	columns = get_columns(filters.periodicity, period_list, filters.accumulated_values, filters.company)
-
 
 	gross_income = get_revenue(income, period_list)
 
