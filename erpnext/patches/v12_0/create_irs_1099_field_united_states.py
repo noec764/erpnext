@@ -3,8 +3,10 @@ import frappe
 from erpnext.regional.united_states.setup import make_custom_fields
 
 def execute():
-    company = frappe.get_all('Company', filters = {'country': 'United States'})
-    if not company:
-        return
+	frappe.reload_doc('accounts', 'doctype', 'allowed_to_transact_with', force=True)
 
-    make_custom_fields()
+	company = frappe.get_all('Company', filters = {'country': 'United States'})
+	if not company:
+		return
+
+	make_custom_fields()
