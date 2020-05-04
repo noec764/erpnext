@@ -12,7 +12,8 @@ def get_data():
 			'Payment Entry': 'party',
 			'Quotation': 'party_name',
 			'Opportunity': 'party_name',
-			'Contract': 'party_name'
+			'Contract': 'party_name',
+			'Bank Account': 'party'
 		},
 		'dynamic_links': {
 			'party_name': ['Customer', 'quotation_to'],
@@ -29,7 +30,7 @@ def get_data():
 			},
 			{
 				'label': _('Payments'),
-				'items': ['Payment Entry']
+				'items': ['Payment Entry', 'Bank Account']
 			},
 			{
 				'label': _('Support'),
