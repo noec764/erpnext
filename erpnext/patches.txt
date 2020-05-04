@@ -668,4 +668,5 @@ erpnext.patches.dokos.v1_2.set_item_booking_status
 erpnext.patches.dokos.v1_3.bank_transaction_enhancements
 erpnext.patches.dokos.v1_3.reset_user_last_version
 execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation")
+execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation Detail")
 erpnext.patches.dokos.v1_3.subscription_plans_refactor
