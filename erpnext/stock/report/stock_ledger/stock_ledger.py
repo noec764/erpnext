@@ -180,6 +180,8 @@ def get_sle_conditions(filters):
 		conditions.append("batch_no=%(batch_no)s")
 	if filters.get("project"):
 		conditions.append("project=%(project)s")
+	if not filters.get("show_cancelled_entries"):
+		conditions.append("is_cancelled = 0")
 
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 

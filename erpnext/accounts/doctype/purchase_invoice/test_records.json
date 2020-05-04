@@ -138,7 +138,6 @@
     "row_id": 7
    }
   ],
-  "posting_date": "2013-02-03",
   "supplier": "_Test Supplier",
   "supplier_name": "_Test Supplier"
  },
@@ -204,7 +203,6 @@
     "tax_amount": 150.0
    }
   ],
-  "posting_date": "2013-02-03",
   "supplier": "_Test Supplier",
   "supplier_name": "_Test Supplier"
  }

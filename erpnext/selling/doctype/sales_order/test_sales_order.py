@@ -762,7 +762,7 @@ class TestSalesOrder(unittest.TestCase):
 		self.assertRaises(frappe.ValidationError, dn.submit)
 		item_line = dn.get("items")[0]
 		item_line.serial_no =  reserved_serial_no
-		self.assertTrue(dn.submit)
+		dn.submit()
 		dn.load_from_db()
 		dn.cancel()
 		si = make_sales_invoice(so.name)
