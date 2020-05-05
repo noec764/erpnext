@@ -18,7 +18,7 @@ def get_data():
 			"onboard_present": 1
 		},
 		{
-			"module_name": "Accounts",
+			"module_name": "Accounting",
 			"category": "Modules",
 			"label": _("Accounting"),
 			"color": "#3498db",
