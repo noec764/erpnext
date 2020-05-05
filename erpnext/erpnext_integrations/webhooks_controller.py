@@ -89,6 +89,7 @@ class WebhooksController():
 		if self.metadata.get("reference_doctype") == "Subscription":
 			self.subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 			if self.subscription.status == 'Active':
+				self.subscription.flags.ignore_permissions = True
 				self.subscription.run_method("process_active_subscription", payment_entry=self.payment_entry.name)
 				frappe.db.commit()
 
