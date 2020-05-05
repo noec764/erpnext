@@ -292,6 +292,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 	},
 
 	refresh: function() {
+		this.frm.clear_custom_buttons();
 		erpnext.toggle_naming_series();
 		erpnext.hide_company();
 		this.set_dynamic_labels();

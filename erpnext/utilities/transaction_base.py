@@ -130,27 +130,7 @@ class TransactionBase(StatusUpdater):
 
 		return ret
 
-def validate_uom_is_integer(doc, uom_field, qty_fields, child_dt=None):
-	if isinstance(qty_fields, string_types):
-		qty_fields = [qty_fields]
-
-	distinct_uoms = list(set([d.get(uom_field) for d in doc.get_all_children()]))
-	integer_uoms = list(filter(lambda uom: frappe.db.get_value("UOM", uom,
-		"must_be_whole_number", cache=True) or None, distinct_uoms))
-
-	if not integer_uoms:
-		return
-
-	for d in doc.get_all_children(parenttype=child_dt):
-		if d.get(uom_field) in integer_uoms:
-			for f in qty_fields:
-				qty = d.get(f)
-				if qty:
-					if abs(cint(qty) - flt(qty)) > 0.0000001:
-						frappe.throw(_("Row {1}: Quantity ({0}) cannot be a fraction. To allow this, disable '{2}' in UOM {3}.") \
-							.format(qty, d.idx, frappe.bold(_("Must be Whole Number")), frappe.bold(d.get(uom_field))), UOMMustBeIntegerError)
-
-def validate_with_last_transaction_posting_time(self):
+	def validate_with_last_transaction_posting_time(self):
 
 		if self.doctype not in ["Sales Invoice", "Purchase Invoice", "Stock Entry", "Stock Reconciliation",
 			"Delivery Note", "Purchase Receipt"]:
@@ -173,3 +153,23 @@ def validate_with_last_transaction_posting_time(self):
 			frappe.throw(_("""Posting timestamp of current transaction
 				must be after last Stock transaction's timestamp which is {0}""").format(frappe.bold(last_transaction_time)),
 				title=_("Backdated Stock Entry"))
+
+def validate_uom_is_integer(doc, uom_field, qty_fields, child_dt=None):
+	if isinstance(qty_fields, string_types):
+		qty_fields = [qty_fields]
+
+	distinct_uoms = list(set([d.get(uom_field) for d in doc.get_all_children()]))
+	integer_uoms = list(filter(lambda uom: frappe.db.get_value("UOM", uom,
+		"must_be_whole_number", cache=True) or None, distinct_uoms))
+
+	if not integer_uoms:
+		return
+
+	for d in doc.get_all_children(parenttype=child_dt):
+		if d.get(uom_field) in integer_uoms:
+			for f in qty_fields:
+				qty = d.get(f)
+				if qty:
+					if abs(cint(qty) - flt(qty)) > 0.0000001:
+						frappe.throw(_("Row {1}: Quantity ({0}) cannot be a fraction. To allow this, disable '{2}' in UOM {3}.") \
+							.format(qty, d.idx, frappe.bold(_("Must be Whole Number")), frappe.bold(d.get(uom_field))), UOMMustBeIntegerError)
