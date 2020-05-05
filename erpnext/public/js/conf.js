@@ -43,5 +43,6 @@ $.extend(frappe.breadcrumbs.module_map, {
 	'Portal': 'Website',
 	'Utilities': 'Settings',
 	'Shopping Cart': 'Website',
-	'Contacts': 'CRM'
+	'Contacts': 'CRM',
+	'Accounts': 'Accounting'
 });
