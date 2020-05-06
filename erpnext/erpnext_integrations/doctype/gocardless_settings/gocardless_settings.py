@@ -66,12 +66,13 @@ class GoCardlessSettings(PaymentGatewayController):
 				"amount": cint(flt(data.grand_total, data.precision("grand_total")) * 100),
 				"title": customer_data.company.encode("utf-8"),
 				"description": data.subject.encode("utf-8"),
-				"reference_doctype": data.reference_doctype if data.reference_doctype=="Subscription" else data.doctype,
-				"reference_docname": data.reference_name if data.reference_doctype=="Subscription" else data.name,
+				"reference_doctype": data.reference_doctype,
+				"reference_docname": data.reference_name,
 				"payer_email": data.email_to or frappe.session.user,
 				"payer_name": customer_data.customer,
 				"order_id": data.name,
-				"currency": data.currency
+				"currency": data.currency,
+				"payment_request": data.name
 			}
 
 			valid_mandate = self.check_mandate_validity(processed_data)
@@ -113,7 +114,7 @@ class GoCardlessSettings(PaymentGatewayController):
 
 		try:
 			self.integration_request = create_request_log(self.data, "Request", "GoCardless")
-			self.reference_document = frappe.get_doc(self.data.reference_doctype, self.data.reference_docname)
+			self._payment_request = frappe.get_doc("Payment Request", self.data.name)
 
 			self.create_charge_on_gocardless()
 			return self.finalize_request(self.output.attributes.get("id") if self.output.attributes else None)
@@ -124,18 +125,11 @@ class GoCardlessSettings(PaymentGatewayController):
 
 	def create_charge_on_gocardless(self):
 		try:
-			self.output = self.create_payment_on_gocardless(self.reference_document, self.data)
+			self.output = self.create_payment_on_gocardless()
 			return self.process_output()
 		except Exception as e:
 			self.change_integration_request_status("Failed", "error", str(e))
 			return self.error_message(402, _("GoCardless Payment Error"))
-
-	def get_day_of_month(self):
-		if self.reference_document.transaction_date\
-			!= get_last_day(self.reference_document.transaction_date):
-			return self.reference_document.transaction_date.strftime("%d")
-		else:
-			return -1
 
 	def get_payments_on_gocardless(self, id=None, params=None):
 		return self.get_payment_by_id(id) if id else self.get_payment_list(params)
@@ -181,21 +175,21 @@ class GoCardlessSettings(PaymentGatewayController):
 	def get_exchange_rate(payment):
 		return flt(payment.attributes.get("fx", {}).get("amount")) or 1
 
-	def create_payment_on_gocardless(self, reference_document, data):
+	def create_payment_on_gocardless(self):
 		return self.client.payments.create(
 			params={
-				"amount" : cint(reference_document.grand_total * 100),
-				"currency" : reference_document.currency,
+				"amount" : cint(self._payment_request.grand_total * 100),
+				"currency" : self._payment_request.currency,
 				"links" : {
-					"mandate": data.get('mandate')
+					"mandate": self.data.get('mandate')
 				},
 				"metadata": {
-					"reference_doctype": reference_document.doctype,
-					"reference_name": reference_document.name
+					"reference_doctype": self._payment_request.reference_doctype,
+					"reference_name": self._payment_request.reference_docname
 				}
 			},
 			headers={
-				'Idempotency-Key' : data.get('reference_docname'),
+				'Idempotency-Key' : self._payment_request.name,
 			}
 		)
 
@@ -204,7 +198,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		if self.output.status == "pending_submission"\
 			or self.output.status == "pending_customer_approval" or self.output.status == "submitted":
 			self.change_integration_request_status("Pending", "output", str(self.output.__dict__))
-			self.reference_document.db_set("status", "Pending", update_modified=True)
+			self._payment_request.db_set("status", "Pending", update_modified=True)
 			self.add_service_link_to_integration_request("payment", self.output.id)
 
 		elif self.output.status == "confirmed" or self.output.status == "paid_out":
@@ -224,8 +218,8 @@ class GoCardlessSettings(PaymentGatewayController):
 		self.update_subscription_gateway()
 
 	def update_transaction_reference(self):
-		if self.reference_document.reference_doctype != "Subscription":
-			frappe.db.set_value(self.reference_document.reference_doctype, self.reference_document.reference_name,\
+		if self._payment_request.reference_doctype != "Subscription":
+			frappe.db.set_value(self._payment_request.reference_doctype, self._payment_request.reference_name,\
 				"external_reference", self.output.attributes.get("id") if self.output.attributes else "")
 
 	def change_integration_request_status(self, status, type, error):
@@ -240,11 +234,11 @@ class GoCardlessSettings(PaymentGatewayController):
 		self.integration_request.db_set('service_id', id, update_modified=True)
 
 	def update_subscription_gateway(self):
-		if hasattr(self.reference_document, 'is_linked_to_a_subscription') and self.reference_document.is_linked_to_a_subscription():
-			subscription = self.reference_document.is_linked_to_a_subscription()
+		if hasattr(self._payment_request, 'is_linked_to_a_subscription') and self._payment_request.is_linked_to_a_subscription():
+			subscription = self._payment_request.is_linked_to_a_subscription()
 			if frappe.db.exists("Subscription", subscription) \
-				and (frappe.db.get_value("Subscription", subscription, "payment_gateway") != self.reference_document.payment_gateway):
-				frappe.db.set_value("Subscription", subscription, "payment_gateway", self.reference_document.payment_gateway)
+				and (frappe.db.get_value("Subscription", subscription, "payment_gateway") != self._payment_request.payment_gateway):
+				frappe.db.set_value("Subscription", subscription, "payment_gateway", self._payment_request.payment_gateway)
 
 	def error_message(self, error_number=500, title=None, error=None):
 		if error is None:
