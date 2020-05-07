@@ -353,6 +353,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Expense Claim Type",
+					"dependencies": ["Employee"]
+				},
+				{
+					"type": "doctype",
 					"name": "Employee Advance",
 					"dependencies": ["Employee"]
 				},
