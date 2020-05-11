@@ -264,6 +264,7 @@ def get_amounts(amounts, against_loan, posting_date, payment_type):
 	penalty_amount = 0
 	payable_principal_amount = 0
 	final_due_date = ''
+	due_date = ''
 
 	for entry in accrued_interest_entries:
 		# Loan repayment due date is one day after the loan interest is accrued
@@ -272,7 +273,7 @@ def get_amounts(amounts, against_loan, posting_date, payment_type):
 
 		due_date = add_days(entry.posting_date, 1)
 		no_of_late_days = date_diff(posting_date,
-					add_days(due_date, loan_type_details.grace_period_in_days)) + 1
+					add_days(due_date, loan_type_details.grace_period_in_days))
 
 		if no_of_late_days > 0 and (not against_loan_doc.repay_from_salary):
 			penalty_amount += (entry.interest_amount * (loan_type_details.penalty_interest_rate / 100) * no_of_late_days)/365
