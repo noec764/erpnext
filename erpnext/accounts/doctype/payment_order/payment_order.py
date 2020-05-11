@@ -78,7 +78,7 @@ def make_journal_entry(doc, supplier, mode_of_payment=None):
 			paid_amt += d.amount
 
 	je.append('accounts', {
-		'account': doc.references[0].account,
+		'account': doc.account,
 		'credit_in_account_currency': paid_amt
 	})
 
