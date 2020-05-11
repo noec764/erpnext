@@ -291,9 +291,9 @@ def get_amounts(amounts, against_loan, posting_date, payment_type):
 
 	pending_principal_amount = against_loan_doc.total_payment - against_loan_doc.total_principal_paid - against_loan_doc.total_interest_payable
 
-	if payment_type == "Loan Closure" and not payable_principal_amount:
-		if final_due_date:
-			pending_days = date_diff(posting_date, final_due_date)
+	if payment_type == "Loan Closure":
+		if due_date:
+			pending_days = date_diff(posting_date, due_date) + 1
 		else:
 			pending_days = date_diff(posting_date, against_loan_doc.disbursement_date) + 1
 		payable_principal_amount = pending_principal_amount
