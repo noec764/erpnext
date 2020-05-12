@@ -88,7 +88,8 @@ frappe.query_reports["Sales Analytics"] = {
 						row_values = data.slice(5,length-1).map(function (column) {
 							return column.content;
 						})
-					} else {
+					}
+					else {
 						row_values = data.slice(3,length-1).map(function (column) {
 							return column.content;
 						})
