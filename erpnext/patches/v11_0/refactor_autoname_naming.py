@@ -8,7 +8,6 @@ from frappe.custom.doctype.property_setter.property_setter import make_property_
 
 doctype_series_map = {
 	'Activity Cost': 'PROJ-ACC-.#####',
-	'Agriculture Task': 'AG-TASK-.#####',
 	'Assessment Plan': 'EDU-ASP-.YYYY.-.#####',
 	'Assessment Result': 'EDU-RES-.YYYY.-.#####',
 	'Asset Movement': 'ACC-ASM-.YYYY.-.#####',

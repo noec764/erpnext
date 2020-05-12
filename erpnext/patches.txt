@@ -483,7 +483,6 @@ erpnext.patches.v10_0.set_student_party_type
 erpnext.patches.v10_0.update_project_in_sle
 erpnext.patches.v10_0.fix_reserved_qty_for_sub_contract
 erpnext.patches.v10_0.repost_requested_qty_for_non_stock_uom_items
-erpnext.patches.v11_0.merge_land_unit_with_location
 erpnext.patches.v11_0.add_index_on_nestedset_doctypes
 erpnext.patches.v11_0.remove_modules_setup_page
 erpnext.patches.v11_0.move_leave_approvers_from_employee #13-06-2018
@@ -650,7 +649,7 @@ erpnext.patches.dokos.v1_0.remove_healthcare_domain
 erpnext.patches.dokos.v1_0.remove_education_domain
 erpnext.patches.dokos.v1_0.remove_non_profit_domain
 erpnext.patches.dokos.v1_0.remove_hub
-erpnext.patches.dokos.v1_0.remove_agriculture_domain
+erpnext.patches.dokos.v1_0.remove_agriculture_domain #2020-05
 execute:frappe.delete_doc_if_exists("Page", "pos")
 execute:frappe.delete_doc_if_exists("Page", "welcome-to-erpnext")
 execute:frappe.delete_doc_if_exists("DocType", "POS Settings")
