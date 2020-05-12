@@ -15,14 +15,15 @@ def execute():
 		role in ({0})
 	""".format(','.join(['%s']*len(roles))), tuple(roles))
 
-	# Standard portal items
-	frappe.db.sql("""
-	DELETE
-	FROM 
-		`tabPortal Menu Item`
-	WHERE 
-		reference_doctype in ({0})
-	""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
+	if doctypes:
+		# Standard portal items
+		frappe.db.sql("""
+		DELETE
+		FROM 
+			`tabPortal Menu Item`
+		WHERE 
+			reference_doctype in ({0})
+		""".format(','.join(['%s']*len(doctypes))), tuple(doctypes))
 
 	# Delete DocTypes, Pages, Reports, Roles, Domain and Custom Fields
 	elements = [
