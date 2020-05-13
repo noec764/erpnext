@@ -78,6 +78,12 @@ frappe.ui.form.on('Subscription', {
 			})
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
+
+		if (frm.doc.payment_gateway) {
+			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, "gateway_settings", r => {
+				frm.fields_dict["plans"].grid.set_column_disp(['payment_plan_section'], r.gateway_settings == "Stripe Settings");
+			})
+		}
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -208,5 +214,27 @@ frappe.ui.form.on('Subscription Plan Detail', {
 				frappe.model.set_value(cdt, cdn, "description", r.description);
 			}
 		})
+	},
+	add_invoice_item(frm, cdt, cdn) {
+		const row = locals[cdt][cdn]
+		if (!frm.doc.stripe_invoice_item) {
+			frappe.call({
+				method: "create_stripe_invoice_item",
+				doc: frm.doc,
+				args: {
+					"plan_details": row
+				}
+			}).then(r => {
+				if (r && r.message) {
+					frappe.model.set_value(cdt, cdn, "stripe_invoice_item", r.message.id);
+					frappe.show_alert({
+						message: __("Invoice item created."),
+						color: "green"
+					})
+				}
+			})
+		} else {
+			frappe.throw(__("This plan is already linked to an invoice item."))
+		}
 	}
 })

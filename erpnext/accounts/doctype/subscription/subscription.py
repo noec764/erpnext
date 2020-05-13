@@ -416,11 +416,11 @@ class Subscription(Document):
 		for plan in plans:
 			if not prorate:
 				items.append({'item_code': plan.item, 'qty': plan.qty, \
-					'rate': self.get_plan_rate(plan, plan.qty, getdate(date)),\
+					'rate': self.get_plan_rate(plan, getdate(date)),\
 					'description': plan.description})
 			else:
 				items.append({'item_code': plan.item, 'qty': plan.qty, \
-					'rate': (self.get_plan_rate(plan, plan.qty, getdate(date)) * prorata_factor),\
+					'rate': (self.get_plan_rate(plan, getdate(date)) * prorata_factor),\
 					'description': plan.description})
 
 		return items
@@ -509,7 +509,7 @@ class Subscription(Document):
 		total = 0
 		for plan in self.plans:
 			if plan.status == "Active":
-				plan.rate = self.get_plan_rate(plan, plan.qty)
+				plan.rate = self.get_plan_rate(plan)
 				total += (flt(plan.qty) * flt(plan.rate))
 
 		if total != self.total:
@@ -595,7 +595,7 @@ class Subscription(Document):
 		if self.billing_interval_count < 1:
 			frappe.throw(_('Billing Interval Count cannot be less than 1'))
 
-	def get_plan_rate(self, plan, quantity=1, date=nowdate()):
+	def get_plan_rate(self, plan, date=nowdate()):
 		if plan.price_determination == "Fixed rate":
 			return plan.fixed_rate
 
@@ -611,7 +611,7 @@ class Subscription(Document):
 				"customer": self.customer,
 				"price_list": price_list,
 				"currency": self.currency,
-				"min_qty": quantity,
+				"min_qty": plan.qty,
 				"transaction_date": date
 			}, plan.item)
 
@@ -619,7 +619,7 @@ class Subscription(Document):
 				"company": self.company,
 				"uom": plan.uom,
 				"item_code": plan.item,
-				"stock_qty": quantity,
+				"stock_qty": plan.qty,
 				"transaction_type": "selling",
 				"price_list_rate": price_list_rate,
 				"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
@@ -634,6 +634,24 @@ class Subscription(Document):
 				price_list_rate = rule.get("price_list_rate")
 
 			return price_list_rate or 0
+
+	@frappe.whitelist()
+	def create_stripe_invoice_item(self, plan_details):
+		plan = frappe.parse_json(plan_details)
+
+		if not frappe.utils.strip_html_tags(plan.get("description")):
+			frappe.throw(_("Please enter a description before creating an invoice item."))
+
+		rate = cint(flt(self.get_plan_rate(plan)) * plan.qty * 100)
+
+		if self.payment_gateway:
+			gateway_settings, gateway_controller = frappe.db.get_value("Payment Gateway", self.payment_gateway, ["gateway_settings", "gateway_controller"])
+			if gateway_settings == "Stripe Settings":
+				stripe_settings = frappe.get_doc("Stripe Settings", gateway_controller)
+				customer = frappe.db.get_value("Integration References", dict(customer=self.customer), "stripe_customer_id")
+				return stripe_settings.create_invoice_items(customer, rate, self.currency, frappe.utils.strip_html_tags(plan.get("description")))
+
+		frappe.msgprint(_("The invoice item creation has failed. Check that this subscription is linked to a Stripe gateway."))
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

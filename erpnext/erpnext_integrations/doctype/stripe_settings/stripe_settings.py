@@ -262,6 +262,14 @@ class StripeSettings(PaymentGatewayController):
 			payout_id
 		)
 
+	def create_invoice_items(self, customer, amount, currency, description):
+		return self.stripe.InvoiceItem.create(
+			customer=customer,
+			amount=amount,
+			currency=currency.lower(),
+			description=description
+		)
+
 	def create_payment_intent_on_stripe(self, amount, currency):
 		self.payment_intent = self.stripe.PaymentIntent.create(
 			amount=amount,
