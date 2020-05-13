@@ -76,6 +76,20 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=False, or_filters=or_filters)
 
 @frappe.whitelist()
+def update_linked_transaction(transaction_type, line_item, item_booking):
+	return frappe.db.set_value(f"{transaction_type} Item", line_item, "item_booking", item_booking)
+
+@frappe.whitelist()
+def get_transactions_items(transaction_type, transactions):
+	transactions = frappe.parse_json(transactions)
+	output = []
+	for transaction in transactions:
+		doc = frappe.get_doc(transaction_type, transaction)
+		output.extend(doc.items)
+
+	return output
+
+@frappe.whitelist()
 def cancel_appointments(ids, force=False):
 	ids = frappe.parse_json(ids)
 	for id in ids:
