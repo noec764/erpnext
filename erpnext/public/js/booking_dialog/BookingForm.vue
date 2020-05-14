@@ -246,7 +246,6 @@ export default {
 <style lang='scss'>
 @import 'node_modules/@fullcalendar/core/main';
 @import 'node_modules/@fullcalendar/list/main';
-@import 'frappe/public/scss/variables.scss';
 
 .cart-uom-selector {
 	>:not(:last-child) {
@@ -256,12 +255,12 @@ export default {
 
 .fc button {
 	height: auto !important;
-	font-size: $text-small !important;
+	font-size: 12px !important;
 	outline: none !important;
 	line-height: 10pt !important;
 	.fc-icon {
 		top: -1px !important;
-		font-size: $text-small !important;
+		font-size: 12px !important;
 	}
 }
 
