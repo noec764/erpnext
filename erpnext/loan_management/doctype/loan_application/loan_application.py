@@ -54,7 +54,7 @@ class LoanApplication(Document):
 		for proposed_pledge in self.proposed_pledges:
 
 			if not proposed_pledge.qty and not proposed_pledge.amount:
-				frappe.throw(_("Qty or Amount is mandatroy for loan security"))
+				frappe.throw(_("Qty or Amount is mandatory for loan security"))
 
 			proposed_pledge.loan_security_price = get_loan_security_price(proposed_pledge.loan_security)
 
@@ -190,7 +190,7 @@ def get_proposed_pledge(securities):
 	for security in securities:
 		security = frappe._dict(security)
 		if not security.qty and not security.amount:
-			frappe.throw(_("Qty or Amount is mandatroy for loan security"))
+			frappe.throw(_("Qty or Amount is mandatory for loan security"))
 
 		security.loan_security_price = get_loan_security_price(security.loan_security)
 
