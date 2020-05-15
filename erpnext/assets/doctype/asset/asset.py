@@ -355,7 +355,7 @@ class Asset(AccountsController):
 				"credit": self.purchase_receipt_amount,
 				"credit_in_account_currency": self.purchase_receipt_amount,
 				"cost_center": self.cost_center
-			}))
+			}, item=self))
 
 			gl_entries.append(self.get_gl_dict({
 				"account": fixed_asset_account,
@@ -365,7 +365,7 @@ class Asset(AccountsController):
 				"debit": self.purchase_receipt_amount,
 				"debit_in_account_currency": self.purchase_receipt_amount,
 				"cost_center": self.cost_center
-			}))
+			}, item=self))
 
 		if gl_entries:
 			from erpnext.accounts.general_ledger import make_gl_entries

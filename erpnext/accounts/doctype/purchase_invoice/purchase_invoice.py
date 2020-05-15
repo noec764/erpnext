@@ -456,7 +456,7 @@ class PurchaseInvoice(BuyingController):
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
 					"cost_center": self.cost_center
-				}, self.party_account_currency)
+				}, self.party_account_currency, item=self)
 			)
 
 	def make_item_gl_entries(self, gl_entries):
@@ -837,7 +837,7 @@ class PurchaseInvoice(BuyingController):
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
 					"cost_center": self.cost_center
-				}, self.party_account_currency)
+				}, self.party_account_currency, item=self)
 			)
 
 			gl_entries.append(
@@ -848,7 +848,7 @@ class PurchaseInvoice(BuyingController):
 					"credit_in_account_currency": self.base_paid_amount \
 						if bank_account_currency==self.company_currency else self.paid_amount,
 					"cost_center": self.cost_center
-				}, bank_account_currency)
+				}, bank_account_currency, item=self)
 			)
 
 	def make_write_off_gl_entry(self, gl_entries):
@@ -869,7 +869,7 @@ class PurchaseInvoice(BuyingController):
 					"against_voucher": self.return_against if cint(self.is_return) and self.return_against else self.name,
 					"against_voucher_type": self.doctype,
 					"cost_center": self.cost_center
-				}, self.party_account_currency)
+				}, self.party_account_currency, item=self)
 			)
 			gl_entries.append(
 				self.get_gl_dict({
@@ -879,7 +879,7 @@ class PurchaseInvoice(BuyingController):
 					"credit_in_account_currency": self.base_write_off_amount \
 						if write_off_account_currency==self.company_currency else self.write_off_amount,
 					"cost_center": self.cost_center or self.write_off_cost_center
-				})
+				}, item=self)
 			)
 
 	def make_gle_for_rounding_adjustment(self, gl_entries):
@@ -898,7 +898,7 @@ class PurchaseInvoice(BuyingController):
 					"debit_in_account_currency": self.rounding_adjustment,
 					"debit": self.base_rounding_adjustment,
 					"cost_center": self.cost_center or round_off_cost_center,
-				}
+				}, item=self)
 			))
 
 	def on_cancel(self):
