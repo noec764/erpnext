@@ -122,7 +122,7 @@
   {
    "fieldname": "section_break_14",
    "fieldtype": "Section Break",
-   "options": "noBottomBorder"
+   "hide_border": 1
   },
   {
    "fieldname": "reference_number",
@@ -171,7 +171,7 @@
   {
    "fieldname": "section_break_17",
    "fieldtype": "Section Break",
-   "options": "noBottomBorder"
+   "hide_border": 1
   },
   {
    "allow_on_submit": 1,
@@ -194,7 +194,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-04-27 16:39:21.489138",
+ "modified": "2020-05-15 10:39:03.343474",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
