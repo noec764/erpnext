@@ -147,6 +147,10 @@ class Customer(TransactionBase):
 					contact = frappe.get_doc('Contact', contact_name.get('name'))
 					if not contact.has_link('Customer', self.name):
 						contact.append('links', dict(link_doctype='Customer', link_name=self.name))
+						if lead.email_id:
+							contact.append('email_ids', dict(email_id=lead.email_id, is_primary=1))
+						if lead.mobile_no:
+							contact.append('phone_nos', dict(phone=lead.mobile_no, is_primary_mobile_no=1))
 						contact.save()
 
 			else:
