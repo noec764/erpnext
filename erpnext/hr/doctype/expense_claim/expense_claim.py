@@ -116,7 +116,7 @@ class ExpenseClaim(AccountsController):
 					"party_type": "Employee",
 					"party": self.employee,
 					"against_voucher_type": self.doctype,
-					"against_voucher": self.name
+					"against_voucher": self.name,
 					"cost_center": self.cost_center
 				}, item=self)
 			)

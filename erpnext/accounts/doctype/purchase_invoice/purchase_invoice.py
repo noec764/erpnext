@@ -899,7 +899,7 @@ class PurchaseInvoice(BuyingController):
 					"debit": self.base_rounding_adjustment,
 					"cost_center": self.cost_center or round_off_cost_center,
 				}, item=self)
-			))
+			)
 
 	def on_cancel(self):
 		super(PurchaseInvoice, self).on_cancel()
