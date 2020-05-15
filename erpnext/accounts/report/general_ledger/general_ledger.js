@@ -18,6 +18,12 @@ frappe.query_reports["General Ledger"] = {
 			"options": "Finance Book"
 		},
 		{
+			"fieldname":"accounting_journal",
+			"label": __("Accounting Journal"),
+			"fieldtype": "Link",
+			"options": "Accounting Journal"
+		},
+		{
 			"fieldname":"from_date",
 			"label": __("From Date"),
 			"fieldtype": "Date",

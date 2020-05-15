@@ -516,7 +516,8 @@ class JournalEntry(AccountsController):
 						"remarks": remarks,
 						"cost_center": d.cost_center,
 						"project": d.project,
-						"finance_book": self.finance_book
+						"finance_book": self.finance_book,
+						"accounting_journal": d.accounting_journal
 					}, item=d)
 				)
 

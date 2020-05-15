@@ -127,6 +127,9 @@ def save_entries(gl_map, adv_adj, update_outstanding):
 		check_freezing_date(gl_map[0]["posting_date"], adv_adj)
 
 	for entry in gl_map:
+		if not entry.get("accounting_journal"):
+			get_accounting_journal(entry)
+
 		make_entry(entry, adv_adj, update_outstanding)
 
 		# check against budget
@@ -146,6 +149,34 @@ def make_entry(args, adv_adj, update_outstanding):
 
 	# check against budget
 	validate_expense_against_budget(args)
+
+def get_accounting_journal(entry):
+	rules = frappe.get_all("Accounting Journal", fields=["name", "type", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
+	applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
+	if all([bool(rule.type in ["Bank", "Cash"]) for rule in applicable_rules]):
+		get_bank_cash_journal(entry)
+
+	for condition in [rule for rule in applicable_rules if rule.condition]:
+		if frappe.safe_eval(condition.condition, None, {"doc": frappe.get_doc(entry.get("voucher_type"), entry.get("voucher_no")).as_dict()}):
+			entry["accounting_journal"] = condition.name
+			break
+
+	if not entry.get("accounting_journal") and [rule for rule in applicable_rules if not rule.condition]:
+		entry["accounting_journal"] = [rule for rule in applicable_rules if not rule.condition][0].name
+
+	if not entry.get("accounting_journal"):
+		frappe.throw(_("Please configure an accounting journal for this transaction type"))
+
+def get_bank_cash_journal(entry):
+	_account = frappe.get_doc("Account", entry.get("account"))
+	if _account.accounting_journal_type:
+		entry["accounting_journal"] = _account.accounting_journal_type
+	else:
+		for ancestor in _account.get_ancestors():
+			_journal = frappe.db.get_value("Account", ancestor, "accounting_journal_type")
+			if _journal:
+				entry["accounting_journal"] = _journal
+				break
 
 def validate_account_for_perpetual_inventory(gl_map):
 	if cint(erpnext.is_perpetual_inventory_enabled(gl_map[0].company)):

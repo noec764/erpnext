@@ -134,7 +134,7 @@ def get_gl_entries(filters):
 			name as gl_entry, posting_date, account, party_type, party,
 			voucher_type, voucher_no, cost_center, project,
 			against_voucher_type, against_voucher, account_currency,
-			remarks, against, is_opening {select_fields}
+			remarks, against, is_opening, accounting_journal {select_fields}
 		from `tabGL Entry`
 		where company=%(company)s {conditions}
 		{order_by_statement}
@@ -181,6 +181,9 @@ def get_conditions(filters):
 
 	if filters.get("project"):
 		conditions.append("project in %(project)s")
+
+	if filters.get("accounting_journal"):
+		conditions.append("accounting_journal in (%(accounting_journal)s)")
 
 	if filters.get("finance_book"):
 		if filters.get("include_default_book_entries"):
@@ -411,6 +414,11 @@ def get_columns(filters):
 	]
 
 	columns.extend([
+		{
+			"label": _("Accounting Journal"),
+			"fieldname": "accounting_journal",
+			"width": 80
+		},
 		{
 			"label": _("Voucher Type"),
 			"fieldname": "voucher_type",

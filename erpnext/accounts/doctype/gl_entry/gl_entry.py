@@ -21,6 +21,7 @@ class GLEntry(Document):
 		self.check_mandatory()
 		self.validate_and_set_fiscal_year()
 		self.pl_must_have_cost_center()
+		self.check_accounting_journal()
 		self.validate_cost_center()
 
 		self.check_pl_account()
@@ -154,6 +155,9 @@ class GLEntry(Document):
 		if not self.fiscal_year:
 			self.fiscal_year = get_fiscal_year(self.posting_date, company=self.company)[0]
 
+	def check_accounting_journal(self):
+		if not self.accounting_journal and cint(frappe.db.get_single("Accounts Settings", "mandatory_accounting_journal")):
+			frappe.throw(_("An accounting journal could not be found for this transaction. Please configure it and try to submit again."))
 
 def validate_balance_type(account, adv_adj=False):
 	if not adv_adj and account:
