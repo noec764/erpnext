@@ -9,8 +9,10 @@
  "field_order": [
   "journal_code",
   "journal_name",
+  "company",
   "column_break_3",
   "type",
+  "account",
   "disabled",
   "conditions_section",
   "conditions"
@@ -58,10 +60,25 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "depends_on": "eval:[\"Cash\", \"Bank\"].includes(doc.type)",
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "mandatory_depends_on": "eval:[\"Cash\", \"Bank\"].includes(doc.type)",
+   "options": "Account"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "links": [],
- "modified": "2020-05-15 17:00:16.704775",
+ "modified": "2020-05-18 09:09:14.272592",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting Journal",
