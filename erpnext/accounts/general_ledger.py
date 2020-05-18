@@ -152,7 +152,7 @@ def make_entry(args, adv_adj, update_outstanding):
 
 def get_accounting_journal(entry):
 	rules = frappe.get_all("Accounting Journal",
-		filters={"company": self.company},
+		filters={"company": self.company, "disabled": 0},
 		fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
 	applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
 	if all([bool(rule.type in ["Bank", "Cash"]) for rule in applicable_rules]):
