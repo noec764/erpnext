@@ -89,6 +89,10 @@
  "category": "Modules",
  "charts": [
   {
+    "chart_name": "Profit and Loss",
+    "label": "Profit and Loss"
+  },
+  {
    "chart_name": "Bank Balance",
    "label": "Bank Balance"
   }
@@ -104,7 +108,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Accounting",
- "modified": "2020-05-18 10:59:51.627863",
+ "modified": "2020-05-18 17:27:26.882340",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
@@ -113,10 +117,25 @@
  "pin_to_top": 0,
  "shortcuts": [
   {
-   "label": "Account",
+   "label": "Chart Of Accounts",
    "link_to": "Account",
    "type": "DocType"
   },
+  {
+    "label": "Accounts Dashboard",
+    "link_to": "Accounts Dashboard",
+    "type": "Dashboard"
+   },
+  {
+    "label": "Sales Invoice",
+    "link_to": "Sales Invoice",
+    "type": "DocType"
+   },
+   {
+    "label": "Purchase Invoice",
+    "link_to": "Purchase Invoice",
+    "type": "DocType"
+   },
   {
    "label": "Journal Entry",
    "link_to": "Journal Entry",
