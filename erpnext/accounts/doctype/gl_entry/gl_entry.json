@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "ACC-GLE-.YYYY.-.#####",
+ "autoname": "format:ACC-GLE-{fiscal_year}-{########}",
  "creation": "2013-01-10 16:34:06",
  "doctype": "DocType",
  "document_type": "Document",
@@ -266,7 +266,7 @@
  "idx": 1,
  "in_create": 1,
  "links": [],
- "modified": "2020-05-15 11:21:07.304472",
+ "modified": "2020-05-19 18:47:20.457075",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "GL Entry",
