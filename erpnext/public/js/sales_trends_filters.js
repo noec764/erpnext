@@ -29,7 +29,7 @@ erpnext.get_sales_trends_filters = function() {
 			],
 			"default": "Item",
 			"dashboard_config": {
-				"read_only": 1,
+				"read_only": 1
 			}
 		},
 		{
