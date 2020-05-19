@@ -1051,3 +1051,52 @@ frappe.ui.form.on('Payment Entry', {
 		}
 	},
 })
+
+
+frappe.tour["Payment Entry"] = [
+	{
+		fieldname: "payment_type",
+		title: __("Select a payment type"),
+		description: __("Select the payment type corresponding to your payment: Have your received money, paid money or made an internal transfer ?")
+	},
+	{
+		fieldname: "posting_date",
+		title: __("Posting date"),
+		description: __("Should be the date of the accounting posting.")
+	},
+	{
+		fieldname: "mode_of_payment",
+		title: __("Select a mode of payment"),
+		description: __("Select the mode of payment used to make this payment.")
+	},
+	{
+		fieldname: "party_type",
+		title: __("Party type"),
+		description: __("The type of party this transaction is made with. Mostly customers or suppliers.")
+	},
+	{
+		fieldname: "party",
+		title: __("Party"),
+		description: __("The party this transaction is made with.")
+	},
+	{
+		fieldname: "paid_amount",
+		title: __("Register the paid amount"),
+		description: __("Enter the exact paid amount.")
+	},
+	{
+		fieldname: "references",
+		title: __("Link this payment with one or many transactions"),
+		description: __("Select the transactions linked to this payment and allocate the amount corresponding to each of them. <i>Eg. A payment of 1000€ can be allocated to two invoices of 800€ and 200€.</i>")
+	},
+	{
+		fieldname: "reference_no",
+		title: __("Reference Number"),
+		description: __("The reference number will be used to find this transaction in the bank reconciliation dashboard.")
+	},
+	{
+		fieldname: "reference_date",
+		title: __("Reference Date"),
+		description: __("The reference date will also be used in the bank reconciliation process.")
+	}
+]
