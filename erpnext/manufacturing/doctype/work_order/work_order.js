@@ -611,6 +611,7 @@ erpnext.work_order = {
 				default: max
 			}, data => {
 				max += (max * (frm.doc.__onload.overproduction_percentage || 0.0)) / 100;
+
 				if (data.qty > max) {
 					frappe.msgprint(__('Quantity must not be more than {0}', [max]));
 					reject();

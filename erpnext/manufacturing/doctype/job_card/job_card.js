@@ -62,8 +62,8 @@ frappe.ui.form.on('Job Card', {
 				if (frm.doc.for_quantity) {
 					frappe.prompt({fieldtype: 'Float', label: __('Completed Quantity'),
 						fieldname: 'qty', reqd: 1, default: frm.doc.for_quantity}, data => {
-						frm.events.complete_job(frm, completed_time, data.qty);
-					}, __("Enter Value"), __("Complete"));
+							frm.events.complete_job(frm, completed_time, data.qty);
+						}, __("Enter Value"), __("Complete"));
 				} else {
 					frm.events.complete_job(frm, completed_time, 0);
 				}
@@ -226,6 +226,7 @@ frappe.ui.form.on('Job Card Time Log', {
 	completed_qty: function(frm) {
 		frm.events.set_total_completed_qty(frm);
 	},
+
 	to_time: function(frm) {
 		frm.set_value('job_started', 0);
 		frm.set_value('started_time', '');
