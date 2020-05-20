@@ -283,6 +283,7 @@
    "width": "100px"
   },
   {
+    "fetch_from": "customer.tax_id",
    "fieldname": "tax_id",
    "fieldtype": "Data",
    "label": "Tax Id",
