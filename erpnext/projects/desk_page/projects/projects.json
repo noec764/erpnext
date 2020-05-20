@@ -17,7 +17,12 @@
      }
     ],
     "category": "Modules",
-    "charts": [],
+    "charts": [
+        {
+         "chart_name": "Project Summary",
+         "label": "Open Projects"
+        }
+       ],
     "color": "#8e44ad",
     "creation": "2020-03-02 15:46:04.874669",
     "developer_mode_only": 0,
@@ -28,7 +33,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Projects",
-    "modified": "2020-04-01 11:28:51.245756",
+    "modified": "2020-05-04 20:27:51.591365",
     "modified_by": "Administrator",
     "module": "Projects",
     "name": "Projects",
@@ -38,6 +43,7 @@
     "icon": "fas fa-project-diagram",
     "shortcuts": [
      {
+      "color": "#4d4da8",
       "format": "{} Assigned",
       "label": "Task",
       "link_to": "Task",
@@ -45,8 +51,11 @@
       "type": "DocType"
      },
      {
+        "color": "#4d4da8",
+        "format": "{} Open",
       "label": "Project",
       "link_to": "Project",
+      "stats_filter": "{\n    \"status\": \"Open\"\n}",
       "type": "DocType"
      },
      {
@@ -58,6 +67,11 @@
       "label": "Project Billing Summary",
       "link_to": "Project Billing Summary",
       "type": "Report"
+     },
+     {
+        "label": "Project Dashboard",
+        "link_to": "Project",
+        "type": "Dashboard"
      }
     ]
    }
