@@ -27,7 +27,11 @@
      }
     ],
     "category": "Modules",
-    "charts": [],
+    "charts": [
+        {
+         "chart_name": "Territory Wise Sales"
+        }
+       ],
     "color": "#EF4DB6",
     "creation": "2020-01-23 14:48:30.183272",
     "developer_mode_only": 0,
@@ -39,10 +43,11 @@
     "idx": 0,
     "is_standard": 1,
     "label": "CRM",
-    "modified": "2020-04-27 22:32:26.682911",
+    "modified": "2020-05-14 17:20:07.636751",
     "modified_by": "Administrator",
     "module": "CRM",
     "name": "CRM",
+    "onboarding": "CRM",
     "owner": "Administrator",
     "pin_to_bottom": 0,
     "pin_to_top": 0,
@@ -70,6 +75,11 @@
       "label": "Sales Analytics",
       "link_to": "Sales Analytics",
       "type": "Report"
+     },
+     {
+        "label": "CRM Dashboard",
+        "link_to": "CRM",
+        "type": "Dashboard"
      }
     ]
    }
