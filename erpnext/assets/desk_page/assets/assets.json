@@ -17,7 +17,12 @@
      }
     ],
     "category": "Modules",
-    "charts": [],
+    "charts": [
+        {
+         "chart_name": "Asset Value Analytics",
+         "label": "Asset Value Analytics"
+        }
+       ],
     "creation": "2020-03-02 15:43:27.634865",
     "developer_mode_only": 0,
     "disable_user_customization": 0,
@@ -28,10 +33,11 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Assets",
-    "modified": "2020-04-01 11:28:51.072198",
+    "modified": "2020-05-12 17:35:14.770662",
     "modified_by": "Administrator",
     "module": "Assets",
     "name": "Assets",
+    "onboarding": "Assets",
     "owner": "Administrator",
     "pin_to_bottom": 0,
     "pin_to_top": 0,
@@ -43,14 +49,19 @@
       "type": "DocType"
      },
      {
-      "label": "Asset Movement",
-      "link_to": "Asset Movement",
+        "label": "Asset Category",
+        "link_to": "Asset Category",
       "type": "DocType"
      },
      {
       "label": "Fixed Asset Register",
       "link_to": "Fixed Asset Register",
       "type": "Report"
+     },
+     {
+        "label": "Assets Dashboard",
+        "link_to": "Asset",
+        "type": "Dashboard"
      }
     ]
    }
