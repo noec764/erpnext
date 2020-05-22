@@ -1,6 +1,9 @@
 import frappe
 
 def execute():
+	if frappe.db.exists("DocType", "Sepa Mandate"):
+		return
+
 	frappe.rename_doc("DocType", "GoCardless Mandate", "Sepa Mandate", force=True)
 	frappe.reload_doc("accounts", "doctype", "sepa_mandate")
 
