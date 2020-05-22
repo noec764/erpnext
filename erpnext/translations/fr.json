@@ -20096,7 +20096,7 @@
     "apps/erpnext/erpnext/templates/includes/footer/footer_extension.html": {
         "Added": "Ajouté",
         "Error: Not a valid id?": "Erreur : Pas un identifiant valide ?",
-        "Get Updates": "Obtenir les Mises à jour",
+        "Get Updates": "S'abonner",
         "Please enter valid email address": "Entrez une adresse email valide",
         "Your email address...": "Votre adresse email..."
     },
