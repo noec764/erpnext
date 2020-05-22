@@ -12408,6 +12408,9 @@
     },
     "apps/erpnext/erpnext/accounts/doctype/sepa_direct_debit/sepa_direct_debit.py": {
         "From Date and To Date are Mandatory": "La date de début et la date de fin sont obligatoires",
+        "Please add a Swift Number in bank account {0} for customer {1}": "Veuillez ajouter un BIC dans le compte bancaire {0} pour le client {1}",
+        "Please add a bank account in mandate {0} for customer {1}": "Veuillez ajouter un compte bancaire dans le mandat {0} pour le client {1}",
+        "Please add an IBAN in bank account {0} for customer {1}": "Veuillez ajouter un IBAN dans le compte bancaire {0} pour le client {1}",
         "Please create or activate a SEPA Mandate for customer {0}": "Veuillez créer ou activer un mandat Sepa pour le client {0}"
     },
     "apps/erpnext/erpnext/accounts/doctype/sepa_direct_debit_settings/sepa_direct_debit_settings.py": {
