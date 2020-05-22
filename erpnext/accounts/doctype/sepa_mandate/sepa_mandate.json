@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:mandate",
  "creation": "2018-02-08 11:33:15.721919",
  "doctype": "DocType",
@@ -19,6 +20,7 @@
    "default": "Submitted",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "\nPending Customer Approval\nPending Submission\nActive\nCancelled\nFailed\nExpired\nSubmitted",
    "reqd": 1
@@ -34,6 +36,7 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
@@ -46,6 +49,7 @@
    "default": "0",
    "fieldname": "registered_on_gocardless",
    "fieldtype": "Check",
+   "in_standard_filter": 1,
    "label": "Registered on GoCardless"
   },
   {
@@ -64,7 +68,8 @@
    "label": "Creation Date"
   }
  ],
- "modified": "2019-10-11 11:09:05.977726",
+ "links": [],
+ "modified": "2020-05-22 12:01:58.712402",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sepa Mandate",
