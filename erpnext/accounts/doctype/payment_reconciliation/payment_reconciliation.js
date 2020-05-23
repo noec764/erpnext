@@ -3,6 +3,12 @@
 
 frappe.provide("erpnext.accounts");
 
+frappe.ui.form.on("Payment Reconciliation", {
+	refresh(frm) {
+		frm.set_value("company", frappe.defaults.get_user_default("Company"),)
+	}
+})
+
 frappe.ui.form.on("Payment Reconciliation Payment", {
 	invoice_number: function(frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
