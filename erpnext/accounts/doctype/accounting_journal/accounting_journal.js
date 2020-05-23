@@ -6,7 +6,7 @@ frappe.ui.form.on('Accounting Journal', {
 		frm.set_query("account", function() {
 			return {
 				filters: {
-					'account_type': ('in', ('Bank', 'Cash')),
+					'account_type': frm.doc.type,
 					'company': frm.doc.company,
 					'is_group': 0
 				}
