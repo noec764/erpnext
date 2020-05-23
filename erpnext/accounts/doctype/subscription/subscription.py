@@ -639,7 +639,7 @@ class Subscription(Document):
 	def create_stripe_invoice_item(self, plan_details):
 		plan = frappe.parse_json(plan_details)
 
-		if not frappe.utils.strip_html_tags(plan.get("description")):
+		if not plan.get("description") or not frappe.utils.strip_html_tags(plan.get("description")):
 			frappe.throw(_("Please enter a description before creating an invoice item."))
 
 		rate = cint(flt(self.get_plan_rate(plan)) * plan.qty * 100)
