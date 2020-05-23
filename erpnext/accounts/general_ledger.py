@@ -166,7 +166,7 @@ def get_accounting_journal(entry):
 	if not entry.get("accounting_journal") and [rule for rule in applicable_rules if not rule.condition]:
 		entry["accounting_journal"] = [rule for rule in applicable_rules if not rule.condition][0].name
 
-	if not entry.get("accounting_journal"):
+	if not entry.get("accounting_journal") and cint(frappe.db.get_single_value("Accounts Settings", "mandatory_accounting_journal")):
 		frappe.throw(_("Please configure an accounting journal for this transaction type: {0}").format(_(entry.voucher_type)))
 
 
