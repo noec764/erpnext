@@ -167,7 +167,7 @@ def get_accounting_journal(entry):
 		entry["accounting_journal"] = [rule for rule in applicable_rules if not rule.condition][0].name
 
 	if not entry.get("accounting_journal"):
-		frappe.throw(_("Please configure an accounting journal for this transaction type"))
+		frappe.throw(_("Please configure an accounting journal for this transaction type: {0}").format(_(entry.voucher_type)))
 
 
 def validate_account_for_perpetual_inventory(gl_map):
