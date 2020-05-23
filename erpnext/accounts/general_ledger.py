@@ -156,7 +156,7 @@ def get_accounting_journal(entry):
 		fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
 	applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
 	if all([bool(rule.type in ["Bank", "Cash"]) for rule in applicable_rules]):
-		applicable_rules = [rule for rule in applicable_rules if rule.account == entry.get("account")]
+		applicable_rules = [rule for rule in applicable_rules if rule.account in (entry.get("account"), entry.get("against"))]
 
 	for condition in [rule for rule in applicable_rules if rule.condition]:
 		if frappe.safe_eval(condition.condition, None, {"doc": frappe.get_doc(entry.get("voucher_type"), entry.get("voucher_no")).as_dict()}):
