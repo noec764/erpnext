@@ -95,7 +95,7 @@
  "is_standard": 1,
  "hide_custom": 0,
  "label": "HR",
- "modified": "2020-05-20 11:20:54.255557",
+ "modified": "2020-05-21 11:20:54.255557",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "HR",
@@ -129,7 +129,7 @@
      "type": "DocType"
     },
     {
-     "label": "Salary Register",
+     "label": "Monthly Attendance Sheet",
      "link_to": "Monthly Attendance Sheet",
      "type": "Report"
     },
