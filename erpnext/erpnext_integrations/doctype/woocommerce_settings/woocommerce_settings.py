@@ -17,6 +17,7 @@ class WoocommerceSettings(Document):
 		self.create_webhook_url()
 
 	def create_delete_custom_fields(self):
+		sys_lang = frappe.get_single("System Settings").language or 'en'
 		if self.enable_sync:
 			custom_fields = {}
 			# create
@@ -28,9 +29,9 @@ class WoocommerceSettings(Document):
 				df = dict(fieldname='woocommerce_email', label='Woocommerce Email', fieldtype='Data', read_only=1, print_hide=1)
 				create_custom_field(doctype, df)
 			
-			if not frappe.get_value("Item Group", {"name": _("WooCommerce Products")}):
+			if not frappe.get_value("Item Group", {"name": _("WooCommerce Products", sys_lang)}):
 				item_group = frappe.new_doc("Item Group")
-				item_group.item_group_name = _("WooCommerce Products")
+				item_group.item_group_name = _("WooCommerce Products", sys_lang)
 				item_group.parent_item_group = get_root_of("Item Group")
 				item_group.insert()
 
