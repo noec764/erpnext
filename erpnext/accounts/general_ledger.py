@@ -151,12 +151,16 @@ def make_entry(args, adv_adj, update_outstanding):
 	validate_expense_against_budget(args)
 
 def get_accounting_journal(entry):
+	applicable_rules = []
 	rules = frappe.get_all("Accounting Journal",
 		filters={"company": entry.get("company"), "disabled": 0},
 		fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
-	applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
-	if all([bool(rule.type in ["Bank", "Cash"]) for rule in applicable_rules]):
-		applicable_rules = [rule for rule in applicable_rules if rule.account in (entry.get("account"), entry.get("against"))]
+
+	applicable_rules = [rule for rule in rules if (rule.account in (entry.account, entry.against, None))]
+	if applicable_rules:
+		applicable_rules = [rule for rule in applicable_rules if rule.document_type in (entry.voucher_type, None)]
+	else:
+		applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
 
 	for condition in [rule for rule in applicable_rules if rule.condition]:
 		if frappe.safe_eval(condition.condition, None, {"doc": frappe.get_doc(entry.get("voucher_type"), entry.get("voucher_no")).as_dict()}):
@@ -167,8 +171,7 @@ def get_accounting_journal(entry):
 		entry["accounting_journal"] = [rule for rule in applicable_rules if not rule.condition][0].name
 
 	if not entry.get("accounting_journal") and cint(frappe.db.get_single_value("Accounts Settings", "mandatory_accounting_journal")):
-		frappe.throw(_("Please configure an accounting journal for this transaction type: {0}").format(_(entry.voucher_type)))
-
+		frappe.throw(_("Please configure an accounting journal for this transaction type and account: {0} - {1}").format(_(entry.voucher_type), entry.get("account")))
 
 def validate_account_for_perpetual_inventory(gl_map):
 	if cint(erpnext.is_perpetual_inventory_enabled(gl_map[0].company)):

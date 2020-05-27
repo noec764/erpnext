@@ -489,7 +489,7 @@ class PaymentEntry(AccountsController):
 		self.add_bank_gl_entries(gl_entries)
 		self.add_deductions_gl_entries(gl_entries)
 
-		make_gl_entries(gl_entries, cancel=cancel, adv_adj=adv_adj)
+		make_gl_entries(gl_entries, cancel=cancel, adv_adj=adv_adj, merge_entries=(self.payment_type!="Internal Transfer"))
 
 	def add_party_gl_entries(self, gl_entries):
 		if self.party_account:
@@ -504,7 +504,8 @@ class PaymentEntry(AccountsController):
 				"party": self.party,
 				"against": against_account,
 				"account_currency": self.party_account_currency,
-				"cost_center": self.cost_center
+				"cost_center": self.cost_center,
+				"accounting_journal": self.get_cash_flow_journal(against_account)
 			}, item=self)
 
 			dr_or_cr = "credit" if erpnext.get_party_account_type(self.party_type) == 'Receivable' else "debit"
@@ -548,9 +549,11 @@ class PaymentEntry(AccountsController):
 					"against": self.party if self.payment_type=="Pay" else self.paid_to,
 					"credit_in_account_currency": self.paid_amount,
 					"credit": self.base_paid_amount,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.get_cash_flow_journal(self.paid_from)
 				}, item=self)
 			)
+
 		if self.payment_type in ("Receive", "Internal Transfer"):
 			gl_entries.append(
 				self.get_gl_dict({
@@ -559,9 +562,38 @@ class PaymentEntry(AccountsController):
 					"against": self.party if self.payment_type=="Receive" else self.paid_from,
 					"debit_in_account_currency": self.received_amount,
 					"debit": self.base_received_amount,
-					"cost_center": self.cost_center
+					"cost_center": self.cost_center,
+					"accounting_journal": self.get_cash_flow_journal(self.paid_to)
 				}, item=self)
 			)
+
+		if self.payment_type == "Internal Transfer":
+			inter_banks_transfer_account = frappe.get_cached_value('Company',  self.company,  "inter_banks_transfer_account")
+			if inter_banks_transfer_account:
+				gl_entries.append(
+					self.get_gl_dict({
+						"account": inter_banks_transfer_account,
+						"account_currency": self.paid_from_account_currency,
+						"against": self.paid_from,
+						"debit_in_account_currency": self.paid_amount,
+						"debit": self.base_paid_amount,
+						"cost_center": self.cost_center,
+						"accounting_journal": self.get_cash_flow_journal(self.paid_from)
+					}, item=self)
+				)
+
+				gl_entries.append(
+					self.get_gl_dict({
+						"account": inter_banks_transfer_account,
+						"account_currency": self.paid_to_account_currency,
+						"against": self.paid_to,
+						"credit_in_account_currency": self.paid_amount,
+						"credit": self.base_paid_amount,
+						"cost_center": self.cost_center,
+						"accounting_journal": self.get_cash_flow_journal(self.paid_to)
+					}, item=self)
+				)
+
 
 	def add_deductions_gl_entries(self, gl_entries):
 		for d in self.get("deductions"):
@@ -577,9 +609,24 @@ class PaymentEntry(AccountsController):
 						"against": self.party or self.paid_from,
 						"debit_in_account_currency": d.amount,
 						"debit": d.amount,
-						"cost_center": d.cost_center
+						"cost_center": d.cost_center,
+						"accounting_journal": self.get_cash_flow_journal(self.paid_to if self.payment_type == "Receive" else self.paid_from)
 					}, item=d)
 				)
+
+	def get_cash_flow_journal(self, account):
+		rules = frappe.get_all("Accounting Journal",
+			filters={"company": self.company, "disabled": 0},
+			fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
+
+		applicable_rules = [rule for rule in rules if (rule.document_type==self.doctype and rule.account==account)]
+
+		for condition in [rule for rule in applicable_rules if rule.condition]:
+			if frappe.safe_eval(condition.condition, None, {"doc": self.as_dict()}):
+				return condition.name
+
+		if [rule for rule in applicable_rules if not rule.condition]:
+			return [rule for rule in applicable_rules if not rule.condition][0].name
 
 	def update_advance_paid(self):
 		if self.payment_type in ("Receive", "Pay") and self.party:
