@@ -437,6 +437,10 @@
 		"must_be_whole_number": 0
 	},
 	{
+		"uom_name": "Half-day",
+		"must_be_whole_number": 0
+	},
+	{
 		"uom_name": "Hour",
 		"must_be_whole_number": 0
 	},

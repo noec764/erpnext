@@ -762,6 +762,12 @@
 	},
 	{
 		"category": "Time",
+		"from_uom": "Half-day",
+		"to_uom": "Minute",
+		"value": "720"
+	},
+	{
+		"category": "Time",
 		"from_uom": "Day",
 		"to_uom": "Minute",
 		"value": "1440"

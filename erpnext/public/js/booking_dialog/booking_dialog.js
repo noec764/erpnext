@@ -104,11 +104,11 @@ erpnext.booking_dialog = class BookingDialog {
 		}
 
 		if (this.uoms.length) {
-			this.header_btns_wrapper = $(`<div class="cart-uom-selector"></div>`).prependTo(this.header)
+			this.header_btns_wrapper = $(`<div class="cart-uom-selector ml-3 mx-auto"></div>`).insertAfter(this.header.find(".modal-title"))
 			this.uoms.forEach(value => {
 				const disabled = (value === this.sales_uom) ? "disabled": ""
 				const btnStyle = (value === this.sales_uom) ? "btn-outline-secondary": "btn-outline-primary"
-				this.uoms_btns[value] = $(`<button type="button" class="btn btn-sm ${btnStyle}" ${disabled}>${__(value)}</button>`).prependTo(this.header_btns_wrapper)
+				this.uoms_btns[value] = $(`<button type="button" class="btn btn-sm ${btnStyle} mx-2" ${disabled}>${__(value)}</button>`).prependTo(this.header_btns_wrapper)
 
 				this.uoms_btns[value].on('click', () => {
 					erpnext.booking_dialog_update.trigger('uom_change', value);
