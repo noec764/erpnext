@@ -365,7 +365,6 @@ class SellingController(StockController):
 			for item in self.items:
 				item.gross_profit = flt(((item.base_rate - item.valuation_rate) * item.stock_qty), self.precision("amount", item))
 
-
 	def set_customer_address(self):
 		address_dict = {
 			'customer_address': 'address_display',
