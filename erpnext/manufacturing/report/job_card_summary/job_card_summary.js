@@ -32,7 +32,7 @@ frappe.query_reports["Job Card Summary"] = {
 					});
 				});
 			}
-		},		
+		},
 		{
 			label: __("From Posting Date"),
 			fieldname:"from_date",
