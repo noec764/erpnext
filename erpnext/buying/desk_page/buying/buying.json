@@ -55,7 +55,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Buying",
-    "modified": "2020-05-19 19:44:36.260982",
+    "modified": "2020-05-27 19:55:22.407528",
     "modified_by": "Administrator",
     "module": "Buying",
     "name": "Buying",
@@ -101,7 +101,7 @@
       "type": "Report"
      },
      {
-      "label": "Buying Dashboard",
+      "label": "Dashboard",
       "link_to": "Buying",
       "type": "Dashboard"
      }

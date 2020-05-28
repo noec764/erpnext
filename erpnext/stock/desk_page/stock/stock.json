@@ -58,7 +58,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Stock",
-    "modified": "2020-05-19 17:36:08.185652",
+    "modified": "2020-05-27 19:56:28.396962",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Stock",
@@ -117,7 +117,7 @@
       "type": "Report"
      },
      {
-      "label": "Stock Dashboard",
+      "label": "Dashboard",
       "link_to": "Stock",
       "type": "Dashboard"
      }
