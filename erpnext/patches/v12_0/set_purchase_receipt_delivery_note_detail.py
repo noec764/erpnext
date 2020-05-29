@@ -82,6 +82,11 @@ def execute():
 						else:
 							continue
 
+			# commit after every 100 sql updates
+			count += 1
+			if count%100 == 0:
+				frappe.db.commit()
+
 	set_document_detail_in_return_document("Purchase Receipt")
 	set_document_detail_in_return_document("Delivery Note")
 	frappe.db.commit()
