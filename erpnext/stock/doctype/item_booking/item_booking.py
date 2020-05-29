@@ -53,7 +53,6 @@ def get_list_context(context=None):
 		"title": _("Bookings"),
 		"get_list": get_bookings_list,
 		"row_template": "templates/includes/item_booking_row.html",
-		"create_new": "/",
 		"can_cancel": frappe.has_permission("Item Booking", "write")
 	})
 
