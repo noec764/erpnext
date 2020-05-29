@@ -99,7 +99,7 @@ class Customer(TransactionBase):
 				self.customer_group, ignore_doctypes)
 
 	def create_primary_contact(self):
-		if not self.customer_primary_contact and not self.lead_name:
+		if not self.customer_primary_contact and not self.lead_name and self.customer_type == "Individual":
 			if self.mobile_no or self.email_id:
 				contact = make_contact(self)
 				self.db_set('customer_primary_contact', contact.name)
@@ -459,15 +459,33 @@ def get_credit_limit(customer, company):
 	return flt(credit_limit)
 
 def make_contact(args, is_primary_contact=1):
-	contact = frappe.get_doc({
-		'doctype': 'Contact',
-		'first_name': args.get('name'),
-		'is_primary_contact': is_primary_contact,
-		'links': [{
+	names = args.get('customer_name').strip().split(" ")
+	if len(names) > 1:
+		first_name, last_name = names[0], " ".join(names[1:])
+	else:
+		first_name, last_name = args.get('customer_name'), None
+
+	if args.get('email_id'):
+		parent = frappe.db.get_value("Contact Email", {"email_id": args.get('email_id')}, "parent")
+	if not parent and args.get('mobile_no'):
+		parent = frappe.db.get_value("Contact Phone", {"phone": args.get('mobile_no')}, "parent")
+
+	if parent:
+		contact = frappe.get_doc("Contact", parent)
+	else:
+		contact = frappe.get_doc({
+			'doctype': 'Contact',
+			'first_name': first_name,
+			'last_name': last_name,
+			'is_primary_contact': is_primary_contact
+		})
+
+	if not contact.has_link(args.get('doctype'), args.get('name')):
+		contact.append('links', {
 			'link_doctype': args.get('doctype'),
 			'link_name': args.get('name')
-		}]
-	})
+		})
+
 	if args.get('email_id'):
 		contact.add_email(args.get('email_id'), is_primary=True)
 	if args.get('mobile_no'):

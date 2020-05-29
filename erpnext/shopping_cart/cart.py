@@ -42,9 +42,9 @@ def get_cart_quotation(doc=None):
 	return {
 		"doc": decorate_quotation_doc(doc),
 		"shipping_addresses": [{"name": address.name, "display": address.display}
-			for address in addresses if address.address_type == "Shipping"],
+			for address in addresses if (address.address_type == "Shipping" or address.is_shipping_address)],
 		"billing_addresses": [{"name": address.name, "display": address.display}
-			for address in addresses if address.address_type == "Billing"],
+			for address in addresses if (address.address_type == "Billing" or address.is_primary_address)],
 		"shipping_rules": get_applicable_shipping_rules(party),
 		"cart_settings": frappe.get_cached_doc("Shopping Cart Settings")
 	}

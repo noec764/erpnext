@@ -57,6 +57,8 @@ def get_opp_by_lead_source(from_date, to_date, company):
 		cp_opportunities = [dict(x, **{'compound_amount': (convert(x['opportunity_amount'], x['currency'], default_currency, to_date) * x['probability']/100)}) for x in opportunities]
 
 		df = pd.DataFrame(cp_opportunities).groupby(['source', 'sales_stage'], as_index=False).agg({'compound_amount': 'sum'})
+		if df.empty:
+			return 'empty'
 
 		result = {}
 		result['labels'] = list(set(df.source.values))
@@ -89,6 +91,8 @@ def get_pipeline_data(from_date, to_date, company):
 		cp_opportunities = [dict(x, **{'compound_amount': (convert(x['opportunity_amount'], x['currency'], default_currency, to_date) * x['probability']/100)}) for x in opportunities]
 
 		df = pd.DataFrame(cp_opportunities).groupby(['sales_stage'], as_index=True).agg({'compound_amount': 'sum'}).to_dict()
+		if not df["compound_amount"]:
+			return 'empty'
 
 		result = {}
 		result['labels'] = df['compound_amount'].keys()
