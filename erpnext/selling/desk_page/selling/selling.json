@@ -29,8 +29,8 @@
     "category": "Modules",
     "charts": [
      {
-      "chart_name": "Income",
-      "label": "Income"
+      "chart_name": "Outgoing Bills (Sales Invoice)",
+      "label": "Outgoing Sales Invoices"
      }
     ],
     "creation": "2020-01-28 11:49:12.092882",
@@ -43,7 +43,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Selling",
-    "modified": "2020-05-28 13:46:08.314240",
+    "modified": "2020-05-29 13:46:08.314240",
     "modified_by": "Administrator",
     "module": "Selling",
     "name": "Selling",
