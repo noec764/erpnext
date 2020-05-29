@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:gateway_name",
  "creation": "2018-02-06 16:11:10.028249",
  "doctype": "DocType",
@@ -23,7 +24,7 @@
   },
   {
    "fieldname": "access_token",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "in_list_view": 1,
    "label": "Access Token",
    "reqd": 1
@@ -52,8 +53,9 @@
    "label": "Check for updates"
   }
  ],
- "modified": "2019-10-01 19:17:53.580964",
- "modified_by": "Administrator",
+ "links": [],
+ "modified": "2020-05-29 09:21:50.464471",
+ "modified_by": "thierry@dokos.io",
  "module": "ERPNext Integrations",
  "name": "GoCardless Settings",
  "owner": "Administrator",

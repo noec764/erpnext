@@ -34,7 +34,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		self.environment = self.get_environment()
 		try:
 			self.client = gocardless_pro.Client(
-				access_token=self.access_token,
+				access_token=self.get_password(fieldname="access_token", raise_exception=False),
 				environment=self.environment
 				)
 			return self.client

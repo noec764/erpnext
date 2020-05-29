@@ -7,6 +7,7 @@ import json
 from frappe import _
 import frappe.www.list
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
+from erpnext.templates.pages.integrations.stripe_checkout import get_api_key
 
 no_cache = 1
 
@@ -31,7 +32,7 @@ def get_context(context):
 			if references.get("stripe_customer_id") and references.get("stripe_settings"):
 				context.enable_stripe = True
 				context.stripe_payment_methods = get_customer_payment_methods(references)
-				context.publishable_key = frappe.db.get_value("Stripe Settings", references.stripe_settings, "publishable_key")
+				context.publishable_key = get_api_key(references.stripe_settings)
 
 def get_customer_payment_methods(references):
 	try:

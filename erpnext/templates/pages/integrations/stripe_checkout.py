@@ -31,7 +31,7 @@ def get_context(context):
 
 			context.client_secret = payment_intent.client_secret
 
-		context.publishable_key = get_api_key(context.reference_docname, gateway_controller)
+		context.publishable_key = get_api_key(gateway_controller)
 		context.image = get_header_image(context.reference_docname, gateway_controller)
 		context.amount = fmt_money(amount=context.amount, currency=context.currency)
 
@@ -41,7 +41,7 @@ def get_context(context):
 		frappe.local.flags.redirect_location = frappe.local.response.location
 		raise frappe.Redirect
 
-def get_api_key(doc, gateway_controller):
+def get_api_key(gateway_controller):
 	return frappe.db.get_value("Stripe Settings", gateway_controller, "publishable_key")
 
 def get_header_image(doc, gateway_controller):
