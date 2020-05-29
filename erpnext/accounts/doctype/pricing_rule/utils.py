@@ -11,29 +11,19 @@ import json
 from six import string_types
 
 import frappe
-from frappe.utils import flt, cint, get_datetime, get_link_to_form, today
 from erpnext.setup.doctype.item_group.item_group import get_child_item_groups
 from erpnext.stock.doctype.warehouse.warehouse import get_child_warehouses
 from erpnext.stock.get_item_details import get_conversion_factor
 from frappe import _, throw
 from frappe.utils import cint, flt, get_datetime, get_link_to_form, getdate, today
 
+
 class MultiplePricingRuleConflict(frappe.ValidationError): pass
 
 apply_on_table = {
-	'Item Code': 'items',
-	'Item Group': 'item_groups',
-	'Brand': 'brands'
-}
-
-date_field_map = {
-	'Quotation': 'transaction_date',
-	'Sales Order': 'transaction_date',
-	'Delivery Note': 'posting_date',
-	'Sales Invoice': 'posting_date',
-	'Purchase Order': 'transaction_date',
-	'Purchase Receipt': 'posting_date',
-	'Purchase Invoice': 'posting_date'
+    'Item Code': 'items',
+    'Item Group': 'item_groups',
+    'Brand': 'brands'
 }
 
 def get_pricing_rules(args, doc=None):
@@ -166,8 +156,6 @@ def get_other_conditions(conditions, values, args):
 		group_condition = _get_tree_conditions(args, parenttype, '`tabPricing Rule`')
 		if group_condition:
 			conditions += " and " + group_condition
-		else:
-			conditions += f" and ifnull(`tabPricing Rule`.{frappe.scrub(parenttype)}, '') = ''"
 
 	if args.get("transaction_date"):
 		conditions += """ and %(transaction_date)s between ifnull(`tabPricing Rule`.valid_from, '2000-01-01')
@@ -196,11 +184,10 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 
 		if pricing_rules[0].mixed_conditions and doc:
 			stock_qty, amount, items = get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args)
-
 			for pricing_rule_args in pricing_rules:
 				pricing_rule_args.apply_rule_on_other_items = items
 
-		elif pricing_rules[0].is_cumulative and not args.get('for_shopping_cart'):
+		elif pricing_rules[0].is_cumulative:
 			items = [args.get(frappe.scrub(pr_doc.get('apply_on')))]
 			data = get_qty_amount_data_for_cumulative(pr_doc, args, items)
 
@@ -212,6 +199,7 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 			pricing_rules = get_qty_and_rate_for_other_item(doc, pr_doc, pricing_rules) or []
 		else:
 			pricing_rules = filter_pricing_rules_for_qty_amount(stock_qty, amount, pricing_rules, args)
+
 		if not pricing_rules:
 			for d in original_pricing_rule:
 				if not d.threshold_percentage: continue
@@ -299,7 +287,7 @@ def filter_pricing_rules_for_qty_amount(qty, rate, pricing_rules, args=None):
 			conversion_factor = get_conversion_factor(rule.item_code, rule.uom).get("conversion_factor", 1)
 
 		if (flt(qty) >= (flt(rule.min_qty) * conversion_factor)
-			and (flt(qty) <= (rule.max_qty * conversion_factor) if rule.max_qty else True)):
+			and (flt(qty)<= (rule.max_qty * conversion_factor) if rule.max_qty else True)):
 			status = True
 
 		# if user has created item price against the transaction UOM
@@ -353,7 +341,7 @@ def get_qty_and_rate_for_mixed_conditions(doc, pr_doc, args):
 				sum_qty += flt(row.get("stock_qty")) or flt(args.get("stock_qty")) or flt(args.get("qty"))
 				sum_amt += amt
 
-		if pr_doc.is_cumulative and not doc.get('for_shopping_cart'):
+		if pr_doc.is_cumulative:
 			data = get_qty_amount_data_for_cumulative(pr_doc, doc, items)
 
 			if data and data[0]:
@@ -376,31 +364,16 @@ def get_qty_and_rate_for_other_item(doc, pr_doc, pricing_rules):
 
 def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 	sum_qty, sum_amt = [0, 0]
-	doctype = doc.get('parenttype') or doc.get('doctype') or "Sales Invoice"
+	doctype = doc.get('parenttype') or doc.doctype
 
-	date_field = date_field_map.get(doctype)
+	date_field = 'transaction_date' if frappe.get_meta(doctype).has_field('transaction_date') else 'posting_date'
 
 	child_doctype = '{0} Item'.format(doctype)
 	apply_on = frappe.scrub(pr_doc.get('apply_on'))
 
 	values = [pr_doc.valid_from, pr_doc.valid_upto]
-
-	parent_condition = ""
-	if doc.get("name"):
-		parent_condition = " and `tab{parent_doc}`.name != '{parent_name}'".format(
-			parent_doc=doctype,
-			parent_name=doc.get("name")
-		)
-
-	party_condition = ""
-	if doc.get("customer") or doc.get("supplier"):
-		party_condition = " and `tab{parent_doc}`.{party_type} = '{party}'".format(
-			parent_doc=doctype,
-			party_type="customer" if doc.get("customer") else "supplier",
-			party=doc.get("customer") or doc.get("supplier")
-		)
-
 	condition = ""
+
 	if pr_doc.warehouse:
 		warehouses = get_child_warehouses(pr_doc.warehouse)
 
@@ -419,15 +392,11 @@ def get_qty_amount_data_for_cumulative(pr_doc, doc, items=[]):
 			`tab{child_doc}`.amount
 		FROM `tab{child_doc}`, `tab{parent_doc}`
 		WHERE
-			`tab{child_doc}`.parent = `tab{parent_doc}`.name
-			{parent_condition}
-			and `tab{parent_doc}`.{date_field}
+			`tab{child_doc}`.parent = `tab{parent_doc}`.name and `tab{parent_doc}`.{date_field}
 			between %s and %s and `tab{parent_doc}`.docstatus = 1
-			{party_condition} {condition} group by `tab{child_doc}`.name
+			{condition} group by `tab{child_doc}`.name
 	""".format(parent_doc = doctype,
 		child_doc = child_doctype,
-		parent_condition = parent_condition,
-		party_condition=party_condition,
 		condition = condition,
 		date_field = date_field
 	), tuple(values), as_dict=1)
@@ -446,7 +415,7 @@ def apply_pricing_rule_on_transaction(doc):
 
 	pricing_rules = frappe.db.sql(""" Select `tabPricing Rule`.* from `tabPricing Rule`
 		where  {conditions} and `tabPricing Rule`.disable = 0
-		""".format(conditions = conditions), values, as_dict=1)
+	""".format(conditions = conditions), values, as_dict=1)
 
 	if pricing_rules:
 		pricing_rules = filter_pricing_rules_for_qty_amount(doc.total_qty,
@@ -458,7 +427,6 @@ def apply_pricing_rule_on_transaction(doc):
 					doc.set('apply_discount_on', d.apply_discount_on)
 
 				for field in ['additional_discount_percentage', 'discount_amount']:
-
 					pr_field = ('discount_percentage'
 						if field == 'additional_discount_percentage' else field)
 
@@ -471,10 +439,9 @@ def apply_pricing_rule_on_transaction(doc):
 						doc.set(field, d.get(pr_field))
 
 				doc.calculate_taxes_and_totals()
-
 			elif d.price_or_product_discount == 'Product':
 				item_details = frappe._dict({'parenttype': doc.doctype})
-				get_product_discount_rule(d, item_details, doc)
+				get_product_discount_rule(d, item_details, doc=doc)
 				apply_pricing_rule_for_free_items(doc, item_details.free_item_data)
 				doc.set_missing_values()
 
@@ -482,9 +449,10 @@ def get_applied_pricing_rules(item_row):
 	return (item_row.get("pricing_rules").split(',')
 		if item_row.get("pricing_rules") else [])
 
-def get_product_discount_rule(pricing_rule, item_details, doc=None):
-	free_item = (pricing_rule.free_item
-		if not pricing_rule.same_item or pricing_rule.apply_on == 'Transaction' else item_details.item_code)
+def get_product_discount_rule(pricing_rule, item_details, args=None, doc=None):
+	free_item = pricing_rule.free_item
+	if pricing_rule.same_item:
+		free_item = item_details.item_code or args.item_code
 
 	if not free_item:
 		frappe.throw(_("Free item not set in the pricing rule {0}")
