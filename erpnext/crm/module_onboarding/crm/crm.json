@@ -13,10 +13,10 @@
  "creation": "2020-05-09 23:42:50.901548",
  "docstatus": 0,
  "doctype": "Module Onboarding",
- "documentation_url": "https://docs.erpnext.com/docs/user/manual/en/CRM",
+ "documentation_url": "https://doc.dokos.io",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-05-27 11:33:09.941263",
+ "modified": "2020-05-28 13:59:33.693420",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "CRM",
@@ -37,6 +37,6 @@
  ],
  "subtitle": "Lead, Opportunity, Customer and more",
  "success_message": "CRM Module is all setup!",
- "title": "Let's Setup Your CRM",
+ "title": "Let's set up your CRM",
  "user_can_dismiss": 1
 }

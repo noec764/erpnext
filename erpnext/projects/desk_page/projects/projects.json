@@ -33,7 +33,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Projects",
-    "modified": "2020-05-04 20:27:51.591365",
+    "modified": "2020-05-28 13:38:19.934937",
     "modified_by": "Administrator",
     "module": "Projects",
     "name": "Projects",
@@ -43,7 +43,7 @@
     "icon": "fas fa-project-diagram",
     "shortcuts": [
      {
-      "color": "#4d4da8",
+      "color": "#cef6d1",
       "format": "{} Assigned",
       "label": "Task",
       "link_to": "Task",
@@ -51,7 +51,7 @@
       "type": "DocType"
      },
      {
-        "color": "#4d4da8",
+      "color": "#ffe8cd",
         "format": "{} Open",
       "label": "Project",
       "link_to": "Project",

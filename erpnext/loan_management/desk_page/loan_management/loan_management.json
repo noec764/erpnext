@@ -37,7 +37,7 @@
     "idx": 0,
     "is_standard": 1,
     "label": "Loan",
-    "modified": "2020-05-22 11:28:51.380509",
+    "modified": "2020-05-28 13:37:42.017709",
     "modified_by": "Administrator",
     "module": "Loan Management",
     "name": "Loan",
@@ -48,8 +48,11 @@
     "color": "#EF4DB6",
     "shortcuts": [
      {
+        "color": "#ffe8cd",
+        "format": "{} Open",
       "label": "Loan Application",
       "link_to": "Loan Application",
+      "stats_filter": "{ \"status\": \"Open\" }",
       "type": "DocType"
      },
      {

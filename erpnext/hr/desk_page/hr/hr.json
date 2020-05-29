@@ -95,7 +95,7 @@
  "is_standard": 1,
  "hide_custom": 0,
  "label": "HR",
- "modified": "2020-05-21 11:20:54.255557",
+ "modified": "2020-05-28 13:36:07.710600",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "HR",
@@ -105,6 +105,7 @@
  "pin_to_top": 0,
  "shortcuts": [
     {
+      "color": "#cef6d1",
      "format": "{} Active",
      "label": "Employee",
      "link_to": "Employee",
@@ -112,17 +113,19 @@
      "type": "DocType"
     },
     {
-     "label": "Attendance",
-     "link_to": "Attendance",
-     "stats_filter": "",
-     "type": "DocType"
-    },
-    {
+      "color": "#ffe8cd",
+      "format": "{} Open",
      "label": "Leave Application",
      "link_to": "Leave Application",
      "stats_filter": "{\"status\":\"Open\"}",
      "type": "DocType"
     },
+    {
+      "label": "Attendance",
+      "link_to": "Attendance",
+      "stats_filter": "",
+      "type": "DocType"
+     },
     {
      "label": "Salary Structure",
      "link_to": "Payroll Entry",
@@ -135,7 +138,7 @@
     },
     {
      "format": "{} Open",
-     "label": "HR Dashboard",
+     "label": "Dashboard",
      "link_to": "Human Resource",
      "stats_filter": "{\n    \"status\": \"Open\"\n}",
      "type": "Dashboard"
