@@ -8,12 +8,12 @@
  "is_mandatory": 1,
  "is_single": 0,
  "is_skipped": 0,
- "modified": "2020-05-14 12:25:38.068582",
+ "modified": "2020-05-15 12:25:38.068582",
  "modified_by": "Administrator",
  "name": "Create Holiday list",
  "owner": "Administrator",
  "reference_document": "Holiday List",
  "show_full_form": 1,
- "title": "Create Holiday list",
+ "title": "Create holiday list",
  "validate_action": 0
 }
