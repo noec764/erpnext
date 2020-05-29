@@ -64,11 +64,13 @@ def execute():
 
 		return_document_map = make_return_document_map(doctype, return_document_map)
 
+		count = 0
+
 		#iterate through original documents and its return documents
 		for docname in return_document_map:
-			doc_items = frappe.get_doc(doctype, docname).get("items")
+			doc_items = frappe.get_cached_doc(doctype, docname).get("items")
 			for return_doc in return_document_map[docname]:
-				return_doc_items = frappe.get_doc(doctype, return_doc).get("items")
+				return_doc_items = frappe.get_cached_doc(doctype, return_doc).get("items")
 
 				#iterate through return document items and original document items for mapping
 				for return_item in return_doc_items:
