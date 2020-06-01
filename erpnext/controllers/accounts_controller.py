@@ -46,7 +46,7 @@ class AccountsController(TransactionBase):
 				self.set_payment_schedule()
 
 	def ensure_supplier_is_not_blocked(self):
-		is_supplier_payment = self.doctype == 'Payment Entry' and self.party_type == 'Supplier'
+		is_supplier_payment = self.doctype == 'Payment Entry' and self.party_type == 'Supplier' and self.payment_type != "Internal Transfer"
 		is_buying_invoice = self.doctype in ['Purchase Invoice', 'Purchase Order']
 		supplier = None
 		supplier_name = None

@@ -80,8 +80,33 @@ class BankTransaction(StatusUpdater):
 		updated_amount = (flt(unreconciled_amount) - flt(payment.allocated_amount)) \
 			if clear else (flt(unreconciled_amount) + flt(payment.allocated_amount))
 
-		frappe.db.set_value(payment.payment_document, payment.payment_entry, \
-			"unreconciled_amount", updated_amount)
+		if payment.payment_document == "Payment Entry":
+			paid_from, paid_to = frappe.db.get_value("Payment Entry", payment.payment_entry, ["paid_from", "paid_to"])
+
+			if paid_from == self.bank_account_head:
+				unreconciled_amount_field = "unreconciled_from_amount"
+			elif paid_to == self.bank_account_head:
+				unreconciled_amount_field = "unreconciled_to_amount"
+			else:
+				frappe.throw(_("This bank account could not be found on the selected payment document"))
+
+			unreconciled_split_amount = frappe.db.get_value(payment.payment_document, payment.payment_entry, unreconciled_amount_field)
+			updated_split_amount = (flt(unreconciled_split_amount) - flt(payment.allocated_amount)) if clear else (flt(unreconciled_split_amount) + flt(payment.allocated_amount))
+			frappe.db.set_value(payment.payment_document, payment.payment_entry, unreconciled_amount_field, updated_split_amount)
+
+		elif payment.payment_document == "Journal Entry":
+			journal_entry_accounts = frappe.get_all("Journal Entry Account", \
+				filters={"parent": payment.payment_entry, "parenttype": "Journal Entry", "account": self.bank_account_head, "unreconciled_amount": (">", 0)}, \
+				fields=["name", "unreconciled_amount"])
+			total_split_amount = flt(payment.allocated_amount)
+			for journal_entry_account in journal_entry_accounts:
+				if total_split_amount > 0:
+					unreconciled_split_amount = journal_entry_account.unreconciled_amount
+					updated_split_amount = (flt(unreconciled_split_amount) - flt(payment.allocated_amount)) if clear else (flt(unreconciled_split_amount) + flt(payment.allocated_amount))
+					frappe.db.set_value("Journal Entry Account", journal_entry_account.name, "unreconciled_amount", max(updated_split_amount, 0))
+					total_split_amount = (total_split_amount - updated_split_amount) if updated_split_amount <= 0 else 0
+
+		frappe.db.set_value(payment.payment_document, payment.payment_entry, "unreconciled_amount", updated_amount)
 
 		if not clear:
 			self.set_payment_entries_clearance_date(True)

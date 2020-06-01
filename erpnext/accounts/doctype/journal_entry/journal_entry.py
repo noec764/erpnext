@@ -639,7 +639,8 @@ class JournalEntry(AccountsController):
 		cash_bank_accounts = [x.get("name") for x in frappe.get_all("Account", {"account_type": ["in", ["Bank", "Cash"]]})]
 		for line in self.accounts:
 			if line.account in cash_bank_accounts:
-				amount += (flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency))
+				amount += abs(flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency))
+				frappe.db.set_value("Journal Entry Account", line.name, "unreconciled_amount", abs(flt(line.debit_in_account_currency) - flt(line.credit_in_account_currency)), update_modified=False)
 
 		self.db_set("unreconciled_amount", abs(amount), update_modified=False)
 
