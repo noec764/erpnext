@@ -454,7 +454,7 @@ def get_item_calendar(item, uom):
 	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
 	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
 		dict(item=None, uom=uom), dict(item=None, uom=None)]:
-		filtered_calendars = [x.get("name") for x in calendars if x.get("item") == filters.get("item") and x.get("uom") == filters.get("uom")]
+		filtered_calendars = [x.get("name") for x in calendars if x.get("item") == (filters.get("item") or "") and x.get("uom") == (filters.get("uom") or "")]
 		if filtered_calendars:
 			return frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
 	return []

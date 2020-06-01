@@ -116,6 +116,7 @@ export default {
 					this.slots = result.message || []
 
 					callback(this.slots);
+					this.$refs.fullCalendar.getApi().setOption('contentHeight', 'auto');
 					if (!this.slots.length) {
 						this.$refs.fullCalendar.getApi().updateSize()
 						this.getAvailableItems(parameters)
@@ -140,7 +141,7 @@ export default {
 				const emptyElems = document.getElementsByClassName("fc-list-empty");
 				if (emptyElems.length) {
 					const alternative_items_links = this.alternative_items.map(item => {
-						return `<div class="card">
+						return `<div class="card my-1">
 									<div class="row no-gutters">
 										<div class="col-md-3">
 											<div class="card-body">
@@ -163,7 +164,7 @@ export default {
 											</div>
 										</div>
 									</div>
-								</card>`
+								</div>`
 					}).join('')
 
 					emptyElems[0].innerHTML = `
@@ -171,6 +172,7 @@ export default {
 					<h3 class="text-muted mb-5">${__("Items available on this date")}</h3>
 					${alternative_items_links}
 					`
+					this.$refs.fullCalendar.getApi().setOption('contentHeight', emptyElems[0].clientHeight);
 				}
 			}
 		},
