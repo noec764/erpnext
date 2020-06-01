@@ -618,12 +618,13 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				item_tax_map = JSON.parse(item_tax_map);
 			}
 
-			$.each(item_tax_map, function(tax, rate) {
-				let found = (me.frm.doc.taxes || []).find(d => d.account_head === tax);
+			item_tax_map.map(tax => {
+				let found = (me.frm.doc.taxes || []).find(d => d.account_head === tax.account);
 				if(!found) {
 					let child = frappe.model.add_child(me.frm.doc, "taxes");
 					child.charge_type = "On Net Total";
-					child.account_head = tax;
+					child.account_head = tax.account;
+					child.description = tax.description;
 					child.rate = 0;
 				}
 			});
