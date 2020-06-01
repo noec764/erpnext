@@ -124,18 +124,18 @@ const add_to_transaction = (frm, transaction_type) => {
 		doctype: transaction_type,
 		target: "Item Booking",
 		date_field: "transaction_date" || undefined,
-		setters: {},
+		setters: {"party_name": ""},
 		get_query: () => {
 			return {
 				filters: {
-					docstatus: ("!=", 2)
+					docstatus: ["!=", 2]
 				}
 			}
 		},
 		action: function(selections, args) {
 			const values = selections;
 			if(values.length === 0){
-				frappe.msgprint(__("Please select {0}", [opts.source_doctype]))
+				frappe.msgprint(__("Please select a {0}", [__(transaction_type)]))
 				return;
 			}
 			d.dialog.hide();
