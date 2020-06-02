@@ -159,8 +159,13 @@ class BankTransaction(StatusUpdater):
 			elif payment.payment_document == "Purchase Invoice":
 				payment.payment_type = "Credit" if not frappe.db.get_value("Purchase Invoice", payment.payment_entry, "is_return") else "Debit"
 			if payment.payment_document == "Payment Entry":
-				pt = frappe.db.get_value("Payment Entry", payment.payment_entry, "payment_type")
-				payment.payment_type = "Debit" if pt == "Receive" else "Credit"
+				paid_from, paid_to = frappe.db.get_value("Payment Entry", payment.payment_entry, ("paid_from", "paid_to"))
+				if self.bank_account_head == paid_from:
+					payment.payment_type = "Credit"
+				elif self.bank_account_head == paid_to:
+					payment.payment_type = "Debit"
+				else:
+					frappe.throw(_("This bank account could not be found on the selected payment document"))
 			if payment.payment_document == "Journal Entry":
 				bank_account = frappe.db.get_value("Bank Account", self.bank_account, "account")
 				debit_in_account_currency = frappe.db.get_value("Journal Entry Account", {"parent": payment.payment_entry, "account": bank_account}, "debit_in_account_currency")

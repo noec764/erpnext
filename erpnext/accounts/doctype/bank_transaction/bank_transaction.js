@@ -54,6 +54,10 @@ frappe.ui.form.on('Bank Transaction', {
 				frm.trigger("close_bank_transaction");
 			});
 		}
+
+		frm.add_custom_button(__('Bank reconciliation dashboard'), function () {
+			frappe.set_route("bank-reconciliation");
+		});
 	},
 	close_bank_transaction(frm) {
 		return frappe.call({
@@ -95,7 +99,7 @@ frappe.ui.form.on('Bank Transaction Payments', {
 				case "Payment Entry":
 					if (frm.doc.bank_account_head) {
 						frappe.db.get_value(row.payment_document, row.payment_entry, ["paid_to", "paid_from", "party_name", "posting_date"], r => {
-							r&&r.paid_from&&frappe.model.set_value(cdt, cdn, "payment_type", r.paid_from == frm.doc.bank_account_head ? "Debit": r.paid_to == frm.doc.bank_account_head ? "Credit" : frm.trigger("account_do_not_exist"));
+							r&&r.paid_from&&frappe.model.set_value(cdt, cdn, "payment_type", r.paid_from == frm.doc.bank_account_head ? "Credit": r.paid_to == frm.doc.bank_account_head ? "Debit" : frm.trigger("account_do_not_exist"));
 							r&&r.party_name&&frappe.model.set_value(cdt, cdn, "party", r.party_name);
 							r&&r.posting_date&&frappe.model.set_value(cdt, cdn, "date", r.posting_date);
 						});

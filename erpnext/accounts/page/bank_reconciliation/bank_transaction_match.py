@@ -18,7 +18,7 @@ from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_ac
 
 PARTY_FIELD = {
 	"Payment Entry": "party",
-	"Journal Entry": "against",
+	"Journal Entry": "party",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
 	"Expense Claim": "employee_name"
@@ -103,28 +103,22 @@ class BankTransactionMatch:
 
 		if self.document_type == "Payment Entry":
 			for result in query_result:
-				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency and result.get("paid_from") == self.account):
+				if (result.get("paid_from_account_currency") == self.currency and result.get("paid_from") == self.account):
 					filtered_result.append(dict(result, **{
-						"amount": result.get("unreconciled_amount", 0) * -1,\
+						"amount": result.get("unreconciled_from_amount", 0) * -1,\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field)
+						"reference_string": result.get(reference_field),
+						"unreconciled_amount": result.get("unreconciled_from_amount", 0)
 					}))
 
-				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency and result.get("paid_to") == self.account):
+				elif (result.get("paid_to_account_currency") == self.currency and result.get("paid_to") == self.account):
 					filtered_result.append(dict(result, **{
-						"amount": result.get("unreconciled_amount", 0),\
+						"amount": result.get("unreconciled_to_amount", 0),\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field)
-					}))
-
-				elif (result.get("payment_type") == "Internal Transfer" and (result.get("paid_to") == self.account or result.get("paid_from") == self.account)):
-					filtered_result.append(dict(result, **{
-						"amount": result.get("unreconciled_amount", 0) * (1 if result.get("paid_to") == self.account else -1),\
-						"party": result.get(party_field),\
-						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field)
+						"reference_string": result.get(reference_field),
+						"unreconciled_amount": result.get("unreconciled_to_amount", 0)
 					}))
 
 		elif self.document_type == "Purchase Invoice":
@@ -161,7 +155,7 @@ class BankTransactionMatch:
 		return filtered_result
 
 	def get_linked_journal_entries(self, document_names=None, unreconciled=True, filters=None):
-		child_query_filters = {"account_currency": self.currency, "account": self.account}
+		child_query_filters = {"account_currency": self.currency, "account": self.account, "docstatus": 1}
 		parent_query_filters = {"company": self.company}
 
 		if unreconciled:
@@ -178,21 +172,21 @@ class BankTransactionMatch:
 			fields=["name", "posting_date", "cheque_no", "cheque_date", "unreconciled_amount", "remark", "user_remark"])
 		parent_map = {x.get("name"): x for x in parent_query_result}
 
-		child_query_filters.update({"voucher_type": "Journal Entry", "voucher_no": ("in", [x.name for x in parent_query_result])})
+		child_query_filters.update({"parenttype": "Journal Entry", "parent": ("in", [x.name for x in parent_query_result])})
 
 		if filters:
 			child_query_filters.update(filters)
 
-		party_query_result = frappe.get_all("GL Entry", filters=child_query_filters, fields=["*"])
+		party_query_result = frappe.get_all("Journal Entry Account", filters=child_query_filters, fields=["*"])
 
 		result = [dict(x, **{
-			"name": parent_map.get(x.get("voucher_no"), {}).get("name"),
-			"amount": x.get("debit_in_account_currency") - x.get("credit_in_account_currency"), \
-			"posting_date": parent_map.get(x.get("voucher_no"), {}).get("posting_date"), \
-			"reference_date": parent_map.get(x.get("voucher_no"), {}).get("cheque_date"), \
-			"reference_string": parent_map.get(x.get("voucher_no"), {}).get("cheque_no") \
-				or parent_map.get(x.get("voucher_no"), {}).get("remark") or parent_map.get(x.get("voucher_no"), {}).get("userremark"), \
-			"unreconciled_amount": parent_map.get(x.get("voucher_no"), {}).get("unreconciled_amount")
+			"name": parent_map.get(x.get("parent"), {}).get("name"),
+			"amount": x.get("unreconciled_amount"), \
+			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
+			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
+			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
+				or parent_map.get(x.get("parent"), {}).get("remark") or parent_map.get(x.get("parent"), {}).get("user_remark"), \
+			"unreconciled_amount": x.get("unreconciled_amount")
 			}) for x in party_query_result]
 
 		return [x for x in result if x.get("amount") and x.get("name")]
