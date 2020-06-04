@@ -660,7 +660,7 @@ erpnext.patches.v12_0.set_italian_import_supplier_invoice_permissions
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
 erpnext.patches.dokos.v1_0.remove_healthcare_domain
-erpnext.patches.dokos.v1_0.remove_education_domain
+erpnext.patches.dokos.v1_0.remove_education_domain #2020-05
 erpnext.patches.dokos.v1_0.remove_non_profit_domain
 erpnext.patches.dokos.v1_0.remove_hub
 erpnext.patches.dokos.v1_0.remove_agriculture_domain #2020-05
@@ -687,3 +687,4 @@ erpnext.patches.dokos.v1_3.reset_user_last_version
 execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation")
 execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation Detail")
 erpnext.patches.dokos.v1_3.subscription_plans_refactor
+execute:frappe.delete_doc_if_exists("DocType", "Company Type")

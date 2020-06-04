@@ -99,13 +99,18 @@
         "Reference Document": "Document de référence"
     },
     "DocType: Accounting Journal": {
+        "Account": "Compte",
         "Accounting Journal": "Journal comptable",
         "Accounts": "Comptes",
         "Bank": "Banque",
         "Cash": "Espèces",
+        "Company": "Société",
         "Conditions": "Conditions",
+        "Disabled": "Désactiver",
+        "Journal Code": "Code du journal",
         "Journal Name": "Nom du journal",
         "Miscellaneous": "Divers",
+        "Purchase": "Achat",
         "Purchases": "Achats",
         "Sales": "Ventes",
         "System Manager": "Responsable système",
@@ -144,6 +149,7 @@
         "Allow Stale Exchange Rates": "Autoriser l'utilisation de taux de change existants",
         "Automatically Add Taxes and Charges from Item Tax Template": "Ajouter automatiquement les taxes et frais des modèles de taxes d'articles",
         "Automatically Fetch Payment Terms": "Récupérer les termes de paiement automatiquement",
+        "Automatically Process Deferred Accounting Entry": "Traiter automatiquement les écritures comptables différées",
         "Billing Address": "Adresse de facturation",
         "Book Asset Depreciation Entry Automatically": "Comptabiliser automatiquement les écritures d'immobilisation d'actifs",
         "Check Supplier Invoice Number Uniqueness": "Vérifiez l'unicité du numéro de facture du fournisseur",
@@ -158,6 +164,7 @@
         "Percentage you are allowed to bill more against the amount ordered. For example: If the order value is $100 for an item and tolerance is set as 10% then you are allowed to bill for $110.": "Pourcentage de facturation supérieur au montant commandé autorisé. Par exemple: si le montant de la commande est de 100 € pour un article et la tolérance est de 10%, vous êtes autorisé à facturer 110 €",
         "Print Settings": "Paramètres d'impression",
         "Purchase User": "Acheteur",
+        "Record all transactions against an accounting journal": "Comptabilisation toutes les transactions dans un journal comptable",
         "Report Settings": "Paramètres de rapport",
         "Role Allowed to Set Frozen Accounts & Edit Frozen Entries": "Rôle autorisé à geler des comptes & à éditer des écritures gelées",
         "Role that is allowed to submit transactions that exceed credit limits set.": "Rôle qui est autorisé à valider des transactions qui dépassent les limites de crédit fixées.",
@@ -197,7 +204,7 @@
     },
     "DocType: Additional Salary": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Company": "Société",
         "Date on which this component is applied": "Date à laquelle ce composant est appliqué",
@@ -205,16 +212,21 @@
         "Department": "Département",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
+        "From Date": "Date de début",
         "HR": "RH",
         "HR User": "Chargé RH",
         "HR-ADS-.YY.-.MM.-": "HR-ADS-.YY .-. MM.-",
+        "Is Recurring": "Récurrent",
         "Overwrite Salary Structure Amount": "Remplacer le montant de la structure salariale",
         "Payroll Date": "Date de la paie",
+        "Reference Document": "Document de référence",
+        "Reference Document Type": "Type du document de référence",
         "Salary Component": "Composante salariale",
         "Salary Component Type": "Type de composant salarial",
         "Salary Slip": "Fiche de Paie",
         "Series": "Série",
-        "System Manager": "Responsable système"
+        "System Manager": "Responsable système",
+        "To Date": "Date de fin"
     },
     "DocType: Allowed To Transact With": {
         "Accounts": "Comptes",
@@ -222,9 +234,11 @@
         "Company": "Société"
     },
     "DocType: Amazon MWS Settings": {
+        "AE": "AE",
         "AU": "AU",
         "AWS Access Key ID": "ID de clé d'accès AWS",
         "After Date": "Après la date",
+        "Always sync your products from Amazon MWS before syncing the Orders details": "Toujours synchroniser les produits depuis Amazon MWS avant de synchroniser les détails de la commande",
         "Always synch your products from Amazon MWS before synching the Orders details": "Synchronisez toujours vos produits depuis Amazon MWS avant de synchroniser les détails des commandes.",
         "Amazon MWS Settings": "Paramètres Amazon MWS",
         "Amazon will synch data updated after this date": "Amazon synchronisera les données mises à jour après cette date",
@@ -241,6 +255,7 @@
         "ERPNext Integrations": "Intégrations dokos",
         "ES": "ES",
         "Enable Amazon": "Activer Amazon",
+        "Enable Scheduled Sync": "Autoriser la synchronisation programmée",
         "Enable Scheduled Synch": "Activer la synchronisation programmée",
         "FR": "FR",
         "Get financial breakup of Taxes and charges data by Amazon ": "Obtenez la répartition financière des taxes et des données de facturation par Amazon",
@@ -259,6 +274,9 @@
         "Region": "Région",
         "Secret Key": "Clé secrète",
         "Seller ID": "ID du vendeur",
+        "Sync Orders": "Synchroniser les commandes",
+        "Sync Products": "Synchroniser les produits",
+        "Sync Taxes and Charges": "Synchroniser les taxes et frais",
         "Synch Orders": "Commandes de synchronisation",
         "Synch Products": "Produits Synch",
         "Synch Taxes and Charges": "Synch Taxes et Charges",
@@ -330,6 +348,11 @@
     },
     "DocType: Appointment Letter": {
         "Applicant Name": "Nom du Candidat",
+        "Appointment Date": "Date d'embauche",
+        "Appointment Letter": "Promesse d'embauche",
+        "Appointment Letter Template": "Modèle de promesse d'embauche",
+        "Body": "Corps",
+        "Closing Notes": "Conclusion",
         "Company": "Société",
         "HR": "RH",
         "HR Manager": "Responsable RH",
@@ -339,6 +362,8 @@
         "Terms": "Termes"
     },
     "DocType: Appointment Letter Template": {
+        "Appointment Letter Template": "Modèle de promesse d'embauche",
+        "Closing Notes": "Conclusion",
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "Introduction": "Introduction",
@@ -346,12 +371,13 @@
         "Terms": "Termes"
     },
     "DocType: Appointment Letter content": {
+        "Appointment Letter content": "Contenu de la promesse d'embauche",
         "Description": "Description",
         "HR": "RH",
         "Title": "Titre"
     },
     "DocType: Appraisal": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Any other remarks, noteworthy effort that should go in the records.": "Toute autre remarque, effort remarquable qui devrait aller dans les dossiers.",
         "Appraisal": "Estimation",
         "Appraisal Template": "Modèle d'évaluation",
@@ -407,7 +433,7 @@
         "Accounting Dimensions": "Dimensions comptables",
         "Accounts User": "Comptable",
         "Allow Monthly Depreciation": "Autoriser les amortissements mensuels",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Category": "Catégorie d'Actif",
         "Asset Name": "Nom de l'Actif",
@@ -538,7 +564,7 @@
     "DocType: Asset Maintenance Log": {
         "ACC-AML-.YYYY.-": "ACC-AML-.YYYY.-",
         "Actions performed": "Actions réalisées",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Asset Maintenance": "Maintenance des Actifs",
         "Asset Maintenance Log": "Journal de Maintenance des Actifs",
         "Asset Name": "Nom de l'Actif",
@@ -561,7 +587,8 @@
         "Periodicity": "Périodicité",
         "Planned": "Prévu",
         "Series": "Série",
-        "Task": "Tâche"
+        "Task": "Tâche",
+        "Task Name": "Nom de la tâche"
     },
     "DocType: Asset Maintenance Task": {
         "2 Yearly": "2 ans",
@@ -604,7 +631,7 @@
     "DocType: Asset Movement": {
         "ACC-ASM-.YYYY.-": "ACC-ASM-.YYYY.-",
         "Accounts Manager": "Responsable comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Movement": "Mouvement d'Actif",
         "Assets": "Actifs",
@@ -644,7 +671,7 @@
     "DocType: Asset Repair": {
         "ACC-ASR-.YYYY.-": "ACC-ASR-.AAAA.-",
         "Actions performed": "Actions réalisées",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Asset Name": "Nom de l'Actif",
         "Asset Repair": "Réparation d'Actif",
         "Assets": "Actifs",
@@ -677,7 +704,7 @@
         "Accounting Dimensions": "Dimensions comptables",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Category": "Catégorie d'Actif",
         "Asset Value Adjustment": "Ajustement de la valeur des actifs",
@@ -695,7 +722,7 @@
     "DocType: Attendance": {
         "ATT-": "ATT-",
         "Absent": "Absent",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Attendance": "Présence",
         "Attendance Date": "Date de Présence",
         "Attendance Request": "Demande de validation de présence",
@@ -721,7 +748,7 @@
         "Working Hours": "Heures de Travail"
     },
     "DocType: Attendance Request": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Attendance Request": "Demande de validation de présence",
         "Company": "Société",
         "Department": "Département",
@@ -793,13 +820,15 @@
     "DocType: BOM": {
         "Allow Alternative Item": "Autoriser un article alternatif",
         "Allow Same Item Multiple Times": "Autoriser le même élément plusieurs fois",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "BOM": "LDM (Liste de Matériaux)",
         "Company": "Société",
         "Conversion Rate": "Taux de Conversion",
         "Costing": "Coût",
         "Currency": "Devise",
+        "Currency and Price List": "Devise et liste de prix",
         "Exploded Items": "Articles éclatés",
+        "Has Variants": "A des variantes",
         "Image": "Image",
         "Image View": "Vue image",
         "Inspection Required": "Inspection obligatoire",
@@ -824,6 +853,8 @@
         "Operating Cost (Company Currency)": "Coût d'Exploitation (Devise Société)",
         "Operations": "Opérations",
         "Price List": "Liste de prix",
+        "Price List Currency": "Devise de la liste de prix",
+        "Price List Exchange Rate": "Taux de change de la Liste de prix",
         "Project": "Projet",
         "Quality Inspection Required": "Inspection de la qualité requise",
         "Quality Inspection Template": "Modèle d'inspection de la qualité",
@@ -880,6 +911,7 @@
         "Basic Rate (Company Currency)": "Taux de Base (Devise de la Société )",
         "Conversion Factor": "Facteur de Conversion",
         "Description": "Description",
+        "Has Variants": "A des variantes",
         "Image": "Image",
         "Image View": "Vue image",
         "Include Item In Manufacturing": "Inclure l'article dans la production",
@@ -1013,6 +1045,22 @@
         "SWIFT number": "Numéro SWIFT",
         "Website": "Site web"
     },
+    "DocType: Bank Account Subtype": {
+        "Account Subtype": "Sous-type de compte",
+        "Accounts": "Comptes",
+        "Accounts Manager": "Responsable comptable",
+        "Accounts User": "Comptable",
+        "Bank Account Subtype": "Sous-type de compte bancaire",
+        "System Manager": "Responsable système"
+    },
+    "DocType: Bank Account Type": {
+        "Account Type": "Type de compte",
+        "Accounts": "Comptes",
+        "Accounts Manager": "Responsable comptable",
+        "Accounts User": "Comptable",
+        "Bank Account Type": "Type de compte bancaire",
+        "System Manager": "Responsable système"
+    },
     "DocType: Bank Clearance": {
         "Account Currency": "Compte Devise",
         "Accounts": "Comptes",
@@ -1047,7 +1095,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
@@ -1111,10 +1159,12 @@
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
         "Allocated Amount": "Montant Alloué",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bank Account": "Compte bancaire",
+        "Bank Account Head": "Compte comptable du compte bancaire",
         "Bank Transaction": "Transaction bancaire",
         "Cancelled": "Annulé",
+        "Closed": "Fermé",
         "Company": "Société",
         "Credit": "Crédit",
         "Currency": "Devise",
@@ -1157,11 +1207,15 @@
     "DocType: Batch": {
         "Batch": "Lot",
         "Batch Description": "Description du Lot",
+        "Batch Details": "Détails du lot",
         "Batch ID": "ID du Lot",
+        "Batch Quantity": "Quantité du lot",
+        "Batch UOM": "Unité de mesure du lot",
         "Disabled": "Désactiver",
         "Expiry Date": "Date d'expiration",
         "Item": "Article",
         "Item Manager": "Gestionnaire d'Article",
+        "Item Name": "Nom de l'article",
         "Manufacturing Date": "Date de production",
         "Parent Batch": "Lot Parent",
         "Source": "Source",
@@ -1194,7 +1248,7 @@
         "Warehouse": "Entrepôt"
     },
     "DocType: Blanket Order": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Blanket Order": "Commande avec limites",
         "Company": "Société",
         "Customer": "Client",
@@ -1253,7 +1307,7 @@
         "Action if Annual Budget Exceeded on Actual": "Action si le budget annuel est dépassé par rapport aux dépenses réelles",
         "Action if Annual Budget Exceeded on MR": "Action si le budget annuel est dépassé avec les requêtes de matériel",
         "Action if Annual Budget Exceeded on PO": "Action si le budget annuel a été dépassé avec les bons de commande d'achat",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicable on Material Request": "Applicable sur la base des requêtes de matériel",
         "Applicable on Purchase Order": "Applicable sur la base des bons de commande d'achat",
         "Applicable on booking actual expenses": "Applicable sur la base de l'enregistrement des dépenses réelles",
@@ -1291,7 +1345,9 @@
         "Over Transfer Allowance (%)": "Tolérance de sur-transfert (%)",
         "Percentage you are allowed to transfer more against the quantity ordered. For example: If you have ordered 100 units. and your Allowance is 10% then you are allowed to transfer 110 units.": "Percentage de transfert autorisé en plus de la quantité commandée. Par exemple: si vous avez commandé 100 unités et votre tolérance est de 10%, vous êtes autorisé à transférer 110 unités",
         "Purchase Order Required": "Commande fournisseur Requis",
+        "Purchase Order Required for Purchase Invoice & Receipt Creation": "Commande fournisseur requise pour les factures d'achat et les création de reçus",
         "Purchase Receipt Required": "Reçu d’Achat Requis",
+        "Purchase Receipt Required for Purchase Invoice Creation": "Reçu d'achat requis pour la création d'une facture fournisseur",
         "Settings for Buying Module": "Paramètres du Module Achat",
         "Subcontract": "Sous-traiter",
         "Supplier Name": "Nom du Fournisseur",
@@ -1305,7 +1361,7 @@
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
         "All": "Tous",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "C-Form": "Formulaire-C",
         "C-Form No": "Formulaire-C Nº",
         "Company": "Société",
@@ -1569,6 +1625,7 @@
         "For reference only.": "Pour information",
         "Gain/Loss Account on Asset Disposal": "Compte de Cessions des Immobilisations",
         "Hub Sync ID": "Hub Sync ID",
+        "Inter-banks transfer account": "Compte de transfert inter-bancaire",
         "Is Group": "Est un groupe",
         "Legal Entity / Subsidiary with a separate Chart of Accounts belonging to the Organization.": "Entité Juridique / Filiale avec un Plan de Comptes différent appartenant à l'Organisation.",
         "Lft": "Lft",
@@ -1611,7 +1668,7 @@
         "Taxes": "Taxes"
     },
     "DocType: Compensatory Leave Request": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Compensatory Leave Request": "Demande de congé compensatoire",
         "Department": "Département",
         "Employee": "Employé",
@@ -1631,7 +1688,7 @@
     },
     "DocType: Contract": {
         "Active": "Actif",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "Contract": "Contrat",
         "Contract Details": "Détails du contrat",
@@ -1679,7 +1736,7 @@
         "Unsigned": "Non signé"
     },
     "DocType: Contract Fulfilment Checklist": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "Contract Fulfilment Checklist": "Liste de vérification de l'exécution des contrats",
         "Fulfilled": "Complété",
@@ -1726,7 +1783,7 @@
     "DocType: Coupon Code": {
         "Accounts": "Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Coupon Code": "Code promotionnel",
         "Coupon Description": "Description de la promotion",
         "Coupon Name": "Nom du code promotionnel",
@@ -1772,6 +1829,8 @@
         "Additional information regarding the customer.": "Informations supplémentaires concernant le client.",
         "Address HTML": "Adresse HTML",
         "Address and Contact": "Adresse et Contact",
+        "Allow Sales Invoice Creation Without Delivery Note": "Permettre la création de factures sans bon de livraison",
+        "Allow Sales Invoice Creation Without Sales Order": "Permettre la création de factures sans bon de commande",
         "Allowed To Transact With": "Autorisé à faire affaire avec",
         "Billing Currency": "Devise de Facturation",
         "Buyer of Goods and Services.": "Acheteur des Biens et Services.",
@@ -1927,7 +1986,7 @@
         "Additional Discount Amount (Company Currency)": "Montant de la Remise Supplémentaire (Devise de la Société)",
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Billing Address": "Adresse de Facturation",
@@ -1974,6 +2033,7 @@
         "In Words will be visible once you save the Delivery Note.": "En Toutes Lettres. Sera visible une fois que vous enregistrez le Bon de livraison.",
         "Installation Status": "Etat de l'Installation",
         "Instructions": "Instructions",
+        "Inter Company Reference": "Référence inter-société",
         "Is Internal Customer": "Est un client interne",
         "Is Return": "Est un Retour",
         "Issue Credit Note": "Note de crédit d'émission",
@@ -2055,6 +2115,7 @@
     "DocType: Delivery Note Item": {
         "Accounting Details": "Détails Comptabilité",
         "Accounting Dimensions": "Dimensions comptables",
+        "Against Delivery Note Item": "En contrepartie d'un article de bon de livraison",
         "Against Sales Invoice": "Pour la Facture de vente",
         "Against Sales Invoice Item": "Pour l'Article de la Facture de vente",
         "Against Sales Order": "Pour la Commande Client",
@@ -2156,7 +2217,7 @@
         "Visited": "Visite effectuée"
     },
     "DocType: Delivery Trip": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Calculate Estimated Arrival Times": "Calculer les heures d'arrivée estimées",
         "Cancelled": "Annulé",
         "Company": "Société",
@@ -2203,6 +2264,7 @@
         "Leave Block List": "Liste de Blocage des Congés",
         "Old Parent": "Grand Parent",
         "Parent Department": "Département parent",
+        "Payroll Cost Center": "Centre de coût pour la paie",
         "The first Expense Approver in the list will be set as the default Expense Approver.": "Le premier approbateur de notes de frais de la liste sera défini comme approbateur de notes de frais par défaut.",
         "The first Leave Approver in the list will be set as the default Leave Approver.": "Le premier approbateur de congés de la liste sera défini comme approbateur de congés par défaut.",
         "lft": "lft",
@@ -2256,6 +2318,31 @@
         "Discounted Invoice": "Affacturage client",
         "Invoice": "Facture",
         "Outstanding Amount": "Montant restant dû"
+    },
+    "DocType: Downtime Entry": {
+        "DT-": "DT-",
+        "Downtime": "Temps d'arrêt",
+        "Downtime Entry": "Ecriture de temps d'arrêt",
+        "Downtime Reason": "Raison pour le temps d'arrêt",
+        "Electricity down": "Coupure d'électricité",
+        "Excessive machine set up time": "Temps de préparation de la machine excessif",
+        "From Time": "Horaire de début",
+        "In Mins": "En mins",
+        "Machine malfunction": "Disfonctionnement de la machine",
+        "Machine operator errors": "Erreurs de l'opérateur de la machine",
+        "Manufacturing": "Production",
+        "Manufacturing Manager": "Responsable de production",
+        "Manufacturing User": "Chargé de production",
+        "Naming Series": "Nom de série",
+        "On-machine press checks": "Vérifications sur la machine",
+        "Operator": "Opérateur",
+        "Other": "Autre",
+        "Remarks": "Remarques",
+        "Stop Reason": "Raison pour l'arrêt",
+        "System Manager": "Responsable système",
+        "To Time": "Horaire de fin",
+        "Unplanned machine maintenance": "Maintenance de la machine non planifiée",
+        "Workstation / Machine": "Station de travail / Machine"
     },
     "DocType: Driver": {
         "Active": "Actif",
@@ -2452,6 +2539,7 @@
         "Old Parent": "Grand Parent",
         "Owned": "Détenu",
         "Passport Number": "Numéro de Passeport",
+        "Payroll Cost Center": "Centre de coût de paie",
         "Permanent Address": "Adresse Permanente",
         "Permanent Address Is": "L’Adresse Permanente Est",
         "Personal Bio": "Biographie",
@@ -2490,7 +2578,7 @@
     "DocType: Employee Advance": {
         "Advance Account": "Compte d'avances",
         "Advance Amount": "Montant de l'Avance",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Claimed": "Réclamé",
         "Claimed Amount": "Montant réclamé",
@@ -2509,6 +2597,7 @@
         "Paid Amount": "Montant payé",
         "Posting Date": "Date de comptabilisation",
         "Purpose": "Objet",
+        "Repay unclaimed amount from salary": "Déduire le montant du salaire",
         "Returned Amount": "Montant remboursé",
         "Series": "Série",
         "Status": "Statut",
@@ -2528,7 +2617,7 @@
         "Unmarked Attendance": "Participation Non Marquée"
     },
     "DocType: Employee Benefit Application": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Benefits Applied": "Prestations demandées",
         "Date": "Date",
         "Department": "Département",
@@ -2556,7 +2645,7 @@
         "Pay Against Benefit Claim": "Payer la demande de prestations"
     },
     "DocType: Employee Benefit Claim": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Attachments": "Pièces jointes",
         "Benefit Type and Amount": "Type de prestation et montant",
         "Claim Benefit For": "Demande de prestations pour",
@@ -2663,7 +2752,7 @@
     },
     "DocType: Employee Incentive": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Department": "Département",
         "Employee": "Employé",
         "Employee Incentive": "Intéressement des employés",
@@ -2692,7 +2781,7 @@
     },
     "DocType: Employee Onboarding": {
         "Activities": "Activités",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Completed": "Terminé",
         "Date of Joining": "Date d'Embauche",
@@ -2733,8 +2822,21 @@
         "HR": "RH",
         "System Manager": "Responsable système"
     },
+    "DocType: Employee Other Income": {
+        "Amended From": "Modication du document",
+        "Amount": "Montant",
+        "Company": "Société",
+        "Employee": "Employé",
+        "Employee Name": "Nom de l'employé",
+        "Employee Other Income": "Autres revenus de l'employé",
+        "HR": "RH",
+        "HR Manager": "Responsable RH",
+        "HR User": "Chargé RH",
+        "Payroll Period": "Période de paie",
+        "Source": "Source"
+    },
     "DocType: Employee Promotion": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "Employee": "Employé",
@@ -2757,7 +2859,7 @@
     },
     "DocType: Employee Separation": {
         "Activities": "Activités",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Completed": "Terminé",
         "Department": "Département",
@@ -2816,7 +2918,7 @@
         "System Manager": "Responsable système"
     },
     "DocType: Employee Tax Exemption Declaration": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Declarations": "Déclarations",
         "Department": "Département",
@@ -2843,7 +2945,7 @@
         "Maximum Exempted Amount": "Montant maximum exempté"
     },
     "DocType: Employee Tax Exemption Proof Submission": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Attachments": "Pièces jointes",
         "Company": "Société",
         "Department": "Département",
@@ -2890,7 +2992,7 @@
         "Training Date": "Date de la formation"
     },
     "DocType: Employee Transfer": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Create New Employee Id": "Créer un nouvel identifiant d'employé",
         "Department": "Département",
@@ -2925,7 +3027,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Exchange Rate Revaluation": "Réévaluation du taux de change",
         "Exchange Rate Revaluation Account": "Compte de réévaluation du taux de change",
@@ -2963,7 +3065,7 @@
         "Accounting Journal": "Journal comptable",
         "Advance Payments": "Avances",
         "Advances": "Avances",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Approval Status": "Statut d'approbation",
         "Approved": "Approuvé",
         "Cancelled": "Annulé",
@@ -3026,6 +3128,7 @@
         "Unclaimed amount": "Montant non réclamé"
     },
     "DocType: Expense Claim Detail": {
+        "Accounting Dimensions": "Dimensions comptables",
         "Amount": "Montant",
         "Cost Center": "Centre de coûts",
         "Default Account": "Compte par Défaut",
@@ -3047,6 +3150,7 @@
     },
     "DocType: Expense Taxes and Charges": {
         "Account Head": "Compte comptable",
+        "Accounting Dimensions": "Dimensions comptables",
         "Amount": "Montant",
         "Cost Center": "Centre de coûts",
         "Description": "Description",
@@ -3096,7 +3200,7 @@
         "Against": "Contrepartie",
         "Against Voucher": "Pour le Bon",
         "Against Voucher Type": "Pour le Type de Bon",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Auditor": "Auditeur",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
@@ -3109,6 +3213,7 @@
         "Fiscal Year": "Exercice Fiscal",
         "GL Entry": "Écriture GL",
         "Is Advance": "Est un acompte",
+        "Is Cancelled": "Annulée",
         "Is Opening": "Écriture d'Ouverture",
         "No": "Non",
         "Party": "Tiers",
@@ -3220,8 +3325,11 @@
     },
     "DocType: HR Settings": {
         "<b>Example:</b> SAL-{first_name}-{date_of_birth.year} <br>This will generate a password like SAL-Jane-1972": "<b>Exemple:</b> SAL-{first_name}-{date_of_birth.year} <br>Ceci générera un mot de passe de la forme SAL-Jane-1972",
+        "Attendance": "Présence",
         "Auto Leave Encashment": "Paiement des congés automatique",
+        "Calculate Payroll Working Days Based On": "Calculer les jours de travail payés sur la base de",
         "Check Vacancies On Job Offer Creation": "Vérifier les ouvertures de poste lors de la création d'offres d'emploi",
+        "Daily Wages Fraction for Half Day": "Fraction du salaire journalier pour une demi-journée",
         "Disable Rounded Total": "Désactiver le Total Arrondi",
         "Don't send Employee Birthday Reminders": "Ne pas envoyer de rappel pour le Jour d'Anniversaire des Employés",
         "Email Salary Slip to Employee": "Envoyer la Fiche de Paie à l'Employé par Mail",
@@ -3240,6 +3348,7 @@
         "If checked, Total no. of Working Days will include holidays, and this will reduce the value of Salary Per Day": "Si cochée, Le nombre total de Jours Ouvrés comprendra les vacances, ce qui réduira la valeur du Salaire Par Jour",
         "If checked, hides and disables Rounded Total field in Salary Slips": "Si coché, le champ total arrondi sera caché dans les fiches de paie",
         "Include holidays in Total no. of Working Days": "Inclure les vacances dans le nombre total de Jours Ouvrés",
+        "Leave": "Congés",
         "Leave Approval Notification Template": "Modèle de notification d'approbation de congés",
         "Leave Approver Mandatory In Leave Application": "Approbateur de congés obligatoire dans une demande de congé",
         "Leave Settings": "Paramètres des Congés",
@@ -3254,13 +3363,15 @@
         "Show Leaves Of All Department Members In Calendar": "Afficher les congés de tous les membres du département dans le calendrier",
         "Stop Birthday Reminders": "Arrêter les Rappels d'Anniversaire",
         "System Manager": "Responsable système",
+        "The fraction of daily wages to be paid for half-day attendance": "Fraction du salaire journalier payé pour une présence d'une demi-journée",
         "The salary slip emailed to the employee will be password protected, the password will be generated based on the password policy.": "Les fiches de paie envoyées par email seront protégées par un mot de passe. Le mot de passe sera généré sur la base de la politique de mots de passe"
     },
     "DocType: Holiday": {
         "Date": "Date",
         "Description": "Description",
         "HR": "RH",
-        "Holiday": "Vacances"
+        "Holiday": "Vacances",
+        "Weekly Off": "Jours de congé hebdomadaire"
     },
     "DocType: Holiday List": {
         "Add Weekly Holidays": "Ajouter des vacances hebdomadaires",
@@ -3362,6 +3473,32 @@
         "Upload XML Invoices": "Télécharger des facture XML",
         "Zip File": "Fichier Zip"
     },
+    "DocType: Income Tax Slab": {
+        "Allow Tax Exemption": "Autoriser les exonérations de taxe",
+        "Amended From": "Modication du document",
+        "Company": "Société",
+        "Disabled": "Désactiver",
+        "Effective from": "Effectif à partir du",
+        "HR": "RH",
+        "HR Manager": "Responsable RH",
+        "HR User": "Chargé RH",
+        "If enabled, Tax Exemption Declaration will be considered for income tax calculation.": "Si autorisé, la déclaration d'exonération de taxe sera prise en compte pour le calcul de l'impôt sur le revenu.",
+        "Income Tax Slab": "Tranche d'impôt sur le revenu",
+        "Other Taxes and Charges": "Autres frais et taxes",
+        "Standard Tax Exemption Amount": "Montant d'exemption de taxes standard",
+        "System Manager": "Responsable système",
+        "Taxable Salary Slabs": "Tranches de salaire imposables",
+        "Taxes and Charges on Income Tax": "Taxes et frais sur l'impôt sur le revenu"
+    },
+    "DocType: Income Tax Slab Other Charges": {
+        "Conditions": "Conditions",
+        "Description": "Description",
+        "HR": "RH",
+        "Income Tax Slab Other Charges": "Autres frais par tranche d'impôt sur le revenu",
+        "Max Taxable Income": "Revenu taxable max",
+        "Min Taxable Income": "Revenu taxable min",
+        "Percent": "Pourcentage"
+    },
     "DocType: Industry Type": {
         "Industry": "Industrie",
         "Industry Type": "Secteur d'Activité",
@@ -3372,7 +3509,7 @@
     },
     "DocType: Installation Note": {
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Contact": "Contact",
@@ -3432,7 +3569,7 @@
         "Accounts Receivable Credit Account": "Compte débiteur à créditer",
         "Accounts Receivable Discounted Account": "Compte débiteur d'affacturage",
         "Accounts Receivable Unpaid Account": "Compte débiteur d'impayés",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bank Account": "Compte bancaire",
         "Bank Charges": "Frais bancaires",
         "Bank Charges Account": "Compte de frais bancaires",
@@ -3544,6 +3681,8 @@
         "Customer Provided": "Fourni par un client",
         "Customs Tariff Number": "Tarifs Personnalisés",
         "Default BOM": "LDM par Défaut",
+        "Default Item Manufacturer": "Fabricant d'article par défaut",
+        "Default Manufacturer Part No": "N° d'élement de fabrication par défaut",
         "Default Material Request Type": "Type de Requête de Matériaux par Défaut",
         "Default Purchase Unit of Measure": "Unité de Mesure par défaut à l'Achat",
         "Default Sales Unit of Measure": "Unité de Mesure par défaut à la Vente",
@@ -3715,7 +3854,7 @@
     "DocType: Item Booking": {
         "All": "Tous",
         "All day": "Toute la journée",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Billing": "Facturation",
         "Billing Qty": "Quantité facturée",
         "Cancelled": "Annulé",
@@ -3848,6 +3987,7 @@
     },
     "DocType: Item Manufacturer": {
         "Description": "Description",
+        "Is Default": "Par défaut",
         "Item Code": "Code de l'Article",
         "Item Manager": "Gestionnaire d'Article",
         "Item Manufacturer": "Fabricant d'article",
@@ -3931,6 +4071,7 @@
     },
     "DocType: Item Tax Template Detail": {
         "Accounts": "Comptes",
+        "Description": "Description",
         "Item Tax Template Detail": "Détail du modèle de taxe d'article",
         "Tax": "Taxe",
         "Tax Rate": "Taux d'Imposition"
@@ -3982,6 +4123,7 @@
         "Hold": "Mettre en attente",
         "Job Applicant": "Demandeur d'Emploi",
         "Job Opening": "Offre d’Emploi",
+        "Notes": "Notes",
         "Open": "Ouvert",
         "Rejected": "Rejeté",
         "Replied": "Répondu",
@@ -4000,7 +4142,7 @@
     "DocType: Job Card": {
         "Actual End Date": "Date de Fin Réelle",
         "Actual Start Date": "Date de Début Réelle",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Barcode": "Code barre",
         "Cancelled": "Annulé",
@@ -4070,7 +4212,7 @@
     },
     "DocType: Job Offer": {
         "Accepted": "Accepté",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant Email Address": "Adresse email du postulant",
         "Applicant Name": "Nom du Candidat",
         "Awaiting Response": "Attente de Réponse",
@@ -4124,7 +4266,7 @@
         "Accounts Payable": "Comptes créditeurs",
         "Accounts Receivable": "Comptes débiteurs",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Auditor": "Auditeur",
         "Auto Repeat": "Répétition",
         "Bank Entry": "Écriture Bancaire",
@@ -4144,6 +4286,7 @@
         "Exchange Rate Revaluation": "Réévaluation du taux de change",
         "Excise Entry": "Écriture d'Accise",
         "Finance Book": "Livre comptable",
+        "From Template": "Depuis le modèle",
         "Get Outstanding Invoices": "Obtenir les factures impayées",
         "Inter Company Journal Entry": "Ecriture de journal inter-sociétés",
         "Inter Company Journal Entry Reference": "Référence d'Écriture de journal inter-sociétés",
@@ -4190,6 +4333,7 @@
         "Account Currency": "Compte Devise",
         "Account Type": "Type de compte",
         "Accounting Dimensions": "Dimensions comptables",
+        "Accounting Journal": "Journal comptable",
         "Accounts": "Comptes",
         "Against Account": "Pour le Compte",
         "Amount": "Montant",
@@ -4227,8 +4371,43 @@
         "Reference Type": "Type de référence",
         "Sales Invoice": "Facture de vente",
         "Sales Order": "Commande client",
+        "Unreconciled Amount": "Montant non rapproché",
         "User Remark": "Remarques",
         "Yes": "Oui"
+    },
+    "DocType: Journal Entry Template": {
+        "Accounting Entries": "Écritures comptables",
+        "Accounts": "Comptes",
+        "Accounts Manager": "Responsable comptable",
+        "Accounts User": "Comptable",
+        "Auditor": "Auditeur",
+        "Bank Entry": "Écriture de banque",
+        "Cash Entry": "Écriture de caisse",
+        "Company": "Société",
+        "Contra Entry": "Contre-passation",
+        "Credit Card Entry": "Écriture de carte de crédit",
+        "Credit Note": "Note de crédit",
+        "Debit Note": "Note de débit",
+        "Depreciation Entry": "Ecriture d’amortissement",
+        "Exchange Rate Revaluation": "Réévaluation du taux de change",
+        "Excise Entry": "Écriture d'accise",
+        "Inter Company Journal Entry": "Ecriture de journal inter-sociétés",
+        "Is Opening": "Écriture d'à-nouveaux",
+        "Journal Entry": "Écriture de journal",
+        "Journal Entry Template": "Modèle d'écriture de journal",
+        "Journal Entry Type": "Type d'écriture de journal",
+        "Multi Currency": "Multi-devise",
+        "No": "Non",
+        "Opening Entry": "Écriture d'à-nouveaux",
+        "Series": "Série",
+        "Template Title": "Titre du modèle",
+        "Write Off Entry": "Écriture de reprise",
+        "Yes": "Oui"
+    },
+    "DocType: Journal Entry Template Account": {
+        "Account": "Compte",
+        "Accounts": "Comptes",
+        "Journal Entry Template Account": "Compte de modèle d'écriture de journal"
     },
     "DocType: Landed Cost Item": {
         "Accounting Dimensions": "Dimensions comptables",
@@ -4268,7 +4447,7 @@
     },
     "DocType: Landed Cost Voucher": {
         "Additional Charges": "Frais Supplémentaires",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Applicable Charges": "Frais Applicables",
         "Company": "Société",
@@ -4293,7 +4472,9 @@
         "Address Line 1": "Adresse",
         "Address Line 2": "Complément d'adresse",
         "Address Title": "Titre de l'Adresse",
+        "Address Type": "Type d'adresse",
         "All": "Tous",
+        "Billing": "Facturation",
         "Blog Subscriber": "Abonné au Blog",
         "CRM": "CRM",
         "Campaign Name": "Nom de la Campagne",
@@ -4307,6 +4488,7 @@
         "Converted": "Converti",
         "Country": "Pays",
         "County": "Etat",
+        "Current": "Valeur actuelle",
         "Designation": "Désignation",
         "Do Not Contact": "Ne Pas Contacter",
         "Email Address": "Adresse email",
@@ -4348,6 +4530,7 @@
         "Sales User": "Commercial",
         "Salutation": "Salutation",
         "Series": "Série",
+        "Shipping": "Livraison",
         "Source": "Source",
         "State": "État",
         "Status": "Statut",
@@ -4356,6 +4539,7 @@
         "Territory": "Région",
         "Title": "Titre",
         "Unsubscribed": "Désabonné",
+        "Warehouse": "Entrepôt",
         "Website": "Site web"
     },
     "DocType: Lead Source": {
@@ -4369,7 +4553,7 @@
     "DocType: Leave Allocation": {
         "Add unused leaves from previous allocations": "Ajouter les congés inutilisés des précédentes allocations",
         "Allocation": "Allocation",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Carry Forwarded Leaves": "Reporter les congés automatiquement",
         "Compensatory Leave Request": "Demande de congé compensatoire",
         "Department": "Département",
@@ -4396,7 +4580,7 @@
     },
     "DocType: Leave Application": {
         "All": "Tous",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply / Approve Leaves": "Appliquer / Approuver les Congés",
         "Approved": "Approuvé",
         "Cancelled": "Annulé",
@@ -4486,7 +4670,7 @@
     },
     "DocType: Leave Encashment": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Department": "Département",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
@@ -4506,13 +4690,14 @@
     },
     "DocType: Leave Ledger Entry": {
         "All": "Tous",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
         "From Date": "Date de début",
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "HR User": "Chargé RH",
+        "Holiday List": "Liste de congés",
         "Is Carry Forward": "Est un report",
         "Is Expired": "Est expiré",
         "Is Leave Without Pay": "Est un Congé Sans Solde",
@@ -4537,7 +4722,7 @@
         "To Date": "Date de fin"
     },
     "DocType: Leave Policy": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "HR User": "Chargé RH",
@@ -4591,9 +4776,25 @@
         "Linked Location": "Lieu lié",
         "Location": "Lieu"
     },
+    "DocType: LinkedIn Settings": {
+        "Access Token": "Jeton d'accès",
+        "Account Name": "Nom du compte",
+        "Active": "Actif",
+        "CRM": "CRM",
+        "Company ID": "ID de la société",
+        "Consumer Key": "Clé de consommateur",
+        "Consumer Secret": "Secret de consommateur",
+        "Expired": "Expiré",
+        "LinkedIn Settings": "Paramètres LinkedIn",
+        "OAuth Credentials": "Identifiants OAuth",
+        "Person URN": "URN de personne",
+        "Session Status": "Statut de la session",
+        "System Manager": "Responsable système",
+        "User Details": "Détails utilisateurs"
+    },
     "DocType: Loan": {
         "Account Info": "Information du Compte",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Name": "Nom du Candidat",
         "Applicant Type": "Type de demandeur",
@@ -4601,25 +4802,37 @@
         "Company": "Société",
         "Customer": "Client",
         "Disbursed": "Décaissé",
+        "Disbursed Amount": "Montant déboursé",
         "Disbursement Date": "Date de déboursement",
         "Employee": "Employé",
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "Interest Income Account": "Compte d'Intérêts Créditeurs",
+        "Is Secured Loan": "Prêt garanti",
+        "Is Term Loan": "Prêt à terme",
         "Loan": "Prêt",
         "Loan Account": "Compte de prêt",
         "Loan Amount": "Montant du Prêt",
         "Loan Application": "Demande de prêt",
+        "Loan Closure Requested": "Clôture du prêt demandée",
         "Loan Details": "Détails du Prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
+        "Loan Security Details": "Détails de la garantie du prêt",
+        "Loan Security Pledge": "Engagement de garantie de prêt",
         "Loan Type": "Type de Prêt",
+        "Maximum Loan Value": "Valeur maximale du prêt",
         "Member": "Membre",
         "Mode of Payment": "Mode de Paiement",
         "Monthly Repayment Amount": "Montant du Remboursement Mensuel",
+        "Partially Disbursed": "Partiellement déboursé",
         "Payment Account": "Compte de Paiement",
+        "Penalty Income Account": "Compte de pénalités",
         "Posting Date": "Date de comptabilisation",
         "Rate of Interest (%) / Year": "Taux d'Intérêt (%) / Année",
         "Repaid/Closed": "Remboursé / Fermé",
         "Repay Fixed Amount per Period": "Rembourser un Montant Fixe par Période",
+        "Repay From Salary": "Remboursé sur le salaire",
         "Repay Over Number of Periods": "Rembourser Sur le Nombre de Périodes",
         "Repay from Salary": "Rembourser avec le Salaire",
         "Repayment Method": "Méthode de Remboursement",
@@ -4632,10 +4845,11 @@
         "Total Interest Payable": "Total des Intérêts à Payer",
         "Total Payable Amount": "Montant Total Créditeur",
         "Total Payment": "Paiement Total",
+        "Total Principal Paid": "Principal total payé",
         "Totals": "Totaux"
     },
     "DocType: Loan Application": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Name": "Nom du Candidat",
         "Applicant Type": "Type de demandeur",
@@ -4645,15 +4859,21 @@
         "Employee": "Employé",
         "HR": "RH",
         "HR Manager": "Responsable RH",
+        "Is Secured Loan": "Prêt garanti",
+        "Is Term Loan": "Prêt à terme",
         "Loan Amount": "Montant du Prêt",
         "Loan Application": "Demande de prêt",
         "Loan Info": "Infos sur le Prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
+        "Loan Security Details": "Détails de la garantie du prêt",
         "Loan Type": "Type de Prêt",
         "Maximum Loan Amount": "Montant Max du Prêt",
         "Member": "Membre",
         "Monthly Repayment Amount": "Montant du Remboursement Mensuel",
         "Open": "Ouvert",
         "Posting Date": "Date de comptabilisation",
+        "Proposed Pledges": "Engagements proposés",
         "Rate of Interest": "Taux d'Intérêt",
         "Reason": "Raison",
         "Rejected": "Rejeté",
@@ -4669,7 +4889,8 @@
     },
     "DocType: Loan Disbursement": {
         "Accounting Dimensions": "Dimensions comptables",
-        "Amended From": "Modifié depuis",
+        "Against Loan ": "Pour le prêt",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Type": "Type de demandeur",
         "Bank Account": "Compte bancaire",
@@ -4677,14 +4898,20 @@
         "Cost Center": "Centre de coûts",
         "Customer": "Client",
         "Customer Details": "Détails du client",
+        "Disbursed Amount": "Montant déboursé",
         "Disbursement Date": "Date de déboursement",
+        "Disbursement Details": "Détails des déboursements",
         "Employee": "Employé",
+        "Loan Disbursement": "Déboursement du prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Member": "Membre",
         "Posting Date": "Date de comptabilisation",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Interest Accrual": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
+        "Amounts": "Montants",
         "Applicant": "Candidat",
         "Applicant Type": "Type de demandeur",
         "Company": "Société",
@@ -4693,15 +4920,18 @@
         "Interest Amount": "Montant d'Intérêts",
         "Interest Income Account": "Compte d'Intérêts Créditeurs",
         "Is Paid": "Est Payé",
+        "Is Term Loan": "Prêt à terme",
         "Loan": "Prêt",
         "Loan Account": "Compte de prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Member": "Membre",
         "Posting Date": "Date de comptabilisation",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Repayment": {
         "Accounting Dimensions": "Dimensions comptables",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Type": "Type de demandeur",
         "Company": "Société",
@@ -4709,6 +4939,9 @@
         "Customer": "Client",
         "Due Date": "Date d'échéance de paiement",
         "Employee": "Employé",
+        "Is Term Loan": "Prêt à terme",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Loan Repayment": "Remboursement de prêt",
         "Loan Type": "Type de Prêt",
         "Member": "Membre",
@@ -4720,12 +4953,17 @@
         "References": "Références",
         "System Manager": "Responsable système"
     },
+    "DocType: Loan Repayment Detail": {
+        "Loan Management": "Gestion des prêts"
+    },
     "DocType: Loan Security": {
         "Disabled": "Désactiver",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Security Pledge": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Type": "Type de demandeur",
         "Company": "Société",
@@ -4733,12 +4971,19 @@
         "Employee": "Employé",
         "Loan": "Prêt",
         "Loan Application": "Demande de prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
+        "Loan Security Details": "Détails de la garantie du prêt",
+        "Loan Security Pledge": "Engagement de garantie de prêt",
+        "Maximum Loan Value": "Valeur maximale du prêt",
         "Member": "Membre",
         "Status": "Statut",
         "System Manager": "Responsable système",
         "Totals": "Totaux"
     },
     "DocType: Loan Security Price": {
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "System Manager": "Responsable système",
         "UOM": "Unité de mesure",
         "Valid From": "Valide à Partir de",
@@ -4747,16 +4992,20 @@
     "DocType: Loan Security Shortfall": {
         "Completed": "Terminé",
         "Loan Amount": "Montant du Prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Pending": "En attente",
         "Status": "Statut",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Security Type": {
         "Disabled": "Désactiver",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Security Unpledge": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Type": "Type de demandeur",
         "Approved": "Approuvé",
@@ -4764,13 +5013,16 @@
         "Customer": "Client",
         "Employee": "Employé",
         "Loan": "Prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
+        "Loan Security Details": "Détails de la garantie du prêt",
         "Member": "Membre",
         "Status": "Statut",
         "System Manager": "Responsable système"
     },
     "DocType: Loan Type": {
         "Account Details": "Détails du compte",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Description": "Description",
         "Disabled": "Désactiver",
@@ -4778,12 +5030,16 @@
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "Interest Income Account": "Compte d'Intérêts Créditeurs",
+        "Is Term Loan": "Prêt à terme",
         "Loan Account": "Compte de prêt",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Loan Name": "Nom du Prêt",
         "Loan Type": "Type de Prêt",
         "Maximum Loan Amount": "Montant Max du Prêt",
         "Mode of Payment": "Mode de Paiement",
         "Payment Account": "Compte de Paiement",
+        "Penalty Income Account": "Compte de pénalités",
         "Rate of Interest (%) Yearly": "Taux d'Intérêt (%) Annuel"
     },
     "DocType: Location": {
@@ -4812,6 +5068,31 @@
         "CRM": "CRM",
         "Lost Reason Detail": "Détail de la raison de la perte",
         "Opportunity Lost Reason": "Raison pour la perte de l'opportunité"
+    },
+    "DocType: Lower Deduction Certificate": {
+        "194A": "194A",
+        "194C": "194C",
+        "194D": "194D",
+        "194H": "194H",
+        "194I": "194I",
+        "194J": "194J",
+        "194LA": "194LA",
+        "194LBB": "194LBB",
+        "194LBC": "194LBC",
+        "Certificate Details": "Détails du certificat",
+        "Certificate Limit": "Limite du certificat",
+        "Certificate No": "N° de certificat",
+        "Deductee Details": "Détails de la déduction",
+        "Fiscal Year": "Exercice fiscal",
+        "Lower Deduction Certificate": "Certificat de déduction minorée",
+        "PAN No": "N° PAN",
+        "Rate Of TDS As Per Certificate": "Taux du TDS d'après le certificat",
+        "Regional": "Régional",
+        "Section Code": "Code de section",
+        "Supplier": "Fournisseur",
+        "Valid From": "Valide à partir de",
+        "Valid Upto": "Valide jusqu'au",
+        "Validity Details": "Détails de validité"
     },
     "DocType: Loyalty Point Entry": {
         "Accounts": "Comptes",
@@ -4873,7 +5154,7 @@
     },
     "DocType: Maintenance Schedule": {
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Contact": "Contact",
@@ -4940,7 +5221,7 @@
     },
     "DocType: Maintenance Visit": {
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Breakdown": "Panne",
         "Company": "Société",
         "Completion Status": "État d'Achèvement",
@@ -5041,7 +5322,7 @@
     "DocType: Material Request": {
         "% Ordered": "% Commandé",
         "% Received": "% Reçu",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Customer": "Client",
@@ -5065,12 +5346,16 @@
         "Purchase": "Achat",
         "Purchase Manager": "Responsable des achats",
         "Purchase User": "Acheteur",
+        "Purpose": "Objet",
         "Received": "Reçu",
         "Reference": "Référence",
         "Requested For": "Demandé par",
+        "Required By": "Demandé pour le",
         "Required Date": "Date Requise",
         "Scan Barcode": "Scanner un code barre",
         "Series": "Série",
+        "Set From Warehouse": "Définir depuis l'entrepôt",
+        "Set Warehouse": "Définir l'entrepôt",
         "Status": "Statut",
         "Stock": "Stock",
         "Stock Manager": "Responsable des stocks",
@@ -5090,6 +5375,7 @@
         "Accounting Dimensions": "Dimensions comptables",
         "Actual Qty": "Quantité Réelle",
         "Amount": "Montant",
+        "BOM No": "N° LDM",
         "Brand": "Marque",
         "Completed Qty": "Quantité Terminée",
         "Cost Center": "Centre de coûts",
@@ -5104,6 +5390,7 @@
         "Manufacture": "Production",
         "Manufacturer": "Fabricant",
         "Manufacturer Part Number": "Numéro de Pièce du Fabricant",
+        "Manufacturing": "Production",
         "Material Request Item": "Article de Demande de matériel",
         "Material Request Plan Item": "Article du plan de demande de matériel",
         "Min Order Qty": "Qté de Commande Min",
@@ -5116,9 +5403,11 @@
         "Quantity and Warehouse": "Quantité et Entrepôt",
         "Rate": "Prix unitaire",
         "Received Quantity": "Quantité reçue",
+        "Required By": "Demandé pour le",
         "Required Date": "Date Requise",
         "Sales Order": "Commande client",
         "Sales Order Item": "Article de la commande client",
+        "Source Warehouse (Material Transfer)": "Entrepôt source (Transfert de matériaux)",
         "Stock": "Stock",
         "Stock Qty": "Qté en Stock",
         "Stock UOM": "Unité de mesure du stock",
@@ -5129,6 +5418,7 @@
         "Actual Qty": "Quantité Réelle",
         "Customer Provided": "Fourni par un client",
         "Description": "Description",
+        "From Warehouse": "De l'Entrepôt",
         "Item Code": "Code de l'Article",
         "Item Description": "Description de l'article",
         "Item Name": "Nom de l'article",
@@ -5245,7 +5535,7 @@
     },
     "DocType: Opportunity": {
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "Campaign": "Campagne",
         "Closed": "Fermé",
@@ -5264,6 +5554,7 @@
         "Customer Group": "Groupe de clients",
         "Detailed Reason": "Raison détaillée",
         "Enter name of campaign if source of enquiry is campaign": "Entrez le nom de la campagne si la source de l'enquête est une campagne",
+        "Expected Closing Date": "Date de clôture prévue",
         "Follow Up": "Suivre",
         "Items": "Articles",
         "Lead": "Prospect",
@@ -5331,7 +5622,7 @@
         "System Manager": "Responsable système"
     },
     "DocType: POS Closing Voucher": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount in Custody": "Montant conservé",
         "Cashier": "Caissier",
         "Company": "Société",
@@ -5494,7 +5785,7 @@
         "UOM": "Unité de mesure"
     },
     "DocType: Packing Slip": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Delivery Note": "Bon de livraison",
         "From Package No.": "Du n° de colis",
         "Generate packing slips for packages to be delivered. Used to notify package number, package contents and its weight.": "Générer les bordereaux des colis à livrer. Utilisé pour indiquer le numéro de colis, le contenu et son poids.",
@@ -5563,12 +5854,13 @@
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
         "Allocate Payment Amount": "Allouer le montant du paiement",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Auto Repeat": "Répétition",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
         "Bank Account No": "No de compte bancaire",
+        "Cancelled": "Annulé",
         "Cheque/Reference Date": "Chèque/Date de Référence",
         "Cheque/Reference No": "Chèque/N° de référence",
         "Clearance Date": "Date de rapprochement",
@@ -5578,6 +5870,7 @@
         "Cost Center": "Centre de coûts",
         "Deductions or Loss": "Déductions ou Perte",
         "Difference Amount (Company Currency)": "Écart de montant (Devise de la Société)",
+        "Draft": "Brouillon",
         "Email": "Email",
         "Exchange Rate": "Taux de change",
         "Get Outstanding Invoice": "Obtenir les factures en attente",
@@ -5609,10 +5902,12 @@
         "Receive": "Reçu",
         "Received Amount": "Montant Reçu",
         "Received Amount (Company Currency)": "Montant Reçu (Devise Société)",
+        "Reconciled": "Rapproché",
         "Reference": "Référence",
         "Remarks": "Remarques",
         "Series": "Série",
         "Set Exchange Gain / Loss": "Définir le change Gain / Perte",
+        "Status": "Statut",
         "Subscription Section": "Section Abonnement",
         "Title": "Titre",
         "Total Allocated Amount": "Montant Total Alloué",
@@ -5620,6 +5915,7 @@
         "Transaction ID": "Identifiant de Transaction",
         "Type of Payment": "Type de Paiement",
         "Unallocated Amount": "Montant Non Alloué",
+        "Unreconciled": "Non rapproché",
         "Unreconciled Amount": "Montant non rapproché",
         "Write Off Difference Amount": "Montant de la Différence de la Reprise",
         "Writeoff": "Écrire"
@@ -5639,6 +5935,7 @@
         "Name": "Nom",
         "Outstanding": "Solde",
         "Payment Entry Reference": "Référence d’Écriture de Paiement",
+        "Payment Term": "Terme de paiement",
         "Supplier Invoice No": "N° de Facture du Fournisseur",
         "Total Amount": "Montant Total",
         "Type": "Type"
@@ -5659,7 +5956,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bank": "Banque",
         "Company": "Société",
         "Company Bank Account": "Compte bancaire de la société",
@@ -5743,7 +6040,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Amount in company currency": "Montant dans la devise de la société",
         "Amount in transaction currency": "Montant dans la devise de la transaction",
@@ -5803,6 +6100,7 @@
         "Due Date": "Date d'échéance de paiement",
         "Invoice Portion": "Pourcentage de facturation",
         "Mode of Payment": "Mode de Paiement",
+        "Paid Amount": "Montant payé",
         "Payment Amount": "Montant du paiement",
         "Payment Schedule": "Calendrier de paiement",
         "Payment Term": "Terme de paiement"
@@ -5828,6 +6126,8 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
+        "Allocate Payment Based On Payment Terms": "Allouer le paiement sur la base des termes de paiement",
+        "If this checkbox is checked, paid amount will be splitted and allocated as per the amounts in payment schedule against each payment term": "Si cette case est cochée, le montant payé sera divisé et alloué selon l'allocation prévue dans les termes de paiement",
         "Payment Terms": "Termes de paiement",
         "Payment Terms Template": "Modèle de termes de paiement",
         "System Manager": "Responsable système",
@@ -5858,7 +6158,7 @@
     "DocType: Payroll Entry": {
         "Accounting Dimensions": "Dimensions comptables",
         "Accounts": "Comptes",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bank Account": "Compte bancaire",
         "Bimonthly": "Bimensuel",
         "Branch": "Branche",
@@ -5916,7 +6216,7 @@
         "Accounting Journal": "Journal comptable",
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Closing Account Head": "Compte de clôture",
         "Closing Fiscal Year": "Clôture de l'Exercice",
         "Company": "Société",
@@ -5928,9 +6228,10 @@
         "Transaction Date": "Date de la Transaction"
     },
     "DocType: Pick List": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Customer": "Client",
+        "Delivery": "Livraison",
         "Delivery against Sales Order": "Livraison pour un bon de commande",
         "Get Item Locations": "Obtenir les localisations des articles",
         "Item Locations": "Localisation des articles",
@@ -5956,6 +6257,7 @@
         "Batch No": "N° du lot",
         "Description": "Description",
         "Item": "Article",
+        "Item Group": "Groupe d'article",
         "Item Name": "Nom de l'article",
         "Material Request": "Demande de matériel",
         "Material Request Item": "Article de demande de matériel",
@@ -5992,6 +6294,7 @@
     },
     "DocType: Pledge": {
         "Amount": "Montant",
+        "Loan Management": "Gestion des prêts",
         "Quantity": "Quantité",
         "UOM": "Unité de mesure"
     },
@@ -6148,14 +6451,33 @@
         "Setup": "Configuration",
         "System Manager": "Responsable système"
     },
+    "DocType: Process Deferred Accounting": {
+        "Account": "Compte",
+        "Accounts": "Comptes",
+        "Accounts Manager": "Responsable comptable",
+        "Accounts User": "Comptable",
+        "Amended From": "Modication du document",
+        "Company": "Société",
+        "Expense": "Charges",
+        "Income": "Revenus",
+        "Posting Date": "Date de comptabilisation",
+        "Service End Date": "Date de fin du service",
+        "Service Start Date": "Date de début du service",
+        "System Manager": "Responsable système",
+        "Type": "Type"
+    },
     "DocType: Process Loan Interest Accrual": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Loan Type": "Type de Prêt",
         "Posting Date": "Date de comptabilisation",
         "System Manager": "Responsable système"
     },
     "DocType: Process Loan Security Shortfall": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "System Manager": "Responsable système"
     },
     "DocType: Product Bundle": {
@@ -6180,7 +6502,7 @@
         "UOM": "Unité de mesure"
     },
     "DocType: Production Plan": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Completed": "Terminé",
@@ -6230,7 +6552,8 @@
         "To know more about projected quantity, <a href=\"https://erpnext.com/docs/user/manual/en/stock/projected-quantity\" style=\"text-decoration: underline;\" target=\"_blank\">click here</a>.": "Pour en savoir plus sur les quantités projetés, <a href=\"https://erpnext.com/docs/user/manual/en/stock/projected-quantity\" style=\"text-decoration: underline;\" target=\"_blank\">cliquez ici</a>.",
         "Total Planned Qty": "Quantité totale prévue",
         "Total Produced Qty": "Quantité totale produite",
-        "Warehouse": "Entrepôt"
+        "Warehouse": "Entrepôt",
+        "Warehouses": "Entrepôts"
     },
     "DocType: Production Plan Item": {
         "BOM No": "N° LDM",
@@ -6262,6 +6585,11 @@
         "Material Request": "Demande de matériel",
         "Material Request Date": "Date de la Demande de matériel",
         "Production Plan Material Request": "Demande de matériel du Plan de Production"
+    },
+    "DocType: Production Plan Material Request Warehouse": {
+        "Manufacturing": "Production",
+        "System Manager": "Responsable système",
+        "Warehouse": "Entrepôt"
     },
     "DocType: Production Plan Sales Order": {
         "Customer": "Client",
@@ -6325,6 +6653,7 @@
         "Margin": "Marge",
         "Medium": "Moyen",
         "Message": "Message",
+        "Message will be sent to the users to get their status on the Project": "Un message sera envoyé aux utilisateurs pour leur donner le statut du projet",
         "Message will sent to users to get their status on the project": "Un message sera envoyé aux utilisateurs pour obtenir leur statut d'avancement du projet",
         "Monday": "Lundi",
         "Monitor Progress": "Suivre l'avancement",
@@ -6391,7 +6720,7 @@
         "System Manager": "Responsable système"
     },
     "DocType: Project Update": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Date": "Date",
         "Project": "Projet",
         "Project Update": "Mise à jour du projet",
@@ -6505,6 +6834,7 @@
     },
     "DocType: Proposed Pledge": {
         "Amount": "Montant",
+        "Loan Management": "Gestion des prêts",
         "Quantity": "Quantité"
     },
     "DocType: Purchase Invoice": {
@@ -6522,7 +6852,7 @@
         "Advance Payments": "Paiements Anticipés",
         "Advances": "Avances",
         "Against Expense Account": "Pour le Compte de Charges",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Apply Tax Withholding Amount": "Appliquer le montant de la retenue d'impôt",
         "Auditor": "Auditeur",
@@ -6630,6 +6960,7 @@
         "Tax Category": "Catégorie de taxe",
         "Tax ID": "Numéro de TVA",
         "Tax Id": "N° TVA",
+        "Tax Withholding Category": "Catégorie de taxation à la source",
         "Taxes and Charges Added": "Taxes et Frais Additionnels",
         "Taxes and Charges Added (Company Currency)": "Taxes et Frais Additionnels (Devise Société)",
         "Taxes and Charges Calculation": "Calcul des Frais et Taxes",
@@ -6763,7 +7094,7 @@
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
         "Advance Paid": "Avance Payée",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Buying": "Achat",
@@ -6829,6 +7160,7 @@
         "Raw Materials Supplied": "Matières Premières Fournies",
         "Ref SQ": "Réf SQ",
         "Reqd By Date": "Date de livraison prévue",
+        "Required By": "Demandé pour le",
         "Rounded Total": "Total Arrondi",
         "Rounded Total (Company Currency)": "Total Arrondi (Devise Société)",
         "Rounding Adjustment": "Arrondi",
@@ -6839,6 +7171,7 @@
         "Series": "Série",
         "Set Reserve Warehouse": "Définir un entrepôt de réserve",
         "Set Target Warehouse": "Définir l'entrepôt cible",
+        "Sets 'Warehouse' in each row of the Items table.": "Défini l'entrepôt dans chaque ligne de la table d'articles",
         "Shipping Address": "Adresse de livraison",
         "Shipping Rule": "Règle de Livraison",
         "Status": "Statut",
@@ -6870,6 +7203,7 @@
         "Total Quantity": "Quantité totale",
         "Total Taxes and Charges": "Total des taxes et frais",
         "Total Taxes and Charges (Company Currency)": "Total des taxes et frais (Devise Société)",
+        "Tracking": "Suivi",
         "Update Auto Repeat Reference": "Mettre à jour la référence de répétition automatique",
         "Yes": "Oui"
     },
@@ -6908,6 +7242,7 @@
         "Manufacturer Part Number": "Numéro de Pièce du Fabricant",
         "Material Request": "Demande de matériel",
         "Material Request Item": "Article de Demande de matériel",
+        "More Information": "Information additionnelles",
         "Net Amount": "Montant HT",
         "Net Amount (Company Currency)": "Montant HT (Devise Société)",
         "Net Rate": "Prix unitaire HT",
@@ -6926,6 +7261,7 @@
         "Rate (Company Currency)": "Prix (Devise Société)",
         "Received Qty": "Qté Reçue",
         "Reqd By Date": "Date de livraison prévue",
+        "Required By": "Demandé pour le",
         "Returned Qty": "Qté Retournée",
         "Sales Order": "Commande client",
         "Sales Order Item": "Article de la commande client",
@@ -6971,7 +7307,7 @@
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Auto Repeat Detail": "Détail de la Répétition Automatique",
@@ -6981,6 +7317,7 @@
         "Closed": "Fermé",
         "Company": "Société",
         "Completed": "Terminé",
+        "Consumed Items": "Articles consommés",
         "Contact": "Contact",
         "Contact Email": "Email du Contact",
         "Contact Person": "Personne à Contacter",
@@ -6999,6 +7336,8 @@
         "In Words": "En Toutes Lettres",
         "In Words (Company Currency)": "En Toutes Lettres (Devise Société)",
         "Instructions": "Instructions",
+        "Inter Company Reference": "Référence inter-société",
+        "Is Internal Supplier": "Est un fournisseur interne",
         "Is Return": "Est un Retour",
         "Items": "Articles",
         "Letter Head": "En-tête",
@@ -7024,6 +7363,7 @@
         "Purchase User": "Acheteur",
         "Range": "Plage",
         "Rate at which supplier's currency is converted to company's base currency": "Taux auquel la devise du fournisseur est convertie en devise société de base",
+        "Raw Materials Consumed": "Matières premières consommées",
         "Raw Materials Supplied": "Matières Premières Fournies",
         "Rejected Warehouse": "Entrepôt Rejeté",
         "Remarks": "Remarques",
@@ -7032,6 +7372,7 @@
         "Rounded Total (Company Currency)": "Total Arrondi (Devise Société)",
         "Rounding Adjustment": "Arrondi",
         "Rounding Adjustment (Company Currency)": "Arrondi (Devise Société)",
+        "Scan Barcode": "Scanner un code barre",
         "Select Shipping Address": "Sélectionner l'Adresse de livraison",
         "Select Supplier Address": "Sélectionner l'Adresse du Fournisseur",
         "Series": "Série",
@@ -7073,6 +7414,7 @@
         "Yes": "Oui"
     },
     "DocType: Purchase Receipt Item": {
+        "Accepted Qty as per Stock UOM": "Quantité acceptée d'après l'unité de mesure du stock",
         "Accepted Quantity": "Quantité Acceptée",
         "Accepted Warehouse": "Entrepôt Accepté",
         "Accounting Dimensions": "Dimensions comptables",
@@ -7345,7 +7687,7 @@
     },
     "DocType: Quality Inspection": {
         "Accepted": "Accepté",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Batch No": "N° du lot",
         "Delivery Note": "Bon de livraison",
@@ -7413,7 +7755,9 @@
         "Close": "Fermer",
         "Closed": "Fermé",
         "Date": "Date",
+        "MTNG-.YYYY.-.MM.-.DD.-": "MTNG-.YYYY.-.MM.-.DD.-",
         "Minutes": "Compte-rendu",
+        "Naming Series": "Nom de série",
         "Open": "Ouvert",
         "Quality Management": "Gestion de la Qualité",
         "Quality Meeting": "Réunion de qualité",
@@ -7538,7 +7882,7 @@
         "Additional Discount and Coupon Code": "Remises additionnelles et codes promotionnels",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Auto Repeat Section": "Répétition Automatique",
@@ -7643,16 +7987,20 @@
     "DocType: Quotation Item": {
         "Actual Qty": "Quantité Réelle",
         "Additional Notes": "Notes additionnelles",
+        "Against Blanket Order": "Pour la commande avec limites",
         "Against Docname": "Pour le docName",
         "Against Doctype": "Contre Doctype",
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
+        "Blanket Order": "Commande avec limites",
+        "Blanket Order Rate": "Prix unitaire de commande avec limites",
         "Brand": "Marque",
         "Customer's Item Code": "Code de l'Article du Client",
         "Description": "Description",
         "Discount (%) on Price List Rate with Margin": "Remise (%) sur le Tarif de la Liste de prix avec la Marge",
         "Discount Amount": "Remise",
         "Discount and Margin": "Remise et Marge",
+        "Gross Profit": "Bénéfice Brut",
         "Image": "Image",
         "Image View": "Vue image",
         "Is Free Item": "Est un article gratuit",
@@ -7693,6 +8041,7 @@
         "Total Weight": "Poids total",
         "UOM": "Unité de mesure",
         "UOM Conversion Factor": "Facteur de conversion de l'unité de mesure",
+        "Valuation Rate": "Taux de valorisation",
         "Warehouse": "Entrepôt",
         "Warehouse and Reference": "Entrepôt et Référence",
         "Weight Per Unit": "Poids par unité",
@@ -7717,6 +8066,8 @@
         "Balance Loan Amount": "Solde du Montant du Prêt",
         "HR": "RH",
         "Interest Amount": "Montant d'Intérêts",
+        "Is Accrued": "Cumulé",
+        "Loan Management": "Gestion des prêts",
         "Paid": "Payé",
         "Payment Date": "Date de Paiement",
         "Principal Amount": "Montant Principal",
@@ -7725,7 +8076,7 @@
     },
     "DocType: Request for Quotation": {
         "All": "Tous",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Buying": "Achat",
         "Cancelled": "Annulé",
         "Company": "Société",
@@ -7795,7 +8146,7 @@
     },
     "DocType: Retention Bonus": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bonus Amount": "Montant du bonus",
         "Bonus Payment Date": "Date de paiement du bonus",
         "Company": "Société",
@@ -7873,6 +8224,7 @@
         "Do not include in total": "Ne pas inclure au total",
         "Earning": "Revenus",
         "Employee": "Employé",
+        "Exempted from Income Tax": "Exempt d'impôt sur le revenu",
         "Flexible Benefits": "Avantages sociaux variables",
         "Formula": "Formule",
         "HR": "RH",
@@ -7902,6 +8254,7 @@
     "DocType: Salary Detail": {
         "Abbr": "Abré",
         "Additional Amount": "Montant additionnel",
+        "Additional Salary ": "Salaire additionnel",
         "Amount": "Montant",
         "Amount based on formula": "Montant basé sur la formule",
         "Component": "Composant",
@@ -7911,6 +8264,7 @@
         "Default Amount": "Montant par Défaut",
         "Depends on Payment Days": "Dépend des jours de paiement",
         "Do not include in total": "Ne pas inclure au total",
+        "Exempted from Income Tax": "Exempt d'impôt sur le revenu",
         "Formula": "Formule",
         "HR": "RH",
         "If selected, the value specified or calculated in this component will not contribute to the earnings or deductions. However, it's value can be referenced by other components that can be added or deducted. ": "Si cette option est sélectionnée, la valeur spécifiée ou calculée dans ce composant ne contribuera pas aux gains ou aux déductions. Cependant, sa valeur peut être référencée par d'autres composants qui peuvent être ajoutés ou déduits.",
@@ -7923,7 +8277,7 @@
         "Variable Based On Taxable Salary": "Variable basée sur le salaire imposable"
     },
     "DocType: Salary Slip": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bank Account No.": "N° de Compte bancaire",
         "Bank Name": "Nom de la Banque",
         "Bimonthly": "Bimensuel",
@@ -7960,6 +8314,7 @@
         "Net Pay": "Salaire Net",
         "Net Pay (in words) will be visible once you save the Salary Slip.": "Salaire Net (en lettres) sera visible une fois que vous aurez enregistré la Fiche de Paie.",
         "Payment Days": "Jours de Paiement",
+        "Payroll Cost Center": "Centre de coût de paie",
         "Payroll Entry": "Entrée de la paie",
         "Payroll Frequency": "Fréquence de la Paie",
         "Posting Date": "Date de comptabilisation",
@@ -7987,6 +8342,7 @@
         "Interest Income Account": "Compte d'Intérêts Créditeurs",
         "Loan": "Prêt",
         "Loan Account": "Compte de prêt",
+        "Loan Management": "Gestion des prêts",
         "Loan Type": "Type de Prêt",
         "Principal Amount": "Montant Principal",
         "Salary Slip Loan": "Avance sur salaire",
@@ -8000,7 +8356,7 @@
     },
     "DocType: Salary Structure": {
         "Account": "Compte",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Bimonthly": "Bimensuel",
         "Company": "Société",
         "Daily": "Quotidien",
@@ -8035,7 +8391,7 @@
         "Yes": "Oui"
     },
     "DocType: Salary Structure Assignment": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Base": "Base",
         "Company": "Société",
         "Department": "Département",
@@ -8046,6 +8402,7 @@
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "HR User": "Chargé RH",
+        "Income Tax Slab": "Tranche d'impôt sur le revenu",
         "Salary Structure": "Grille des Salaires",
         "Salary Structure Assignment": "Attribution de la structure salariale",
         "System Manager": "Responsable système",
@@ -8080,7 +8437,7 @@
         "Against Income Account": "Pour le Compte de Produits",
         "All": "Tous",
         "Allocate Advances Automatically (FIFO)": "Allouer automatiquement les avances (FIFO)",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Base Change Amount (Company Currency)": "Montant de monnaie rendue (Devise de la société)",
@@ -8358,7 +8715,7 @@
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
         "Advance Paid": "Avance Payée",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Auto Repeat Section": "Répétition Automatique",
@@ -8496,6 +8853,7 @@
         "Against Blanket Order": "Pour la commande avec limites",
         "Amount": "Montant",
         "Amount (Company Currency)": "Montant (Devise de la Société)",
+        "BOM No": "N° LDM",
         "Basic Rate (Company Currency)": "Taux de Base (Devise de la Société )",
         "Billed Amt": "Mnt Facturé",
         "Blanket Order": "Commande avec limites",
@@ -8524,6 +8882,7 @@
         "Item Tax Rate": "Taux de la Taxe sur l'Article",
         "Item Tax Template": "Modèle de taxe d'article",
         "Item Weight Details": "Détails du poids de l'article",
+        "Manufacturing Section": "Production",
         "Margin Rate or Amount": "Taux de Marge ou Montant",
         "Margin Type": "Type de Marge",
         "Net Amount": "Montant HT",
@@ -8687,6 +9046,8 @@
         "Company": "Société",
         "Customer": "Client",
         "Employee": "Employé",
+        "Loan Management": "Gestion des prêts",
+        "Loan Manager": "Gestionnaire de prêt",
         "Member": "Membre",
         "System Manager": "Responsable système"
     },
@@ -8726,7 +9087,7 @@
         "ACC-SEPA-.YYYY.-": "ACC-SEPA-.YYYY.-",
         "Accounts": "Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Batch Booking": "Prélèvement en lot (batch booking)",
         "Company": "Société",
         "Currency": "Devise",
@@ -8797,6 +9158,7 @@
     },
     "DocType: Serial No": {
         "AMC Expiry Date": "Date d'Expiration CMA",
+        "Active": "Actif",
         "Asset": "Actif",
         "Asset Details": "Détails de l'actif",
         "Asset Status": "Statut de l'actif",
@@ -8809,6 +9171,7 @@
         "Creation Time": "Date de Création",
         "Customer": "Client",
         "Customer Name": "Nom du Client",
+        "Delivered": "Livré",
         "Delivery Date": "Date de Livraison",
         "Delivery Details": "Détails de la Livraison",
         "Delivery Document No": "Numéro de Document de Livraison",
@@ -8817,6 +9180,8 @@
         "Description": "Description",
         "Distinct unit of an Item": "Unité distincte d'un Article",
         "Employee": "Employé",
+        "Expired": "Expiré",
+        "Inactive": "Inactif",
         "Incoming Rate": "Taux d'Entrée",
         "Invoice Details": "Détails de la Facture",
         "Is Cancelled": "Est Annulée",
@@ -8837,6 +9202,7 @@
         "Sales Order": "Commande client",
         "Serial No": "N° de série",
         "Serial No Details": "Détails du N° de série",
+        "Status": "Statut",
         "Stock": "Stock",
         "Stock Manager": "Responsable des stocks",
         "Stock User": "Chargé des stocks",
@@ -8962,7 +9328,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable comptable",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Asset Account": "Compte d'actif",
         "Company": "Société",
@@ -9016,7 +9382,7 @@
         "Title": "Titre"
     },
     "DocType: Shift Assignment": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Date": "Date",
         "Department": "Département",
@@ -9031,7 +9397,7 @@
         "Shift Type": "Type de quart"
     },
     "DocType: Shift Request": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "Employee": "Employé",
@@ -9151,6 +9517,7 @@
         "ERPNext Integrations": "Intégrations dokos",
         "Enable Shopify": "Activer Shopify",
         "For Company": "Pour la Société",
+        "If Shopify does not have a customer in the order, then while syncing the orders, the system will consider the default customer for the order": "Si Shopify n'a pas de client dans la commande, lors de la synchronisation le système utilisera le client par défaut pour la commande",
         "If Shopify not contains a customer in Order, then while syncing Orders, the system will consider default customer for order": "Si Shopify ne contient pas de client dans la commande, lors de la synchronisation des commandes le système considérera le client par défaut pour la commande",
         "Import Delivery Notes from Shopify on Shipment": "Importer les bons de livraison depuis Shopify lors de l'expédition",
         "Import Sales Invoice from Shopify if Payment is marked": "Importer la facture de vente de Shopify si le paiement est marqué",
@@ -9221,8 +9588,29 @@
         "Skill Name": "Nom de la compétence",
         "System Manager": "Responsable système"
     },
+    "DocType: Social Media Post": {
+        "Amended From": "Modication du document",
+        "Attachments": "Pièces jointes",
+        "CRM": "CRM",
+        "Campaign": "Campagne",
+        "Error": "Erreur",
+        "Image": "Image",
+        "LinkedIn": "LinkedIn",
+        "LinkedIn Post Id": "ID de publication LinkedIn",
+        "Post": "Publication",
+        "Post Status": "Statut de la publication",
+        "Posted": "Publié",
+        "Scheduled": "Prévu",
+        "Scheduled Time": "Heure programmée",
+        "Share On": "Partagé sur",
+        "Social Media Post": "Publication sur les réseaux sociaux",
+        "System Manager": "Responsable système",
+        "Tweet": "Tweet",
+        "Twitter": "Twitter",
+        "Twitter Post Id": "ID de publication Twitter"
+    },
     "DocType: Staffing Plan": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "From Date": "Date de début",
@@ -9251,7 +9639,7 @@
         "Accounting Journal": "Journal comptable",
         "Additional Costs": "Frais Supplémentaires",
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "As per Stock UOM": "Selon Unité de mesure du stock",
         "BOM No": "N° LDM",
         "Company": "Société",
@@ -9401,7 +9789,7 @@
         "Accounts Manager": "Responsable comptable",
         "Actual Qty After Transaction": "Qté Réelle Après Transaction",
         "Actual Quantity": "Quantité Réelle",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Batch No": "N° du lot",
         "Company": "Société",
         "Fiscal Year": "Exercice Fiscal",
@@ -9431,7 +9819,7 @@
     },
     "DocType: Stock Reconciliation": {
         "Accounting Dimensions": "Dimensions comptables",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Difference Account": "Compte d’écart",
@@ -9594,7 +9982,7 @@
     },
     "DocType: Subscription Event": {
         "Accounts": "Comptes",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Created document name": "Nom du document créé",
         "Created document type": "Type de document créé",
         "Date": "Date",
@@ -9750,7 +10138,7 @@
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition",
         "Auto Repeat Section": "Répétition Automatique",
@@ -9766,6 +10154,7 @@
         "Disable Rounded Total": "Désactiver le Total Arrondi",
         "Draft": "Brouillon",
         "Exchange Rate": "Taux de change",
+        "Expired": "Expiré",
         "Grand Total": "Total TTC",
         "Grand Total (Company Currency)": "Total TTC (Devise de la Société)",
         "Group same items": "Groupe les éléments identiques",
@@ -9829,6 +10218,7 @@
         "Total Taxes and Charges": "Total des taxes et frais",
         "Total Taxes and Charges (Company Currency)": "Total des taxes et frais (Devise Société)",
         "Update Auto Repeat Reference": "Mettre à jour la référence de répétition automatique",
+        "Valid Till": "Valable jusqu'au",
         "Yes": "Oui"
     },
     "DocType: Supplier Quotation Item": {
@@ -9924,7 +10314,7 @@
         "System Manager": "Responsable système"
     },
     "DocType: Supplier Scorecard Period": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Buying": "Achat",
         "Calculations": "Calculs",
         "Criteria": "Critère",
@@ -10068,6 +10458,7 @@
         "Default Warehouse": "Entrepôt par Défaut",
         "ERPNext Company": "Société dokos",
         "ERPNext Integrations": "Intégrations dokos",
+        "Import Log": "Log d'import",
         "Is Day Book Data Imported": "Données de journal importées",
         "Is Day Book Data Processed": "Données de journal traitées",
         "Is Master Data Imported": "Données de base importées",
@@ -10281,7 +10672,7 @@
     "DocType: Timesheet": {
         "% Amount Billed": "% facturé",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Balance": "Solde",
         "Billed": "Facturé",
         "Billing Details": "Détails de la facturation",
@@ -10348,7 +10739,7 @@
     },
     "DocType: Training Event": {
         "Advance": "Avance",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Attendees": "Participants",
         "Beginner": "Débutant",
         "Cancelled": "Annulé",
@@ -10400,7 +10791,7 @@
         "Training Event Employee": "Évènement de Formation – Employé"
     },
     "DocType: Training Feedback": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Course": "Cours",
         "Department": "Département",
         "Employee": "Employé",
@@ -10414,7 +10805,7 @@
         "Training Feedback": "Retour d'Expérience sur la Formation"
     },
     "DocType: Training Program": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Completed": "Terminé",
@@ -10430,7 +10821,7 @@
         "Training Program": "Programme de formation"
     },
     "DocType: Training Result": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Employee Emails": "Emails de l'Employé",
         "Employees": "Employés",
         "HR": "RH",
@@ -10476,7 +10867,7 @@
     "DocType: Travel Request": {
         "Accounting Dimensions": "Dimensions comptables",
         "Address of Organizer": "Adresse de l'organisateur",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Any other details": "Tout autre détail",
         "Contact Email": "Email du Contact",
         "Contact Number": "Numéro de Contact",
@@ -10518,6 +10909,17 @@
         "Total Amount": "Montant Total",
         "Travel Request Costing": "Coût de la demande de déplacement"
     },
+    "DocType: Twitter Settings": {
+        "API Key": "Clé API",
+        "Access Token": "Jeton d'accès",
+        "Account Name": "Nom du Compte",
+        "Active": "Actif",
+        "CRM": "CRM",
+        "Expired": "Expiré",
+        "OAuth Credentials": "Identifiants OAuth",
+        "Session Status": "Statut de la session",
+        "System Manager": "Responsable système"
+    },
     "DocType: UOM": {
         "Check this to disallow fractions. (for Nos)": "Cochez cette case pour interdire les fractions. (Pour les numéros)",
         "Item Manager": "Gestionnaire d'Article",
@@ -10550,6 +10952,7 @@
         "Value": "Valeur"
     },
     "DocType: Unpledge": {
+        "Loan Management": "Gestion des prêts",
         "Quantity": "Quantité",
         "UOM": "Unité de mesure"
     },
@@ -10574,7 +10977,7 @@
     "DocType: Vehicle": {
         "Acquisition Date": "Date d'Aquisition",
         "Additional Details": "Détails Supplémentaires",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Chassis No": "N ° de Châssis",
         "Color": "Couleur",
         "Details": "Détails",
@@ -10604,7 +11007,7 @@
         "Wheels": "Roues"
     },
     "DocType: Vehicle Log": {
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Date": "Date",
         "Employee": "Employé",
         "Fleet Manager": "Gestionnaire de Flotte",
@@ -10699,7 +11102,7 @@
     "DocType: Warranty Claim": {
         "AMC Expiry Date": "Date d'Expiration CMA",
         "Address": "Adresse",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Closed": "Fermé",
         "Company": "Société",
@@ -10795,7 +11198,7 @@
         "Actual Start Date": "Date de Début Réelle",
         "Additional Operating Cost": "Coût d'Exploitation Supplémentaires",
         "Allow Alternative Item": "Autoriser un article alternatif",
-        "Amended From": "Modifié depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Backflush Raw Materials From Work-in-Progress Warehouse": "Sortir rétroactivement les matières premières de l'entrepôt de travaux en cours",
         "Cancelled": "Annulé",
@@ -10805,6 +11208,7 @@
         "Draft": "Brouillon",
         "Expected Delivery Date": "Date de livraison prévue",
         "Image": "Image",
+        "In Mins": "En mins",
         "In Process": "En Cours",
         "Item Description": "Description de l'Article",
         "Item Name": "Nom de l'article",
@@ -10860,6 +11264,7 @@
     },
     "DocType: Work Order Item": {
         "Allow Alternative Item": "Autoriser un article alternatif",
+        "Amount": "Montant",
         "Available Qty at Source Warehouse": "Qté Disponible à l'Entrepôt Source",
         "Available Qty at WIP Warehouse": "Qté disponible à l'Entrepôt de Travaux en Cours",
         "Consumed Qty": "Qté Consommée",
@@ -10870,6 +11275,7 @@
         "Manufacturing": "Production",
         "Operation": "Opération",
         "Qty": "Qté",
+        "Rate": "Prix unitaire",
         "Required Qty": "Qté requise",
         "Source Warehouse": "Entrepôt Source",
         "Transferred Qty": "Quantité Transférée",
@@ -10932,6 +11338,132 @@
         "Start Time": "Date de début",
         "Workstation Working Hour": "Heures de travail de la station de travail"
     },
+    "Onboarding Step: Buying Settings": {
+        "Configure Buying Settings.": "Configurer les paramètres des achats"
+    },
+    "Onboarding Step: Chart Of Accounts": {
+        "Review Chart Of Accounts": "Vérifier le plan comptable"
+    },
+    "Onboarding Step: Configure Account Settings": {
+        "Configure Account Settings": "Configurer les paramètres des comptes"
+    },
+    "Onboarding Step: Create BOM": {
+        "Create a BOM (Bill of Material)": "Créer une liste de matériaux (BOM)"
+    },
+    "Onboarding Step: Create Department": {
+        "Create Department": "Créer un département"
+    },
+    "Onboarding Step: Create Designation": {
+        "Create Designation": "Créer une désignation"
+    },
+    "Onboarding Step: Create Employee": {
+        "Create Employee": "Créer un employé"
+    },
+    "Onboarding Step: Create Holiday list": {
+        "Create holiday list": "Créer une liste de congés"
+    },
+    "Onboarding Step: Create Lead": {
+        "Create Lead": "Créer un prospect"
+    },
+    "Onboarding Step: Create Leave Allocation": {
+        "Create Leave Allocation": "Créer une allocation de congés"
+    },
+    "Onboarding Step: Create Leave Application": {
+        "Create Leave Application": "Créer une demande congés"
+    },
+    "Onboarding Step: Create Leave Type": {
+        "Create Leave Type": "Créer un type de congés"
+    },
+    "Onboarding Step: Create Opportunity": {
+        "Create Opportunity": "Créer une opportunité"
+    },
+    "Onboarding Step: Create Product": {
+        "Create a Finished Good": "Créer un produit fini"
+    },
+    "Onboarding Step: Create Raw Materials": {
+        "Create Raw Materials": "Créer des matières premières"
+    },
+    "Onboarding Step: Create Your First Purchase Invoice": {
+        "Create Your First Purchase Invoice ": "Créer votre première facture d'achat"
+    },
+    "Onboarding Step: Create Your First Sales Invoice": {
+        "Create Your First Sales Invoice ": "Créer votre première facture de vente"
+    },
+    "Onboarding Step: Create a Customer": {
+        "Create a Customer": "Créer un client"
+    },
+    "Onboarding Step: Create a Fixed Asset Item": {
+        "Create a Fixed Asset Item": "Créer un article d'immobilisation"
+    },
+    "Onboarding Step: Create a Material Request": {
+        "Create a Material Request": "Créer une demande de matériel"
+    },
+    "Onboarding Step: Create a Product": {
+        "Create a Product": "Créer un produit"
+    },
+    "Onboarding Step: Create a Purchase Receipt": {
+        "Create a Purchase Receipt": "Créer un reçu d'achat"
+    },
+    "Onboarding Step: Create a Stock Entry": {
+        "Create a Stock Entry": "Créer une écriture de stock"
+    },
+    "Onboarding Step: Create a Supplier": {
+        "Create a Supplier": "Créer un fournisseur"
+    },
+    "Onboarding Step: Create an Asset": {
+        "Create an Asset": "Créer un actif"
+    },
+    "Onboarding Step: Create an Asset Category": {
+        "Create an Asset Category": "Créer une catégorie d'actif"
+    },
+    "Onboarding Step: Create and Send Quotation": {
+        "Create and Send Quotation": "Créer et envoyer un devis"
+    },
+    "Onboarding Step: Create your first Purchase Order": {
+        "Create your first Purchase Order": "Créer une première commande fournisseur"
+    },
+    "Onboarding Step: Explore Manufacturing Settings": {
+        "Explore Manufacturing Settings": "Explorer les paramètres de production"
+    },
+    "Onboarding Step: HR Settings": {
+        "HR settings": "Paramètres RH"
+    },
+    "Onboarding Step: Introduction to Assets": {
+        "Introduction to Assets": "Introductions aux actifs"
+    },
+    "Onboarding Step: Introduction to Buying": {
+        "Introduction to Buying": "Introduction aux achats"
+    },
+    "Onboarding Step: Introduction to CRM": {
+        "Introduction to CRM": "Introduction au CRM"
+    },
+    "Onboarding Step: Introduction to Stock Entry": {
+        "Introduction to Stock Entry": "Introduction aux écritures de stock"
+    },
+    "Onboarding Step: Operation": {
+        "Create a Operation": "Créer un opération"
+    },
+    "Onboarding Step: Purchase an Asset Item": {
+        "Purchase an Asset Item": "Acheter un actif"
+    },
+    "Onboarding Step: Setup Taxes": {
+        "Lets create a Tax Template for Sales ": "Créer un modèle de tax pour la vente"
+    },
+    "Onboarding Step: Setup your Warehouse": {
+        "Setup your Warehouse": "Configurer les entrepôts"
+    },
+    "Onboarding Step: Stock Settings": {
+        "Explore Stock Settings": "Explorer les paramètres de stock"
+    },
+    "Onboarding Step: Warehouse": {
+        "Create a Warehouse": "Créer un entrepôt"
+    },
+    "Onboarding Step: Work Order": {
+        "Create a Work Order": "Créer un ordre de travail"
+    },
+    "Onboarding Step: Workstation": {
+        "Create a Workstation / Machine": "Créer un station de travail / Machine"
+    },
     "Page: BOM Comparison Tool": {
         "BOM Comparison Tool": "Outil de comparaison des listes de matériaux"
     },
@@ -10982,6 +11514,9 @@
     },
     "Report: BOM Explorer": {
         "BOM Explorer": "Explorateur de liste de matériaux"
+    },
+    "Report: BOM Operations Time": {
+        "BOM Operations Time": "Temps des opération par liste de matériaux"
     },
     "Report: BOM Search": {
         "BOM Search": "Recherche de liste de matériaux"
@@ -11067,11 +11602,17 @@
     "Report: Department Analytics": {
         "Department Analytics": "Analyse des départements"
     },
+    "Report: Downtime Analysis": {
+        "Downtime Analysis": "Analyse des temps d'arrêt"
+    },
     "Report: Electronic Invoice Register": {
         "Electronic Invoice Register": "Registre des factures électroniques"
     },
     "Report: Employee Advance Summary": {
         "Employee Advance Summary": "Avances aux employés"
+    },
+    "Report: Employee Analytics": {
+        "Employee Analytics": "Analyse des employés"
     },
     "Report: Employee Billing Summary": {
         "Employee Billing Summary": "Récapitulatif des rapprochements bancaires"
@@ -11093,6 +11634,9 @@
     },
     "Report: Eway Bill": {
         "Eway Bill": "Facture Eway"
+    },
+    "Report: Exponential Smoothing Forecasting": {
+        "Exponential Smoothing Forecasting": "Prévision par lissage exponentiel"
     },
     "Report: Fichier des Ecritures Comptables [FEC]": {
         "Fichier des Ecritures Comptables [FEC]": "Fichier des Ecritures Comptables [FEC]"
@@ -11178,6 +11722,9 @@
     "Report: Itemwise Recommended Reorder Level": {
         "Itemwise Recommended Reorder Level": "Niveau de réapprovisionnement recommandé par article"
     },
+    "Report: Job Card Summary": {
+        "Job Card Summary": "Récapitulatif des cartes de travail"
+    },
     "Report: Lead Details": {
         "Lead Details": "Détails des prospects"
     },
@@ -11186,6 +11733,12 @@
     },
     "Report: Loan Repayment": {
         "Loan Repayment": "Remboursement de prêt"
+    },
+    "Report: Loan Repayment and Closure": {
+        "Loan Repayment and Closure": "Remboursement et clôture des prêts"
+    },
+    "Report: Loan Security Status": {
+        "Loan Security Status": "Statut des garanties des prêts"
     },
     "Report: Lost Opportunity": {
         "Lost Opportunity": "Opportunités perdues"
@@ -11229,6 +11782,9 @@
     "Report: Production Analytics": {
         "Production Analytics": "Analyse de la production"
     },
+    "Report: Production Planning Report": {
+        "Production Planning Report": "Planification de la production"
+    },
     "Report: Profit and Loss Statement": {
         "Profit and Loss Statement": "Compte de résultat"
     },
@@ -11237,6 +11793,9 @@
     },
     "Report: Project Billing Summary": {
         "Project Billing Summary": "Récapitulatif des facturations de projets"
+    },
+    "Report: Project Summary": {
+        "Project Summary": "Récapitulatif des projets"
     },
     "Report: Project wise Stock Tracking": {
         "Project wise Stock Tracking": "Suivi des stocks par projet"
@@ -11249,6 +11808,9 @@
     },
     "Report: Purchase Invoice Trends": {
         "Purchase Invoice Trends": "Evolution des factures d'achat"
+    },
+    "Report: Purchase Order Analysis": {
+        "Purchase Order Analysis": "Analyse des commandes fournisseur"
     },
     "Report: Purchase Order Items To Be Billed": {
         "Purchase Order Items To Be Billed": "Articles des commandes fournisseurs à facturer"
@@ -11268,6 +11830,9 @@
     "Report: Purchase Register": {
         "Purchase Register": "Registre des achats"
     },
+    "Report: Quality Inspection Summary": {
+        "Quality Inspection Summary": "Récapitulatif des inspections de qualité"
+    },
     "Report: Quotation Trends": {
         "Quotation Trends": "Evolution des devis"
     },
@@ -11282,6 +11847,9 @@
     },
     "Report: Requested Items To Be Transferred": {
         "Requested Items To Be Transferred": "Articles demandés à transférer"
+    },
+    "Report: Requested Items to Order": {
+        "Requested Items to Order": "Articles demandés à commander"
     },
     "Report: Review": {
         "Review": "Revue"
@@ -11409,6 +11977,9 @@
     "Report: Work Order Stock Report": {
         "Work Order Stock Report": "Stock par ordre de travail"
     },
+    "Report: Work Order Summary": {
+        "Work Order Summary": "Récapitulatif des ordres de travail"
+    },
     "Report: Work Orders in Progress": {
         "Work Orders in Progress": "Ordres de travail en cours"
     },
@@ -11423,7 +11994,13 @@
         "Weekly": "Hebdomadaire"
     },
     "apps/erpnext/erpnext/accounts/dashboard_chart_source/account_balance_timeline/account_balance_timeline.py": {
-        "Account is not set for the dashboard chart {0}": "Aucun compte défini pour le graphique du tableau de bord {0}"
+        "Account is not set for the dashboard chart {0}": "Aucun compte défini pour le graphique du tableau de bord {0}",
+        "Account {0} does not exists in the dashboard chart {1}": "Le compte {0} n'existe pas dans le graphique du tableau de bord {1}"
+    },
+    "apps/erpnext/erpnext/accounts/dashboard_fixtures.py": {
+        "Incoming Bills (Purchase Invoice)": "Factures entrantes (Facture d'achat)",
+        "Outgoing Bills (Sales Invoice)": "Facture sortante (Facture de vente)",
+        "Profit and Loss": "Compte de résultat"
     },
     "apps/erpnext/erpnext/accounts/deferred_revenue.py": {
         "Cannot change Service Stop Date for item in row {0}": "Impossible de modifier la date d'arrêt du service pour l'élément de la ligne {0}",
@@ -11469,6 +12046,7 @@
         "Root Account must be a group": "Le Compte Racine doit être un groupe",
         "Root Type is mandatory": "Le Type de racine est obligatoire",
         "Root cannot be edited.": "La Racine ne peut pas être modifiée.",
+        "The root account {0} must be a group": "Le compte racine {0} doit être un groupe",
         "While creating account for child Company {0}, parent account {1} not found. Please create the parent account in corresponding COA": "Compte parent {1} introuvable lors de la création du compte pour la filiale {0}. Veuillez créer le compte parent dans le plan de compte correspondant.",
         "You are not authorized to set Frozen value": "Vous n'êtes pas autorisé à définir des valeurs gelées"
     },
@@ -11672,6 +12250,20 @@
         "Creating Dimensions...": "Création des dimensions",
         "Not allowed to create accounting dimension for {0}": "Création d'une dimension comptable pour {0} non autorisée"
     },
+    "apps/erpnext/erpnext/accounts/doctype/accounting_journal/accounting_journal.js": {
+        "Can be used in transactions to filter journal codes.": "Peut être utilisé dans les transactions pour filtrer les codes journaux",
+        "Enable/disable this journal": "Activer/Désactiver ce journal",
+        "If the journal is a bank or cash journal, it should be linked to the corresponding bank or cash account.": "Si ce journal est un journal de banque ou de caisse, il doit être lié au compte de banque ou de caisse correspondant.",
+        "If the journal is disabled, it will not be used anymore.": "Si ce journal est désactivé, il ne sera plus utilisé.",
+        "Journal code": "Code journal",
+        "Journal name": "Nom du journal",
+        "Journal type": "Type de journal",
+        "Link it to a transaction": "Lié le à une transaction",
+        "Linked account": "Compte lié",
+        "This is the code of the journal. It will be displayed in the general ledger.": "Code du journal. Il sera affiché dans le grand livre.",
+        "This is the label of this journal. It should be more explicit than the journal code.": "Libellé du journal. Il peut être plus explicite que le code du journal.",
+        "You can link your journal with specific transactions and add some conditions. E.g: Link it to a sales invoice with a condition `doc.is_return` for a credit notes journal.": "Vous pouvez lier votre journal avec des transaction spécifiques et ajouter des conditions. Ex. Liez le avec les factures de vente et ajoutez la condition `doc.is_return` pour créer un journal des avoirs."
+    },
     "apps/erpnext/erpnext/accounts/doctype/accounting_journal/accounting_journal.py": {
         "The Condition '{0}' is invalid": "La condition '{0}' est invalide",
         "Unable to find DocType {0}": "Impossible de trouver le DocType {0}"
@@ -11700,6 +12292,7 @@
         "BankAccount.validate_iban() failed for valid IBAN {}": "BankAccount.validate_iban() a rejeté l'IBAN valide {}"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_clearance/bank_clearance.py": {
+        "Account is mandatory to get payment entries": "Le compte est obligatoire pour obtenir les écritures de paiement",
         "Bank Account, From Date and To Date are Mandatory": "Le compte bancaire et les dates de début et de fin sont obligatoires",
         "Clearance Date not mentioned": "Date de rapprochement non indiquée",
         "Clearance Date updated": "Date de rapprochement mise à jour",
@@ -11725,14 +12318,18 @@
         "Row #{0}: Payment document is required to complete the transaction": "Ligne #{0}: un document de paiement est nécessaire pour compléter cette transaction"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction.js": {
+        "Bank reconciliation dashboard": "Tableau de bord de rapprochement bancaire",
         "Document {0} successfully uncleared": "Rapprochement du document {0} annulé avec succès",
-        "Make payment entry": "Créer une écriture de paiement"
+        "Make payment entry": "Créer une écriture de paiement",
+        "Set status as Closed": "Mettre statut 'Fermé'",
+        "This bank account could not be found on the selected payment document": "Ce compte bancaire n'a pas pu être trouvé dans le document de paiement sélectionné"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction.py": {
         "A bank transaction exists already with the same reference number for this bank account": "Une transaction bancaire existe déjà avec le même numéro de référénce pour ce compte bancaire.",
         "The allocated amount ({0}) is greater than the unreconciled amount ({1}) for {2} {3}.": "Le montant alloué ({0} est supérieur au montant non rapproché ({1}) pour {2} {3}",
         "The following entries exist already with the same date, debit, credit and currency:<br>{0}": "Les écritures suivantes existent déjà avec la même date, débit, crédit et devise:<br>{0}",
-        "The total allocated amount ({0}) is greated than the paid amount ({1}).": "Le montant total alloué ({0}) est supérieur au montant payé ({1})"
+        "The total allocated amount ({0}) is greated than the paid amount ({1}).": "Le montant total alloué ({0}) est supérieur au montant payé ({1})",
+        "This bank account could not be found on the selected payment document": "Ce compte bancaire n'a pas pu être trouvé dans le document de paiement sélectionné"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_import/BankTransactionImporter.vue": {
         "All bank transactions have been created": "Toutes les transactions bancaires ont été créées",
@@ -11752,6 +12349,7 @@
         "Upload New Bank Transactions": "Télécharger de nouvelles transactions bancaires"
     },
     "apps/erpnext/erpnext/accounts/doctype/bank_transaction/bank_transaction_list.js": {
+        "Closed": "Fermé",
         "Reconciled": "Rapproché",
         "Synchronize this account": "Synchroniser ce compte",
         "Unreconciled": "Non rapproché",
@@ -11795,9 +12393,12 @@
     "apps/erpnext/erpnext/accounts/doctype/chart_of_accounts_importer/chart_of_accounts_importer.js": {
         "All Accounts": "Tous les comptes",
         "Creating Accounts...": "Création des comptes...",
+        "Download": "Télécharger",
         "Download Template": "Télécharger le modèle",
         "Download template": "Télécharger le modèle",
+        "Import": "Importer",
         "Import Successfull": "Import réussi",
+        "Please select <b>Template Type</b> to download template": "Veuillez sélectionner le <b>Type de modèle</b> pour télécharger un modèle",
         "Reset": "Réinitialiser",
         "Resolve error and upload again.": "Résoudre l'erreur et réimporter",
         "Start Import": "Démarrer l'import",
@@ -11811,7 +12412,8 @@
         "Please identify/create Account (Group) for type - {0}": "Veuillez identifier/créer un groupe de comptes de type - {0}",
         "Please identify/create Account (Ledger) for type - {0}": "Veuillez identifier/créer un compte comptable de type - {0}",
         "Start entering data from here : ": "Veuillez commencer à entrer des données ci-dessous :",
-        "The parent account {0} does not exists": "Le compte parent {0} n'existe pas"
+        "The parent account {0} does not exists": "Le compte parent {0} n'existe pas",
+        "The parent account {0} does not exists in the uploaded template": "Le compte parent {0} n'existe pas dans le modèle téléchargé"
     },
     "apps/erpnext/erpnext/accounts/doctype/cheque_print_template/cheque_print_template.js": {
         "Account Pay Only": "Compte Bénéficiaire Seulement",
@@ -11830,6 +12432,7 @@
         "Note: This Cost Center is a Group. Cannot make accounting entries against groups.": "Remarque : Ce Centre de coûts est un Groupe. Vous ne pouvez pas faire des écritures comptables sur des groupes.",
         "Please enter company name first": "Veuillez d’abord entrer le nom de l'entreprise",
         "Update": "Mettre à jour",
+        "Update Cost Center Name / Number": "Mettre à jour le nom / numéro du centre de coûts",
         "Update Cost Center Number": "Mettre à jour le numéro du centre de coût"
     },
     "apps/erpnext/erpnext/accounts/doctype/cost_center/cost_center.py": {
@@ -11865,6 +12468,7 @@
         "Please select the customer.": "Veuillez sélectionner le client."
     },
     "apps/erpnext/erpnext/accounts/doctype/exchange_rate_revaluation/exchange_rate_revaluation.js": {
+        "Create": "Créer",
         "Create Journal Entry": "Créer une Écriture de journal",
         "Journal Entry": "Écriture de journal",
         "Please select Company and Posting Date to getting entries": "Veuillez sélectionner la société et la Date de comptabilisation pour obtenir les écritures",
@@ -11904,6 +12508,7 @@
         "Accounting Dimension <b>{0}</b> is required for 'Balance Sheet' account {1}.": "La dimension comptable <b>{0}</b> est obligatoire pour le compte de 'Bilan' {1}",
         "Accounting Dimension <b>{0}</b> is required for 'Profit and Loss' account {1}.": "La dimension comptable <b>{0}</b> est obligatoire pour le compte de 'Compte de résultat' {1}",
         "Against Journal Entry {0} is already adjusted against some other voucher": "L'Écriture de journal {0} est déjà ajustée par un autre bon",
+        "An accounting journal could not be found for this transaction. Please configure it and try to submit again.": "Aucun journal comptable n'a pu être trouvé pour cette transaction. Veuillez en configurer un et essayer de valider à nouveau.",
         "Balance for Account {0} must always be {1}": "Solde pour le compte {0} doit toujours être {1}",
         "Not authorized to edit frozen Account {0}": "Vous n'êtes pas autorisé à modifier le compte gelé {0}",
         "Outstanding for {0} cannot be less than zero ({1})": "Solde pour {0} ne peut pas être inférieur à zéro ({1})",
@@ -12085,6 +12690,7 @@
         "Cannot select charge type as 'On Previous Row Amount' or 'On Previous Row Total' for first row": "Impossible de sélectionner le type de charge comme étant «Le Montant de la Ligne Précédente» ou «Montant Total de la Ligne Précédente» pour la première ligne",
         "Cannot {0} {1} {2} without any negative outstanding invoice": "Can not {0} {1} {2} sans aucune facture impayée négative",
         "Due Date": "Date d'échéance de paiement",
+        "Enter the exact paid amount.": "Veuillez entrer le montant payé exact.",
         "Error: {0} is mandatory field": "Erreur: {0} est un champs obligatoire",
         "Filters": "Filtres",
         "For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included": "Pour la ligne {0} dans {1}. Pour inclure {2} dans le prix de l'Article, les lignes {3} doivent également être incluses",
@@ -12094,19 +12700,36 @@
         "Greater Than Amount": "Montant supérieur à",
         "Ledger": "Grand livre",
         "Less Than Amount": "Montant inférieur à",
+        "Link this payment with one or many transactions": "Liez ce paiement avec une ou plusieurs transactions",
         "No gain or loss in the exchange rate": "Aucun gain ou perte dans le taux de change",
         "Outstanding Amount": "Montant restant dû",
         "Paid Amount cannot be greater than total negative outstanding amount {0}": "Le Montant payé ne peut pas être supérieur au montant impayé restant {0}",
+        "Party": "Tiers",
         "Party can only be one of ": "Le tiers ne peut être que ",
+        "Party type": "Type de tiers",
         "Please select Charge Type first": "Veuillez d’abord sélectionner le Type de Facturation",
         "Please select Posting Date before selecting Party": "Veuillez sélectionner la Date de comptabilisation avant de sélectionner le Tiers",
         "Please select the Company first": "Veuillez sélectionner la Société en premier",
         "Please select {0} first": "Veuillez d’abord sélectionner {0}",
         "Please specify a valid Row ID for row {0} in table {1}": "Veuillez spécifier un N° de Ligne valide pour la ligne {0} de la table {1}",
         "Posting Date": "Date de comptabilisation",
+        "Posting date": "Date de comptabilisation",
+        "Reference Date": "Date de référence",
+        "Reference Number": "Numéro de référence",
+        "Register the paid amount": "Entrez le montant à payer",
         "Row #{0}: Reference Document Type must be one of Expense Claim or Journal Entry": "Ligne {0}: Le Type de Document de Référence doit être soit une Note de Frais soit une Écriture de journal",
         "Row #{0}: Reference Document Type must be one of Purchase Order, Purchase Invoice or Journal Entry": "Ligne #{0} : Type de Document de Référence doit être une commande fournisseur, une Facture d'Achat ou une Écriture de journal",
         "Row #{0}: Reference Document Type must be one of Sales Order, Sales Invoice or Journal Entry": "Ligne #{0} : Le Type de Document de Référence doit être une Commande Client, une Facture de vente ou une Écriture de journal",
+        "Select a mode of payment": "Sélectionnez un mode de paiement",
+        "Select a payment type": "Sélectionnez un type de paiement",
+        "Select the mode of payment used to make this payment.": "Sélectionnez le mode de paiement utilisé pour faire ce paiement",
+        "Select the payment type corresponding to your payment: Have your received money, paid money or made an internal transfer ?": "Sélectionnez le type de paiement correspondant à votre paiement: Avez-vous reçu de l'argent, payé un certain montant ou fait un transfert interne ?",
+        "Select the transactions linked to this payment and allocate the amount corresponding to each of them. <i>Eg. A payment of 1000€ can be allocated to two invoices of 800€ and 200€.</i>": "Sélectionnez les transactions liées avec ce paiement et allouez le montant correspondant à chacune d'entre elle.<i>Ex. Un paiement de 1000€ peut être alloué à deux factures de 800€ et 200€.</i>",
+        "Should be the date of the accounting posting.": "Correpond à la date de comptabilisation de votre paiement",
+        "The party this transaction is made with.": "Tiers avec lequel est fait la transaction",
+        "The reference date will also be used in the bank reconciliation process.": "La date de référence sera également utilisée dans le processus de rapprochement bancaire",
+        "The reference number will be used to find this transaction in the bank reconciliation dashboard.": "Le numéro de référence sera utilisé pour trouver cette transaction dans le tableau de bord de rapprochement bancaire.",
+        "The type of party this transaction is made with. Mostly customers or suppliers.": "Type de tiers avec lequel est faite cette transaction. Principalement des clients et fournisseurs.",
         "To Date": "Date de fin",
         "Valuation type charges can not marked as Inclusive": "Frais de type valorisation ne peuvent pas être marqués comme inclus",
         "{0}: {1} must be less than {2}": "{0}: {1} doit être inférieur à {2}"
@@ -12137,6 +12760,7 @@
         "Row #{0}: Duplicate entry in References {1} {2}": "Ligne # {0}: entrée en double dans les références {1} {2}",
         "Row #{0}: Journal Entry {1} does not have account {2} or already matched against another voucher": "Ligne #{0} : L’Écriture de journal {1} n'a pas le compte {2} ou est déjà réconciliée avec une autre référence",
         "Transaction reference no {0} dated {1}": "Référence de la transaction n° {0} datée du {1}",
+        "Warning": "Attention",
         "from": "de",
         "received from": "reçu de",
         "to": "à",
@@ -12157,6 +12781,7 @@
     "apps/erpnext/erpnext/accounts/doctype/payment_order/payment_order.js": {
         "Create Payment Entries": "Créer des écritures de paiement",
         "For Supplier": "Pour Fournisseur",
+        "Get Payments from": "Obtenir les paiements depuis",
         "Get from": "Obtenir depuis",
         "Mode of Payment": "Mode de Paiement",
         "Payment Entry": "Écriture de Paiement",
@@ -12330,8 +12955,13 @@
         "The coupon code use has exceeded the maximum allowed.": "Ce code promotionnel a déjà été utilisé plus de fois que la quantité maximum autorisée.",
         "The coupon code validity has expired": "La période de validité de ce code promotionnel a expiré.",
         "The coupon code validity has not started": "La période de validité de ce code promotionnel n'a pas encore commencé.",
+        "The coupon code's validity has expired": "La période de validité de ce code de réduction a expiré",
+        "The coupon code's validity has not started": "La période de validité de ce code de réduction n'a pas démarrée",
         "User has not applied rule on the invoice {0}": "L'utilisateur n'a pas appliqué de règle de tarification sur la facture {0}",
         "{0} has been use {1} times. Allowed quantity has been exceeded.": "{0} a été utilisé {1} fois. La quantité autorisée est dépassée."
+    },
+    "apps/erpnext/erpnext/accounts/doctype/process_deferred_accounting/process_deferred_accounting.js": {
+        "End date cannot be before start date": "La date de fin ne peut pas être avant la date de début"
     },
     "apps/erpnext/erpnext/accounts/doctype/promotional_scheme/promotional_scheme.py": {
         "New {0} pricing rules are created": "{0} nouvelles règles de tarification créées",
@@ -12396,6 +13026,7 @@
         "Credit To account must be a Balance Sheet account": "Le compte À Créditer doit être un compte de Bilan",
         "Credit To account must be a Payable account": "Le compte À Créditer doit être un compte Créditeur",
         "Expense account is mandatory for item {0}": "Compte de charge est obligatoire pour l'article {0}",
+        "Invalid Account": "Compte invalide",
         "Item Code required at Row No {0}": "Code de l'Article est requis à la Ligne No {0}",
         "No Remarks": "Aucune Remarque",
         "Paid amount + Write Off Amount can not be greater than Grand Total": "Le Montant payé + Montant Repris ne peut pas être supérieur au Total Général",
@@ -12403,7 +13034,9 @@
         "Please enter default currency in Company Master": "Veuillez entrer la devise par défaut dans les Données de Base de la Société",
         "Please set account in Warehouse {0}": "Veuillez définir un compte dans l'entrepôt {0}",
         "Purchase Invoices": "Factures d'achat",
+        "Purchase Order Required": "Commande fournisseur requis",
         "Purchase Order {0} is not submitted": "La commande fournisseur {0} n’est pas soumis",
+        "Purchase Receipt Required": "Reçu d’achat requis",
         "Purchase Receipt {0} is not submitted": "Le Reçu d’Achat {0} n'est pas soumis",
         "Release date must be in the future": "La date de fin de mise en attente doit être dans le futur",
         "Row {0}: asset is required for item {1}": "Ligne {0}: l'article {1} doit être un actif",
@@ -12513,6 +13146,7 @@
     },
     "apps/erpnext/erpnext/accounts/doctype/sales_invoice/sales_invoice.py": {
         "'Update Stock' cannot be checked for fixed asset sale": "'Mettre à Jour Le Stock’ ne peut pas être coché pour la vente d'actifs immobilisés",
+        "Account Missing": "Compte manquant",
         "At least one mode of payment is required for POS invoice.": "Au moins un mode de paiement est nécessaire pour une facture de PDV",
         "Cancelled": "Annulé",
         "Company currencies of both the companies should match for Inter Company Transactions.": "Les devises des deux sociétés doivent correspondre pour les transactions inter-sociétés.",
@@ -12524,6 +13158,7 @@
         "Debit To account must be a Receivable account": "Le compte de débit doit être un compte Débiteur",
         "Debit To is required": "Compte de Débit Requis",
         "Delivery Note {0} is not submitted": "Bon de livraison {0} n'est pas soumis",
+        "Invalid Account": "Compte invalide",
         "Invalid Company for Inter Company Transaction.": "Société invalide pour une transaction inter-société",
         "Invalid {0} for Inter Company Transaction.": "{0} invalide pour une transaction inter-société",
         "Invoices": "Factures",
@@ -12739,6 +13374,7 @@
         "Please create adjustment Journal Entry for amount {0} ": "Veuillez créer une écriture de journal pour le montant {0}",
         "Please mention Round Off Account in Company": "Veuillez indiquer le Compte d’Arrondi de la Société",
         "Please mention Round Off Cost Center in Company": "Veuillez indiquer le Centre de coûts d’Arrondi de la Société",
+        "You are not authorized to add or update entries before {0}": "Vous n'êtes pas autorisé à ajouter ou faire une mise à jour des écritures avant le {0}",
         "You can't create accounting entries in the closed accounting period {0}": "Vous ne pouvez pas créer d'écritures comptables dans la période comptable clôturée {0}"
     },
     "apps/erpnext/erpnext/accounts/page/bank_reconciliation/auto_bank_reconciliation.py": {
@@ -12966,6 +13602,7 @@
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Finance Book": "Livre comptable",
+        "Group By Supplier": "Grouper par fournisseur",
         "Payment Terms Template": "Modèle de termes de paiement",
         "Posting Date": "Date de comptabilisation",
         "Supplier": "Fournisseur",
@@ -13043,6 +13680,7 @@
         "Customer Group": "Groupe de clients",
         "Customer Name": "Nom du Client",
         "Finance Book": "Livre comptable",
+        "Group By Customer": "Grouper par client",
         "Payment Tems": "Termes de paiement",
         "Payment Terms Template": "Modèle de termes de paiement",
         "Posting Date": "Date de comptabilisation",
@@ -13103,6 +13741,7 @@
         "Posting Date": "Date de comptabilisation",
         "Sales Partner": "Partenaire Commercial",
         "Sales Person": "Vendeur",
+        "Show Future Payments": "Afficher les paiements futurs",
         "Territory": "Région"
     },
     "apps/erpnext/erpnext/accounts/report/accounts_receivable_summary/accounts_receivable_summary.py": {
@@ -13271,10 +13910,12 @@
         "Accumulated Values in Group Company": "Valeurs accumulées dans la société mère",
         "Company": "Société",
         "Currency": "Devise",
+        "End Date": "Date de fin",
         "End Year": "Année de Fin",
         "Finance Book": "Livre comptable",
         "Include Default Book Entries": "Inclure les écritures du livre comptable par défaut",
         "Report": "Rapport",
+        "Start Date": "Date de début",
         "Start Year": "Année de Début"
     },
     "apps/erpnext/erpnext/accounts/report/consolidated_financial_statement/consolidated_financial_statement.py": {
@@ -13353,6 +13994,7 @@
     },
     "apps/erpnext/erpnext/accounts/report/general_ledger/general_ledger.js": {
         "Account": "Compte",
+        "Accounting Journal": "Journal comptable",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Currency": "Devise",
@@ -13369,6 +14011,7 @@
         "Party Name": "Nom du tiers",
         "Party Type": "Type de tiers",
         "Project": "Projet",
+        "Show Cancelled Entries": "Afficher les écritures annulées",
         "Show Opening Entries": "Voir les écritures d'à-nouveaux",
         "Tax Id": "N° TVA",
         "To Date": "Date de fin",
@@ -13377,6 +14020,7 @@
     "apps/erpnext/erpnext/accounts/report/general_ledger/general_ledger.py": {
         "Account": "Compte",
         "Account {0} does not exists": "Le compte {0} n'existe pas",
+        "Accounting Journal": "Journal comptable",
         "Against Account": "Pour le Compte",
         "Against Voucher": "Pour le Bon",
         "Against Voucher Type": "Pour le Type de Bon",
@@ -13389,6 +14033,7 @@
         "Credit ({0})": "Crédit ({0})",
         "Debit ({0})": "Débit ({0})",
         "From Date must be before To Date": "La date de début ne peut pas être supérieure à la date de fin",
+        "GL Entry": "Écriture GL",
         "Group by Account": "Grouper par Compte",
         "Group by Party": "Grouper par tiers",
         "Group by Voucher": "Groupe par Bon",
@@ -13469,10 +14114,12 @@
     "apps/erpnext/erpnext/accounts/report/item_wise_purchase_register/item_wise_purchase_register.js": {
         "Company": "Société",
         "Date Range": "Intervalle de dates",
+        "From Date": "Date de début",
         "Group By": "Grouper Par",
         "Item": "Article",
         "Mode of Payment": "Mode de Paiement",
-        "Supplier": "Fournisseur"
+        "Supplier": "Fournisseur",
+        "To Date": "Date de fin"
     },
     "apps/erpnext/erpnext/accounts/report/item_wise_purchase_register/item_wise_purchase_register.py": {
         "% Of Grand Total": "% du total général",
@@ -13503,9 +14150,11 @@
         "Company": "Société",
         "Customer": "Client",
         "Date Range": "Intervalle de dates",
+        "From Date": "Date de début",
         "Group By": "Grouper par",
         "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
+        "To Date": "Date de fin",
         "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/accounts/report/item_wise_sales_register/item_wise_sales_register.py": {
@@ -13592,7 +14241,12 @@
         "Income": "Revenus",
         "Net Profit": "Bénéfice net",
         "Net Profit/Loss": "Bénéfice / Perte net·te",
-        "Profit for the year": "Bénéfice de l'exercice"
+        "Profit This Year": "Bénéfice cette année",
+        "Profit for the year": "Bénéfice de l'exercice",
+        "Total Expense": "Dépenses totales",
+        "Total Expense This Year": "Total des dépenses de l'année",
+        "Total Income": "Revenus totaux",
+        "Total Income This Year": "Total des revenus de l'année"
     },
     "apps/erpnext/erpnext/accounts/report/profitability_analysis/profitability_analysis.js": {
         "Based On": "Basé sur",
@@ -13626,10 +14280,13 @@
     },
     "apps/erpnext/erpnext/accounts/report/purchase_register/purchase_register.js": {
         "Company": "Société",
+        "Cost Center": "Centre de coûts",
         "From Date": "Date de début",
+        "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
         "Supplier": "Fournisseur",
-        "To Date": "Date de fin"
+        "To Date": "Date de fin",
+        "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/accounts/report/purchase_register/purchase_register.py": {
         "Bill Date": "Date de la Facture",
@@ -13815,6 +14472,7 @@
         "From Date": "Date de début",
         "Include Default Book Entries": "Inclure les écritures du livre comptable par défaut",
         "Period Closing Entry": "Écriture de Clôture de la Période",
+        "Project": "Projet",
         "Show unclosed fiscal year's P&L balances": "Afficher le solde du compte de résulat des exercices non cloturés",
         "Show zero values": "Afficher les valeurs nulles",
         "To Date": "Date de fin"
@@ -13879,6 +14537,9 @@
         "{0} '{1}' not in Fiscal Year {2}": "{0} '{1}' n'est pas dans l’exercice {2}",
         "{0} Number {1} already used in account {2}": "{0} Numéro {1} déjà utilisé dans le compte {2}",
         "{0} {1} not in any active Fiscal Year.": "{0} {1} dans aucun exercice actif."
+    },
+    "apps/erpnext/erpnext/assets/dashboard_fixtures.py": {
+        "Asset Value": "Valeur de l'actif"
     },
     "apps/erpnext/erpnext/assets/doctype/asset/asset.js": {
         "Asset Maintenance": "Maintenance des Actifs",
@@ -14022,10 +14683,16 @@
         "Asset Category": "Catégorie d'actif",
         "Available For Use Date": "Date de mise en service",
         "Company": "Société",
+        "Cost Center": "Centre de coûts",
         "Date": "Date",
+        "End Date": "Date de fin",
+        "End Year": "Année de fin",
         "Finance Book": "Livre comptable",
+        "Group By": "Grouper Par",
         "Is Existing Asset": "Est Actif Existant",
         "Purchase Date": "Date d'achat",
+        "Start Date": "Date de début",
+        "Start Year": "Année de Début",
         "Status": "Statut"
     },
     "apps/erpnext/erpnext/assets/report/fixed_asset_register/fixed_asset_register.py": {
@@ -14038,12 +14705,28 @@
         "Current Value": "Valeur actuelle",
         "Department": "Département",
         "Depreciated Amount": "Montant amorti",
+        "Depreciatied Amount": "Montant déprécié",
         "Gross Purchase Amount": "Montant d'achat brut",
         "Location": "Lieu",
         "Opening Accumulated Depreciation": "Amortissement Cumulé d'Ouverture",
         "Purchase Date": "Date d'achat",
         "Status": "Statut",
         "Vendor Name": "Nom du fournisseur"
+    },
+    "apps/erpnext/erpnext/buying/dashboard_fixtures.py": {
+        "Annual Purchase": "Achats annuels",
+        "Material Request Analysis": "Analyse des demandes de matériel",
+        "Purchase Order Analysis": "Analyses de commandes fournisseur",
+        "Purchase Order Trends": "Evolution des commandes fournisseur",
+        "Purchase Orders to Bill": "Commandes d'achat à facturer",
+        "Purchase Orders to Receive": "Commandes d'achat à recevoir",
+        "Top Suppliers": "Principaux fournisseurs"
+    },
+    "apps/erpnext/erpnext/buying/doctype/buying_settings/buying_settings.js": {
+        "Default Buying Price List": "Liste de prix d'achat par défaut",
+        "Purchase Order Required for Purchase Invoice & Receipt Creation": "Commande fournisseur requise pour les factures d'achat et les création de reçus",
+        "Purchase Receipt Required for Purchase Invoice Creation": "Reçu d'achat requis pour la création d'une facture fournisseur",
+        "Supplier Naming By": "Nommage du fournisseur selon"
     },
     "apps/erpnext/erpnext/buying/doctype/purchase_order/purchase_order.js": {
         "Actual type tax cannot be included in Item rate in row {0}": "Le type de taxe réel ne peut pas être inclus dans le prix de l'Article à la ligne {0}",
@@ -14064,11 +14747,13 @@
         "Get Items from Product Bundle": "Obtenir les Articles du Produit Groupé",
         "Get items from": "Obtenir les articles de",
         "Hold": "Mettre en attente",
+        "Invalid Part Number": "Numéro d'élément invalide",
         "Invoice": "Facture",
         "Item": "Article",
         "Item Code, warehouse, quantity are required on row": "Le code d'article, l'entrepôt, la quantité sont requis à la ligne",
         "Items": "Articles",
         "Link to Material Request": "Lien vers la demande de matériel",
+        "Manufacturer Part Number <b>{0}</b> is invalid": "Le numéro d'élément du fabricant <b>{0}</b> est invalide",
         "Material Request": "Demande de matériel",
         "Material to Supplier": "Du Matériel au Fournisseur",
         "No pending Material Requests found to link for the given items.": "Aucune demande de matériel en attente n'a été trouvée pour créer un lien vers les articles donnés.",
@@ -14152,6 +14837,8 @@
         "Get Suppliers": "Obtenir des Fournisseurs",
         "Get Suppliers By": "Obtenir des Fournisseurs",
         "Get items from": "Obtenir les articles de",
+        "Invalid Part Number": "Numéro d'élément invalide",
+        "Manufacturer Part Number <b>{0}</b> is invalid": "Le numéro d'élément du fabricant <b>{0}</b> est invalide",
         "Material Request": "Demande de matériel",
         "No pending Material Requests found to link for the given items.": "Aucune demande de matériel en attente n'a été trouvée pour créer un lien vers les articles donnés.",
         "Opportunity": "Opportunité",
@@ -14228,6 +14915,8 @@
         "Get Items": "Obtenir les articles",
         "Get Items from Product Bundle": "Obtenir les Articles du Produit Groupé",
         "Get items from": "Obtenir les articles de",
+        "Invalid Part Number": "Numéro d'élément invalide",
+        "Manufacturer Part Number <b>{0}</b> is invalid": "Le numéro d'élément du fabricant <b>{0}</b> est invalide",
         "Material Request": "Demande de matériel",
         "No pending Material Requests found to link for the given items.": "Aucune demande de matériel en attente n'a été trouvée pour créer un lien vers les articles donnés.",
         "Please select Category first": "Veuillez d’abord sélectionner une Catégorie",
@@ -14248,6 +14937,7 @@
         "Received": "Reçu",
         "Supplier Quotation": "Devis Fournisseur",
         "Supplier {0} not found in {1}": "Fournisseur {0} introuvable dans {1}",
+        "Valid till Date cannot be before Transaction Date": "La date de validité ne peut pas être avant la date de transaction",
         "{0} indicates that {1} will not provide a quotation, but all items \\\n\t\t\t\t\thave been quoted. Updating the RFQ quote status.": "{0} indique que {1} ne fournira pas de devis, mais tous les articles \\ ont été évalués. Mise à jour du statut de devis RFQ."
     },
     "apps/erpnext/erpnext/buying/doctype/supplier_quotation/supplier_quotation_dashboard.py": {
@@ -14257,6 +14947,7 @@
         "Subscription": "Abonnement"
     },
     "apps/erpnext/erpnext/buying/doctype/supplier_quotation/supplier_quotation_list.js": {
+        "Expired": "Expiré",
         "Lost": "Perdu",
         "Ordered": "Commandé"
     },
@@ -14328,6 +15019,38 @@
         "Yearly": "Annuel",
         "based_on": "basé sur"
     },
+    "apps/erpnext/erpnext/buying/report/purchase_order_analysis/purchase_order_analysis.js": {
+        "Company": "Société",
+        "From Date": "Date de début",
+        "Group by Purchase Order": "Grouper par commande fournisseur",
+        "Purchase Order": "Commande fournisseur",
+        "Status": "Statut",
+        "To Date": "Date de fin"
+    },
+    "apps/erpnext/erpnext/buying/report/purchase_order_analysis/purchase_order_analysis.py": {
+        "Amount": "Montant",
+        "Billed Amount": "Montant facturé",
+        "Billed Qty": "Qté facturée",
+        "Company": "Société",
+        "Date": "Date",
+        "From and To Dates are required.": "Les dates de début et de fin sont obligatoires",
+        "Item Code": "Code de l'Article",
+        "Pending Amount": "Montant en attente",
+        "Pending Qty": "Qté en attente",
+        "Purchase Order": "Commande fournisseur",
+        "Qty": "Qté",
+        "Qty to Bill": "Qté à facturer",
+        "Received Qty": "Qté reçue",
+        "Received Qty Amount": "Qté reçue",
+        "Required By": "Demandé pour le",
+        "Status": "Statut",
+        "Supplier": "Fournisseur",
+        "To Date cannot be before From Date.": "La date de fin ne peut pas être supérieure à la date de début.",
+        "Warehouse": "Entrepôt"
+    },
+    "apps/erpnext/erpnext/buying/report/purchase_order_trends/purchase_order_trends.py": {
+        " Purchase Value": "Valeur d'achat"
+    },
     "apps/erpnext/erpnext/buying/report/quoted_item_comparison/quoted_item_comparison.html": {
         "Quotation": "Devis"
     },
@@ -14337,6 +15060,28 @@
         "Successfully Set Supplier": "Fournisseur défini avec succès",
         "Supplier Quotation": "Devis Fournisseur",
         "Tools": "Outils"
+    },
+    "apps/erpnext/erpnext/buying/report/requested_items_to_order/requested_items_to_order.js": {
+        "Company": "Société",
+        "From Date": "Date de début",
+        "Group by Material Request": "Grouper par demande de matériel",
+        "Item": "Article",
+        "Material Request": "Demande de matériel",
+        "To Date": "Date de fin"
+    },
+    "apps/erpnext/erpnext/buying/report/requested_items_to_order/requested_items_to_order.py": {
+        "Company": "Société",
+        "Date": "Date",
+        "From and To Dates are required.": "Les dates de début et de fin sont obligatoires",
+        "Item Code": "Code de l'Article",
+        "Item Name": "Nom de l'article",
+        "Material Request": "Demande de matériel",
+        "Ordered Qty": "Qté Commandée",
+        "Qty": "Qté",
+        "Qty to Order": "Qté à commander",
+        "Required By": "Demandé pour le",
+        "To Date cannot be before From Date.": "La date de fin ne peut pas être supérieure à la date de début.",
+        "UOM": "Unité de mesure"
     },
     "apps/erpnext/erpnext/buying/report/subcontracted_item_to_be_received/subcontracted_item_to_be_received.js": {
         "From Date": "Date de début",
@@ -14387,7 +15132,9 @@
         "Auto Repeat": "Répétition",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
+        "Bank Reconciliation": "Rapprochement bancaire",
         "Bank Statement": "Relevé bancaire",
+        "Bank Transaction": "Transaction bancaire",
         "Bank/Cash transactions against party or for internal transfer": "Transactions Bancaires/de Trésorerie avec un tiers ou pour transfert interne",
         "Banking and Payments": "Banque et Paiements",
         "Bills raised by Suppliers.": "Factures émises par des Fournisseurs.",
@@ -14417,6 +15164,7 @@
         "Opening and Closing": "A-nouveaux et clôture",
         "Other Reports": "Autres Rapports",
         "Payment Request": "Demande de Paiement",
+        "Payment Terms Templates": "Modèles de termes de paiement",
         "Payment Terms based on conditions": "Termes de paiement basées sur des conditions",
         "Profitability": "Profitabilité",
         "Reports": "Rapports",
@@ -14441,6 +15189,7 @@
         "To Bill": "À Facturer",
         "Tree of financial Cost Centers.": "Arbre des Centres de Coûts financiers.",
         "Tree of financial accounts.": "Arbre des comptes financiers.",
+        "Update Bank Clearance Dates": "Mettre à jour les dates de rapprochement bancaire",
         "Update Bank Transaction Dates": "Mettre à jour les dates de rapprochement bancaire",
         "Update bank payment dates with journals.": "Mettre à jour les dates de paiement bancaires avec les journaux.",
         "e.g. Bank, Cash, Credit Card": "e.g. Cash, Banque, Carte de crédit"
@@ -14525,6 +15274,7 @@
         "Bundle items at time of sale.": "Grouper les articles au moment de la vente.",
         "Default settings for buying transactions.": "Paramètres par défaut pour les transactions d'achat.",
         "Help": "Aide",
+        "Import Italian Supplier Invoice.": "Importer une facture fournisseur italienne.",
         "Item Group": "Groupe d'article",
         "Items and Pricing": "Articles et prix",
         "Key Reports": "Rapports importants",
@@ -14534,6 +15284,7 @@
         "Purchase Orders given to Suppliers.": "Bons de commande envoyés aux fournisseurs",
         "Purchasing": "Achat",
         "Quotations received from Suppliers.": "Devis reçus des fournisseurs.",
+        "Regional": "Régional",
         "Request for Quotation": "Appel d'offre",
         "Request for purchase.": "Demande d'achat.",
         "Request for quotation.": "Appel d'offre",
@@ -14598,6 +15349,7 @@
         "Getting Started": "Démarrer avec dokos",
         "Help": "Aide",
         "Human Resources": "Ressources Humaines",
+        "Loan Management": "Gestion des prêts",
         "Manufacturing": "Production",
         "POS": "PDV",
         "Projects": "Projets",
@@ -14898,6 +15650,7 @@
         "Following item {0} is not marked as {1} item. You can enable them as {1} item from its Item master": "L'élément suivant {0} n'est pas marqué comme élément {1}. Vous pouvez les activer en tant qu'élément {1} à partir de sa fiche article.",
         "Following items {0} are not marked as {1} item. You can enable them as {1} item from its Item master": "Les éléments suivants {0} ne sont pas marqués comme {1} élément. Vous pouvez les activer en tant qu'élément {1} à partir de sa fiche article.",
         "From {0} | {1} {2}": "Du {0} | {1} {2}",
+        "Not Allowed": "Non autorisé",
         "Please enter 'Is Subcontracted' as Yes or No": "Veuillez entrer Oui ou Non pour 'Est sous-traitée'",
         "Please enter Reqd by Date": "Veuillez entrer une date de livraison prévue",
         "Please select BOM in BOM field for Item {0}": "Veuillez sélectionner une LDM dans le champ LDM pour l’Article {0}",
@@ -15002,6 +15755,9 @@
         "Delivered": "Livré",
         "{0}% Billed": "{0}% Facturé",
         "{0}% Delivered": "{0}% Livré"
+    },
+    "apps/erpnext/erpnext/crm/dashboard_fixtures.py": {
+        "Lead Source": "Source du prospect"
     },
     "apps/erpnext/erpnext/crm/doctype/appointment/appointment.py": {
         "Appointment Confirmation": "Confirmation de rendez-vous"
@@ -15287,6 +16043,7 @@
     },
     "apps/erpnext/erpnext/erpnext_integrations/doctype/plaid_settings/plaid_settings.py": {
         "Bank account {0} already exists and could not be created again": "Le compte bancaire {0} existe déjà et ne peut pas être créé une seconde fois",
+        "Bank transaction creation error": "Erreur de création d'une transaction bancaire",
         "Plaid transactions sync error": "Erreur de synchronisation des transactions Plaid",
         "Please link your bank with Plaid first.": "Veuillez d'abord lier votre banque avec Plaid",
         "Please setup a default bank account for company {0}": "Veuillez définir un compte bancaire par défaut pour la société {0}"
@@ -15391,6 +16148,7 @@
         "This type of event is not handled by dokos": "Ce type d'événement n'est pas géré par dokos"
     },
     "apps/erpnext/erpnext/erpnext_integrations/doctype/tally_migration/tally_migration.js": {
+        "Create": "Créer",
         "Import Day Book Data": "Importer un journal",
         "Import Master Data": "Importer des données de base",
         "Process Day Book Data": "Traiter le journal",
@@ -15466,6 +16224,7 @@
     "apps/erpnext/erpnext/hr/doctype/additional_salary/additional_salary.py": {
         "Additional Salary Component Exists.": "Une composante salariale additionnelle existe",
         "Amount should not be less than zero.": "Le montant ne doit pas être inférieur à zéro",
+        "Error": "Erreur",
         "Payroll date can not be less than employee's joining date": "La date de paie ne peut être inférieure à la date d'adhésion de l'employé",
         "To date can not greater than employee's relieving date": "La date de fin ne peut pas dépasser la date de libération de l'employé"
     },
@@ -15974,6 +16733,7 @@
         "For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included": "Pour la ligne {0} dans {1}. Pour inclure {2} dans le prix de l'Article, les lignes {3} doivent également être incluses",
         "From Date": "Date de début",
         "From Date cannot be greater than To Date": "La Date Initiale ne peut pas être postérieure à la Date Finale",
+        "Income Tax Slab": "Tranche d'impôt sur le revenu",
         "Please select Charge Type first": "Veuillez d’abord sélectionner le Type de Facturation",
         "Please select the Company first": "Veuillez sélectionner la Société en premier",
         "Please specify a valid Row ID for row {0} in table {1}": "Veuillez spécifier un N° de Ligne valide pour la ligne {0} de la table {1}",
@@ -16157,6 +16917,21 @@
         "Status": "Statut",
         "Title": "Titre"
     },
+    "apps/erpnext/erpnext/hr/report/employee_analytics/employee_analytics.js": {
+        "Company": "Société",
+        "Parameter": "Paramètre"
+    },
+    "apps/erpnext/erpnext/hr/report/employee_analytics/employee_analytics.py": {
+        "Branch": "Branche",
+        "Company": "Société",
+        "Date of Birth": "Date de naissance",
+        "Department": "Département",
+        "Designation": "Désignation",
+        "Employee": "Employé",
+        "Gender": "Genre",
+        "Name": "Nom",
+        "{0} is mandatory": "{0} est obligatoire"
+    },
     "apps/erpnext/erpnext/hr/report/employee_birthday/employee_birthday.js": {
         "Company": "Société",
         "Month": "Mois"
@@ -16180,15 +16955,20 @@
     },
     "apps/erpnext/erpnext/hr/report/employee_leave_balance/employee_leave_balance.py": {
         "Balance": "Solde",
+        "Closing Balance": "Solde à la fin",
         "Department": "Département",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
         "From date can not be greater than than To date": "La date de début ne peut pas être supérieure à la date de fin",
+        "Leave Type": "Type de congé",
+        "Leaves Taken": "Congés pris",
         "Opening": "Ouverture",
+        "Opening Balance": "Solde au début",
         "Taken": "Pris"
     },
     "apps/erpnext/erpnext/hr/report/employee_leave_balance_summary/employee_leave_balance_summary.js": {
         "Company": "Société",
+        "Date": "Date",
         "Department": "Département",
         "Employee": "Employé",
         "From Date": "Date de début",
@@ -16196,6 +16976,7 @@
     },
     "apps/erpnext/erpnext/hr/report/employee_leave_balance_summary/employee_leave_balance_summary.py": {
         "Closing Balance": "Solde à la fin",
+        "Department": "Département",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
         "From date can not be greater than than To date": "La date de début ne peut pas être supérieure à la date de fin",
@@ -16228,6 +17009,7 @@
     "apps/erpnext/erpnext/hr/report/monthly_attendance_sheet/monthly_attendance_sheet.js": {
         "Company": "Société",
         "Employee": "Employé",
+        "Group By": "Grouper Par",
         "Month": "Mois",
         "Year": "Année"
     },
@@ -16241,6 +17023,7 @@
         "Please select month and year": "Veuillez sélectionner le mois et l'année",
         "Total Absent": "Total des Absences",
         "Total Early Exits": "Total des départs anticipés",
+        "Total Holidays": "Total des vacances",
         "Total Late Entries": "Total des arrivées tardives",
         "Total Leaves": "Total des Congés",
         "Total Present": "Total des Présents"
@@ -16307,6 +17090,7 @@
     "apps/erpnext/erpnext/loan_management/doctype/loan/loan.js": {
         "Accounting Ledger": "Grand livre",
         "Create": "Créer",
+        "Loan Disbursement": "Déboursement du prêt",
         "Loan Repayment": "Remboursement de prêt",
         "View": "Voir"
     },
@@ -16320,6 +17104,7 @@
         "Accounting Ledger": "Grand livre",
         "Create": "Créer",
         "Loan": "Prêt",
+        "Loan Security Pledge": "Engagement de garantie de prêt",
         "View": "Voir"
     },
     "apps/erpnext/erpnext/loan_management/doctype/loan_application/loan_application.py": {
@@ -16367,6 +17152,7 @@
         "Applicant": "Candidat",
         "Currency": "Devise",
         "Loan": "Prêt",
+        "Loan Security Pledge": "Engagement de garantie de prêt",
         "Quantity": "Quantité",
         "Status": "Statut"
     },
@@ -16410,9 +17196,16 @@
         "Serial No {0} does not exist": "N° de série {0} n’existe pas",
         "To {0}": "À {0}"
     },
+    "apps/erpnext/erpnext/manufacturing/dashboard_fixtures.py": {
+        "Produced Quantity": "Quantité Produite"
+    },
     "apps/erpnext/erpnext/manufacturing/doctype/blanket_order/blanket_order.js": {
+        "Create": "Créer",
         "Create Purchase Order": "Créer une commande fournisseur",
         "Create Sales Order": "Créer une commande client",
+        "Purchase Order": "Commande fournisseur",
+        "Quotation": "Devis",
+        "Sales Order": "Commande client",
         "View Orders": "Afficher les commandes"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/blanket_order/blanket_order.py": {
@@ -16424,8 +17217,12 @@
         "Create": "Créer",
         "Duplicate": "Dupliquer",
         "Enter Value": "Entrer une valeur",
+        "Operation": "Opération",
         "Qty To Manufacture": "Quantité À Produire",
         "Quality Inspection": "Inspection de la Qualité",
+        "Quantity": "Quantité",
+        "Raw Materials": "Matières premières",
+        "Source Warehouse": "Entrepôt Source",
         "Update Cost": "Mettre à jour le Coût",
         "Work Order": "Ordre de travail",
         "You can not change rate if BOM mentioned agianst any item": "Vous ne pouvez pas modifier le taux si la LDM est mentionnée pour un article"
@@ -16472,7 +17269,8 @@
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom_list.js": {
         "Active": "Actif",
         "Default": "Défaut",
-        "Not active": "Non actif"
+        "Not active": "Non actif",
+        "Template": "Modèle"
     },
     "apps/erpnext/erpnext/manufacturing/doctype/bom/bom_tree.js": {
         "BOM": "LDM (Liste de Matériaux)",
@@ -16508,6 +17306,7 @@
         "Row {0}: From time must be less than to time": "Ligne {0}: L'heure de début doit être inférieure à l'heure de fin",
         "The total completed qty({0}) must be equal to qty to manufacture({1})": "La quantité terminée ({0}) doit être égale à la quantité à produire ({1})",
         "Time logs are required for job card {0}": "Des feuilles de temps sont nécessaires pour la carte de travail {0}",
+        "Total Completed Qty": "Qté totale complétée",
         "Total completed qty can not be greater than for quantity": "La quantité complétée totale ne peut pas être supérieure à la quantité demandée",
         "Total completed qty must be greater than zero": "La quantité complétée totale doit être supérieure à zéro"
     },
@@ -16524,6 +17323,10 @@
         "Open": "Ouvert",
         "Work In Progress": "Travaux en cours"
     },
+    "apps/erpnext/erpnext/manufacturing/doctype/manufacturing_settings/manufacturing_settings.js": {
+        "Allow Multiple Material Consumption": "Autoriser la consommation de plusieurs matériaux",
+        "Update BOM Cost Automatically": "Mettre à jour automatiquement le coût de la LDM"
+    },
     "apps/erpnext/erpnext/manufacturing/doctype/operation/operation_dashboard.py": {
         "Manufacture": "Production"
     },
@@ -16531,6 +17334,7 @@
         "Actual Qty: Quantity available in the warehouse.": "Qté actuelle: Quantité disponible dans l'entrepôt",
         "Create": "Créer",
         "Do you want to submit the material request": "Voulez-vous soumettre la demande de matériel",
+        "Get Items": "Obtenir les articles",
         "Item {0}: {1} qty produced, ": "Article {0}: {1} quantité produite,",
         "Item {0}: {1} qty produced. ": "Article {0}: {1} qté produite",
         "Material Request": "Demande de matériel",
@@ -16660,6 +17464,12 @@
     "apps/erpnext/erpnext/manufacturing/report/bom_explorer/bom_explorer.js": {
         "BOM": "LDM (Liste de Matériaux)"
     },
+    "apps/erpnext/erpnext/manufacturing/report/bom_operations_time/bom_operations_time.py": {
+        "Item Name": "Nom de l'article",
+        "Operation": "Opération",
+        "UOM": "Unité de mesure",
+        "Workstation": "Station de travail"
+    },
     "apps/erpnext/erpnext/manufacturing/report/bom_stock_calculated/bom_stock_calculated.js": {
         "BOM": "LDM (Liste de Matériaux)",
         "Quantity to Make": "Quantité à faire",
@@ -16713,6 +17523,55 @@
         "Required Qty": "Qté requise",
         "Work Order": "Ordre de travail"
     },
+    "apps/erpnext/erpnext/manufacturing/report/downtime_analysis/downtime_analysis.js": {
+        "From Date": "Date de début",
+        "To Date": "Date de fin"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/downtime_analysis/downtime_analysis.py": {
+        "From Time": "Horaire de Début",
+        "ID": "ID",
+        "Operator": "Opérateur",
+        "Remarks": "Remarques",
+        "Stop Reason": "Raison pour l'arrêt",
+        "To Time": "Horaire de Fin"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/exponential_smoothing_forecasting/exponential_smoothing_forecasting.js": {
+        "Based On": "Basé sur",
+        "Company": "Société",
+        "From Date": "Date de début",
+        "Half-Yearly": "Semestriel",
+        "Item Code": "Code de l'Article",
+        "Monthly": "Mensuel",
+        "Periodicity": "Périodicité",
+        "Quarterly": "Trimestriel",
+        "To Date": "Date de fin",
+        "Warehouse": "Entrepôt",
+        "Yearly": "Annuel"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/exponential_smoothing_forecasting/exponential_smoothing_forecasting.py": {
+        "Item Code": "Code de l'article",
+        "Warehouse": "Entrepôt"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/job_card_summary/job_card_summary.js": {
+        "Company": "Société",
+        "Fiscal Year": "Exercice fiscal",
+        "Production Item": "Article de production",
+        "Sales Orders": "Commandes clients",
+        "Status": "Statut"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/job_card_summary/job_card_summary.py": {
+        "Employee Name": "Nom de l'employé",
+        "From Time": "Horaire de Début",
+        "Item Name": "Nom de l'article",
+        "Operation": "Opération",
+        "Posting Date": "Date de comptabilisation",
+        "Production Item": "Article de Production",
+        "Status": "Statut",
+        "To Time": "Horaire de Fin",
+        "Total Completed Qty": "Qté totale complétée",
+        "Work Order": "Ordre de travail",
+        "Workstation": "Station de travail"
+    },
     "apps/erpnext/erpnext/manufacturing/report/production_analytics/production_analytics.js": {
         "Company": "Société",
         "From Date": "Date de début",
@@ -16726,8 +17585,58 @@
     "apps/erpnext/erpnext/manufacturing/report/production_analytics/production_analytics.py": {
         "Status": "Statut"
     },
+    "apps/erpnext/erpnext/manufacturing/report/production_planning_report/production_planning_report.js": {
+        "Based On": "Basé sur",
+        "Company": "Société",
+        "Document Name": "Nom du document"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/production_planning_report/production_planning_report.py": {
+        "Available": "Disponible",
+        "ID": "ID",
+        "Item Code": "Code de l'article",
+        "Item Name": "Nom de l'article",
+        "Required Qty": "Qté requise",
+        "Warehouse": "Entrepôt"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/quality_inspection_summary/quality_inspection_summary.js": {
+        "From Date": "Date de début",
+        "Inspected By": "Inspecté Par",
+        "Item Code": "Code de l'article",
+        "Status": "Statut",
+        "To Date": "Date de fin"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/quality_inspection_summary/quality_inspection_summary.py": {
+        "Document Name": "Nom du document",
+        "Document Type": "Type de document",
+        "Inspected By": "Inspecté Par",
+        "Inspection Type": "Type d'inspection",
+        "Item Code": "Code de l'article",
+        "Item Name": "Nom de l'article",
+        "Report Date": "Date du rapport",
+        "Sample Size": "Taille de l'échantillon",
+        "Status": "Statut"
+    },
     "apps/erpnext/erpnext/manufacturing/report/work_order_stock_report/work_order_stock_report.js": {
         "Warehouse": "Entrepôt"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/work_order_summary/work_order_summary.js": {
+        "Age": "Âge",
+        "Company": "Société",
+        "Fiscal Year": "Exercice fiscal",
+        "Production Item": "Article de production",
+        "Sales Orders": "Commandes clients",
+        "Status": "Statut"
+    },
+    "apps/erpnext/erpnext/manufacturing/report/work_order_summary/work_order_summary.py": {
+        "Actual End Date": "Date de fin réelle",
+        "Actual Start Date": "Date de début réelle",
+        "Age": "Âge",
+        "Planned End Date": "Date de fin prévue",
+        "Planned Start Date": "Date de début prévue",
+        "Produced Qty": "Quantité produite",
+        "Production Item": "Article de production",
+        "Sales Order": "Commande client",
+        "Status": "Statut"
     },
     "apps/erpnext/erpnext/patches/dokos/v1_0/remove_healthcare_domain.py": {
         "Drug": "Médicament",
@@ -16746,6 +17655,10 @@
     },
     "apps/erpnext/erpnext/patches/v11_0/rename_supplier_type_to_supplier_group.py": {
         "All Supplier Groups": "Tous les groupes de fournisseurs"
+    },
+    "apps/erpnext/erpnext/patches/v11_0/set_default_email_template_in_hr.py": {
+        "Leave Approval Notification": "Notification d'approbation de congés",
+        "Leave Status Notification": "Notification de statut des congés"
     },
     "apps/erpnext/erpnext/patches/v11_0/update_department_lft_rgt.py": {
         "All Departments": "Tous les départements"
@@ -16921,6 +17834,20 @@
         "Project": "Projet",
         "To Date": "Date de fin"
     },
+    "apps/erpnext/erpnext/projects/report/project_summary/project_summary.js": {
+        "Company": "Société",
+        "Is Active": "Est actif",
+        "Priority": "Priorité",
+        "Project Type": "Type de projet",
+        "Status": "Statut"
+    },
+    "apps/erpnext/erpnext/projects/report/project_summary/project_summary.py": {
+        "End Date": "Date de fin",
+        "Project": "Projet",
+        "Start Date": "Date de début",
+        "Status": "Statut",
+        "Type": "Type"
+    },
     "apps/erpnext/erpnext/projects/report/project_wise_stock_tracking/project_wise_stock_tracking.py": {
         "Company": "Société",
         "Completion Date": "Date d'Achèvement",
@@ -17073,6 +18000,7 @@
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Currency": "Devise",
+        "End Date": "Date de fin",
         "End Year": "Année de Fin",
         "Finance Book": "Livre comptable",
         "Financial Statements": "États Financiers",
@@ -17081,6 +18009,7 @@
         "Periodicity": "Périodicité",
         "Profit and Loss": "Compte de résultat",
         "Quarterly": "Trimestriel",
+        "Start Date": "Date de début",
         "Start Year": "Année de Début",
         "Yearly": "Annuel"
     },
@@ -17265,6 +18194,7 @@
         "Alternate Item": "Article alternatif",
         "Annual Billing: {0}": "Facturation annuelle: {0}",
         "Available Qty": "Qté Disponible",
+        "Delivery Date": "Date de livraison",
         "Item Code": "Code de l'Article",
         "Items": "Articles",
         "Loyalty Points: {0}": "Points de fidélité: {0}",
@@ -17574,10 +18504,12 @@
     "apps/erpnext/erpnext/regional/report/gst_itemised_purchase_register/gst_itemised_purchase_register.js": {
         "Company": "Société",
         "Date Range": "Intervalle de dates",
+        "From Date": "Date de début",
         "Group By": "Grouper par",
         "Item": "Article",
         "Mode of Payment": "Mode de Paiement",
-        "Supplier": "Fournisseur"
+        "Supplier": "Fournisseur",
+        "To Date": "Date de fin"
     },
     "apps/erpnext/erpnext/regional/report/gst_itemised_sales_register/gst_itemised_sales_register.js": {
         "Brand": "Marque",
@@ -17585,18 +18517,23 @@
         "Company GSTIN": "N° GSTIN de la société",
         "Customer": "Client",
         "Date Range": "Intervalle de dates",
+        "From Date": "Date de début",
         "Group By": "Grouper par",
         "Invoice Type": "Type de Facture",
         "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
+        "To Date": "Date de fin",
         "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/regional/report/gst_purchase_register/gst_purchase_register.js": {
         "Company": "Société",
+        "Cost Center": "Centre de coûts",
         "From Date": "Date de début",
+        "Item Group": "Groupe d'article",
         "Mode of Payment": "Mode de Paiement",
         "Supplier": "Fournisseur",
-        "To Date": "Date de fin"
+        "To Date": "Date de fin",
+        "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/regional/report/gst_sales_register/gst_sales_register.js": {
         "Brand": "Marque",
@@ -17984,6 +18921,7 @@
         "Opportunities": "Opportunités",
         "Quotations": "Devis",
         "Sales Orders": "Commandes Clients",
+        "To Date must be greater than From Date": "La date de fin doit être supérieure à la date de début",
         "Total Amount": "Montant Total"
     },
     "apps/erpnext/erpnext/selling/report/address_and_contacts/address_and_contacts.js": {
@@ -18356,6 +19294,7 @@
         "Support": "Support"
     },
     "apps/erpnext/erpnext/setup/doctype/company/company_list.js": {
+        "Accounting": "Comptabilité",
         "Accounts": "Comptes"
     },
     "apps/erpnext/erpnext/setup/doctype/company/company_tree.js": {
@@ -18743,6 +19682,15 @@
         "Projected Qty": "Qté Projetée",
         "Reserved Qty": "Qté Réservées"
     },
+    "apps/erpnext/erpnext/stock/dashboard_chart_source/warehouse_wise_stock_value/warehouse_wise_stock_value.js": {
+        "Company": "Société"
+    },
+    "apps/erpnext/erpnext/stock/dashboard_chart_source/warehouse_wise_stock_value/warehouse_wise_stock_value.py": {
+        "Stock Value": "Valeur du Stock"
+    },
+    "apps/erpnext/erpnext/stock/dashboard_fixtures.py": {
+        "Purchase Receipt Trends": "Evolution des reçus d'achat"
+    },
     "apps/erpnext/erpnext/stock/doctype/batch/batch.js": {
         "Move": "Déplacer",
         "New Batch ID (Optional)": "Nouveau Numéro de Lot (Optionnel)",
@@ -18763,7 +19711,15 @@
         "Set item's shelf life in days, to set expiry based on manufacturing date plus shelf-life.": "Définissez la durée de vie de l'article en jours, pour que la date d'expiration soit calculée sur la base de la date de fabrication + la durée de vie",
         "The selected item cannot have Batch": "L’article sélectionné ne peut pas avoir de Lot"
     },
+    "apps/erpnext/erpnext/stock/doctype/batch/batch_dashboard.py": {
+        "Buy": "Acheter",
+        "Move": "Déplacer",
+        "Quality": "Qualité",
+        "Sell": "Vendre"
+    },
     "apps/erpnext/erpnext/stock/doctype/batch/batch_list.js": {
+        "Active": "Actif",
+        "Disabled": "Désactiver",
         "Expired": "Expiré",
         "Not Expired": "Non Expiré"
     },
@@ -18970,6 +19926,7 @@
     },
     "apps/erpnext/erpnext/stock/doctype/item_booking/item_booking.js": {
         "Create a quotation": "Créer un devis",
+        "Select": "Sélectionner",
         "This document will be automatically deleted in {0} minutes if not validated.": "Ce document sera automatiquement supprimé dans {0} minutes s'il n'est pas validé"
     },
     "apps/erpnext/erpnext/stock/doctype/item_booking/item_booking.py": {
@@ -19053,6 +20010,7 @@
         "Fetch exploded BOM (including sub-assemblies)": "Récupérer la LDM éclatée (y compris les sous-ensembles)",
         "For Default Supplier (Optional)": "Pour le fournisseur par défaut (optionnel)",
         "For Default Supplier (optional)": "Pour le fournisseur par défaut (facultatif)",
+        "For Warehouse": "Pour l’entrepôt",
         "For row {0} in {1}. To include {2} in Item rate, rows {3} must also be included": "Pour la ligne {0} dans {1}. Pour inclure {2} dans le prix de l'Article, les lignes {3} doivent également être incluses",
         "Get Items": "Obtenir les articles",
         "Get Items from BOM": "Obtenir les Articles depuis LDM",
@@ -19089,6 +20047,7 @@
         "Row {0}: Bill of Materials not found for the Item {1}": "Ligne {0} : Liste de Matériaux non trouvée pour l’Article {1}",
         "The following Work Orders were created:": "Les ordres de travail suivants ont été créés:",
         "The total Issue / Transfer quantity {0} in Material Request {1}  \\\n\t\t\t\t\t\t\tcannot be greater than requested quantity {2} for Item {3}": "La quantité totale d’Émission / Transfert {0} dans la Demande de matériel {1} \\ ne peut pas être supérieure à la quantité demandée {2} pour l’Article {3}",
+        "Work Order": "Ordre de travail",
         "Work Order cannot be created for following reason:": "Les ordres de travail ne peuvent pas être créé pour la raison suivante",
         "{0} Request for {1}": "Demande de {0} pour {1}",
         "{0} for {1}": "{0} pour {1}",
@@ -19100,7 +20059,8 @@
     },
     "apps/erpnext/erpnext/stock/doctype/material_request/material_request_dashboard.py": {
         "Manufacturing": "Production",
-        "Related": "En Relation"
+        "Related": "En Relation",
+        "Stock": "Stock"
     },
     "apps/erpnext/erpnext/stock/doctype/material_request/material_request_list.js": {
         "Issued": "Publié",
@@ -19264,7 +20224,8 @@
         "Active": "Actif",
         "Cancelled": "Annulé",
         "Delivered": "Livré",
-        "Expired": "Expiré"
+        "Expired": "Expiré",
+        "Inactive": "Inactif"
     },
     "apps/erpnext/erpnext/stock/doctype/stock_entry/stock_entry.js": {
         "Alternate Item": "Article alternatif",
@@ -19388,6 +20349,14 @@
         "Valuation Rate required for Item {0} at row {1}": "Le taux de valorisation est requis pour l'article {0} à la ligne {1}",
         "Warehouse not found in the system": "L'entrepôt n'a pas été trouvé dans le système"
     },
+    "apps/erpnext/erpnext/stock/doctype/stock_settings/stock_settings.js": {
+        "Allow Negative Stock": "Autoriser un stock négatif",
+        "Automatically Set Serial Nos based on FIFO": "Définir automatiquement les n° de série en PEPS",
+        "Default Warehouse": "Entrepôt par défaut",
+        "Item Naming By": "Nommage des articles selon",
+        "Show Barcode Field": "Afficher le champ de code barre",
+        "Valuation Method": "Méthode de valorisation"
+    },
     "apps/erpnext/erpnext/stock/doctype/stock_settings/stock_settings.py": {
         "Can't change valuation method, as there are transactions against some items which does not have it's own valuation method": "Impossible de modifier la méthode de valorisation, car il existe des transactions sur certains articles ne possèdant pas leur propre méthode de valorisation",
         "Group Warehouses cannot be used in transactions. Please change the value of {0}": "Les entrepôts groupes ne peuvent pas être utilisés dans les transactions. Veuillez modifier la valeur de {0}",
@@ -19442,6 +20411,7 @@
         "Warehouse": "Entrepôt"
     },
     "apps/erpnext/erpnext/stock/reorder_item.py": {
+        "Administrator": "Administrateur",
         "Auto Material Requests Generated": "Demandes de Matériel Générées Automatiquement"
     },
     "apps/erpnext/erpnext/stock/report/batch_item_expiry_status/batch_item_expiry_status.js": {
@@ -19560,6 +20530,22 @@
         "UOM": "Unité de mesure",
         "Valuation Rate": "Taux de valorisation"
     },
+    "apps/erpnext/erpnext/stock/report/item_shortage_report/item_shortage_report.js": {
+        "Company": "Société",
+        "Warehouse": "Entrepôt"
+    },
+    "apps/erpnext/erpnext/stock/report/item_shortage_report/item_shortage_report.py": {
+        "Actual Quantity": "Quantité réelle",
+        "Company": "Société",
+        "Description": "Description",
+        "Item": "Article",
+        "Item Name": "Nom de l'article",
+        "Ordered Quantity": "Quantité Commandée",
+        "Planned Quantity": "Quantité Planifiée",
+        "Projected Qty": "Qté projetée",
+        "Reserved Quantity": "Quantité réservée",
+        "Warehouse": "Entrepôt"
+    },
     "apps/erpnext/erpnext/stock/report/item_variant_details/item_variant_details.js": {
         "Item": "Article"
     },
@@ -19676,6 +20662,7 @@
     },
     "apps/erpnext/erpnext/stock/report/stock_balance/stock_balance.js": {
         "Brand": "Marque",
+        "Company": "Société",
         "From Date": "Date de début",
         "Include UOM": "Inclure Unité de mesure",
         "Item": "Article",
@@ -20375,6 +21362,8 @@
         "Duplicate row {0} with same {1}": "Ligne {0} en double avec le même {1}",
         "Invalid Posting Time": "Heure de comptabilisation non valide",
         "Invalid reference {0} {1}": "Référence invalide {0} {1}",
+        "Maintain Same Rate Throughout Sales Cycle": "Maintenir le même prix unitaire durant tout le cycle de vente",
+        "Must be Whole Number": "Doit être un nombre entier",
         "Quantity ({0}) cannot be a fraction in row {1}": "La quantité ({0}) ne peut pas être une fraction dans la ligne {1}",
         "Row #{0}: Rate must be same as {1}: {2} ({3} / {4}) ": "Ligne #{0} : Le Prix doit être le même que {1}: {2} ({3} / {4})"
     },
@@ -20606,6 +21595,7 @@
         "Customer POS Id": "ID PDV du Client",
         "Customers in Queue": "Clients dans la File d'Attente",
         "Del": "Supp",
+        "Delivery Date": "Date de livraison",
         "Disc": "Rem",
         "Discount": "Remise",
         "Documentation": "Documentation",

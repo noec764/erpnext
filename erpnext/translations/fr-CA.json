@@ -201,7 +201,7 @@
     },
     "DocType: Additional Salary": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Company": "Société",
         "Department": "Département",
@@ -348,7 +348,7 @@
         "Warehouse": "Entrepôt"
     },
     "DocType: Appraisal": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Any other remarks, noteworthy effort that should go in the records.": "Toute autre remarque, effort remarquable qui devrait aller dans les dossiers.",
         "Appraisal": "Estimation",
         "Appraisal Template": "Modèle d'évaluation",
@@ -402,7 +402,7 @@
     "DocType: Asset": {
         "ACC-ASS-.YYYY.-": "ACC-ASS-YYYY.-",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Category": "Catégorie d'Actif",
         "Asset Name": "Nom de l'Actif",
@@ -525,7 +525,7 @@
     "DocType: Asset Maintenance Log": {
         "ACC-AML-.YYYY.-": "ACC-AML-.YYYY.-",
         "Actions performed": "Actions réalisées",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Asset Maintenance": "Maintenance des Actifs",
         "Asset Maintenance Log": "Journal de Maintenance des Actifs",
         "Asset Name": "Nom de l'Actif",
@@ -587,7 +587,7 @@
     },
     "DocType: Asset Movement": {
         "Accounts Manager": "Responsable des Comptes",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Movement": "Mouvement d'Actif",
         "Assets": "Actifs",
@@ -613,7 +613,7 @@
     "DocType: Asset Repair": {
         "ACC-ASR-.YYYY.-": "ACC-ASR-.AAAA.-",
         "Actions performed": "Actions réalisées",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Asset Name": "Nom de l'Actif",
         "Asset Repair": "Réparation d'Actif",
         "Assets": "Actifs",
@@ -647,7 +647,7 @@
     "DocType: Asset Value Adjustment": {
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Asset": "Actif",
         "Asset Category": "Catégorie d'Actif",
         "Asset Value Adjustment": "Ajustement de la valeur des actifs",
@@ -664,7 +664,7 @@
     },
     "DocType: Attendance": {
         "Absent": "Absent",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attendance": "Présence",
         "Attendance Date": "Date de Présence",
         "Attendance Request": "Demande de validation de présence",
@@ -685,7 +685,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: Attendance Request": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attendance Request": "Demande de validation de présence",
         "Company": "Société",
         "Department": "Département",
@@ -782,7 +782,7 @@
     "DocType: Auto Repeat": {
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Auto Repeat": "Répétition Automatique",
         "Auto Repeat Schedule": "Calendrier de répétitions automatiques",
         "Cancelled": "Annulé",
@@ -824,7 +824,7 @@
     "DocType: BOM": {
         "Allow Alternative Item": "Autoriser un article alternatif",
         "Allow Same Item Multiple Times": "Autoriser le même élément plusieurs fois",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "BOM": "LDM (Liste de Matériaux)",
         "Company": "Société",
         "Conversion Rate": "Taux de Conversion",
@@ -1019,7 +1019,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
@@ -1097,7 +1097,7 @@
     "DocType: Bank Statement Transaction Entry": {
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bank": "Banque",
         "Bank Account": "Compte bancaire",
         "Bank Statement": "Relevé bancaire",
@@ -1171,7 +1171,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bank Account": "Compte bancaire",
         "Credit": "Crédit",
         "Currency": "Devise",
@@ -1234,7 +1234,7 @@
         "Warehouse": "Entrepôt"
     },
     "DocType: Blanket Order": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Blanket Order": "Commande avec limites",
         "Company": "Société",
         "Customer": "Client",
@@ -1354,7 +1354,7 @@
         "Action if Annual Budget Exceeded on Actual": "Action si le budget annuel est dépassé par rapport aux dépenses réelles",
         "Action if Annual Budget Exceeded on MR": "Action si le budget annuel est dépassé avec les requêtes de matériel",
         "Action if Annual Budget Exceeded on PO": "Action si le budget annuel a été dépassé avec les bons de commande d'achat",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Applicable on Material Request": "Applicable sur la base des requêtes de matériel",
         "Applicable on Purchase Order": "Applicable sur la base des bons de commande d'achat",
         "Applicable on booking actual expenses": "Applicable sur la base de l'enregistrement des dépenses réelles",
@@ -1416,7 +1416,7 @@
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
         "All": "Tous",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "C-Form": "Formulaire-C",
         "C-Form No": "Formulaire-C Nº",
         "Company": "Société",
@@ -1509,7 +1509,7 @@
     },
     "DocType: Cashier Closing": {
         "Accounts": "Comptes",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cashier Closing": "Fermeture de la caisse",
         "Custody": "Garde",
         "Date": "Date",
@@ -1818,7 +1818,7 @@
         "Year": "Année"
     },
     "DocType: Compensatory Leave Request": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Compensatory Leave Request": "Demande de congé compensatoire",
         "Department": "Département",
         "Employee": "Employé",
@@ -1899,7 +1899,7 @@
     },
     "DocType: Contract": {
         "Active": "Actif",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "Contract": "Contrat",
         "Contract Details": "Détails du contrat",
@@ -1947,7 +1947,7 @@
         "Unsigned": "Non signé"
     },
     "DocType: Contract Fulfilment Checklist": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "Contract Fulfilment Checklist": "Liste de vérification de l'exécution des contrats",
         "Fulfilled": "Complété",
@@ -2486,7 +2486,7 @@
     },
     "DocType: Data Import": {
         "Action": "Action",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attach file for Import": "Joindre un fichier à importer",
         "Core": "Noyau",
         "Data Import": "Import de données",
@@ -2641,7 +2641,7 @@
         "Additional Discount Amount (Company Currency)": "Montant de la Remise Supplémentaire (Devise de la Société)",
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Billing Address": "Adresse de Facturation",
@@ -2851,7 +2851,7 @@
         "UOM": "Unité de mesure"
     },
     "DocType: Delivery Trip": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Calculate Estimated Arrival Times": "Calculer les heures d'arrivée estimées",
         "Cancelled": "Annulé",
         "Company": "Société",
@@ -3585,7 +3585,7 @@
     "DocType: Employee Advance": {
         "Advance Account": "Compte d'avances",
         "Advance Amount": "Montant de l'Avance",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Claimed": "Réclamé",
         "Claimed Amount": "Montant réclamé",
@@ -3622,7 +3622,7 @@
         "Unmarked Attendance": "Participation Non Marquée"
     },
     "DocType: Employee Benefit Application": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Benefits Applied": "Prestations demandées",
         "Date": "Date",
         "Department": "Département",
@@ -3650,7 +3650,7 @@
         "Pay Against Benefit Claim": "Payer la demande de prestations"
     },
     "DocType: Employee Benefit Claim": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attachments": "Pièces jointes",
         "Benefit Type and Amount": "Type de prestation et montant",
         "Claim Benefit For": "Demande de prestations pour",
@@ -3720,7 +3720,7 @@
         "Health Insurance Name": "Nom de l'assurance santé"
     },
     "DocType: Employee Incentive": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Department": "Département",
         "Employee": "Employé",
         "Employee Incentive": "Intéressement des employés",
@@ -3742,7 +3742,7 @@
     },
     "DocType: Employee Onboarding": {
         "Activities": "Activités",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Completed": "Terminé",
         "Date of Joining": "Date d'Embauche",
@@ -3783,7 +3783,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: Employee Promotion": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "Employee": "Employé",
@@ -3806,7 +3806,7 @@
     },
     "DocType: Employee Separation": {
         "Activities": "Activités",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Completed": "Terminé",
         "Department": "Département",
@@ -3845,7 +3845,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: Employee Tax Exemption Declaration": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Declarations": "Déclarations",
         "Department": "Département",
@@ -3866,7 +3866,7 @@
         "HR": "RH"
     },
     "DocType: Employee Tax Exemption Proof Submission": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attachments": "Pièces jointes",
         "Company": "Société",
         "Department": "Département",
@@ -3900,7 +3900,7 @@
         "Tax Exemption Category": "Catégorie d'exonération fiscale"
     },
     "DocType: Employee Transfer": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Create New Employee Id": "Créer un nouvel identifiant d'employé",
         "Department": "Département",
@@ -4006,7 +4006,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Exchange Rate Revaluation": "Réévaluation du taux de change",
         "Exchange Rate Revaluation Account": "Compte de réévaluation du taux de change",
@@ -4033,7 +4033,7 @@
         "Accounting Details": "Détails Comptabilité",
         "Advance Payments": "Paiements Anticipés",
         "Advances": "Avances",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Approval Status": "Statut d'Approbation",
         "Approved": "Approuvé",
         "Cancelled": "Annulé",
@@ -4524,7 +4524,7 @@
     },
     "DocType: Installation Note": {
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Contact": "Contact",
@@ -4988,7 +4988,7 @@
     "DocType: Job Card": {
         "Actual End Date": "Date de Fin Réelle",
         "Actual Start Date": "Date de Début Réelle",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Cancelled": "Annulé",
         "Company": "Société",
@@ -5034,7 +5034,7 @@
     },
     "DocType: Job Offer": {
         "Accepted": "Accepté",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Applicant Name": "Nom du Candidat",
         "Awaiting Response": "Attente de Réponse",
         "Company": "Société",
@@ -5085,7 +5085,7 @@
         "Accounts Payable": "Comptes créditeurs",
         "Accounts Receivable": "Comptes débiteurs",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Auditor": "Auditeur",
         "Auto Repeat": "Répétition Automatique",
         "Bill Date": "Date de la Facture",
@@ -5241,7 +5241,7 @@
     },
     "DocType: Landed Cost Voucher": {
         "Additional Charges": "Frais Supplémentaires",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Company": "Société",
         "Distribute Charges Based On": "Distribuer les Charges sur la Base de",
@@ -5335,7 +5335,7 @@
     "DocType: Leave Allocation": {
         "Add unused leaves from previous allocations": "Ajouter les congés inutilisés des précédentes allocations",
         "Allocation": "Allocation",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Compensatory Leave Request": "Demande de congé compensatoire",
         "Department": "Département",
         "Description": "Description",
@@ -5359,7 +5359,7 @@
     },
     "DocType: Leave Application": {
         "All": "Tous",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply / Approve Leaves": "Appliquer / Approuver les Congés",
         "Approved": "Approuvé",
         "Cancelled": "Annulé",
@@ -5445,7 +5445,7 @@
     },
     "DocType: Leave Encashment": {
         "Additional Salary": "Salaire supplémentaire",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Department": "Département",
         "Employee": "Employé",
         "Employee Name": "Nom de l'employé",
@@ -5476,7 +5476,7 @@
         "To Date": "Jusqu'au"
     },
     "DocType: Leave Policy": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "HR": "RH",
         "HR Manager": "Responsable RH",
         "HR User": "Chargé RH",
@@ -5563,7 +5563,7 @@
     },
     "DocType: Loan": {
         "Account Info": "Information du Compte",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Name": "Nom du Candidat",
         "Applicant Type": "Type de demandeur",
@@ -5602,7 +5602,7 @@
         "Totals": "Totaux"
     },
     "DocType: Loan Application": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Applicant": "Candidat",
         "Applicant Name": "Nom du Candidat",
         "Applicant Type": "Type de demandeur",
@@ -5728,7 +5728,7 @@
     },
     "DocType: Maintenance Schedule": {
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Contact": "Contact",
@@ -5794,7 +5794,7 @@
     },
     "DocType: Maintenance Visit": {
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Breakdown": "Panne",
         "Company": "Société",
         "Completion Status": "État d'Achèvement",
@@ -5885,7 +5885,7 @@
     },
     "DocType: Material Request": {
         "% Ordered": "% Commandé",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Customer": "Client",
@@ -6236,7 +6236,7 @@
     },
     "DocType: Opportunity": {
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "CRM": "CRM",
         "CRM-OPP-.YYYY.-": "CRM-OPP-YYYY.-",
         "Campaign": "Campagne",
@@ -6315,7 +6315,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: POS Closing Voucher": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cashier": "Caissier",
         "Company": "Société",
         "Details": "Détails",
@@ -6451,7 +6451,7 @@
         "UOM": "Unité de mesure"
     },
     "DocType: Packing Slip": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Delivery Note": "Bon de livraison",
         "From Package No.": "Du N° de Colis",
         "Generate packing slips for packages to be delivered. Used to notify package number, package contents and its weight.": "Générer les bordereaux des colis à livrer. Utilisé pour indiquer le numéro de colis, le contenu et son poids.",
@@ -6555,7 +6555,7 @@
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
         "Allocate Payment Amount": "Allouer le montant du paiement",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Auto Repeat": "Répétition Automatique",
         "Bank": "Banque",
@@ -6650,7 +6650,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bank": "Banque",
         "Company": "Société",
         "PMO-": "PMO-",
@@ -6727,7 +6727,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Amount in customer's currency": "Montant dans la devise du client",
         "Bank": "Banque",
@@ -6834,7 +6834,7 @@
     },
     "DocType: Payroll Entry": {
         "Accounts": "Comptes",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bimonthly": "Bimensuel",
         "Branch": "Branche",
         "Company": "Société",
@@ -6889,7 +6889,7 @@
     "DocType: Period Closing Voucher": {
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Closing Account Head": "Compte de clôture",
         "Closing Fiscal Year": "Clôture de l'Exercice",
         "Company": "Société",
@@ -7132,7 +7132,7 @@
         "UOM": "Unité de mesure"
     },
     "DocType: Production Plan": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Completed": "Terminé",
@@ -7325,7 +7325,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: Project Update": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Date": "Date",
         "Project": "Projet",
         "Project Update": "Mise à jour du projet",
@@ -7388,7 +7388,7 @@
         "Advance Payments": "Paiements Anticipés",
         "Advances": "Avances",
         "Against Expense Account": "Pour le Compte de Charges",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Apply Tax Withholding Amount": "Appliquer le montant de la retenue d'impôt",
         "Auditor": "Auditeur",
@@ -7598,7 +7598,7 @@
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
         "Advance Paid": "Avance Payée",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Buying": "Achat",
@@ -7782,7 +7782,7 @@
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Auto Repeat Detail": "Détail de la Répétition Automatique",
@@ -8055,7 +8055,7 @@
         "Yes": "Oui"
     },
     "DocType: Quality Inspection": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Batch No": "N° du lot",
         "Delivery Note": "Bon de livraison",
@@ -8200,7 +8200,7 @@
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Auto Repeat Section": "Répétition Automatique",
@@ -8409,7 +8409,7 @@
     },
     "DocType: Request for Quotation": {
         "All": "Tous",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Buying": "Achat",
         "Cancelled": "Annulé",
         "Company": "Société",
@@ -8476,7 +8476,7 @@
         "Supplier Name": "Nom du Fournisseur"
     },
     "DocType: Retention Bonus": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bonus Amount": "Montant du bonus",
         "Bonus Payment Date": "Date de paiement du bonus",
         "Company": "Société",
@@ -8677,7 +8677,7 @@
         "Variable Based On Taxable Salary": "Variable basée sur le salaire imposable"
     },
     "DocType: Salary Slip": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bank Account No.": "N° de Compte bancaire",
         "Bank Name": "Nom de la Banque",
         "Bimonthly": "Bimensuel",
@@ -8753,7 +8753,7 @@
     },
     "DocType: Salary Structure": {
         "Account": "Compte",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Bimonthly": "Bimensuel",
         "Company": "Société",
         "Daily": "Quotidien",
@@ -8788,7 +8788,7 @@
         "Yes": "Oui"
     },
     "DocType: Salary Structure Assignment": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Base": "Base",
         "Company": "Société",
         "Department": "Département",
@@ -8822,7 +8822,7 @@
         "Against Income Account": "Pour le Compte de Produits",
         "All": "Tous",
         "Allocate Advances Automatically (FIFO)": "Allouer automatiquement les avances (FIFO)",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Base Change Amount (Company Currency)": "Montant de Base à Rendre (Devise de la Société)",
@@ -9077,7 +9077,7 @@
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
         "Advance Paid": "Avance Payée",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Auto Repeat Section": "Répétition Automatique",
@@ -9505,7 +9505,7 @@
         "Accounts": "Comptes",
         "Accounts Manager": "Responsable des Comptes",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Amount": "Montant",
         "Asset Account": "Compte d'actif",
         "Company": "Société",
@@ -9558,7 +9558,7 @@
         "Title": "Titre"
     },
     "DocType: Shift Assignment": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Date": "Date",
         "Department": "Département",
@@ -9573,7 +9573,7 @@
         "Shift Type": "Type de quart"
     },
     "DocType: Shift Request": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "Employee": "Employé",
@@ -9823,7 +9823,7 @@
         "Value": "Valeur"
     },
     "DocType: Staffing Plan": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Department": "Département",
         "From Date": "A partir du",
@@ -9850,7 +9850,7 @@
     "DocType: Stock Entry": {
         "Additional Costs": "Frais Supplémentaires",
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "As per Stock UOM": "Selon Unité de mesure du stock",
         "BOM No": "N° LDM",
         "Company": "Société",
@@ -9987,7 +9987,7 @@
         "Yes": "Oui"
     },
     "DocType: Stock Reconciliation": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Company": "Société",
         "Cost Center": "Centre de coûts",
         "Difference Account": "Compte d’écart",
@@ -10212,7 +10212,7 @@
         "Additional Discount Percentage": "Pourcentage de réduction supplémentaire",
         "Address": "Adresse",
         "Address and Contact": "Adresse et Contact",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Apply Additional Discount On": "Appliquer une Remise Supplémentaire Sur",
         "Auto Repeat": "Répétition Automatique",
         "Auto Repeat Section": "Répétition Automatique",
@@ -10373,7 +10373,7 @@
         "System Manager": "Responsable Système"
     },
     "DocType: Supplier Scorecard Period": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Buying": "Achat",
         "Calculations": "Calculs",
         "Criteria": "Critère",
@@ -10761,7 +10761,7 @@
     "DocType: Timesheet": {
         "% Amount Billed": "% Montant facturé",
         "Accounts User": "Comptable",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Billed": "Facturé",
         "Billing Details": "Détails de la Facturation",
         "Cancelled": "Annulé",
@@ -10860,7 +10860,7 @@
     },
     "DocType: Training Event": {
         "Advance": "Avance",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Attendees": "Participants",
         "Beginner": "Débutant",
         "Cancelled": "Annulé",
@@ -10912,7 +10912,7 @@
         "Training Event Employee": "Évènement de Formation – Employé"
     },
     "DocType: Training Feedback": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Course": "Cours",
         "Department": "Département",
         "Employee": "Employé",
@@ -10926,7 +10926,7 @@
         "Training Feedback": "Retour d'Expérience sur la Formation"
     },
     "DocType: Training Program": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Company": "Société",
         "Completed": "Terminé",
@@ -10942,7 +10942,7 @@
         "Training Program": "Programme de formation"
     },
     "DocType: Training Result": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Employee Emails": "Emails de l'Employé",
         "Employees": "Employés",
         "HR": "RH",
@@ -10962,7 +10962,7 @@
     },
     "DocType: Transaction Log": {
         "Administrator": "Administrateur",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Chaining Hash": "Hachage de chaînage",
         "Checksum Version": "Version du Checksum",
         "Core": "Noyau",
@@ -11230,7 +11230,7 @@
     "DocType: Vehicle": {
         "Acquisition Date": "Date d'Aquisition",
         "Additional Details": "Détails Supplémentaires",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Chassis No": "N ° de Châssis",
         "Color": "Couleur",
         "Details": "Détails",
@@ -11259,7 +11259,7 @@
         "Wheels": "Roues"
     },
     "DocType: Vehicle Log": {
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Date": "Date",
         "Employee": "Employé",
         "Fleet Manager": "Gestionnaire de Flotte",
@@ -11352,7 +11352,7 @@
     "DocType: Warranty Claim": {
         "AMC Expiry Date": "Date d'Expiration CMA",
         "Address": "Adresse",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "Cancelled": "Annulé",
         "Closed": "Fermé",
         "Company": "Société",
@@ -11757,7 +11757,7 @@
         "Actual Start Date": "Date de Début Réelle",
         "Additional Operating Cost": "Coût d'Exploitation Supplémentaires",
         "Allow Alternative Item": "Autoriser un article alternatif",
-        "Amended From": "Modifié Depuis",
+        "Amended From": "Modication du document",
         "BOM No": "N° LDM",
         "Backflush raw materials from work-in-progress warehouse": "Rembourrage des matières premières dans l'entrepôt de travaux en cours",
         "Cancelled": "Annulé",

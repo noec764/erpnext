@@ -190,7 +190,7 @@
       "label": "Max Retry Limit"
      },
      {
-      "description": "Always sync your products from Amazon MWS before synching the Orders details",
+      "description": "Always sync your products from Amazon MWS before syncing the Orders details",
       "fieldname": "sync_products",
       "fieldtype": "Button",
       "label": "Sync Products",
