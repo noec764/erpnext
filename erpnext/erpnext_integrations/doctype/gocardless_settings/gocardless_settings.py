@@ -186,7 +186,8 @@ class GoCardlessSettings(PaymentGatewayController):
 				},
 				"metadata": {
 					"reference_doctype": self._payment_request.reference_doctype,
-					"reference_name": self._payment_request.reference_name
+					"reference_name": self._payment_request.reference_name,
+					"payment_request": self._payment_request.name
 				}
 			},
 			headers={
