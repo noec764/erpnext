@@ -17,7 +17,7 @@
      "tally_company",
      "default_uom",
      "column_break_8",
-     "erpnext_company",
+     "dokos_company",
      "processed_files_section",
      "chart_of_accounts",
      "parties",
@@ -95,10 +95,10 @@
       "fieldtype": "Column Break"
      },
      {
-      "description": "Your Company set in ERPNext",
-      "fieldname": "erpnext_company",
+      "description": "Your Company set in Dokos",
+      "fieldname": "dokos_company",
       "fieldtype": "Data",
-      "label": "ERPNext Company",
+      "label": "Dokos Company",
       "read_only_depends_on": "eval:doc.is_master_data_processed==1"
      },
      {

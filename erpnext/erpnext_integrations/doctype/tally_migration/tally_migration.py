@@ -90,7 +90,7 @@ class TallyMigration(Document):
 			setattr(self, key, f.file_url)
 
 	def set_account_defaults(self):
-		self.default_cost_center, self.default_round_off_account = frappe.db.get_value("Company", self.erpnext_company, ["cost_center", "round_off_account"])
+		self.default_cost_center, self.default_round_off_account = frappe.db.get_value("Company", self.dokos_company, ["cost_center", "round_off_account"])
 		self.default_warehouse = frappe.db.get_value("Stock Settings", "Stock Settings", "default_warehouse")
 
 	def _process_master_data(self):
@@ -239,7 +239,7 @@ class TallyMigration(Document):
 					"stock_uom": stock_uom.strip(),
 					"is_stock_item": 0,
 					"item_group": "All Item Groups",
-					"item_defaults": [{"company": self.erpnext_company}]
+					"item_defaults": [{"company": self.dokos_company}]
 				})
 
 			return items, uoms
@@ -249,7 +249,7 @@ class TallyMigration(Document):
 			collection = self.get_collection(self.master_data)
 			company = get_company_name(collection)
 			self.tally_company = company
-			self.erpnext_company = company
+			self.dokos_company = company
 
 			self.publish("Process Master Data", _("Processing Chart of Accounts and Parties"), 2, 5)
 			chart_of_accounts, customers, suppliers = get_coa_customers_suppliers(collection)
@@ -284,13 +284,13 @@ class TallyMigration(Document):
 			try:
 				company = frappe.get_doc({
 					"doctype": "Company",
-					"company_name": self.erpnext_company,
+					"company_name": self.dokos_company,
 					"default_currency": "INR",
 					"enable_perpetual_inventory": 0,
 				}).insert()
 			except frappe.DuplicateEntryError:
-				company = frappe.get_doc("Company", self.erpnext_company)
-				unset_existing_data(self.erpnext_company)
+				company = frappe.get_doc("Company", self.dokos_company)
+				unset_existing_data(self.dokos_company)
 
 			frappe.local.flags.ignore_chart_of_accounts = False
 			create_charts(company.name, custom_chart=json.loads(coa_file.get_content()))
@@ -379,7 +379,7 @@ class TallyMigration(Document):
 			accounts = []
 			ledger_entries = voucher.find_all("ALLLEDGERENTRIES.LIST") + voucher.find_all("LEDGERENTRIES.LIST")
 			for entry in ledger_entries:
-				account = {"account": encode_company_abbr(entry.LEDGERNAME.string.strip(), self.erpnext_company), "cost_center": self.default_cost_center}
+				account = {"account": encode_company_abbr(entry.LEDGERNAME.string.strip(), self.dokos_company), "cost_center": self.default_cost_center}
 				if entry.ISPARTYLEDGER.string.strip() == "Yes":
 					party_details = get_party(entry.LEDGERNAME.string.strip())
 					if party_details:
@@ -399,7 +399,7 @@ class TallyMigration(Document):
 				"tally_guid": voucher.GUID.string.strip(),
 				"tally_voucher_no": voucher.VOUCHERNUMBER.string.strip() if voucher.VOUCHERNUMBER else "",
 				"posting_date": voucher.DATE.string.strip(),
-				"company": self.erpnext_company,
+				"company": self.dokos_company,
 				"accounts": accounts,
 			}
 			return journal_entry
@@ -409,13 +409,13 @@ class TallyMigration(Document):
 				doctype = "Sales Invoice"
 				party_field = "customer"
 				account_field = "debit_to"
-				account_name = encode_company_abbr(self.tally_debtors_account, self.erpnext_company)
+				account_name = encode_company_abbr(self.tally_debtors_account, self.dokos_company)
 				price_list_field = "selling_price_list"
 			elif voucher.VOUCHERTYPENAME.string.strip() in ["Purchase", "Debit Note"]:
 				doctype = "Purchase Invoice"
 				party_field = "supplier"
 				account_field = "credit_to"
-				account_name = encode_company_abbr(self.tally_creditors_account, self.erpnext_company)
+				account_name = encode_company_abbr(self.tally_creditors_account, self.dokos_company)
 				price_list_field = "buying_price_list"
 			else:
 				# Do not handle vouchers other than "Purchase", "Debit Note", "Sales" and "Credit Note"
@@ -435,7 +435,7 @@ class TallyMigration(Document):
 				price_list_field: "Tally Price List",
 				"set_posting_time": 1,
 				"disable_rounded_total": 1,
-				"company": self.erpnext_company,
+				"company": self.dokos_company,
 			}
 			return invoice
 
@@ -457,7 +457,7 @@ class TallyMigration(Document):
 					"price_list_rate": entry.RATE.string.strip().split("/")[0],
 					"cost_center": self.default_cost_center,
 					"warehouse": self.default_warehouse,
-					account_field: encode_company_abbr(entry.find_all("ACCOUNTINGALLOCATIONS.LIST")[0].LEDGERNAME.string.strip(), self.erpnext_company),
+					account_field: encode_company_abbr(entry.find_all("ACCOUNTINGALLOCATIONS.LIST")[0].LEDGERNAME.string.strip(), self.dokos_company),
 				})
 			return items
 
@@ -466,7 +466,7 @@ class TallyMigration(Document):
 			taxes = []
 			for entry in ledger_entries:
 				if entry.ISPARTYLEDGER.string.strip() == "No":
-					tax_account = encode_company_abbr(entry.LEDGERNAME.string.strip(), self.erpnext_company)
+					tax_account = encode_company_abbr(entry.LEDGERNAME.string.strip(), self.dokos_company)
 					taxes.append({
 						"charge_type": "Actual",
 						"account_head": tax_account,
@@ -478,9 +478,9 @@ class TallyMigration(Document):
 
 		def get_party(party):
 			if frappe.db.exists({"doctype": "Supplier", "supplier_name": party}):
-				return "Supplier", encode_company_abbr(self.tally_creditors_account, self.erpnext_company)
+				return "Supplier", encode_company_abbr(self.tally_creditors_account, self.dokos_company)
 			elif frappe.db.exists({"doctype": "Customer", "customer_name": party}):
-				return "Customer", encode_company_abbr(self.tally_debtors_account, self.erpnext_company)
+				return "Customer", encode_company_abbr(self.tally_debtors_account, self.dokos_company)
 
 		try:
 			self.publish("Process Day Book Data", _("Reading Uploaded File"), 1, 3)
@@ -545,9 +545,9 @@ class TallyMigration(Document):
 			}).insert()
 
 		try:
-			frappe.db.set_value("Account", encode_company_abbr(self.tally_creditors_account, self.erpnext_company), "account_type", "Payable")
-			frappe.db.set_value("Account", encode_company_abbr(self.tally_debtors_account, self.erpnext_company), "account_type", "Receivable")
-			frappe.db.set_value("Company", self.erpnext_company, "round_off_account", self.default_round_off_account)
+			frappe.db.set_value("Account", encode_company_abbr(self.tally_creditors_account, self.dokos_company), "account_type", "Payable")
+			frappe.db.set_value("Account", encode_company_abbr(self.tally_debtors_account, self.dokos_company), "account_type", "Receivable")
+			frappe.db.set_value("Company", self.dokos_company, "round_off_account", self.default_round_off_account)
 
 			vouchers_file = frappe.get_doc("File", {"file_url": self.vouchers})
 			vouchers = json.loads(vouchers_file.get_content())
