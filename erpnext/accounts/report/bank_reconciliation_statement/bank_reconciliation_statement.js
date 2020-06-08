@@ -18,5 +18,10 @@ frappe.query_reports["Bank Reconciliation Statement"] = {
 			"default": frappe.datetime.get_today(),
 			"reqd": 1
 		}
-	]
+	],
+	onload: (report) => {
+		report.page.add_action_item(__("Go to Bank Reconciliation Dashboard"), function() {
+			frappe.set_route("bank-reconciliation", {bank_account: report.filters.filter(f => f.fieldname == "bank_account")[0].value})
+		});
+	}
 }

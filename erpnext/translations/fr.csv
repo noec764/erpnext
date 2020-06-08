@@ -5781,7 +5781,8 @@ Reconcile Stripe Transactions,Rapprocher les transactions Stripe,
 Reconcile this account,Rapprocher ce compte,
 Reconcile,Rapprocher,context
 Reconcile,Réconcilier,
-Reconciled,Rapproché,context
+Reconciled,Rapproché,Bank Transaction
+Reconciled,Rapproché,Payment Entry
 Reconciled,Réconcilié,
 Reconciliation JSON,Réconciliation JSON,
 Record all transactions against an accounting journal,Comptabilisation toutes les transactions dans un journal comptable,
@@ -7882,7 +7883,8 @@ Unplanned machine maintenance,Maintenance de la machine non planifiée,
 Unrealized Exchange Gain/Loss Account,Compte de gains / pertes de change non réalisés,
 Unreconciled Amount,Montant non rapproché,
 Unreconciled Payment Details,Détails des paiements non rapprochés,
-Unreconciled,Non rapproché,context
+Unreconciled,Non rapproché,Bank Transaction
+Unreconciled,Non rapproché,Payment Entry
 Unreconciled,Non réconcilié,
 Unresolve,Non résolu,
 Unscheduled,Non programmé,

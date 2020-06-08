@@ -6,9 +6,9 @@ frappe.listview_settings['Bank Transaction'] = {
 	add_fields: ["unallocated_amount"],
 	get_indicator: function(doc) {
 		if (doc.status === "Unreconciled") {
-			return [__("Unreconciled"), "orange", "status,=,Unreconciled"];
+			return [__("Unreconciled", null, "Bank Transaction"), "orange", "status,=,Unreconciled"];
 		} else if (doc.status === "Reconciled") {
-			return [__("Reconciled"), "green", "status,=,Reconciled"];
+			return [__("Reconciled", null, "Bank Transaction"), "green", "status,=,Reconciled"];
 		} else if (doc.status === "Closed") {
 			return [__("Closed"), "darkgrey", "status,=,Closed"];
 		} else if (doc.status === "Pending") {

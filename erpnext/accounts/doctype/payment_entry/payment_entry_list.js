@@ -3,10 +3,8 @@
 
 frappe.listview_settings['Payment Entry'] = {
 	get_indicator: function(doc) {
-		if (doc.docstatus == 1 && doc.unreconciled_amount > 0) {
-			return [__("Unreconciled"), "orange", "status,==,Unreconciled"];
-		} else if(doc.docstatus == 1 && doc.unreconciled_amount <= 0) {
-			return [__("Reconciled"), "green", "status,==,Reconciled"];
+		if (doc.docstatus == 1) {
+			return [__(doc.status, null, "Payment Entry"), doc.status === "Reconciled" ? "green": "orange", `status,==,${doc.status}`];
 		}
 	},
 	onload: function(listview) {

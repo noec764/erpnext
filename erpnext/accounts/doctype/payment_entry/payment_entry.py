@@ -344,7 +344,7 @@ class PaymentEntry(AccountsController):
 			status = 'Draft'
 
 		if update:
-			self.db_set("status", self.status)
+			self.db_set("status", status)
 
 		self.status = status
 

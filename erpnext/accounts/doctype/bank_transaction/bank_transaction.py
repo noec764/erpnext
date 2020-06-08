@@ -19,6 +19,7 @@ class BankTransaction(StatusUpdater):
 		self.check_transaction_references()
 
 	def before_save(self):
+		self.check_bank_account_head()
 		self.check_payment_types()
 		self.calculate_totals()
 		self.check_reconciliation_amounts()
@@ -31,6 +32,7 @@ class BankTransaction(StatusUpdater):
 		self.set_status()
 
 	def before_update_after_submit(self):
+		self.check_bank_account_head()
 		self.check_payment_types()
 		self.calculate_totals()
 
@@ -180,6 +182,10 @@ class BankTransaction(StatusUpdater):
 	@frappe.whitelist()
 	def close_transaction(self):
 		self.db_set("status", "Closed")
+
+	def check_bank_account_head(self):
+		if not self.bank_account_head:
+			self.bank_account_head = frappe.db.get_value("Bank Account", self.bank_account, "account")
 
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")
