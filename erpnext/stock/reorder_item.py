@@ -197,7 +197,7 @@ def send_email_notification(mr_list):
 		subject=_('Auto Material Requests Generated'), message = msg)
 
 def notify_errors(exceptions_list):
-	subject = _("[Important] [ERPNext] Auto Reorder Errors")
+	subject = _("[Important] [Dokos] Auto Reorder Errors")
 	content = _("Dear System Manager,") + "<br>" + _("An error occured for certain Items while creating Material Requests based on Re-order level. \
 		Please rectify these issues :") + "<br>"
 
