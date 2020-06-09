@@ -445,6 +445,7 @@ def get_leave_details(employee, date):
 		total_allocated_leaves = frappe.db.get_value('Leave Allocation', {
 			'from_date': ('<=', date),
 			'to_date': ('>=', date),
+			'employee': employee,
 			'leave_type': allocation.leave_type,
 		}, 'SUM(total_leaves_allocated)') or 0
 
