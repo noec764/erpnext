@@ -216,7 +216,7 @@ class SalarySlip(TransactionBase):
 			lwp = actual_lwp
 		elif lwp != actual_lwp:
 			frappe.msgprint(_("Leave Without Pay does not match with approved {} records")
-				.format(payroll_based_on))
+				.format(_(payroll_based_on)))
 
 		self.leave_without_pay = lwp
 		self.total_working_days = working_days
