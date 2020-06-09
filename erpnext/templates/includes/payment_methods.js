@@ -1,11 +1,15 @@
 // Copyright (c) 2019, Dokos SAS and Contributors
 // License: See license.txt
 
-const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
-const elements = stripe.elements();
+if (typeof Stripe != "undefined") {
+	const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
+	const elements = stripe.elements();
+}
 
 $(document).ready(function() {
-	new stripe_payment_methods();
+	if (typeof Stripe != "undefined") {
+		new stripe_payment_methods();
+	}
 });
 
 stripe_payment_methods = class {

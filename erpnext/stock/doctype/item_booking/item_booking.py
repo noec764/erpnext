@@ -61,6 +61,7 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 	user = frappe.session.user
 	contact = frappe.db.get_value('Contact', {'user': user}, 'name')
 	customer = None
+	or_filters = []
 
 	if contact:
 		contact_doc = frappe.get_doc('Contact', contact)
@@ -69,7 +70,6 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 	if is_website_user():
 		if not filters: filters = []
 
-		or_filters = []
 		or_filters.append({"user": user, "party_name": customer})
 
 	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=False, or_filters=or_filters)
