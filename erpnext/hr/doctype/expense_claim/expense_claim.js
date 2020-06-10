@@ -265,6 +265,17 @@ frappe.ui.form.on("Expense Claim", {
 		});
 	},
 
+	cost_center: function(frm) {
+		frm.events.set_child_cost_center(frm);
+	},
+	set_child_cost_center: function(frm){
+		(frm.doc.expenses || []).forEach(function(d) {
+			if (!d.cost_center){
+				d.cost_center = frm.doc.cost_center;
+			}
+		});
+	},
+
 	make_payment_entry: function(frm) {
 		var method = "erpnext.accounts.doctype.payment_entry.payment_entry.get_payment_entry";
 		if(frm.doc.__onload && frm.doc.__onload.make_payment_via_journal_entry) {
@@ -346,8 +357,7 @@ frappe.ui.form.on("Expense Claim", {
 
 frappe.ui.form.on("Expense Claim Detail", {
 	expenses_add: function(frm, cdt, cdn) {
-		var row = frappe.get_doc(cdt, cdn);
-		frm.script_manager.copy_from_first_row("expenses", row, ["cost_center"]);
+		frm.events.set_child_cost_center(frm);
 	},
 	amount: function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
