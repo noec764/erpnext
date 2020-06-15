@@ -463,9 +463,14 @@ def get_leave_details(employee, date):
 			"pending_leaves": leaves_pending,
 			"remaining_leaves": remaining_leaves}
 
+	#is used in set query
+	lwps = frappe.get_list("Leave Type", filters = {"is_lwp": 1})
+	lwps = [lwp.name for lwp in lwps]
+
 	ret = {
 		'leave_allocation': leave_allocation,
-		'leave_approver': get_leave_approver(employee)
+		'leave_approver': get_leave_approver(employee),
+		'lwps': lwps
 	}
 
 	return ret
