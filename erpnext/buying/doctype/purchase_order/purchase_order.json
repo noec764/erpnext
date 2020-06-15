@@ -38,6 +38,8 @@
   "col_break_address",
   "shipping_address",
   "shipping_address_display",
+  "billing_address",
+  "billing_address_display",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -1062,13 +1064,25 @@
    {
     "fieldname": "column_break_75",
     "fieldtype": "Column Break"
+   },
+   {
+    "fieldname": "billing_address",
+    "fieldtype": "Link",
+    "label": "Select Billing Address",
+    "options": "Address"
+   },
+   {
+    "fieldname": "billing_address_display",
+    "fieldtype": "Small Text",
+    "label": "Billing Address",
+    "read_only": 1
    }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-04-24 12:13:14.186280",
+ "modified": "2020-06-13 22:25:47.333850",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",

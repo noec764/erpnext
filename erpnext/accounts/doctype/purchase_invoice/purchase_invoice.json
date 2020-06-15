@@ -42,6 +42,8 @@
   "col_break_address",
   "shipping_address",
   "shipping_address_display",
+  "billing_address",
+  "billing_address_display",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -1336,14 +1338,26 @@
     "label": "Tax Withholding Category",
     "options": "Tax Withholding Category",
     "print_hide": 1
-  }
+  },
+  {
+    "fieldname": "billing_address",
+    "fieldtype": "Link",
+    "label": "Select Billing Address",
+    "options": "Address"
+   },
+   {
+    "fieldname": "billing_address_display",
+    "fieldtype": "Small Text",
+    "label": "Billing Address",
+    "read_only": 1
+   }
  ],
  "icon": "fa fa-file-text",
  "idx": 204,
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-04-18 13:05:25.199832",
+ "modified": "2020-06-13 22:26:30.800199",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
