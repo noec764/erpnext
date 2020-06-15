@@ -11,14 +11,14 @@ def setup(company=None, patch=True):
 	add_print_formats()
 
 
-def make_custom_fields():
+def make_custom_fields(update=True):
 	custom_fields = {
 		'Supplier': [
 			dict(fieldname='irs_1099', fieldtype='Check', insert_after='tax_id',
 				label='Is IRS 1099 reporting required for supplier?')
 		]
 	}
-	create_custom_fields(custom_fields)
+	create_custom_fields(custom_fields, update=update)
 
 
 def add_print_formats():
