@@ -693,3 +693,4 @@ execute:frappe.delete_doc_if_exists("DocType", "Bank Reconciliation Detail")
 erpnext.patches.dokos.v1_3.subscription_plans_refactor
 execute:frappe.delete_doc_if_exists("DocType", "Company Type")
 erpnext.patches.dokos.v2_0.split_unreconciled_amount
+erpnext.patches.dokos.v2_0.default_accounting_journals
