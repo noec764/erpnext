@@ -120,7 +120,7 @@ def create_accounting_journals(bank_account_name, company):
 			"doctype": "Accounting Journal",
 			"journal_code": "PUR",
 			"journal_name":"Purchases",
-			"type": "Purchases",
+			"type": "Purchase",
 			"company": company,
 			"conditions": [
 				{"document_type": "Purchase Invoice"}
