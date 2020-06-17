@@ -67,7 +67,7 @@ frappe.ready(() => {
 					reqd: 1
 				},
 				{
-					label: __('Pin Code'),
+					label: __('Postal Code'),
 					fieldname: 'pincode',
 					fieldtype: 'Data'
 				},
