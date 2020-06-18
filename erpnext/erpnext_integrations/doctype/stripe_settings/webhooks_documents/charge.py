@@ -82,7 +82,7 @@ class StripeChargeWebhookHandler(WebhooksController):
 				fees = flt(self.fee_amount) * flt(self.payment_entry.get("target_exchange_rate", 1))
 				self.payment_entry.update({
 					"paid_amount": flt(self.base_amount or self.payment_entry.paid_amount) - fees,
-					"received_amount": flt(self.payment_entry.received_amount) - fees
+					"received_amount": flt(self.base_amount or self.payment_entry.received_amount) - fees
 				})
 
 				self.payment_entry.append("deductions", {
