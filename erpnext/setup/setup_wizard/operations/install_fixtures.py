@@ -475,7 +475,7 @@ def install_defaults(args=None):
 				frappe.db.set_value("Company", args.company_name, "default_bank_account", bank_account.name, update_modified=False)
 
 				create_bank_and_bank_account(args.bank_account, doc.name)
-				create_accounting_journals(args.bank_account, company_name)
+				create_accounting_journals(doc.name, company_name)
 
 			except RootNotEditable:
 				frappe.throw(_("Bank account cannot be named as {0}").format(args.bank_account))

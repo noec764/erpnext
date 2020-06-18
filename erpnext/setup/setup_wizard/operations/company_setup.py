@@ -144,6 +144,8 @@ def create_accounting_journals(bank_account_name, company):
 			frappe.get_doc(journal).insert()
 		except frappe.DuplicateEntryError:
 			pass
+		except Exception:
+			print(frappe.get_traceback())
 
 def create_email_digest():
 	from frappe.utils.user import get_system_managers

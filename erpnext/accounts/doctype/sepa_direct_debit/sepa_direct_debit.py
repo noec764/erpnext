@@ -78,6 +78,9 @@ class SepaDirectDebit(Document):
 			if not frappe.db.exists("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active")):
 				frappe.throw(_("Please create or activate a SEPA Mandate for customer {0}".format(customer)))
 
+			if frappe.get_all("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active")):
+				frappe.throw(_("Customer {0} has several active mandates. Please keep only one active mandate.".format(customer)))
+
 			mandate = frappe.get_doc("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active"))
 			if not mandate.bank_account:
 				frappe.throw(_("Please add a bank account in mandate {0} for customer {1}".format(mandate.name, customer)))
