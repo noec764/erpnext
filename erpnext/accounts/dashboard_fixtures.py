@@ -5,7 +5,6 @@ import frappe
 import json
 from frappe.utils import nowdate, add_months, get_date_str
 from frappe import _
-from erpnext.accounts.utils import get_fiscal_year, get_account_name
 from erpnext.accounts.utils import get_fiscal_year, get_account_name, FiscalYearError
 
 def _get_fiscal_year(date=None):
@@ -71,7 +70,6 @@ def get_dashboards():
 def get_charts(fiscal_year):
 	company = frappe.get_doc("Company", get_company_for_dashboards())
 	bank_account = company.default_bank_account or get_account_name("Bank", company=company.name)
-	fiscal_year = get_fiscal_year(date=nowdate())
 	default_cost_center = company.cost_center
 
 	return [
