@@ -142,6 +142,7 @@ def get_gl_entries(filters):
 			party,
 			voucher_type,
 			voucher_no,
+			accounting_journal,
 			cost_center, project,
 			against_voucher_type,
 			against_voucher,
@@ -166,7 +167,7 @@ def get_gl_entries(filters):
 		"""
 		select
 			name as gl_entry, posting_date, account, party_type, party,
-			voucher_type, voucher_no, cost_center, project,
+			voucher_type, voucher_no, cost_center, project, accounting_journal,
 			against_voucher_type, against_voucher, account_currency,
 			remarks, against, is_opening, creation {select_fields}
 		from `tabGL Entry`
