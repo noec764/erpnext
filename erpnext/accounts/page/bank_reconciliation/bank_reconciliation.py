@@ -121,7 +121,7 @@ class BankReconciliation:
 	def reconcile_one_transaction_with_multiple_documents(self):
 		for document in self.documents:
 			bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
-			date_value = document.get("reference_date")
+			date_value = document.get("reference_date") or document.get("date")
 			if isinstance(date_value, str):
 				date_value = parse_date(date_value)
 

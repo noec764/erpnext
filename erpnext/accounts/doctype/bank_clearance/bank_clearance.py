@@ -126,6 +126,9 @@ class BankClearance(Document):
 						payment_entry.run_method("update_unreconciled_amount")
 				else:
 					payment_entry.db_set('unreconciled_amount', 0)
+					for f in ["unreconciled_from_amount", "unreconciled_to_amount"]:
+						if frappe.get_meta(payment_entry.doctype).has_field(f):
+							payment_entry.db_set(f, 0)
 
 				clearance_date_updated = True
 
