@@ -224,6 +224,9 @@ doc_events = {
 		"on_submit": ["erpnext.regional.italy.utils.sales_invoice_on_submit"],
 		"on_cancel": "erpnext.regional.italy.utils.sales_invoice_on_cancel"
 	},
+	"Purchase Invoice": {
+		"on_submit": "erpnext.regional.india.utils.make_reverse_charge_entries"
+	},
 	'Address': {
 		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code', 'erpnext.regional.india.utils.update_gst_category']
 	},
