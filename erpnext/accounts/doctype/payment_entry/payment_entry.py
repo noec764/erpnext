@@ -86,7 +86,7 @@ class PaymentEntry(AccountsController):
 		self.update_expense_claim()
 		self.delink_advance_entry_references()
 		self.update_payment_schedule(cancel=1)
-		self.set_status()
+		self.set_status(update=True)
 
 	def update_outstanding_amounts(self):
 		self.set_missing_ref_details(force=True)

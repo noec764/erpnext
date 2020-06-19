@@ -345,6 +345,9 @@ def make_reverse_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,
 			entry['is_cancelled'] = 1
 			entry['posting_date'] = today()
 
+			if not entry.get("accounting_journal"):
+				get_accounting_journal(entry)
+
 			if entry['debit'] or entry['credit']:
 				make_entry(entry, adv_adj, "Yes")
 
