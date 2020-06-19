@@ -99,7 +99,7 @@ class BankTransaction(StatusUpdater):
 
 		elif payment.payment_document == "Journal Entry":
 			journal_entry_accounts = frappe.get_all("Journal Entry Account", \
-				filters={"parent": payment.payment_entry, "parenttype": "Journal Entry", "account": self.bank_account_head, "unreconciled_amount": (">", 0)}, \
+				filters={"parent": payment.payment_entry, "parenttype": "Journal Entry", "account": self.bank_account_head}, \
 				fields=["name", "unreconciled_amount"])
 			total_split_amount = flt(payment.allocated_amount)
 			for journal_entry_account in journal_entry_accounts:
