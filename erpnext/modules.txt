@@ -18,3 +18,4 @@ ERPNext Integrations
 Quality Management
 Communication
 Loan Management
+Payroll
