@@ -29,6 +29,7 @@
   }
  ],
  "creation": "2020-05-27 19:54:23.405607",
+ "color": "#15aabf",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
@@ -37,8 +38,9 @@
  "hide_custom": 0,
  "idx": 0,
  "is_standard": 1,
+ "icon": "fas fa-file-invoice",
  "label": "Payroll",
- "modified": "2020-06-19 12:23:06.034046",
+ "modified": "2020-06-20 12:23:06.034046",
  "modified_by": "Administrator",
  "module": "Payroll",
  "name": "Payroll",
