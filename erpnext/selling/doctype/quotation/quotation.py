@@ -108,6 +108,8 @@ class Quotation(SellingController):
 		self.update_item_bookings()
 
 	def on_cancel(self):
+		if self.lost_reasons:
+			self.lost_reasons = []
 		super(Quotation, self).on_cancel()
 
 		#update enquiry status
