@@ -39,7 +39,7 @@ erpnext.salary_slip_deductions_report_filters = {
 		},
 		{
 			fieldname: "branch",
-			label: __("Barnch"),
+			label: __("Branch"),
 			fieldtype: "Link",
 			options: "Branch",
 		}

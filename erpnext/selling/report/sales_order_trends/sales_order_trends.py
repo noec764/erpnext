@@ -46,7 +46,7 @@ def get_chart_data(data, conditions, filters):
 			"labels" : labels,
 			"datasets" : [
 				{
-					"name" : _("{0}").format(filters.get("period")) + _(" Sales Value"),
+					"name" : _("{0} Sales Value").format(filters.get("period"),
 					"values" : datapoints
 				}
 			]
