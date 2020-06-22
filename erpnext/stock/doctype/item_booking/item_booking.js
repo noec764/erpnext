@@ -124,7 +124,7 @@ const add_to_transaction = (frm, transaction_type) => {
 		doctype: transaction_type,
 		target: "Item Booking",
 		date_field: "transaction_date" || undefined,
-		setters: {"party_name": ""},
+		setters: transaction_type === "Quotation" ? {"party_name": ""} : {"customer": ""},
 		get_query: () => {
 			return {
 				filters: {
