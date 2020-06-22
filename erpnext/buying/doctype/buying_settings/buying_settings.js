@@ -11,12 +11,12 @@ frappe.tour['Buying Settings'] = [
 	{
 		fieldname: "supp_master_name",
 		title: __("Supplier Naming By"),
-		description: __("By default, the Item Name is set as per the Item Code entered. If you want Items to be named by a set Naming Series choose the 'Naming Series' option."),
+		description: __("By default, the supplier unique identifier is set as per the supplier name entered. If you want suppliers to be named by a set Naming Series choose the 'Naming Series' option."),
 	},
 	{
 		fieldname: "buying_price_list",
 		title: __("Default Buying Price List"),
-		description: __("Configure the default Price List when creating a new Buying transaction, the default is set as 'Standard Buying'. Item prices will be fetched from this Price List.")
+		description: __("Configure the default Price List when creating a new purchase transaction, the default is set as 'Standard Buying'. Item prices will be fetched from this Price List.")
 	},
 	{
 		fieldname: "po_required",
