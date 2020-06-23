@@ -115,7 +115,7 @@
    "fieldname": "tax_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Amount",
+   "label": "Amount*",
    "options": "currency"
   },
   {
@@ -123,7 +123,7 @@
    "fieldname": "total",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total",
+   "label": "Total*",
    "options": "currency",
    "read_only": 1
   },
