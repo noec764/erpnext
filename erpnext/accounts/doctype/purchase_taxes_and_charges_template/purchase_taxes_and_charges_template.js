@@ -28,3 +28,37 @@ frappe.ui.form.on("Purchase Taxes and Charges", "category", function(doc, cdt, c
 	}
 	refresh_field('add_deduct_tax', d.name, 'taxes');
 });
+
+
+frappe.tour['Purchase Taxes and Charges Template'] = [
+	{
+		fieldname: "title",
+		title: __("Title"),
+		description: __("The template's title. Should help you find it in transaction."),
+	},
+	{
+		fieldname: "is_default",
+		title: __("Default template"),
+		description: __("Should be checked if this template is your default template."),
+	},
+	{
+		fieldname: "disabled",
+		title: __("Disabled"),
+		description: __("Should be checked if this template is disabled"),
+	},
+	{
+		fieldname: "company",
+		title: __("Company"),
+		description: __("The company this template should apply to."),
+	},
+	{
+		fieldname: "tax_category",
+		title: __("Tax category"),
+		description: __("The tax category this template is linked to, if applicable."),
+	},
+	{
+		fieldname: "taxes",
+		title: __("Taxes and charges table"),
+		description: __("Each line represents a different rule to be applied to your transactions."),
+	}
+]
