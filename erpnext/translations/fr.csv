@@ -77,7 +77,7 @@ A Lead requires either a person's name or an organization's name,Il faut au moin
 "A Product or a Service that is bought, sold or kept in stock.","Un Produit ou un Service qui est acheté, vendu ou conservé en stock.",
 A Product,Un Produit,
 A bank transaction exists already with the same reference number for this bank account,Une transaction bancaire existe déjà avec le même numéro de référénce pour ce compte bancaire.,
-A condition for a Shipping Rule,Une condition pour une Règle de Livraison,
+A condition for a Shipping Rule,Une condition pour une règle de livraison,
 A customer with the same name already exists,Un client avec un nom identique existe déjà,
 A logical Warehouse against which stock entries are made.,Un Entrepôt logique dans lequel les entrées en stock sont faites.,
 A new appointment has been created for you on {},Un nouveau rendez-vous a été créé pour vous sur {},
@@ -2859,6 +2859,7 @@ Fixed Deposit Number,Numéro de dépôt fixe,
 Fixed Error Log,Journal des erreurs corrigées,
 Fixed rate,Prix unitaire fixe,
 Fixed,Fixé,
+Fixed,Fixe,Shipping Rule
 Fleet Management,Gestion des flottes,
 Fleet Manager,Gestionnaire de Flotte,
 Flexible Benefits,Avantages sociaux variables,
@@ -3678,7 +3679,6 @@ Is Term Loan,Prêt à terme,
 Is Transporter,Est transporteur,
 Is Working Capital,Est du capital,
 Is the Default Account,Est-ce le compte par défaut,
-Is this Tax included in Basic Rate?,Cette Taxe est-elle incluse dans le Taux de Base ?,context
 Is this Tax included in Basic Rate?,Cette taxe est-elle incluse dans le total net ?,
 Issue Credit Note,Note de crédit d'émission,
 Issue Date,Date d'Émission,
@@ -4549,12 +4549,11 @@ Net Profit,Bénéfice net,
 Net Rate (Company Currency),Prix unitaire HT (Devise société),
 Net Rate,Prix unitaire HT,
 Net Salary Amount,Montant du salaire net,
-Net Total (Company Currency),Total Net (Devise Société),
-Net Total,Total Net,
+Net Total (Company Currency),Total net (Devise société),
+Net Total,Total net,
 Net Weight UOM,Unité de mesure poids net,
-Net Weight,Poids Net,context
 Net Weight,Poids net,
-Net pay cannot be negative,Salaire Net ne peut pas être négatif,
+Net pay cannot be negative,Le salaire net ne peut pas être négatif,
 Net total,Total net,
 New Account Name,Nouveau Nom de Compte,
 New Address,Nouvelle Adresse,
@@ -4802,7 +4801,7 @@ On Hold Since,En attente depuis le,
 On Hold,En attente,
 On Item Quantity,Sur les quantités d'article,
 On Leave,En Congé,
-On Net Total,Sur le Total Net,
+On Net Total,Sur le total net,
 On Previous Row Amount,Le Montant de la Rangée Précédente,
 On Previous Row Total,Le Total de la Rangée Précédente,
 On Purchase Order Submission,A la validation d'une commande fournisseur,
@@ -7086,12 +7085,12 @@ Shipping Amount,Montant de la Livraison,
 Shipping City,Ville de Livraison,
 Shipping Country,Pays de Livraison,
 Shipping County,Comté de Livraison,
-Shipping Rule Condition,Condition de la Règle de Livraison,
-Shipping Rule Conditions,Conditions de la Règle de Livraison,
-Shipping Rule Country,Pays de la Règle de Livraison,
-Shipping Rule Label,Étiquette de la Règle de Livraison,
+Shipping Rule Condition,Condition de la règle de livraison,
+Shipping Rule Conditions,Conditions de la règle de livraison,
+Shipping Rule Country,Pays de la règle de livraison,
+Shipping Rule Label,Étiquette de la règle de livraison,
 Shipping Rule Type,Type de règle d'expédition,
-Shipping Rule,Règle de Livraison,
+Shipping Rule,Règle de livraison,
 Shipping State,État de livraison,
 Shipping Zipcode,Code postal d'expédition,
 Shipping rule not applicable for country {0} in Shipping Address,La règle de livraison n'est pas applicable pour le pays {0} dans l'adresse de livraison,
@@ -7297,7 +7296,7 @@ Le taux d'imposition que vous définissez ici sera le taux d'imposition standard
 #### Description des Colonnes
 
 1. Type de Calcul : 
-    - Cela peut être le **Total Net** (qui est la somme des montants de base).
+    - Cela peut être le **Total net** (qui est la somme des montants de base).
     - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).
     - **Réel** (comme mentionné).
 2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée
@@ -7337,7 +7336,7 @@ Le taux d'imposition que vous définissez ici sera le taux d'imposition standard
 #### Description des Colonnes
 
 1. Type de Calcul : 
-    - Cela peut être le **Total Net** (qui est la somme des montants de base).
+    - Cela peut être le **Total net** (qui est la somme des montants de base).
     - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).
     - **Réel** (comme mentionné).
 2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée
@@ -7864,7 +7863,7 @@ There are no vacancies under staffing plan {0},Aucun poste ouvert dans le plan d
 						Please create or link {1} Assets with respective document.",Il n'y a pas assez d'actifs créés ou liés à {0}. Veuillez créer ou lier {1} actifs avec leurs documents respectifs.,
 There can be multiple tiered collection factor based on the total spent. But the conversion factor for redemption will always be same for all the tier.,Il peut y avoir plusieurs facteurs de collecte hiérarchisés en fonction du total dépensé. Mais le facteur de conversion pour l'échange sera toujours le même pour tous les niveaux.,
 There can only be 1 Account per Company in {0} {1},Il ne peut y avoir qu’un Compte par Société dans {0} {1},
-"There can only be one Shipping Rule Condition with 0 or blank value for ""To Value""","Il ne peut y avoir qu’une Condition de Règle de Livraison avec 0 ou une valeur vide pour « A la Valeur""",
+"There can only be one Shipping Rule Condition with 0 or blank value for ""To Value""","Il ne peut y avoir qu’une condition de règle de livraison avec 0 ou une valeur vide pour « A la Valeur""",
 There is a mismatch between the reference in this document and the current invoice {1} linked to subscription {0},Il y a une différence entre la référence dans ce document et la facture de la période en cours ({1}) liée à l'abonnement {0},
 There is no batch found against the {0}: {1},Aucun lot n'a été trouvé pour {0}: {1},
 There is no leave period in between {0} and {1},Il n'y a pas de période de congé entre {0} et {1},
@@ -8855,7 +8854,7 @@ e.g Adjustments for:,Par exemple des ajustements pour:,
 "e.g. Bank, Cash, Credit Card","e.g. Cash, Banque, Carte de crédit",
 eg: frappe.myshopify.com,par exemple: frappe.myshopify.com,
 email,email,
-example: Next Day Shipping,Exemple : Livraison le Jour Suivant,
+example: Next Day Shipping,Exemple : Livraison J+1,
 from,de,
 hidden,caché,
 hours,heures,

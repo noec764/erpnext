@@ -401,7 +401,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				args: {
 					"master_doctype": taxes_and_charges_field.options,
 					"tax_template": me.frm.doc.taxes_and_charges,
-					"company": me.frm.doc.company
+					"company": me.frm.doc.company,
+					"tax_category": me.frm.doc.tax_category
 				},
 				callback: function(r) {
 					if(!r.exc && r.message) {

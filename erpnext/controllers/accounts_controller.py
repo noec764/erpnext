@@ -341,9 +341,12 @@ class AccountsController(TransactionBase):
 
 		if (self.is_new() or self.is_pos_profile_changed()) and not self.get("taxes"):
 			if self.company and not self.get("taxes_and_charges"):
+				if self.tax_category:
+					self.taxes_and_charges = frappe.db.get_value(tax_master_doctype, {"tax_category": self.tax_category, 'company': self.company})
+
 				# get the default tax master
-				self.taxes_and_charges = frappe.db.get_value(tax_master_doctype,
-															 {"is_default": 1, 'company': self.company})
+				if not self.taxes_and_charges:
+					self.taxes_and_charges = frappe.db.get_value(tax_master_doctype, {"is_default": 1, 'company': self.company})
 
 			self.append_taxes_from_master(tax_master_doctype)
 
@@ -876,7 +879,7 @@ def get_tax_rate(account_head):
 
 
 @frappe.whitelist()
-def get_default_taxes_and_charges(master_doctype, tax_template=None, company=None):
+def get_default_taxes_and_charges(master_doctype, tax_template=None, company=None, tax_category=None):
 	if not company: return {}
 
 	if tax_template and company:
@@ -884,7 +887,12 @@ def get_default_taxes_and_charges(master_doctype, tax_template=None, company=Non
 		if tax_template_company == company:
 			return
 
-	default_tax = frappe.db.get_value(master_doctype, {"is_default": 1, "company": company})
+	default_tax = None
+	if tax_category:
+		default_tax = frappe.db.get_value(master_doctype, {"tax_category": tax_category, "company": company})
+
+	if not default_tax:
+		default_tax = frappe.db.get_value(master_doctype, {"is_default": 1, "company": company})
 
 	return {
 		'taxes_and_charges': default_tax,
