@@ -497,7 +497,7 @@
    "label": "Stock Settings"
   },
   {
-   "default": "1",
+   "default": "0",
    "fieldname": "enable_perpetual_inventory",
    "fieldtype": "Check",
    "label": "Enable Perpetual Inventory"
@@ -737,8 +737,8 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2020-05-24 14:17:02.917873",
- "modified_by": "Administrator",
+ "modified": "2020-06-23 09:03:20.643679",
+ "modified_by": "thierry@dokos.io",
  "module": "Setup",
  "name": "Company",
  "nsm_parent_field": "parent_company",
