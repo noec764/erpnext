@@ -268,3 +268,76 @@ class ItemSelector {
 	}
 
 }
+
+frappe.tour['Item Booking'] = [
+	{
+		fieldname: "item",
+		title: __("Item"),
+		description: __("Item booked by the user. This item will also be used to invoice the customer.")
+	},
+	{
+		fieldname: "user",
+		title: __("User"),
+		description: __("User linked with this booking.")
+	},
+	{
+		fieldname: "color",
+		title: __("Color"),
+		description: __("By default the color set in the item master data. Used to visualize the booking in your calendar.")
+	},
+	{
+		fieldname: "status",
+		title: __("Status"),
+		description: __("Status of the booking. If the status is cancelled, the slot will remain available, else it will be considered as unavailable.")
+	},
+	{
+		fieldname: "starts_on",
+		title: __("Starts on"),
+		description: __("Booked slot start time.")
+	},
+	{
+		fieldname: "ends_on",
+		title: __("Ends on"),
+		description: __("Booked slot end time.")
+	},
+	{
+		fieldname: "all_day",
+		title: __("All day"),
+		description: __("Check this field if your event is an all day event.")
+	},
+	{
+		fieldname: "repeat_this_event",
+		title: __("Repeat this event"),
+		description: __("Check this field and configure the repeat options if your event is a recurring event.")
+	},
+	{
+		fieldname: "sync_with_google_calendar",
+		title: __("Sync with Google Calendar"),
+		description: __("Check this field if you want to synchronize your event with Google Calendar. Make sure your Google Calendar integration is setup and you have created at least one calendar.")
+	},
+	{
+		fieldname: "notes",
+		title: __("Notes"),
+		description: __("This field allows you to register notes linked to this booking. Users can also add notes when booking on the website.")
+	},
+	{
+		fieldname: "billing_qty",
+		title: __("Billing Quantity"),
+		description: __("This value will be used to create a quotation from an item booking. A new line will be added with this quantity.")
+	},
+	{
+		fieldname: "sales_uom",
+		title: __("Sales UOM"),
+		description: __("This value will be used to create a quotation from an item booking. This unit of measure will be used to fetch the appropriate price.")
+	},
+	{
+		fieldname: "party_type",
+		title: __("Party type"),
+		description: __("Allows you to link this item booking with a customer or a lead. Used to select the appropriate party.")
+	},
+	{
+		fieldname: "party_name",
+		title: __("Party name"),
+		description: __("Name of the party linked to this booking. Used to create the quotation.")
+	}
+]
