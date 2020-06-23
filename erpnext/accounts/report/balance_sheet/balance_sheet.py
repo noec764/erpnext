@@ -146,28 +146,28 @@ def get_report_summary(period_list, asset, liability, equity, provisional_profit
 	return [
 		{
 			"value": net_asset,
-			"label": "Total Asset",
+			"label": _("Total Asset"),
 			"indicator": "Green",
 			"datatype": "Currency",
 			"currency": currency
 		},
 		{
 			"value": net_liability,
-			"label": "Total Liability",
+			"label": _("Total Liability"),
 			"datatype": "Currency",
 			"indicator": "Red",
 			"currency": currency
 		},
 		{
 			"value": net_equity,
-			"label": "Total Equity",
+			"label": _("Total Equity"),
 			"datatype": "Currency",
 			"indicator": "Blue",
 			"currency": currency
 		},
 		{
 			"value": net_provisional_profit_loss,
-			"label": "Provisional Profit / Loss (Credit)",
+			"label": _("Provisional Profit / Loss (Credit)"),
 			"indicator": "Green" if net_provisional_profit_loss > 0 else "Red",
 			"datatype": "Currency",
 			"currency": currency
