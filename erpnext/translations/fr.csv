@@ -8923,7 +8923,7 @@ woocommerce - {0},woocommerce - {0},
 {0} Digest,Récapitulatif {0},
 {0} Name,Nom {0},context
 {0} Name,{0} Nom,
-{0} Number {1} already used in account {2},{0} Numéro {1} déjà utilisé dans le compte {2},
+{0} Number {1} already used in account {2},{0} numéro {1} déjà utilisé dans le compte {2},
 {0} Number {1} is already used in {2} {3},Le numéro de {0} {1} est déjà utilisé par {2} {3},
 {0} Operations: {1},Opérations {0}: {1},
 {0} Quoted Amount,Montant estimé {0},

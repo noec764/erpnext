@@ -867,7 +867,7 @@ def validate_field_number(doctype_name, docname, number_value, company, field_na
 
 		if doctype_with_same_number:
 			frappe.throw(_("{0} Number {1} is already used in {2} {3}")
-				.format(doctype_name, number_value, doctype_name.lower(), doctype_with_same_number))
+				.format(_(doctype_name), number_value, _(doctype_name).lower(), doctype_with_same_number))
 
 def get_autoname_with_number(number_value, doc_title, name, company):
 	''' append title with prefix as number and suffix as company's abbreviation separated by '-' '''
