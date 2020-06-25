@@ -193,7 +193,7 @@ def send_supplier_emails(rfq_name):
 def check_portal_enabled(reference_doctype):
 	if not frappe.db.get_value('Portal Menu Item',
 		{'reference_doctype': reference_doctype}, 'enabled'):
-		frappe.throw(_("Request for Quotation is disabled to access from portal, for more check portal settings."))
+		frappe.throw(_("The access to Request for Quotation from portal is disabled. To allow access, enable it in portal settings."))
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
