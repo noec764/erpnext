@@ -239,7 +239,7 @@ def prepare_data(accounts, balance_must_be, period_list, company_currency):
 			"is_group": d.is_group,
 			"opening_balance": d.get("opening_balance", 0.0) * (1 if balance_must_be=="Debit" else -1),
 			"account_name": ('%s - %s' %(_(d.account_number), _(d.account_name))
-				if d.account_number else _(d.account_name))
+				if d.account_number and not d.do_not_show_account_number else _(d.account_name))
 		})
 		for period in period_list:
 			if d.get(period.key) and balance_must_be == "Credit":
@@ -304,7 +304,8 @@ def add_total_row(out, root_type, balance_must_be, period_list, company_currency
 
 def get_accounts(company, root_type):
 	return frappe.db.sql("""
-		select name, account_number, parent_account, lft, rgt, root_type, report_type, account_name, include_in_gross, account_type, is_group, lft, rgt
+		select name, account_number, parent_account, lft, rgt, root_type, report_type,
+		account_name, include_in_gross, account_type, is_group, lft, rgt, do_not_show_account_number
 		from `tabAccount`
 		where company=%s and root_type=%s order by lft""", (company, root_type), as_dict=True)
 
@@ -337,9 +338,9 @@ def sort_accounts(accounts, is_root=False, key="name"):
 	"""Sort root types as Asset, Liability, Equity, Income, Expense"""
 
 	def compare_accounts(a, b):
-		if re.split('\W+', a[key])[0].isdigit():
+		if re.split('\W+', a[key])[0].isdigit() and re.split('\W+', b[key])[0].isdigit():
 			# if chart of accounts is numbered, then sort by number
-			return cmp(a[key], b[key])
+			return cmp(int(re.split('\W+', a[key])[0]), int(re.split('\W+', b[key])[0]))
 		elif is_root:
 			if a.report_type != b.report_type and a.report_type == "Balance Sheet":
 				return -1

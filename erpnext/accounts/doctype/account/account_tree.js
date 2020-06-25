@@ -46,6 +46,9 @@ frappe.treeview_settings["Account"] = {
 	root_label: "Accounts",
 	get_tree_nodes: 'erpnext.accounts.utils.get_children',
 	add_tree_node: 'erpnext.accounts.utils.add_ac',
+	get_label: function(node) {
+		return node.data.title || node.label;
+	},
 	menu_items:[
 		{
 			label: __('New Company'),
@@ -54,7 +57,7 @@ frappe.treeview_settings["Account"] = {
 		}
 	],
 	fields: [
-		{fieldtype:'Data', fieldname:'account_name', label:__('New Account Name'), reqd:true,
+		{fieldtype:'Small Text', fieldname:'account_name', label:__('New Account Name'), reqd:true,
 			description: __("Name of new Account. Note: Please don't create accounts for Customers and Suppliers")},
 		{fieldtype:'Data', fieldname:'account_number', label:__('Account Number'),
 			description: __("Number of new Account, it will be included in the account name as a prefix")},

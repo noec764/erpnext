@@ -26,15 +26,21 @@ class Account(NestedSet):
 
 	def autoname(self):
 		from erpnext.accounts.utils import get_autoname_with_number
-		self.name = get_autoname_with_number(self.account_number, self.account_name, None, self.company)
+		suffix = None
+		if frappe.db.exists("Account", {"account_number": self.account_number}):
+			suffix = _(self.root_type)
+		self.name = get_autoname_with_number(self.account_number, self.account_name, None, self.company, suffix)
 
 	def validate(self):
 		from erpnext.accounts.utils import validate_field_number
+		from erpnext.accounts.utils import get_autoname_with_number
 		if frappe.local.flags.allow_unverified_charts:
 			return
+		self.title = self.get_title()
 		self.validate_parent()
 		self.validate_root_details()
-		validate_field_number("Account", self.name, self.account_number, self.company, "account_number")
+		if not self.is_group:
+			validate_field_number("Account", self.name, self.account_number, self.company, "account_number")
 		self.validate_group_or_ledger()
 		self.set_root_and_report_type()
 		self.validate_mandatory()
@@ -42,6 +48,14 @@ class Account(NestedSet):
 		self.validate_balance_must_be_debit_or_credit()
 		self.validate_account_currency()
 		self.validate_root_company_and_sync_account_to_children()
+
+	def get_title(self):
+		parts = [self.account_name.strip()]
+
+		if cstr(self.account_number).strip():
+			parts.insert(0, cstr(self.account_number).strip())
+
+		return ' - '.join(parts)
 
 	def validate_parent(self):
 		"""Fetch Parent Details and validate parent account"""
@@ -92,7 +106,7 @@ class Account(NestedSet):
 			frappe.throw(_("The root account {0} must be a group").format(frappe.bold(self.name)))
 
 	def validate_root_company_and_sync_account_to_children(self):
-		# ignore validation while creating new compnay or while syncing to child companies
+		# ignore validation while creating new company or while syncing to child companies
 		if frappe.local.flags.ignore_root_company_validation or self.flags.ignore_root_company_validation:
 			return
 		ancestors = get_root_company(self.company)
@@ -285,13 +299,21 @@ def get_account_currency(account):
 def on_doctype_update():
 	frappe.db.add_index("Account", ["lft", "rgt"])
 
-def get_account_autoname(account_number, account_name, company):
+def get_account_autoname(account_number, account_name, company, root_type):
 	# first validate if company exists
 	company = frappe.get_cached_value('Company',  company,  ["abbr", "name"], as_dict=True)
 	if not company:
 		frappe.throw(_('Company {0} does not exist').format(company))
 
-	parts = [account_name.strip(), company.abbr]
+	suffix = None
+	if frappe.db.exists("Account", {"account_number": account_number}):
+		suffix = _(root_type)
+
+	parts = [account_name.strip()[:100], company.abbr]
+
+	if suffix:
+		parts.insert(-1, suffix)
+
 	if cstr(account_number).strip():
 		parts.insert(0, cstr(account_number).strip())
 	return ' - '.join(parts)
@@ -299,15 +321,15 @@ def get_account_autoname(account_number, account_name, company):
 def validate_account_number(name, account_number, company):
 	if account_number:
 		account_with_same_number = frappe.db.get_value("Account",
-			{"account_number": account_number, "company": company, "name": ["!=", name]})
+			{"account_number": account_number, "company": company, "name": ["!=", name], "is_group": 0})
 		if account_with_same_number:
 			frappe.throw(_("Account Number {0} already used in account {1}")
 				.format(account_number, account_with_same_number))
 
 @frappe.whitelist()
-def update_account_number(name, account_name, account_number=None):
+def update_account_number(name, account_name, account_number=None, do_not_show_account_number_in_reports=False):
 
-	account = frappe.db.get_value("Account", name, "company", as_dict=True)
+	account, root_type = frappe.db.get_value("Account", name, ["company", "root_type"], as_dict=True)
 	if not account: return
 	validate_account_number(name, account_number, account.company)
 	if account_number:
@@ -316,7 +338,9 @@ def update_account_number(name, account_name, account_number=None):
 		frappe.db.set_value("Account", name, "account_number", "")
 	frappe.db.set_value("Account", name, "account_name", account_name.strip())
 
-	new_name = get_account_autoname(account_number, account_name, account.company)
+	frappe.db.set_value("Account", name, "do_not_show_account_number", do_not_show_account_number_in_reports)
+
+	new_name = get_account_autoname(account_number, account_name, account.company, root_type)
 	if name != new_name:
 		frappe.rename_doc("Account", name, new_name, force=1)
 		return new_name

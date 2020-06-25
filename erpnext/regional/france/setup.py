@@ -20,7 +20,7 @@ def make_custom_fields():
 		]
 	}
 
-	create_custom_fields(custom_fields)
+	create_custom_fields(custom_fields, ignore_validate=True)
 
 def add_custom_roles_for_reports():
 	report_name = 'Fichier des Ecritures Comptables [FEC]'

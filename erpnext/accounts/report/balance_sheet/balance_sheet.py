@@ -2,11 +2,12 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe, erpnext
 from frappe import _
 from frappe.utils import flt, cint
 from erpnext.accounts.report.financial_statements import (get_period_list, get_columns, get_data)
 
+@erpnext.allow_regional
 def execute(filters=None):
 	period_list = get_period_list(filters.from_fiscal_year, filters.to_fiscal_year,
 		filters.period_start_date, filters.period_end_date, filters.filter_based_on,
