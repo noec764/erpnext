@@ -303,6 +303,33 @@ class PurchaseReceipt(BuyingController):
 					d.rejected_warehouse not in warehouse_with_no_account:
 						warehouse_with_no_account.append(d.warehouse)
 
+			elif d.item_code not in stock_items and flt(d.qty) and auto_accounting_for_non_stock_items:
+
+					service_received_but_not_billed_account = self.get_company_default("service_received_but_not_billed")
+					credit_currency = get_account_currency(service_received_but_not_billed_account)
+
+					gl_entries.append(self.get_gl_dict({
+						"account": service_received_but_not_billed_account,
+						"against": d.expense_account,
+						"cost_center": d.cost_center,
+						"remarks": self.get("remarks") or _("Accounting Entry for Service"),
+						"project": d.project,
+						"credit": d.amount,
+						"voucher_detail_no": d.name
+					}, credit_currency, item=d))
+
+					debit_currency = get_account_currency(d.expense_account)
+
+					gl_entries.append(self.get_gl_dict({
+						"account": d.expense_account,
+						"against": service_received_but_not_billed_account,
+						"cost_center": d.cost_center,
+						"remarks": self.get("remarks") or _("Accounting Entry for Service"),
+						"project": d.project,
+						"debit": d.amount,
+						"voucher_detail_no": d.name
+					}, debit_currency, item=d))
+
 		self.get_asset_gl_entry(gl_entries)
 
 		# Cost center-wise amount breakup for other charges included for valuation
