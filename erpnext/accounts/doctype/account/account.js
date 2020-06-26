@@ -141,7 +141,7 @@ frappe.ui.form.on('Account', {
 				{
 					"label": "Account Name",
 					"fieldname": "account_name",
-					"fieldtype": "Data",
+					"fieldtype": "Small Text",
 					"reqd": 1,
 					"default": frm.doc.account_name
 				},
@@ -150,11 +150,17 @@ frappe.ui.form.on('Account', {
 					"fieldname": "account_number",
 					"fieldtype": "Data",
 					"default": frm.doc.account_number
+				},
+				{
+					"label": "Do not show account number in reports",
+					"fieldname": "do_not_show_account_number",
+					"fieldtype": "Check",
+					"default": frm.doc.do_not_show_account_number
 				}
 			],
 			primary_action: function() {
 				var data = d.get_values();
-				if(data.account_number === frm.doc.account_number && data.account_name === frm.doc.account_name) {
+				if(data.account_number === frm.doc.account_number && data.account_name === frm.doc.account_name && data.do_not_show_account_number === frm.doc.do_not_show_account_number) {
 					d.hide();
 					return;
 				}
@@ -164,6 +170,7 @@ frappe.ui.form.on('Account', {
 					args: {
 						account_number: data.account_number,
 						account_name: data.account_name,
+						do_not_show_account_number_in_reports: data.do_not_show_account_number,
 						name: frm.doc.name
 					},
 					callback: function(r) {

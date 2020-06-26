@@ -164,7 +164,7 @@ frappe.ui.form.on("Company", {
 	}
 });
 
-
+// __("Standard") __("Standard with Numbers")
 erpnext.company.set_chart_of_accounts_options = function(doc) {
 	var selected_value = doc.chart_of_accounts;
 	if(doc.country) {

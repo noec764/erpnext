@@ -350,7 +350,7 @@ communication_doctypes = ["Customer", "Supplier"]
 
 regional_overrides = {
 	'France': {
-		'erpnext.tests.test_regional.test_method': 'erpnext.regional.france.utils.test_method'
+		'erpnext.accounts.report.balance_sheet.balance_sheet.execute': 'erpnext.regional.france.report.balance_sheet.balance_sheet.execute',
 	},
 	'India': {
 		'erpnext.tests.test_regional.test_method': 'erpnext.regional.india.utils.test_method',

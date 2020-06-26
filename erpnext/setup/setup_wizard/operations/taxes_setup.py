@@ -61,13 +61,14 @@ def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None)
 	}
 
 	for tax_details in tax_data.get("taxes"):
-		tax_details.update({
-			"category": "Total",
-			"charge_type": "On Net Total",
-			"account_head": tax_details.get("tax_account", {}).get("name"),
-			"description": tax_details.get("description") or tax_details.get("account_name")
-		})
-		sales_tax_template['taxes'].append(tax_details)
+		if tax_details.get("tax_account"):
+			tax_details.update({
+				"category": "Total",
+				"charge_type": "On Net Total",
+				"account_head": tax_details.get("tax_account", {}).get("name"),
+				"description": tax_details.get("description") or tax_details.get("account_name")
+			})
+			sales_tax_template['taxes'].append(tax_details)
 
 	# Sales
 	if not tax_data.get("purchase_tax"):

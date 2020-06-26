@@ -387,7 +387,8 @@ def install_company(args):
 
 
 def install_post_company_fixtures(args=None):
-	existing_parent = frappe.db.get_value("Department", filters={"parent_department": ""})
+	existing_parents = [x.name for x in frappe.get_all("Department", filters={"parent_department": ""}, fields=["name"])]
+	existing_parent = existing_parents[0] if existing_parents else None
 	root_department = existing_parent if existing_parent else _('All Departments')
 
 	records = [

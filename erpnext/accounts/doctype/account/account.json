@@ -9,11 +9,12 @@
  "engine": "InnoDB",
  "field_order": [
   "properties",
-  "column_break0",
+  "title",
   "disabled",
   "account_name",
   "account_number",
   "is_group",
+  "do_not_show_account_number",
   "company",
   "root_type",
   "report_type",
@@ -37,13 +38,8 @@
    "oldfieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break0",
-   "fieldtype": "Column Break",
-   "width": "50%"
-  },
-  {
    "fieldname": "account_name",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Account Name",
    "no_copy": 1,
@@ -193,13 +189,25 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disable"
+  },
+  {
+   "default": "0",
+   "fieldname": "do_not_show_account_number",
+   "fieldtype": "Check",
+   "label": "Do not show account number in reports"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Title"
   }
  ],
  "icon": "fa fa-money",
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2020-05-18 09:05:51.390263",
+ "modified": "2020-06-25 08:03:34.857608",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -259,5 +267,6 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
+ "title_field": "title",
  "track_changes": 1
 }

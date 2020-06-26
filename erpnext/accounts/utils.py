@@ -18,6 +18,7 @@ from erpnext.stock import get_warehouse_account_map
 
 
 class FiscalYearError(frappe.ValidationError): pass
+class DuplicateAccountNumberError(frappe.ValidationError): pass
 
 @frappe.whitelist()
 def get_fiscal_year(date=None, fiscal_year=None, label="Date", verbose=1, company=None, as_dict=False):
@@ -780,6 +781,9 @@ def get_children(doctype, parent, company, is_root=False):
 		fields += ['root_type', 'account_currency'] if doctype == 'Account' else []
 		fields += [parent_fieldname + ' as parent']
 
+	if frappe.get_meta(doctype).get_title_field():
+		fields += [frappe.get_meta(doctype).get_title_field()]
+
 	acc = frappe.get_list(doctype, fields=fields, filters=filters)
 
 	if doctype == 'Account':
@@ -867,18 +871,23 @@ def validate_field_number(doctype_name, docname, number_value, company, field_na
 
 		if doctype_with_same_number:
 			frappe.throw(_("{0} Number {1} is already used in {2} {3}")
-				.format(_(doctype_name), number_value, _(doctype_name).lower(), doctype_with_same_number))
+				.format(_(doctype_name), number_value, _(doctype_name).lower(), doctype_with_same_number), DuplicateAccountNumberError)
 
-def get_autoname_with_number(number_value, doc_title, name, company):
+def get_autoname_with_number(number_value, doc_title, name, company, suffix=None):
 	''' append title with prefix as number and suffix as company's abbreviation separated by '-' '''
 	if name:
 		name_split=name.split("-")
-		parts = [doc_title.strip(), name_split[len(name_split)-1].strip()]
+		parts = [doc_title.strip()[:100], name_split[len(name_split)-1].strip()]
 	else:
 		abbr = frappe.get_cached_value('Company',  company,  ["abbr"], as_dict=True)
-		parts = [doc_title.strip(), abbr.abbr]
+		parts = [doc_title.strip()[:100], abbr.abbr]
+
+	if suffix:
+		parts.insert(-1, suffix)
+
 	if cstr(number_value).strip():
 		parts.insert(0, cstr(number_value).strip())
+
 	return ' - '.join(parts)
 
 @frappe.whitelist()
