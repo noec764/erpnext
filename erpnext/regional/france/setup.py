@@ -8,9 +8,13 @@ import os
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def setup(company=None, patch=True):
+	setup_company_independent_fixtures()
 	if not patch:
-		make_custom_fields()
-		add_custom_roles_for_reports()
+		make_fixtures(company)
+
+def setup_company_independent_fixtures():
+	make_custom_fields()
+	add_custom_roles_for_reports()
 
 def make_custom_fields():
 	custom_fields = {
@@ -21,9 +25,9 @@ def make_custom_fields():
 		'Account': [
 			dict(fieldname='negative_in_balance_sheet', label='Negative in Balance Sheet',
 			fieldtype='Check', insert_after='include_in_gross', depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group',
-			description='Balance is debit for asset or credit for liability accounts')
+			description='Balance is debit for asset or credit for liability accounts'),
 			dict(fieldname='balance_sheet_alternative_category', label='Balance Sheet Other Category',
-			fieldtype='Link', options='Account', insert_after='negative_in_balance_sheet', depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group')
+			fieldtype='Link', options='Account', insert_after='parent_account', depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group')
 		]
 	}
 
@@ -40,3 +44,7 @@ def add_custom_roles_for_reports():
 				dict(role='Accounts Manager')
 			]
 		)).insert()
+
+def make_fixtures(company=None):
+	# TODO
+	pass
