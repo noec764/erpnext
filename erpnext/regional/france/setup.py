@@ -17,6 +17,13 @@ def make_custom_fields():
 		'Company': [
 			dict(fieldname='siren_number', label='SIREN Number',
 			fieldtype='Data', insert_after='website')
+		],
+		'Account': [
+			dict(fieldname='negative_in_balance_sheet', label='Negative in Balance Sheet',
+			fieldtype='Check', insert_after='include_in_gross', depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group',
+			description='Balance is debit for asset or credit for liability accounts')
+			dict(fieldname='balance_sheet_alternative_category', label='Balance Sheet Other Category',
+			fieldtype='Link', options='Account', insert_after='negative_in_balance_sheet', depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group')
 		]
 	}
 

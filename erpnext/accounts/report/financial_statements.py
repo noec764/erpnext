@@ -494,7 +494,7 @@ def get_columns(periodicity, period_list, accumulated_values=1, company=None):
 		"label": _("Account"),
 		"fieldtype": "Link",
 		"options": "Account",
-		"width": 300
+		"width": 500
 	}]
 	if company:
 		columns.append({
