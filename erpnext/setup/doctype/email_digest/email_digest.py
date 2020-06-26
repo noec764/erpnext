@@ -403,9 +403,9 @@ class EmailDigest(Document):
 		"""Get value not billed"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total)) - (sum(grand_total*per_billed/100)),0),
-                    count(*) from `tabSales Order`
-					where (transaction_date <= %(to_date)s) and billing_status != "Fully Billed"
-					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
+					count(*) from `tabSales Order`
+					where (transaction_date <= %(to_date)s) and billing_status != "Fully Billed" and company = %(company)s
+					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
 		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_bill")),
 			report_type="Report Builder",
@@ -429,8 +429,8 @@ class EmailDigest(Document):
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total)) - (sum(grand_total*per_delivered/100)),0),
 					count(*) from `tabSales Order`
-					where (transaction_date <= %(to_date)s) and delivery_status != "Fully Delivered"
-					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
+					where (transaction_date <= %(to_date)s) and delivery_status != "Fully Delivered" and company = %(company)s
+					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
 		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_deliver")),
 			report_type="Report Builder",
@@ -453,9 +453,9 @@ class EmailDigest(Document):
 		"""Get value not received"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total))-(sum(grand_total*per_received/100)),0),
-                    count(*) from `tabPurchase Order`
-					where (transaction_date <= %(to_date)s) and per_received < 100
-					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
+					count(*) from `tabPurchase Order`
+					where (transaction_date <= %(to_date)s) and per_received < 100 and company = %(company)s
+					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
 		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_receive")),
 			report_type="Report Builder",
@@ -478,9 +478,9 @@ class EmailDigest(Document):
 		"""Get purchase not billed"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total)) - (sum(grand_total*per_billed/100)),0),
-                    count(*) from `tabPurchase Order`
-					where (transaction_date <= %(to_date)s) and per_billed < 100
-					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date})[0]
+					count(*) from `tabPurchase Order`
+					where (transaction_date <= %(to_date)s) and per_billed < 100 and company = %(company)s
+					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
 		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_bill")),
 			report_type="Report Builder",
@@ -756,7 +756,7 @@ class EmailDigest(Document):
 	def get_purchase_orders_items_overdue_list(self):
 		fields_po = "distinct `tabPurchase Order Item`.parent as po"
 		fields_poi = "`tabPurchase Order Item`.parent, `tabPurchase Order Item`.schedule_date, item_code," \
-		             "received_qty, qty - received_qty as missing_qty, rate, amount"
+					 "received_qty, qty - received_qty as missing_qty, rate, amount"
 
 		sql_po = """select {fields} from `tabPurchase Order Item`
 			left join `tabPurchase Order` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
