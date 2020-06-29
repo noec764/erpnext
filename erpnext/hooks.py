@@ -222,8 +222,14 @@ doc_events = {
 		"validate": "erpnext.portal.doctype.products_settings.products_settings.home_page_is_products"
 	},
 	"Sales Invoice": {
-		"on_submit": ["erpnext.regional.italy.utils.sales_invoice_on_submit"],
-		"on_cancel": "erpnext.regional.italy.utils.sales_invoice_on_cancel"
+		"on_submit": [
+			"erpnext.regional.italy.utils.sales_invoice_on_submit",
+			"erpnext.erpnext_integrations.taxjar_integration.create_transaction"
+		],
+		"on_cancel": [
+			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
+			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
+		]
 	},
 	"Purchase Invoice": {
 		"on_submit": "erpnext.regional.india.utils.make_reverse_charge_entries"
@@ -255,6 +261,9 @@ doc_events = {
 		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar",
 		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar"
 	},
+	('Quotation', 'Sales Order', 'Sales Invoice'): {
+		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
+	}
 }
 
 # On cancel event Payment Entry will be exempted and all linked submittable doctype will get cancelled.
