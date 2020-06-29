@@ -27,13 +27,13 @@ def get_columns():
 		'label': _('Employee'),
 		'fieldtype': 'Link',
 		'fieldname': 'employee',
-		'width': 100,
+		'width': 200,
 		'options': 'Employee'
 	}, {
 		'label': _('Employee Name'),
 		'fieldtype': 'Data',
 		'fieldname': 'employee_name',
-		'width': 100,
+		'width': 200,
 	}, {
 		'label': _('Opening Balance'),
 		'fieldtype': 'float',
