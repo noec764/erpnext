@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap justify-center align-center">
-                <a type="button" class="btn btn-success" :disabled="is_reconciliation_disabled || btn_clicked" @click="reconcile_entries"><span>{{ btn_clicked ? __("In progress...") : __("Reconcile") }}</span><i v-show="!btn_clicked" class='uil uil-check'></i></a>
+                <a type="button" class="btn btn-success" :disabled="is_reconciliation_disabled || btn_clicked" @click="reconcile_entries"><span>{{ btn_clicked ? __("In progress...") : __("Reconcile", null, "Bank Transaction") }}</span><i v-show="!btn_clicked" class='uil uil-check'></i></a>
             </div>
         </div>
     </div>
