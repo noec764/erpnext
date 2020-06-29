@@ -306,8 +306,7 @@
 				},
 				"Charges constatées d'avance": {
 					"Charges constatées d'avance": {
-						"account_number": "486",
-						"account_type": "Round Off"
+						"account_number": "486"
 					},
 					"account_number": "E",
 					"do_not_show_account_number": 1
@@ -423,6 +422,10 @@
 				"Dettes fiscales et sociales": {
 					"Personnel - Rémunérations dues": {
 						"account_number": "421",
+						"account_type": "Payable"
+					},
+					"Personnel - Avances et acomptes": {
+						"account_number": "425",
 						"account_type": "Payable"
 					},
 					"Personnel - Charges à payer et produits à recevoir": {

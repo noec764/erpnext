@@ -292,3 +292,261 @@ var disbale_coa_fields = function(frm, bool=true) {
 	frm.set_df_property("existing_company", "read_only", bool);
 }
 
+
+frappe.tour["Company"] = [
+	{
+		fieldname: "abbr",
+		title: __("Abbreviation"),
+		description: __("Company's name abbreviation. Used to differentiate master date between several companies.")
+	},
+	{
+		fieldname: "is_group",
+		title: __("Company is a group"),
+		description: __("Check this field if this company is a parent company to one or several subsidiaries created in this system.")
+	},
+	{
+		fieldname: "default_currency",
+		title: __("Company's default currency'"),
+		description: __("Default currency used for this company. The accounting will be done with this currency.")
+	},
+	{
+		fieldname: "default_letter_head",
+		title: __("Company's default letter head"),
+		description: __("Will be selected by default in all transactions linked with this company.")
+	},
+	{
+		fieldname: "default_holiday_list",
+		title: __("Default holiday list"),
+		description: __("Holiday list used by default for this company unless specified differently at a lower level.")
+	},
+	{
+		fieldname: "default_finance_book",
+		title: __("Default Finance Book"),
+		description: __("Finance book used by default for this company.")
+	},
+	{
+		fieldname: "default_selling_terms",
+		title: __("Default Selling Terms"),
+		description: __("Terms and conditions used by default in sales transactions.")
+	},
+	{
+		fieldname: "default_buying_terms",
+		title: __("Default Buying Terms"),
+		description: __("Terms and conditions used by default in buying transactions.")
+	},
+	{
+		fieldname: "country",
+		title: __("Company's country"),
+		description: __("Country in which this company is registered.")
+	},
+	{
+		fieldname: "create_chart_of_accounts_based_on",
+		title: __("Chart of account base"),
+		description: __("Create this company's chart of account based on a standard template or an existing company's chart of account. The chart of account can be edited manually after the initial creation.")
+	},
+	{
+		fieldname: "chart_of_accounts",
+		title: __("Chart of account"),
+		description: __("Template for this company's chart of account.")
+	},
+	{
+		fieldname: "tax_id",
+		title: __("Tax ID"),
+		description: __("Tax ID of this company.")
+	},
+	{
+		fieldname: "date_of_establishment",
+		title: __("Date of establishment"),
+		description: __("Date of establishment of this company.")
+	},
+	{
+		fieldname: "monthly_sales_target",
+		title: __("Monthly Sales Target"),
+		description: __("Set a monthly sales target for this company. It will be used to create the sales chart baseline at the top of this document.")
+	},
+	{
+		fieldname: "total_monthly_sales",
+		title: __("Total Monthly Sales"),
+		description: __("Total monthly sales for this company.")
+	},
+	{
+		fieldname: "default_bank_account",
+		title: __("Default Bank Account"),
+		description: __("Account to use as default bank account in accounting transactions.")
+	},
+	{
+		fieldname: "default_cash_account",
+		title: __("Default Cash Account"),
+		description: __("Account to use as default cash account in accounting transactions.")
+	},
+	{
+		fieldname: "inter_banks_transfer_account",
+		title: __("Inter-banks transfer account"),
+		description: __("Account to use as default inter-bank transfer account in internal transfer payment entries.")
+	},
+	{
+		fieldname: "default_receivable_account",
+		title: __("Default Receivable Account"),
+		description: __("Default account for receivable entries. Will be associated with auxiliary accounts.")
+	},
+	{
+		fieldname: "round_off_account",
+		title: __("Round Off Account"),
+		description: __("Default account for round-offs.")
+	},
+	{
+		fieldname: "round_off_cost_center",
+		title: __("Round Off Cost Center"),
+		description: __("Default cost center for round-offs.")
+	},
+	{
+		fieldname: "write_off_account",
+		title: __("Write Off Account"),
+		description: __("Default account for writing off part of a transaction.")
+	},
+	{
+		fieldname: "discount_allowed_account",
+		title: __("Discount Allowed Account"),
+		description: __("Default account for discounts given by the company.")
+	},
+	{
+		fieldname: "discount_received_account",
+		title: __("Discount Received Account"),
+		description: __("Default account for discounts received by the company.")
+	},
+	{
+		fieldname: "exchange_gain_loss_account",
+		title: __("Exchange Gain / Loss Account"),
+		description: __("Default account for exhange gain or losses.")
+	},
+	{
+		fieldname: "unrealized_exchange_gain_loss_account",
+		title: __("Unrealized Exchange Gain/Loss Account"),
+		description: __("Default account for unrealized exhange gain or losses.")
+	},
+	{
+		fieldname: "default_payable_account",
+		title: __("Default Payable Account"),
+		description: __("Default account for payable entries. Will be associated with auxiliary accounts.")
+	},
+	{
+		fieldname: "default_employee_advance_account",
+		title: __("Default Employee Advance Account"),
+		description: __("Default account for advances to employees.")
+	},
+	{
+		fieldname: "default_expense_account",
+		title: __("Default Cost of Goods Sold Account"),
+		description: __("Default account for expenses booking. Should be overriden at item group or item level.")
+	},
+	{
+		fieldname: "default_income_account",
+		title: __("Default Income Account"),
+		description: __("Default account for income booking. Should be overriden at item group or item level.")
+	},
+	{
+		fieldname: "default_deferred_revenue_account",
+		title: __("Default Deferred Revenue Account"),
+		description: __("Default account for deferred income booking.")
+	},
+	{
+		fieldname: "default_deferred_expense_account",
+		title: __("Default Deferred Expense Account"),
+		description: __("Default account for deferred expense booking.")
+	},
+	{
+		fieldname: "default_payroll_payable_account",
+		title: __("Default Payroll Payable Account"),
+		description: __("Default account for payroll payables.")
+	},
+	{
+		fieldname: "default_expense_claim_payable_account",
+		title: __("Default Expense Claim Payable Account"),
+		description: __("Default account for expense claim payables.")
+	},
+	{
+		fieldname: "cost_center",
+		title: __("Default Cost Center"),
+		description: __("Default cost center for this company.")
+	},
+	{
+		fieldname: "credit_limit",
+		title: __("Credit Limit"),
+		description: __("Default credit limit for this company.")
+	},
+	{
+		fieldname: "payment_terms",
+		title: __("Default Payment Terms Template"),
+		description: __("Default template for payment terms to use in transactions.")
+	},
+	{
+		fieldname: "enable_perpetual_inventory",
+		title: __("Enable Perpetual Inventory"),
+		description: __("Enable or disable the perpetual inventory mode. In perpetual inventory, accounting entries are made for each stock ledger transaction.")
+	},
+	{
+		fieldname: "enable_perpetual_inventory_for_non_stock_items",
+		title: __("Enable Perpetual Inventory For Non Stock Items"),
+		description: __("Enable or disable the perpetual inventory mode for non stock items.")
+	},
+	{
+		fieldname: "default_inventory_account",
+		title: __("Default Inventory Account"),
+		description: __("Default account for stock transactions.")
+	},
+	{
+		fieldname: "stock_adjustment_account",
+		title: __("Stock Adjustment Account"),
+		description: __("Default account for stock variations.")
+	},
+	{
+		fieldname: "stock_received_but_not_billed",
+		title: __("Stock Received But Not Billed"),
+		description: __("Stock received but not billed account.")
+	},
+	{
+		fieldname: "service_received_but_not_billed",
+		title: __("Service Received But Not Billed"),
+		description: __("Service received but not billed account.")
+	},
+	{
+		fieldname: "expenses_included_in_valuation",
+		title: __("Expenses Included In Valuation"),
+		description: __("Default account for expense included in items valuation.")
+	},
+	{
+		fieldname: "accumulated_depreciation_account",
+		title: __("Accumulated Depreciation Account"),
+		description: __("Default account for accumulated asset depreciation.")
+	},
+	{
+		fieldname: "depreciation_expense_account",
+		title: __("Depreciation Expense Account"),
+		description: __("Account for asset depreciation expenses.")
+	},
+	{
+		fieldname: "expenses_included_in_asset_valuation",
+		title: __("Expenses Included In Asset Valuation"),
+		description: __("Default account for expense included in assets valuation.")
+	},
+	{
+		fieldname: "disposal_account",
+		title: __("Gain/Loss Account on Asset Disposal"),
+		description: __("Defaut account for gain / loss account on asset disposal.")
+	},
+	{
+		fieldname: "depreciation_cost_center",
+		title: __("Asset Depreciation Cost Center"),
+		description: __("Default cost center for asset depreciations.")
+	},
+	{
+		fieldname: "capital_work_in_progress_account",
+		title: __("Capital Work In Progress Account"),
+		description: __("Account for capital work in progress accounting.")
+	},
+	{
+		fieldname: "asset_received_but_not_billed",
+		title: __("Asset Received But Not Billed"),
+		description: __("Default account for assets received but not billed.")
+	},
+]
