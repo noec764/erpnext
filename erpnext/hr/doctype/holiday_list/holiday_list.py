@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.utils import cint, getdate, formatdate, today
+from frappe.utils import cint, getdate, formatdate, today, nowdate
 from frappe import throw, _
 from frappe.model.document import Document
 
@@ -95,3 +95,9 @@ def is_holiday(holiday_list, date=today()):
 			dict(name=holiday_list, holiday_date=date)))
 	else:
 		return False
+
+def replace_expired_holiday_lists():
+	applicable_holiday_lists = {x.replaces_holiday_list: x.name for x in frappe.get_all("Holiday List", filters={"from_date": ("<=", nowdate()), "to_date": (">=", nowdate())}, fields=["name", "replaces_holiday_list"]) if x.replaces_holiday_list is not None}
+	for dt in frappe.get_all("DocField", filters={"fieldtype": "Link", "options": "Holiday List", "parent": ("!=", "Holiday List")}, fields=["parent", "fieldname"]):
+		for doc in frappe.get_all(dt.parent, filters={dt.fieldname: ("in", applicable_holiday_lists.keys())}:
+			frappe.db.set_value(dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname)))

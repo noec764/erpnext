@@ -314,7 +314,8 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.send_email_to_leads_or_contacts",
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status",
 		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
-		"erpnext.buying.doctype.supplier_quotation.supplier_quotation.set_expired_status"
+		"erpnext.buying.doctype.supplier_quotation.supplier_quotation.set_expired_status",
+		"erpnext.hr.doctype.holiday_list.holiday_list.replace_expired_holiday_lists",
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",
