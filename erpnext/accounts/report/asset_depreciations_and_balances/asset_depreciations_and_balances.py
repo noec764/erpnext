@@ -143,72 +143,72 @@ def get_columns(filters):
 			"fieldname": "asset_category",
 			"fieldtype": "Link",
 			"options": "Asset Category",
-			"width": 120
+			"width": 200
 		},
 		{
 			"label": _("Cost as on") + " " + formatdate(filters.day_before_from_date),
 			"fieldname": "cost_as_on_from_date",
 			"fieldtype": "Currency",
-			"width": 140
+			"width": 350
 		},
 		{
 			"label": _("Cost of New Purchase"),
 			"fieldname": "cost_of_new_purchase",
 			"fieldtype": "Currency",
-			"width": 140
+			"width": 250
 		},
 		{
 			"label": _("Cost of Sold Asset"),
 			"fieldname": "cost_of_sold_asset",
 			"fieldtype": "Currency",
-			"width": 140
+			"width": 250
 		},
 		{
 			"label": _("Cost of Scrapped Asset"),
 			"fieldname": "cost_of_scrapped_asset",
 			"fieldtype": "Currency",
-			"width": 140
+			"width": 250
 		},
 		{
 			"label": _("Cost as on") + " " + formatdate(filters.to_date),
 			"fieldname": "cost_as_on_to_date",
 			"fieldtype": "Currency",
-			"width": 140
+			"width": 250
 		},
 		{
 			"label": _("Accumulated Depreciation as on") + " " + formatdate(filters.day_before_from_date),
 			"fieldname": "accumulated_depreciation_as_on_from_date",
 			"fieldtype": "Currency",
-			"width": 270
+			"width": 350
 		},
 		{
 			"label": _("Depreciation Amount during the period"),
 			"fieldname": "depreciation_amount_during_the_period",
 			"fieldtype": "Currency",
-			"width": 240
+			"width": 350
 		},
 		{
 			"label": _("Depreciation Eliminated due to disposal of assets"),
 			"fieldname": "depreciation_eliminated_during_the_period",
 			"fieldtype": "Currency",
-			"width": 300
+			"width": 350
 		},
 		{
 			"label": _("Accumulated Depreciation as on") + " " + formatdate(filters.to_date),
 			"fieldname": "accumulated_depreciation_as_on_to_date",
 			"fieldtype": "Currency",
-			"width": 270
+			"width": 350
 		},
 		{
 			"label": _("Net Asset value as on") + " " + formatdate(filters.day_before_from_date),
 			"fieldname": "net_asset_value_as_on_from_date",
 			"fieldtype": "Currency",
-			"width": 200
+			"width": 350
 		},
 		{
 			"label": _("Net Asset value as on") + " " + formatdate(filters.to_date),
 			"fieldname": "net_asset_value_as_on_to_date",
 			"fieldtype": "Currency",
-			"width": 200
+			"width": 350
 		}
 	]
