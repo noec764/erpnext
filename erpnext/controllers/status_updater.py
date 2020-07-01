@@ -206,7 +206,7 @@ class StatusUpdater(Document):
 		else:
 			action_msg = _('To allow over billing, update "Over Billing Allowance" in Accounts Settings or the Item.')
 
-		frappe.throw(_('This document is over limit by {0} {1} for item {4}. Are you making another {3} against the same {2}?')
+		frappe.throw(_('This document is over limit by a/an {0} of {1} for item {4}. Are you making another {3} against the same {2}?')
 			.format(
 				frappe.bold(_(item["target_ref_field"].title())),
 				frappe.bold(item["reduce_by"]),
