@@ -99,7 +99,6 @@
   "company_description",
   "registration_info",
   "registration_details",
-  "delete_company_transactions",
   "lft",
   "rgt",
   "old_parent"
@@ -679,11 +678,6 @@
    "oldfieldtype": "Code"
   },
   {
-   "fieldname": "delete_company_transactions",
-   "fieldtype": "Button",
-   "label": "Delete Company Transactions"
-  },
-  {
    "fieldname": "lft",
    "fieldtype": "Int",
    "hidden": 1,
@@ -728,27 +722,27 @@
    "options": "Account"
   },
   {
-    "fieldname": "service_received_but_not_billed",
-    "fieldtype": "Link",
-    "ignore_user_permissions": 1,
-    "label": "Service Received But Not Billed",
-    "no_copy": 1,
-    "options": "Account"
-   },
-   {
-    "default": "0",
-    "fieldname": "enable_perpetual_inventory_for_non_stock_items",
-    "fieldtype": "Check",
-    "label": "Enable Perpetual Inventory For Non Stock Items"
-   }
+   "fieldname": "service_received_but_not_billed",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Service Received But Not Billed",
+   "no_copy": 1,
+   "options": "Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_perpetual_inventory_for_non_stock_items",
+   "fieldtype": "Check",
+   "label": "Enable Perpetual Inventory For Non Stock Items"
+  }
  ],
  "icon": "fa fa-building",
  "idx": 1,
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2020-06-24 12:45:31.462195",
- "modified_by": "thierry@dokos.io",
+ "modified": "2020-07-01 12:02:33.343330",
+ "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
  "nsm_parent_field": "parent_company",

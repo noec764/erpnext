@@ -110,10 +110,6 @@ class Company(NestedSet):
 				self.create_default_accounts()
 				self.create_default_warehouses()
 
-		if frappe.flags.country_change:
-			install_country_fixtures(self.name)
-			self.create_default_tax_template()
-
 		if not frappe.db.get_value("Department", {"company": self.name}):
 			from erpnext.setup.setup_wizard.operations.install_fixtures import install_post_company_fixtures
 			install_post_company_fixtures(frappe._dict({'company_name': self.name}))
@@ -125,6 +121,10 @@ class Company(NestedSet):
 			self.set_default_accounts()
 			if self.default_cash_account:
 				self.set_mode_of_payment_account()
+
+		if frappe.flags.country_change:
+			install_country_fixtures(self.name)
+			self.create_default_tax_template()
 
 		if self.default_currency:
 			frappe.db.set_value("Currency", self.default_currency, "enabled", 1)

@@ -51,9 +51,10 @@ def make_fixtures(company=None):
 	company_doc = frappe.get_doc("Company", company)
 
 	if company_doc.chart_of_accounts == "Plan Comptable Général":
-		accounts = frappe.get_all("Account", filters={"disabled": 0, "is_group": 0}, fields=["name", "account_number"])
-		company_doc.update(default_accounts_mapping(accounts, company_doc))
-		company_doc.save()
+		accounts = frappe.get_all("Account", filters={"disabled": 0, "is_group": 0, "company": company}, fields=["name", "account_number"])
+		account_map = default_accounts_mapping(accounts, company_doc)
+		for account in account_map:
+			frappe.db.set_value("Company", company, account, account_map[account])
 
 
 def default_accounts_mapping(accounts, company):
@@ -65,7 +66,7 @@ def default_accounts_mapping(accounts, company):
 		"discount_allowed_account": 709,
 		"discount_received_account": 609,
 		"exchange_gain_loss_account": 666,
-		"unrealized_exchange_gain_loss_account": 6865,
+		"unrealized_exchange_gain_loss_account": 686,
 		"default_payable_account": 401,
 		"default_employee_advance_account": 425,
 		"default_expense_account": 600,
@@ -73,6 +74,7 @@ def default_accounts_mapping(accounts, company):
 		"default_deferred_revenue_account": 487,
 		"default_deferred_expense_account": 486,
 		"default_payroll_payable_account": 421,
+		"default_expense_claim_payable_account": 421,
 		"default_inventory_account": 310,
 		"stock_adjustment_account": 603,
 		"stock_received_but_not_billed": 4081,
@@ -86,4 +88,5 @@ def default_accounts_mapping(accounts, company):
 		"asset_received_but_not_billed": 722
 	}
 
+	print({x: ([y.name for y in accounts if cint(y.account_number)==account_map[x]] or [""])[0] for x in account_map})
 	return {x: ([y.name for y in accounts if cint(y.account_number)==account_map[x]] or [""])[0] for x in account_map}

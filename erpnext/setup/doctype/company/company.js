@@ -335,6 +335,11 @@ frappe.tour["Company"] = [
 		description: __("Terms and conditions used by default in buying transactions.")
 	},
 	{
+		fieldname: "default_warehouse_for_sales_return",
+		title: __("Default warehouse for Sales Return"),
+		description: __("Default warehouse for sales return transactions.")
+	},
+	{
 		fieldname: "country",
 		title: __("Company's country"),
 		description: __("Country in which this company is registered.")
@@ -548,5 +553,55 @@ frappe.tour["Company"] = [
 		fieldname: "asset_received_but_not_billed",
 		title: __("Asset Received But Not Billed"),
 		description: __("Default account for assets received but not billed.")
+	},
+	{
+		fieldname: "exception_budget_approver_role",
+		title: __("Exception Budget Approver Role"),
+		description: __("Role allowing the approval of budget exceptions.")
+	},
+	{
+		fieldname: "company_logo",
+		title: __("Company Logo"),
+		description: __("Add your company logo. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "date_of_incorporation",
+		title: __("Date of Incorporation"),
+		description: __("Date of the company's incorporation. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "date_of_commencement",
+		title: __("Date of Commencement"),
+		description: __("Company's date of commencement. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "phone_no",
+		title: __("Phone No"),
+		description: __("Company's main phone number. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "fax",
+		title: __("Fax"),
+		description: __("Company's main fax number. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "email",
+		title: __("Email"),
+		description: __("Company's main email address. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "website",
+		title: __("Website"),
+		description: __("Company's website. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "company_description",
+		title: __("Company Description"),
+		description: __("Company's description. For reference only or to be used in custom print formats.")
+	},
+	{
+		fieldname: "registration_details",
+		title: __("Registration Details"),
+		description: __("Company's registration details. For reference only or to be used in custom print formats.")
 	},
 ]
