@@ -90,12 +90,6 @@
    "stats_filter": "{ \n    \"status\": [\"not in\", [\"Completed\"]]\n}",
    "type": "DocType"
   },
-  {
-    "label": "Dashboard",
-    "link_to": "Manufacturing",
-    "restrict_to_domain": "Manufacturing",
-    "type": "Dashboard"
-   },
    {
     "label": "Forecasting",
     "link_to": "Exponential Smoothing Forecasting",
@@ -116,6 +110,12 @@
     "label": "Production Planning Report",
     "link_to": "Production Planning Report",
     "type": "Report"
-  }
+  },
+  {
+    "label": "Dashboard",
+    "link_to": "Manufacturing",
+    "restrict_to_domain": "Manufacturing",
+    "type": "Dashboard"
+   }
  ]
 }
