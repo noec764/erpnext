@@ -187,7 +187,7 @@ class Company(NestedSet):
 		if not self.get("__islocal"):
 			if cint(self.enable_perpetual_inventory_for_non_stock_items) == 1 and not self.service_received_but_not_billed:
 				frappe.throw(_("Set default {0} account for perpetual inventory for non stock items").format(
-					frappe.bold('Service Received But Not Billed')))
+					frappe.bold(_('Service Received But Not Billed'))))
 
 	def check_country_change(self):
 		frappe.flags.country_change = False

@@ -64,7 +64,7 @@ frappe.tour['Leave Type'] = [
 	{
 		fieldname: "is_earned_leave",
 		title: __("Earned Leave"),
-		description: __("Check this option if this type of leave is earned based on a working period.")
+		description: __("Check this option if this type of leaves is earned based on a working period.")
 	},
 	{
 		fieldname: "earned_leave_frequency",

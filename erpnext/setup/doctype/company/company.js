@@ -297,7 +297,7 @@ frappe.tour["Company"] = [
 	{
 		fieldname: "abbr",
 		title: __("Abbreviation"),
-		description: __("Company's name abbreviation. Used to differentiate master date between several companies.")
+		description: __("Company's name abbreviation. Used to differentiate master data between several companies.")
 	},
 	{
 		fieldname: "is_group",

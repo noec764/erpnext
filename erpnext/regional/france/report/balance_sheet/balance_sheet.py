@@ -22,10 +22,10 @@ def execute(filters=None):
 				additional_period = period.copy()
 				additional_period.key = additional_period.key + "_" + period_type
 				additional_period["type"] = period_type
-				additional_period["label"] = additional_period.label + _(" - Gross") if period_type == "gross" else _("Amortization - Depreciation")
+				additional_period["label"] = additional_period.label + " " + _("- Gross") if period_type == "gross" else _("Amortization - Depreciation")
 				additional_columns.append(additional_period)
 		period["type"] = "net"
-		period["label"] = period.label + _(" - Net")
+		period["label"] = period.label + " " +  _(" - Net")
 	period_list.extend(additional_columns)
 	period_list = list(reversed(sorted(period_list, key=lambda x:x["from_date"])))
 
