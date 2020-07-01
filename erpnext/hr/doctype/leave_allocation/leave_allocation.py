@@ -50,6 +50,7 @@ class LeaveAllocation(Document):
 			expire_allocation(allocation)
 
 	def on_cancel(self):
+		self.ignore_linked_doctypes = ('Leave Ledger Entry')
 		self.create_leave_ledger_entry(submit=False)
 		if self.carry_forward:
 			self.set_carry_forwarded_leaves_in_previous_allocation(on_cancel=True)

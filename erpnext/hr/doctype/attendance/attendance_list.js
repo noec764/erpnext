@@ -11,7 +11,13 @@ frappe.listview_settings['Attendance'] = {
 	},
 	onload: function(list_view) {
 		let me = this;
-		const months = moment.months()
+		const moment_months = moment.months()
+		const months = moment_months.map(value => {
+			return {
+				"label": __(value),
+				"value": value
+			}
+		})
 		list_view.page.add_inner_button( __("Mark Attendance"), function(){
 			let dialog = new frappe.ui.Dialog({
 				title: __("Mark Attendance"),
@@ -65,7 +71,7 @@ frappe.listview_settings['Attendance'] = {
 					},
 				],
 				primary_action(data){
-					frappe.confirm(__('Mark attendance as <b>' + data.status + '</b> for <b>' + data.month +'</b>' + ' on selected dates?'), () => {
+					frappe.confirm(__(`Mark attendance as <b>${data.status}</b> for <b>${__(data.month)}</b> on selected dates?`), () => {
 						frappe.call({
 							method: "erpnext.hr.doctype.attendance.attendance.mark_bulk_attendance",
 							args: {

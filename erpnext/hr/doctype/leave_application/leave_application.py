@@ -73,7 +73,7 @@ class LeaveApplication(Document):
 				number_of_days = date_diff(getdate(self.from_date), date_of_joining)
 				if number_of_days >= 0:
 					holidays = 0
-					if not frappe.db.get_value("Leave Type", self.leave_type, "include_holiday"):
+					if not leave_type.include_holiday:
 						holidays = get_holidays(self.employee, date_of_joining, self.from_date)
 					number_of_days = number_of_days - leave_days - holidays
 					if number_of_days < leave_type.applicable_after:

@@ -9,6 +9,7 @@ frappe.ui.form.on('Leave Period', {
 				frm.trigger("grant_leaves");
 			});
 		}
+		frm.trigger("enable_disable_optional_holidays")
 	},
 	from_date: (frm)=>{
 		if (frm.doc.from_date && !frm.doc.to_date) {
@@ -30,18 +31,18 @@ frappe.ui.form.on('Leave Period', {
 			title: __('Grant Leaves'),
 			fields: [
 				{
-					"label": "Filter Employees By (Optional)",
+					"label": __("Filter Employees By (Optional)"),
 					"fieldname": "sec_break",
 					"fieldtype": "Section Break",
 				},
 				{
-					"label": "Employee Grade",
+					"label": __("Employee Grade"),
 					"fieldname": "grade",
 					"fieldtype": "Link",
 					"options": "Employee Grade"
 				},
 				{
-					"label": "Department",
+					"label": __("Department"),
 					"fieldname": "department",
 					"fieldtype": "Link",
 					"options": "Department"
@@ -51,13 +52,13 @@ frappe.ui.form.on('Leave Period', {
 					"fieldtype": "Column Break",
 				},
 				{
-					"label": "Designation",
+					"label": __("Designation"),
 					"fieldname": "designation",
 					"fieldtype": "Link",
 					"options": "Designation"
 				},
 				{
-					"label": "Employee",
+					"label": __("Employee"),
 					"fieldname": "employee",
 					"fieldtype": "Link",
 					"options": "Employee"
@@ -67,7 +68,7 @@ frappe.ui.form.on('Leave Period', {
 					"fieldtype": "Section Break",
 				},
 				{
-					"label": "Add unused leaves from previous allocations",
+					"label": __("Add unused leaves from previous allocations"),
 					"fieldname": "carry_forward",
 					"fieldtype": "Check"
 				}
@@ -87,8 +88,50 @@ frappe.ui.form.on('Leave Period', {
 					}
 				});
 			},
-			primary_action_label: __('Grant')
+			primary_action_label: __('Grant', null, 'Leave Period')
 		});
 		d.show();
+	},
+	leave_types(frm) {
+		frm.trigger("enable_disable_optional_holidays")
+	},
+	enable_disable_optional_holidays(frm) {
+		const leave_types = frm.doc.leave_types.map(f => {return f.leave_type})
+		frappe.db.get_list("Leave Type", {
+			filters: { 'name': ["in", leave_types]},
+			fields: ["is_optional_leave"]
+		}).then((data) => {
+			const result = data.filter(f => f.is_optional_leave == 1)
+			frm.toggle_display('optional_holiday_list', result.length)
+		})
 	}
 });
+
+
+frappe.tour['Leave Period'] = [
+	{
+		fieldname: "from_date",
+		title: __("From Date"),
+		description: __("Initial date for the period.")
+	},
+	{
+		fieldname: "to_date",
+		title: __("To Date"),
+		description: __("Final date for the period.")
+	},
+	{
+		fieldname: "is_active",
+		title: __("Is Active"),
+		description: __("This period is active/inactive.")
+	},
+	{
+		fieldname: "company",
+		title: __("Company"),
+		description: __("Company this period is linked with.")
+	},
+	{
+		fieldname: "optional_holiday_list",
+		title: __("Holiday List for Optional Leave"),
+		description: __("Holiday list to use specifically with optional leaves.")
+	}
+]

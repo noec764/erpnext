@@ -28,7 +28,7 @@ class LeavePeriod(Document):
 
 	def validate(self):
 		self.validate_dates()
-		validate_overlap(self, self.from_date, self.to_date, self.company)
+		#validate_overlap(self, self.from_date, self.to_date, self.company)
 
 	def validate_dates(self):
 		if getdate(self.from_date) >= getdate(self.to_date):
@@ -47,17 +47,19 @@ class LeavePeriod(Document):
 		if employee_records:
 			if len(employee_records) > 20:
 				frappe.enqueue(grant_leave_alloc_for_employees, timeout=600,
-					employee_records=employee_records, leave_period=self, carry_forward=carry_forward)
+					employee_records=employee_records, leave_period=self, leave_types=self.leave_types, carry_forward=carry_forward)
 			else:
-				grant_leave_alloc_for_employees(employee_records, self, carry_forward)
+				grant_leave_alloc_for_employees(employee_records, self, self.leave_types, carry_forward)
 		else:
 			frappe.msgprint(_("No Employee Found"))
 
-def grant_leave_alloc_for_employees(employee_records, leave_period, carry_forward=0):
+def grant_leave_alloc_for_employees(employee_records, leave_period, leave_types, carry_forward=0):
+	leave_types = [x.leave_type for x in leave_types]
 	leave_allocations = []
 	existing_allocations_for = get_existing_allocations(list(employee_records.keys()), leave_period.name)
 	leave_type_details = get_leave_type_details()
 	count = 0
+
 	for employee in employee_records.keys():
 		if employee in existing_allocations_for:
 			continue
@@ -65,7 +67,7 @@ def grant_leave_alloc_for_employees(employee_records, leave_period, carry_forwar
 		leave_policy = get_employee_leave_policy(employee)
 		if leave_policy:
 			for leave_policy_detail in leave_policy.leave_policy_details:
-				if not leave_type_details.get(leave_policy_detail.leave_type).is_lwp:
+				if leave_type_details.get(leave_policy_detail.leave_type).name in leave_types and not leave_type_details.get(leave_policy_detail.leave_type).is_lwp:
 					leave_allocation = create_leave_allocation(employee, leave_policy_detail.leave_type,
 						leave_policy_detail.annual_allocation, leave_type_details, leave_period, carry_forward, employee_records.get(employee))
 					leave_allocations.append(leave_allocation)

@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from frappe import _
 from frappe.utils import add_days, today, flt, DATE_FORMAT, getdate
 
+exclude_from_linked_with = True
 class LeaveLedgerEntry(Document):
 	def validate(self):
 		if getdate(self.from_date) > getdate(self.to_date):

@@ -128,6 +128,9 @@ def mark_bulk_attendance(data):
 	from pprint import pprint
 	if isinstance(data, frappe.string_types):
 		data = json.loads(data)
+	if not data:
+		return
+
 	data = frappe._dict(data)
 	company = frappe.get_value('Employee', data.employee, 'company')
 	for date in data.unmarked_days:

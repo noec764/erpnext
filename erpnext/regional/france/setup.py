@@ -70,7 +70,7 @@ def default_accounts_mapping(accounts, company):
 		"default_employee_advance_account": 425,
 		"default_expense_account": 600,
 		"default_income_account": 706 if company.domain == "Services" else 701,
-		"default_deferred_revenue_account": 487
+		"default_deferred_revenue_account": 487,
 		"default_deferred_expense_account": 486,
 		"default_payroll_payable_account": 421,
 		"default_inventory_account": 310,
@@ -82,7 +82,7 @@ def default_accounts_mapping(accounts, company):
 		"depreciation_expense_account": 681,
 		"expenses_included_in_asset_valuation": 608,
 		"disposal_account": 675,
-		"capital_work_in_progress_account": 231
+		"capital_work_in_progress_account": 231,
 		"asset_received_but_not_billed": 722
 	}
 

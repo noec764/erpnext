@@ -22,16 +22,17 @@
   "carry_forward_section",
   "maximum_carry_forwarded_leaves",
   "expire_carry_forwarded_leaves_after_days",
+  "earned_leave",
+  "is_earned_leave",
+  "earned_leave_frequency",
+  "earned_leave_frequency_formula",
+  "column_break_22",
+  "rounding",
   "encashment",
   "allow_encashment",
   "encashment_threshold_days",
   "column_break_17",
-  "earning_component",
-  "earned_leave",
-  "is_earned_leave",
-  "earned_leave_frequency",
-  "column_break_22",
-  "rounding"
+  "earning_component"
  ],
  "fields": [
   {
@@ -159,16 +160,15 @@
    "depends_on": "is_earned_leave",
    "fieldname": "earned_leave_frequency",
    "fieldtype": "Select",
-   "label": "Earned Leave Frequency",
-   "options": "Monthly\nQuarterly\nHalf-Yearly\nYearly"
+   "label": "Earned Leave Frequency"
   },
   {
    "default": "0.5",
-   "depends_on": "is_earned_leave",
+   "depends_on": "eval:doc.is_earned_leave&&doc.earned_leave_frequency!=\"Custom Formula\"",
    "fieldname": "rounding",
    "fieldtype": "Select",
    "label": "Rounding",
-   "options": "0.5\n1.0"
+   "options": "None\n0.5\n1.0"
   },
   {
    "depends_on": "is_carry_forward",
@@ -183,12 +183,18 @@
   {
    "fieldname": "column_break_22",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.earned_leave_frequency==\"Custom Formula\"",
+   "fieldname": "earned_leave_frequency_formula",
+   "fieldtype": "Select",
+   "label": "Earned Leave Frequency Formula"
   }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2019-12-12 12:48:37.780254",
+ "modified": "2020-07-01 08:17:29.360980",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",
