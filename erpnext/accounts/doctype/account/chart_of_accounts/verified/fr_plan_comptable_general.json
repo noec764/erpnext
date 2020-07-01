@@ -582,50 +582,70 @@
 		},
 		"Capitaux Propres": {
 			"Capital": {
-				"account_number": "101",
-				"account_type": "Equity"
+				"Capital": {
+					"account_number": "101",
+					"account_type": "Equity"
+				},
+				"Compte de l'exploitant": {
+					"account_number": "108",
+					"account_type": "Payable"
+				},
+				"account_number": "A",
+				"do_not_show_account_number": 1
 			},
 			"Réserves": {
-				"Réserve légale": {
-					"account_number": "1061",
-					"account_type": "Equity"
+				"Réserves": {
+					"Réserve légale": {
+						"account_number": "1061",
+						"account_type": "Equity"
+					},
+					"Réserves statutaires ou contractuelles": {
+						"account_number": "1063",
+						"account_type": "Equity"
+					},
+					"Réserves réglementées": {
+						"account_number": "1064",
+						"account_type": "Equity"
+					},
+					"Autres réserves": {
+						"account_number": "1068",
+						"account_type": "Equity"
+					},
+					"account_number": "106"
 				},
-				"Réserves statutaires ou contractuelles": {
-					"account_number": "1063",
-					"account_type": "Equity"
-				},
-				"Réserves réglementées": {
-					"account_number": "1064",
-					"account_type": "Equity"
-				},
-				"Autres réserves": {
-					"account_number": "1068",
-					"account_type": "Equity"
-				},
-				"account_number": "106"
-			},
-			"Compte de l'exploitant": {
-				"account_number": "108",
-				"account_type": "Payable"
+				"account_number": "B",
+				"do_not_show_account_number": 1
 			},
 			"Report à nouveau": {
-				"account_number": "110",
-				"account_type": "Equity"
+				"Report à nouveau": {
+					"account_number": "110",
+					"account_type": "Equity"
+				},
+				"account_number": "C",
+				"do_not_show_account_number": 1
 			},
 			"Résultat de l'exercice": {
-				"account_number": "120",
-				"account_type": "Equity"
+				"Résultat de l'exercice": {
+					"account_number": "120",
+					"account_type": "Equity"
+				},
+				"account_number": "D",
+				"do_not_show_account_number": 1
 			},
 			"Provisions réglementées": {
-				"Amortissements dérogatoires": {
-					"account_number": "145",
-					"account_type": "Equity"
+				"Provisions réglementées": {
+					"Amortissements dérogatoires": {
+						"account_number": "145",
+						"account_type": "Equity"
+					},
+					"Autres provisions réglementées": {
+						"account_number": "148",
+						"account_type": "Equity"
+					},
+					"account_number": "14"
 				},
-				"Autres provisions réglementées": {
-					"account_number": "148",
-					"account_type": "Equity"
-				},
-				"account_number": "14"
+				"account_number": "E",
+				"do_not_show_account_number": 1
 			},
 			"root_type": "Equity",
 			"account_number": "B",
@@ -1070,24 +1090,24 @@
 					"account_number": "687",
 					"account_type": "Depreciation"
 				},
+				"Participation des salariés aux résultats": {
+					"account_number": "691",
+					"account_type": "Expense Account"
+				},
+				"Impôts sur les bénéfices": {
+					"account_number": "695",
+					"account_type": "Tax"
+				},
+				"Imposition forfaitaire annuelle des sociétés": {
+					"account_number": "697",
+					"account_type": "Tax"
+				},
+				"Produits - Reports en arrière des déficits": {
+					"account_number": "699",
+					"account_type": "Expense Account"
+				},
 				"account_number": "C",
 				"do_not_show_account_number": 1
-			},
-			"Participation des salariés aux résultats": {
-				"account_number": "691",
-				"account_type": "Expense Account"
-			},
-			"Impôts sur les bénéfices": {
-				"account_number": "695",
-				"account_type": "Tax"
-			},
-			"Imposition forfaitaire annuelle des sociétés": {
-				"account_number": "697",
-				"account_type": "Tax"
-			},
-			"Produits - Reports en arrière des déficits": {
-				"account_number": "699",
-				"account_type": "Expense Account"
 			},
 			"root_type": "Expense",
 			"account_number": "E",
