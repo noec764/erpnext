@@ -407,7 +407,21 @@ frappe.ui.form.on('Asset', {
 				}
 			});
 		}
-	}
+	},
+	company: function(frm) {
+		if (frm.get_field("cost_center")) {
+			frappe.call({
+				method: "frappe.client.get_value",
+				args: {
+					doctype: "Company",
+					filters: {"name": frm.doc.company},
+					fieldname: "cost_center"
+				}
+			}).then(r => {
+				r&&r.message&&frm.set_value("cost_center", r.message.cost_center);
+			})
+		}
+	},
 });
 
 frappe.ui.form.on('Asset Finance Book', {
