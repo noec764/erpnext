@@ -41,7 +41,7 @@ class Subscription(Document):
 		self.update_payment_gateway_subscription()
 
 	def on_trash(self):
-		events = frappe.get_all("Subscription Event", filters={"subscription": self.name}, fields=["name", "doctstatus"])
+		events = frappe.get_all("Subscription Event", filters={"subscription": self.name}, fields=["name", "docstatus"])
 		for event in events:
 			if event.docstatus == 1:
 				e = frappe.get_doc("Subscription Event", event.name)
