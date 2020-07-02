@@ -125,7 +125,7 @@ export default {
         },
         stripe_transactions() {
             return this.transactions
-                .filter(f => f.description.toLowerCase().includes("stripe"))
+                .filter(f => f.description&&f.description.toLowerCase().includes("stripe"))
                 .map(transaction => ({...transaction,
                     displayed_date: frappe.datetime.str_to_user(transaction.date),
                     amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount
