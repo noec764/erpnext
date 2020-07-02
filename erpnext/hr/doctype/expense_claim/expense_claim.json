@@ -140,7 +140,9 @@
    "depends_on": "eval:(doc.docstatus==0 || doc.is_paid)",
    "fieldname": "is_paid",
    "fieldtype": "Check",
-   "label": "Is Paid"
+   "label": "Is Paid",
+   "hidden": "1",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
    "fieldname": "expense_details",
@@ -251,12 +253,14 @@
    "fieldname": "mode_of_payment",
    "fieldtype": "Link",
    "label": "Mode of Payment",
-   "options": "Mode of Payment"
+   "options": "Mode of Payment",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
    "fieldname": "clearance_date",
    "fieldtype": "Date",
-   "label": "Clearance Date"
+   "label": "Clearance Date",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
    "fieldname": "column_break_24",
@@ -371,7 +375,7 @@
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-06-15 12:43:04.099803",
+ "modified": "2020-06-16 12:43:04.099803",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Expense Claim",

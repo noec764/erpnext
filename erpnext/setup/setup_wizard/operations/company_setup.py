@@ -103,7 +103,8 @@ def create_accounting_journals(bank_account_name, company):
 				{"document_type": "Period Closing Voucher"},
 				{"document_type": "Delivery Note"},
 				{"document_type": "Purchase Receipt"},
-				{"document_type": "Stock Entry"}
+				{"document_type": "Stock Entry"},
+				{"document_type": "Expense Claim"}
 			]
 		},
 		{
