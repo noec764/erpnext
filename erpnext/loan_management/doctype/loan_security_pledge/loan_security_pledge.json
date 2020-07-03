@@ -6,10 +6,10 @@
  "engine": "InnoDB",
  "field_order": [
   "loan_details_section",
-  "loan_application",
-  "loan",
   "applicant_type",
   "applicant",
+  "loan_application",
+  "loan",
   "column_break_3",
   "company",
   "pledge_time",
@@ -55,15 +55,13 @@
    "fieldname": "loan",
    "fieldtype": "Link",
    "label": "Loan",
-   "options": "Loan",
-   "read_only": 1
+   "options": "Loan"
   },
   {
    "fieldname": "loan_application",
    "fieldtype": "Link",
    "label": "Loan Application",
-   "options": "Loan Application",
-   "read_only": 1
+   "options": "Loan Application"
   },
   {
    "fieldname": "total_security_value",
@@ -133,7 +131,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-10 13:22:53.297519",
+ "modified": "2020-07-02 23:38:24.002382",
  "modified_by": "Administrator",
  "module": "Loan Management",
  "name": "Loan Security Pledge",
