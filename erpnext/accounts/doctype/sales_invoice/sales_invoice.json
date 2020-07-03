@@ -1503,6 +1503,7 @@
    "print_hide": 1
   },
   {
+    "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
    "label": "Subscription Section"
@@ -1610,7 +1611,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-19 17:00:57.208696",
+ "modified": "2020-05-20 17:00:57.208696",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
