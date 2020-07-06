@@ -66,7 +66,7 @@ class TestSalarySlip(unittest.TestCase):
 		#Gross pay calculation based on attendances
 		gross_pay = 78000 - ((78000 / (days_in_month - no_of_holidays)) * flt(ss.leave_without_pay + ss.absent_days))
 
-		self.assertEqual(ss.gross_pay, gross_pay)
+		self.assertEqual(flt(ss.gross_pay, 2), flt(gross_pay, 2))
 
 		frappe.db.set_value("Payroll Settings", None, "payroll_based_on", "Leave")
 
