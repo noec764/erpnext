@@ -53,7 +53,7 @@
   {
    "fieldname": "document_name",
    "fieldtype": "Dynamic Link",
-   "label": "Name",
+   "label": "Feedback By",
    "options": "document_type",
    "reqd": 1
   }
