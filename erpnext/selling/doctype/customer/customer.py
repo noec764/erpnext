@@ -85,6 +85,7 @@ class Customer(TransactionBase):
 		self.validate_name_with_customer_group()
 		self.create_primary_contact()
 		self.create_primary_address()
+		self.validate_primary_contact()
 
 		if self.flags.old_lead != self.lead_name:
 			self.update_lead_status()
@@ -107,6 +108,22 @@ class Customer(TransactionBase):
 				self.db_set('customer_primary_contact', contact.name)
 				self.db_set('mobile_no', self.mobile_no)
 				self.db_set('email_id', self.email_id)
+
+	def validate_primary_contact(self):
+		primary_contacts = frappe.get_all('Dynamic Link', filters={
+			"parenttype":"Contact",
+			"link_doctype":"Customer",
+			"link_name":self.name
+		}, fields=["parent as name"])
+
+		if len(primary_contacts) > 1:
+			for contact in primary_contacts:
+				is_primary_contact = frappe.db.get_value("Contact", contact.name, "is_primary_contact")
+				if contact.name != self.customer_primary_contact \
+					and cint(is_primary_contact) == 1:
+					frappe.db.set_value("Contact", contact.name, "is_primary_contact", 0)
+				elif contact.name == self.customer_primary_contact and cint(is_primary_contact) == 0:
+					frappe.db.set_value("Contact", contact.name, "is_primary_contact", 1)
 
 	def create_primary_address(self):
 		if self.flags.is_new_doc and self.get('address_line1'):
