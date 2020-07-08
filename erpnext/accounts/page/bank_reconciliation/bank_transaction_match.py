@@ -195,8 +195,8 @@ class BankTransactionMatch:
 		return {
 			"Payment Entry": "paid_amount",
 			"Journal Entry": "debit_in_account_currency" if debit_or_credit == "debit" else "credit_in_account_currency",
-			"Sales Invoice": "amount",
-			"Purchase Invoice": "paid_amount",
+			"Sales Invoice": "outstanding_amount",
+			"Purchase Invoice": "outstanding_amount",
 			"Expense Claim": "total_sanctioned_amount"
 		}.get(self.document_type)
 
@@ -229,7 +229,8 @@ class BankTransactionMatch:
 		comparison_date = self.bank_transactions[0].get("date")
 		description = self.bank_transactions[0].get("description")
 
-		output = sorted(output, key=lambda doc: difflib.SequenceMatcher(lambda doc: doc == " ", str(doc.get("party")), description).ratio(), reverse=True)
+		if description:
+			output = sorted(output, key=lambda doc: difflib.SequenceMatcher(lambda doc: doc == " ", str(doc.get("party")), description).ratio(), reverse=True)
 
 		date_field = self.get_reference_date_field()
 		closest = min(output[:10], key=lambda x: abs(getdate(x.get(date_field)) - getdate(parse_date(comparison_date))))
