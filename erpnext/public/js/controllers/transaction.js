@@ -599,6 +599,12 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 										let key = item.name;
 										me.apply_rule_on_other_items({key: item});
 									}
+								},
+								() => {
+									const d = locals[cdt][cdn];
+									if (d.is_down_payment_item) {
+										me.frm.script_manager.trigger('is_down_payment_item', d.doctype, d.name);
+									}
 								}
 							]);
 						}

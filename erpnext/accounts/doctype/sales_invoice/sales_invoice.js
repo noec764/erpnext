@@ -264,7 +264,8 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				party_type: "Customer",
 				account: this.frm.doc.debit_to,
 				price_list: this.frm.doc.selling_price_list,
-				pos_profile: pos_profile
+				pos_profile: pos_profile,
+				down_payment: this.frm.doc.is_down_payment_invoice
 			}, function() {
 				me.apply_pricing_rule();
 			});
@@ -780,6 +781,29 @@ frappe.ui.form.on('Sales Invoice', {
 			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.create_invoice_discounting",
 			frm: frm
 		});
+	},
+
+	is_down_payment_invoice: function(frm) {
+		if (frm.doc.is_down_payment_invoice) {
+			const so = [...new Set(frm.doc.items.map(line => {
+				return line.sales_order
+			}))]
+			frm.set_value("items", [])
+			so.map(value => {
+				const d = frm.add_child("items");
+				d.sales_order = value;
+			})
+			frm.refresh_field("items");
+		}
+
+		frappe.xcall("erpnext.accounts.party.get_party_account", {
+			party_type: "Customer",
+			party: frm.doc.customer,
+			company: frm.doc.company,
+			down_payment: frm.doc.is_down_payment_invoice
+		}).then(r => {
+			frm.set_value("debit_to", r);
+		})
 	}
 })
 
@@ -806,6 +830,24 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 		}
 	}
 })
+
+frappe.ui.form.on('Sales Invoice Item', {
+	sales_order: function(frm, cdt, cdn) {
+		calculate_down_payment(locals[cdt][cdn])
+	},
+	is_down_payment_item: function(frm, cdt, cdn) {
+		calculate_down_payment(locals[cdt][cdn])
+	}
+})
+
+const calculate_down_payment = line => {
+	if (line.sales_order && line.is_down_payment_item) {
+		frappe.db.get_value("Sales Order", line.sales_order, ["base_total", "total"], r => {
+			frappe.model.set_value(line.doctype, line.name, "base_rate", flt(line.down_payment_rate) / 100.0 * flt(r.base_total))
+			frappe.model.set_value(line.doctype, line.name, "rate", flt(line.down_payment_rate) / 100.0 * flt(r.total))
+		})
+	}
+}
 
 var calculate_total_billing_amount =  function(frm) {
 	var doc = frm.doc;

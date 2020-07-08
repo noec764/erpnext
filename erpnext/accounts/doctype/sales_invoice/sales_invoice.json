@@ -16,6 +16,7 @@
   "pos_profile",
   "offline_pos_name",
   "is_return",
+  "is_down_payment_invoice",
   "column_break1",
   "company",
   "posting_date",
@@ -287,6 +288,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.is_down_payment_invoice",
    "fieldname": "is_return",
    "fieldtype": "Check",
    "label": "Is Return (Credit Note)",
@@ -1503,7 +1505,7 @@
    "print_hide": 1
   },
   {
-    "collapsible": 1,
+   "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
    "label": "Subscription Section"
@@ -1598,12 +1600,19 @@
    "read_only": 1
   },
   {
-    "default": "0",
-    "fetch_from": "customer.is_internal_customer",
-    "fieldname": "is_internal_customer",
-    "fieldtype": "Check",
-    "label": "Is Internal Customer",
-    "read_only": 1
+   "default": "0",
+   "fetch_from": "customer.is_internal_customer",
+   "fieldname": "is_internal_customer",
+   "fieldtype": "Check",
+   "label": "Is Internal Customer",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.is_return",
+   "fieldname": "is_down_payment_invoice",
+   "fieldtype": "Check",
+   "label": "Is Down Payment Invoice"
   }
  ],
  "icon": "fa fa-file-text",
@@ -1611,7 +1620,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-20 17:00:57.208696",
+ "modified": "2020-07-08 16:34:09.496372",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

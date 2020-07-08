@@ -523,6 +523,28 @@ class AccountsController(TransactionBase):
 
 		res = journal_entries + payment_entries
 
+		if self.doctype == "Sales Invoice":
+			party_account = self.debit_to
+			party_type = "Customer"
+			party = self.customer
+			amount_field = "credit_in_account_currency"
+			order_doctype = "Sales Invoice"
+
+			invoice_list = frappe.db.sql_list("""
+				SELECT si.name
+				FROM `tabSales Invoice` si, `tabSales Invoice Item` sii
+				WHERE si.is_down_payment_invoice = 1
+				AND sii.sales_order in ({0})
+				""".format(",".join([f'"{ol}"' for ol in order_list])))
+
+			down_payments_je = get_advance_journal_entries(party_type, party, party_account,
+				amount_field, order_doctype, order_list, include_unallocated)
+
+			down_payments_pe = get_advance_payment_entries(party_type, party, party_account,
+				order_doctype, invoice_list, include_unallocated)
+
+			res += (down_payments_je + down_payments_pe)
+
 		return res
 
 	def is_inclusive_tax(self):
