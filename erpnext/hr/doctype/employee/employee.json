@@ -410,6 +410,8 @@
    "options": "Branch"
   },
   {
+    "fetch_from": "grade.default_leave_policy",
+   "fetch_if_empty": 1,
    "fieldname": "leave_policy",
    "fieldtype": "Link",
    "label": "Leave Policy",
