@@ -4,7 +4,8 @@
 from __future__ import unicode_literals
 import frappe, json
 from frappe import _
-from frappe.utils import add_to_date, date_diff, getdate, nowdate, get_last_day, formatdate, get_link_to_form
+from frappe.utils import add_to_date, date_diff, getdate, nowdate, get_last_day, formatdate, get_link_to_form, flt
+from erpnext.accounts.utils import get_currency_precision
 from erpnext.accounts.report.general_ledger.general_ledger import execute
 from frappe.utils.dashboard import cache_source, get_from_date_from_timespan
 from frappe.desk.doctype.dashboard_chart.dashboard_chart import get_period_ending
@@ -38,7 +39,7 @@ def get(chart_name = None, chart = None, no_cache = None, filters = None, from_d
 	if not to_date:
 		to_date = nowdate()
 	if not from_date:
-		if timegrain in ('Monthly', 'Quarterly'):
+		if timegrain in ('Monthly', 'Quarterly', 'Weekly', 'Daily'):
 			from_date = get_from_date_from_timespan(to_date, timespan)
 
 	# fetch dates to plot
@@ -49,12 +50,13 @@ def get(chart_name = None, chart = None, no_cache = None, filters = None, from_d
 
 	# compile balance values
 	result = build_result(account, dates, gl_entries)
+	precision = get_currency_precision() or 2
 
 	return {
 		"labels": [formatdate(r[0].strftime('%Y-%m-%d')) for r in result],
 		"datasets": [{
 			"name": account,
-			"values": [r[1] for r in result]
+			"values": [flt(r[1], precision) for r in result]
 		}]
 	}
 
