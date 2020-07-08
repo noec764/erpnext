@@ -1,5 +1,5 @@
 {
- "action": "Show Form Tour",
+ "action": "Update Settings",
  "creation": "2020-05-06 15:53:44.667414",
  "docstatus": 0,
  "doctype": "Onboarding Step",
@@ -15,5 +15,5 @@
  "reference_document": "Buying Settings",
  "show_full_form": 0,
  "title": "Configure Buying Settings.",
- "validate_action": 0
+ "validate_action": 1
 }

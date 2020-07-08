@@ -13,7 +13,7 @@
  "documentation_url": "https://doc.dokos.io/dokos/assets/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-06-01 12:55:09.234944",
+ "modified": "2020-06-03 12:55:09.234944",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Assets",
@@ -36,7 +36,6 @@
   }
  ],
  "subtitle": "Assets, Depreciations, Repairs and more",
- "success_message": "The Asset Module is all set up!",
- "title": "Let's Setup Asset Management",
- "user_can_dismiss": 1
+ "success_message": "The asset module is all set up!",
+ "title": "Let's set up your asset management"
 }

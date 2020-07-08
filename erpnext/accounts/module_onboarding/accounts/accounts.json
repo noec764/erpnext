@@ -13,7 +13,7 @@
  "documentation_url": "https://doc.dokos.io/dokos/accounting/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-05-19 09:13:24.117177",
+ "modified": "2020-06-19 09:13:24.117177",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts",
@@ -46,6 +46,5 @@
  ],
  "subtitle": "Accounts, invoices and taxes.",
  "success_message": "The accounting module is set up !",
- "title": "Setup Your Accounts and Taxes.",
- "user_can_dismiss": 1
+ "title": "Let's set up your accounts and taxes."
 }
