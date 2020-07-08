@@ -668,6 +668,7 @@ erpnext.patches.v13_0.move_doctype_reports_and_notification_from_hr_to_payroll
 erpnext.patches.v13_0.move_payroll_setting_separately_from_hr_settings
 erpnext.patches.v13_0.check_is_income_tax_component
 erpnext.patches.v12_0.add_taxjar_integration_field
+erpnext.patches.v12_0.update_item_tax_template_company
 
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
