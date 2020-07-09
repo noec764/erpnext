@@ -792,23 +792,25 @@ def subscription_headline(name):
 
 def check_gateway_payments():
 	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
-	gocardless_gateways = [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
-	gocardless_subscription = frappe.get_all("Subscription", filters={"status": "Active", "payment_gateway": ["in", gocardless_gateways]})
 
-	for subscription in gocardless_subscription:
-		doc = frappe.get_doc("Subscription", subscription)
-		if doc.is_payable():
-			pr = make_payment_request(**{
-				"dt": doc.doctype,
-				"dn": doc.name,
-				"party_type": "Customer",
-				"party": doc.customer,
-				"submit_doc": True,
-				"mute_email": True,
-				"payment_gateway": doc.payment_gateway,
-				"currency": doc.currency
-			})
+	if not frappe.conf.mute_payment_gateways:
+		gocardless_gateways = [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
+		gocardless_subscription = frappe.get_all("Subscription", filters={"status": "Active", "payment_gateway": ["in", gocardless_gateways]})
 
-			if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:
-				doc = frappe.get_doc("Payment Request", pr.get("name"))
-				doc.run_method("process_payment_immediately")
+		for subscription in gocardless_subscription:
+			doc = frappe.get_doc("Subscription", subscription)
+			if doc.is_payable():
+				pr = make_payment_request(**{
+					"dt": doc.doctype,
+					"dn": doc.name,
+					"party_type": "Customer",
+					"party": doc.customer,
+					"submit_doc": True,
+					"mute_email": True,
+					"payment_gateway": doc.payment_gateway,
+					"currency": doc.currency
+				})
+
+				if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:
+					doc = frappe.get_doc("Payment Request", pr.get("name"))
+					doc.run_method("process_payment_immediately")
