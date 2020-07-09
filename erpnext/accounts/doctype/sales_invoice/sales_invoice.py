@@ -73,6 +73,10 @@ class SalesInvoice(SellingController):
 		if not self.is_pos:
 			self.so_dn_required()
 
+		if cint(self.is_down_payment_invoice) and \
+			len([x.sales_order for x in self.get("items")]) > 1:
+			frappe.throw(_("Down payment invoices can only be made against a single sales order."))
+
 		self.validate_proj_cust()
 		self.validate_pos_return()
 		self.validate_with_previous_doc()
@@ -171,15 +175,16 @@ class SalesInvoice(SellingController):
 		self.update_billing_status_in_dn()
 		self.clear_unallocated_mode_of_payments()
 
-		# Updating stock ledger should always be called after updating prevdoc status,
-		# because updating reserved qty in bin depends upon updated delivered qty in SO
-		if self.update_stock == 1:
-			self.update_stock_ledger()
+		if not self.is_down_payment_invoice:
+			# Updating stock ledger should always be called after updating prevdoc status,
+			# because updating reserved qty in bin depends upon updated delivered qty in SO
+			if self.update_stock == 1:
+				self.update_stock_ledger()
 
-		# this sequence because outstanding may get -ve
-		self.make_gl_entries()
+			# this sequence because outstanding may get -ve
+			self.make_gl_entries()
 
-		if not self.is_return:
+		if not self.is_return and not self.is_down_payment_invoice:
 			self.update_billing_status_for_zero_amount_refdoc("Delivery Note")
 			self.update_billing_status_for_zero_amount_refdoc("Sales Order")
 			self.check_credit_limit()
@@ -326,7 +331,7 @@ class SalesInvoice(SellingController):
 		pos = self.set_pos_fields(for_validate)
 
 		if not self.debit_to:
-			self.debit_to = get_party_account("Customer", self.customer, self.company)
+			self.debit_to = get_party_account("Customer", self.customer, self.company, self.is_down_payment_invoice)
 			self.party_account_currency = frappe.db.get_value("Account", self.debit_to, "account_currency", cache=True)
 		if not self.due_date and self.customer:
 			self.due_date = get_due_date(self.posting_date, "Customer", self.customer, self.company)

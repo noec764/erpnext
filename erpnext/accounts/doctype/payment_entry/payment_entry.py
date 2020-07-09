@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe, erpnext, json
 from frappe import _, scrub, ValidationError
-from frappe.utils import flt, comma_or, nowdate, getdate
+from frappe.utils import flt, comma_or, nowdate, getdate, cint
 from erpnext.accounts.utils import get_outstanding_invoices, get_account_currency, get_balance_on, get_allow_cost_center_in_entry_of_bs_account
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
@@ -44,6 +44,7 @@ class PaymentEntry(AccountsController):
 			self.party_account_currency = self.paid_to_account_currency
 
 	def validate(self):
+		self.check_if_down_payment()
 		self.setup_party_account_field()
 		self.set_missing_values()
 		self.validate_payment_type()
@@ -123,6 +124,16 @@ class PaymentEntry(AccountsController):
 				doc = frappe.get_doc(reference.reference_doctype, reference.reference_name)
 				doc.delink_advance_entries(self.name)
 
+	def check_if_down_payment(self):
+		is_down_payment = False
+		for d in self.get("references"):
+			if d.reference_doctype == "Sales Invoice":
+				is_dp_invoice = frappe.db.get_value(d.reference_doctype, d.reference_name, "is_down_payment_invoice")
+				if cint(is_dp_invoice):
+					is_down_payment = True
+
+		self.down_payment = is_down_payment
+
 	def set_missing_values(self):
 		if self.payment_type == "Internal Transfer":
 			for field in ("party", "party_balance", "total_allocated_amount",
@@ -143,7 +154,7 @@ class PaymentEntry(AccountsController):
 			self.party_balance = get_balance_on(party_type=self.party_type,
 				party=self.party, date=self.posting_date, company=self.company)
 
-			party_account = get_party_account(self.party_type, self.party, self.company)
+			party_account = get_party_account(self.party_type, self.party, self.company, self.down_payment)
 			self.set(self.party_account_field, party_account)
 			self.party_account = party_account
 
@@ -258,7 +269,7 @@ class PaymentEntry(AccountsController):
 
 						if ref_party_account != self.party_account:
 								frappe.throw(_("{0} {1} is associated with {2}, but Party Account is {3}")
-									.format(d.reference_doctype, d.reference_name, ref_party_account, self.party_account))
+									.format(_(d.reference_doctype), d.reference_name, ref_party_account, self.party_account))
 
 					if ref_doc.doctype != "Subscription" and ref_doc.docstatus != 1:
 						frappe.throw(_("{0} {1} must be submitted")
@@ -279,7 +290,7 @@ class PaymentEntry(AccountsController):
 		for k, v in no_oustanding_refs.items():
 			frappe.msgprint(_("{} - {} now have {} as they had no outstanding amount left before submitting the Payment Entry.<br><br>\
 					If this is undesirable please cancel the corresponding Payment Entry.")
-				.format(k, frappe.bold(", ".join([d.reference_name for d in v])), frappe.bold("negative outstanding amount")),
+				.format(k, frappe.bold(", ".join([_(d.reference_name) for d in v])), frappe.bold(_("negative outstanding amount"))),
 				title=_("Warning"), indicator="orange")
 
 	def validate_journal_entry(self):
@@ -637,6 +648,10 @@ class PaymentEntry(AccountsController):
 					and d.reference_doctype in ("Sales Order", "Purchase Order", "Employee Advance"):
 						frappe.get_doc(d.reference_doctype, d.reference_name).set_total_advance_paid()
 
+				if d.allocated_amount and d.reference_doctype == "Sales Invoice":
+					frappe.get_doc("Sales Order", frappe.db.get_value("Sales Invoice Item", \
+						{"parenttype": "Sales Invoice", "parent": d.reference_name}, "sales_order")).set_total_advance_paid()
+
 	def update_expense_claim(self):
 		if self.payment_type in ("Pay") and self.party:
 			for d in self.get("references"):
@@ -858,12 +873,12 @@ def get_negative_outstanding_invoices(party_type, party, party_account,
 
 
 @frappe.whitelist()
-def get_party_details(company, party_type, party, date, cost_center=None):
+def get_party_details(company, party_type, party, date, cost_center=None, down_payment=None):
 	bank_account = ''
 	if not frappe.db.exists(party_type, party):
 		frappe.throw(_("Invalid {0}: {1}").format(party_type, party))
 
-	party_account = get_party_account(party_type, party, company)
+	party_account = get_party_account(party_type, party, company, down_payment)
 
 	account_currency = get_account_currency(party_account)
 	account_balance = get_balance_on(party_account, date, cost_center=cost_center)
@@ -1027,7 +1042,7 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	elif dt == "Expense Claim":
 		party_account = doc.payable_account
 	else:
-		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company)
+		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company, doc.down_payment)
 
 	if dt not in ("Sales Invoice", "Purchase Invoice"):
 		party_account_currency = get_account_currency(party_account)
@@ -1104,6 +1119,7 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	pe.contact_person = doc.get("contact_person")
 	pe.contact_email = doc.get("contact_email")
 	pe.ensure_supplier_is_not_blocked()
+	pe.down_payment = doc.is_down_payment_invoice
 
 	pe.paid_from = party_account if payment_type=="Receive" else bank.account
 	pe.paid_to = party_account if payment_type=="Pay" else bank.account

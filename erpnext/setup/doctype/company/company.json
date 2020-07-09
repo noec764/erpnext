@@ -43,6 +43,7 @@
   "default_cash_account",
   "inter_banks_transfer_account",
   "default_receivable_account",
+  "default_down_payment_receivable_account",
   "round_off_account",
   "round_off_cost_center",
   "write_off_account",
@@ -53,6 +54,7 @@
   "column_break0",
   "allow_account_creation_against_child_company",
   "default_payable_account",
+  "default_down_payment_payable_account",
   "default_employee_advance_account",
   "default_expense_account",
   "default_income_account",
@@ -734,6 +736,23 @@
    "fieldname": "enable_perpetual_inventory_for_non_stock_items",
    "fieldtype": "Check",
    "label": "Enable Perpetual Inventory For Non Stock Items"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_down_payment_receivable_account",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Default Down Payment Receivable Account",
+   "no_copy": 1,
+   "options": "Account"
+  },
+  {
+   "fieldname": "default_down_payment_payable_account",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Default Down Payment Payable Account",
+   "no_copy": 1,
+   "options": "Account"
   }
  ],
  "icon": "fa fa-building",
@@ -741,7 +760,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2020-07-01 12:02:33.343330",
+ "modified": "2020-07-08 19:29:26.933843",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

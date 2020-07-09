@@ -9,6 +9,8 @@
  "field_order": [
   "barcode",
   "item_code",
+  "is_down_payment_item",
+  "down_payment_rate",
   "col_break1",
   "item_name",
   "customer_item_code",
@@ -673,7 +675,7 @@
    "oldfieldtype": "Link",
    "options": "Sales Order",
    "print_hide": 1,
-   "read_only": 1,
+   "read_only_depends_on": "eval:!doc.is_down_payment_item",
    "search_index": 1
   },
   {
@@ -784,12 +786,26 @@
    "fieldtype": "Link",
    "label": "Finance Book",
    "options": "Finance Book"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_down_payment_item",
+   "fieldtype": "Check",
+   "label": "Is Down Payment Item",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.is_down_payment_item",
+   "fieldname": "down_payment_rate",
+   "fieldtype": "Percent",
+   "label": "Down Payment Rate",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-04-03 12:22:57.875455",
+ "modified": "2020-07-08 17:34:41.819328",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",

@@ -342,7 +342,6 @@ def reconcile_against_document(args):
 		Cancel JV, Update aginst document, split if required and resubmit jv
 	"""
 	for d in args:
-
 		check_if_advance_entry_modified(d)
 		validate_allocated_amount(d)
 
@@ -390,7 +389,7 @@ def check_if_advance_entry_modified(args):
 					t1.name = t2.parent and t1.docstatus = 1
 					and t1.name = %(voucher_no)s and t2.name = %(voucher_detail_no)s
 					and t1.party_type = %(party_type)s and t1.party = %(party)s and t1.{0} = %(account)s
-					and t2.reference_doctype in ("", "Sales Order", "Purchase Order")
+					and t2.reference_doctype in ("", "Sales Order", "Purchase Order", "Sales Invoice")
 					and t2.allocated_amount = %(unadjusted_amount)s
 			""".format(party_account_field), args)
 		else:
@@ -491,6 +490,7 @@ def update_reference_in_payment_entry(d, payment_entry, do_not_save=False):
 		new_row.update(reference_details)
 
 	payment_entry.flags.ignore_validate_update_after_submit = True
+	payment_entry.down_payment = 0
 	payment_entry.setup_party_account_field()
 	payment_entry.set_missing_values()
 	payment_entry.set_amounts()

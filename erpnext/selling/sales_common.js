@@ -70,10 +70,11 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 		}
 
 		if(this.frm.fields_dict["items"].grid.get_field('item_code')) {
+			const me = this;
 			this.frm.set_query("item_code", "items", function() {
 				return {
 					query: "erpnext.controllers.queries.item_query",
-					filters: {'is_sales_item': 1}
+					filters: {'is_sales_item': 1, "is_down_payment_item": me.frm.doc.is_down_payment_invoice}
 				}
 			});
 		}
@@ -164,11 +165,12 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 		frappe.model.round_floats_in(item, ["price_list_rate", "discount_percentage"]);
 
 		// check if child doctype is Sales Order Item/Qutation Item and calculate the rate
-		if(in_list(["Quotation Item", "Sales Order Item", "Delivery Note Item", "Sales Invoice Item"]), cdt)
+		if(in_list(["Quotation Item", "Sales Order Item", "Delivery Note Item", "Sales Invoice Item"]), cdt) {
 			this.apply_pricing_rule_on_item(item);
-		else
+		} else {
 			item.rate = flt(item.price_list_rate * (1 - item.discount_percentage / 100.0),
 				precision("rate", item));
+		}
 
 		this.calculate_taxes_and_totals();
 	},

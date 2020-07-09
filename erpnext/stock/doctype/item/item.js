@@ -152,6 +152,10 @@ frappe.ui.form.on("Item", {
 		}
 	},
 
+	is_down_payment_item: function(frm) {
+		frm.set_value('is_stock_item', !frm.doc.is_down_payment_item);
+	},
+
 	is_fixed_asset: function(frm) {
 		// set serial no to false & toggles its visibility
 		frm.set_value('has_serial_no', 0);

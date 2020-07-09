@@ -8,7 +8,7 @@ from frappe import _, msgprint, scrub
 from frappe.core.doctype.user_permission.user_permission import get_permitted_documents
 from frappe.model.utils import get_fetch_values
 from frappe.utils import (add_days, getdate, formatdate, date_diff,
-	add_years, get_timestamp, nowdate, flt, cstr, add_months, get_last_day)
+	add_years, get_timestamp, nowdate, flt, cstr, add_months, get_last_day, cint)
 from frappe.contacts.doctype.address.address import (get_address_display,
 	get_default_address, get_company_address)
 from frappe.contacts.doctype.contact.contact import get_contact_details
@@ -23,7 +23,7 @@ class DuplicatePartyAccountError(frappe.ValidationError): pass
 @frappe.whitelist()
 def get_party_details(party=None, account=None, party_type="Customer", company=None, posting_date=None,
 	bill_date=None, price_list=None, currency=None, doctype=None, ignore_permissions=False, fetch_payment_terms_template=True,
-	party_address=None, company_address=None, shipping_address=None, pos_profile=None):
+	party_address=None, company_address=None, shipping_address=None, pos_profile=None, down_payment=None):
 
 	if not party:
 		return {}
@@ -31,13 +31,13 @@ def get_party_details(party=None, account=None, party_type="Customer", company=N
 		frappe.throw(_("{0}: {1} does not exists").format(party_type, party))
 	return _get_party_details(party, account, party_type,
 		company, posting_date, bill_date, price_list, currency, doctype, ignore_permissions,
-		fetch_payment_terms_template, party_address, company_address, shipping_address, pos_profile)
+		fetch_payment_terms_template, party_address, company_address, shipping_address, pos_profile, down_payment)
 
 def _get_party_details(party=None, account=None, party_type="Customer", company=None, posting_date=None,
 	bill_date=None, price_list=None, currency=None, doctype=None, ignore_permissions=False,
-	fetch_payment_terms_template=True, party_address=None, company_address=None, shipping_address=None, pos_profile=None):
+	fetch_payment_terms_template=True, party_address=None, company_address=None, shipping_address=None, pos_profile=None, down_payment=None):
 
-	party_details = frappe._dict(set_account_and_due_date(party, account, party_type, company, posting_date, bill_date, doctype))
+	party_details = frappe._dict(set_account_and_due_date(party, account, party_type, company, posting_date, bill_date, doctype, down_payment))
 	party = party_details[party_type.lower()]
 
 	if not ignore_permissions and not frappe.has_permission(party_type, "read", party):
@@ -184,7 +184,7 @@ def set_price_list(party_details, party, party_type, given_price_list, pos=None)
 	party_details["selling_price_list" if party.doctype=="Customer" else "buying_price_list"] = price_list
 
 
-def set_account_and_due_date(party, account, party_type, company, posting_date, bill_date, doctype):
+def set_account_and_due_date(party, account, party_type, company, posting_date, bill_date, doctype, down_payment):
 	if doctype not in ["Sales Invoice", "Purchase Invoice"]:
 		# not an invoice
 		return {
@@ -192,7 +192,7 @@ def set_account_and_due_date(party, account, party_type, company, posting_date, 
 		}
 
 	if party:
-		account = get_party_account(party_type, party, company)
+		account = get_party_account(party_type, party, company, down_payment)
 
 	account_fieldname = "debit_to" if party_type=="Customer" else "credit_to"
 	out = {
@@ -204,7 +204,7 @@ def set_account_and_due_date(party, account, party_type, company, posting_date, 
 	return out
 
 @frappe.whitelist()
-def get_party_account(party_type, party, company):
+def get_party_account(party_type, party, company, down_payment=None):
 	"""Returns the account for the given `party`.
 		Will first search in party (Customer / Supplier) record, if not found,
 		will search in group (Customer Group / Supplier Group),
@@ -214,6 +214,10 @@ def get_party_account(party_type, party, company):
 
 	if not party:
 		return
+
+	if cint(down_payment) and party_type in ['Customer', 'Supplier']:
+		query_field = "default_down_payment_receivable_account" if party_type == "Customer" else "default_down_payment_payable_account"
+		return frappe.get_cached_value("Company", company, query_field)
 
 	account = frappe.db.get_value("Party Account",
 		{"parenttype": party_type, "parent": party, "company": company}, "account")
