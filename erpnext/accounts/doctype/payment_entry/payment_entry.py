@@ -290,7 +290,7 @@ class PaymentEntry(AccountsController):
 		for k, v in no_oustanding_refs.items():
 			frappe.msgprint(_("{} - {} now have {} as they had no outstanding amount left before submitting the Payment Entry.<br><br>\
 					If this is undesirable please cancel the corresponding Payment Entry.")
-				.format(k, frappe.bold(", ".join([d.reference_name for d in v])), frappe.bold("negative outstanding amount")),
+				.format(k, frappe.bold(", ".join([_(d.reference_name) for d in v])), frappe.bold(_("negative outstanding amount"))),
 				title=_("Warning"), indicator="orange")
 
 	def validate_journal_entry(self):
@@ -647,6 +647,10 @@ class PaymentEntry(AccountsController):
 				if d.allocated_amount \
 					and d.reference_doctype in ("Sales Order", "Purchase Order", "Employee Advance"):
 						frappe.get_doc(d.reference_doctype, d.reference_name).set_total_advance_paid()
+
+				if d.allocated_amount and d.reference_doctype == "Sales Invoice":
+					frappe.get_doc("Sales Order", frappe.db.get_value("Sales Invoice Item", \
+						{"parenttype": "Sales Invoice", "parent": d.reference_name}, "sales_order")).set_total_advance_paid()
 
 	def update_expense_claim(self):
 		if self.payment_type in ("Pay") and self.party:

@@ -342,7 +342,6 @@ def reconcile_against_document(args):
 		Cancel JV, Update aginst document, split if required and resubmit jv
 	"""
 	for d in args:
-
 		check_if_advance_entry_modified(d)
 		validate_allocated_amount(d)
 
@@ -491,6 +490,7 @@ def update_reference_in_payment_entry(d, payment_entry, do_not_save=False):
 		new_row.update(reference_details)
 
 	payment_entry.flags.ignore_validate_update_after_submit = True
+	payment_entry.down_payment = 0
 	payment_entry.setup_party_account_field()
 	payment_entry.set_missing_values()
 	payment_entry.set_amounts()

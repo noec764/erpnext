@@ -4,12 +4,14 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 import json
+from collections import defaultdict
 from frappe import _, throw
 from frappe.utils import (today, flt, cint, fmt_money, formatdate,
 	getdate, add_days, add_months, get_last_day, nowdate, get_link_to_form)
 from erpnext.stock.get_item_details import get_conversion_factor, get_item_details
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency
+from erpnext.accounts.party import get_party_account
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.buying.utils import update_last_purchase_rate
 from erpnext.controllers.sales_and_purchase_return import validate_return
@@ -524,18 +526,20 @@ class AccountsController(TransactionBase):
 		res = journal_entries + payment_entries
 
 		if self.doctype == "Sales Invoice":
-			party_account = self.debit_to
 			party_type = "Customer"
 			party = self.customer
+			party_account = get_party_account(party_type, party, self.company, True)
 			amount_field = "credit_in_account_currency"
 			order_doctype = "Sales Invoice"
 
-			invoice_list = frappe.db.sql_list("""
+			invoice_list = list(set(frappe.db.sql_list("""
 				SELECT si.name
-				FROM `tabSales Invoice` si, `tabSales Invoice Item` sii
+				FROM `tabSales Invoice` si
+				LEFT JOIN `tabSales Invoice Item` sii
+				ON sii.parent = si.name
 				WHERE si.is_down_payment_invoice = 1
 				AND sii.sales_order in ({0})
-				""".format(",".join([f'"{ol}"' for ol in order_list])))
+				""".format(",".join([f'"{ol}"' for ol in order_list])))))
 
 			down_payments_je = get_advance_journal_entries(party_type, party, party_account,
 				amount_field, order_doctype, order_list, include_unallocated)
@@ -570,9 +574,8 @@ class AccountsController(TransactionBase):
 			advance_entries_against_si = [d.reference_name for d in self.get("advances")]
 			for d in advance_entries:
 				if not advance_entries_against_si or d.reference_name not in advance_entries_against_si:
-					frappe.msgprint(_(
-						"Payment Entry {0} is linked against Order {1}, check if it should be pulled as advance in this invoice.")
-							.format(d.reference_name, d.against_order))
+					frappe.msgprint(_("Payment Entry {0} is linked against {1} {2}, check if it should be pulled as advance in this invoice.")
+						.format(d.reference_name, _(d.against_order_type), d.against_order))
 
 	def update_against_document_in_jv(self):
 		"""
@@ -596,13 +599,14 @@ class AccountsController(TransactionBase):
 		lst = []
 		for d in self.get('advances'):
 			if flt(d.allocated_amount) > 0:
+				down_payment = cint(frappe.db.get_value(d.reference_type, d.reference_name, "down_payment")) if d.reference_type == "Payment Entry" else 0
 				args = frappe._dict({
 					'voucher_type': d.reference_type,
 					'voucher_no': d.reference_name,
 					'voucher_detail_no': d.reference_row,
 					'against_voucher_type': self.doctype,
 					'against_voucher': self.name,
-					'account': party_account,
+					'account': get_party_account(party_type, party, self.company, True) if down_payment else party_account,
 					'party_type': party_type,
 					'party': party,
 					'is_advance': 'Yes',
@@ -692,10 +696,22 @@ class AccountsController(TransactionBase):
 			dr_or_cr = "credit_in_account_currency"
 			rev_dr_or_cr = "debit_in_account_currency"
 			party = self.customer
+			down_payment_invoices = list(set(frappe.db.sql_list("""
+				SELECT si.name
+				FROM `tabSales Invoice` si
+				LEFT JOIN `tabSales Invoice Item` sii
+				ON sii.parent = si.name
+				WHERE si.is_down_payment_invoice = 1
+				AND sii.sales_order = %s
+				""", self.name, debug=True)))
+			dp_invoices=",".join([f'"{dpi}"' for dpi in down_payment_invoices])
+			against_condition = f"((against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}') or (against_voucher_type = 'Sales Invoice' and against_voucher in ({dp_invoices})))"
 		else:
 			dr_or_cr = "debit_in_account_currency"
 			rev_dr_or_cr = "credit_in_account_currency"
 			party = self.supplier
+			against_condition = f"against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}'"
+
 
 		advance = frappe.db.sql("""
 			select
@@ -703,9 +719,14 @@ class AccountsController(TransactionBase):
 			from
 				`tabGL Entry`
 			where
-				against_voucher_type = %s and against_voucher = %s and party=%s
+				{against_condition}
+				and party=%s
 				and docstatus = 1
-		""".format(dr_or_cr=dr_or_cr, rev_dr_cr=rev_dr_or_cr), (self.doctype, self.name, party), as_dict=1) #nosec
+		""".format(
+			dr_or_cr=dr_or_cr,
+			rev_dr_cr=rev_dr_or_cr,
+			against_condition=against_condition
+			), (party), as_dict=1) #nosec
 
 		if advance:
 			advance = advance[0]
@@ -1060,6 +1081,7 @@ def get_advance_payment_entries(party_type, party, party_account, order_doctype,
 			select
 				"Payment Entry" as reference_type, t1.name as reference_name,
 				t1.remarks, t2.allocated_amount as amount, t2.name as reference_row,
+				t2.reference_doctype as against_order_type,
 				t2.reference_name as against_order, t1.posting_date
 			from `tabPayment Entry` t1, `tabPayment Entry Reference` t2
 			where

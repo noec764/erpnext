@@ -73,6 +73,10 @@ class SalesInvoice(SellingController):
 		if not self.is_pos:
 			self.so_dn_required()
 
+		if cint(self.is_down_payment_invoice) and \
+			len([x.sales_order for x in self.get("items")]) > 1:
+			frappe.throw(_("Down payment invoices can only be made against a single sales order."))
+
 		self.validate_proj_cust()
 		self.validate_pos_return()
 		self.validate_with_previous_doc()

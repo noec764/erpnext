@@ -307,7 +307,7 @@ def get_basic_details(args, item, overwrite_warehouse=True):
 		"against_blanket_order": args.get("against_blanket_order"),
 		"bom_no": item.get("default_bom"),
 		"is_down_payment_item": item.get("is_down_payment_item"),
-		"advance_rate": item.get("down_payment_percentage")
+		"down_payment_rate": item.get("down_payment_percentage")
 	})
 
 	if item.get("enable_deferred_revenue") or item.get("enable_deferred_expense"):
