@@ -42,6 +42,9 @@ class ItemBooking(Document):
 		if isinstance(self.rrule, list) and self.rrule > 1:
 			self.rrule = self.rrule[0]
 
+		if get_datetime(self.starts_on) < get_datetime(self.ends_on):
+			frappe.throw(_("Please make sure the end time is greater than the start time"))
+
 	def set_status(self, status):
 		self.db_set("status", status)
 
@@ -450,13 +453,19 @@ def get_unavailable_dict(event):
 		"title": _("In shopping cart")
 	}
 
-def get_item_calendar(item, uom):
+def get_item_calendar(item, uom=None):
+	if not uom:
+		uom = frappe.get_cached_value("Item", item, "sales_uom")
+
 	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
 	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
 		dict(item=None, uom=uom), dict(item=None, uom=None)]:
-		filtered_calendars = [x.get("name") for x in calendars if x.get("item") == (filters.get("item") or "") and x.get("uom") == (filters.get("uom") or "")]
+		filtered_calendars = [x.get("name") for x in calendars if \
+			(x.get("item") == filters.get("item") or x.get("item") == "") \
+			and (x.get("uom") == filters.get("uom") or x.get("uom") == "")]
 		if filtered_calendars:
 			return frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+
 	return []
 
 def get_uom_in_minutes(uom=None):
