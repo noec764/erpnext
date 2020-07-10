@@ -206,7 +206,7 @@ class PaymentEntry(AccountsController):
 	def validate_account_type(self, account, account_types):
 		account_type = frappe.db.get_value("Account", account, "account_type")
 		if account_type not in account_types:
-			frappe.throw(_("Account Type for {0} must be {1}").format(account, comma_or(account_types)))
+			frappe.throw(_("Account Type for {0} must be {1}").format(account, comma_or([_(x) for x in account_types])))
 
 	def set_exchange_rate(self):
 		if self.paid_from and not self.source_exchange_rate:
@@ -242,7 +242,7 @@ class PaymentEntry(AccountsController):
 				continue
 			if d.reference_doctype not in valid_reference_doctypes:
 				frappe.throw(_("Reference Doctype must be one of {0}")
-					.format(comma_or(valid_reference_doctypes)))
+					.format(comma_or([_(x) for x in valid_reference_doctypes])))
 
 			elif d.reference_name:
 				if not frappe.db.exists(d.reference_doctype, d.reference_name):

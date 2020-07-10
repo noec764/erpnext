@@ -11,7 +11,7 @@ class OverAllowanceError(frappe.ValidationError): pass
 
 def validate_status(status, options):
 	if status not in options:
-		frappe.throw(_("Status must be one of {0}").format(comma_or(options)))
+		frappe.throw(_("Status must be one of {0}").format(comma_or([_(x) for x in options])))
 
 status_map = {
 	"Lead": [

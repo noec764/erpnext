@@ -136,7 +136,7 @@ class StockEntry(StockController):
 			"Material Consumption for Manufacture", "Send to Warehouse", "Receive at Warehouse"]
 
 		if self.purpose not in valid_purposes:
-			frappe.throw(_("Purpose must be one of {0}").format(comma_or(valid_purposes)))
+			frappe.throw(_("Purpose must be one of {0}").format(comma_or([_(x) for x in valid_purposes])))
 
 		if self.job_card and self.purpose != 'Material Transfer for Manufacture':
 			frappe.throw(_("For job card {0}, you can only make the 'Material Transfer for Manufacture' type stock entry")
