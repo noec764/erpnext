@@ -373,7 +373,7 @@ def install_company(args):
 		{
 			"doctype":"Company",
 			'company_name': args.company_name,
-			'enable_perpetual_inventory': 1,
+			'enable_perpetual_inventory': 0,
 			'abbr': args.company_abbr,
 			'default_currency': args.currency,
 			'country': args.country,

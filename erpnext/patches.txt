@@ -704,3 +704,4 @@ execute:frappe.delete_doc_if_exists("DocType", "Company Type")
 erpnext.patches.dokos.v2_0.split_unreconciled_amount
 erpnext.patches.dokos.v2_0.default_accounting_journals
 erpnext.patches.dokos.v2_0.update_document_status
+erpnext.patches.dokos.v2_0.update_custom_fields_for_france
