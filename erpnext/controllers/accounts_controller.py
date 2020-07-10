@@ -704,7 +704,7 @@ class AccountsController(TransactionBase):
 				ON sii.parent = si.name
 				WHERE si.is_down_payment_invoice = 1
 				AND sii.sales_order = %s
-				""", self.name, debug=True)))
+				""", self.name)))
 			dp_invoices=",".join([f'"{dpi}"' for dpi in down_payment_invoices])
 			if dp_invoices:
 				against_condition = f"(({against_condition}) or (against_voucher_type = 'Sales Invoice' and against_voucher in ({dp_invoices})))"
@@ -727,7 +727,7 @@ class AccountsController(TransactionBase):
 			dr_or_cr=dr_or_cr,
 			rev_dr_cr=rev_dr_or_cr,
 			against_condition=against_condition
-			), (party), as_dict=1, debug=True) #nosec
+			), (party), as_dict=1) #nosec
 
 		if advance:
 			advance = advance[0]
