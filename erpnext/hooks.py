@@ -324,11 +324,11 @@ scheduler_events = {
 		"erpnext.hr.utils.generate_leave_encashment",
 		"erpnext.projects.doctype.project.project.update_project_sales_billing",
 		"erpnext.loan_management.doctype.loan_security_shortfall.loan_security_shortfall.create_process_loan_security_shortfall",
-		"erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual.process_loan_interest_accrual_for_term_loans"
+		"erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
+		"erpnext.hr.utils.allocate_earned_leaves"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.process_deferred_accounting",
-		"erpnext.hr.utils.allocate_earned_leaves",
 		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_demand_loans"
 	]
 }

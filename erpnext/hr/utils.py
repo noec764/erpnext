@@ -310,24 +310,6 @@ def create_additional_leave_ledger_entry(allocation, leaves, date):
 	allocation.unused_leaves = 0
 	allocation.create_leave_ledger_entry()
 
-def check_frequency_hit(from_date, to_date, frequency):
-	'''Return True if current date matches frequency'''
-	from_dt = get_datetime(from_date)
-	to_dt = get_datetime(to_date)
-	from dateutil import relativedelta
-	rd = relativedelta.relativedelta(to_dt, from_dt)
-	months = rd.months
-	if frequency == "Quarterly":
-		if not months % 3:
-			return True
-	elif frequency == "Half-Yearly":
-		if not months % 6:
-			return True
-	elif frequency == "Yearly":
-		if not months % 12:
-			return True
-	return False
-
 def get_salary_assignment(employee, date):
 	assignment = frappe.db.sql("""
 		select * from `tabSalary Structure Assignment`
@@ -431,6 +413,21 @@ def get_previous_claimed_amount(employee, payroll_period, non_pro_rata=False, co
 		total_claimed_amount = sum_of_claimed_amount[0].total_amount
 	return total_claimed_amount
 
+def check_frequency_hit(from_date, to_date, frequency):
+	'''Return True if current date matches frequency'''
+	from_dt = get_datetime(from_date)
+	to_dt = get_datetime(to_date)
+	from dateutil import relativedelta
+	rd = relativedelta.relativedelta(to_dt, from_dt)
+	months = rd.months
+	if frequency == "Quarterly":
+		return math.floor(months / 4)
+	elif frequency == "Half-Yearly":
+		return math.floor(months / 6)
+	elif frequency == "Yearly":
+		return math.floor(months / 12)
+	return False
+
 class EarnedLeaveAllocator():
 	def __init__(self, calculator):
 		self.calculator = calculator
@@ -465,8 +462,9 @@ class EarnedLeaveCalculator():
 		if not self.leave_policy:
 			return
 
-		if self.leave_type.earned_leave_frequency not in ("Monthly", "Custom Formula"):
-			if not check_frequency_hit(self.allocation.from_date, self.parent.today, self.leave_type.earned_leave_frequency):
+		if self.leave_type.earned_leave_frequency != "Custom Formula":
+			frequency = check_frequency_hit(self.allocation.from_date, self.parent.today, self.leave_type.earned_leave_frequency)
+			if not frequency:
 				return
 
 		self.annual_allocation = frappe.db.get_value("Leave Policy Detail", filters={
@@ -480,7 +478,7 @@ class EarnedLeaveCalculator():
 			if self.leave_type.earned_leave_frequency == "Custom Formula" and self.formula_map.get(self.leave_type.earned_leave_frequency_formula):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
 			else:
-				self.earned_leaves = flt(self.annual_allocation) / self.parent.divide_by_frequency[self.leave_type.earned_leave_frequency]
+				self.earned_leaves = flt(self.annual_allocation) / self.parent.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
 				if self.leave_type.rounding == "None":
 					pass
 				elif self.leave_type.rounding == "0.5":
@@ -492,7 +490,7 @@ class EarnedLeaveCalculator():
 
 	def allocate_earned_leaves(self):
 		allocation = frappe.get_doc('Leave Allocation', self.allocation.name)
-		new_allocation = flt(allocation.total_leaves_allocated) + flt(self.earned_leaves)
+		new_allocation = flt(allocation.new_leaves_allocated) + flt(self.earned_leaves)
 
 		if new_allocation > self.leave_type.max_leaves_allowed and self.leave_type.max_leaves_allowed > 0:
 			new_allocation = self.leave_type.max_leaves_allowed
@@ -500,8 +498,10 @@ class EarnedLeaveCalculator():
 		if new_allocation == allocation.total_leaves_allocated:
 			return
 
+		allocation_difference = flt(new_allocation) - flt(allocation.total_leaves_allocated)
+
 		allocation.db_set("total_leaves_allocated", new_allocation, update_modified=False)
-		create_additional_leave_ledger_entry(allocation, self.earned_leaves, self.parent.today)
+		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
 
 def get_attendance(employee, start_date, end_date):
 	holidays = get_holidays_for_employee(employee, start_date, end_date)

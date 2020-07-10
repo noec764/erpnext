@@ -3,7 +3,7 @@
 
 import frappe
 import math
-from frappe.utils import getdate, flt
+from frappe.utils import getdate, flt, today
 from erpnext.hr.utils import get_holidays_for_employee, create_additional_leave_ledger_entry, EarnedLeaveAllocator, EarnedLeaveCalculator
 
 
@@ -32,7 +32,7 @@ class FranceLeaveCalculator(EarnedLeaveCalculator):
 
 	def allocate_earned_leaves_based_on_formula(self):
 		allocation = frappe.get_doc('Leave Allocation', self.allocation.name)
-		new_allocation = flt(allocation.new_leaves_allocated) + math.ceil(flt(self.earned_leaves))
+		new_allocation = flt(allocation.new_leaves_allocated) + flt(self.earned_leaves)
 
 		if new_allocation > self.leave_type.max_leaves_allowed and self.leave_type.max_leaves_allowed > 0:
 			new_allocation = self.leave_type.max_leaves_allowed
@@ -40,8 +40,11 @@ class FranceLeaveCalculator(EarnedLeaveCalculator):
 		if new_allocation == allocation.total_leaves_allocated:
 			return
 
+		if getdate(today()) >= getdate(frappe.db.get_value("Leave Period", allocation.leave_period, "to_date")):
+			new_allocation = math.ceil(flt(new_allocation))
+
 		allocation_difference = flt(new_allocation) - flt(allocation.total_leaves_allocated)
-		
+
 		allocation.db_set("total_leaves_allocated", new_allocation, update_modified=False)
 		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
 
