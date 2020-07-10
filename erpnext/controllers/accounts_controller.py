@@ -692,6 +692,7 @@ class AccountsController(TransactionBase):
 		return stock_items
 
 	def set_total_advance_paid(self):
+		against_condition = f"against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}'"
 		if self.doctype == "Sales Order":
 			dr_or_cr = "credit_in_account_currency"
 			rev_dr_or_cr = "debit_in_account_currency"
@@ -705,12 +706,12 @@ class AccountsController(TransactionBase):
 				AND sii.sales_order = %s
 				""", self.name, debug=True)))
 			dp_invoices=",".join([f'"{dpi}"' for dpi in down_payment_invoices])
-			against_condition = f"((against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}') or (against_voucher_type = 'Sales Invoice' and against_voucher in ({dp_invoices})))"
+			if dp_invoices:
+				against_condition = f"(({against_condition}) or (against_voucher_type = 'Sales Invoice' and against_voucher in ({dp_invoices})))"
 		else:
 			dr_or_cr = "debit_in_account_currency"
 			rev_dr_or_cr = "credit_in_account_currency"
 			party = self.supplier
-			against_condition = f"against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}'"
 
 
 		advance = frappe.db.sql("""
@@ -726,7 +727,7 @@ class AccountsController(TransactionBase):
 			dr_or_cr=dr_or_cr,
 			rev_dr_cr=rev_dr_or_cr,
 			against_condition=against_condition
-			), (party), as_dict=1) #nosec
+			), (party), as_dict=1, debug=True) #nosec
 
 		if advance:
 			advance = advance[0]
