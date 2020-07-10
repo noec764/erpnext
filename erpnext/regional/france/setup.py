@@ -85,8 +85,9 @@ def default_accounts_mapping(accounts, company):
 		"expenses_included_in_asset_valuation": 608,
 		"disposal_account": 675,
 		"capital_work_in_progress_account": 231,
-		"asset_received_but_not_billed": 722
+		"asset_received_but_not_billed": 722,
+		"default_down_payment_receivable_account": 4191,
+		"default_down_payment_payable_account": 4091
 	}
 
-	print({x: ([y.name for y in accounts if cint(y.account_number)==account_map[x]] or [""])[0] for x in account_map})
 	return {x: ([y.name for y in accounts if cint(y.account_number)==account_map[x]] or [""])[0] for x in account_map}
