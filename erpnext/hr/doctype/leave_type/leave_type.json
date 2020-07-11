@@ -185,7 +185,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.earned_leave_frequency==\"Custom Formula\"",
+   "depends_on": "eval:doc.is_earned_leave && doc.earned_leave_frequency==\"Custom Formula\"",
    "fieldname": "earned_leave_frequency_formula",
    "fieldtype": "Select",
    "label": "Earned Leave Frequency Formula"
@@ -194,7 +194,7 @@
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2020-07-01 08:17:29.360980",
+ "modified": "2020-07-11 09:22:35.064884",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",
