@@ -3,6 +3,7 @@
   "company": "_Test Company",
   "conversion_rate": 1.0,
   "currency": "INR",
+  "cost_center": "_Test Cost Center - _TC",
   "customer": "_Test Customer",
   "customer_name": "_Test Customer",
   "debit_to": "_Test Receivable - _TC",
@@ -38,6 +39,7 @@
     "description": "VAT",
     "doctype": "Sales Taxes and Charges",
     "parentfield": "taxes",
+    "cost_center": "_Test Cost Center - _TC",
     "rate": 6
    },
    {
@@ -46,6 +48,7 @@
     "description": "Service Tax",
     "doctype": "Sales Taxes and Charges",
     "parentfield": "taxes",
+    "cost_center": "_Test Cost Center - _TC",
     "rate": 6.36
    }
   ],
@@ -76,6 +79,7 @@
   "customer_name": "_Test Customer",
   "debit_to": "_Test Receivable - _TC",
   "doctype": "Sales Invoice",
+  "cost_center": "_Test Cost Center - _TC",
   "items": [
    {
     "amount": 500.0,
@@ -108,6 +112,7 @@
     "description": "VAT",
     "doctype": "Sales Taxes and Charges",
     "parentfield": "taxes",
+    "cost_center": "_Test Cost Center - _TC",
     "rate": 16
    },
    {
@@ -116,6 +121,7 @@
     "description": "Service Tax",
     "doctype": "Sales Taxes and Charges",
     "parentfield": "taxes",
+    "cost_center": "_Test Cost Center - _TC",
     "rate": 10
    }
   ],
@@ -132,6 +138,7 @@
   "customer_name": "_Test Customer",
   "debit_to": "_Test Receivable - _TC",
   "doctype": "Sales Invoice",
+  "cost_center": "_Test Cost Center - _TC",
   "items": [
    {
     "cost_center": "_Test Cost Center - _TC",
@@ -259,6 +266,7 @@
   "customer_name": "_Test Customer",
   "debit_to": "_Test Receivable - _TC",
   "doctype": "Sales Invoice",
+  "cost_center": "_Test Cost Center - _TC",
   "items": [
    {
     "cost_center": "_Test Cost Center - _TC",

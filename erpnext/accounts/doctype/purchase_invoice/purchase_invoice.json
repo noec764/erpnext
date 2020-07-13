@@ -26,6 +26,7 @@
   "accounting_dimensions_section",
   "cost_center",
   "dimension_col_break",
+  "project",
   "supplier_invoice_details",
   "bill_no",
   "column_break_15",
@@ -1331,6 +1332,12 @@
    "print_hide": 1,
    "read_only": 1
   },
+  {
+    "fieldname": "project",
+    "fieldtype": "Link",
+    "label": "Project",
+    "options": "Project"
+   },
   {
     "fieldname": "tax_withholding_category",
     "fieldtype": "Link",

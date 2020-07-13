@@ -3,7 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe, json
+import frappe, json, erpnext
 from frappe import _
 from frappe.utils import flt, getdate, nowdate, add_days
 from erpnext.controllers.accounts_controller import AccountsController
@@ -133,16 +133,19 @@ class InvoiceDiscounting(AccountsController):
 		je.append("accounts", {
 			"account": self.bank_account,
 			"debit_in_account_currency": flt(self.total_amount) - flt(self.bank_charges),
+			"cost_center": erpnext.get_default_cost_center(self.company)
 		})
 
 		je.append("accounts", {
 			"account": self.bank_charges_account,
-			"debit_in_account_currency": flt(self.bank_charges)
+			"debit_in_account_currency": flt(self.bank_charges),
+			"cost_center": erpnext.get_default_cost_center(self.company)
 		})
 
 		je.append("accounts", {
 			"account": self.short_term_loan,
 			"credit_in_account_currency": flt(self.total_amount),
+			"cost_center": erpnext.get_default_cost_center(self.company),
 			"reference_type": "Invoice Discounting",
 			"reference_name": self.name
 		})
@@ -150,6 +153,7 @@ class InvoiceDiscounting(AccountsController):
 			je.append("accounts", {
 				"account": self.accounts_receivable_discounted,
 				"debit_in_account_currency": flt(d.outstanding_amount),
+				"cost_center": erpnext.get_default_cost_center(self.company),
 				"reference_type": "Invoice Discounting",
 				"reference_name": self.name,
 				"party_type": "Customer",
@@ -159,6 +163,7 @@ class InvoiceDiscounting(AccountsController):
 			je.append("accounts", {
 				"account": self.accounts_receivable_credit,
 				"credit_in_account_currency": flt(d.outstanding_amount),
+				"cost_center": erpnext.get_default_cost_center(self.company),
 				"reference_type": "Invoice Discounting",
 				"reference_name": self.name,
 				"party_type": "Customer",
@@ -176,13 +181,15 @@ class InvoiceDiscounting(AccountsController):
 		je.append("accounts", {
 			"account": self.short_term_loan,
 			"debit_in_account_currency": flt(self.total_amount),
+			"cost_center": erpnext.get_default_cost_center(self.company),
 			"reference_type": "Invoice Discounting",
 			"reference_name": self.name,
 		})
 
 		je.append("accounts", {
 			"account": self.bank_account,
-			"credit_in_account_currency": flt(self.total_amount)
+			"credit_in_account_currency": flt(self.total_amount),
+			"cost_center": erpnext.get_default_cost_center(self.company)
 		})
 
 		if getdate(self.loan_end_date) > getdate(nowdate()):
@@ -192,6 +199,7 @@ class InvoiceDiscounting(AccountsController):
 					je.append("accounts", {
 						"account": self.accounts_receivable_discounted,
 						"credit_in_account_currency": flt(outstanding_amount),
+						"cost_center": erpnext.get_default_cost_center(self.company),
 						"reference_type": "Invoice Discounting",
 						"reference_name": self.name,
 						"party_type": "Customer",
@@ -201,6 +209,7 @@ class InvoiceDiscounting(AccountsController):
 					je.append("accounts", {
 						"account": self.accounts_receivable_unpaid,
 						"debit_in_account_currency": flt(outstanding_amount),
+						"cost_center": erpnext.get_default_cost_center(self.company),
 						"reference_type": "Invoice Discounting",
 						"reference_name": self.name,
 						"party_type": "Customer",
