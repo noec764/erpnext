@@ -126,7 +126,7 @@ def get_chart(filters, data):
 
 	return {
 		"data" : {
-			"labels" : ["{0} {1}".format(x[1], x[0]) for x in result],
+			"labels" : ["{0} {1}".format(_(x[1]), x[0]) for x in result],
 			"datasets" : [
 				{
 					"name" : _("Amount"),
