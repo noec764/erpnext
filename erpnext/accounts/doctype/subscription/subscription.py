@@ -703,7 +703,7 @@ def get_payment_entry(name):
 @frappe.whitelist()
 def get_chart_data(title, doctype, docname):
 	invoices = frappe.get_all("Sales Invoice", filters={"subscription": docname,}, \
-		fields=["name", "outstanding_amount", "grand_total", "posting_date", "currency"], group_by="posting_date")
+		fields=["name", "outstanding_amount", "grand_total", "posting_date", "currency"], group_by="posting_date DESC", limit=20)
 
 	if len(invoices) < 1:
 		return {}
@@ -714,7 +714,7 @@ def get_chart_data(title, doctype, docname):
 	dates = []
 	total = []
 	outstanding = []
-	for invoice in invoices[:20]:
+	for invoice in invoices:
 		dates.insert(0, invoice.posting_date)
 		total.insert(0, invoice.grand_total)
 		outstanding.insert(0, invoice.outstanding_amount)
