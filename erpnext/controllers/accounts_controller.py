@@ -525,7 +525,7 @@ class AccountsController(TransactionBase):
 
 		res = journal_entries + payment_entries
 
-		if self.doctype == "Sales Invoice":
+		if self.doctype == "Sales Invoice" and order_list:
 			party_type = "Customer"
 			party = self.customer
 			party_account = get_party_account(party_type, party, self.company, True)
