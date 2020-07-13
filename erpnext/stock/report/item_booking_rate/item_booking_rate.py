@@ -126,7 +126,6 @@ def get_columns(filters, dates):
 
 
 def get_chart_data(data):
-	print(data)
 	return {
 		"data" : {
 			"labels" : [x.get("item_name") for x in data],

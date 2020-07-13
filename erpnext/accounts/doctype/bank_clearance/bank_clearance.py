@@ -130,6 +130,7 @@ class BankClearance(Document):
 						if frappe.get_meta(payment_entry.doctype).has_field(f):
 							payment_entry.db_set(f, 0)
 
+				payment_entry.set_status(update=True)
 				clearance_date_updated = True
 
 		if clearance_date_updated:
