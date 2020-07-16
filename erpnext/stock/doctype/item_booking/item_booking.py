@@ -42,7 +42,7 @@ class ItemBooking(Document):
 		if isinstance(self.rrule, list) and self.rrule > 1:
 			self.rrule = self.rrule[0]
 
-		if get_datetime(self.starts_on) < get_datetime(self.ends_on):
+		if get_datetime(self.starts_on) > get_datetime(self.ends_on):
 			frappe.throw(_("Please make sure the end time is greater than the start time"))
 
 	def set_status(self, status):
@@ -119,11 +119,14 @@ def get_item_price(item_code, uom):
 	if not cart_settings.enabled:
 		return frappe._dict()
 
-	cart_quotation = _get_cart_quotation()
+	contact = frappe.db.get_value("Contact", {"user": frappe.session.user})
+	cart_quotation = None
+	if contact:
+		cart_quotation = _get_cart_quotation()
 
 	price = get_price(
 		item_code=item_code,
-		price_list=cart_quotation.selling_price_list,
+		price_list=cart_quotation.selling_price_list if contact else cart_settings.price_list,
 		customer_group=cart_settings.default_customer_group,
 		company=cart_settings.company,
 		uom=uom
@@ -188,13 +191,6 @@ def reset_all_booked_slots():
 		remove_booked_slot(slot.get("name"))
 
 	return slots
-
-@frappe.whitelist(allow_guest=True)
-def get_locale_and_timezone():
-	return {
-		"locale": frappe.local.lang,
-		"time_zone": frappe.db.get_single_value("System Settings", "time_zone")
-	}
 
 @frappe.whitelist(allow_guest=True)
 def get_available_item(item, start, end):
@@ -453,6 +449,7 @@ def get_unavailable_dict(event):
 		"title": _("In shopping cart")
 	}
 
+@frappe.whitelist()
 def get_item_calendar(item, uom=None):
 	if not uom:
 		uom = frappe.get_cached_value("Item", item, "sales_uom")

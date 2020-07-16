@@ -104,6 +104,7 @@ $.extend(shopping_cart, {
 		$('.cart-items').on('click', '.item-booking-btn', function() {
 			const item_code = $(this).attr("data-item-code");
 			new erpnext.booking_dialog({
+				parentId: 'item-booking',
 				item: item_code
 			})
 		});
