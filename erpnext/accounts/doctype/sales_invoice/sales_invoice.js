@@ -794,6 +794,15 @@ frappe.ui.form.on('Sales Invoice', {
 				d.sales_order = value;
 			})
 			frm.refresh_field("items");
+
+			frappe.db.get_list("Item", {filters: {is_down_payment_item: 1}})
+			.then(r => {
+				if (r.length == 1) {
+					frm.doc.items.forEach(line => {
+						frappe.model.set_value(line.doctype, line.name, "item_code", r[0].name)
+					})
+				}
+			})
 		}
 
 		frappe.xcall("erpnext.accounts.party.get_party_account", {
@@ -836,6 +845,9 @@ frappe.ui.form.on('Sales Invoice Item', {
 		calculate_down_payment(locals[cdt][cdn])
 	},
 	is_down_payment_item: function(frm, cdt, cdn) {
+		calculate_down_payment(locals[cdt][cdn])
+	},
+	down_payment_rate: function(frm, cdt, cdn) {
 		calculate_down_payment(locals[cdt][cdn])
 	}
 })
