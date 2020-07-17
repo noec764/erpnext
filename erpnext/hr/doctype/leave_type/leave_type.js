@@ -47,6 +47,11 @@ frappe.tour['Leave Type'] = [
 		description: __("Check this option if you wish to count holidays within leaves as a ‘leave’. For example, if an Employee has applied for leave on Friday and Monday, and Saturday and Sunday are weekly offs, if this option is checked, the system will consider Saturday as Sunday as leaves too. Such holidays will be deducted from the total number of leaves.")
 	},
 	{
+		fieldname: "exclude_from_leave_acquisition",
+		title: __("Exclude from leave acquisition"),
+		description: __("If checked, all leave days taken with this leave type will be considered as absent when calculating the attendance for acquired leaves calculation.")
+	},
+	{
 		fieldname: "is_compensatory",
 		title: __("Compensatory leave"),
 		description: __("Compensatory leaves are leaves granted for working overtime or on holidays, normally compensated as an encashable leave. You can check this option to mark the Leave Type as compensatory. An Employee can request for compensatory leaves using Compensatory Leave Request.")

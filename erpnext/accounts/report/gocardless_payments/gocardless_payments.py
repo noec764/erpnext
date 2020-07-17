@@ -118,11 +118,13 @@ def get_columns(filters):
 	]
 
 def get_chart(filters, data):
+	result = []
 	df = pd.DataFrame.from_records(data)
-	df['date'] = pd.to_datetime(df['charge_date'])
-	aggregate = df.groupby([df['date'].dt.strftime('%Y'), df['date'].dt.strftime('%B')])['amount'].sum().sort_values()
+	if not df.empty:
+		df['date'] = pd.to_datetime(df['charge_date'])
+		aggregate = df.groupby([df['date'].dt.strftime('%Y'), df['date'].dt.strftime('%B')])['amount'].sum().sort_values()
 
-	result = aggregate.to_dict()
+		result = aggregate.to_dict()
 
 	return {
 		"data" : {

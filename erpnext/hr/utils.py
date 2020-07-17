@@ -505,10 +505,12 @@ class EarnedLeaveCalculator():
 
 def get_attendance(employee, start_date, end_date):
 	holidays = get_holidays_for_employee(employee, start_date, end_date)
+	excluded_leave_types = [x.name for x in frappe.get_all("Leave Type", filters={"exclude_from_leave_acquisition": 1})]
 
 	attendance = frappe.get_all("Attendance",
 		filters={"docstatus": 1, "employee": employee, "attendance_date": ("between", [start_date, end_date]), "status": ("!=", "Absent")},
 		fields=["name", "attendance_date", "status", "leave_type"])
+	attendance = [x for x in attendance if not(x.status=="On Leave" and x.leave_type in excluded_leave_types)]
 
 	return {
 		"dates": [x.attendance_date for x in attendance if x.attendance_date not in holidays],

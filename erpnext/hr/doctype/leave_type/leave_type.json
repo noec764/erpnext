@@ -18,6 +18,7 @@
   "is_optional_leave",
   "allow_negative",
   "include_holiday",
+  "exclude_from_leave_acquisition",
   "is_compensatory",
   "carry_forward_section",
   "maximum_carry_forwarded_leaves",
@@ -189,12 +190,18 @@
    "fieldname": "earned_leave_frequency_formula",
    "fieldtype": "Select",
    "label": "Earned Leave Frequency Formula"
+  },
+  {
+   "default": "0",
+   "fieldname": "exclude_from_leave_acquisition",
+   "fieldtype": "Check",
+   "label": "Exclude from leave acquisition"
   }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2020-07-11 09:22:35.064884",
+ "modified": "2020-07-17 12:17:46.572150",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",

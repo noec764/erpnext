@@ -74,8 +74,8 @@ class ServiceLevelAgreement(Document):
 
 	def validate_doc(self):
 		if not frappe.db.get_single_value("Support Settings", "track_service_level_agreement") and self.enable:
-			frappe.throw(_("{0} is not enabled in {1}").format(frappe.bold("Track Service Level Agreement"),
-				get_link_to_form("Support Settings", "Support Settings")))
+			frappe.throw(_("{0} is not enabled in {1}").format(_(frappe.bold("Track Service Level Agreement")),
+				get_link_to_form("Support Settings", "Support Settings", _("Support Settings"))))
 
 		if self.default_service_level_agreement:
 			if frappe.db.exists("Service Level Agreement", {"default_service_level_agreement": "1", "name": ["!=", self.name]}):
