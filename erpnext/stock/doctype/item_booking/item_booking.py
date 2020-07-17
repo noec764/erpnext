@@ -70,7 +70,7 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 		contact_doc = frappe.get_doc('Contact', contact)
 		customer = contact_doc.get_link_for('Customer')
 
-	if is_website_user():
+	if is_website_user() or is_system_user(user):
 		if not filters: filters = []
 
 		or_filters.append({"user": user, "party_name": customer})
