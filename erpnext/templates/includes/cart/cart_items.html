@@ -7,12 +7,14 @@
 		<div>
 			{{ d.item_code }}
 		</div>
+
 		{% if d.item_booking %}
 		{% set item_booking_doc = frappe.db.get_value('Item Booking', d.item_booking, ['starts_on', 'ends_on'], as_dict=True) %}
 		<div>
 			{{ frappe.utils.format_datetime(item_booking_doc.starts_on) }} - {{ frappe.utils.format_datetime(item_booking_doc.ends_on) }}
 		</div>
 		{% endif %}
+
 		{% set items_params = frappe.db.get_value('Item', d.item_code, ['variant_of', 'enable_item_booking'], as_dict=True) %}
 		{% if items_params["variant_of"] %}
 		<span class="text-muted">
@@ -35,7 +37,7 @@
 		</div>
 		{% if items_params["enable_item_booking"] and d.item_booking %}
 			<div class="text-center mt-2">
-				<button class="btn btn-default btn-xs item-booking-btn" data-item-code="{{d.item_code}}">{{ _("Change booking") }}</button>
+				<button class="btn btn-default btn-xs item-booking-btn" data-item-code="{{d.item_code}}" data-item-route="{{d.route}}">{{ _("Change booking") }}</button>
 			</div>
 		{% endif %}
 	</td>

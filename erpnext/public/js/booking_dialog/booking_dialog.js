@@ -385,21 +385,15 @@ class BookingCalendar {
 	}
 
 	updateCart(booking, qty) {
-		new Promise((resolve) => {
-			resolve(
-				erpnext.shopping_cart.shopping_cart_update({
-					item_code: this.parent.item,
-					qty: qty,
-					uom: this.uom,
-					booking: booking
-				})
-			)
-		}).then(r => {
-			// Hack for promise resolving too fast
-			setTimeout(() => {
-				this.loading = false;
-				this.fullCalendar.refetchEvents()
-			}, (qty == 0) ? 3000: 2000);
+		erpnext.shopping_cart.shopping_cart_update({
+			item_code: this.parent.item,
+			qty: qty,
+			uom: this.uom,
+			booking: booking,
+			cart_dropdown: true
+		}).then(() => {
+			this.loading = false;
+			this.fullCalendar.refetchEvents()
 		})
 	}
 

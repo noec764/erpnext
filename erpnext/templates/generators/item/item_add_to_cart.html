@@ -67,11 +67,11 @@
 			erpnext.shopping_cart.update_cart({
 				item_code,
 				qty: 1,
-				callback(r) {
-					$btn.prop('disabled', false);
-					if (r.message) {
-						$('.btn-add-to-cart, .btn-view-in-cart').toggleClass('hidden');
-					}
+				cart_dropdown: true
+			}).then(r => {
+				$btn.prop('disabled', false);
+				if (r.message) {
+					$('.btn-add-to-cart, .btn-view-in-cart').toggleClass('hidden');
 				}
 			});
 		});

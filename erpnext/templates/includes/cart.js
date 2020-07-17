@@ -64,7 +64,7 @@ $.extend(shopping_cart, {
 		$(".cart-items").on("change", ".cart-qty", function() {
 			var item_code = $(this).attr("data-item-code");
 			var newVal = $(this).val();
-			shopping_cart.shopping_cart_update({item_code, qty: newVal});
+			shopping_cart.shopping_cart_update({item_code, qty: newVal, cart_dropdown: true});
 		});
 
 		$(".cart-items").on('click', '.number-spinner button', function () {
@@ -82,7 +82,7 @@ $.extend(shopping_cart, {
 			}
 			input.val(newVal);
 			var item_code = input.attr("data-item-code");
-			shopping_cart.shopping_cart_update({item_code, qty: newVal});
+			shopping_cart.shopping_cart_update({item_code, qty: newVal, cart_dropdown: true});
 		});
 	},
 
@@ -102,11 +102,7 @@ $.extend(shopping_cart, {
 
 	bind_change_booking: function() {
 		$('.cart-items').on('click', '.item-booking-btn', function() {
-			const item_code = $(this).attr("data-item-code");
-			new erpnext.booking_dialog({
-				parentId: 'item-booking',
-				item: item_code
-			})
+			window.location.href = $(this).attr("data-item-route");
 		});
 	},
 

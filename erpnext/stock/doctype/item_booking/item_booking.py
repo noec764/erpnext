@@ -444,12 +444,13 @@ def get_unavailable_dict(event):
 		"start": event.get("starts_on").isoformat(),
 		"end": event.get("ends_on").isoformat(),
 		"id": event.get("name"),
-		"backgroundColor": "#69eb94",
+		"backgroundColor": "#117f35",
+		"borderColor": "#117f35",
 		"classNames": "unavailable",
 		"title": _("In shopping cart")
 	}
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_item_calendar(item, uom=None):
 	if not uom:
 		uom = frappe.get_cached_value("Item", item, "sales_uom")

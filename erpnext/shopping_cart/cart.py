@@ -112,6 +112,7 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 			frappe.delete_doc("Item Booking", booking, ignore_permissions=True, force=True)
 		else:
 			quotation_items = quotation.get("items", filters={"item_code": ["!=", item_code]})
+			quotation_items += quotation.get("items", filters={"item_code": ["=", item_code], "item_booking": ["!=", None]})
 
 		if quotation_items:
 			quotation.set("items", quotation_items)
@@ -121,8 +122,9 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	else:
 		quotation_items = quotation.get("items", {"item_code": item_code, "uom": uom}) if uom\
 			else quotation.get("items", {"item_code": item_code})
+		non_booked_items = [x for x in quotation_items if not x.item_booking]
 
-		if not quotation_items or booking:
+		if not quotation_items or (not (booking and non_booked_items)) or booking:
 			quotation.append("items", {
 				"doctype": "Quotation Item",
 				"item_code": item_code,

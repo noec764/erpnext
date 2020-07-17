@@ -240,7 +240,8 @@ class ItemConfigure {
 		erpnext.shopping_cart.update_cart({
 			item_code,
 			additional_notes,
-			qty: 1
+			qty: 1,
+			cart_dropdown: true
 		});
 		this.dialog.hide();
 	}
