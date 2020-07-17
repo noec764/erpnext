@@ -14,6 +14,7 @@ from erpnext.accounts.report.utils import get_currency, convert_to_presentation_
 from erpnext.accounts.utils import get_fiscal_year
 from frappe import _
 from frappe.utils import (flt, getdate, get_first_day, add_months, add_days, formatdate, cstr)
+import math
 
 from six import itervalues
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
@@ -45,10 +46,7 @@ def get_period_list(from_fiscal_year, to_fiscal_year, period_start_date, period_
 	start_date = year_start_date
 	months = get_months(year_start_date, year_end_date)
 
-	if (months // months_to_add) != (months / months_to_add):
-		months += months_to_add
-
-	for i in range(months // months_to_add):
+	for i in range(math.ceil(months / months_to_add)):
 		period = frappe._dict({
 			"from_date": start_date
 		})
