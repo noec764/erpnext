@@ -8,6 +8,7 @@ from frappe import msgprint, _
 from frappe.model.document import Document
 import datetime
 
+exclude_from_linked_with = True
 class SepaDirectDebit(Document):
 	def validate(self):
 		self.total_amount = 0
@@ -78,7 +79,7 @@ class SepaDirectDebit(Document):
 			if not frappe.db.exists("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active")):
 				frappe.throw(_("Please create or activate a SEPA Mandate for customer {0}".format(customer)))
 
-			if frappe.get_all("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active")):
+			if len(frappe.get_all("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active"))) > 1:
 				frappe.throw(_("Customer {0} has several active mandates. Please keep only one active mandate.".format(customer)))
 
 			mandate = frappe.get_doc("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active"))
