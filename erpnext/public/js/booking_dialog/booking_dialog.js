@@ -53,7 +53,9 @@ erpnext.booking_dialog = class BookingDialog {
 	toggle_item_descriptions(display) {
 		['item-website-description', 'item-website-specification', 'item-website-content'].forEach(el => {
 			const toggledItem = document.getElementsByClassName(el)[0]
-			toggledItem.style.display = display ? "flex" : "none";
+			if (toggledItem!==undefined) {
+				toggledItem.style.display = display ? "flex" : "none";
+			}
 		})
 		const calendarElem = document.getElementById('item-booking')
 		if (display) {
