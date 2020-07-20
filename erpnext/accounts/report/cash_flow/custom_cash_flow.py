@@ -395,7 +395,7 @@ def _get_account_type_based_data(filters, account_names, period_list, accumulate
 			gl_sum = frappe.db.sql_list("""
 				select sum(credit) - sum(debit)
 				from `tabGL Entry`
-				where company=%s and posting_date >= %s and posting_date <= %s 
+				where company=%s and posting_date >= %s and posting_date <= %s
 					and voucher_type != 'Period Closing Voucher'
 					and account in ( SELECT name FROM tabAccount WHERE name IN (%s)
 					OR parent_account IN (%s))
@@ -404,7 +404,7 @@ def _get_account_type_based_data(filters, account_names, period_list, accumulate
 			gl_sum = frappe.db.sql_list("""
 				select sum(credit) - sum(debit)
 				from `tabGL Entry`
-				where company=%s and posting_date >= %s and posting_date <= %s 
+				where company=%s and posting_date >= %s and posting_date <= %s
 					and voucher_type != 'Period Closing Voucher'
 					and account in ( SELECT name FROM tabAccount WHERE name IN (%s)
 					OR parent_account IN (%s))
