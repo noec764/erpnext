@@ -549,7 +549,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 							filters: {'parent': me.frm.doc.name}
 						}
 					}},
-					{fieldname: 'items_for_po', fieldtype: 'Table', label: 'Select Items',
+					{fieldname: 'items_for_po', fieldtype: 'Table', label: __('Select Items'),
 					fields: [
 						{
 							fieldtype:'Data',
