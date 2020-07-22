@@ -123,7 +123,7 @@ frappe.ui.form.on("Opportunity", {
 	make_supplier_quotation: function(frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.opportunity.opportunity.make_supplier_quotation",
-			frm: cur_frm
+			frm: frm
 		})
 	},
 
@@ -178,7 +178,7 @@ erpnext.crm.Opportunity = frappe.ui.form.Controller.extend({
 	create_quotation: function() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.opportunity.opportunity.make_quotation",
-			frm: cur_frm
+			frm: frm
 		})
 	}
 });
