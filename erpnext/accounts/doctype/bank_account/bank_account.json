@@ -208,15 +208,14 @@
    "label": "SWIFT number"
   },
   {
-   "fetch_from": "bank.branch_code",
-   "fetch_if_empty": 1,
+    "in_global_search": 1,
    "fieldname": "branch_code",
    "fieldtype": "Data",
    "label": "Branch Code"
   }
  ],
  "links": [],
- "modified": "2020-06-23 15:54:33.814079",
+ "modified": "2020-06-24 15:54:33.814079",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Account",
