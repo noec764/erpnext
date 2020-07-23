@@ -96,6 +96,12 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				cur_frm.add_custom_button(__('Invoice Discounting'), function() {
 					cur_frm.events.create_invoice_discounting(cur_frm);
 				}, __('Create'));
+
+				if (doc.due_date < frappe.datetime.get_today()) {
+					cur_frm.add_custom_button(__('Dunning'), function() {
+						cur_frm.events.create_dunning(cur_frm);
+					}, __('Create'));
+				}
 			}
 
 			if (doc.docstatus === 1) {
@@ -813,6 +819,13 @@ frappe.ui.form.on('Sales Invoice', {
 		}).then(r => {
 			frm.set_value("debit_to", r);
 		})
+	},
+
+	create_dunning: function(frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.create_dunning",
+			frm: frm
+		});
 	}
 })
 
