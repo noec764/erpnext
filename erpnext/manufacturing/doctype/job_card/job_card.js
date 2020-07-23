@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Job Card', {
+	setup: function(frm) {
+		frm.set_query("employee", function() {
+			return {
+				filters: {
+					"status": "Active"
+				}
+			};
+		});
+	},
 	refresh: function(frm) {
 		frappe.flags.pause_job = 0;
 		frappe.flags.resume_job = 0;
@@ -32,6 +41,13 @@ frappe.ui.form.on('Job Card', {
 			frm.add_custom_button(__("Start"), () => {
 				if (!frm.doc.employee) {
 					frappe.prompt({fieldtype: 'Link', label: __('Employee'), options: "Employee",
+						get_query: function() {
+							return {
+								filters: {
+									"status": "Active"
+								}
+							};
+						},
 						fieldname: 'employee'}, d => {
 						if (d.employee) {
 							frm.set_value("employee", d.employee);
