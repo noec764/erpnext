@@ -234,9 +234,9 @@ doc_events = {
 	"Purchase Invoice": {
 		"validate": "erpnext.regional.india.utils.update_grand_total_for_rcm"
 	},
-	"Payment Entry": [
+	"Payment Entry": {
 		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning"
-	]
+	},
 	'Address': {
 		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code', 'erpnext.regional.india.utils.update_gst_category']
 	},
