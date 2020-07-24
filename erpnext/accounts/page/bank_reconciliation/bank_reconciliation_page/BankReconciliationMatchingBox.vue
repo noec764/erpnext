@@ -61,15 +61,15 @@
 			</vue-good-table>
 		</div>
 		<div v-show="!transactions.length && !matching_documents[document_type].length" class="flex flex-wrap justify-center align-center border rounded no-data">
-			{{ __("Select a bank transaction to find matching transactions")}}
+			{{ __("Select a bank transaction to find matching transactions") }}
 		</div>
 		<div v-show="transactions.length && !matching_documents[document_type].length" class="flex flex-wrap justify-center align-center border rounded no-data">
-			{{ __("No matching document found for your selection")}}
+			{{ __("No matching document found for your selection") }}
 		</div>
 		<div v-show="matching_documents[document_type].length || (transactions.length && !matching_documents[document_type].length)" class="text-center document-options">
 			<div class="btn-group" role="group" aria-label="Document Options">
 				<button type="button" class="btn btn-default" @click="get_linked_docs(false)">{{ __("Show the full list") }}</button>
-				<button type="button" class="btn btn-primary" @click="create_new_document">{{ __(`Create a new ${__(document_type)}`) }}</button>
+				<button type="button" class="btn btn-primary" @click="create_new_document">{{ __("Create a new {0}", [__(document_type)]) }}</button>
 			</div>
 		</div>
 	</div>
@@ -80,6 +80,9 @@ import { VueGoodTable } from 'vue-good-table';
 
 export default {
 	name: 'BankReconciliationMatchingBox',
+	components: {
+		VueGoodTable
+	},
 	props: {
 		transactions: {
 			type: Array,
@@ -170,7 +173,7 @@ export default {
 	}
 
 	table.vgt-table {
-		font-size: 1.5rem;
+		font-size: 1rem;
 	}
 }
 

@@ -10,7 +10,7 @@ from frappe.model.document import Document
 from frappe.utils import time_diff_in_hours, now_datetime, getdate, get_weekdays, add_to_date, today, get_time, get_datetime, time_diff_in_seconds, time_diff
 from datetime import datetime, timedelta
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils.user import is_website_user
+from frappe.utils.user import is_website_user, is_system_user
 from erpnext.support.doctype.service_level_agreement.service_level_agreement import get_active_service_level_agreement_for
 from frappe.email.inbox import link_communication_to_document
 

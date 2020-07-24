@@ -17,7 +17,7 @@ from erpnext.shopping_cart.product_info import get_product_info_for_website
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
-from frappe.utils.user import is_website_user
+from frappe.utils.user import is_website_user, is_system_user
 from frappe.integrations.doctype.google_calendar.google_calendar import get_google_calendar_object, \
 	format_date_according_to_google_calendar, get_timezone_naive_datetime
 from googleapiclient.errors import HttpError
