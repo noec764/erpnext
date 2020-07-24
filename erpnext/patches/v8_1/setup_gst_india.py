@@ -41,7 +41,7 @@ Templates and update your Customer's and Supplier's GST Numbers.</p>
 
 <p>Please refer {gst_document_link} to know more about how to setup and implement GST in ERPNext.</p>
 
-<p>Please contact us at support@erpnext.com, if you have any questions.</p>
+<p>Please contact us at support@dokos.io, if you have any questions.</p>
 
 <p>Thanks,</p>
 ERPNext Team.

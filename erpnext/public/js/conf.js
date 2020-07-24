@@ -7,8 +7,8 @@ frappe.provide('erpnext');
 $(document).bind('toolbar_setup', function() {
 	frappe.app.name = "dokos";
 
-	frappe.help_feedback_link = '<p><a class="text-muted" \
-		href="https://discuss.erpnext.com">Feedback</a></p>'
+	frappe.help_feedback_link = `<p><a class="text-muted" \
+		href="https://community.dokos.io">${__("Feedback") }</a></p>`
 
 	$('[data-link="docs"]').attr("href", "https://doc.dokos.io")
 	$('[data-link="issues"]').attr("href", "https://gitlab.com/dokos/dokos/issues")
