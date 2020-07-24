@@ -148,7 +148,6 @@ def get_report_summary(period_list, asset, liability, equity, provisional_profit
 		{
 			"value": net_asset,
 			"label": _("Total Asset"),
-			"indicator": "Green",
 			"datatype": "Currency",
 			"currency": currency
 		},
@@ -156,14 +155,12 @@ def get_report_summary(period_list, asset, liability, equity, provisional_profit
 			"value": net_liability,
 			"label": _("Total Liability"),
 			"datatype": "Currency",
-			"indicator": "Red",
 			"currency": currency
 		},
 		{
 			"value": net_equity,
 			"label": _("Total Equity"),
 			"datatype": "Currency",
-			"indicator": "Blue",
 			"currency": currency
 		},
 		{

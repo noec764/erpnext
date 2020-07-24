@@ -72,7 +72,7 @@
     "icon": "fas fa-shopping-bag",
     "shortcuts": [
      {
-      "color": "#cef6d1",
+      "color": "Green",
       "format": "{} available",
       "label": "Item",
       "link_to": "Item",
@@ -80,7 +80,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
       "format": "{} Pending",
       "label": "Material Request",
       "link_to": "Material Request",
@@ -88,7 +88,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
       "format": "{}  to Receive",
       "label": "Purchase Order",
       "link_to": "Purchase Order",

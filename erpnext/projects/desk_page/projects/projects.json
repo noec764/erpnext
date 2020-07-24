@@ -43,7 +43,7 @@
     "icon": "fas fa-project-diagram",
     "shortcuts": [
      {
-      "color": "#cef6d1",
+      "color": "Green",
       "format": "{} Assigned",
       "label": "Task",
       "link_to": "Task",
@@ -51,7 +51,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
         "format": "{} Open",
       "label": "Project",
       "link_to": "Project",

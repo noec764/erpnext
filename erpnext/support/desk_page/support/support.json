@@ -53,7 +53,7 @@
     "color": "#1abc9c",
     "shortcuts": [
      {
-        "color": "#ffc4c4",
+        "color": "#Yellow",
         "format": "{} Assigned",
       "label": "Issue",
       "link_to": "Issue",

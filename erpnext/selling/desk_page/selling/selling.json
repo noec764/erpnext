@@ -56,7 +56,7 @@
     "icon": "fas fa-cash-register",
     "shortcuts": [
         {
-         "color": "#cef6d1",
+         "color": "Green",
          "format": "{} Available",
          "label": "Item",
          "link_to": "Item",
@@ -64,7 +64,7 @@
          "type": "DocType"
         },
         {
-         "color": "#ffe8cd",
+         "color": "Yellow",
          "format": "{}  To Deliver",
          "label": "Sales Order",
          "link_to": "Sales Order",
@@ -72,7 +72,7 @@
          "type": "DocType"
         },
         {
-         "color": "#cef6d1",
+         "color": "Green",
          "format": "{} Open",
          "label": "Sales Analytics",
          "link_to": "Sales Analytics",

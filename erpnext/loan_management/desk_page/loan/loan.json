@@ -48,7 +48,7 @@
     "color": "#EF4DB6",
     "shortcuts": [
      {
-        "color": "#ffe8cd",
+        "color": "Yellow",
         "format": "{} Open",
       "label": "Loan Application",
       "link_to": "Loan Application",

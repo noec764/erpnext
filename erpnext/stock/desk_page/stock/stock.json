@@ -70,7 +70,7 @@
     "icon": "fas fa-warehouse",
     "shortcuts": [
      {
-      "color": "#cef6d1",
+      "color": "Green",
       "format": "{}  available",
       "label": "Item",
       "link_to": "Item",
@@ -78,7 +78,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
       "format": "{} Pending",
       "label": "Material Request",
       "link_to": "Material Request",
@@ -91,7 +91,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
       "format": "{} to Bill",
       "label": "Purchase Receipt",
       "link_to": "Purchase Receipt",
@@ -99,7 +99,7 @@
       "type": "DocType"
      },
      {
-      "color": "#ffe8cd",
+      "color": "Yellow",
       "format": "{} to Bill",
       "label": "Delivery Note",
       "link_to": "Delivery Note",
