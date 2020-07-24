@@ -13,6 +13,7 @@ erpnext.patches.v4_0.apply_user_permissions
 erpnext.patches.v4_0.move_warehouse_user_to_restrictions
 erpnext.patches.v4_0.global_defaults_to_system_settings
 erpnext.patches.v4_0.update_incharge_name_to_sales_person_in_maintenance_schedule
+execute:frappe.reload_doc("accounts", "doctype", "POS Payment Method") #2020-05-28
 execute:frappe.reload_doc("HR", "doctype", "HR Settings") #2020-01-16
 execute:frappe.reload_doc('stock', 'doctype', 'warehouse') # 2017-04-24
 execute:frappe.reload_doc('accounts', 'doctype', 'sales_invoice') # 2016-08-31
@@ -639,6 +640,8 @@ erpnext.patches.v12_0.set_default_payroll_based_on
 erpnext.patches.v12_0.repost_stock_ledger_entries_for_target_warehouse
 erpnext.patches.v12_0.update_end_date_and_status_in_email_campaign
 erpnext.patches.v13_0.move_tax_slabs_from_payroll_period_to_income_tax_slab
+erpnext.patches.v12_0.rename_pos_closing_doctype
+erpnext.patches.v13_0.replace_pos_payment_mode_table
 erpnext.patches.v12_0.remove_duplicate_leave_ledger_entries #2020-05-22
 erpnext.patches.v13_0.patch_to_fix_reverse_linking_in_additional_salary_encashment_and_incentive
 execute:frappe.reload_doc("HR", "doctype", "Employee Advance")
@@ -657,6 +660,7 @@ erpnext.patches.v12_0.update_bom_in_so_mr
 execute:frappe.delete_doc("Report", "Department Analytics")
 execute:frappe.rename_doc("Desk Page", "Loan Management", "Loan", force=True)
 erpnext.patches.v12_0.update_uom_conversion_factor
+execute:frappe.delete_doc_if_exists("Page", "pos") #29-05-2020
 erpnext.patches.v13_0.delete_old_purchase_reports
 erpnext.patches.v12_0.set_italian_import_supplier_invoice_permissions
 erpnext.patches.v12_0.unhide_cost_center_field
@@ -668,6 +672,7 @@ erpnext.patches.v13_0.delete_old_sales_reports
 erpnext.patches.v13_0.move_doctype_reports_and_notification_from_hr_to_payroll
 erpnext.patches.v13_0.move_payroll_setting_separately_from_hr_settings
 erpnext.patches.v13_0.check_is_income_tax_component
+erpnext.patches.v13_0.loyalty_points_entry_for_pos_invoice #22-07-2020
 erpnext.patches.v12_0.add_taxjar_integration_field
 erpnext.patches.v12_0.fix_percent_complete_for_projects
 erpnext.patches.v13_0.delete_report_requested_items_to_order

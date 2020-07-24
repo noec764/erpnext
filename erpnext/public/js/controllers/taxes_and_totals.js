@@ -34,18 +34,18 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 		this.calculate_discount_amount();
 
 		// Advance calculation applicable to Sales /Purchase Invoice
-		if(in_list(["Sales Invoice", "Purchase Invoice"], this.frm.doc.doctype)
+		if(in_list(["Sales Invoice", "POS Invoice", "Purchase Invoice"], this.frm.doc.doctype)
 			&& this.frm.doc.docstatus < 2 && !this.frm.doc.is_return) {
 			this.calculate_total_advance(update_paid_amount);
 		}
 
-		if (this.frm.doc.doctype == "Sales Invoice" && this.frm.doc.is_pos &&
+		if (in_list(["Sales Invoice", "POS Invoice"], this.frm.doc.doctype) && this.frm.doc.is_pos &&
 			this.frm.doc.is_return) {
 			this.update_paid_amount_for_return();
 		}
 
 		// Sales person's commission
-		if(in_list(["Quotation", "Sales Order", "Delivery Note", "Sales Invoice"], this.frm.doc.doctype)) {
+		if(in_list(["Quotation", "Sales Order", "Delivery Note", "Sales Invoice", "POS Invoice"], this.frm.doc.doctype)) {
 			this.calculate_commission();
 			this.calculate_contribution();
 		}
@@ -605,7 +605,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 		// NOTE:
 		// paid_amount and write_off_amount is only for POS/Loyalty Point Redemption Invoice
 		// total_advance is only for non POS Invoice
-		if(this.frm.doc.doctype == "Sales Invoice" && this.frm.doc.is_return){
+		if(in_list(["Sales Invoice", "POS Invoice"], this.frm.doc.doctype) && this.frm.doc.is_return){
 			this.calculate_paid_amount();
 		}
 
@@ -613,7 +613,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 
 		frappe.model.round_floats_in(this.frm.doc, ["grand_total", "total_advance", "write_off_amount"]);
 
-		if(in_list(["Sales Invoice", "Purchase Invoice"], this.frm.doc.doctype)) {
+		if(in_list(["Sales Invoice", "POS Invoice", "Purchase Invoice"], this.frm.doc.doctype)) {
 			var grand_total = this.frm.doc.rounded_total || this.frm.doc.grand_total;
 
 			if(this.frm.doc.party_account_currency == this.frm.doc.currency) {
@@ -635,7 +635,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 				this.frm.refresh_field("base_paid_amount");
 			}
 
-			if(this.frm.doc.doctype == "Sales Invoice") {
+			if(in_list(["Sales Invoice", "POS Invoice"], this.frm.doc.doctype)) {
 				let total_amount_for_payment = (this.frm.doc.redeem_loyalty_points && this.frm.doc.loyalty_amount)
 					? flt(total_amount_to_pay - this.frm.doc.loyalty_amount, precision("base_grand_total"))
 					: total_amount_to_pay;
@@ -692,11 +692,12 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 		if(this.frm.doc.is_pos && (update_paid_amount===undefined || update_paid_amount)) {
 			$.each(this.frm.doc['payments'] || [], function(index, data) {
 				if(data.default && payment_status && total_amount_to_pay > 0) {
-					data.base_amount = flt(total_amount_to_pay, precision("base_amount"));
-					data.amount = flt(total_amount_to_pay / me.frm.doc.conversion_rate, precision("amount"));
-					payment_status = false;
+					let base_amount = flt(total_amount_to_pay, precision("base_amount", data));
+					frappe.model.set_value(data.doctype, data.name, "base_amount", base_amount);
+					let amount = flt(total_amount_to_pay / me.frm.doc.conversion_rate, precision("amount", data));
+					frappe.model.set_value(data.doctype, data.name, "amount", amount);
 				} else if(me.frm.doc.paid_amount) {
-					data.amount = 0.0;
+					frappe.model.set_value(data.doctype, data.name, "amount", 0.0);
 				}
 			});
 		}
@@ -708,7 +709,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 		var base_paid_amount = 0.0;
 		if(this.frm.doc.is_pos) {
 			$.each(this.frm.doc['payments'] || [], function(index, data){
-				data.base_amount = flt(data.amount * me.frm.doc.conversion_rate, precision("base_amount"));
+				data.base_amount = flt(data.amount * me.frm.doc.conversion_rate, precision("base_amount", data));
 				paid_amount += data.amount;
 				base_paid_amount += data.base_amount;
 			});
@@ -720,14 +721,14 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 			paid_amount += flt(this.frm.doc.loyalty_amount / me.frm.doc.conversion_rate, precision("paid_amount"));
 		}
 
-		this.frm.doc.paid_amount = flt(paid_amount, precision("paid_amount"));
-		this.frm.doc.base_paid_amount = flt(base_paid_amount, precision("base_paid_amount"));
+		this.frm.set_value('paid_amount', flt(paid_amount, precision("paid_amount")));
+		this.frm.set_value('base_paid_amount', flt(base_paid_amount, precision("base_paid_amount")));
 	},
 
 	calculate_change_amount: function(){
 		this.frm.doc.change_amount = 0.0;
 		this.frm.doc.base_change_amount = 0.0;
-		if(this.frm.doc.doctype == "Sales Invoice"
+		if(in_list(["Sales Invoice", "POS Invoice"], this.frm.doc.doctype)
 			&& this.frm.doc.paid_amount > this.frm.doc.grand_total && !this.frm.doc.is_return) {
 
 			var payment_types = $.map(this.frm.doc.payments, function(d) { return d.type; });

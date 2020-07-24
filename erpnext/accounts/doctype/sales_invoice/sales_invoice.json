@@ -13,6 +13,7 @@
   "customer_name",
   "tax_id",
   "is_pos",
+  "is_consolidated",
   "pos_profile",
   "offline_pos_name",
   "is_return",
@@ -1615,7 +1616,14 @@
    "fieldname": "is_down_payment_invoice",
    "fieldtype": "Check",
    "label": "Is Down Payment Invoice"
-  }
+  },
+  {
+    "default": "0",
+    "fieldname": "is_consolidated",
+    "fieldtype": "Check",
+    "label": "Is Consolidated",
+    "read_only": 1
+   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,

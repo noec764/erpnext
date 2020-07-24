@@ -15,11 +15,20 @@ frappe.ui.form.on("POS Profile", "onload", function(frm) {
 	erpnext.queries.setup_queries(frm, "Warehouse", function() {
 		return erpnext.queries.warehouse(frm.doc);
 	});
+
+	frm.call({
+		method: "erpnext.accounts.doctype.pos_profile.pos_profile.get_series",
+		callback: function(r) {
+			if(!r.exc) {
+				set_field_options("naming_series", r.message);
+			}
+		}
+	});
 });
 
 frappe.ui.form.on('POS Profile', {
 	setup: function(frm) {
-		frm.set_query("print_format_for_online", function() {
+		frm.set_query("print_format", function() {
 			return {
 				filters: [
 					['Print Format', 'doc_type', '=', 'Sales Invoice'],
@@ -59,15 +68,6 @@ frappe.ui.form.on('POS Profile', {
 		if(frm.doc.company) {
 			frm.trigger("toggle_display_account_head");
 		}
-
-		frm.call({
-			method: "erpnext.accounts.doctype.pos_profile.pos_profile.get_series",
-			callback: function(r) {
-				if(!r.exc) {
-					set_field_options("naming_series", r.message);
-				}
-			}
-		});
 	},
 
 	company: function(frm) {

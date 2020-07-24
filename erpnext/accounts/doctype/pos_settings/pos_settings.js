@@ -7,18 +7,18 @@ frappe.ui.form.on('POS Settings', {
 	},
 
 	get_invoice_fields: function(frm) {
-        frappe.model.with_doctype("Sales Invoice", () => {
-            var fields = $.map(frappe.get_doc("DocType", "Sales Invoice").fields, function(d) {
-                if (frappe.model.no_value_type.indexOf(d.fieldtype) === -1 ||
-                    d.fieldtype === 'Table') {
-                    return { label: d.label + ' (' + d.fieldtype + ')', value: d.fieldname };
-                } else {
-                    return null;
-                }
-            });
+		frappe.model.with_doctype("Sales Invoice", () => {
+			var fields = $.map(frappe.get_doc("DocType", "Sales Invoice").fields, function(d) {
+				if (frappe.model.no_value_type.indexOf(d.fieldtype) === -1 ||
+					d.fieldtype === 'Table') {
+					return { label: d.label + ' (' + d.fieldtype + ')', value: d.fieldname };
+				} else {
+					return null;
+				}
+			});
 
-            frappe.meta.get_docfield("POS Field", "fieldname", frm.doc.name).options = [""].concat(fields);
-        });
+			frappe.meta.get_docfield("POS Field", "fieldname", frm.doc.name).options = [""].concat(fields);
+		});
 	}
 });
 
