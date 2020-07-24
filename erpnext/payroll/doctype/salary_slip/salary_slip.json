@@ -448,6 +448,7 @@
       "fieldname": "total_in_words",
       "fieldtype": "Data",
       "label": "Total in words",
+      "length": 240,
       "oldfieldname": "net_pay_in_words",
       "oldfieldtype": "Data",
       "read_only": 1
