@@ -22,6 +22,7 @@ from erpnext.accounts.general_ledger import get_round_off_account_and_cost_cente
 from erpnext.accounts.doctype.loyalty_program.loyalty_program import \
 	get_loyalty_program_details_with_points, get_loyalty_details, validate_loyalty_points
 from erpnext.accounts.deferred_revenue import validate_service_stop_date
+from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 
 from six import iteritems
 
@@ -269,9 +270,12 @@ class SalesInvoice(SellingController):
 			against_si_doc.make_loyalty_point_entry()
 
 		unlink_inter_company_doc(self.doctype, self.name, self.inter_company_invoice_reference)
+		delete_linked_subscription_events(self)
 
 		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry')
 
+	def on_trash(self):
+		delete_linked_subscription_events(self)
 
 	def update_status_updater_args(self):
 		if cint(self.update_stock):
@@ -1234,6 +1238,9 @@ class SalesInvoice(SellingController):
 
 		if update:
 			self.db_set('status', self.status, update_modified = update_modified)
+
+			if self.subscription:
+				frappe.get_doc("Subscription", self.subscription).update_outstanding()
 
 def get_discounting_status(sales_invoice):
 	status = None

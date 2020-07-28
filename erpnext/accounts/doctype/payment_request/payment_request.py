@@ -10,6 +10,7 @@ from frappe.utils import flt, nowdate, get_url
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry, get_company_defaults
+from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 from frappe.integrations.utils import get_payment_gateway_controller
 from frappe.utils.background_jobs import enqueue
 import json
@@ -117,22 +118,12 @@ class PaymentRequest(Document):
 			self.send_email(communication)
 
 	def on_cancel(self):
-		self.delete_linked_subscription_events(True)
+		delete_linked_subscription_events(self)
 		self.check_if_payment_entry_exists()
 		self.set_as_cancelled()
 
 	def on_trash(self):
-		self.delete_linked_subscription_events()
-
-	def delete_linked_subscription_events(self, cancel_only=False):
-		events = frappe.get_all("Subscription Event", filters={"document_type": "Payment Request", "document_name": self.name}, fields=["name", "docstatus"])
-		for event in events:
-			if event.docstatus == 1:
-				e = frappe.get_doc("Subscription Event", event.name)
-				e.flags.ignore_permissions = True
-				e.cancel()
-
-			frappe.delete_doc("Subscription Event", event.name, force=True)
+		delete_linked_subscription_events(self)
 
 	def make_invoice(self):
 		if self.reference_doctype == "Sales Order":

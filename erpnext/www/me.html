@@ -34,6 +34,21 @@
 				</div>
 			</li>
 			{% endif %}
+			{% if subscription %}
+			<li>
+				<div class="card w-50">
+					<div class="card-body">
+						<h5 class="card-title">{{ _("Your subscription") }}</h5>
+						{% for plan in subscription.plans %}
+							{% set item_name = frappe.db.get_value("Item", plan.item, "item_name") %}
+							<label>{{ item_name }}</label>
+							<p class="card-text">{{ plan.description or "" }}</p>
+						{% endfor %}
+						<a href="/subscriptions" class="btn btn-primary">{{ _("Edit subscription") }}</a>
+					</div>
+				</div>
+			</li>
+			{% endif %}
 			{% if enable_stripe %}
 			<li>
 				<div class="card w-50">

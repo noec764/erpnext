@@ -649,8 +649,9 @@ class PaymentEntry(AccountsController):
 						frappe.get_doc(d.reference_doctype, d.reference_name).set_total_advance_paid()
 
 				if d.allocated_amount and d.reference_doctype == "Sales Invoice":
-					frappe.get_doc("Sales Order", frappe.db.get_value("Sales Invoice Item", \
-						{"parenttype": "Sales Invoice", "parent": d.reference_name}, "sales_order")).set_total_advance_paid()
+					so = frappe.db.get_value("Sales Invoice Item", {"parenttype": "Sales Invoice", "parent": d.reference_name}, "sales_order")
+					if so:
+						frappe.get_doc("Sales Order", so).set_total_advance_paid()
 
 	def update_expense_claim(self):
 		if self.payment_type in ("Pay") and self.party:

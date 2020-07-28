@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 
+import copy
 import frappe
 import erpnext
 from frappe import _
@@ -15,6 +16,7 @@ import numpy as np
 from erpnext.accounts.party import get_default_price_list
 from erpnext.stock.get_item_details import get_price_list_rate_for
 from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
+from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 class Subscription(Document):
 	def onload(self):
@@ -25,7 +27,8 @@ class Subscription(Document):
 
 	def after_insert(self):
 		self.add_subscription_event("New period")
-		self.set_subscription_status()
+		self.set_status()
+		self.process()
 
 	def validate(self):
 		self.set_plan_details_status()
@@ -36,7 +39,7 @@ class Subscription(Document):
 		self.simulate_grand_total_calculation()
 
 	def on_update(self):
-		self.set_subscription_status()
+		self.set_status()
 		self.update_payment_gateway_subscription()
 
 	def on_trash(self):
@@ -92,11 +95,11 @@ class Subscription(Document):
 		if self.cancellation_date and self.period_has_passed(add_days(self.cancellation_date, -1)):
 			self.cancel_subscription()
 
-		if self.status == 'Active':
+		if self.status in ('Active', 'Paid', 'Unpaid'):
 			if not (self.payment_gateway and self.payment_gateway_reference):
 				self.process_active_subscription()
 		elif self.status == 'Trial':
-			self.set_subscription_status()
+			self.set_status()
 
 	def process_active_subscription(self, payment_entry=None):
 		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
@@ -153,13 +156,13 @@ class Subscription(Document):
 
 		return data
 
-	def set_subscription_status(self):
+	def set_status(self):
 		if self.is_cancelled() and self.status != 'Cancelled':
 			self.db_set('status', 'Cancelled')
 		elif not self.is_cancelled() and self.is_trial() and self.status != 'Trial':
 			self.db_set('status', 'Trial')
 		elif not self.is_cancelled() and not self.is_trial() and self.status != 'Cancelled':
-			self.db_set('status', 'Active')
+			self.db_set('status', 'Unpaid' if flt(self.outstanding_amount) > 0 else 'Paid')
 
 		self.reload()
 
@@ -332,6 +335,18 @@ class Subscription(Document):
 
 		return payment_entry
 
+	def create_payment_request(self, submit=False, mute_email=True):
+		return make_payment_request(**{
+			"dt": self.doctype,
+			"dn": self.name,
+			"party_type": "Customer",
+			"party": self.customer,
+			"submit_doc": submit,
+			"mute_email": mute_email,
+			"payment_gateway": self.payment_gateway,
+			"currency": self.currency
+		})
+
 	def set_subscription_invoicing_details(self, document, prorate=0):
 		document.customer = self.customer
 		document.customer_group, document.territory = frappe.db.get_value("Customer", self.customer, ["customer_group", "territory"])
@@ -460,7 +475,7 @@ class Subscription(Document):
 
 	def cancel_subscription(self):
 		if self.status != 'Cancelled':
-			generate_invoice = True if self.status == 'Active' else False
+			generate_invoice = True if self.status in ('Active', 'Paid', 'Unpaid') else False
 			self.status = 'Cancelled'
 			if not self.cancellation_date:
 				self.cancellation_date = self.current_invoice_end
@@ -635,6 +650,20 @@ class Subscription(Document):
 
 			return price_list_rate or 0
 
+	def add_plan(self, plan):
+		plan_doc = frappe.get_doc("Subscription Plan", plan)
+		for plan_line in plan_doc.subscription_plans_template:
+			line = copy.deepcopy(plan_line)
+			self.append('plans', dict(line.as_dict(), **{
+				"from_date": nowdate(),
+				"name": None
+			}))
+
+	def remove_line(self, line):
+		for plan_line in self.plans:
+			if plan_line.name == line:
+				plan_line.to_date = nowdate()
+
 	@frappe.whitelist()
 	def create_stripe_invoice_item(self, plan_details):
 		plan = frappe.parse_json(plan_details)
@@ -652,6 +681,11 @@ class Subscription(Document):
 				return stripe_settings.create_invoice_items(customer, rate, self.currency, frappe.utils.strip_html_tags(plan.get("description")))
 
 		frappe.msgprint(_("The invoice item creation has failed. Check that this subscription is linked to a Stripe gateway."))
+
+	def update_outstanding(self):
+		outstanding = sum([x.outstanding_amount for x in frappe.get_all("Sales Invoice", filters={"subscription": self.name, "docstatus": 1}, fields=["outstanding_amount"])])
+		self.db_set("outstanding_amount", outstanding)
+		self.set_status()
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
@@ -701,8 +735,13 @@ def get_payment_entry(name):
 	return subscription.create_payment()
 
 @frappe.whitelist()
+def get_payment_request(name):
+	subscription = frappe.get_doc('Subscription', name)
+	return subscription.create_payment_request()
+
+@frappe.whitelist()
 def get_chart_data(title, doctype, docname):
-	invoices = frappe.get_all("Sales Invoice", filters={"subscription": docname,}, \
+	invoices = frappe.get_all("Sales Invoice", filters={"subscription": docname, "docstatus": 1}, \
 		fields=["name", "outstanding_amount", "grand_total", "posting_date", "currency"], group_by="posting_date DESC", limit=20)
 
 	if len(invoices) < 1:
@@ -791,26 +830,15 @@ def subscription_headline(name):
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date))
 
 def check_gateway_payments():
-	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
-
 	if not frappe.conf.mute_payment_gateways:
 		gocardless_gateways = [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
-		gocardless_subscription = frappe.get_all("Subscription", filters={"status": "Active", "payment_gateway": ["in", gocardless_gateways]})
+		gocardless_subscription = frappe.get_all("Subscription", filters={"status": ("in", ("Active", "Paid", "Unpaid")), "payment_gateway": ["in", gocardless_gateways]})
 
 		for subscription in gocardless_subscription:
 			doc = frappe.get_doc("Subscription", subscription)
 			if doc.is_payable():
-				pr = make_payment_request(**{
-					"dt": doc.doctype,
-					"dn": doc.name,
-					"party_type": "Customer",
-					"party": doc.customer,
-					"submit_doc": True,
-					"mute_email": True,
-					"payment_gateway": doc.payment_gateway,
-					"currency": doc.currency
-				})
+				payment_request = doc.create_payment_request(submit=True, mute_email=True)
 
-				if pr.get("payment_gateway_account") and float(pr.get("grand_total")) > 0:
-					doc = frappe.get_doc("Payment Request", pr.get("name"))
+				if payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:
+					doc = frappe.get_doc("Payment Request", payment_request.get("name"))
 					doc.run_method("process_payment_immediately")

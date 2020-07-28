@@ -41,6 +41,10 @@ frappe.ui.form.on('Subscription', {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
 			frm.page.add_action_item(
+				__('Create payment request'),
+				() => frm.events.create_payment_request(frm)
+			);
+			frm.page.add_action_item(
 				__('Create payment'),
 				() => frm.events.create_payment(frm)
 			);
@@ -163,12 +167,11 @@ frappe.ui.form.on('Subscription', {
 		frappe.call({
 			method:
 			"erpnext.accounts.doctype.subscription.subscription.get_subscription_updates",
-			args: {name: doc.name},
-			freeze: true,
-			callback: function(data){
-				if(!data.exc){
-					frm.reload_doc();
-				}
+			args: {name: doc.name}
+		}).then(r => {
+			if(!r.exc){
+				frm.reload_doc();
+				frappe.show_alert({message: __("Subscription up to date"), color: "green"})
 			}
 		});
 	},
@@ -187,6 +190,17 @@ frappe.ui.form.on('Subscription', {
 	create_payment(frm) {
 		return frappe.call({
 			method: "erpnext.accounts.doctype.subscription.subscription.get_payment_entry",
+			args: {
+				"name": frm.doc.name
+			}
+		}).then(r => {
+			const doclist = frappe.model.sync(r.message);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		});
+	},
+	create_payment_request(frm) {
+		return frappe.call({
+			method: "erpnext.accounts.doctype.subscription.subscription.get_payment_request",
 			args: {
 				"name": frm.doc.name
 			}

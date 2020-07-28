@@ -18,6 +18,7 @@ def get_context(context):
 	context.show_sidebar = True
 	context.enable_stripe = False
 	context.enable_gocardless = False
+	context.subscription = False
 	context.lang = frappe.local.lang
 
 	active_tokens = frappe.get_all("OAuth Bearer Token",\
@@ -33,6 +34,9 @@ def get_context(context):
 				context.enable_stripe = True
 				context.stripe_payment_methods = get_customer_payment_methods(references)
 				context.publishable_key = get_api_key(references.stripe_settings)
+
+		if frappe.db.exists("Subscription", {"customer": customers[0]}):
+			context.subscription = frappe.get_doc("Subscription", {"customer": customers[0]})
 
 def get_customer_payment_methods(references):
 	try:

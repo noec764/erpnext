@@ -8,6 +8,7 @@
  "field_order": [
   "naming_series",
   "customer",
+  "subscription_template",
   "cb_1",
   "company",
   "currency",
@@ -46,6 +47,7 @@
   "total",
   "column_break_25",
   "grand_total",
+  "outstanding_amount",
   "terms_section",
   "terms_and_conditions",
   "accounting_dimensions_section",
@@ -75,7 +77,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "\nTrial\nActive\nCancelled"
+   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid"
   },
   {
    "fieldname": "subscription_period",
@@ -256,7 +258,7 @@
   {
    "fieldname": "cancellation_date",
    "fieldtype": "Date",
-   "label": "Cancellation Date",
+   "label": "Subscription End Date",
    "no_copy": 1,
    "read_only": 1
   },
@@ -348,10 +350,23 @@
    "fieldtype": "Link",
    "label": "Subscription Plan",
    "options": "Subscription Plan"
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Outstanding Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "subscription_template",
+   "fieldtype": "Link",
+   "label": "From Template",
+   "options": "Subscription Template",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2020-02-29 17:17:58.887601",
+ "modified": "2020-07-28 15:22:35.954843",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
