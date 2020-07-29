@@ -277,6 +277,10 @@ auto_cancel_exempted_doctypes= [
 	"Asset Movement"
 ]
 
+override_doctype_dashboards = {
+	"User": "erpnext.fixtures.user.get_dashboard_data"
+}
+
 scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
