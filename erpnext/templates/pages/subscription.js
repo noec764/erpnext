@@ -16,18 +16,18 @@ class subscriptionPortal {
 		this.subscription_plans = [];
 		this.available_subscriptions = [];
 		this.$wrapper = document.getElementsByClassName("subscriptions-section")
-		this.$current_subscription = document.getElementsByClassName("current-subscription")
-		this.$cancellation_section = document.getElementsByClassName("cancellation-options")
-		this.$available_subscriptions = document.getElementsByClassName("available-subscriptions")
+		this.$current_subscription = this.$wrapper[0].getElementsByClassName("current-subscription")
+		this.$available_plans = this.$wrapper[0].getElementsByClassName("available-plans")
+		this.$payment_section = this.$wrapper[0].getElementsByClassName("invoicing-status")
+		this.$cancellation_section = this.$wrapper[0].getElementsByClassName("cancellation-options")
+		this.$available_subscriptions = this.$wrapper[0].getElementsByClassName("available-subscriptions")
 		this.build()
 	}
 
 	build() {
 		this.get_data()
 		.then(() => {
-			this.subscription&&this.build_current_subscription()
-			this.subscription&&!this.subscription.cancellation_date&&this.build_plans()
-			this.subscription&&!this.subscription.cancellation_date&&this.build_cancellation_section()
+			this.build_current_section();
 			!this.subscription&&this.build_available_subscriptions()
 		})
 	}
@@ -39,6 +39,15 @@ class subscriptionPortal {
 				Object.assign(this, r.message);
 			}
 		})
+	}
+
+	build_current_section() {
+		if (this.subscription) {
+			this.build_current_subscription()
+			this.build_payment_status_section()
+			!this.subscription.cancellation_date&&this.build_plans()
+			!this.subscription.cancellation_date&&this.build_cancellation_section()
+		}
 	}
 
 	build_current_subscription() {
@@ -62,6 +71,8 @@ class subscriptionPortal {
 			const $title = this.$current_subscription[0].getElementsByClassName("subscriptions-section-title")[0]
 			$title.parentNode.insertBefore( div, $title.nextSibling );
 		}
+
+		this.$current_subscription[0].classList.remove("hide")
 	}
 
 	bind_subscription_lines() {
@@ -72,9 +83,9 @@ class subscriptionPortal {
 				return frappe.call("erpnext.templates.pages.subscription.remove_subscription_line", {subscription: me.subscription.name, line: plan.name})
 				.then(r => {
 					if (r && r.message) {
-						this.subscription = r.message;
-						frappe.show_alert({message: __("Line removed from your subscription"), indicator: "green"})
-						me.build_current_subscription()
+						me.subscription = r.message;
+						me.build_current_section();
+						frappe.show_alert({message: __("Line removed from your subscription"), indicator: "green"});
 					}
 				})
 			})
@@ -82,14 +93,15 @@ class subscriptionPortal {
 	}
 
 	build_plans() {
-		const $plans_wrapper = this.$wrapper[0].getElementsByClassName("available-plans")
-		if ($plans_wrapper.length) {
-			const plans = this.get_plans_html()
-			$plans_wrapper[0].innerHTML = `
+		const plans = this.get_plans_html()
+		if (plans) {
+			this.$available_plans[0].innerHTML = `
 				<h5 class="subscriptions-section-title">${ __("Your options") }</h5>
 				<div class="card-columns">${plans}</div>`
+
+			this.bind_plans()
+			this.$available_plans[0].classList.remove("hide")
 		}
-		this.bind_plans()
 	}
 
 	get_plans_html() {
@@ -113,9 +125,9 @@ class subscriptionPortal {
 				return frappe.call("erpnext.templates.pages.subscription.add_plan", {subscription: me.subscription.name, plan: plan.name})
 				.then(r => {
 					if (r && r.message) {
-						this.subscription = r.message;
-						frappe.show_alert({message: __("Plan added to your subscription"), indicator: "green"})
-						me.build_current_subscription()
+						me.subscription = r.message;
+						me.build_current_section();
+						frappe.show_alert({message: __("Plan added to your subscription"), indicator: "green"});
 					}
 				})
 			})
@@ -138,34 +150,42 @@ class subscriptionPortal {
 
 		this.$available_subscriptions[0].innerHTML = `<div class="card-columns">${subscriptions}</div>`
 		this.bind_available_subscriptions()
+		this.$available_subscriptions[0].classList.remove("hide")
 	}
 
 	bind_available_subscriptions() {
+		const me = this;
 		this.available_subscriptions.map(sub => {
 			document.getElementById(`${frappe.scrub(sub.name)}_subscription`).addEventListener("click", function(e) {
 				return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: sub.name})
 				.then(r => {
 					if (r && r.message) {
-						this.subscription = r.message;
+						me.subscription = r.message;
+						me.build_current_section();
+						me.remove_available_subscriptions();
 						frappe.show_alert({message: __("Subscription created"), indicator: "green"})
-						me.build_current_subscription()
 					}
 				})
 			})
 		})
 	}
 
+	remove_available_subscriptions() {
+		this.$available_subscriptions[0].classList.add("hide");
+	}
+
 	build_cancellation_section() {
 		const me = this;
 		this.$cancellation_section[0].innerHTML = 
 			`<h5 class="subscriptions-section-title">${ __("Cancellation options") }</h5>
-			<button class="btn btn-danger" id="subscription-cancellation-btn">${ __("Cancel my subscription") }</button>
+			<div><button class="btn btn-danger" id="subscription-cancellation-btn">${ __("Cancel my subscription") }</button></div>
 			`
 		document.getElementById('subscription-cancellation-btn').addEventListener("click", function(e) {
 			new frappe.confirm(__('Cancel this subscription at the end of the current billing period ?'), function() {
 				me.cancel_subscription();
 			})
 		})
+		this.$cancellation_section[0].classList.remove("hide");
 	}
 
 	cancel_subscription() {
@@ -173,9 +193,41 @@ class subscriptionPortal {
 		.then(r => {
 			if (r && r.message) {
 				this.subscription = r.message;
+				this.build_current_section()
+				this.remove_cancellation_section()
 				frappe.show_alert({message: __("Subscription created"), indicator: "green"})
-				this.build_current_subscription()
 			}
 		})
+	}
+
+	remove_cancellation_section() {
+		this.$cancellation_section[0].classList.add("hide");
+	}
+
+	build_payment_status_section() {
+		frappe.call("erpnext.templates.pages.subscription.get_payment_requests", {subscription: this.subscription.name})
+		.then(r => {
+			const status = `
+				<div>
+					<p>${__("Outstanding amount:")}
+						<span> ${format_currency(this.subscription.outstanding_amount, this.subscription.currency)}</span>
+					<p>
+				</div>`
+
+			let payment_request = "";
+			if (r.message.length) {
+				payment_request = `<div><a class="btn btn-warning" href="${r.message[0].payment_link}">${__("Pay immediately")}</a></div>`
+			} else {
+				payment_request = `<div><a class="btn btn-info" href="/invoices">${ __("View invoices") }</a></div>`
+			}
+
+			this.$payment_section[0].innerHTML = 
+			`<h5 class="subscriptions-section-title">${ __("Invoicing status") }</h5>
+			${status}
+			${payment_request}
+			`
+		})
+
+		this.$payment_section[0].classList.remove("hide");
 	}
 }

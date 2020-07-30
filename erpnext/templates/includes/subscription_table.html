@@ -13,7 +13,7 @@
 			{% if frappe.utils.getdate(plan.to_date) >= frappe.utils.getdate(frappe.utils.nowdate()) %}
 				{% set item_name = frappe.db.get_value("Item", plan.item, "item_name") %}
 				<tr>
-					<th><h6>{{ item_name }}</h6><span>{{ plan.description }}</span></th>
+					<th><h6>{{ item_name }}</h6><span>{{ plan.description or "" }}</span></th>
 					<td>{{ plan.qty }}</td>
 					<td>{{ frappe.utils.fmt_money(plan.rate, currency=subscription.currency) }}</td>
 					<td>{{ frappe.utils.fmt_money(frappe.utils.flt(plan.rate) * frappe.utils.flt(plan.qty), currency=subscription.currency) }}</td>

@@ -5,11 +5,6 @@
 {%- block header -%}
 {% endblock %}
 
-{% block script %}
-<script src="https://js.stripe.com/v3/"></script>
-<script>{% include "templates/includes/integrations/stripe_checkout.js" %}</script>
-{% endblock %}
-
 {%- block page_content -%}
 
 <div class="row stripe">
@@ -54,4 +49,13 @@
 </div>
 
 
+{% endblock %}
+
+{% block script %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>{% include "templates/includes/integrations/stripe_checkout.js" %}</script>
+{% endblock %}
+
+{% block style %}
+<style>{% include "templates/pages/integrations/stripe_checkout.css" %}</style>
 {% endblock %}

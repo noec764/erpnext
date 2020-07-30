@@ -125,7 +125,7 @@ class WebhooksController():
 			filters={
 				"service_document": self.integration_request.get("service_document"),
 				"service_id": self.integration_request.get("service_id"),
-				"status": "Pending"
+				"status": ("in", ("Initiated", "Pending"))
 			},
 			fields=["name", "reference_doctype", "reference_docname"])
 

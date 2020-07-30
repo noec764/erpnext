@@ -385,7 +385,7 @@ class PaymentRequest(Document):
 
 		return redirect_to
 
-	def get_subscription_plans_details(self, gateway):
+	def get_stripe_subscription_plans_details(self):
 		result = []
 		for plan in self.get_subscription_payment_plans():
 			if plan.stripe_plan:

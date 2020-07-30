@@ -66,6 +66,7 @@ domains = {
 	'Manufacturing': 'erpnext.domains.manufacturing',
 	'Retail': 'erpnext.domains.retail',
 	'Services': 'erpnext.domains.services',
+	'Venue': 'erpnext.domains.venue',
 }
 
 website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
@@ -169,7 +170,8 @@ standard_portal_menu_items = [
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"},
-	{"title": _("Appointment Booking"), "route": "/book_appointment"}
+	{"title": _("Appointment Booking"), "route": "/book_appointment"},
+	{"title": _("Subscription"), "route": "/subscription"}
 ]
 
 default_roles = [
@@ -296,8 +298,7 @@ scheduler_events = {
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
-		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
-		"erpnext.accounts.doctype.subscription.subscription.check_gateway_payments"
+		"erpnext.accounts.doctype.subscription.subscription.update_grand_total"
 	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",

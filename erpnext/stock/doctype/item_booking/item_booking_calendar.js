@@ -9,7 +9,14 @@ frappe.views.calendar["Item Booking"] = {
 		"title": "title",
 		"allDay": "all_day",
 		"rrule": "rrule",
-		"color": "color"
+		"color": "color",
+		"status": "status"
+	},
+	status_color: {
+		"In cart": "orange",
+		"Not confirmed": "darkgrey",
+		"Confirmed": "green",
+		"Cancelled": "red"
 	},
 	filters: [["Item Booking", "status","!=", "Cancelled"]]
 };

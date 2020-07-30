@@ -28,6 +28,7 @@
   "create_sales_order",
   "generate_invoice_at_period_start",
   "submit_invoice",
+  "generate_payment_request",
   "column_break_18",
   "billing_interval",
   "billing_interval_count",
@@ -77,7 +78,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid"
+   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nDraft invoices"
   },
   {
    "fieldname": "subscription_period",
@@ -363,10 +364,16 @@
    "label": "From Template",
    "options": "Subscription Template",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_payment_request",
+   "fieldtype": "Check",
+   "label": "Generate a payment request automatically"
   }
  ],
  "links": [],
- "modified": "2020-07-28 15:22:35.954843",
+ "modified": "2020-07-30 09:56:22.209602",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

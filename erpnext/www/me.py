@@ -19,6 +19,7 @@ def get_context(context):
 	context.enable_stripe = False
 	context.enable_gocardless = False
 	context.subscription = False
+	context.subscriptions_available = False
 	context.lang = frappe.local.lang
 
 	active_tokens = frappe.get_all("OAuth Bearer Token",\
@@ -37,6 +38,8 @@ def get_context(context):
 
 		if frappe.db.exists("Subscription", {"customer": customers[0]}):
 			context.subscription = frappe.get_doc("Subscription", {"customer": customers[0]})
+
+		context.subscriptions_available = True if frappe.db.get_value("Subscription Template", {"enable_on_portal": 1}) else False
 
 def get_customer_payment_methods(references):
 	try:

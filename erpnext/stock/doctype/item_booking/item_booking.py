@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -227,8 +227,8 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 	if not duration:
 		return
 
-	init = datetime.datetime.strptime(start, '%Y-%m-%d')
-	finish = datetime.datetime.strptime(end, '%Y-%m-%d')
+	init = datetime.datetime.strptime(start, '%Y-%m-%d') if type(start) == str else get_datetime(start)
+	finish = datetime.datetime.strptime(end, '%Y-%m-%d') if type(end) == str else get_datetime(end)
 
 	output = []
 	for dt in daterange(init, finish):
@@ -242,16 +242,14 @@ def _check_availability(item, date, duration, quotation=None, uom=None):
 	date = getdate(date)
 	day = calendar.day_name[date.weekday()]
 
-
 	schedule = get_item_calendar(item.name, uom)
 
 	availability = []
 	schedules = []
 	if schedule:
 		schedule_for_the_day = filter(lambda x: x.day == day, schedule)
-
 		for line in schedule_for_the_day:
-			start = now_datetime()
+			start = get_datetime(now())
 			if datetime.datetime.combine(date, get_time(line.end_time)) > start:
 				if datetime.datetime.combine(date, get_time(line.start_time)) > start:
 					start = datetime.datetime.combine(date, get_time(line.start_time))
@@ -475,7 +473,7 @@ def get_uom_in_minutes(uom=None):
 		dict(from_uom=uom, to_uom=minute_uom), "value") or 0
 
 def daterange(start_date, end_date):
-	if start_date < now_datetime():
+	if start_date < get_datetime(now()):
 		start_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
 	for n in range(int((end_date - start_date).days)):
 		yield start_date + timedelta(n)

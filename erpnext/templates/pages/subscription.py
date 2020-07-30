@@ -8,6 +8,7 @@ from frappe.utils import nowdate, cint
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
 from erpnext.shopping_cart.cart import get_party
+from erpnext.accounts.doctype.payment_request.payment_request import get_payment_link
 
 def get_context(context):
 	context.no_cache = 1
@@ -72,3 +73,19 @@ def cancel_subscription(subscription):
 	subscription = frappe.get_doc("Subscription", subscription)
 	subscription.cancellation_date = subscription.current_invoice_end
 	return subscription.save(ignore_permissions=True)
+
+@frappe.whitelist()
+def get_payment_requests(subscription):
+	output = []
+	payment_requests = frappe.get_all("Payment Request", filters={
+		"docstatus": 1,
+		"reference_doctype": "Subscription",
+		"reference_name": subscription,
+		"status": "Initiated"
+	}, fields=["name", "payment_key"])
+
+	if payment_requests:
+		output = [dict(x, **{"payment_link": get_payment_link(x.payment_key)}) for x in payment_requests]
+
+	return output
+

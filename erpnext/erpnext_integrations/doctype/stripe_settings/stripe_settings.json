@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_rename": 1,
  "autoname": "field:gateway_name",
  "creation": "2017-03-09 17:18:29.458397",
  "doctype": "DocType",
@@ -81,7 +82,7 @@
   }
  ],
  "links": [],
- "modified": "2019-12-18 15:26:02.286956",
+ "modified": "2020-07-30 10:30:32.402762",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Stripe Settings",

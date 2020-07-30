@@ -1,14 +1,10 @@
 // Copyright (c) 2019, Dokos SAS and Contributors
 // License: See license.txt
 
-if (typeof Stripe != "undefined") {
-	const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
-	const elements = stripe.elements();
-}
-
 $(document).ready(function() {
 	if (typeof Stripe != "undefined") {
-		new stripe_payment_methods();
+		const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
+		new stripe_payment_methods({stripe: stripe});
 	}
 });
 
@@ -32,7 +28,7 @@ stripe_payment_methods = class {
 	add_new_card() {
 		$("#add-card").addClass('d-none');
 		$("#card-form").addClass('d-block');
-		this.cardElement = elements.create('card', {
+		this.cardElement = this.stripe.elements().create('card', {
 			hidePostalCode: true,
 			style: {
 				base: {
@@ -73,7 +69,7 @@ stripe_payment_methods = class {
 		submitButton.addEventListener('click', function(event) {
 			event.preventDefault();
 		
-			stripe.createToken(me.cardElement).then(function(result) {
+			me.stripe.createToken(me.cardElement).then(function(result) {
 				if (result.error) {
 					// Inform the user if there was an error.
 					const errorElement = document.getElementById('card-errors');

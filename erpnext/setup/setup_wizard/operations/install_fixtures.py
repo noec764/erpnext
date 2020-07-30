@@ -27,6 +27,7 @@ def install(country=None):
 		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
 		{ 'doctype': 'Domain', 'domain': 'Retail'},
 		{ 'doctype': 'Domain', 'domain': 'Services'},
+		{ 'doctype': 'Domain', 'domain': 'Venue'},
 
 		# ensure at least an empty Address Template exists for this Country
 		{'doctype':"Address Template", "country": country},

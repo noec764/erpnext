@@ -14,6 +14,7 @@
   "create_sales_order",
   "generate_invoice_at_period_start",
   "submit_invoice",
+  "generate_payment_request",
   "column_break_8",
   "billing_interval",
   "billing_interval_count",
@@ -167,11 +168,17 @@
    "fieldname": "portal_description",
    "fieldtype": "Text Editor",
    "label": "Portal description"
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_payment_request",
+   "fieldtype": "Check",
+   "label": "Generate a payment request automatically"
   }
  ],
  "image_field": "portal_image",
  "links": [],
- "modified": "2020-07-27 17:56:19.419461",
+ "modified": "2020-07-30 09:56:53.886649",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

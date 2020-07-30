@@ -33,7 +33,7 @@
 
 <div class="row transaction-subheading">
 	<div class="col-6">
-		<span class="indicator {{ doc.indicator_color or ("blue" if doc.docstatus==1 else "darkgrey") }}">
+		<span class="indicator-pill {{ doc.indicator_color or ("blue" if doc.docstatus==1 else "darkgrey") }}">
 			{{ _(doc.get('indicator_title')) or _(doc.status) or _("Submitted") }}
 		</span>
 	</div>
@@ -61,7 +61,7 @@
 {{ doc._header }}
 {% endif %}
 
-<div class="order-container">
+<div class="order-container card frappe-card">
 
 	<!-- items -->
 	<div class="order-item-table">
@@ -107,7 +107,7 @@
 	or (doc.doctype=="Sales Invoice" and doc.outstanding_amount > 0)) %}
 
 	{% if available_loyalty_points %}
-		<div class="card mt-3">
+		<div class="frappe-card card mt-3">
 			<div class="card-body">
 				<h5 class="card-title">{{ _("Redeem loyalty points") }}</h5>
 				<div class="control-input-wrapper">
@@ -120,7 +120,7 @@
 		  </div>
 	{% endif %}
 
-	<div class="card mt-3">
+	<div class="frappe-card card mt-3">
 		<div class="card-body">
 			<h5 class="card-title">{{ _("Payment") }}</h5>
 			<p id="loyalty-points-status"></p>
@@ -131,7 +131,7 @@
 
 
 {% if attachments %}
-<div class="order-item-table">
+<div class="order-item-table frappe-card card">
 	<div class="row order-items order-item-header text-muted">
 		<div class="col-sm-12 h6 text-uppercase">
 			{{ _("Attachments") }}

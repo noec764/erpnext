@@ -6,10 +6,11 @@
 
 {% block page_content %}
 <div class="subscriptions-section">
-		<div class="current-subscription"></div>
-		<div class="available-plans"></div>
-		<div class="cancellation-options"></div>
-		<div class="available-subscriptions"></div>
+	<div class="current-subscription card frappe-card hide"></div>
+	<div class="available-plans card frappe-card hide"></div>
+	<div class="invoicing-status card frappe-card hide"></div>
+	<div class="cancellation-options card frappe-card hide"></div>
+	<div class="available-subscriptions card frappe-card hide"></div>
 </div>
 {% endblock %}
 
@@ -23,8 +24,10 @@
 
 .current-subscription,
 .available-plans,
-.cancellation-options {
+.cancellation-options,
+.invoicing-status {
 	margin: 2rem 0;
+	padding: 2rem;
 }
 
 .subscription-subtitle h6 {
