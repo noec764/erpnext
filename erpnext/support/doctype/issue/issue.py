@@ -351,7 +351,7 @@ def set_service_level_agreement_variance(issue=None):
 	if issue:
 		filters = {"name": issue}
 
-	for issue in frappe.get_list("Issue", filters=filters):
+	for issue in frappe.get_list("Issue", filters=filters, ignore_permissions=True if issue else False):
 		doc = frappe.get_doc("Issue", issue.name)
 
 		if not doc.first_responded_on: # first_responded_on set when first reply is sent to customer
