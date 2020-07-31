@@ -277,7 +277,8 @@
 							"account_number": "5124",
 							"account_type": "Bank"
 						},
-						"account_number": "512"
+						"account_number": "512",
+						"account_type": "Bank"
 					},
 					"Caisse": {
 						"Caisse siège social": {

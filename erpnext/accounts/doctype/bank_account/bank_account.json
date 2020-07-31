@@ -201,7 +201,6 @@
    "read_only": 1
   },
   {
-   "fetch_from": "bank.swift_number",
    "fetch_if_empty": 1,
    "fieldname": "swift_number",
    "fieldtype": "Data",

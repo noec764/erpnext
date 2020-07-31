@@ -14,8 +14,9 @@ def get_context(context):
 	context.no_cache = 1
 	context.show_sidebar = True
 
-	if not cint(frappe.db.get_single_value("Shopping Cart Settings", "enabled")):
-		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	if not cint(frappe.db.get_single_value("Shopping Cart Settings", "enabled")) \
+		or frappe.session.user == "Guest":
+		frappe.throw(_("You need to be logged in to access this page"), frappe.PermissionError)
 
 @frappe.whitelist()
 def get_subscription_context():
