@@ -25,11 +25,11 @@ def get_context(context):
 
 		if hasattr(reference_document, 'is_linked_to_a_subscription') and reference_document.is_linked_to_a_subscription():
 			context.is_subscription = True
-		else:
-			payment_intent = frappe.get_doc("Stripe Settings", gateway_controller)\
-				.create_payment_intent_on_stripe(amount=cint(context['amount'])*100, currency=context['currency'])
 
-			context.client_secret = payment_intent.client_secret
+		payment_intent = frappe.get_doc("Stripe Settings", gateway_controller)\
+			.create_payment_intent_on_stripe(amount=cint(context['amount'])*100, currency=context['currency'])
+
+		context.client_secret = payment_intent.client_secret
 
 		context.publishable_key = get_api_key(gateway_controller)
 		context.image = get_header_image(context.reference_docname, gateway_controller)

@@ -1213,7 +1213,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2020-07-09 12:50:39.640534",
+ "modified": "2020-07-10 12:50:39.640534",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
@@ -1287,7 +1287,7 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "customer",
- "title_field": "title",
+ "title_field": "customer_name",
  "track_changes": 1,
  "track_seen": 1
 }

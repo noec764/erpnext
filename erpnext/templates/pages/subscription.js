@@ -15,6 +15,7 @@ class subscriptionPortal {
 		this.subscription = null;
 		this.subscription_plans = [];
 		this.available_subscriptions = [];
+		this.payment_link = null;
 		this.$wrapper = document.getElementsByClassName("subscriptions-section")
 		this.$current_subscription = this.$wrapper[0].getElementsByClassName("current-subscription")
 		this.$available_plans = this.$wrapper[0].getElementsByClassName("available-plans")
@@ -157,16 +158,29 @@ class subscriptionPortal {
 		const me = this;
 		this.available_subscriptions.map(sub => {
 			document.getElementById(`${frappe.scrub(sub.name)}_subscription`).addEventListener("click", function(e) {
-				return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: sub.name})
-				.then(r => {
-					if (r && r.message) {
-						me.subscription = r.message;
-						me.build_current_section();
-						me.remove_available_subscriptions();
-						frappe.show_alert({message: __("Subscription created"), indicator: "green"})
-					}
+				new frappe.confirm(__('Subscribe to {0} ?', [sub.name]), function() {
+					me.new_subscription(sub);
 				})
 			})
+		})
+	}
+
+	new_subscription(sub) {
+		const me = this;
+		return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: sub.name})
+		.then(r => {
+			if (r && r.message) {
+				me.subscription = r.message.subscription;
+				me.payment_link = r.message.payment_link;
+
+				frappe.show_alert({message: __("Subscription created"), indicator: "green"})
+				if (me.payment_link) {
+					window.location = me.payment_link;
+				} else {
+					me.build_current_section();
+					me.remove_available_subscriptions();
+				}
+			}
 		})
 	}
 

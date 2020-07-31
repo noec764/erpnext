@@ -136,9 +136,8 @@ class StripeSettings(PaymentGatewayController):
 		})
 
 	def get_stripe_customer(self):
-		if self.get_existing_customer():
-			self.customer = self.get_existing_customer()
-		else:
+		self.customer = self.get_existing_customer()
+		if not self.customer:
 			self.customer = self.create_new_customer_on_stripe(
 					**dict(
 						name=self.data.payer_name,
@@ -152,17 +151,16 @@ class StripeSettings(PaymentGatewayController):
 
 	def create_new_customer_on_stripe(self, **kwargs):
 		return self.stripe.Customer.create(
-				name=kwargs.get("payer_name"),
-				email=kwargs.get("payer_email"),
-				source=kwargs.get("stripe_token_id"),
+				name=kwargs.get("name"),
+				email=kwargs.get("email"),
+				source=kwargs.get("source"),
 				payment_method=kwargs.get("payment_method"),
 				address=kwargs.get("address"),
 				metadata=kwargs.get("metadata")
 		)
 
 	def get_existing_customer(self):
-		if self.origin_transaction.get("customer") and frappe.db.exists("Integration References",\
-			dict(customer=self.origin_transaction.get("customer"))):
+		if self.origin_transaction.get("customer"):
 			customer_id = frappe.db.get_value("Integration References",\
 				dict(customer=self.origin_transaction.get("customer")), "stripe_customer_id")
 			if not customer_id:
@@ -180,6 +178,7 @@ class StripeSettings(PaymentGatewayController):
 		if frappe.db.exists("Integration References", dict(customer=dokos_customer)):
 			doc = frappe.get_doc("Integration References", dict(customer=dokos_customer))
 			doc.stripe_customer_id = stripe_customer
+			doc.stripe_settings = self.name
 			doc.save(ignore_permissions=True)
 
 		else:
@@ -198,7 +197,7 @@ class StripeSettings(PaymentGatewayController):
 
 	def create_subscription_on_stripe(self, metadata=None):
 		self.subscription = self.stripe.Subscription.create(
-			customer=self.customer,
+			customer=self.customer.id,
 			items=self.payment_plans,
 			idempotency_key=self.reference_document.name,
 			metadata=metadata
@@ -420,8 +419,10 @@ class StripeSettings(PaymentGatewayController):
 			"Completed": "Paid"
 		}
 
-		if self.reference_document == "Payment Request":
-			self.integration_request.db_set('status', status_map.get(status, status), update_modified=True)
+		updated_status = status_map.get(status, status)
+		status_field = self.reference_document.meta.get_field("status")
+		if status_field and updated_status in status_field.options.split("\n"):
+			frappe.db.set_value(self.reference_document.doctype, self.reference_document.name, 'status', updated_status, update_modified=False)
 
 def handle_webhooks(**kwargs):
 	integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))

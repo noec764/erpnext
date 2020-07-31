@@ -293,13 +293,42 @@ class PaymentRequest(Document):
 
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
-			payment_entry.submit()
-
 			if self.reference_doctype == "Subscription":
-				subscription = frappe.get_doc(self.reference_doctype, self.reference_name)
-				subscription.run_method("generate_invoice", payment_entry=payment_entry.name)
+				self.generate_subscription_invoices(payment_entry)
+			else:
+				payment_entry.submit()
 
 		return payment_entry
+
+	def generate_subscription_invoices(self, payment_entry):
+			subscription = frappe.get_doc(self.reference_doctype, self.reference_name)
+			generated_invoices = subscription.get_current_documents("Sales Invoice")
+
+			if not generated_invoices:
+				payment_entry.submit()
+				subscription.run_method("generate_invoice", payment_entry=payment_entry.name)
+			else:
+				for invoice in generated_invoices:
+					si = frappe.get_doc("Sales Invoice", invoice)
+					if si.docstatus == 0:
+						si.allocate_advances_automatically = True
+						si.save()
+
+						if subscription.submit_invoice:
+							si.submit()
+					elif si.docstatus == 1:
+						payment_entry.append("references", {
+							'reference_doctype': "Sales Invoice",
+							'reference_name': si.name,
+							"bill_no": si.get("bill_no"),
+							"due_date": si.get("due_date"),
+							'total_amount': si.get("grand_total"),
+							'outstanding_amount': si.outstanding_amount,
+							'allocated_amount': min(payment_entry.unallocated_amount, si.outstanding_amount)
+						})
+						payment_entry.save()
+
+				payment_entry.submit()
 
 	def send_email(self, communication=None):
 		"""send email with payment link"""

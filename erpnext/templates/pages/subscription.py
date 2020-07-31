@@ -4,7 +4,7 @@
 import frappe
 
 from frappe import _
-from frappe.utils import nowdate, cint
+from frappe.utils import nowdate, cint, get_url
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
 from erpnext.shopping_cart.cart import get_party
@@ -67,7 +67,13 @@ def new_subscription(template):
 
 	company = frappe.db.get_single_value("Shopping Cart Settings", "company")
 
-	return make_subscription(template=template, company=company, customer=customer, start_date=nowdate(), ignore_permissions=True)
+	subscription = make_subscription(template=template, company=company, customer=customer, start_date=nowdate(), ignore_permissions=True)
+	payment_key = frappe.db.get_value("Payment Request", {"reference_doctype": "Subscription", "reference_name": subscription.name}, "payment_key")
+	
+	return {
+		"subscription": subscription,
+		"payment_link": get_url("/payments?link={0}".format(payment_key)) if payment_key else None
+	}
 
 @frappe.whitelist()
 def cancel_subscription(subscription):
