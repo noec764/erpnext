@@ -103,8 +103,7 @@ export default {
 			transactions: [],
 			columns: [
 				{field: "name", hidden: true},
-				{field: "date", hidden: true},
-				{label:__("Date"), field:"displayed_date"},
+				{label:__("Date"), field:"date", type: 'date', dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
 				{label:__("Description"), field:"description", width: "60%"},
 				{label:__("Amount"), field:"amount", width: "100%", type: "decimal", formatFn: this.formatAmount},
 				{field: "currency", hidden: true},
@@ -121,7 +120,6 @@ export default {
 	computed: {
 		mapped_transactions() {
 			return this.transactions.map(transaction => ({...transaction,
-				displayed_date: frappe.datetime.str_to_user(transaction.date),
 				amount: transaction.unallocated_amount,
 				link: `/desk#Form/Bank Transaction/${transaction.name}`
 			}))
@@ -130,7 +128,6 @@ export default {
 			return this.transactions
 				.filter(f => f.description&&f.description.toLowerCase().includes("stripe"))
 				.map(transaction => ({...transaction,
-					displayed_date: frappe.datetime.str_to_user(transaction.date),
 					amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount
 				}))
 		}

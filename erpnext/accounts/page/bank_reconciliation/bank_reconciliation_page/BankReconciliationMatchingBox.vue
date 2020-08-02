@@ -101,11 +101,11 @@ export default {
 			},
 			columns: [
 				{field: 'name', hidden: true},
-				{label:__('Date'), field:'date'},
+				{label:__('Date'), field:'date', type: "date", dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
 				{label:__('Party'), field:'party', width: "20%"},
 				{label:__('Amount'), field:'amount', type: 'decimal', formatFn: this.formatAmount, width: "30%"},
 				{label:__('Reference'), field:'reference_string', width: "30%"},
-				{label:__('Reference Date'), field:'reference_date'},
+				{label:__('Reference Date'), field:'reference_date', type: "date", dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
 				{field:'link'}
 			]
 		}
@@ -113,9 +113,7 @@ export default {
 	computed: {
 		rows: function() {
 			return this.matching_documents[this.document_type].map(document => ({...document,
-				date: frappe.datetime.str_to_user(document.posting_date),
-				reference_date: frappe.datetime.str_to_user(document.reference_date),
-				reference_string: document.reference_string,
+				date: document.posting_date,
 				doctype: this.document_type,
 				link: `/desk#Form/${this.document_type}/${document.name}`
 			}))
