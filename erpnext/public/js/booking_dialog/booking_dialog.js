@@ -374,7 +374,8 @@ class BookingCalendar {
 			start: moment.utc(event.event.start).format("YYYY-MM-DD H:mm:SS"),
 			end: moment.utc(event.event.end).format("YYYY-MM-DD H:mm:SS"),
 			item: this.parent.item,
-			uom: this.uom
+			uom: this.uom,
+			user: frappe.session.user
 		}).then(r => {
 			this.getQuotation()
 			this.updateCart(r.message.name, 1)

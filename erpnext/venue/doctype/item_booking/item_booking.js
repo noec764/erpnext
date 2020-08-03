@@ -16,7 +16,8 @@ frappe.ui.form.on('Item Booking', {
 				{ source_name: frm.doc.name }
 			).then(r => {
 				if (r) {
-					frappe.set_route('Form', r.doctype, r.name);
+					const doclist = frappe.model.sync(r);
+					frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 				}
 			})
 		})
@@ -60,7 +61,7 @@ frappe.ui.form.on('Item Booking', {
 			clearInterval(frm.delayInfo)
 		}
 
-		if (!frm.is_new() && frm.doc.status === "In Cart") {
+		if (!frm.is_new() && frm.doc.status === "In cart") {
 			frappe.db.get_single_value("Venue Settings", "clear_item_booking_draft_duration")
 				.then(r => {
 					frm.delayInfo && clearInterval(frm.delayInfo);
@@ -319,16 +320,6 @@ frappe.tour['Item Booking'] = [
 		fieldname: "notes",
 		title: __("Notes"),
 		description: __("This field allows you to register notes linked to this booking. Users can also add notes when booking on the website.")
-	},
-	{
-		fieldname: "billing_qty",
-		title: __("Billing Quantity"),
-		description: __("This value will be used to create a quotation from an item booking. A new line will be added with this quantity.")
-	},
-	{
-		fieldname: "sales_uom",
-		title: __("Sales UOM"),
-		description: __("This value will be used to create a quotation from an item booking. This unit of measure will be used to fetch the appropriate price.")
 	},
 	{
 		fieldname: "party_type",

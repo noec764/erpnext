@@ -22,7 +22,8 @@ doctype_js = {
 	"Communication": "public/js/communication.js",
 	"Website Theme": "public/js/website_theme.js",
 	"Newsletter": "public/js/newsletter.js",
-	"Google Calendar": "public/js/google_calendar.js"
+	"Google Calendar": "public/js/google_calendar.js",
+	"Event": "public/js/event.js"
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
@@ -280,7 +281,8 @@ auto_cancel_exempted_doctypes= [
 ]
 
 override_doctype_dashboards = {
-	"User": "erpnext.fixtures.user.get_dashboard_data"
+	"User": "erpnext.fixtures.user.get_dashboard_data",
+	"Event": "erpnext.fixtures.event.get_dashboard_data"
 }
 
 scheduler_events = {

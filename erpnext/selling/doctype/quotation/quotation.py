@@ -49,8 +49,6 @@ class Quotation(SellingController):
 				booking = frappe.get_doc("Item Booking", item.item_booking)
 				booking.party_type = self.quotation_to
 				booking.party_name = self.party_name
-				booking.billing_qty = item.qty
-				booking.sales_uom = item.uom
 				booking.save(ignore_permissions=True)
 
 	def set_customer_name(self):

@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -109,7 +109,7 @@ def get_item_uoms(item_code):
 	return {
 		"uoms": frappe.get_all('UOM Conversion Detail',\
 		filters={'parent': item_code}, fields=["distinct uom"], order_by='idx desc', as_list=1),
-		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
+		"sales_uom": frappe.get_cached_value("Item", item, "sales_uom")
 	}
 
 @frappe.whitelist(allow_guest=True)
@@ -139,18 +139,16 @@ def get_item_price(item_code, uom):
 
 @frappe.whitelist()
 def book_new_slot(**kwargs):
-	uom = kwargs.get("uom") or frappe.db.get_value("Item", kwargs.get("item"), "sales_uom")
 	try:
 		doc = frappe.get_doc({
 			"doctype": "Item Booking",
 			"item": kwargs.get("item"),
 			"starts_on": kwargs.get("start"),
 			"ends_on": kwargs.get("end"),
-			"billing_qty": 1,
-			"sales_uom": uom,
-			"user": frappe.session.user,
-			"status": "In Cart",
-			"sync_with_google_calendar": frappe.db.get_single_value('Venue Settings', 'sync_with_google_calendar')
+			"user": kwargs.get("user"),
+			"status": kwargs.get("status") or "In cart",
+			"event": kwargs.get("event"),
+			"sync_with_google_calendar": kwargs.get("sync_with_google_calendar") or frappe.db.get_single_value('Venue Settings', 'sync_with_google_calendar')
 		}).insert(ignore_permissions=True)
 
 		return doc
@@ -381,7 +379,7 @@ def check_simultaneaous_bookings(item, scheduled_items):
 	return scheduled_items
 
 def _get_selected_slots(events, quotation=None):
-	linked_items = [x for x in events if x.get("status") == "In Cart" and x.get("user") == frappe.session.user]
+	linked_items = [x for x in events if x.get("status") == "In cart" and x.get("user") == frappe.session.user]
 	if not linked_items:
 		return []
 
@@ -472,6 +470,18 @@ def get_uom_in_minutes(uom=None):
 	return frappe.db.get_value("UOM Conversion Factor",\
 		dict(from_uom=uom, to_uom=minute_uom), "value") or 0
 
+def get_sales_qty(item, start, end):
+	minute_uom = frappe.db.get_value("Venue Settings", None, "minute_uom")
+	sales_uom = frappe.get_cached_value("Item", item, "sales_uom")
+	duration = time_diff_in_minutes(end, start)
+
+	if sales_uom == minute_uom:
+		return duration
+
+	conversion_factor = frappe.db.get_value("UOM Conversion Factor", dict(from_uom=sales_uom, to_uom=minute_uom), "value")
+
+	return flt(duration) / flt(conversion_factor)
+
 def daterange(start_date, end_date):
 	if start_date < get_datetime(now()):
 		start_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
@@ -498,7 +508,7 @@ def confirm_linked_item_bookings(doc, method):
 			slot.set_status("Confirmed")
 
 def clear_draft_bookings():
-	drafts = frappe.get_all("Item Booking", filters={"status": "In Cart"}, fields=["name", "modified"])
+	drafts = frappe.get_all("Item Booking", filters={"status": "In cart"}, fields=["name", "modified"])
 	clearing_duration = frappe.db.get_value("Venue Settings", None, "clear_item_booking_draft_duration")
 
 	if cint(clearing_duration) <= 0:
@@ -534,8 +544,8 @@ def make_quotation(source_name, target_doc=None):
 		# add item
 		quotation.append('items', {
 			'item_code': source.item,
-			'qty': source.billing_qty,
-			'uom': source.sales_uom,
+			'qty': get_sales_qty(source.item, source.starts_on, source.ends_on),
+			'uom': frappe.get_cached_value("Item", source.item, "sales_uom"),
 			'item_booking': source.name
 		})
 
@@ -556,9 +566,7 @@ def make_quotation(source_name, target_doc=None):
 		}
 	}, target_doc, set_missing_values)
 
-	doc = frappe.get_doc(doclist).insert()
-
-	return doc
+	return doclist
 
 def get_calendar_item(account):
 	return frappe.db.get_value("Item", dict(google_calendar=account.name), ["item_code", "calendar_color"])
