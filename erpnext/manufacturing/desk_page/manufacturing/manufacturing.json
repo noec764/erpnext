@@ -26,13 +26,12 @@
    "links": "[\n    {\n        \"description\": \"Global settings for all manufacturing processes.\",\n        \"label\": \"Manufacturing Settings\",\n        \"name\": \"Manufacturing Settings\",\n        \"type\": \"doctype\"\n    }\n]"
   }
  ],
- "category": "Domains",
  "charts": [
   {
    "chart_name": "Produced Quantity"
   }
  ],
- "color": "#7c61ff",
+ "color": "#c2831c",
  "creation": "2020-04-01 17:11:37.032604",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -44,8 +43,8 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Manufacturing",
- "modified": "2020-05-28 13:54:02.048419",
- "modified_by": "Administrator",
+ "modified": "2020-08-03 12:19:27.598360",
+ "modified_by": "thierry@dokos.io",
  "module": "Manufacturing",
  "name": "Manufacturing",
  "onboarding": "Manufacturing",
@@ -55,7 +54,7 @@
  "restrict_to_domain": "Manufacturing",
  "shortcuts": [
   {
-    "color": "Green",
+   "color": "Green",
    "format": "{} Active",
    "label": "Item",
    "link_to": "Item",
@@ -64,7 +63,7 @@
    "type": "DocType"
   },
   {
-    "color": "Green",
+   "color": "Green",
    "format": "{} Active",
    "label": "BOM",
    "link_to": "BOM",
@@ -73,7 +72,7 @@
    "type": "DocType"
   },
   {
-    "color": "Yellow",
+   "color": "Yellow",
    "format": "{} Open",
    "label": "Work Order",
    "link_to": "Work Order",
@@ -82,7 +81,7 @@
    "type": "DocType"
   },
   {
-    "color": "Yellow",
+   "color": "Yellow",
    "format": "{} Open",
    "label": "Production Plan",
    "link_to": "Production Plan",
@@ -90,11 +89,11 @@
    "stats_filter": "{ \n    \"status\": [\"not in\", [\"Completed\"]]\n}",
    "type": "DocType"
   },
-   {
-    "label": "Forecasting",
-    "link_to": "Exponential Smoothing Forecasting",
-    "type": "Report"
-   },
+  {
+   "label": "Forecasting",
+   "link_to": "Exponential Smoothing Forecasting",
+   "type": "Report"
+  },
   {
    "label": "Work Order Summary",
    "link_to": "Work Order Summary",
@@ -102,20 +101,20 @@
    "type": "Report"
   },
   {
-    "label": "BOM Stock Report",
-    "link_to": "BOM Stock Report",
-    "type": "Report"
+   "label": "BOM Stock Report",
+   "link_to": "BOM Stock Report",
+   "type": "Report"
   },
   {
-    "label": "Production Planning Report",
-    "link_to": "Production Planning Report",
-    "type": "Report"
+   "label": "Production Planning Report",
+   "link_to": "Production Planning Report",
+   "type": "Report"
   },
   {
-    "label": "Dashboard",
-    "link_to": "Manufacturing",
-    "restrict_to_domain": "Manufacturing",
-    "type": "Dashboard"
-   }
+   "label": "Dashboard",
+   "link_to": "Manufacturing",
+   "restrict_to_domain": "Manufacturing",
+   "type": "Dashboard"
+  }
  ]
 }
