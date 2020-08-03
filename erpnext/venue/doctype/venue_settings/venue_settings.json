@@ -52,7 +52,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2020-08-03 08:10:42.541814",
+ "modified": "2020-08-03 09:06:17.733657",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
@@ -65,6 +65,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Venue Manager",
    "share": 1,
    "write": 1
   }

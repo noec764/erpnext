@@ -118,7 +118,7 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	
 				if (bookings.length) {
 					frappe.confirm(__("Do you also want to cancel the item bookings linked to this document ?"), () => {
-						frappe.xcall("erpnext.stock.doctype.item_booking.item_booking.cancel_appointments", { ids: bookings, force: true })
+						frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.cancel_appointments", { ids: bookings, force: true })
 						.then(() => {
 							resolve(frappe.show_alert({message:__("Linked item bookings successfully cancelled"), indicator:'green'}));
 						})

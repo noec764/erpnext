@@ -136,5 +136,14 @@ def get_data():
 			"icon": "fas fa-store-alt",
 			"type": "module",
 			"description": "Point of Sale and cashier closing."
+		},
+		{
+			"module_name": "Venue",
+			"category": "Domains",
+			"label": _("Venue"),
+			"color": "#49937e",
+			"icon": "fas fa-map-marked-alt",
+			"type": "module",
+			"description": "Venue management."
 		}
 	]

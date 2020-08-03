@@ -8,7 +8,7 @@
   {
    "hidden": 0,
    "label": "Bookings and events",
-   "links": "[\n    {\n        \"label\": \"Event\",\n        \"name\": \"Event\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking\",\n        \"name\": \"Item Booking\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking Calendar\",\n        \"name\": \"Item Booking Calendar\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"label\": \"Event\",\n        \"name\": \"Event\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking\",\n        \"name\": \"Item Booking\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking Calendar\",\n        \"name\": \"Item Booking Calendar\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Venue Settings\",\n        \"name\": \"Venue Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,
@@ -34,7 +34,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-07-29 14:06:16.663715",
+ "modified": "2020-08-03 08:22:25.715029",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Venue",

@@ -22,7 +22,7 @@
 frappe.ready(function() {
 	const cancel_appointment = () => {
 		frappe.call({
-			method: "erpnext.stock.doctype.item_booking.item_booking.cancel_appointment",
+			method: "erpnext.venue.doctype.item_booking.item_booking.cancel_appointment",
 			args: {
 				id: "{{ doc.name }}"
 			}

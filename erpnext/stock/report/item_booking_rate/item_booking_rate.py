@@ -9,7 +9,7 @@ from collections import defaultdict, Counter
 import calendar
 import datetime
 from erpnext.accounts.dashboard_chart_source.account_balance_timeline.account_balance_timeline import get_dates_from_timegrain
-from erpnext.stock.doctype.item_booking.item_booking import get_item_calendar
+from erpnext.venue.doctype.item_booking.item_booking import get_item_calendar
 
 def execute(filters=None):
 	dates = get_dates_from_timegrain(filters.get("date_range")[0], filters.get("date_range")[1], filters.period)

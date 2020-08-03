@@ -55,9 +55,9 @@ update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
 calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
 gcalendar_integrations = {
 	"Item Booking": {
-		"pull_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_to_calendar",
-		"pull_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_calendar",
-		"pull_delete": "erpnext.stock.doctype.item_booking.item_booking.cancel_event_in_calendar"
+		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
+		"pull_update": "erpnext.venue.doctype.item_booking.item_booking.update_event_in_calendar",
+		"pull_delete": "erpnext.venue.doctype.item_booking.item_booking.cancel_event_in_calendar"
 	}
 }
 
@@ -257,14 +257,14 @@ doc_events = {
 		"after_insert": "erpnext.crm.doctype.email_campaign.email_campaign.unsubscribe_recipient"
 	},
 	"Quotation": {
-		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
-		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.confirm_linked_item_bookings"
+		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_linked_item_bookings",
+		"on_submit": "erpnext.venue.doctype.item_booking.item_booking.confirm_linked_item_bookings"
 	},
 	"Item Booking": {
-		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",
-		"on_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_google_calendar",
-		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar",
-		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar"
+		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
+		"on_update": "erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
+		"on_cancel": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar"
 	},
 	('Quotation', 'Sales Order', 'Sales Invoice'): {
 		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
@@ -286,7 +286,7 @@ override_doctype_dashboards = {
 scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
-		"erpnext.stock.doctype.item_booking.item_booking.clear_draft_bookings",
+		"erpnext.venue.doctype.item_booking.item_booking.clear_draft_bookings",
 		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts"
 	],
 	"hourly": [

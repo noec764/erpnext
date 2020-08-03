@@ -243,7 +243,7 @@
   }
  ],
  "links": [],
- "modified": "2020-07-12 16:17:07.203088",
+ "modified": "2020-08-03 09:07:11.736768",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",
@@ -258,6 +258,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Venue Manager",
    "share": 1,
    "write": 1
   },
@@ -292,15 +304,6 @@
    "read": 1,
    "report": 1,
    "role": "All",
-   "share": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Guest",
    "share": 1
   },
   {

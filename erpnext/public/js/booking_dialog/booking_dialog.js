@@ -37,7 +37,7 @@ erpnext.booking_dialog = class BookingDialog {
 
 	get_selling_uoms() {
 		return frappe.call(
-			'erpnext.stock.doctype.item_booking.item_booking.get_item_uoms',
+			'erpnext.venue.doctype.item_booking.item_booking.get_item_uoms',
 			{ item_code: this.item }
 		).then(r => {
 			if (r.message) {
@@ -95,7 +95,7 @@ erpnext.booking_dialog = class BookingDialog {
 
 	get_item_price() {
 		return frappe.call(
-			'erpnext.stock.doctype.item_booking.item_booking.get_item_price',
+			'erpnext.venue.doctype.item_booking.item_booking.get_item_price',
 			{ item_code: this.item, uom: this.sales_uom }
 		).then(r => {
 			if (r && r.message) {
@@ -206,7 +206,7 @@ class BookingCalendar {
 
 	get_item_calendar() {
 		return frappe.call(
-			'erpnext.stock.doctype.item_booking.item_booking.get_item_calendar',
+			'erpnext.venue.doctype.item_booking.item_booking.get_item_calendar',
 			{ item: this.parent.item, uom: this.parent.sales_uom }
 		).then(r => {
 			this.item_calendar = r.message;
@@ -269,7 +269,7 @@ class BookingCalendar {
 	getAvailableSlots(parameters, callback) {
 		if (this.parent.item) {
 			this.alternative_items = []
-			frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_availabilities", {
+			frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_availabilities", {
 				start: moment(parameters.start).format("YYYY-MM-DD"),
 				end: moment(parameters.end).format("YYYY-MM-DD"),
 				item: this.parent.item,
@@ -290,7 +290,7 @@ class BookingCalendar {
 	}
 
 	getAvailableItems(parameters) {
-		return frappe.call("erpnext.stock.doctype.item_booking.item_booking.get_available_item", {
+		return frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_available_item", {
 			start: moment(parameters.start).format("YYYY-MM-DD"),
 			end: moment(parameters.end).format("YYYY-MM-DD"),
 			item: this.parent.item
@@ -370,7 +370,7 @@ class BookingCalendar {
 	}
 
 	bookNewSlot(event) {
-		frappe.call("erpnext.stock.doctype.item_booking.item_booking.book_new_slot", {
+		frappe.call("erpnext.venue.doctype.item_booking.item_booking.book_new_slot", {
 			start: moment.utc(event.event.start).format("YYYY-MM-DD H:mm:SS"),
 			end: moment.utc(event.event.end).format("YYYY-MM-DD H:mm:SS"),
 			item: this.parent.item,
