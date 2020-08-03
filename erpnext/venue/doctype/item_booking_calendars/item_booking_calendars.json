@@ -33,9 +33,9 @@
   }
  ],
  "istable": 1,
- "modified": "2019-08-31 09:23:43.626184",
+ "modified": "2020-07-30 09:23:43.626184",
  "modified_by": "Administrator",
- "module": "Stock",
+ "module": "Venue",
  "name": "Item Booking Calendars",
  "owner": "Administrator",
  "permissions": [],

@@ -243,9 +243,9 @@
   }
  ],
  "links": [],
- "modified": "2020-05-12 16:17:07.203088",
+ "modified": "2020-07-12 16:17:07.203088",
  "modified_by": "Administrator",
- "module": "Stock",
+ "module": "Venue",
  "name": "Item Booking",
  "owner": "Administrator",
  "permissions": [

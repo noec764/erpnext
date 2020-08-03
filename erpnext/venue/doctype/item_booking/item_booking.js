@@ -12,7 +12,7 @@ frappe.ui.form.on('Item Booking', {
 		frm.page.clear_actions_menu();
 		frm.page.add_action_item(__("Create a quotation"), () => {
 			frappe.xcall(
-				"erpnext.stock.doctype.item_booking.item_booking.make_quotation",
+				"erpnext.venue.doctype.item_booking.item_booking.make_quotation",
 				{ source_name: frm.doc.name }
 			).then(r => {
 				if (r) {
@@ -61,7 +61,7 @@ frappe.ui.form.on('Item Booking', {
 		}
 
 		if (!frm.is_new() && frm.doc.status === "In Cart") {
-			frappe.db.get_single_value("Stock settings", "clear_item_booking_draft_duration")
+			frappe.db.get_single_value("Venue Settings", "clear_item_booking_draft_duration")
 				.then(r => {
 					frm.delayInfo && clearInterval(frm.delayInfo);
 
@@ -159,7 +159,7 @@ class ItemSelector {
 	}
 
 	get_data() {
-		return frappe.xcall("erpnext.stock.doctype.item_booking.item_booking.get_transactions_items", {
+		return frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.get_transactions_items", {
 			transaction_type: this.transaction_type,
 			transactions: this.values
 		})
@@ -174,7 +174,7 @@ class ItemSelector {
 			primary_action: () => {
 				const value = this.get_checked_values()
 				if (value.length) {
-					frappe.xcall("erpnext.stock.doctype.item_booking.item_booking.update_linked_transaction", {
+					frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.update_linked_transaction", {
 						transaction_type: this.transaction_type,
 						line_item: value[0],
 						item_booking: this.frm.doc.name

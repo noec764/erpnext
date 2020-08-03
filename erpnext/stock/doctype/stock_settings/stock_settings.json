@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2013-06-24 16:37:54",
  "description": "Settings",
  "doctype": "DocType",
@@ -33,13 +34,7 @@
   "stock_auth_role",
   "batch_id_sb",
   "use_naming_series",
-  "naming_series_prefix",
-  "item_booking_column",
-  "minute_uom",
-  "clear_item_booking_draft_duration",
-  "column_break_30",
-  "enable_simultaneous_booking",
-  "sync_with_google_calendar"
+  "naming_series_prefix"
  ],
  "fields": [
   {
@@ -200,64 +195,28 @@
    "label": "Naming Series Prefix"
   },
   {
-   "collapsible": 1,
-   "fieldname": "item_booking_column",
+   "fieldname": "inter_warehouse_transfer_settings_section",
    "fieldtype": "Section Break",
-   "label": "Item Booking"
-  },
-  {
-   "description": "Used for slots calculation.<br>Please add an UOM conversion factor between each UOM used in booked items and this UOM.",
-   "fieldname": "minute_uom",
-   "fieldtype": "Link",
-   "label": "Minute UOM",
-   "options": "UOM"
-  },
-  {
-   "fieldname": "column_break_30",
-   "fieldtype": "Column Break"
+   "label": "Inter Warehouse Transfer Settings"
   },
   {
    "default": "0",
-   "fieldname": "enable_simultaneous_booking",
+   "fieldname": "allow_from_dn",
    "fieldtype": "Check",
-   "label": "Enable simultaneous booking"
-  },
-  {
-   "default": "15",
-   "description": "Minimum 3 minutes.<br>Set 0 to disable this functionality.",
-   "fieldname": "clear_item_booking_draft_duration",
-   "fieldtype": "Int",
-   "label": "Clear drafts after x minutes"
+   "label": "Allow Material Transfer From Delivery Note and Sales Invoice"
   },
   {
    "default": "0",
-   "description": "Applicable for shopping cart bookings",
-   "fieldname": "sync_with_google_calendar",
+   "fieldname": "allow_from_pr",
    "fieldtype": "Check",
-   "label": "Automatically synchronize with Google Calendar"
-  },
-  {
-    "fieldname": "inter_warehouse_transfer_settings_section",
-    "fieldtype": "Section Break",
-    "label": "Inter Warehouse Transfer Settings"
-   },
-   {
-    "default": "0",
-    "fieldname": "allow_from_dn",
-    "fieldtype": "Check",
-    "label": "Allow Material Transfer From Delivery Note and Sales Invoice"
-   },
-   {
-    "default": "0",
-    "fieldname": "allow_from_pr",
-    "fieldtype": "Check",
-    "label": "Allow Material Transfer From Purchase Receipt and Purchase Invoice"
-   }
+   "label": "Allow Material Transfer From Purchase Receipt and Purchase Invoice"
+  }
  ],
  "icon": "icon-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-06-20 11:39:15.344112",
+ "links": [],
+ "modified": "2020-08-03 08:10:02.689125",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",

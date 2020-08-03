@@ -150,7 +150,7 @@ def book_new_slot(**kwargs):
 			"sales_uom": uom,
 			"user": frappe.session.user,
 			"status": "In Cart",
-			"sync_with_google_calendar": frappe.db.get_single_value('Stock Settings', 'sync_with_google_calendar')
+			"sync_with_google_calendar": frappe.db.get_single_value('Venue Settings', 'sync_with_google_calendar')
 		}).insert(ignore_permissions=True)
 
 		return doc
@@ -337,7 +337,7 @@ def _find_available_slot(date, duration, line, scheduled_items, item, quotation=
 	output = []
 	output.extend(_get_selected_slots(scheduled_items, quotation))
 
-	simultaneous_booking_allowed = frappe.db.get_value("Stock Settings", None, "enable_simultaneous_booking")
+	simultaneous_booking_allowed = frappe.db.get_value("Venue Settings", None, "enable_simultaneous_booking")
 	if simultaneous_booking_allowed:
 		scheduled_items = check_simultaneaous_bookings(item, scheduled_items)
 
@@ -499,7 +499,7 @@ def confirm_linked_item_bookings(doc, method):
 
 def clear_draft_bookings():
 	drafts = frappe.get_all("Item Booking", filters={"status": "In Cart"}, fields=["name", "modified"])
-	clearing_duration = frappe.db.get_value("Stock Settings", None, "clear_item_booking_draft_duration")
+	clearing_duration = frappe.db.get_value("Venue Settings", None, "clear_item_booking_draft_duration")
 
 	if cint(clearing_duration) <= 0:
 		return
