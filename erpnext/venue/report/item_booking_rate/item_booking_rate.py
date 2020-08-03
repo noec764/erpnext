@@ -12,7 +12,7 @@ from erpnext.accounts.dashboard_chart_source.account_balance_timeline.account_ba
 from erpnext.venue.doctype.item_booking.item_booking import get_item_calendar
 
 def execute(filters=None):
-	dates = get_dates_from_timegrain(filters.get("date_range")[0], filters.get("date_range")[1], filters.period)
+	dates = get_dates_from_timegrain(filters.get("date_range")[0], filters.get("date_range")[1], filters.get("period"))
 	data, chart = get_data(filters, dates)
 	columns = get_columns(filters, dates)
 	return columns, data, [], chart
@@ -131,12 +131,12 @@ def get_chart_data(data):
 			"labels" : [x.get("item_name") for x in data],
 			"datasets" : [
 				{
-					"name" : _("Bookings"),
-					"values" : [round(x.get("total"), 2) for x in data]
-				},
-				{
 					"name" : _("Capacity"),
 					"values" : [round(x.get("capacity"), 2) for x in data]
+				},
+				{
+					"name" : _("Bookings"),
+					"values" : [round(x.get("total"), 2) for x in data]
 				}
 			]
 		},

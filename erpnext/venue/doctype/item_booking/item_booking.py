@@ -465,7 +465,7 @@ def get_item_calendar(item, uom=None):
 	return []
 
 def get_uom_in_minutes(uom=None):
-	minute_uom = frappe.db.get_value("Stock Settings", None, "minute_uom")
+	minute_uom = frappe.db.get_value("Venue Settings", None, "minute_uom")
 	if uom == minute_uom:
 		return 1
 
