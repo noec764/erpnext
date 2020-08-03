@@ -26,6 +26,7 @@
    "links": "[\n    {\n        \"description\": \"Global settings for all manufacturing processes.\",\n        \"label\": \"Manufacturing Settings\",\n        \"name\": \"Manufacturing Settings\",\n        \"type\": \"doctype\"\n    }\n]"
   }
  ],
+ "category": "Domains",
  "charts": [
   {
    "chart_name": "Produced Quantity"
@@ -43,7 +44,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Manufacturing",
- "modified": "2020-08-03 12:19:27.598360",
+ "modified": "2020-08-03 14:21:20.315070",
  "modified_by": "thierry@dokos.io",
  "module": "Manufacturing",
  "name": "Manufacturing",

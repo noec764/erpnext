@@ -86,6 +86,7 @@
    "links": "[\n    {\n        \"dependencies\": [\n            \"Sales Invoice\"\n        ],\n        \"doctype\": \"Sales Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Gross Profit\",\n        \"name\": \"Gross Profit\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"GL Entry\"\n        ],\n        \"doctype\": \"GL Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Profitability Analysis\",\n        \"name\": \"Profitability Analysis\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Sales Invoice\"\n        ],\n        \"doctype\": \"Sales Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Sales Invoice Trends\",\n        \"name\": \"Sales Invoice Trends\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Purchase Invoice\"\n        ],\n        \"doctype\": \"Purchase Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Purchase Invoice Trends\",\n        \"name\": \"Purchase Invoice Trends\",\n        \"type\": \"report\"\n    }\n]"
   }
  ],
+ "category": "Modules",
  "charts": [
   {
    "chart_name": "Profit and Loss",
@@ -108,7 +109,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Accounting",
- "modified": "2020-08-03 12:25:51.480341",
+ "modified": "2020-08-03 14:21:05.018987",
  "modified_by": "thierry@dokos.io",
  "module": "Accounts",
  "name": "Accounting",

@@ -21,6 +21,7 @@
    "links": "[\n    {\n        \"label\": \"Newsletter\",\n        \"name\": \"Newsletter\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Email Campaign\",\n        \"name\": \"Email Campaign\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
   }
  ],
+ "category": "Domains",
  "charts": [],
  "color": "#eeb867",
  "creation": "2020-07-29 10:21:31.420677",
@@ -34,7 +35,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-08-03 12:12:06.440959",
+ "modified": "2020-08-03 14:41:46.340971",
  "modified_by": "thierry@dokos.io",
  "module": "Venue",
  "name": "Venue",

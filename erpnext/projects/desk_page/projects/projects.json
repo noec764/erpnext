@@ -16,6 +16,7 @@
    "links": "[\n    {\n        \"dependencies\": [\n            \"Timesheet\"\n        ],\n        \"doctype\": \"Timesheet\",\n        \"is_query_report\": true,\n        \"label\": \"Daily Timesheet Summary\",\n        \"name\": \"Daily Timesheet Summary\",\n        \"onboard\": 1,\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Project\"\n        ],\n        \"doctype\": \"Project\",\n        \"is_query_report\": true,\n        \"label\": \"Project wise Stock Tracking\",\n        \"name\": \"Project wise Stock Tracking\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Project\"\n        ],\n        \"doctype\": \"Project\",\n        \"is_query_report\": true,\n        \"label\": \"Project Billing Summary\",\n        \"name\": \"Project Billing Summary\",\n        \"type\": \"report\"\n    }\n]"
   }
  ],
+ "category": "Modules",
  "charts": [
   {
    "chart_name": "Project Summary",
@@ -34,7 +35,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Projects",
- "modified": "2020-08-03 11:54:09.582920",
+ "modified": "2020-08-03 14:22:20.399421",
  "modified_by": "thierry@dokos.io",
  "module": "Projects",
  "name": "Projects",
