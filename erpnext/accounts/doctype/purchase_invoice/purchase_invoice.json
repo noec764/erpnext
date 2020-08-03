@@ -224,7 +224,8 @@
    "fieldtype": "Date",
    "label": "Due Date",
    "oldfieldname": "due_date",
-   "oldfieldtype": "Date"
+   "oldfieldtype": "Date",
+   "no_copy": 1
   },
   {
    "default": "0",
@@ -1367,7 +1368,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-06-16 22:26:30.800199",
+ "modified": "2020-07-16 22:26:30.800199",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
