@@ -25,13 +25,7 @@ from frappe.desk.calendar import process_recurring_events
 
 class ItemBooking(Document):
 	def validate(self):
-		self.title = self.item_name
-		if self.user:
-			user_name = frappe.db.get_value("User", self.user, "full_name")
-			self.title += " - " + (user_name or self.user)
-
-		elif self.party_name and self.party_type:
-			self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title()
+		self.set_title()
 
 		if self.sync_with_google_calendar and not self.google_calendar:
 			self.google_calendar = frappe.db.get_value("Item", self.item, "google_calendar")
@@ -44,6 +38,16 @@ class ItemBooking(Document):
 
 		if get_datetime(self.starts_on) > get_datetime(self.ends_on):
 			frappe.throw(_("Please make sure the end time is greater than the start time"))
+
+	def set_title(self):
+		if self.meta._fields["title"].hidden or not self.title:
+			self.title = self.item_name
+			if self.user:
+				user_name = frappe.db.get_value("User", self.user, "full_name")
+				self.title += " - " + (user_name or self.user)
+
+			elif self.party_name and self.party_type:
+				self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title()
 
 	def set_status(self, status):
 		self.db_set("status", status)
@@ -562,6 +566,53 @@ def make_quotation(source_name, target_doc=None):
 			"doctype": "Quotation",
 			"field_map": {
 				"party_type": "quotation_to"
+			}
+		}
+	}, target_doc, set_missing_values)
+
+	return doclist
+
+@frappe.whitelist()
+def make_sales_order(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
+		sales_order = frappe.get_doc(target)
+		sales_order.order_type = "Maintenance"
+		company_currency = frappe.get_cached_value('Company',  sales_order.company,  "default_currency")
+
+		party_account_currency = get_party_account_currency("Customer", sales_order.customer, sales_order.company)
+
+		sales_order.currency = party_account_currency or company_currency
+
+		if company_currency == sales_order.currency:
+			exchange_rate = 1
+		else:
+			exchange_rate = get_exchange_rate(sales_order.currency, company_currency,
+				sales_order.transaction_date, args="for_selling")
+
+		sales_order.conversion_rate = exchange_rate
+
+		# add item
+		sales_order.append('items', {
+			'item_code': source.item,
+			'qty': get_sales_qty(source.item, source.starts_on, source.ends_on),
+			'uom': frappe.get_cached_value("Item", source.item, "sales_uom"),
+			'item_booking': source.name
+		})
+
+		# get default taxes
+		taxes = get_default_taxes_and_charges("Sales Taxes and Charges Template", company=sales_order.company)
+		if taxes.get('taxes'):
+			sales_order.update(taxes)
+
+		sales_order.run_method("set_missing_values")
+		sales_order.run_method("calculate_taxes_and_totals")
+
+	doclist = get_mapped_doc("Item Booking", source_name, {
+		"Item Booking": {
+			"doctype": "Sales Order",
+			"field_map": {
+				"party_type": "customer"
 			}
 		}
 	}, target_doc, set_missing_values)

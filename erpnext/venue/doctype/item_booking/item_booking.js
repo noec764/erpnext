@@ -7,19 +7,20 @@ frappe.ui.form.on('Item Booking', {
 			frappe.show_alert({message: data.message, indicator: 'green'});
 			frm.reload_doc();
 		})
+
+		frm.make_methods = {
+			'Quotation': () => {
+				make_quotation(frm)
+			},
+			'Sales Order': () => {
+				make_sales_order(frm)
+			}
+		}
 	},
 	refresh(frm) {
 		frm.page.clear_actions_menu();
 		frm.page.add_action_item(__("Create a quotation"), () => {
-			frappe.xcall(
-				"erpnext.venue.doctype.item_booking.item_booking.make_quotation",
-				{ source_name: frm.doc.name }
-			).then(r => {
-				if (r) {
-					const doclist = frappe.model.sync(r);
-					frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
-				}
-			})
+			make_quotation(frm)
 		})
 
 		frm.trigger('add_to_quotation');
@@ -268,6 +269,30 @@ class ItemSelector {
 		});
 	}
 
+}
+
+const make_quotation = frm => {
+	frappe.xcall(
+		"erpnext.venue.doctype.item_booking.item_booking.make_quotation",
+		{ source_name: frm.doc.name }
+	).then(r => {
+		if (r) {
+			const doclist = frappe.model.sync(r);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		}
+	})
+}
+
+const make_sales_order = frm => {
+	frappe.xcall(
+		"erpnext.venue.doctype.item_booking.item_booking.make_sales_order",
+		{ source_name: frm.doc.name }
+	).then(r => {
+		if (r) {
+			const doclist = frappe.model.sync(r);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		}
+	})
 }
 
 frappe.tour['Item Booking'] = [
