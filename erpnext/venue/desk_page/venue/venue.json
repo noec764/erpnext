@@ -19,6 +19,11 @@
    "hidden": 0,
    "label": "Tools",
    "links": "[\n    {\n        \"label\": \"Newsletter\",\n        \"name\": \"Newsletter\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Email Campaign\",\n        \"name\": \"Email Campaign\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
+  },
+  {
+   "hidden": 0,
+   "label": "Reports",
+   "links": "[\n    {\n        \"dependencies\": [\n            \"Item Booking\"\n        ],\n        \"is_query_report\": true,\n        \"label\": \"Item Booking Rate\",\n        \"name\": \"Item Booking Rate\",\n        \"type\": \"report\"\n    }\n]"
   }
  ],
  "category": "Domains",
@@ -40,7 +45,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-08-03 17:37:22.020170",
+ "modified": "2020-08-04 12:11:22.279371",
  "modified_by": "thierry@dokos.io",
  "module": "Venue",
  "name": "Venue",

@@ -62,7 +62,6 @@ def get_data(filters, dates):
 	return output, chart_data
 
 def get_calendar_capacity(filters, items, dates):
-
 	for item in items:
 		daily_capacity = defaultdict(float)
 		calendar = get_item_calendar(item)
@@ -73,7 +72,7 @@ def get_calendar_capacity(filters, items, dates):
 		for date in dates:
 			next_date = min(getdate(date), getdate(filters.get("date_range")[1]))
 			weekdays = dict(count_weekday(prev_date, next_date))
-			items[item][f"{frappe.scrub(str(date))}_capacity"] = sum([daily_capacity[x] * weekdays[x[:3]] for x in daily_capacity])
+			items[item][f"{frappe.scrub(str(date))}_capacity"] = sum([daily_capacity[x] * weekdays[x[:3]] for x in daily_capacity if x[:3] in weekdays])
 			prev_date = date
 
 
@@ -131,11 +130,11 @@ def get_chart_data(data):
 			"labels" : [x.get("item_name") for x in data],
 			"datasets" : [
 				{
-					"name" : _("Capacity"),
+					"name" : _("Capacity (Hours)"),
 					"values" : [round(x.get("capacity"), 2) for x in data]
 				},
 				{
-					"name" : _("Bookings"),
+					"name" : _("Bookings (Hours)"),
 					"values" : [round(x.get("total"), 2) for x in data]
 				}
 			]
