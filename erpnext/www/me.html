@@ -1,5 +1,11 @@
 {% extends "templates/web.html" %}
 
+{% block head_include %}
+	{% if enable_stripe %}
+		<script src="https://js.stripe.com/v3/"></script>
+	{% endif %}
+{% endblock %}
+
 {% block title %}{{ _("My Account") }}{% endblock %}
 {% block header %}<h1>{{ _("My Account") }}</h1>{% endblock %}
 
@@ -69,7 +75,7 @@
 							<h5>{{ details.card.name or '' }} xxxxx-{{ details.card.last4 or '' }}</h5>
 							<p>{{ _("Expires") }} {{ details.card.exp_month }}/{{ details.card.exp_year }}</p>
 							{% if stripe_payment_methods.data|length > 1 %}
-								<a href="#" class="btn btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</a>
+								<button class="btn btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</button>
 							{% endif %}
 						</div>
 						<hr>
@@ -89,7 +95,7 @@
 							
 							<button class="btn btn-primary" id="card-submit">{{ _("Add this card") }}</button>
 						</form>
-						<a href="#" class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</a>
+						<button class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</button>
 					</div>
 				</div>
 			</li>
@@ -112,9 +118,6 @@
 {% endblock %}
 
 {% block script %}
-	{% if enable_stripe %}
-		<script src="https://js.stripe.com/v3/"></script>
-	{% endif %}
 	<script>
 		{% include "templates/includes/payment_methods.js" %}
 	</script>

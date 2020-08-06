@@ -19,5 +19,8 @@ frappe.listview_settings['Payment Request'] = {
 		else if(doc.status == "Failed") {
 			return [__("Failed"), "orange", "status,=,Failed"];
 		}
+		else if(doc.status == "Completed") {
+			return [__("Completed"), "blue", "status,=,Completed"];
+		}
 	}	
 }

@@ -98,10 +98,13 @@ class Subscription(Document):
 			self.cancel_subscription()
 
 		if self.status in ACTIVE_STATUS:
-			if not (self.payment_gateway and self.payment_gateway_reference):
+			if not self.subscription_managed_by_gateway():
 				self.process_active_subscription()
 		elif self.status == 'Trial':
 			self.set_status()
+
+	def subscription_managed_by_gateway(self):
+		return self.payment_gateway and frappe.get_cached_value("Payment Gateway", self.payment_gateway, "gateway_settings") in ("Stripe Settings")
 
 	def process_active_subscription(self, payment_entry=None):
 		if not self.generate_invoice_at_period_start and self.period_has_passed(self.current_invoice_end):
@@ -708,6 +711,7 @@ class Subscription(Document):
 
 	@frappe.whitelist()
 	def create_stripe_invoice_item(self, plan_details):
+		from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeInvoiceItem
 		plan = frappe.parse_json(plan_details)
 
 		if not plan.get("description") or not frappe.utils.strip_html_tags(plan.get("description")):
@@ -720,7 +724,15 @@ class Subscription(Document):
 			if gateway_settings == "Stripe Settings":
 				stripe_settings = frappe.get_doc("Stripe Settings", gateway_controller)
 				customer = frappe.db.get_value("Integration References", dict(customer=self.customer), "stripe_customer_id")
-				return stripe_settings.create_invoice_items(customer, rate, self.currency, frappe.utils.strip_html_tags(plan.get("description")))
+				return StripeInvoiceItem(stripe_settings).create(customer,
+					amount=rate,
+					currency=self.currency,
+					description=frappe.utils.strip_html_tags(plan.get("description")),
+					metadata={
+						"reference_doctype": self.doctype,
+						"reference_name": self.name
+					}
+				)
 
 		frappe.msgprint(_("The invoice item creation has failed. Check that this subscription is linked to a Stripe gateway."))
 

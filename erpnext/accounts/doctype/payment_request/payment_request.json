@@ -52,14 +52,14 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "ACC-PRQ-.YYYY.-",
+   "default": "ACC-PRQ-.YYYY.-.MM.-.DD.-",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
    "in_list_view": 1,
    "label": "Series",
    "no_copy": 1,
-   "options": "ACC-PRQ-.YYYY.-",
+   "options": "ACC-PRQ-.YYYY.-.MM.-.DD.-",
    "print_hide": 1,
    "reqd": 1
   },
@@ -141,7 +141,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nDraft\nInitiated\nPending\nPaid\nFailed\nCancelled",
+   "options": "\nDraft\nInitiated\nPending\nPaid\nFailed\nCancelled\nCompleted",
    "read_only": 1
   },
   {
@@ -280,8 +280,8 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-29 17:24:58.775495",
- "modified_by": "Administrator",
+ "modified": "2020-08-06 10:02:54.125253",
+ "modified_by": "thierry@dokos.io",
  "module": "Accounts",
  "name": "Payment Request",
  "owner": "Administrator",

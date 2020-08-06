@@ -111,3 +111,11 @@
 .field:-ms-input-placeholder {
   color: #CFD7E0;
 }
+
+#card-error {
+	color: #fa755a;
+}
+
+.stripe-image {
+	max-height: 300px;
+}

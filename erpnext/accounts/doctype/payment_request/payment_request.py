@@ -68,6 +68,7 @@ class PaymentRequest(Document):
 		if not self.payment_gateways and not self.payment_gateway:
 			frappe.throw(_("Please add at least one payment gateway"))
 
+	#TODO: Refactor
 	def validate_subscription_gateways(self):
 		if self.is_linked_to_a_subscription():
 			plans = self.get_subscription_payment_plans()
@@ -188,6 +189,9 @@ class PaymentRequest(Document):
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(self.name))
 
+	def get_customer(self):
+		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
+
 	def get_payment_url(self, payment_gateway):
 		data = frappe.db.get_value(self.reference_doctype, self.reference_name,\
 			["company", "customer"], as_dict=1)
@@ -200,6 +204,7 @@ class PaymentRequest(Document):
 		if hasattr(controller, 'validate_minimum_transaction_amount'):
 			controller.validate_minimum_transaction_amount(self.currency, self.grand_total)
 
+		# All keys kept for backward compatibility
 		return controller.get_payment_url(**{
 			"amount": flt(self.grand_total, self.precision("grand_total")),
 			"title": frappe.safe_encode(data.company),
@@ -209,7 +214,8 @@ class PaymentRequest(Document):
 			"payer_email": self.email_to or (frappe.session.user if frappe.session.user != "Guest" else ""),
 			"payer_name": frappe.safe_encode(data.customer_name),
 			"order_id": self.name,
-			"currency": self.currency
+			"currency": self.currency,
+			"payment_key": self.payment_key
 		})
 
 	def set_as_paid(self, reference_no=None):
@@ -293,42 +299,9 @@ class PaymentRequest(Document):
 
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
-			if self.reference_doctype == "Subscription":
-				self.generate_subscription_invoices(payment_entry)
-			else:
-				payment_entry.submit()
+			payment_entry.submit()
 
 		return payment_entry
-
-	def generate_subscription_invoices(self, payment_entry):
-			subscription = frappe.get_doc(self.reference_doctype, self.reference_name)
-			generated_invoices = subscription.get_current_documents("Sales Invoice")
-
-			if not generated_invoices:
-				payment_entry.submit()
-				subscription.run_method("generate_invoice", payment_entry=payment_entry.name)
-			else:
-				for invoice in generated_invoices:
-					si = frappe.get_doc("Sales Invoice", invoice)
-					if si.docstatus == 0:
-						si.allocate_advances_automatically = True
-						si.save()
-
-						if subscription.submit_invoice:
-							si.submit()
-					elif si.docstatus == 1:
-						payment_entry.append("references", {
-							'reference_doctype': "Sales Invoice",
-							'reference_name': si.name,
-							"bill_no": si.get("bill_no"),
-							"due_date": si.get("due_date"),
-							'total_amount': si.get("grand_total"),
-							'outstanding_amount': si.outstanding_amount,
-							'allocated_amount': min(payment_entry.unallocated_amount, si.outstanding_amount)
-						})
-						payment_entry.save()
-
-				payment_entry.submit()
 
 	def send_email(self, communication=None):
 		"""send email with payment link"""
@@ -414,14 +387,7 @@ class PaymentRequest(Document):
 
 		return redirect_to
 
-	def get_stripe_subscription_plans_details(self):
-		result = []
-		for plan in self.get_subscription_payment_plans():
-			if plan.stripe_plan:
-				result.append({"quantity": plan.qty, "plan": plan.stripe_plan})
-
-		return result
-
+	#TODO: Refactor
 	def get_subscription_payment_plans(self):
 		subscription_name = self.is_linked_to_a_subscription()
 		if subscription_name:
@@ -622,6 +588,10 @@ def make_status_as_paid(doc, method):
 				frappe.db.commit()
 
 @frappe.whitelist()
+def make_status_as_completed(name):
+	frappe.db.set_value("Payment Request", name, "status", "Completed")
+
+@frappe.whitelist()
 def get_message(doc, template):
 	"""return message with payment gateway link"""
 
@@ -642,4 +612,4 @@ def get_message(doc, template):
 	}
 
 def get_payment_link(payment_key):
-		return get_url("/payments?link={0}".format(payment_key))
+	return get_url("/payments?link={0}".format(payment_key))

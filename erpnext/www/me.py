@@ -9,6 +9,8 @@ import frappe.www.list
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
 from erpnext.templates.pages.integrations.stripe_checkout import get_api_key
 
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePaymentMethod
+
 no_cache = 1
 
 def get_context(context):
@@ -44,7 +46,7 @@ def get_context(context):
 def get_customer_payment_methods(references):
 	try:
 		stripe_settings = frappe.get_doc("Stripe Settings", references.stripe_settings)
-		return stripe_settings.get_payment_methods(references.stripe_customer_id)
+		return StripePaymentMethod(stripe_settings).get_list(references.stripe_customer_id)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),\
 			_("[Portal] Stripe payment methods retrieval error for {0}").format(references.customer))
@@ -56,20 +58,19 @@ def remove_payment_card(id):
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return stripe_settings.delete_source(account.stripe_customer_id, id)
+			return StripePaymentMethod(stripe_settings).detach(id, account.stripe_customer_id)
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] Stripe payment source deletion error"))
 
 @frappe.whitelist()
-def add_new_payment_card(token):
+def add_new_payment_card(payment_method):
 	try:
-		token = json.loads(token)
 		customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return stripe_settings.create_source(account.stripe_customer_id, token.get("id"))
+			return StripePaymentMethod(stripe_settings).attach(payment_method, account.stripe_customer_id)
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] New stripe payment source registration error"))

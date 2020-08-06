@@ -30,8 +30,7 @@ def get_payment_gateways(link):
 	return payment_gateways
 
 def check_and_add_gateway(payment_request, gateway):
-	if frappe.db.exists("Payment Gateway Account",\
-		dict(payment_gateway=gateway, currency=payment_request.currency)):
+	if frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway, currency=payment_request.currency)):
 		return frappe.db.get_value("Payment Gateway",\
 			gateway, ["name", "title", "icon"], as_dict=True)
 	return
@@ -47,7 +46,7 @@ def get_payment_details(link):
 	total = reference_document.get("rounded_total") or reference_document.get("grand_total")
 	advance = reference_document.get("advance_paid")
 
-	if payment_request.status in ["Pending", "Authorized", "Completed"] or outstanding:
+	if payment_request.status in ["Paid", "Completed"] or outstanding:
 		if flt(outstanding) == 0:
 			error = _("This invoice has already been fully paid")
 		elif erpnext.get_company_currency(reference_document.get("company")) == payment_request.currency and \

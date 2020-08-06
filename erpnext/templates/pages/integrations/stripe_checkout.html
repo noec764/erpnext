@@ -1,5 +1,9 @@
 {% extends "templates/web.html" %}
 
+{% block head_include %}
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
 {% block title %} {{ _("Payment") }} {% endblock %}
 
 {%- block header -%}
@@ -9,13 +13,14 @@
 
 <div class="row stripe">
 	{% if image %}
-	<div class="col-12 text-center">
+	<div class="col-12 text-center stripe-image">
 		<img class="mx-auto h-75" src={{image}}>
 	</div>
 	{% endif %}
 	<div class="col-12">
 		<h2 class="text-center">{{description}}</h2>
 		<form id="payment-form">
+			<div class="card frappe-card">
 				<div class="form-group">
 					<label>
 						<span>{{ _("Name") }}</span>
@@ -34,24 +39,23 @@
 						<div id="card-element" name="card-element" class="field"></div>
 					</label>
 				</div>
+			</div>
 
-			<div class="text-right" id="card-errors" role="alert" style="color: #fa755a;"></div>
-			<button type="submit" class="submit" id="card-button" data-secret="{{ client_secret }}">{{_('Pay')}} {{ amount }}</button>
+			<button type="submit" class="submit" id="card-button">
+				<span id="loading-text" class="hidden">{{ _("Processing...") }}</span>
+				<span id="button-text">{{_('Pay')}} {{ amount }}</span>
+			</button>
+			<p id="card-error" role="alert"></p>
+			<p class="result-message hidden">
+				{{ _("Payment succeeded. Refresh the page to pay again.") }}
+			</p>
 		</form>
-	</div>
-	<div class="col-12 mt-5">
-		<div class="text-right font-weight-bold">
-			<div class="error" id="error-msg" style="color: #fa755a; display: none"></div>
-			<button class="btn btn-primary error" style="display: none;" id="card-reload">{{_('Try Again')}}</button>
-			<div class="success" style="display: none;">{{ _("Your payment has been successfully registered.") }}</div>
-		</div>
 	</div>
 </div>
 
 {% endblock %}
 
 {% block script %}
-<script src="https://js.stripe.com/v3/"></script>
 <script>{% include "templates/includes/integrations/stripe_checkout.js" %}</script>
 {% endblock %}
 

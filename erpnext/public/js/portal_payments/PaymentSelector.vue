@@ -12,7 +12,10 @@
 					<div class="card-body text-center">
 						<i :class="gateway.icon in iconMap ? iconMap[gateway.icon] : 'far fa-credit-card'"></i>
 						<h5 class="card-title my-2">{{ gateway.title }}</h5>
-						<a href="#" @click="getPaymentRequest(gateway.name)" class="btn btn-primary">{{ __("Pay") }} {{ formattedAmount }}</a>
+						<button @click="getPaymentRequest(gateway.name)" class="btn btn-primary" :disabled="redirecting">
+							<span v-show="redirecting">{{ __("Redirecting...") }}</span>
+							<span v-show="!redirecting">{{ __("Pay") }} {{ formattedAmount }}</span>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -23,6 +26,7 @@
 <script>
 const query_strings = frappe.utils.get_query_params()
 export default {
+	name: "PaymentSelector",
 	data() {
 		return {
 			paymentGateways: [],
@@ -35,7 +39,8 @@ export default {
 			formattedAmount: null,
 			docname: null,
 			doctype: null,
-			subject: null
+			subject: null,
+			redirecting: false
 		}
 	},
 	mounted() {
@@ -81,6 +86,7 @@ export default {
 			}
 		},
 		getPaymentRequest(gateway) {
+			this.redirecting = true;
 			frappe.call({
 				method: "erpnext.www.payments.index.get_payment_url",
 				args: {

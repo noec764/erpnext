@@ -88,6 +88,15 @@ frappe.ui.form.on("Payment Request", {
 				})
 			}
 		}
+
+		if (frm.doc.docstatus === 1 && ["Initiated", "Pending"].includes(frm.doc.status)) {
+			frm.add_custom_button(__('Set as completed'), function(){
+				frappe.xcall("erpnext.accounts.doctype.payment_request.payment_request.make_status_as_completed", {name: frm.doc.name})
+				.then(r => {
+					frm.reload_doc()
+				})
+			})
+		}
 	},
 	process_payment_immediately(frm) {
 		frm.add_custom_button(__('Process payment immediately'), function(){

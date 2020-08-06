@@ -1047,7 +1047,7 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	elif dt == "Expense Claim":
 		party_account = doc.payable_account
 	else:
-		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company, doc.down_payment)
+		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company, getattr(doc, "down_payment", None))
 
 	if dt not in ("Sales Invoice", "Purchase Invoice"):
 		party_account_currency = get_account_currency(party_account)
@@ -1127,7 +1127,7 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	pe.contact_person = doc.get("contact_person")
 	pe.contact_email = doc.get("contact_email")
 	pe.ensure_supplier_is_not_blocked()
-	pe.down_payment = doc.is_down_payment_invoice
+	pe.down_payment = getattr(doc, "is_down_payment_invoice", 0)
 
 	pe.paid_from = party_account if payment_type=="Receive" else bank.account
 	pe.paid_to = party_account if payment_type=="Pay" else bank.account

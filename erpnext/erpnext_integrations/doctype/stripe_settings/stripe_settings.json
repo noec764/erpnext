@@ -16,6 +16,7 @@
   "header_img",
   "column_break_7",
   "redirect_url",
+  "failure_redirect_url",
   "bank_section",
   "bank_account"
  ],
@@ -60,9 +61,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "payment-success",
    "fieldname": "redirect_url",
    "fieldtype": "Data",
-   "label": "Redirect URL"
+   "label": "Success redirect URL"
   },
   {
    "fieldname": "webhook_secret_key",
@@ -79,11 +81,17 @@
    "fieldtype": "Link",
    "label": "Bank Account",
    "options": "Bank Account"
+  },
+  {
+   "default": "payment-failed",
+   "fieldname": "failure_redirect_url",
+   "fieldtype": "Data",
+   "label": "Failure redirect URL"
   }
  ],
  "links": [],
- "modified": "2020-07-30 10:30:32.402762",
- "modified_by": "Administrator",
+ "modified": "2020-08-05 12:13:52.806752",
+ "modified_by": "thierry@dokos.io",
  "module": "ERPNext Integrations",
  "name": "Stripe Settings",
  "owner": "Administrator",
