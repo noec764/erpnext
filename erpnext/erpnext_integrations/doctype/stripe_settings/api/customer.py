@@ -1,5 +1,5 @@
 import frappe
-from .idempotency import StripeIdempotencyKey, handle_idempotency
+from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
 
 class StripeCustomer:
 	def __init__(self, gateway):
@@ -33,7 +33,7 @@ class StripeCustomer:
 				name=customer_name,
 				email=contact_email,
 				metadata=metadata,
-				#idempotency_key=StripeIdempotencyKey("customer", "create", customer_id).get()
+				idempotency_key=IdempotencyKey("customer", "create", customer_id).get()
 			)
 			self.register(stripe_customer.get("id"), customer_id)
 			return stripe_customer

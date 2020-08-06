@@ -15,7 +15,7 @@ def get_context(context):
 	if frappe.db.exists("Payment Request", {"payment_key": frappe.form_dict.get("key"), "docstatus": 1}):
 		payment_request = frappe.get_doc("Payment Request", {"payment_key": frappe.form_dict.get("key")})
 
-		if payment_request.status == "Paid":
+		if payment_request.status in ("Paid", "Completed", "Cancelled"):
 			frappe.redirect_to_message(_('Already paid'), _('This payment has already been done.<br>Please contact us if you have any question.'))
 			frappe.local.flags.redirect_location = frappe.local.response.location
 			raise frappe.Redirect

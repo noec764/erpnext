@@ -8,17 +8,18 @@ import json
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 
 EVENT_MAP = {
-	'customer_approval_granted': 'change_status',
-	'customer_approval_skipped': 'change_status',
-	'active': 'change_status',
-	'cancelled': 'change_status',
-	'failed': 'change_status',
-	'transferred': 'change_status',
-	'expired': 'change_status',
-	'submitted': 'change_status',
-	'resubmission_requested': 'change_status',
-	'reinstated': 'change_status',
-	'replaced': 'change_status'
+	'customer_approval_granted': 'change_mandate_status',
+	'customer_approval_skipped': 'change_mandate_status',
+	'active': 'change_mandate_status',
+	'cancelled': 'change_mandate_status',
+	'failed': 'change_mandate_status',
+	'transferred': 'change_mandate_status',
+	'expired': 'change_mandate_status',
+	'submitted': 'change_mandate_status',
+	'resubmission_requested': 'change_mandate_status',
+	'reinstated': 'change_mandate_status',
+	'replaced': 'change_mandate_status',
+	'created': 'change_mandate_status'
 }
 
 STATUS_MAP = {
@@ -32,40 +33,24 @@ STATUS_MAP = {
 	'submitted': 'Submitted',
 	'resubmission_requested': 'Pending Submission',
 	'reinstated': 'Active',
-	'replaced': 'Cancelled'
+	'replaced': 'Cancelled',
+	'created': 'Pending Submission'
 }
 
 class GoCardlessMandateWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessMandateWebhookHandler, self).__init__(**kwargs)
-
-		self.get_mandate()
-		target = EVENT_MAP.get(self.data.get("action"))
-		if not target:
-			self.integration_request.db_set("error", _("This type of event is not handled by dokos"))
-			self.integration_request.update_status({}, "Not Handled")
-
-		else:
-			method = getattr(self, target)
-			method()
-
-		self.add_mandate_to_integration_request()
-
-	def get_mandate(self):
+		
+		self.event_map = EVENT_MAP
+		self.action_type = self.data.get("action")
 		self.mandate = self.data.get("links", {}).get("mandate")
-
-	def create_mandates(self):
-		mandate_exists = self.check_existing_mandate()
-		if mandate_exists:
-			self.set_status(self.mandate, STATUS_MAP.get(self.data.get("action")))
-		else:
-			#TODO: Handle mandate creation through API (only for GoCardless Pro accounts)
-			self.integration_request.update_status({}, "Completed")
+		self.handle_update()
+		self.add_mandate_to_integration_request()
 
 	def check_existing_mandate(self):
 		return False if frappe.db.exists("Sepa Mandate", dict(mandate=mandate)) else True
 
-	def change_status(self):
+	def change_mandate_status(self):
 		self.set_status(self.mandate, STATUS_MAP.get(self.data.get("action")))
 
 	def set_status(self, mandate, status):

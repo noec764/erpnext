@@ -10,8 +10,7 @@
   "access_token",
   "webhooks_secret",
   "use_sandbox",
-  "settings_section",
-  "check_for_updates"
+  "settings_section"
  ],
  "fields": [
   {
@@ -44,17 +43,10 @@
    "fieldname": "settings_section",
    "fieldtype": "Section Break",
    "label": "Settings"
-  },
-  {
-   "default": "1",
-   "description": "Hourly status updates for mandates and payments",
-   "fieldname": "check_for_updates",
-   "fieldtype": "Check",
-   "label": "Check for updates"
   }
  ],
  "links": [],
- "modified": "2020-05-29 09:21:50.464471",
+ "modified": "2020-08-06 13:51:04.278077",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "GoCardless Settings",

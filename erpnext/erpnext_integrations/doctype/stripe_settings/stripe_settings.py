@@ -90,7 +90,7 @@ class StripeSettings(PaymentGatewayController):
 		)
 
 def handle_webhooks(**kwargs):
-	integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
+	from erpnext.erpnext_integrations.webhooks_controller import handle_webhooks as _handle_webhooks
 
 	WEBHOOK_HANDLERS = {
 		"charge": StripeChargeWebhookHandler,
@@ -98,8 +98,4 @@ def handle_webhooks(**kwargs):
 		"invoice": StripeInvoiceWebhookHandler
 	}
 
-	if WEBHOOK_HANDLERS.get(integration_request.get("service_document")):
-		WEBHOOK_HANDLERS.get(integration_request.get("service_document"))(**kwargs)
-	else:
-		integration_request.db_set("error", _("This type of event is not handled by dokos"))
-		integration_request.update_status({}, "Not Handled")
+	_handle_webhooks(WEBHOOK_HANDLERS, **kwargs)

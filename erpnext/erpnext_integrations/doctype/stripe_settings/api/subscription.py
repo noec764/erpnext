@@ -1,5 +1,5 @@
 import frappe
-from .idempotency import StripeIdempotencyKey, handle_idempotency
+from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
 
 class StripeSubscription:
 	def __init__(self, gateway, subscription_id):
@@ -11,7 +11,7 @@ class StripeSubscription:
 		from hashlib import sha224
 		return self.gateway.stripe.Subscription.create(
 			customer=customer,
-			idempotency_key=StripeIdempotencyKey("subscription", "create", self.subscription).get(),
+			idempotency_key=IdempotencyKey("subscription", "create", self.subscription).get(),
 			**kwargs
 		)
 

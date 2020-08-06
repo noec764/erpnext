@@ -28,6 +28,7 @@
   "column_break_17",
   "payment_gateway_account",
   "recipient_and_message",
+  "subject",
   "mute_email",
   "column_break_9",
   "email_to",
@@ -35,7 +36,6 @@
   "make_sales_invoice",
   "section_break_10",
   "email_template",
-  "subject",
   "message",
   "payment_url",
   "amended_from"
@@ -124,11 +124,10 @@
    "options": "Email"
   },
   {
-   "depends_on": "eval:!doc.mute_email",
    "fieldname": "subject",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "Subject"
+   "label": "Subject / Description"
   },
   {
    "fieldname": "column_break_9",
@@ -280,8 +279,8 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-08-06 10:02:54.125253",
- "modified_by": "thierry@dokos.io",
+ "modified": "2020-08-06 14:37:50.112958",
+ "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",
  "owner": "Administrator",

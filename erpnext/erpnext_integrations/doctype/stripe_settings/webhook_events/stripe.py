@@ -31,7 +31,6 @@ class StripeWebhooksController(WebhooksController):
 
 		if self.metadata:
 			self.handle_payment_update()
-			self.add_reference_to_integration_request()
 		else:
 			self.set_as_failed(_("No metadata found in this webhook"))
 
@@ -51,7 +50,7 @@ class StripeWebhooksController(WebhooksController):
 			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))
 			self.set_as_completed()
 
-	def add_fees_before_submission(self):
+	def add_fees_before_submission(self, payment_entry):
 		output = []
 		base_amount = exchange_rate = fee_amount = 0.0
 		for charge in self.charges:
@@ -64,27 +63,27 @@ class StripeWebhooksController(WebhooksController):
 			# We suppose all charges within the same payment intent have the same exchange rate
 			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate"))) or 1
 
-			self.payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
+			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
 
 			if exchange_rate:
-				self.payment_entry.update({
+				payment_entry.update({
 					"target_exchange_rate": exchange_rate,
 				})
 
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
 				fees = fee_amount * exchange_rate
-				self.payment_entry.update({
-					"paid_amount": flt(base_amount or self.payment_entry.paid_amount) - fees,
-					"received_amount": flt(base_amount or self.payment_entry.received_amount) - fees
+				payment_entry.update({
+					"paid_amount": flt(base_amount or payment_entry.paid_amount) - fees,
+					"received_amount": flt(base_amount or payment_entry.received_amount) - fees
 				})
 
-				self.payment_entry.append("deductions", {
+				payment_entry.append("deductions", {
 					"account": self.payment_gateway.fee_account,
 					"cost_center": self.payment_gateway.cost_center,
 					"amount": fee_amount
 				})
 
-				self.payment_entry.set_amounts()
+				payment_entry.set_amounts()
 
 		self.integration_request.db_set("output", json.dumps(output, indent=4))
 

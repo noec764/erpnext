@@ -76,6 +76,7 @@
   "bank_account_no",
   "payment_order",
   "subscription_section",
+  "subscription",
   "auto_repeat",
   "amended_from",
   "title"
@@ -514,9 +515,10 @@
    "read_only": 1
   },
   {
+   "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
-   "label": "Subscription Section"
+   "label": "Subscription"
   },
   {
    "allow_on_submit": 1,
@@ -612,12 +614,18 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Down Payment"
+  },
+  {
+   "fieldname": "subscription",
+   "fieldtype": "Link",
+   "label": "Subscription",
+   "options": "Subscription"
   }
  ],
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-08 19:20:26.694036",
+ "modified": "2020-08-06 14:46:49.988810",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",

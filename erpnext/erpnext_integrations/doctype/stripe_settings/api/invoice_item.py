@@ -1,5 +1,5 @@
 import frappe
-from .idempotency import StripeIdempotencyKey, handle_idempotency
+from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
 
 class StripeInvoiceItem:
 	def __init__(self, gateway, payment_request):
@@ -9,7 +9,7 @@ class StripeInvoiceItem:
 	def create(self, customer, **kwargs):
 		return self.gateway.stripe.InvoiceItem.create(
 			customer=customer,
-			idempotency_key=StripeIdempotencyKey("invoice_item", "create", self.payment_request.name).get(),
+			idempotency_key=IdempotencyKey("invoice_item", "create", self.payment_request.name).get(),
 			**kwargs
 		)
 
