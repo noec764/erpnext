@@ -56,7 +56,7 @@ def add_plan(subscription, plan):
 @frappe.whitelist()
 def remove_subscription_line(subscription, line):
 	subscription = frappe.get_doc("Subscription", subscription)
-	subscription.remove_line(line)
+	subscription.remove_plan(line)
 	return subscription.save(ignore_permissions=True)
 
 @frappe.whitelist()

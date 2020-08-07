@@ -30,7 +30,7 @@ class StripeWebhooksController(WebhooksController):
 		self.action_type = self.data.get("type")
 
 		if self.metadata:
-			self.handle_payment_update()
+			self.handle_update()
 		else:
 			self.set_as_failed(_("No metadata found in this webhook"))
 
@@ -46,7 +46,7 @@ class StripeWebhooksController(WebhooksController):
 			self.payment_request = frappe.get_doc("Payment Request", self.metadata.get("payment_request"))
 
 	def update_payment_request(self):
-		if self.payment_request.status != self.status_map.get(self.action_type):
+		if self.payment_request and self.payment_request.status != self.status_map.get(self.action_type):
 			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))
 			self.set_as_completed()
 

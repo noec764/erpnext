@@ -6,7 +6,7 @@ frappe.ui.form.on('Subscription', {
 		frm.trigger('setup_listeners');
 
 		frm.set_indicator_formatter('item', function(doc) {
-			return (doc.status == "Active") ? "green" : "darkgrey";
+			return (doc.status == "Active") ? "green" : (doc.status == "Upcoming") ? "orange" : "darkgrey";
 		});
 
 		frm.make_methods = {
@@ -211,9 +211,19 @@ frappe.ui.form.on('Subscription', {
 	},
 	subscription_plan(frm) {
 		if (frm.doc.subscription_plan) {
-			frappe.model.with_doc("Subscription Plan", frm.doc.subscription_plan, function() {
-				const plan = frappe.get_doc("Subscription Plan", frm.doc.subscription_plan);
-				frm.doc.plans.push.apply(frm.doc.plans, plan.subscription_plans_template);
+			frappe.xcall("erpnext.accounts.doctype.subscription.subscription.get_subscription_plan", {
+				plan: frm.doc.subscription_plan
+			}).then(r => {
+				if (frm.is_new()) {
+					frm.doc.plans = frm.doc.plans.map(f => f.item).filter(f => f != undefined)
+				}
+
+				r.forEach(values => {
+					const row = frappe.model.add_child(frm.doc, "Subscription Plan Detail", "plans");
+					Object.keys(values).forEach(v => {
+						frappe.model.set_value(row.doctype, row.name, v, values[v])
+					})
+				})
 				frm.refresh_field("plans");
 			})
 		}
@@ -231,7 +241,7 @@ frappe.ui.form.on('Subscription Plan Detail', {
 	},
 	add_invoice_item(frm, cdt, cdn) {
 		const row = locals[cdt][cdn]
-		if (!frm.doc.stripe_invoice_item) {
+		if (!row.stripe_invoice_item) {
 			frappe.call({
 				method: "create_stripe_invoice_item",
 				doc: frm.doc,

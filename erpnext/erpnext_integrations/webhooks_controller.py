@@ -112,30 +112,25 @@ class WebhooksController():
 				frappe.db.commit()
 
 	def set_references(self, dt, dn):
-		frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, \
-			"reference_doctype", dt, update_modified=False)
-		frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, \
-			"reference_doctype", dn, update_modified=False)
+		self.integration_request.db_set("reference_doctype", dt, update_modified=False)
+		self.integration_request.db_set("reference_doctype", dn, update_modified=False)
 		self.integration_request.load_from_db()
 
 	def set_as_not_handled(self):
-		frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, \
-			"error", _("This type of event is not handled"), update_modified=False)
-		self.integration_request.update_status({}, "Not Handled")
+		self.integration_request.db_set("error", _("This type of event is not handled"), update_modified=False)
 		self.integration_request.load_from_db()
+		self.integration_request.update_status({}, "Not Handled")
 
 	def set_as_failed(self, message):
-		frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, \
-			"error", str(message), update_modified=False)
-		self.integration_request.update_status({}, "Failed")
+		self.integration_request.db_set("error", str(message), update_modified=False)
 		self.integration_request.load_from_db()
+		self.integration_request.update_status({}, "Failed")
 
 	def set_as_completed(self, message=None):
 		if message:
-			frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, \
-				"error", str(message), update_modified=False)
+			self.integration_request.db_set("error", str(message), update_modified=False)
+			self.integration_request.load_from_db()
 		self.integration_request.update_status({}, "Completed")
-		self.integration_request.load_from_db()
 
 
 def handle_webhooks(handlers, **kwargs):

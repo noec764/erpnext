@@ -27,7 +27,7 @@ class Account(NestedSet):
 	def autoname(self):
 		from erpnext.accounts.utils import get_autoname_with_number
 		suffix = None
-		if frappe.db.exists("Account", {"account_number": self.account_number}):
+		if self.account_number and frappe.db.exists("Account", {"account_number": self.account_number, "company": self.company}):
 			suffix = _(self.root_type)
 		self.name = get_autoname_with_number(self.account_number, self.account_name, None, self.company, suffix)
 

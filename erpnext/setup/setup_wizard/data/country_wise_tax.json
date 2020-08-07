@@ -1018,14 +1018,12 @@
 			"default": 1,
 			"taxes": [
 				{
-					"account_name": [
-						"SGST",
-						"CGST"
-					],
-					"rate": [
-						9.0,
-						9.0
-					]
+					"account_name": "SGST",
+					"rate": 9.0
+				},
+				{
+					"account_name": "CGST",
+					"rate": 9.0
 				}
 			]
 		},

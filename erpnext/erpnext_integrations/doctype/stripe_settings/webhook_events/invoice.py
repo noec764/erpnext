@@ -31,9 +31,7 @@ class StripeInvoiceWebhookHandler(StripeWebhooksController):
 
 		self.init_handler()
 		self.action_type = self.data.get("type")
-
-		self.init_handler()
 		self.handle_webhook()
 
 	def get_or_create_invoice(self):
-		pass
+		self.set_as_failed(_("Not yet implemented"))
