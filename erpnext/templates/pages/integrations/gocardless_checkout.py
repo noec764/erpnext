@@ -75,12 +75,13 @@ class PrefilledCustomer:
 		}
 
 	def get_customer_address(self):
+		customer_address_name = None
 		if self.reference.doctype == "Subscription":
-			customer_address_name = frappe.db.get_value("Customer", self.customer, "customer_primary_address")
+			customer_address_name = frappe.db.get_value("Customer", self.customer.name, "customer_primary_address")
 		else:
 			customer_address_name = self.reference.customer_address
 
-		self.customer_address = frappe.get_doc("Address", customer_address_name)
+		self.customer_address = frappe.get_doc("Address", customer_address_name) if customer_address_name else frappe._dict()
 
 	def get_primary_contact(self):
 		if self.customer.customer_primary_contact:

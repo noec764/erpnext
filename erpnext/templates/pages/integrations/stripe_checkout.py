@@ -23,13 +23,13 @@ def get_context(context):
 		gateway_controller = frappe.get_doc("Stripe Settings", get_gateway_controller(payment_request.doctype, payment_request.name))
 
 		customer_id = payment_request.get_customer()
-		context.customer = StripeCustomer(gateway_controller).get_or_create(customer_id).get("id")
+		context.customer = StripeCustomer(gateway_controller).get_or_create(customer_id).get("id") if customer_id else ""
 
 		context.publishable_key = gateway_controller.publishable_key
 		context.payment_key = frappe.form_dict.get("key")
 		context.image = gateway_controller.header_img
 		context.description = payment_request.subject
-		context.payer_name = frappe.db.get_value("Customer", customer_id, "customer_name")
+		context.payer_name = frappe.db.get_value("Customer", customer_id, "customer_name") if customer_id else ""
 		context.payer_email = payment_request.email_to or (frappe.session.user if frappe.session.user != "Guest" else "")
 		context.amount = fmt_money(amount=payment_request.grand_total, currency=payment_request.currency)
 		context.is_subscription = 1 if payment_request.is_linked_to_a_subscription() else 0

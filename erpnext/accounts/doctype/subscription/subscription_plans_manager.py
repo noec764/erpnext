@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils.data import nowdate, getdate
+from frappe.utils.data import nowdate, getdate, add_days
 from erpnext.accounts.party import get_default_price_list
 from erpnext.stock.get_item_details import get_price_list_rate_for
 from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
@@ -22,6 +22,16 @@ class SubscriptionPlansManager:
 		for plan in [x for x in self.items if x.status in ("Active", "Upcoming")]:
 			date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
 			plan.rate = self.get_plan_rate(plan, date)
+
+	def get_plans_total(self):
+		max_date = add_days(getdate(self.subscription.current_invoice_end), 1) if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
+		total = 0
+		for plan in [x for x in self.items if x.status in ("Active", "Upcoming")]:
+			if not plan.to_date or getdate(plan.to_date) <= getdate(maxdate):
+				date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
+				total += self.get_plan_rate(plan, date)
+
+		return total
 
 	def get_plan_rate(self, plan, date=nowdate()):
 		if plan.price_determination == "Fixed rate":

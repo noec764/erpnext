@@ -74,6 +74,7 @@
   "print_heading",
   "bank",
   "bank_account_no",
+  "payment_request",
   "payment_order",
   "subscription_section",
   "subscription",
@@ -620,13 +621,19 @@
    "fieldtype": "Link",
    "label": "Subscription",
    "options": "Subscription"
+  },
+  {
+   "fieldname": "payment_request",
+   "fieldtype": "Link",
+   "label": "Payment Request",
+   "options": "Payment Request"
   }
  ],
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-08-06 14:46:49.988810",
- "modified_by": "Administrator",
+ "modified": "2020-08-10 16:58:21.535790",
+ "modified_by": "thierry@dokos.io",
  "module": "Accounts",
  "name": "Payment Entry",
  "name_after_submit": 1,

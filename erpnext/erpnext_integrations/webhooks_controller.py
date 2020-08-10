@@ -37,6 +37,8 @@ class WebhooksController():
 				payment_request = frappe.get_doc("Payment Request", self.metadata.get("payment_request"))
 				payment_entry = payment_request.run_method("create_payment_entry", submit=False)
 				payment_entry.reference_no = reference
+				payment_entry.payment_request = payment_request.name
+				self.add_subscription_references(payment_request, payment_entry)
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
@@ -53,6 +55,7 @@ class WebhooksController():
 				payment_entry = subscription.run_method("create_payment")
 				payment_entry.reference_no = reference
 				payment_entry.subscription = subscription.name
+				self.add_subscription_references(payment_request, payment_entry)
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
@@ -74,12 +77,14 @@ class WebhooksController():
 			payment_entry.posting_date = posting_date
 			payment_entry.reference_date = posting_date
 
+			if self.metadata.get("payment_request"):
+				payment_request = frappe.get_doc("Payment Request", self.metadata.get("payment_request"))
+				self.add_subscription_references(payment_request, payment_entry)
+
 			if hasattr(self, 'add_fees_before_submission'):
-				self.add_fees_before_submission()
+				self.add_fees_before_submission(payment_entry)
 			payment_entry.flags.ignore_permissions = True
 			payment_entry.submit()
-
-			#self.trigger_subscription_events()
 
 			self.set_references(payment_entry.doctype, payment_entry.name)
 			self.set_as_completed()
@@ -89,6 +94,14 @@ class WebhooksController():
 			self.set_as_completed()
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
+
+	def add_subscription_references(self, payment_request, payment_entry):
+		if payment_request.is_linked_to_a_subscription():
+			payment_entry.subscription = payment_request.is_linked_to_a_subscription()
+			subscription = payment_request.get_linked_subscription()
+			references = subscription.get_references_for_payment_request(payment_request.name)
+			if references:
+				payment_entry.append('references', references)
 
 	def cancel_payment(self, reference=None):
 		if not reference:
@@ -102,18 +115,9 @@ class WebhooksController():
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
 
-	#TODO: refactor
-	def trigger_subscription_events(self):
-		if self.metadata.get("reference_doctype") == "Subscription":
-			self.subscription = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
-			if self.subscription.status == 'Active':
-				self.subscription.flags.ignore_permissions = True
-				self.subscription.run_method("process_active_subscription", payment_entry=self.payment_entry.name)
-				frappe.db.commit()
-
 	def set_references(self, dt, dn):
 		self.integration_request.db_set("reference_doctype", dt, update_modified=False)
-		self.integration_request.db_set("reference_doctype", dn, update_modified=False)
+		self.integration_request.db_set("reference_docname", dn, update_modified=False)
 		self.integration_request.load_from_db()
 
 	def set_as_not_handled(self):

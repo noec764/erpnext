@@ -104,3 +104,33 @@ class TestSubscription(unittest.TestCase):
 				self.assertEqual(subscription.status, 'Billable')
 
 		subscription.delete()
+
+	def test_invoice_generation(self):
+		current_date = today()
+		subscription = frappe.new_doc('Subscription')
+		subscription.customer = '_Test Customer'
+		subscription.company = '_Test Company'
+		subscription.start = today()
+		subscription.billing_interval = "Day"
+		subscription.append('plans', PLANS[0])
+		subscription.save()
+
+		for i in range(1, 5):
+			frappe.flags.current_date = add_days(nowdate(), 1)
+			subscription.save()
+
+			invoices = frappe.get_all("Sales Invoice", filters={
+				"subscription": subscription.name,
+				"from_date": subscription.current_invoice_start,
+				"to_date": subscription.current_invoice_end
+			})
+			events = frappe.get_all("Subscription Event", filters={
+				"period_start": subscription.current_invoice_start,
+				"period_end": subscription.current_invoice_end,
+				"event_type": "Sales invoice created"
+			})
+			self.assertEqual(len(invoices), 1)
+			self.assertEqual(len(events), 1)
+
+
+		subscription.delete()

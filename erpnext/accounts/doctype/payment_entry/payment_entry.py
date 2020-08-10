@@ -484,7 +484,7 @@ class PaymentEntry(AccountsController):
 			for d in self.get("references"):
 				if d.allocated_amount:
 					remarks.append(_("Amount {0} {1} against {2} {3}").format(self.party_account_currency,
-						d.allocated_amount, d.reference_doctype, d.reference_name))
+						d.allocated_amount, _(d.reference_doctype), d.reference_name))
 
 		for d in self.get("deductions"):
 			if d.amount:

@@ -45,13 +45,13 @@ class StripeCustomer:
 			doc.stripe_settings = self.gateway.name
 			doc.save(ignore_permissions=True)
 		else:
-			frappe.get_doc({
+			doc = frappe.get_doc({
 				"doctype": "Integration References",
 				"customer": customer_id,
 				"stripe_customer_id": stripe_id,
 				"stripe_settings": self.gateway.name
-			}).insert(ignore_permissions=True)
-		frappe.db.commit()
+			})
+			doc.insert(ignore_permissions=True)
 
 	def update(self, stripe_id, **kwargs):
 		return self.gateway.stripe.Customer.modify(

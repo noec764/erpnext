@@ -1,21 +1,23 @@
 frappe.listview_settings['Subscription'] = {
 	get_indicator: function(doc) {
 		if(doc.status === 'Trial') {
-			return [__("Trial"), "orange"];
+			return [__("Trial"), "blue"];
 		} else if(doc.status === 'Active') {
 			return [__("Active"), "blue"];
-		} else if(doc.status === 'Past Due Date') {
-			return [__("Past Due Date"), "orange"];
-		} else if(['Unpaid'].includes(doc.status)) {
-			return [__(doc.status), "orange"];
+		} else if(doc.status === 'Unpaid') {
+			return [__(doc.status), "red"];
 		} else if(doc.status === 'Paid') {
 			return [__("Paid"), "green"];
 		} else if(doc.status === 'Cancelled') {
 			return [__("Cancelled"), "darkgrey"];
-		} else if(doc.status === 'To bill') {
-			return [__("To bill"), "orange"];
+		} else if(doc.status === 'Billable') {
+			return [__("Billable"), "orange"];
 		} else if(doc.status === 'Billing failed') {
-			return [__("Billing failed"), "orange"];
+			return [__("Billing failed"), "red"];
+		} else if(doc.status === 'Payable') {
+			return [__("Payable"), "orange"];
+		} else if(doc.status === 'Draft invoices') {
+			return [__("Draft invoices"), "orange"];
 		}
 	}
 };

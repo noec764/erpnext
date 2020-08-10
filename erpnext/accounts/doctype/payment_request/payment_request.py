@@ -17,6 +17,8 @@ import json
 
 import warnings
 
+from erpnext.accounts.doctype.subscription.subscription_transaction import SubscriptionPaymentEntryGenerator
+
 class PaymentRequest(Document):
 	def before_insert(self):
 		if not self.no_payment_link:
@@ -187,7 +189,7 @@ class PaymentRequest(Document):
 			return controller.immediate_payment_processing(self)
 
 	def generate_payment_key(self):
-		self.db_set('payment_key', frappe.generate_hash(self.name))
+		self.db_set('payment_key', frappe.generate_hash(json.dumps(self.as_dict())))
 
 	def get_customer(self):
 		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
@@ -237,7 +239,7 @@ class PaymentRequest(Document):
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
 		if self.reference_doctype == "Subscription":
-			payment_entry = ref_doc.create_payment()
+			payment_entry = SubscriptionPaymentEntryGenerator(ref_doc).create_payment()
 			payment_entry.bank_account = self.get_payment_account()
 		else:
 			if self.reference_doctype == "Sales Invoice":
@@ -414,10 +416,21 @@ class PaymentRequest(Document):
 			return frappe.get_doc("Subscription", subscription)
 
 	def create_subscription_event(self):
+		from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 		subscription = frappe.get_doc("Subscription", self.is_linked_to_a_subscription())
+		start = subscription.current_invoice_start
+		end = subscription.current_invoice_end
+
+		if not subscription.generate_invoice_at_period_start:
+			previous_period = SubscriptionPeriod(subscription).get_previous_period()
+			start = previous_period[0].period_start
+			end = previous_period[0].period_end
+
 		subscription.add_subscription_event("Payment request created", **{
 			"document_type": "Payment Request",
-			"document_name": self.name
+			"document_name": self.name,
+			"period_start": start,
+			"period_end": end
 		})
 
 

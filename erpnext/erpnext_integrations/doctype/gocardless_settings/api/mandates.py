@@ -42,3 +42,4 @@ class GoCardlessMandates:
 				"registered_on_gocardless": 1,
 				"creation_date": nowdate()
 			}).insert(ignore_permissions=True)
+			frappe.db.commit()

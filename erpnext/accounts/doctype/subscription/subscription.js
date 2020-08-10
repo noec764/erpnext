@@ -11,21 +11,10 @@ frappe.ui.form.on('Subscription', {
 
 		frm.make_methods = {
 			'Payment Request': () => {
-				frappe.call({
-					method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_request",
-					freeze: true,
-					args: {
-						dt: me.frm.doc.doctype,
-						dn: me.frm.doc.name,
-						party_type: "Customer",
-						party: me.frm.doc.customer
-					}
-				}).then(r => {
-					if (r.message) {
-						const doc = frappe.model.sync(r.message)[0];
-						frappe.set_route("Form", doc.doctype, doc.name);
-					}
-				});
+				frm.events.create_payment_request(frm);
+			},
+			'Payment Entry': () => {
+				frm.events.create_payment(frm);
 			}
 		}
 
@@ -40,18 +29,10 @@ frappe.ui.form.on('Subscription', {
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
-			frm.page.add_action_item(
-				__('Create payment request'),
-				() => frm.events.create_payment_request(frm)
-			);
-			frm.page.add_action_item(
-				__('Create payment'),
-				() => frm.events.create_payment(frm)
-			);
 			if(frm.doc.status !== 'Cancelled'){
 				if(!frm.doc.cancellation_date){
 					frm.page.add_action_item(
-						__('Cancel Subscription'),
+						__('Stop Subscription'),
 						() => frm.events.cancel_this_subscription(frm)
 					);
 				} else {
@@ -60,7 +41,7 @@ frappe.ui.form.on('Subscription', {
 						() => frm.events.abort_cancel_this_subscription(frm)
 					);
 				}
-				frm.page.add_action_item(
+				frm.add_custom_button(
 					__('Fetch Subscription Updates'),
 					() => frm.events.get_subscription_updates(frm)
 				);
@@ -100,7 +81,7 @@ frappe.ui.form.on('Subscription', {
 			{
 				"fieldtype": "Check",
 				"label": __("Prorate last invoice"),
-				"fieldname": "prorate_invoice"
+				"fieldname": "prorate_last_invoice"
 			}
 		]
 
@@ -164,6 +145,7 @@ frappe.ui.form.on('Subscription', {
 
 	get_subscription_updates: function(frm) {
 		const doc = frm.doc;
+		frappe.show_alert({message: __("Subscription update in progress"), indicator: "orange"})
 		frappe.call({
 			method:
 			"erpnext.accounts.doctype.subscription.subscription.get_subscription_updates",
@@ -171,7 +153,9 @@ frappe.ui.form.on('Subscription', {
 		}).then(r => {
 			if(!r.exc){
 				frm.reload_doc();
-				frappe.show_alert({message: __("Subscription up to date"), color: "green"})
+				frappe.show_alert({message: __("Subscription up to date"), indicator: "green"})
+			} else {
+				frappe.show_alert({message: __("Subscription update failed. Please try again or check the error log."), indicator: "red"})
 			}
 		});
 	},

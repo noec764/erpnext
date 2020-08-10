@@ -10,8 +10,10 @@ from erpnext.accounts.doctype.subscription.subscription_plans_manager import Sub
 class SubscriptionTransactionBase:
 	def __init__(self, subscription):
 		self.subscription = subscription
+		previous_period = SubscriptionPeriod(self.subscription).get_previous_period()
+		self.previous_period = previous_period[0] if previous_period else frappe._dict(period_start=self.subscription.start, period_end=self.subscription.start)
 
-	def set_subscription_invoicing_details(self, document, prorate=0):
+	def set_subscription_invoicing_details(self, document):
 		document.customer = self.subscription.customer
 		document.customer_group, document.territory = frappe.db.get_value("Customer", self.subscription.customer, ["customer_group", "territory"])
 		document.set_missing_lead_customer_details()
@@ -19,7 +21,7 @@ class SubscriptionTransactionBase:
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and "Fixed rate" in list(self.get_plans_pricing_rules()) else 0
 
 		items_list = self.get_items_from_plans([p for p in self.subscription.plans if p.status == "Active"],\
-			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date, prorate)
+			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date)
 		for item in items_list:
 			document.append('items', item)
 
@@ -43,7 +45,7 @@ class SubscriptionTransactionBase:
 				billing_address=document.customer_address,
 				shipping_address=document.shipping_address_name
 			)
-		document.set_taxes()
+		document.append_taxes_from_master()
 
 		self.add_due_date(document)
 
@@ -80,46 +82,52 @@ class SubscriptionTransactionBase:
 		document.append(
 			'payment_schedule',
 			{
-				'due_date': self.get_due_date(),
+				'due_date': self.get_due_date(document),
 				'invoice_portion': 100
 			}
 		)
 
-	def get_due_date(self):
-		return add_days(self.subscription.current_invoice_start if \
-			self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end, cint(self.subscription.days_until_due))
+	def get_due_date(self, document):
+		end_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
+		if document.doctype == "Sales Order":
+			end_date = self.subscription.current_invoice_end
+
+		return add_days(end_date, cint(self.subscription.days_until_due))
 
 	def add_subscription_dates(self, document):
-		document.from_date = self.subscription.current_invoice_start
-		document.to_date = self.subscription.current_invoice_end
+		start_date = self.subscription.current_invoice_start if \
+			self.subscription.generate_invoice_at_period_start else self.previous_period.period_start
+		end_date = self.subscription.current_invoice_end if \
+			self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 
-	def get_items_from_plans(self, plans, date, prorate=0):
-		if prorate:
-			prorata_factor = self.get_prorata_factor()
+		if document.doctype == "Sales Order":
+			start_date = self.subscription.current_invoice_start
+			end_date = self.subscription.current_invoice_end
 
+		document.from_date =  start_date
+		document.to_date =  end_date
+
+	def get_items_from_plans(self, plans, date):
+		prorata_factor = self.get_prorata_factor()
 		items = []
 		for plan in plans:
-			if not prorate:
-				items.append({'item_code': plan.item, 'qty': plan.qty, \
-					'rate': SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)),\
-					'description': plan.description})
-			else:
-				items.append({'item_code': plan.item, 'qty': plan.qty, \
-					'rate': (SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor),\
-					'description': plan.description})
+			items.append({'item_code': plan.item, 'qty': plan.qty, \
+				'rate': (SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor),\
+				'description': plan.description})
 
 		return items
 
 	def get_prorata_factor(self):
+		prorate = cint(self.subscription.prorate_last_invoice) and (self.subscription.current_invoice_end == self.subscription.cancellation_date)
 		consumed = flt(date_diff(self.subscription.cancellation_date, self.subscription.current_invoice_start) + 1)
 		plan_days = flt(date_diff(self.subscription.current_invoice_end, self.subscription.current_invoice_start) + 1)
 		prorata_factor = consumed / plan_days
 
-		return prorata_factor
+		return prorata_factor if prorate else 1
 
 
 class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
-	def create_invoice(self, prorate, simulate=False, payment_entry=None):
+	def create_invoice(self, simulate=False):
 		current_sales_orders = SubscriptionPeriod(self.subscription).get_current_documents("Sales Order")
 		if current_sales_orders and not simulate:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
@@ -130,11 +138,10 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 		else:
 			invoice = frappe.new_doc('Sales Invoice')
 			invoice.flags.ignore_permissions = True
-			invoice = self.set_subscription_invoicing_details(invoice, prorate)
+			invoice = self.set_subscription_invoicing_details(invoice)
 
 		invoice.set_posting_time = 1
-		invoice.posting_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
-		invoice.posting_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
+		invoice.posting_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 		invoice.currency = self.subscription.currency
 
@@ -147,33 +154,33 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 					dimension: self.subscription.get(dimension)
 				})
 
+		self.add_advances(invoice)
 		invoice.flags.ignore_mandatory = True
 		invoice.set_missing_values()
 		if not simulate:
 			invoice.save()
-
-			if payment_entry:
-				invoice = self.add_advances(invoice, payment_entry)
-				invoice.save()
 
 			if self.subscription.submit_invoice:
 				invoice.submit()
 
 		return invoice
 
-	def add_advances(self, invoice, payment_entry):
-		pe = frappe.db.get_value("Payment Entry", payment_entry, ["remarks", "unallocated_amount"], as_dict=True)
+	def add_advances(self, invoice):
+		if self.subscription.payment_gateway:
+			reference = None
 
-		invoice.append("advances", {
-				"doctype": "Sales Invoice Advance",
-				"reference_type": "Payment Entry",
-				"reference_name": payment_entry,
-				"remarks": pe.get("remarks"),
-				"advance_amount": flt(pe.get("unallocated_amount")),
-				"allocated_amount": min(flt(invoice.outstanding_amount), flt(pe.get("unallocated_amount")))
-			})
+			payment_entry = frappe.db.get_value("Payment Entry", dict(reference_no=reference), ["remarks", "unallocated_amount"], as_dict=True)
+			if payment_entry:
+				invoice.append("advances", {
+					"doctype": "Sales Invoice Advance",
+					"reference_type": "Payment Entry",
+					"reference_name": payment_entry,
+					"remarks": pe.get("remarks"),
+					"advance_amount": flt(pe.get("unallocated_amount")),
+					"allocated_amount": min(flt(invoice.outstanding_amount), flt(pe.get("unallocated_amount")))
+				})
 
-		return invoice
+				return invoice
 
 	def get_simulation(self):
 		try:
@@ -193,7 +200,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
 			return
 
-class SubscriptionSalesOderGenerator(SubscriptionTransactionBase):
+class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
 		sales_order.flags.ignore_permissions = True
@@ -216,8 +223,7 @@ class SubscriptionPaymentEntryGenerator(SubscriptionTransactionBase):
 		from erpnext.accounts.utils import get_account_currency
 		payment_entry = frappe.new_doc("Payment Entry")
 
-		bank_account = self.get_bank_account()		# Subscription is better suited for service items. It won't update `update_stock`
-		# for that reason
+		bank_account = self.get_bank_account()
 
 		payment_entry.posting_date = nowdate()
 		payment_entry.company = self.subscription.company
@@ -229,11 +235,11 @@ class SubscriptionPaymentEntryGenerator(SubscriptionTransactionBase):
 		payment_entry.paid_to = bank_account.account
 		payment_entry.received_amount = self.subscription.grand_total
 		payment_entry.reference_no = f"{self.subscription.customer}-{self.subscription.name}"
-		payment_entry.reference_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
+		payment_entry.reference_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 
 		payment_entry.payment_type = "Receive"
 		payment_entry.party_type = "Customer"
-		payment_entry.paid_to_account_currency = self.currency
+		payment_entry.paid_to_account_currency = self.subscription.currency
 
 		return payment_entry
 
@@ -269,15 +275,37 @@ class SubscriptionPaymentRequestGenerator:
 	def get_immediate_payment_gateways():
 		return [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
 
+	@staticmethod
+	def get_payment_gateways():
+		return [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway")]
+
 	def create_payment_request(self, submit=False, mute_email=True):
-		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
-		return make_payment_request(**{
-			"dt": self.subscription.doctype,
-			"dn": self.subscription.name,
-			"party_type": "Customer",
-			"party": self.subscription.customer,
-			"submit_doc": submit,
-			"mute_email": mute_email,
-			"payment_gateway": self.subscription.payment_gateway,
-			"currency": self.subscription.currency
-		})
+		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
+		pr = frappe.get_doc(
+			make_payment_request(**{
+				"dt": self.subscription.doctype,
+				"dn": self.subscription.name,
+				"party_type": "Customer",
+				"party": self.subscription.customer,
+				"submit_doc": False,
+				"mute_email": mute_email,
+				"currency": self.subscription.currency
+			})
+		)
+
+		if not self.subscription.payment_gateway:
+			for gateway in self.get_payment_gateways():
+				pr.append('payment_gateways', gateway)
+		pr.payment_gateway = self.subscription.payment_gateway if self.subscription.payment_gateway else None
+		pr.payment_gateway_account = get_payment_gateway_account({
+			"currency": self.subscription.currency,
+			"payment_gateway": self.subscription.payment_gateway
+		}).name if self.subscription.payment_gateway else None
+
+		if submit:
+			print(pr.__dict__)
+			print(pr.as_dict())
+			pr.insert(ignore_permissions=True)
+			pr.submit()
+
+		return pr.as_dict()

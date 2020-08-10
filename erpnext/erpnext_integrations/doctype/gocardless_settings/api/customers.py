@@ -47,5 +47,6 @@ class GoCardlessCustomers:
 					"gocardless_customer_id": gocardless_id,
 					"gocardless_settings": self.gateway.name
 				}).insert(ignore_permissions=True)
+			frappe.db.commit()
 		except Exception as e:
 			frappe.log_error(e, "GoCardless Customer ID Registration Error")
