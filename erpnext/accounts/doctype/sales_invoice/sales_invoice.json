@@ -214,7 +214,7 @@
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "ACC-SINV-.YYYY.-",
+   "options": "ACC-SINV-.YYYY.-\nACC-SINV-RET-.YYYY.-",
    "print_hide": 1,
    "reqd": 1,
    "set_only_once": 1
@@ -1630,7 +1630,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 17:34:09.496372",
+ "modified": "2020-08-03 23:31:12.675040",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
