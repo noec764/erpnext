@@ -375,6 +375,7 @@ class SalesInvoice(SellingController):
 
 	def on_update(self):
 		self.set_paid_amount()
+		self.add_subscription_event()
 
 	def set_paid_amount(self):
 		paid_amount = 0.0

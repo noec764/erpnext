@@ -16,7 +16,7 @@ class IdempotencyKey:
 def handle_idempotency(func):
 	def wrapper(*args, **kwargs):
 		try:
-			func(*args, **kwargs)
+			return func(*args, **kwargs)
 		except stripe.error.IdempotencyError:
 			frappe.throw(_("This request has already been completed within the last 24 hours.<br> Please contact us for any question."))
 		except Exception:

@@ -17,7 +17,6 @@ from erpnext.accounts.doctype.subscription.subscription_state_manager import (Su
 from erpnext.accounts.doctype.subscription.subscription_transaction import (
 	SubscriptionInvoiceGenerator, SubscriptionPaymentEntryGenerator, SubscriptionSalesOrderGenerator, SubscriptionPaymentRequestGenerator)
 
-ACTIVE_STATUS = ["Active", "Paid", "Unpaid"]
 BILLING_STATUS = ["Billable", "Billing failed", "Cancelled and billable"]
 
 class Subscription(Document):
@@ -85,18 +84,13 @@ class Subscription(Document):
 	def generate_sales_order(self):
 		if self.create_sales_order:
 			try:
-				sales_order = SubscriptionSalesOrderGenerator(self).create_new_sales_order()
-				previous_period = SubscriptionPeriod(self).get_previous_period()
-				self.add_document_event(sales_order)
+				return SubscriptionSalesOrderGenerator(self).create_new_sales_order()
 			except Exception:
 				frappe.log_error(frappe.get_traceback(), _("Sales order generation error for subscription {0}").format(self.name))
 
 	def generate_invoice(self, simulate=False):
 		try:
-			invoice = SubscriptionInvoiceGenerator(self).create_invoice(simulate)
-			if not simulate:
-				self.add_document_event(invoice)
-			return invoice
+			return SubscriptionInvoiceGenerator(self).create_invoice(simulate)
 		except Exception:
 			previous_status = self.status
 			self.db_set("status", "Billing failed")
@@ -106,22 +100,6 @@ class Subscription(Document):
 			})
 			self.reload()
 			frappe.log_error(frappe.get_traceback(), _("Invoice generation error for subscription {0}").format(self.name))
-
-	def add_document_event(self, document):
-		start = self.current_invoice_start
-		end = self.current_invoice_end
-
-		if not self.generate_invoice_at_period_start:
-			previous_period = SubscriptionPeriod(self).get_previous_period()
-			start = previous_period[0].period_start
-			end = previous_period[0].period_end
-
-		self.add_subscription_event(f"{document.doctype.capitalize()} created", **{
-			"document_type": document.doctype,
-			"document_name": document.name,
-			"period_start": start,
-			"period_end": end
-		})
 
 	def cancel_subscription(self, **kwargs):
 		self.cancellation_date = kwargs.get("cancellation_date")
@@ -234,6 +212,15 @@ class Subscription(Document):
 			).get_current_documents("Sales Invoice") if x.docstatus == 1 and x.outstanding_amount > 0]
 
 		return []
+
+	def get_payment_request_for_period(self, start, end):
+		return frappe.db.get_value("Subscription Event", dict(
+			event_type="Payment request created",
+			subscription=self.name,
+			document_type="Payment Request",
+			period_start=start,
+			period_end=end
+		))
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

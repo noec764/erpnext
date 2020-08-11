@@ -321,7 +321,7 @@ class SalesOrder(SellingController):
 			})
 
 	def on_update(self):
-		pass
+		self.add_subscription_event()
 
 	def before_update_after_submit(self):
 		self.validate_po()

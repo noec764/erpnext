@@ -163,6 +163,39 @@ class TransactionBase(StatusUpdater):
 				msg += "<br><br>" + _("Please remove this item and try to submit again or update the posting time.")
 				frappe.throw(msg, title=_("Backdated Stock Entry"))
 
+	def add_subscription_event(self):
+		if getattr(self, "subscription", None) and self.doctype in ("Sales Order", "Sales Invoice", "Payment Entry"):
+			from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
+			subscription = frappe.get_doc("Subscription", self.subscription)
+			existing_event = frappe.db.get_value("Subscription Event", {
+				"subscription": subscription.name,
+				"document_type": self.doctype,
+				"document_name": self.name
+			})
+			start = getattr(self, "from_date", None) or subscription.current_invoice_start
+			end = getattr(self, "to_date", None) or subscription.current_invoice_end
+
+			if not subscription.generate_invoice_at_period_start:
+				previous_period = SubscriptionPeriod(
+					subscription,
+					start=start,
+					end=end
+				).get_previous_period()
+				if previous_period:
+					start = previous_period[0].period_start
+					end = previous_period[0].period_end
+
+			if existing_event:
+				for key, value in (("period_start", start), ("period_end", end)):
+					frappe.db.set_value("Subscription Event", existing_event, key, value)
+			else:
+				subscription.add_subscription_event(f"{self.doctype.capitalize()} created", **{
+					"document_type": self.doctype,
+					"document_name": self.name,
+					"period_start": start,
+					"period_end": end
+				})
+
 def validate_uom_is_integer(doc, uom_field, qty_fields, child_dt=None):
 	if isinstance(qty_fields, string_types):
 		qty_fields = [qty_fields]

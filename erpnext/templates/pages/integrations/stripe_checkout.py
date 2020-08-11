@@ -1,12 +1,14 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 from __future__ import unicode_literals
+from datetime import datetime
 import frappe
 from frappe import _
-from frappe.utils import cint, fmt_money
+from frappe.utils import cint, fmt_money, getdate, nowdate, get_datetime
 from frappe.integrations.utils import get_gateway_controller
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import (StripeCustomer, 
 	StripePaymentMethod, StripePaymentIntent, StripeInvoice, StripeSubscription)
+from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 
 def get_context(context):
 	context.no_cache = 1
@@ -58,9 +60,9 @@ def make_payment_intent(payment_key, customer):
 		currency=payment_request.currency,
 		customer=customer,
 		metadata={
-			"reference_doctype": payment_request.doctype,
-			"reference_name": payment_request.reference_doctype,
-			"payment_request": payment_request.reference_name
+			"reference_doctype": payment_request.reference_doctype,
+			"reference_name": payment_request.reference_name,
+			"payment_request": payment_request.name
 		}
 	)
 	return payment_intent
@@ -69,7 +71,7 @@ def make_payment_intent(payment_key, customer):
 def retry_invoice(**kwargs):
 	payment_request, payment_gateway = update_payment_method(**kwargs)
 
-	invoice = StripeInvoice(payment_gateway, payment_request).retrieve(kwargs.get("invoiceId"), expand=['payment_intent'])
+	invoice = StripeInvoice(payment_gateway).retrieve(kwargs.get("invoiceId"), expand=['payment_intent'])
 	return invoice
 
 @frappe.whitelist(allow_guest=True)
@@ -79,18 +81,30 @@ def make_subscription(**kwargs):
 	subscription = frappe.get_doc("Subscription", payment_request.is_linked_to_a_subscription())
 	items = [{'price': x.stripe_plan, 'quantity': x.qty} for x in subscription.plans if x.stripe_plan and x.status == "Active"]
 
-	stripe_subscription = StripeSubscription(payment_gateway, subscription.name).create(
-		kwargs.get("customerId"),
+	data = dict(
 		items=items,
+		proration_behavior="none",
 		expand=['latest_invoice.payment_intent'],
 		metadata={
 			"reference_doctype": subscription.doctype,
-			"reference_name": subscription.name,
-			"payment_request": payment_request.name
+			"reference_name": subscription.name
 		}
 	)
 
-	return stripe_subscription
+	if subscription.trial_period_end:
+		data.update({"trial_end": int(datetime.timestamp(get_datetime(subscription.trial_period_end)))})
+
+	if getdate(subscription.start) < getdate(nowdate()):
+		data.update({
+			"backdate_start_date": int(datetime.timestamp(get_datetime(subscription.start))),
+			"billing_cycle_anchor": int(datetime.timestamp(get_datetime(SubscriptionPeriod(subscription).get_next_invoice_date())))
+		})
+
+	return StripeSubscription(payment_gateway).create(
+		subscription.name,
+		kwargs.get("customerId"),
+		**data
+	)
 
 def update_payment_method(**kwargs):
 	payment_request = frappe.get_doc("Payment Request", {"payment_key": kwargs.get("payment_key")})

@@ -50,6 +50,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.get_payment()
 		self.get_reference_date()
 		self.get_metadata()
+		self.get_payment_request()
 
 	def get_payment(self):
 		payment = self.data.get("links", {}).get("payment")
@@ -63,6 +64,10 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 	def get_metadata(self):
 		self.metadata = getattr(self.gocardless_payment, "metadata", {})
+
+	def get_payment_request(self):
+		if self.metadata.get("payment_request"):
+			self.payment_request = frappe.get_doc("Payment Request", self.metadata.get("payment_request"))
 
 	def add_fees_before_submission(self, payment_entry):
 		self.get_payout()

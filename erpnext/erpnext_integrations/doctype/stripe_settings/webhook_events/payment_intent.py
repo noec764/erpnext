@@ -7,13 +7,14 @@ from frappe import _
 import json
 from frappe.utils import flt
 
-from .stripe import StripeWebhooksController
+from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import StripeWebhooksController
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeInvoice, StripeSubscription
 
 EVENT_MAP = {
-	'payment_intent.created': 'update_payment_request',
-	'payment_intent.canceled': 'update_payment_request',
-	'payment_intent.payment_failed': 'update_payment_request',
-	'payment_intent.processing': 'update_payment_request',
+	'payment_intent.created': 'update_payment_request_status',
+	'payment_intent.canceled': 'update_payment_request_status',
+	'payment_intent.payment_failed': 'update_payment_request_status',
+	'payment_intent.processing': 'update_payment_request_status',
 	'payment_intent.succeeded': 'create_submit_payment'
 }
 
@@ -35,6 +36,24 @@ class StripePaymentIntentWebhookHandler(StripeWebhooksController):
 
 		self.init_handler()
 		self.handle_webhook()
+
+	def get_metadata(self):
+		metadata = self.data.get("data", {}).get("object", {}).get("metadata")
+		if not metadata:
+			invoice_id = self.data.get("data", {}).get("object", {}).get("invoice")
+			invoice = StripeInvoice(self.stripe_settings).retrieve(invoice_id)
+			metadata = invoice.get("metadata")
+
+			if not metadata and invoice.get("subscription"):
+				subscription = StripeSubscription(self.stripe_settings).retrieve(invoice.get("subscription"))
+				metadata = subscription.get("metadata")
+
+		self.metadata = metadata
+
+	def update_payment_request_status(self):
+		self.update_payment_request()
+		if self.payment_request:
+			self.set_references(self.payment_request.doctype, self.payment_request.name)
 
 	def get_charges(self):
 		self.charges = [x.get("id") for x in self.data.get("data", {}).get("object", {}).get("charges", {}).get("data", [])]

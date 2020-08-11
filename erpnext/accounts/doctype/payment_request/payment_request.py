@@ -32,7 +32,7 @@ class PaymentRequest(Document):
 
 		if not self.no_payment_link:
 			self.validate_payment_gateways()
-			self.validate_subscription_gateways()
+			self.payment_gateways_validation()
 			self.validate_existing_gateway()
 			self.validate_currency()
 
@@ -70,19 +70,18 @@ class PaymentRequest(Document):
 		if not self.payment_gateways and not self.payment_gateway:
 			frappe.throw(_("Please add at least one payment gateway"))
 
-	#TODO: Refactor
-	def validate_subscription_gateways(self):
-		if self.is_linked_to_a_subscription():
-			plans = self.get_subscription_payment_plans()
-			selected_gateways = set([x.payment_gateway for x in self.payment_gateways])
-
-			if selected_gateways:
-				gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings"])
-				for gateway in gateways:
-					if gateway.gateway_settings == "Stripe Settings":
-						stripe_gateway = frappe.get_doc("Payment Gateway", gateway.name)
-						for plan in plans:
-							stripe_gateway.validate_subscription_plan(self.currency, plan.stripe_plan)
+	def payment_gateways_validation(self):
+		selected_gateways = set([x.payment_gateway for x in self.payment_gateways])
+		if selected_gateways:
+			gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings", "gateway_controller"])
+			for gateway in gateways:
+				gateway_controller = frappe.get_doc(gateway.gateway_settings, gateway.gateway_controller)
+				if hasattr(gateway_controller, "validate_payment_request"):
+					try:
+						gateway_controller.validate_payment_request(self)
+					except Exception as e:
+						if frappe.flags.mute_gateways_validation:
+							self.payment_gateways = [x for x in self.payment_gateways if x.payment_gateway!=gateway.name]
 	
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\
@@ -97,8 +96,7 @@ class PaymentRequest(Document):
 
 	def get_payment_account(self):
 		if self.payment_gateway_account:
-			return frappe.db.get_value("Payment Gateway Account",\
-				self.payment_gateway_account, "payment_account")
+			return frappe.db.get_value("Payment Gateway Account", self.payment_gateway_account, "payment_account")
 
 	def on_submit(self):
 		self.db_set('status', 'Initiated')
@@ -131,11 +129,10 @@ class PaymentRequest(Document):
 	def make_invoice(self):
 		if self.reference_doctype == "Sales Order":
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
-			ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
 			si = make_sales_invoice(self.reference_name, ignore_permissions=True)
 			si.allocate_advances_automatically = True
-			si = si.insert(ignore_permissions=True)
+			si.insert(ignore_permissions=True)
 			si.submit()
 
 	@frappe.whitelist()
@@ -389,13 +386,6 @@ class PaymentRequest(Document):
 
 		return redirect_to
 
-	#TODO: Refactor
-	def get_subscription_payment_plans(self):
-		subscription_name = self.is_linked_to_a_subscription()
-		if subscription_name:
-			subscription = frappe.get_doc("Subscription", subscription_name)
-			return subscription.plans
-
 	@frappe.whitelist()
 	def is_linked_to_a_subscription(self):
 		if self.reference_doctype == "Subscription":
@@ -423,8 +413,9 @@ class PaymentRequest(Document):
 
 		if not subscription.generate_invoice_at_period_start:
 			previous_period = SubscriptionPeriod(subscription).get_previous_period()
-			start = previous_period[0].period_start
-			end = previous_period[0].period_end
+			if previous_period:
+				start = previous_period[0].period_start
+				end = previous_period[0].period_end
 
 		subscription.add_subscription_event("Payment request created", **{
 			"document_type": "Payment Request",

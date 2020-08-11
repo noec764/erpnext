@@ -13,6 +13,8 @@ class StripeWebhooksController(WebhooksController):
 	def __init__(self, **kwargs):
 		super(StripeWebhooksController, self).__init__(**kwargs)
 		self.status_map = {}
+		self.period_start = None
+		self.period_end = None
 
 	def init_handler(self):
 		self.stripe_settings = frappe.get_doc("Stripe Settings", self.integration_request.get("payment_gateway_controller"))
@@ -36,17 +38,26 @@ class StripeWebhooksController(WebhooksController):
 
 	def get_metadata(self):
 		self.metadata = self.data.get("data", {}).get("object", {}).get("metadata")
-		if self.metadata:
-			self.get_reference_doc()
 
 	def get_payment_request(self):
-		if self.metadata.get("reference_doctype") == "Payment Request":
-			self.payment_request = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
+		payment_request_id = None
+
+		if self.metadata.get("reference_doctype") == "Subscription":
+			self.subscription = frappe.get_doc("Subscription", self.metadata.get("reference_name"))
+			self.period_start = getdate(datetime.datetime.utcfromtimestamp(self.data.get("data", {}).get("object", {}).get("period_start")))
+			self.period_end = getdate(datetime.datetime.utcfromtimestamp(self.data.get("data", {}).get("object", {}).get("period_end")))
+			if self.period_start and self.period_end:
+				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, self.period_end)
+
 		elif self.metadata.get("payment_request"):
-			self.payment_request = frappe.get_doc("Payment Request", self.metadata.get("payment_request"))
+			payment_request_id = self.metadata.get("payment_request")
+		elif self.metadata.get("reference_doctype") == "Payment Request":
+			payment_request_id = self.metadata.get("reference_name")
+
+		self.payment_request = frappe.get_doc("Payment Request", payment_request_id)
 
 	def update_payment_request(self):
-		if self.payment_request and self.payment_request.status != self.status_map.get(self.action_type):
+		if self.payment_request and self.payment_request.status not in (self.status_map.get(self.action_type), 'Paid', 'Completed'):
 			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))
 			self.set_as_completed()
 
@@ -93,3 +104,5 @@ class StripeWebhooksController(WebhooksController):
 			for charge in self.charges:
 				self.create_payment(charge)
 				self.submit_payment(charge)
+
+		self.update_payment_request()

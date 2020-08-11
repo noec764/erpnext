@@ -8,9 +8,15 @@ from erpnext.accounts.doctype.subscription.subscription_state_manager import Sub
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
 
 class SubscriptionTransactionBase:
-	def __init__(self, subscription):
+	def __init__(self, subscription, start_date=None, end_date=None):
 		self.subscription = subscription
-		previous_period = SubscriptionPeriod(self.subscription).get_previous_period()
+		self.start_date = start_date or self.subscription.current_invoice_start
+		self.end_date = end_date or self.subscription.current_invoice_end
+		previous_period = SubscriptionPeriod(
+			self.subscription,
+			start=self.start_date,
+			end=self.end_date
+		).get_previous_period()
 		self.previous_period = previous_period[0] if previous_period else frappe._dict(period_start=self.subscription.start, period_end=self.subscription.start)
 
 	def set_subscription_invoicing_details(self, document):
@@ -88,21 +94,21 @@ class SubscriptionTransactionBase:
 		)
 
 	def get_due_date(self, document):
-		end_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
+		end_date = self.start_date if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 		if document.doctype == "Sales Order":
-			end_date = self.subscription.current_invoice_end
+			end_date = self.end_date
 
 		return add_days(end_date, cint(self.subscription.days_until_due))
 
 	def add_subscription_dates(self, document):
-		start_date = self.subscription.current_invoice_start if \
+		start_date = self.start_date if \
 			self.subscription.generate_invoice_at_period_start else self.previous_period.period_start
-		end_date = self.subscription.current_invoice_end if \
+		end_date = self.end_date if \
 			self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 
 		if document.doctype == "Sales Order":
-			start_date = self.subscription.current_invoice_start
-			end_date = self.subscription.current_invoice_end
+			start_date = self.start_date
+			end_date = self.end_date
 
 		document.from_date =  start_date
 		document.to_date =  end_date
@@ -118,9 +124,9 @@ class SubscriptionTransactionBase:
 		return items
 
 	def get_prorata_factor(self):
-		prorate = cint(self.subscription.prorate_last_invoice) and (self.subscription.current_invoice_end == self.subscription.cancellation_date)
-		consumed = flt(date_diff(self.subscription.cancellation_date, self.subscription.current_invoice_start) + 1)
-		plan_days = flt(date_diff(self.subscription.current_invoice_end, self.subscription.current_invoice_start) + 1)
+		prorate = cint(self.subscription.prorate_last_invoice) and (self.end_date == self.subscription.cancellation_date)
+		consumed = flt(date_diff(self.subscription.cancellation_date, self.start_date) + 1)
+		plan_days = flt(date_diff(self.end_date, self.start_date) + 1)
 		prorata_factor = consumed / plan_days
 
 		return prorata_factor if prorate else 1
@@ -141,7 +147,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			invoice = self.set_subscription_invoicing_details(invoice)
 
 		invoice.set_posting_time = 1
-		invoice.posting_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
+		invoice.posting_date = self.start_date if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 		invoice.currency = self.subscription.currency
 
@@ -204,8 +210,8 @@ class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
 	def create_new_sales_order(self):
 		sales_order = frappe.new_doc('Sales Order')
 		sales_order.flags.ignore_permissions = True
-		sales_order.transaction_date = self.subscription.current_invoice_start
-		sales_order.delivery_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
+		sales_order.transaction_date = self.start_date
+		sales_order.delivery_date = self.start_date if self.subscription.generate_invoice_at_period_start else self.end_date
 		sales_order = self.set_subscription_invoicing_details(sales_order)
 		sales_order.currency = self.subscription.currency
 		sales_order.order_type = "Maintenance"
@@ -235,7 +241,7 @@ class SubscriptionPaymentEntryGenerator(SubscriptionTransactionBase):
 		payment_entry.paid_to = bank_account.account
 		payment_entry.received_amount = self.subscription.grand_total
 		payment_entry.reference_no = f"{self.subscription.customer}-{self.subscription.name}"
-		payment_entry.reference_date = self.subscription.current_invoice_start if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
+		payment_entry.reference_date = self.start_date if self.subscription.generate_invoice_at_period_start else self.previous_period.period_end
 
 		payment_entry.payment_type = "Receive"
 		payment_entry.party_type = "Customer"
@@ -264,7 +270,9 @@ class SubscriptionPaymentRequestGenerator:
 
 	def make_payment_request(self):
 		if self.subscription.generate_payment_request and self.subscription.status == "Payable" and not frappe.conf.mute_payment_gateways:
+			frappe.flags.mute_gateways_validation = True
 			payment_request = self.create_payment_request(submit=True, mute_email=True)
+			frappe.flags.mute_gateways_validation = False
 
 			if self.subscription.payment_gateway in self.get_immediate_payment_gateways() and \
 				payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:

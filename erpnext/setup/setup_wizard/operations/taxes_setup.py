@@ -26,7 +26,7 @@ def make_tax_account_and_template(company, tax_data, template_name=None):
 		pass
 
 def make_tax_account(company, account_name, tax_rate, account_number=None):
-	tax_group = get_tax_account_group(company)
+	tax_group = get_tax_account_group(company, account_number)
 
 	if tax_group:
 		try:
@@ -82,7 +82,15 @@ def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None)
 		doc = frappe.get_doc(purchase_tax_template)
 		doc.insert(ignore_permissions=True)
 
-def get_tax_account_group(company):
+def get_tax_account_group(company, account_number=None):
+	if account_number:
+		tax_groups = frappe.get_all("Account",
+			filters={"is_group": 1, "company": company, "account_number": ("in", (account_number[:-1], account_number[:-2]))},
+			order_by="lft DESC")
+
+		if tax_groups:
+			tax_group = tax_groups[0]
+
 	tax_group = frappe.db.get_value("Account",
 		{"account_name": "Duties and Taxes", "is_group": 1, "company": company})
 	if not tax_group:

@@ -7,10 +7,12 @@ import warnings
 import frappe
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, cint, flt
+from frappe.utils import get_url, call_hook_method, cint, flt, getdate, nowdate
 from frappe.integrations.utils import PaymentGatewayController, create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import (StripeChargeWebhookHandler, 
 	StripePaymentIntentWebhookHandler, StripeInvoiceWebhookHandler)
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice
+from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 import stripe
 import json
 
@@ -63,11 +65,30 @@ class StripeSettings(PaymentGatewayController):
 				frappe.throw(_("For currency {0}, the minimum transaction amount should be {1}").format(currency,
 					self.currency_wise_minimum_charge_amount.get(currency, 0.0)))
 
-	#TODO: Refactor
-	def validate_subscription_plan(self, currency, plan):
-		try:
-			stripe_plan = self.stripe.Plan.retrieve(plan)
+	def validate_payment_request(self, payment_request):
+		subscription = payment_request.get_linked_subscription()
+		if not subscription:
+			return
 
+		self.validate_subscription_lines(subscription)
+		self.validate_next_invoice_date(subscription)
+
+	def validate_subscription_lines(self, subscription):
+		total = 0
+		for plan in subscription.plans:
+			if plan.stripe_plan:
+				p = self.get_stripe_plan(plan.stripe_plan, subscription.currency)
+				total += flt(p.unit_amount) / 100
+			elif plan.stripe_invoice_item:
+				i = self.get_stripe_invoice_item(plan.stripe_invoice_item, subscription.currency)
+				total += flt(i.price.unit_amount) / 100
+
+		if total != subscription.total:
+			frappe.msgprint(_("The total billed by Stripe ({0}) will be different from the total in your subscription ({1}).").format(total, subscription.total))
+
+	def get_stripe_plan(self, plan, currency):
+		try:
+			stripe_plan = StripePrice(self).retrieve(plan)
 			if not stripe_plan.active:
 				frappe.throw(_("Payment plan {0} is no longer active.").format(plan))
 			if not currency == stripe_plan.currency.upper():
@@ -76,6 +97,21 @@ class StripeSettings(PaymentGatewayController):
 			return stripe_plan
 		except stripe.error.InvalidRequestError as e:
 			frappe.throw(_("Invalid Stripe plan or currency: {0} - {1}").format(plan, currency))
+
+	def get_stripe_invoice_item(self, item, currency):
+			try:
+				invoice_item = StripeInvoiceItem(self).retrieve(item)
+				if not currency == invoice_item.currency.upper():
+					frappe.throw(_("Payment plan {0} is in currency {1}, not {2}.")\
+						.format(item, invoice_item.currency.upper(), currency))
+				return invoice_item
+			except stripe.error.InvalidRequestError as e:
+				frappe.throw(_("Invalid currency for invoice item: {0} - {1}").format(item, currency))
+
+	def validate_next_invoice_date(self, subscription):
+		next_invoice_date = SubscriptionPeriod(subscription).get_next_invoice_date()
+		if getdate(next_invoice_date) < getdate(nowdate()):
+			frappe.throw(_("The next invoice date for this subscription is in the past and can not be billed with Stripe."))
 
 	def get_payment_url(self, **kwargs):
 		payment_key = {"key": kwargs.get("payment_key")}

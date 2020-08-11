@@ -456,38 +456,52 @@
 							"account_number": "4455"
 						},
 						"Taxes sur le chiffre d'affaires déductibles": {
+							"TVA déductible": {
+								"account_number": "44561",
+								"account_type": "Tax",
+								"is_group": 1
+							},
 							"TVA sur immobilisations": {
 								"account_number": "44562",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
 							"TVA transférée par d'autres entreprises": {
 								"account_number": "44563",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
 							"TVA sur autres biens et services": {
 								"account_number": "44566",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
 							"Crédit de TVA à reporter": {
 								"account_number": "44567",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
 							"Taxes assimilées à la TVA": {
 								"account_number": "44568",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
-							"account_number": "4456"
+							"account_number": "4456",
+							"account_type": "Tax"
 						},
 						"Taxes sur le chiffre d'affaires collectées par l'entreprise": {
 							"TVA collectée": {
 								"account_number": "44571",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
 							"Taxes assimilées à la TVA": {
 								"account_number": "44578",
-								"account_type": "Tax"
+								"account_type": "Tax",
+								"is_group": 1
 							},
-							"account_number": "4457"
+							"account_number": "4457",
+							"account_type": "Tax"
 						},
 						"Taxes sur le chiffre d'affaires à régulariser ou en attente": {
 							"Acomptes - Régime simplifié d'imposition": {

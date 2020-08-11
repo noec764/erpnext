@@ -66,6 +66,9 @@ class PaymentEntry(AccountsController):
 		self.update_unreconciled_amount()
 		self.set_status()
 
+	def on_update(self):
+		self.add_subscription_event()
+
 	def on_submit(self):
 		self.setup_party_account_field()
 		if self.difference_amount:
