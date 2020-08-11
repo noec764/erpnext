@@ -325,6 +325,7 @@ scheduler_events = {
 		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
 		"erpnext.buying.doctype.supplier_quotation.supplier_quotation.set_expired_status",
 		"erpnext.hr.doctype.holiday_list.holiday_list.replace_expired_holiday_lists",
+		"erpnext.accounts.doctype.process_statement_of_accounts.process_statement_of_accounts.send_auto_email"
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",
