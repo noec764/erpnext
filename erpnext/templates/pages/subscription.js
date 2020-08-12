@@ -65,10 +65,17 @@ class subscriptionPortal {
 			}
 		})
 
+		let subtitle = null;
 		if (this.subscription.cancellation_date) {
+			subtitle = `<h6 class="small muted">${__("This subscription will end on")} ${frappe.datetime.global_date_format(this.subscription.cancellation_date)}</h6>`
+		} else if (this.next_invoice_date) {
+			subtitle = `<h6 class="small muted">${__("The next invoice will be generated on")} ${frappe.datetime.global_date_format(this.next_invoice_date)}</h6>`
+		}
+
+		if (subtitle) {
 			const div = document.createElement('div')
 			div.classList.add('subscription-subtitle')
-			div.innerHTML = `<h6 class="small muted">${__("This subscription will end on")} ${frappe.datetime.global_date_format(this.subscription.cancellation_date)}</h6>`
+			div.innerHTML = subtitle
 			const $title = this.$current_subscription[0].getElementsByClassName("subscriptions-section-title")[0]
 			$title.parentNode.insertBefore( div, $title.nextSibling );
 		}
@@ -229,7 +236,7 @@ class subscriptionPortal {
 				</div>`
 
 			let payment_request = "";
-			if (r.message.length) {
+			if (this.subscription.outstanding_amount > 0) {
 				payment_request = `<div><a class="btn btn-warning" href="${r.message[0].payment_link}">${__("Pay immediately")}</a></div>`
 			} else {
 				payment_request = `<div><a class="btn btn-info" href="/invoices">${ __("View invoices") }</a></div>`

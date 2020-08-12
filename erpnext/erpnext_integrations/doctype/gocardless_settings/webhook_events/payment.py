@@ -19,6 +19,15 @@ EVENT_MAP = {
 	'paid_out': 'submit_payment'
 }
 
+STATUS_MAP = {
+	'created': 'Pending',
+	'submitted': 'Pending',
+	'confirmed': 'Paid',
+	'cancelled': 'Failed',
+	'failed': 'Failed',
+	'paid_out': 'Paid'
+}
+
 class GoCardlessPaymentWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessPaymentWebhookHandler, self).__init__(**kwargs)
@@ -27,6 +36,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 		self.gocardless_payment = {}
 
 		self.event_map = EVENT_MAP
+		self.status_map = STATUS_MAP
 		self.init_handler()
 
 		if self.gocardless_payment and self.metadata:

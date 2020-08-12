@@ -29,19 +29,25 @@ class StripeInvoiceWebhookHandler(StripeWebhooksController):
 		self.handle_webhook()
 
 	def get_metadata(self):
-		subscription_id = self.data.get("data", {}).get("object", {}).get("subscription")
-		if subscription_id:
-			subscription = StripeSubscription(self.stripe_settings).retrieve(subscription_id)
-			self.metadata = subscription.get("metadata")
-		else:
-			self.metadata = self.data.get("data", {}).get("object", {}).get("lines", {}).get("data")[0].get("metadata")
+		super().get_metadata()
+		if not self.metadata:
+			subscription_id = self.data.get("data", {}).get("object", {}).get("subscription")
+			if subscription_id:
+				subscription = StripeSubscription(self.stripe_settings).retrieve(subscription_id)
+				self.metadata = subscription.get("metadata")
+			else:
+				self.metadata = self.data.get("data", {}).get("object", {}).get("lines", {}).get("data")[0].get("metadata")
 
 	def get_or_create_invoice(self):
 		reference = self.data.get("data", {}).get("object", {}).get("id")
-		invoice = self.get_sales_invoice(reference, self.period_start, self.period_end)
+		period_start = self.period.get("period_start") or self.period_start
+		period_end = self.period.get("period_end") or self.period_end
+		invoice = self.get_sales_invoice(reference, period_start, period_end)
 
 		if not invoice:
-			invoice = self.create_sales_invoice(self.period_start, self.period_end, reference)
+			invoice = self.create_sales_invoice(period_start, period_end, reference)
+		else:
+			invoice = frappe.get_doc("Sales Invoice", invoice)
 
 		if invoice:
 			self.set_references(invoice.doctype, invoice.name)
@@ -51,19 +57,20 @@ class StripeInvoiceWebhookHandler(StripeWebhooksController):
 
 	def cancel_invoice(self):
 		try:
-			self.cancel_sales_invoice()
+			invoice = self.cancel_sales_invoice()
+			if invoice:
+				self.set_references(invoice.doctype, invoice.name)
 			self.set_as_completed()
 		except Exception as e:
 			self.set_as_failed(e)
 
 	def finalize_invoice(self):
-		submit_invoice = True
-		if self.metadata.get("reference_doctype") == "Subscription":
-			submit_invoice = frappe.db.get_value("Subscription", self.metadata.get("reference_name"), "submit_invoice")
-
+		submit_invoice = self.subscription.submit_invoice if self.subscription else True
 		if submit_invoice:
 			try:
-				self.submit_sales_invoice()
+				invoice = self.submit_sales_invoice()
+				if invoice:
+					self.set_references(invoice.doctype, invoice.name)
 			except Exception as e:
 				self.set_as_failed(e)
 

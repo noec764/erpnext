@@ -83,7 +83,6 @@ def make_subscription(**kwargs):
 
 	data = dict(
 		items=items,
-		proration_behavior="none",
 		expand=['latest_invoice.payment_intent'],
 		metadata={
 			"reference_doctype": subscription.doctype,
@@ -99,6 +98,8 @@ def make_subscription(**kwargs):
 			"backdate_start_date": int(datetime.timestamp(get_datetime(subscription.start))),
 			"billing_cycle_anchor": int(datetime.timestamp(get_datetime(SubscriptionPeriod(subscription).get_next_invoice_date())))
 		})
+	else:
+		data.update({"proration_behavior": "none"})
 
 	return StripeSubscription(payment_gateway).create(
 		subscription.name,

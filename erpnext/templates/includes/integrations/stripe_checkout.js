@@ -157,7 +157,6 @@ class StripeCheckout {
 				}
 				return result.message;
 			}).then((result) => {
-				console.log(result)
 				return {
 					paymentMethodId: paymentMethodId,
 					subscription: result,
@@ -198,7 +197,6 @@ class StripeCheckout {
 	}
 
 	handlePaymentWithInitialPaymentMethod(data) {
-		console.log("handlePaymentWithInitialPaymentMethod", data)
 		this.handlePaymentThatRequiresCustomerAction(data)
 		.then(this.handleRequiresPaymentMethod)
 		.then(this.orderComplete)
@@ -208,7 +206,6 @@ class StripeCheckout {
 	}
 
 	handlePaymentRetry(data) {
-		console.log("handlePaymentRetry", data)
 		this.handlePaymentThatRequiresCustomerAction(data)
 		.then(this.orderComplete)
 		.catch(error => {
@@ -247,10 +244,6 @@ class StripeCheckout {
 			return Promise.resolve({ subscription, paymentMethodId });
 		}
 
-		console.log("invoice", invoice)
-		console.log("subscription", subscription)
-		console.log("paymentMethodId", paymentMethodId)
-		console.log("isRetry", isRetry)
 		// If it's a first payment attempt, the payment intent is on the subscription latest invoice.
 		// If it's a retry, the payment intent will be on the invoice itself.
 		let paymentIntent = invoice ? invoice.payment_intent : subscription.latest_invoice.payment_intent;

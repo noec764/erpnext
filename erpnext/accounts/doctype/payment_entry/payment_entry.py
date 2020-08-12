@@ -15,6 +15,7 @@ from erpnext.hr.doctype.expense_claim.expense_claim import update_reimbursed_amo
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account, get_bank_account_details
 from erpnext.controllers.accounts_controller import AccountsController, get_supplier_block_status
 from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import get_party_account_based_on_invoice_discounting
+from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 
 from six import string_types, iteritems
 
@@ -83,6 +84,7 @@ class PaymentEntry(AccountsController):
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry', 'Sepa Direct Debit Details')
+		delete_linked_subscription_events(self)
 		self.setup_party_account_field()
 		self.make_gl_entries(cancel=1)
 		self.update_outstanding_amounts()
@@ -91,6 +93,9 @@ class PaymentEntry(AccountsController):
 		self.delink_advance_entry_references()
 		self.update_payment_schedule(cancel=1)
 		self.set_status(update=True)
+
+	def on_trash(self):
+		delete_linked_subscription_events(self)
 
 	def update_outstanding_amounts(self):
 		self.set_missing_ref_details(force=True)

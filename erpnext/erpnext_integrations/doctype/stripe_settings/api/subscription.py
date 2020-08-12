@@ -11,7 +11,7 @@ class StripeSubscription:
 	def create(self, subscription, customer, **kwargs):
 		return self.gateway.stripe.Subscription.create(
 			customer=customer,
-			idempotency_key=IdempotencyKey("subscription", "create2", subscription).get(),
+			idempotency_key=IdempotencyKey("subscription", "create", subscription).get(),
 			**kwargs
 		)
 

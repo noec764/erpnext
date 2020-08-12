@@ -206,7 +206,11 @@ class Subscription(Document):
 		)
 
 		if payment_request_period:
-			return [x for x in SubscriptionPeriod(self,
+			return [{
+					"reference_doctype": "Sales Invoice",
+					"reference_name": x.name,
+					"outstanding_amount": x.outstanding_amount
+				} for x in SubscriptionPeriod(self,
 				start=payment_request_period.period_start,
 				end=payment_request_period.period_end
 			).get_current_documents("Sales Invoice") if x.docstatus == 1 and x.outstanding_amount > 0]
@@ -220,7 +224,13 @@ class Subscription(Document):
 			document_type="Payment Request",
 			period_start=start,
 			period_end=end
-		))
+		), "document_name") or frappe.db.get_value("Subscription Event", dict(
+			event_type="Payment request created",
+			subscription=self.name,
+			document_type="Payment Request",
+			period_start=("<=", start),
+			period_end=(">=", end)
+		), "document_name")
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

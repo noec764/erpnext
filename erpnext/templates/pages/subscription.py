@@ -9,6 +9,7 @@ from erpnext.controllers.website_list_for_contact import get_customers_suppliers
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
 from erpnext.shopping_cart.cart import get_party
 from erpnext.accounts.doctype.payment_request.payment_request import get_payment_link
+from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 
 def get_context(context):
 	context.no_cache = 1
@@ -39,7 +40,8 @@ def get_subscription_context():
 	return {
 		"subscription": subscription,
 		"subscription_plans": subscription_plans,
-		"available_subscriptions": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"])
+		"available_subscriptions": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"]),
+		"next_invoice_date": SubscriptionPeriod(subscription).get_next_invoice_date()
 	}
 
 @frappe.whitelist()
@@ -89,7 +91,7 @@ def get_payment_requests(subscription):
 		"reference_doctype": "Subscription",
 		"reference_name": subscription,
 		"status": "Initiated"
-	}, fields=["name", "payment_key"])
+	}, fields=["name", "payment_key", "grand_total"])
 
 	if payment_requests:
 		output = [dict(x, **{"payment_link": get_payment_link(x.payment_key)}) for x in payment_requests]

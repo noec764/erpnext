@@ -1,20 +1,21 @@
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
+import datetime
 import frappe
 from frappe import _
 import json
-from frappe.utils import flt
+from frappe.utils import flt, getdate
 
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeCharge
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeCharge, StripeInvoice
 
 class StripeWebhooksController(WebhooksController):
 	def __init__(self, **kwargs):
 		super(StripeWebhooksController, self).__init__(**kwargs)
-		self.status_map = {}
 		self.period_start = None
 		self.period_end = None
+		self.stripe_invoice = {}
 
 	def init_handler(self):
 		self.stripe_settings = frappe.get_doc("Stripe Settings", self.integration_request.get("payment_gateway_controller"))
@@ -25,8 +26,8 @@ class StripeWebhooksController(WebhooksController):
 		)
 
 		self.get_metadata()
-		if self.metadata:
-			self.get_payment_request()
+		self.get_invoice()
+		self.get_payment_request()
 
 	def handle_webhook(self):
 		self.action_type = self.data.get("type")
@@ -39,13 +40,23 @@ class StripeWebhooksController(WebhooksController):
 	def get_metadata(self):
 		self.metadata = self.data.get("data", {}).get("object", {}).get("metadata")
 
+	def get_invoice(self):
+		object_type = self.data.get("data", {}).get("object", {}).get("object")
+		if object_type == "invoice":
+			invoice = self.data.get("data", {}).get("object", {}).get("id")
+		else:
+			invoice = self.data.get("data", {}).get("object", {}).get("invoice")
+
+		self.stripe_invoice = StripeInvoice(self.stripe_settings).retrieve(invoice)
+
 	def get_payment_request(self):
 		payment_request_id = None
 
 		if self.metadata.get("reference_doctype") == "Subscription":
 			self.subscription = frappe.get_doc("Subscription", self.metadata.get("reference_name"))
-			self.period_start = getdate(datetime.datetime.utcfromtimestamp(self.data.get("data", {}).get("object", {}).get("period_start")))
-			self.period_end = getdate(datetime.datetime.utcfromtimestamp(self.data.get("data", {}).get("object", {}).get("period_end")))
+			if self.stripe_invoice:
+				self.period_start = getdate(datetime.datetime.utcfromtimestamp(self.stripe_invoice.get("period_start")))
+				self.period_end = getdate(datetime.datetime.utcfromtimestamp(self.stripe_invoice.get("period_end")))
 			if self.period_start and self.period_end:
 				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, self.period_end)
 
@@ -54,12 +65,8 @@ class StripeWebhooksController(WebhooksController):
 		elif self.metadata.get("reference_doctype") == "Payment Request":
 			payment_request_id = self.metadata.get("reference_name")
 
-		self.payment_request = frappe.get_doc("Payment Request", payment_request_id)
-
-	def update_payment_request(self):
-		if self.payment_request and self.payment_request.status not in (self.status_map.get(self.action_type), 'Paid', 'Completed'):
-			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))
-			self.set_as_completed()
+		if payment_request_id:
+			self.payment_request = frappe.get_doc("Payment Request", payment_request_id)
 
 	def add_fees_before_submission(self, payment_entry):
 		output = []
@@ -68,11 +75,24 @@ class StripeWebhooksController(WebhooksController):
 			stripe_charge = StripeCharge(self.stripe_settings).retrieve(charge)
 			output.append(stripe_charge)
 
-			base_amount += flt(stripe_charge.balance_transaction.get("amount")) / 100
-			fee_amount += flt(stripe_charge.balance_transaction.get("fee")) / 100
+			if stripe_charge.balance_transaction.currency != payment_entry.paid_to_account_currency:
+				currency_account = frappe.db.get_value("Payment Gateway Account", {
+					"payment_gateway": self.payment_gateway.name,
+					"currency": stripe_charge.balance_transaction.currency
+				}, "payment_account")
+				if not currency_account:
+					frappe.throw(_("Please create a payment gateway account for currency {0}").format(stripe_charge.balance_transaction.currency))
+
+				payment_entry.update({
+					"paid_to": currency_account,
+					"paid_to_account_currency": stripe_charge.balance_transaction.currency
+				})
 
 			# We suppose all charges within the same payment intent have the same exchange rate
 			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate"))) or 1
+
+			base_amount += flt(stripe_charge.balance_transaction.get("amount")) / 100
+			fee_amount += flt(stripe_charge.balance_transaction.get("fee")) / 100 * exchange_rate
 
 			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
 
@@ -82,10 +102,9 @@ class StripeWebhooksController(WebhooksController):
 				})
 
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
-				fees = fee_amount * exchange_rate
 				payment_entry.update({
-					"paid_amount": flt(base_amount or payment_entry.paid_amount) - fees,
-					"received_amount": flt(base_amount or payment_entry.received_amount) - fees
+					"paid_amount": flt(base_amount or payment_entry.paid_amount) - fee_amount,
+					"received_amount": flt(base_amount or payment_entry.received_amount) - fee_amount
 				})
 
 				payment_entry.append("deductions", {
@@ -104,5 +123,3 @@ class StripeWebhooksController(WebhooksController):
 			for charge in self.charges:
 				self.create_payment(charge)
 				self.submit_payment(charge)
-
-		self.update_payment_request()

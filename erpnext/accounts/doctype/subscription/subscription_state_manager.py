@@ -165,10 +165,10 @@ class SubscriptionStateManager:
 		elif not self.is_cancelled() and not self.is_trial():
 			if self.is_billable():
 				status = 'Billable'
-			elif self.is_draft():
-				status = 'Draft invoices'
 			elif self.is_payable():
 				status = 'Payable'
+			elif self.is_draft():
+				status = 'Draft invoices'
 			elif flt(self.subscription.outstanding_amount) > 0:
 				status = 'Unpaid'
 			elif self.is_paid():

@@ -311,8 +311,6 @@ class SubscriptionPaymentRequestGenerator:
 		}).name if self.subscription.payment_gateway else None
 
 		if submit:
-			print(pr.__dict__)
-			print(pr.as_dict())
 			pr.insert(ignore_permissions=True)
 			pr.submit()
 
