@@ -140,7 +140,7 @@ class Company(NestedSet):
 			{"warehouse_name": _("All Warehouses"), "is_group": 1},
 			{"warehouse_name": _("Stores"), "is_group": 0},
 			{"warehouse_name": _("Work In Progress"), "is_group": 0},
-			{"warehouse_name": _("Finished Goods"), "is_group": 0}],
+			{"warehouse_name": _("Finished Goods"), "is_group": 0},
 			{"warehouse_name": _("Goods In Transit"), "is_group": 0, "warehouse_type": "Transit"}]:
 
 			if not frappe.db.exists("Warehouse", "{0} - {1}".format(wh_detail["warehouse_name"], self.abbr)):

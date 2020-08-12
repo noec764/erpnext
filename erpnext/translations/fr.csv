@@ -3771,7 +3771,7 @@ Issues,Tickets,
 Issuing Date,Date d'émission,
 "Issuing cannot be done to a location. \
 						Please enter employee who has issued Asset {0}",Il n'est pas possible de sortir un actif vers un lieu. Veuillez sélectionner l'employé qui a sorti l'actif {0}.,
-It is needed to fetch Item Details.,Nécessaire pour aller chercher les Détails de l'Article.,
+It is needed to fetch Item Details.,C'est nécessaire pour récupérer les détails de l'article.,
 "It seems that there is an issue with our GoCardless integration.\
 						<br>In case of failure, the amount will get refunded to your account.","Nous rencontrons un problème avec notre intégration GoCardless.\
 						<br>En cas d'échec de la procédure de paiement, le montant sera remboursé sur votre compte.",

@@ -1,47 +1,48 @@
 
 from __future__ import unicode_literals, print_function
 import frappe
+from frappe import _
 from frappe.utils import cint
 
 def get_leaderboards():
 	leaderboards = {
 		"Customer": {
 			"fields": [
-				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency'},
-				'total_qty_sold',
-				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency'}
+				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency', 'label': _('Total Sales Amount')},
+				{'fieldname': 'total_qty_sold', 'label': _("Total Qty Sold")},
+				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency', 'label': _("Outstanding Amount")}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_customers",
 		},
 		"Item": {
 			"fields": [
-				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency'},
-				'total_qty_sold',
-				{'fieldname': 'total_purchase_amount', 'fieldtype': 'Currency'},
-				'total_qty_purchased',
-				'available_stock_qty',
-				{'fieldname': 'available_stock_value', 'fieldtype': 'Currency'}
+				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency', 'label': _("Total Sales Amount")},
+				{'fieldname': 'total_qty_sold', 'label': _('Total Qty Sold')},
+				{'fieldname': 'total_purchase_amount', 'fieldtype': 'Currency', 'label': _('Total Purchase Amount')},
+				{'fieldname': 'total_qty_purchased', 'label': _('Total Qty Purchased')},
+				{'fieldname': 'available_stock_qty', 'label': _('Available Stock Qty')},
+				{'fieldname': 'available_stock_value', 'fieldtype': 'Currency', 'label': _('Available Stock Value')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_items",
 		},
 		"Supplier": {
 			"fields": [
-				{'fieldname': 'total_purchase_amount', 'fieldtype': 'Currency'},
-				'total_qty_purchased',
-				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency'}
+				{'fieldname': 'total_purchase_amount', 'fieldtype': 'Currency', 'label': _('Total Purchase Amount')},
+				{'fieldname':'total_qty_purchased', 'label': _('Total Qty Purchased')},
+				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency', 'label': _('Outstanding Amount')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_suppliers",
 		},
 		"Sales Partner": {
 			"fields": [
-				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency'},
-				{'fieldname': 'total_commission', 'fieldtype': 'Currency'}
+				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency', 'label': _('Total Sales Amount')},
+				{'fieldname': 'total_commission', 'fieldtype': 'Currency', 'label': _('Total Commission')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_sales_partner",
 		},
 		"Sales Person": {
 			"fields": [
-				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency'}
+				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency', 'label': _('Total Sales Amount')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_sales_person",
 		}
@@ -55,8 +56,8 @@ def get_all_customers(date_range, company, field, limit = None):
 		filters = [['docstatus', '=', '1'], ['company', '=', company]]
 		if date_range:
 			date_range = frappe.parse_json(date_range)
-			filters.append(['posting_date', '>=', 'between', [date_range[0], date_range[1]]])
-		return frappe.db.get_all('Sales Invoice',
+			filters.append(['posting_date', 'between', [date_range[0], date_range[1]]])
+		return frappe.get_all('Sales Invoice',
 			fields = ['customer as name', 'sum(outstanding_amount) as value'],
 			filters = filters,
 			group_by = 'customer',

@@ -1570,7 +1570,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 			if(frappe.meta.has_field(me.frm.doc.doctype, fieldname) && me.frm.doc.doctype != "Purchase Order") {
 				if (!me.frm.doc[fieldname]) {
 					frappe.msgprint(__("Please specify") + ": " +
-						frappe.meta.get_label(me.frm.doc.doctype, fieldname, me.frm.doc.name) +
+						__(frappe.meta.get_label(me.frm.doc.doctype, fieldname, me.frm.doc.name)) +
 						". " + __("It is needed to fetch Item Details."));
 					valid = false;
 				}

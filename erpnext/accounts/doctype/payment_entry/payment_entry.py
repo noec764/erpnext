@@ -939,7 +939,7 @@ def get_company_defaults(company):
 	for fieldname in fields:
 		if not ret[fieldname]:
 			frappe.throw(_("Please set default {0} in Company {1}")
-				.format(frappe.get_meta("Company").get_label(fieldname), company))
+				.format(_(frappe.get_meta("Company").get_label(fieldname)), company))
 
 	return ret
 
