@@ -4,8 +4,8 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from frappe.model.document import Document
-from erpnext.accounts.report.general_ledger.general_ledger import execute as get_soa
 from erpnext.accounts.report.accounts_receivable_summary.accounts_receivable_summary import execute as get_ageing
 from frappe.core.doctype.communication.email import make
 
@@ -21,15 +21,15 @@ from frappe.www.printview import get_print_style
 class ProcessStatementOfAccounts(Document):
 	def validate(self):
 		if not self.subject:
-			self.subject = 'Statement Of Accounts for {{ customer.name }}'
+			self.subject = _('Statement Of Accounts for {{ customer.name }}')
 		if not self.body:
-			self.body = 'Hello {{ customer.name }},<br>PFA your Statement Of Accounts from {{ doc.from_date }} to {{ doc.to_date }}.'
+			self.body = _('Hello {{ customer.name }},<br>Please find attached your Statement Of Accounts from {{ doc.from_date }} to {{ doc.to_date }}.')
 
 		validate_template(self.subject)
 		validate_template(self.body)
 
 		if not self.customers:
-			frappe.throw(frappe._('Customers not selected.'))
+			frappe.throw(_('Customers not selected.'))
 
 		if self.enable_auto_email:
 			self.to_date = self.start_date
@@ -37,6 +37,7 @@ class ProcessStatementOfAccounts(Document):
 
 
 def get_report_pdf(doc, consolidated=True):
+	from erpnext.accounts.report.general_ledger.general_ledger import execute as get_soa
 	statement_dict = {}
 	aging = ''
 	base_template_path = "frappe/www/printview.html"
