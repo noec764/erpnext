@@ -302,10 +302,10 @@
    "fieldname": "warehouse",
    "fieldtype": "Link",
    "label": "Warehouse",
+   "mandatory_depends_on": "update_stock",
    "oldfieldname": "warehouse",
    "oldfieldtype": "Link",
-   "options": "Warehouse",
-   "reqd": 1
+   "options": "Warehouse"
   },
   {
    "default": "0",
@@ -323,7 +323,7 @@
  "icon": "icon-cog",
  "idx": 1,
  "links": [],
- "modified": "2020-06-29 12:20:30.977272",
+ "modified": "2020-06-30 12:20:30.977272",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Profile",
