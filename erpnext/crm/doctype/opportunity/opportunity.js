@@ -173,7 +173,7 @@ erpnext.crm.Opportunity = frappe.ui.form.Controller.extend({
 		this.frm.set_query("item_code", "items", function() {
 			return {
 				query: "erpnext.controllers.queries.item_query",
-				filters: {'is_sales_item': 1}
+				filters: {'is_sales_item': 1, 'is_down_payment_item': 0}
 			};
 		});
 
