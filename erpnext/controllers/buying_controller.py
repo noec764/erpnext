@@ -811,9 +811,9 @@ class BuyingController(StockController):
 		if self.doctype=="Material Request": return
 
 		if hasattr(self, "is_subcontracted") and self.is_subcontracted == 'Yes':
-			validate_item_type(self, "is_sub_contracted_item", "subcontracted")
+			validate_item_type(self, "is_sub_contracted_item", _("subcontracted"))
 		else:
-			validate_item_type(self, "is_purchase_item", "purchase")
+			validate_item_type(self, "is_purchase_item", _("purchase"))
 
 def get_items_from_bom(item_code, bom, exploded_item=1):
 	doctype = "BOM Item" if not exploded_item else "BOM Explosion Item"

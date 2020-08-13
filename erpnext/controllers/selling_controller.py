@@ -415,7 +415,7 @@ class SellingController(StockController):
 	def validate_items(self):
 		# validate items to see if they have is_sales_item enabled
 		from erpnext.controllers.buying_controller import validate_item_type
-		validate_item_type(self, "is_sales_item", "sales")
+		validate_item_type(self, "is_sales_item", _("sales"))
 
 def set_default_income_account_for_item(obj):
 	for d in obj.get("items"):
