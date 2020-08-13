@@ -16,14 +16,16 @@ from six import string_types
 
 class LoanApplication(Document):
 	def validate(self):
-
-		validate_repayment_method(self.repayment_method, self.loan_amount, self.repayment_amount,
-			self.repayment_periods, self.is_term_loan)
-
-		self.validate_loan_type()
 		self.set_pledge_amount()
 		self.set_loan_amount()
 		self.validate_loan_amount()
+
+		if self.is_term_loan:
+			validate_repayment_method(self.repayment_method, self.loan_amount, self.repayment_amount,
+				self.repayment_periods, self.is_term_loan)
+
+		self.validate_loan_type()
+
 		self.get_repayment_details()
 		self.check_sanctioned_amount_limit()
 
@@ -106,7 +108,7 @@ class LoanApplication(Document):
 		if self.is_secured_loan and self.proposed_pledges:
 			self.maximum_loan_amount = 0
 			for security in self.proposed_pledges:
-				self.maximum_loan_amount += security.post_haircut_amount
+				self.maximum_loan_amount += flt(security.post_haircut_amount)
 
 		if not self.loan_amount and self.is_secured_loan and self.proposed_pledges:
 			self.loan_amount = self.maximum_loan_amount
@@ -119,11 +121,13 @@ def create_loan(source_name, target_doc=None, submit=0):
 		 filters = {'name': source_doc.loan_type}
 		)[0]
 
+
 		target_doc.mode_of_payment = account_details.mode_of_payment
 		target_doc.payment_account = account_details.payment_account
 		target_doc.loan_account = account_details.loan_account
 		target_doc.interest_income_account = account_details.interest_income_account
 		target_doc.penalty_income_account = account_details.penalty_income_account
+
 
 	doclist = get_mapped_doc("Loan Application", source_name, {
 		"Loan Application": {
@@ -187,7 +191,7 @@ def get_proposed_pledge(securities):
 	for security in securities:
 		security = frappe._dict(security)
 		if not security.qty and not security.amount:
-			frappe.throw(_("Qty or Amount is mandatory for loan security"))
+			frappe.throw(_("Qty or Amount is mandatroy for loan security"))
 
 		security.loan_security_price = get_loan_security_price(security.loan_security)
 
