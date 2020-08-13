@@ -59,6 +59,7 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 			body: this.page.body
 		});
 		this.form.make();
+		this.form.wrapper[0].classList.add("frappe-card");
 	}
 
 	fetch_and_render() {
@@ -139,7 +140,7 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 					return `
 						<tr>
 							${th}
-							<td>${frappe.meta.get_label(child_doctype, fieldname)}</td>
+							<td>${__(frappe.meta.get_label(child_doctype, fieldname))}</td>
 							<td>${value1}</td>
 							<td>${value2}</td>
 						</tr>
@@ -148,7 +149,7 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 			}).join('');
 
 			return `
-				<h4 class="margin-top">${__('Changes in {0}', [df.label])}</h4>
+				<h4 class="margin-top">${__('Changes in {0}', [__(df.label)])}</h4>
 				<table class="table table-bordered">
 					<tr>
 						<th width="25%">${__('Item Code')}</th>
