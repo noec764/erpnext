@@ -71,8 +71,16 @@
 }
 
 .dokos-footer-extension {
+	.btn {
+		box-shadow: none;
+	}
 	.btn-outline-secondary {
 		padding: 0 1rem;
+		border: 1px solid;
+		border-radius: 0 var(--border-radius) var(--border-radius) 0;
+	}
+	#footer-subscribe-email {
+		border-radius: var(--border-radius) 0 0 var(--border-radius);
 	}
 
 }
