@@ -153,7 +153,7 @@ frappe.ui.form.on("Work Order", {
 			if(not_completed && not_completed.length) {
 				frm.add_custom_button(__('Create Job Card'), () => {
 					frm.trigger("make_job_card");
-				}).addClass('btn-primary');
+				}).addClass('btn-primary').removeClass("btn-default");
 			}
 		}
 
@@ -529,7 +529,7 @@ erpnext.work_order = {
 					var start_btn = frm.add_custom_button(__('Start'), function() {
 						erpnext.work_order.make_se(frm, 'Material Transfer for Manufacture');
 					});
-					start_btn.addClass('btn-primary');
+					start_btn.addClass('btn-primary').removeClass("btn-default");
 				}
 			}
 
@@ -554,7 +554,7 @@ erpnext.work_order = {
 								const backflush_raw_materials_based_on = frm.doc.__onload.backflush_raw_materials_based_on;
 								erpnext.work_order.make_consumption_se(frm, backflush_raw_materials_based_on);
 							});
-							consumption_btn.addClass('btn-primary');
+							consumption_btn.addClass('btn-primary').removeClass("btn-default");
 						}
 					}
 
@@ -564,7 +564,7 @@ erpnext.work_order = {
 
 					if(doc.material_transferred_for_manufacturing>=doc.qty) {
 						// all materials transferred for manufacturing, make this primary
-						finish_btn.addClass('btn-primary');
+						finish_btn.addClass('btn-primary').removeClass("btn-default");
 					}
 				}
 			} else {
@@ -572,7 +572,7 @@ erpnext.work_order = {
 					var finish_btn = frm.add_custom_button(__('Finish'), function() {
 						erpnext.work_order.make_se(frm, 'Manufacture');
 					});
-					finish_btn.addClass('btn-primary');
+					finish_btn.addClass('btn-primary').removeClass("btn-default");
 				}
 			}
 		}

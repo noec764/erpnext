@@ -58,12 +58,12 @@ frappe.ui.form.on('Job Card', {
 				} else {
 					frm.events.start_job(frm);
 				}
-			}).addClass("btn-primary");
+			}).addClass("btn-primary").removeClass("btn-default");
 		} else if (frm.doc.status == "On Hold") {
 			frm.add_custom_button(__("Resume"), () => {
 				frappe.flags.resume_job = 1;
 				frm.events.start_job(frm);
-			}).addClass("btn-primary");
+			}).addClass("btn-primary").removeClass("btn-default");
 		} else {
 			frm.add_custom_button(__("Pause"), () => {
 				frappe.flags.pause_job = 1;
@@ -83,7 +83,7 @@ frappe.ui.form.on('Job Card', {
 				} else {
 					frm.events.complete_job(frm, completed_time, 0);
 				}
-			}).addClass("btn-primary");
+			}).addClass("btn-primary").removeClass("btn-default");
 		}
 	},
 
