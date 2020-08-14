@@ -34,8 +34,8 @@ erpnext.PointOfSale.Controller = class {
 
 	create_opening_voucher() {
 		const table_fields = [
-			{ fieldname: "mode_of_payment", fieldtype: "Link", in_list_view: 1, label: "Mode of Payment", options: "Mode of Payment", reqd: 1 },
-			{ fieldname: "opening_amount", fieldtype: "Currency", default: 0, in_list_view: 1, label: "Opening Amount", 
+			{ fieldname: "mode_of_payment", fieldtype: "Link", in_list_view: 1, label: __("Mode of Payment"), options: "Mode of Payment", reqd: 1 },
+			{ fieldname: "opening_amount", fieldtype: "Currency", default: 0, in_list_view: 1, label: __("Opening Amount"),
 				options: "company:company_currency", reqd: 1 }
 		];
 
@@ -80,7 +80,7 @@ erpnext.PointOfSale.Controller = class {
 				{
 					fieldname: "balance_details",
 					fieldtype: "Table",
-					label: "Opening Balance Details",
+					label: __("Opening Balance Details"),
 					cannot_add_rows: false,
 					in_place_edit: true,
 					reqd: 1,
