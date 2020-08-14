@@ -98,15 +98,15 @@ def get_chart_data(data):
 			'labels': labels[:30],
 			'datasets': [
 				{
-					"name": "Overdue",
+					"name": _("Overdue"),
 					"values": overdue[:30]
 				},
 				{
-					"name": "Completed",
+					"name": _("Completed"),
 					"values": completed[:30]
 				},
 				{
-					"name": "Total Tasks",
+					"name": _("Total Tasks"),
 					"values": total[:30]
 				},
 			]
