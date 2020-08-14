@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2016-02-25 01:24:07.224790",
@@ -205,6 +206,7 @@
    "options": "fa fa-file-text"
   },
   {
+   "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
@@ -233,8 +235,9 @@
  ],
  "icon": "fa fa-shopping-cart",
  "is_submittable": 1,
- "modified": "2020-07-12 15:08:32.750661",
- "modified_by": "Administrator",
+ "links": [],
+ "modified": "2020-08-14 08:24:16.543412",
+ "modified_by": "thierry@dokos.io",
  "module": "Buying",
  "name": "Request for Quotation",
  "owner": "Administrator",
