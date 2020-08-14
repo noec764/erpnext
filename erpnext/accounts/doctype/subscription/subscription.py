@@ -232,6 +232,9 @@ class Subscription(Document):
 			period_end=(">=", end)
 		), "document_name")
 
+	def get_next_invoice_date(self):
+		return SubscriptionPeriod(self).get_next_invoice_date()
+
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
 		fields=["name", "grand_total"])
