@@ -326,7 +326,7 @@ frappe.ui.form.on("Work Order", {
 			});
 
 			for (let key in status_wise_oprtation_data) {
-				title = __("{0} Operations: {1}", [key, status_wise_oprtation_data[key][1].bold()]);
+				title = __("{0} Operations: {1}", [__(key), status_wise_oprtation_data[key][1].bold()]);
 				bars.push({
 					'title': title,
 					'width': status_wise_oprtation_data[key][0] / total_completed_qty * 100  + '%',

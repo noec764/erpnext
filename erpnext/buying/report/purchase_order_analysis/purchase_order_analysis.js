@@ -52,6 +52,7 @@ frappe.query_reports["Purchase Order Analysis"] = {
 				for (let option of status){
 					options.push({
 						"value": option,
+						"label": __(option),
 						"description": ""
 					})
 				}
