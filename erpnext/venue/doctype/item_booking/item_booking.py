@@ -113,7 +113,7 @@ def get_item_uoms(item_code):
 	return {
 		"uoms": frappe.get_all('UOM Conversion Detail',\
 		filters={'parent': item_code}, fields=["distinct uom"], order_by='idx desc', as_list=1),
-		"sales_uom": frappe.get_cached_value("Item", item, "sales_uom")
+		"sales_uom": frappe.get_cached_value("Item", item_code, "sales_uom")
 	}
 
 @frappe.whitelist(allow_guest=True)
