@@ -41,7 +41,7 @@ def get_subscription_context():
 		"subscription": subscription,
 		"subscription_plans": subscription_plans,
 		"available_subscriptions": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"]),
-		"next_invoice_date": SubscriptionPeriod(subscription).get_next_invoice_date()
+		"next_invoice_date": subscription.get_next_invoice_date() if subscription else ""
 	}
 
 @frappe.whitelist()
