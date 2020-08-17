@@ -50,7 +50,7 @@ frappe.ui.form.on('Bank Guarantee', {
 			}
 			fields_to_fetch.push(party_field);
 			frappe.call({
-				method: "erpnext.accounts.doctype.bank_guarantee.bank_guarantee.get_vouchar_detials",
+				method: "erpnext.accounts.doctype.bank_guarantee.bank_guarantee.get_voucher_details",
 				args: {
 					"column_list": fields_to_fetch,
 					"doctype": frm.doc.reference_doctype,
