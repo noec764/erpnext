@@ -51,7 +51,8 @@
   {
    "fieldname": "portal_description",
    "fieldtype": "Text Editor",
-   "label": "Portal Description"
+   "label": "Portal Description",
+   "translatable": 1
   },
   {
    "fieldname": "column_break_6",
@@ -71,7 +72,7 @@
  ],
  "image_field": "portal_image",
  "links": [],
- "modified": "2020-07-28 09:09:48.374380",
+ "modified": "2020-08-17 18:53:54.336637",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan",

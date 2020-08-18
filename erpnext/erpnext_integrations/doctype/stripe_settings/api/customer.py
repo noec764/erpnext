@@ -23,7 +23,7 @@ class StripeCustomer:
 
 	@handle_idempotency
 	@handle_stripe_errors
-	def create(self, customer_id):
+	def create(self, customer_id, **kwargs):
 		from frappe.contacts.doctype.contact.contact import get_default_contact
 		from hashlib import sha224
 		metadata = { "customer": customer_id }
@@ -31,12 +31,13 @@ class StripeCustomer:
 		contact = get_default_contact("Customer", customer_id)
 		contact_email = frappe.db.get_value("Contact", contact, "email_id")
 
-		if customer_name and contact_email:
+		if customer_name:
 			stripe_customer = self.gateway.stripe.Customer.create(
 				name=customer_name,
 				email=contact_email,
 				metadata=metadata,
-				idempotency_key=IdempotencyKey("customer", "create", customer_id).get()
+				idempotency_key=IdempotencyKey("customer", "create", customer_id).get(),
+				**kwargs
 			)
 			self.register(stripe_customer.get("id"), customer_id)
 			return stripe_customer

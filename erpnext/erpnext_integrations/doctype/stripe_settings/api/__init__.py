@@ -6,3 +6,4 @@ from .subscription import StripeSubscription
 from .charge import StripeCharge
 from .invoice_item import StripeInvoiceItem
 from .price import StripePrice
+from .setup_intent import StripeSetupIntent

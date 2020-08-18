@@ -269,12 +269,13 @@ class SubscriptionPaymentRequestGenerator:
 		self.subscription = subscription
 
 	def make_payment_request(self):
-		if self.subscription.generate_payment_request and self.subscription.status == "Payable" and not frappe.conf.mute_payment_gateways:
+		if self.subscription.generate_payment_request and self.subscription.status == "Payable":
 			frappe.flags.mute_gateways_validation = True
 			payment_request = self.create_payment_request(submit=True, mute_email=True)
 			frappe.flags.mute_gateways_validation = False
 
 			if self.subscription.payment_gateway in self.get_immediate_payment_gateways() and \
+				not frappe.conf.mute_payment_gateways and \
 				payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:
 				doc = frappe.get_doc("Payment Request", payment_request.get("name"))
 				doc.run_method("process_payment_immediately")

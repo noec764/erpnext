@@ -70,7 +70,7 @@ def new_subscription(template):
 	company = frappe.db.get_single_value("Shopping Cart Settings", "company")
 
 	subscription = make_subscription(template=template, company=company, customer=customer, start_date=nowdate(), ignore_permissions=True)
-	payment_key = frappe.db.get_value("Payment Request", {"reference_doctype": "Subscription", "reference_name": subscription.name}, "payment_key")
+	payment_key = frappe.db.get_value("Payment Request", {"reference_doctype": "Subscription", "reference_name": subscription.name, "status": "Initiated"}, "payment_key")
 	
 	return {
 		"subscription": subscription,

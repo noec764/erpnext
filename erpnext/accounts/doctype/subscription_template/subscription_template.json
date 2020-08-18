@@ -167,7 +167,8 @@
   {
    "fieldname": "portal_description",
    "fieldtype": "Text Editor",
-   "label": "Portal description"
+   "label": "Portal description",
+   "translatable": 1
   },
   {
    "default": "0",
@@ -178,7 +179,7 @@
  ],
  "image_field": "portal_image",
  "links": [],
- "modified": "2020-07-30 09:56:53.886649",
+ "modified": "2020-08-17 18:54:10.316841",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

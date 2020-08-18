@@ -7,10 +7,9 @@ from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_
 class SubscriptionPlansManager:
 	def __init__(self, subscription):
 		self.subscription = subscription
-		self.items = self.subscription.plans
 
 	def set_plans_status(self):
-		for plan in self.items:
+		for plan in self.subscription.plans:
 			if getdate(plan.from_date or "1900-01-01") <= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
 				plan.status = "Active"
 			elif getdate(plan.from_date or "1900-01-01") >= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
@@ -19,14 +18,14 @@ class SubscriptionPlansManager:
 				plan.status = "Inactive"
 
 	def set_plans_rates(self):
-		for plan in [x for x in self.items if x.status in ("Active", "Upcoming")]:
+		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:
 			date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
 			plan.rate = self.get_plan_rate(plan, date)
 
 	def get_plans_total(self):
 		max_date = add_days(getdate(self.subscription.current_invoice_end), 1) if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
 		total = 0
-		for plan in [x for x in self.items if x.status in ("Active", "Upcoming")]:
+		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:
 			if not plan.to_date or getdate(plan.to_date) <= getdate(maxdate):
 				date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
 				total += self.get_plan_rate(plan, date)

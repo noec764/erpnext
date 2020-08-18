@@ -33,7 +33,7 @@ class StripePaymentMethod:
 		)
 
 	@handle_stripe_errors
-	def detach(self, id, customer_id):
+	def detach(self, id):
 		return self.gateway.stripe.PaymentMethod.detach(
 			id
 		)
