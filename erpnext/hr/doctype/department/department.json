@@ -17,10 +17,10 @@
   "payroll_cost_center",
   "column_break_9",
   "leave_block_list",
-  "leave_section",
+  "approvers",
   "leave_approvers",
-  "expense_section",
   "expense_approvers",
+  "shift_request_approver",
   "lft",
   "rgt",
   "old_parent"
@@ -75,11 +75,6 @@
    "in_list_view": 1,
    "label": "Leave Block List",
    "options": "Leave Block List"
-  },
-  {
-   "fieldname": "leave_section",
-   "fieldtype": "Section Break",
-   "label": "Leave Approvers"
   },
   {
    "description": "The first Leave Approver in the list will be set as the default Leave Approver.",
@@ -137,13 +132,25 @@
    {
     "fieldname": "column_break_9",
     "fieldtype": "Column Break"
+   },
+   {
+	"description": "The first Approver in the list will be set as the default Approver.",
+	"fieldname": "approvers",
+	"fieldtype": "Section Break",
+	"label": "Approvers"
+   },
+   {
+	"fieldname": "shift_request_approver",
+	"fieldtype": "Table",
+	"label": "Shift Request Approver",
+	"options": "Department Approver"
    }
  ],
  "icon": "fa fa-sitemap",
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2020-05-05 18:49:28.503931",
+ "modified": "2020-06-23 15:42:00.563272",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Department",

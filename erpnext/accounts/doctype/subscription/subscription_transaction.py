@@ -286,7 +286,7 @@ class SubscriptionPaymentRequestGenerator:
 
 	@staticmethod
 	def get_payment_gateways():
-		return [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway")]
+		return [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway", filters={"disabled": 0})]
 
 	def create_payment_request(self, submit=False, mute_email=True):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account

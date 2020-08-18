@@ -51,10 +51,14 @@
   "column_break_31",
   "grade",
   "branch",
+  "approvers_section",
+  "expense_approver",
+  "leave_approver",
+  "column_break_45",
+  "shift_request_approver",
   "attendance_and_leave_details",
   "leave_policy",
   "attendance_device_id",
-  "leave_approver",
   "column_break_44",
   "holiday_list",
   "default_shift",
@@ -807,13 +811,28 @@
     "fieldtype": "Link",
     "label": "Expense Approver",
     "options": "User"
+   },
+   {
+	"fieldname": "approvers_section",
+	"fieldtype": "Section Break",
+	"label": "Approvers"
+   },
+   {
+	"fieldname": "column_break_45",
+	"fieldtype": "Column Break"
+   },
+   {
+	"fieldname": "shift_request_approver",
+	"fieldtype": "Link",
+	"label": "Shift Request Approver",
+	"options": "User"
    }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
  "links": [],
- "modified": "2020-06-18 18:01:27.223535",
+ "modified": "2020-07-28 01:36:04.109189",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

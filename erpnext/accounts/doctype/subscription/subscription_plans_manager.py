@@ -37,35 +37,36 @@ class SubscriptionPlansManager:
 			return plan.fixed_rate
 
 		elif plan.price_determination == "Based on price list":
-			customer_doc = frappe.get_doc("Customer", self.subscription.customer)
-			price_list = get_default_price_list(customer_doc)
+			price_list = None
+			if hasattr(self.subscription, "customer"):
+				customer_doc = frappe.get_doc("Customer", self.subscription.customer)
+				price_list = get_default_price_list(customer_doc)
 			if not price_list:
-				price_list = frappe.db.get_value("Price List", {"selling": 1})
+				price_list = frappe.db.get_value("Price List", {"selling": 1, "enabled": 1})
 
-			price_list_rate = get_price_list_rate_for({
+			args = {
 				"company": self.subscription.company,
 				"uom": plan.uom,
-				"customer": self.subscription.customer,
 				"price_list": price_list,
 				"currency": self.subscription.currency,
-				"min_qty": plan.qty,
-				"transaction_date": date
-			}, plan.item)
+				"transaction_date": date,
+				"qty": plan.qty
+			}
+			if hasattr(self.subscription, "customer"):
+				args.update({"customer": self.subscription.customer})
 
-			rule = get_pricing_rule_for_item(frappe._dict({
-				"company": self.subscription.company,
-				"uom": plan.uom,
+			price_list_rate = get_price_list_rate_for(args, plan.item)
+
+			args.update({
 				"item_code": plan.item,
 				"stock_qty": plan.qty,
 				"transaction_type": "selling",
 				"price_list_rate": price_list_rate,
 				"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
-				"price_list": price_list,
-				"customer": self.subscription.customer,
-				"currency": self.subscription.currency,
 				"transaction_date": date,
 				"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse=''))
-			}))
+			})
+			rule = get_pricing_rule_for_item(frappe._dict(args))
 
 			if rule.get("price_list_rate"):
 				price_list_rate = rule.get("price_list_rate")

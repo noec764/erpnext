@@ -75,13 +75,14 @@ class PaymentRequest(Document):
 		if selected_gateways:
 			gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings", "gateway_controller"])
 			for gateway in gateways:
-				gateway_controller = frappe.get_doc(gateway.gateway_settings, gateway.gateway_controller)
-				if hasattr(gateway_controller, "validate_payment_request"):
-					try:
-						gateway_controller.validate_payment_request(self)
-					except Exception as e:
-						if frappe.flags.mute_gateways_validation:
-							self.payment_gateways = [x for x in self.payment_gateways if x.payment_gateway!=gateway.name]
+				if gateway.gateway_settings and gateway.gateway_controller:
+					gateway_controller = frappe.get_doc(gateway.gateway_settings, gateway.gateway_controller)
+					if hasattr(gateway_controller, "validate_payment_request"):
+						try:
+							gateway_controller.validate_payment_request(self)
+						except Exception as e:
+							if frappe.flags.mute_gateways_validation:
+								self.payment_gateways = [x for x in self.payment_gateways if x.payment_gateway!=gateway.name]
 	
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\
