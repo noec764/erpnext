@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import frappe, re, json
 from frappe import _
+import erpnext
 from frappe.utils import cstr, flt, date_diff, nowdate, round_based_on_smallest_currency_fraction, money_in_words
 from erpnext.regional.india import states, state_numbers
 from erpnext.controllers.taxes_and_totals import get_itemised_tax, get_itemised_taxable_amount
@@ -460,7 +461,6 @@ def generate_ewb_json(dt, dn):
 def download_ewb_json():
 	data = json.loads(frappe.local.form_dict.data)
 	frappe.local.response.filecontent = json.dumps(data, indent=4, sort_keys=True)
-
 	frappe.local.response.type = 'download'
 
 	filename_prefix = 'Bulk'
@@ -471,9 +471,9 @@ def download_ewb_json():
 			if len(docname) == 1:
 				docname = docname[0]
 
-	if not isinstance(docname, list):
-		# removes characters not allowed in a filename (https://stackoverflow.com/a/38766141/4767738)
-		filename_prefix = re.sub('[^\w_.)( -]', '', docname)
+		if not isinstance(docname, list):
+			# removes characters not allowed in a filename (https://stackoverflow.com/a/38766141/4767738)
+			filename_prefix = re.sub('[^\w_.)( -]', '', docname)
 
 	frappe.local.response.filename = '{0}_e-WayBill_Data_{1}.json'.format(filename_prefix, frappe.utils.random_string(5))
 
@@ -679,20 +679,26 @@ def update_grand_total_for_rcm(doc, method):
 		gst_account_list = gst_accounts.get('cgst_account') + gst_accounts.get('sgst_account') \
 			+ gst_accounts.get('igst_account')
 
+		base_gst_tax = 0
 		gst_tax = 0
+
 		for tax in doc.get('taxes'):
 			if tax.category not in ("Total", "Valuation and Total"):
 				continue
 
 			if flt(tax.base_tax_amount_after_discount_amount) and tax.account_head in gst_account_list:
-				gst_tax += tax.base_tax_amount_after_discount_amount
+				base_gst_tax += tax.base_tax_amount_after_discount_amount
+				gst_tax += tax.tax_amount_after_discount_amount
 
 		doc.taxes_and_charges_added -= gst_tax
 		doc.total_taxes_and_charges -= gst_tax
+		doc.base_taxes_and_charges_added -= base_gst_tax
+		doc.base_total_taxes_and_charges -= base_gst_tax
 
-		update_totals(gst_tax, doc)
+		update_totals(gst_tax, base_gst_tax, doc)
 
-def update_totals(gst_tax, doc):
+def update_totals(gst_tax, base_gst_tax, doc):
+	doc.base_grand_total -= base_gst_tax
 	doc.grand_total -= gst_tax
 
 	if doc.meta.get_field("rounded_total"):
@@ -708,6 +714,7 @@ def update_totals(gst_tax, doc):
 			doc.outstanding_amount = doc.rounded_total or doc.grand_total
 
 	doc.in_words = money_in_words(doc.grand_total, doc.currency)
+	doc.base_in_words = money_in_words(doc.base_grand_total, erpnext.get_company_currency(doc.company))
 	doc.set_payment_schedule()
 
 def make_regional_gl_entries(gl_entries, doc):
