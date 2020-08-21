@@ -88,7 +88,7 @@ class WebhooksController():
 				self.set_as_completed()
 
 			elif self.subscription:
-				payment_entry = subscription.run_method("create_payment")
+				payment_entry = self.subscription.run_method("create_payment")
 				payment_entry.reference_no = reference
 				payment_entry.subscription = self.subscription.name
 				payment_entry.insert(ignore_permissions=True)
