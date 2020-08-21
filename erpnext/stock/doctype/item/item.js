@@ -234,7 +234,7 @@ frappe.ui.form.on("Item", {
 
 	toggle_simultaneous_bookings(frm) {
 		if (frm.doc.show_in_website && frm.doc.enable_item_booking) {
-			frappe.db.get_value("Stock Settings", null, "enable_simultaneous_booking", r => {
+			frappe.db.get_value("Venue Settings", null, "enable_simultaneous_booking", r => {
 				if (r) {
 					frm.toggle_display("simultaneous_bookings_allowed", parseInt(r.enable_simultaneous_booking, 10))
 				}
