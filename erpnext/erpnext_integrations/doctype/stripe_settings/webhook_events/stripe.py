@@ -89,7 +89,7 @@ class StripeWebhooksController(WebhooksController):
 				})
 
 			# We suppose all charges within the same payment intent have the same exchange rate
-			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate"))) or 1
+			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate", 1)))
 
 			base_amount += flt(stripe_charge.balance_transaction.get("amount")) / 100
 			fee_amount += flt(stripe_charge.balance_transaction.get("fee")) / 100 * exchange_rate
