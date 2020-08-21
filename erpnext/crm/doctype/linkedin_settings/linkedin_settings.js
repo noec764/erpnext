@@ -21,7 +21,7 @@ frappe.ui.form.on('LinkedIn Settings', {
 			frm.dashboard.set_headline_alert(
 				`<div class="row">
 					<div class="col-xs-12">
-						<span class="indicator whitespace-nowrap red"><span class="hidden-xs">${msg}</span></span>
+						<span class="indicator whitespace-nowrap red" style="color: white;">${msg}</span>
 					</div>
 				</div>`
 			);
