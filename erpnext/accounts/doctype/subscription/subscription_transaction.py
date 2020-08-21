@@ -28,10 +28,11 @@ class SubscriptionTransactionBase:
 
 		items_list = self.get_items_from_plans([p for p in self.subscription.plans if p.status == "Active"],\
 			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date)
+		if not items_list:
+			frappe.throw(_("Please configure at least one active item for your subscription."))
+
 		for item in items_list:
 			document.append('items', item)
-		else:
-			frappe.throw(_("Please configure at least one active item for your subscription."))
 
 		# Shipping
 		if self.subscription.shipping_rule:
@@ -119,9 +120,12 @@ class SubscriptionTransactionBase:
 		prorata_factor = self.get_prorata_factor()
 		items = []
 		for plan in plans:
-			items.append({'item_code': plan.item, 'qty': plan.qty, \
-				'rate': (SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor),\
-				'description': plan.description})
+			items.append({
+				'item_code': plan.item,
+				'qty': plan.qty,
+				'rate': SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor,
+				'description': plan.description
+			})
 
 		return items
 

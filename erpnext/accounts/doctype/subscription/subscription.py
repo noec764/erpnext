@@ -26,8 +26,6 @@ class Subscription(Document):
 	def validate(self):
 		self.validate_interval_count()
 		self.validate_trial_period()
-		SubscriptionPlansManager(self).set_plans_status()
-		SubscriptionPlansManager(self).set_plans_rates()
 		self.calculate_total()
 		self.calculate_grand_total()
 		self.validate_payment_request_generation()
@@ -74,29 +72,31 @@ class Subscription(Document):
 
 	def process(self):
 		SubscriptionPeriod(self).validate(True)
+		SubscriptionPlansManager(self).set_plans_status()
+		SubscriptionPlansManager(self).set_plans_rates()
 		SubscriptionStateManager(self).set_status()
 		if self.status in BILLING_STATUS:
 			self.process_active_subscription()
 			SubscriptionStateManager(self).set_status()
 
 	def process_active_subscription(self):
-		self.generate_sales_order()
-		self.generate_invoice()
-		SubscriptionStateManager(self).set_status()
-		SubscriptionPaymentRequestGenerator(self).make_payment_request()
+		try:
+			self.generate_sales_order()
+			self.generate_invoice()
+			SubscriptionStateManager(self).set_status()
+			SubscriptionPaymentRequestGenerator(self).make_payment_request()
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), _("Subscription update error for subscription {0}").format(self.name))
 
 	def generate_sales_order(self):
 		if self.create_sales_order:
-			try:
-				return SubscriptionSalesOrderGenerator(self).create_new_sales_order()
-			except Exception:
-				frappe.log_error(frappe.get_traceback(), _("Sales order generation error for subscription {0}").format(self.name))
+			return SubscriptionSalesOrderGenerator(self).create_new_sales_order()
 
 	def generate_invoice(self):
 		try:
 			invoice = SubscriptionInvoiceGenerator(self).create_invoice()
 			invoice.save()
-			if self.subscription.submit_invoice:
+			if self.submit_invoice:
 				invoice.submit()
 			return invoice
 		except Exception:
@@ -107,7 +107,7 @@ class Subscription(Document):
 				"new_status":  "Billing failed"
 			})
 			self.reload()
-			frappe.log_error(frappe.get_traceback(), _("Invoice generation error for subscription {0}").format(self.name))
+			frappe.throw(_("Invoicing error for subscription {0}").format(self.name))
 
 	def cancel_subscription(self, **kwargs):
 		self.cancellation_date = kwargs.get("cancellation_date")
