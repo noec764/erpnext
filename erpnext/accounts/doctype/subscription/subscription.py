@@ -63,12 +63,12 @@ class Subscription(Document):
 			self.generate_payment_request = 1
 
 	def calculate_total(self):
-		if getdate(sub.start) > getdate(nowdate()):
+		if getdate(self.start) > getdate(nowdate()):
 			return
 		self.total = SubscriptionPlansManager(self).get_plans_total()
 
 	def calculate_grand_total(self):
-		if getdate(sub.start) > getdate(nowdate()):
+		if getdate(self.start) > getdate(nowdate()):
 			return
 		self.grand_total = SubscriptionInvoiceGenerator(self).get_simulation()
 
