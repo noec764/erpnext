@@ -235,7 +235,7 @@ class Subscription(Document):
 	def get_next_invoice_date(self):
 		return SubscriptionPeriod(self).get_next_invoice_date()
 
-	def create_payment_entry(self):
+	def create_payment(self):
 		return SubscriptionPaymentEntryGenerator(self).create_payment()
 
 def update_grand_total():
