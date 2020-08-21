@@ -30,6 +30,8 @@ class SubscriptionTransactionBase:
 			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date)
 		for item in items_list:
 			document.append('items', item)
+		else:
+			frappe.throw(_("Please configure at least one active item for your subscription."))
 
 		# Shipping
 		if self.subscription.shipping_rule:
@@ -163,11 +165,6 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 		self.add_advances(invoice)
 		invoice.flags.ignore_mandatory = True
 		invoice.set_missing_values()
-		if not simulate:
-			invoice.save()
-
-			if self.subscription.submit_invoice:
-				invoice.submit()
 
 		return invoice
 

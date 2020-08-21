@@ -189,8 +189,11 @@ class WebhooksController():
 				start_date=period_start,
 				end_date=period_end,
 			).create_invoice()
+			invoice.save()
+
 		elif self.sales_invoice:
 			invoice = self.sales_invoice
+
 		elif self.sales_order:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 			invoice = make_sales_invoice(self.sales_order.name, ignore_permissions=True)

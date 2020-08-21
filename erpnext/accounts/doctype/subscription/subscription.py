@@ -63,9 +63,13 @@ class Subscription(Document):
 			self.generate_payment_request = 1
 
 	def calculate_total(self):
+		if getdate(sub.start) > getdate(nowdate()):
+			return
 		self.total = SubscriptionPlansManager(self).get_plans_total()
 
 	def calculate_grand_total(self):
+		if getdate(sub.start) > getdate(nowdate()):
+			return
 		self.grand_total = SubscriptionInvoiceGenerator(self).get_simulation()
 
 	def process(self):
@@ -88,9 +92,13 @@ class Subscription(Document):
 			except Exception:
 				frappe.log_error(frappe.get_traceback(), _("Sales order generation error for subscription {0}").format(self.name))
 
-	def generate_invoice(self, simulate=False):
+	def generate_invoice(self):
 		try:
-			return SubscriptionInvoiceGenerator(self).create_invoice(simulate)
+			invoice = SubscriptionInvoiceGenerator(self).create_invoice()
+			invoice.save()
+			if self.subscription.submit_invoice:
+				invoice.submit()
+			return invoice
 		except Exception:
 			previous_status = self.status
 			self.db_set("status", "Billing failed")

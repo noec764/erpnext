@@ -190,7 +190,7 @@ class SubscriptionStateManager:
 		return getdate(self.subscription.cancellation_date) <= getdate(nowdate()) if self.subscription.cancellation_date else False
 
 	def is_billable(self):
-		if self.subscription.generate_invoice_at_period_start:
+		if self.subscription.generate_invoice_at_period_start and getdate(nowdate()) >= getdate(self.subscription.current_invoice_start):
 			return not(SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice"))
 		else:
 			previous_period = SubscriptionPeriod(self.subscription).get_previous_period()
@@ -216,7 +216,7 @@ class SubscriptionStateManager:
 		if self.is_cancelled():
 			return False
 
-		if self.subscription.generate_invoice_at_period_start:
+		if self.subscription.generate_invoice_at_period_start and getdate(nowdate()) >= getdate(self.subscription.current_invoice_start):
 			current_sales_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
 			current_payment_requests = frappe.get_all("Subscription Event",
 				filters={
