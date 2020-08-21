@@ -15,7 +15,7 @@ frappe.listview_settings['Subscription'] = {
 		} else if(doc.status === 'Billing failed') {
 			return [__("Billing failed"), "red"];
 		} else if(doc.status === 'Payable') {
-			return [__("Payable"), "orange"];
+			return [__("Payable", null, "Subscription"), "orange"];
 		} else if(doc.status === 'Draft invoices') {
 			return [__("Draft invoices"), "orange"];
 		}
