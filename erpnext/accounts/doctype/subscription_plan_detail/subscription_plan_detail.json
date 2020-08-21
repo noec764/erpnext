@@ -105,7 +105,8 @@
    "fieldname": "price_determination",
    "fieldtype": "Select",
    "label": "Price Determination",
-   "options": "\nFixed rate\nBased on price list"
+   "options": "\nFixed rate\nBased on price list",
+   "reqd": 1
   },
   {
    "depends_on": "eval:doc.price_determination == \"Fixed rate\"",
@@ -174,9 +175,10 @@
    "read_only": 1
   }
  ],
+ "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-08-18 11:20:12.409464",
+ "modified": "2020-08-21 18:23:13.633762",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan Detail",

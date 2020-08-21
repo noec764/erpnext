@@ -204,7 +204,6 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 				self.subscription.cancel_subscription()
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
-			return
 
 class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
 	def create_new_sales_order(self):
