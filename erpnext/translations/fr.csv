@@ -5281,7 +5281,7 @@ Payment Entry against {0} {1} via Payment Request {2},Ecriture de paiement pour 
 Payment Entry already exists,L’Écriture de Paiement existe déjà,
 Payment Entry has been modified after you pulled it. Please pull it again.,L’écriture de paiement a été modifiée après son ajout dans le tableau des avances. Veuillez l'ajouter à nouveau.,
 Payment Entry is already created,L’Écriture de Paiement est déjà créée,
-"Payment Entry {0} is linked against {1} {2}, check if it should be pulled as advance in this invoice.",L'écriture de paiement {0} est liée avec la {1} {2}. Vérifiez si vous ne souhaitez pas l'associer avec cette facture.,
+"Payment Entry {0} is linked against {1} {2}, check if it should be pulled as advance in this invoice.",L'écriture de paiement {0} est liée avec la {1} {2}. Vérifiez que vous ne souhaitez pas l'associer avec cette facture.,
 Payment Entry,Écriture de paiement,
 Payment Failed. Please check your GoCardless Account for more details,Le paiement a échoué. Veuillez vérifier votre compte GoCardless pour plus de détails,
 Payment From / To,Paiement De / À,

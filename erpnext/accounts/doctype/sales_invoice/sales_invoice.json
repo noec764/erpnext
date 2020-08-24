@@ -29,6 +29,8 @@
   "return_against",
   "column_break_21",
   "update_billed_amount_in_sales_order",
+  "down_payment_section",
+  "down_payment_against",
   "accounting_dimensions_section",
   "project",
   "dimension_col_break",
@@ -1618,19 +1620,33 @@
    "label": "Is Down Payment Invoice"
   },
   {
-    "default": "0",
-    "fieldname": "is_consolidated",
-    "fieldtype": "Check",
-    "label": "Is Consolidated",
-    "read_only": 1
-   }
+   "default": "0",
+   "fieldname": "is_consolidated",
+   "fieldtype": "Check",
+   "label": "Is Consolidated",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.is_down_payment_invoice",
+   "fieldname": "down_payment_section",
+   "fieldtype": "Section Break",
+   "label": "Down Payment"
+  },
+  {
+   "fieldname": "down_payment_against",
+   "fieldtype": "Link",
+   "label": "Down Payment Against",
+   "options": "Sales Invoice",
+   "read_only": 1
+  }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
+ "index_web_pages_for_search": 1,
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-08-03 23:31:12.675040",
+ "modified": "2020-08-24 13:57:05.253406",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

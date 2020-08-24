@@ -473,6 +473,12 @@ def update_reference_in_payment_entry(d, payment_entry, do_not_save=False):
 	if d.voucher_detail_no:
 		existing_row = payment_entry.get("references", {"name": d["voucher_detail_no"]})[0]
 		original_row = existing_row.as_dict().copy()
+
+		# Link down payment invoice with final invoice
+		if payment_entry.down_payment:
+			frappe.db.set_value(original_row.reference_doctype, original_row.reference_name,\
+				"down_payment_against", reference_details.get("reference_name"))
+
 		existing_row.update(reference_details)
 
 		if d.allocated_amount < original_row.allocated_amount:
