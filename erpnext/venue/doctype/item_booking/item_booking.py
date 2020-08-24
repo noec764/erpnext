@@ -173,7 +173,7 @@ def remove_booked_slot(name):
 		remove_booked_slot(name)
 
 @frappe.whitelist()
-def get_booked_slots(quotation=None, uom=None):
+def get_booked_slots(quotation=None, uom=None, item_code=None):
 	if not quotation and not frappe.session.user == "Guest":
 		quotation = _get_cart_quotation().get("name")
 
@@ -184,7 +184,21 @@ def get_booked_slots(quotation=None, uom=None):
 	if uom:
 		filters["uom"] = uom
 
+	if item_code:
+		filters["item_code"] = item_code
+
 	return frappe.get_all("Quotation Item", filters=filters, fields=["item_booking as name"])
+
+@frappe.whitelist()
+def get_detailed_booked_slots(quotation=None, uom=None, item_code=None):
+	slots = get_booked_slots(quotation, uom, item_code)
+
+	out = []
+	for slot in slots:
+		if slot.name:
+			out.extend(frappe.db.get_values("Item Booking", slot.name, ["name", "starts_on", "ends_on"], as_dict=True))
+
+	return out
 
 @frappe.whitelist()
 def reset_all_booked_slots():

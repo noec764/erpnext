@@ -25,12 +25,14 @@ erpnext.booking_dialog = class BookingDialog {
 	show() {
 		frappe.require([
 			'/assets/js/moment-bundle.min.js',
-			'/assets/js/control.min.js'
+			'/assets/js/control.min.js',
+			'/assets/frappe/js/frappe/utils/datetime.js'
 		], () => {
 			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 			this.get_selling_uoms()
 			.then(() => {
 				this.toggle_item_descriptions(false)
+				this.refresh_bookings();
 			})
 		});
 	}
@@ -105,6 +107,14 @@ erpnext.booking_dialog = class BookingDialog {
 			}
 		})
 	}
+
+	refresh_bookings() {
+		frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_detailed_booked_slots", {
+			item_code: this.item
+		}).then(r => {
+			this.sidebar.display_bookings(r.message);
+		})
+	}
 }
 
 class BookingSidebar {
@@ -119,6 +129,8 @@ class BookingSidebar {
 		this.wrapper = $('<div class="sidebar-card sticky-top"></div>').appendTo($(this.parent.wrapper).find('.calendar-sidebar'));
 		this.duration_selector_title = $(`<div class="sidebar-section"><h4>${__("Duration")}</h4></div>`).appendTo(this.wrapper);
 		this.duration_selector_wrapper = $(`<div class="sidebar-durations"></div>`).appendTo(this.duration_selector_title);
+		this.bookings_title = $(`<div class="sidebar-section"><h4>${__("Bookings")}</h4></div>`).appendTo(this.wrapper);
+		this.bookings_display = $(`<div></div>`).appendTo(this.bookings_title);
 		const fields = this.parent.uoms.map(value => {
 			return {
 				fieldname: value,
@@ -170,6 +182,32 @@ class BookingSidebar {
 			this.price_display = $(`<div class="formatted-price">${this.parent.formatted_price}</div>`).appendTo(this.price_title);
 		}
 	}
+
+	display_bookings(data) {
+		const me = this;
+		if (!data.length) {
+			this.bookings_title[0].style.display = 'none';
+		} else {
+			this.bookings_title[0].style.display = 'block';
+			const bookings = data.map(v => {
+				return `
+					<p>
+						<span>${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('Do MMMM YYYY')}</span>
+						<span class="pull-right remove-slot" data-booking=${v.name}><i class="uil uil-trash-alt"></i></span>
+						<span class="small d-inline-block">${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('LT')}-${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('LT')}</span>
+					</p>
+				`
+			}).join('')
+			this.bookings_display[0].innerHTML = bookings;
+			this.bookings_display.on('click', '.remove-slot', function(e) {
+				e.preventDefault();
+				const booking = $(this).attr('data-booking')
+				erpnext.booking_dialog_update.trigger("remove_slot", {
+					booking: booking
+				})
+			})
+		}
+	}
 }
 
 class BookingCalendar {
@@ -183,6 +221,13 @@ class BookingCalendar {
 		this.loading = true
 		this.uom = this.sales_uom
 		this.item_calendar = []
+		this.triggered = false
+		erpnext.booking_dialog_update.on("remove_slot", r => {
+			if (!this.triggered) {
+				this.removeBookedSlot(r.booking);
+				this.triggered = true;
+			}
+		})
 		this.get_item_calendar()
 		.then(() => {
 			this.render();
@@ -350,7 +395,7 @@ class BookingCalendar {
 			if (event.event.classNames.includes("available")) {
 				this.bookNewSlot(event)
 			} else {
-				this.removeBookedSlot(event)
+				this.removeBookedSlot(event.event.id)
 			}
 		} else {
 			if(localStorage) {
@@ -382,9 +427,9 @@ class BookingCalendar {
 		})
 	}
 
-	removeBookedSlot(event) {
+	removeBookedSlot(booking_id) {
 		this.getQuotation()
-		this.updateCart(event.event.id, 0)
+		this.updateCart(booking_id, 0)
 	}
 
 	updateCart(booking, qty) {
@@ -397,6 +442,8 @@ class BookingCalendar {
 		}).then(() => {
 			this.loading = false;
 			this.fullCalendar.refetchEvents()
+			this.parent.refresh_bookings()
+			this.triggered = false;
 		})
 	}
 
