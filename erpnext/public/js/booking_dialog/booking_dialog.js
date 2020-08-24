@@ -5,6 +5,7 @@ import { Calendar } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
 
 frappe.provide("erpnext.booking_dialog");
 frappe.provide("erpnext.booking_dialog_update")
@@ -17,6 +18,7 @@ erpnext.booking_dialog = class BookingDialog {
 		this.uoms_btns = {};
 		this.price = 0;
 		this.formatted_price = '';
+		this.calendar_type = "Daily"
 		this.read_only = frappe.session.user === "Guest";
 		this.wrapper = document.getElementById(this.parentId);
 		this.show()
@@ -190,11 +192,13 @@ class BookingSidebar {
 		} else {
 			this.bookings_title[0].style.display = 'block';
 			const bookings = data.map(v => {
+				const monthly_end = `<span class="small d-inline-block">${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('Do MMMM YYYY')}</span>`
+				const daily_end = `<span class="small d-inline-block">${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('LT')}-${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('LT')}</span>`
 				return `
 					<p>
 						<span>${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('Do MMMM YYYY')}</span>
 						<span class="pull-right remove-slot" data-booking=${v.name}><i class="uil uil-trash-alt"></i></span>
-						<span class="small d-inline-block">${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('LT')}-${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('LT')}</span>
+						${this.parent.calendar_type === "Monthly" ? monthly_end : daily_end}
 					</p>
 				`
 			}).join('')
@@ -254,7 +258,8 @@ class BookingCalendar {
 			'erpnext.venue.doctype.item_booking.item_booking.get_item_calendar',
 			{ item: this.parent.item, uom: this.parent.sales_uom }
 		).then(r => {
-			this.item_calendar = r.message;
+			this.parent.calendar_type = r.message.type;
+			this.item_calendar = r.message.calendar;
 			this.start_time = new Date(Math.min.apply(0, this.item_calendar.map(f => new Date(`2999-01-01 ${f.start_time}`))))
 			this.end_time = new Date(Math.max.apply(0, this.item_calendar.map(f => new Date(`2999-01-01 ${f.end_time}`))))
 		})
@@ -264,7 +269,7 @@ class BookingCalendar {
 		const me = this;
 		return {
 			eventClassNames: 'booking-calendar',
-			initialView: frappe.is_mobile() ? 'listDay' : 'timeGridWeek',
+			initialView: this.parent.calendar_type === "Monthly" ? 'dayGridMonth' : (frappe.is_mobile() ? 'listDay' : 'timeGridWeek'),
 			customButtons: {
 				closeButton: {
 					text: __("Close"),
@@ -274,7 +279,7 @@ class BookingCalendar {
 				}
 			},
 			headerToolbar: {
-				left: frappe.is_mobile() ? 'today' : 'timeGridWeek,listDay',
+				left: this.parent.calendar_type === "Monthly" ? '' : (frappe.is_mobile() ? 'today' : 'timeGridWeek,listDay'),
 				center: 'prev,title,next',
 				right: frappe.is_mobile() ? 'closeButton' : 'today closeButton',
 			},
@@ -288,7 +293,8 @@ class BookingCalendar {
 			plugins: [
 				timeGridPlugin,
 				listPlugin,
-				interactionPlugin
+				interactionPlugin,
+				dayGridPlugin
 			],
 			locale: frappe.boot.lang || 'en',
 			timeZone: 'UTC',
@@ -319,13 +325,14 @@ class BookingCalendar {
 				end: moment(parameters.end).format("YYYY-MM-DD"),
 				item: this.parent.item,
 				quotation: this.quotation,
-				uom: this.uom
+				uom: this.uom,
+				calendar_type: this.parent.calendar_type
 			}).then(result => {
 				this.slots = result.message || []
 
 				callback(this.slots);
 				this.fullCalendar.setOption('contentHeight', 'auto');
-				if (!this.slots.length) {
+				if (!this.slots.length && this.parent.calendar_type !== "Monthly") {
 					this.getAvailableItems(parameters)
 				} else {
 					this.removeAlternativeItems()
@@ -448,7 +455,7 @@ class BookingCalendar {
 	}
 
 	datesSet(event) {
-		if (event.view.activeStart) {
+		if (event.view.activeStart && this.parent.calendar_type !== "Monthly") {
 			this.fullCalendar.gotoDate(event.view.activeStart)
 		}
 	}

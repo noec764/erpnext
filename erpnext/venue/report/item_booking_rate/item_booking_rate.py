@@ -65,7 +65,7 @@ def get_calendar_capacity(filters, items, dates):
 	for item in items:
 		daily_capacity = defaultdict(float)
 		calendar = get_item_calendar(item)
-		for line in calendar:
+		for line in calendar.get("calendar"):
 			daily_capacity[line.day] += (line.get("end_time") - line.get("start_time")).total_seconds() / 3600
 
 		prev_date = filters.get("date_range")[0]

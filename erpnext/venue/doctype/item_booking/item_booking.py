@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, get_first_day, get_last_day
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -231,7 +231,7 @@ def get_available_item(item, start, end):
 	return result
 
 @frappe.whitelist(allow_guest=True)
-def get_availabilities(item, start, end, uom=None, quotation=None):
+def get_availabilities(item, start, end, uom=None, quotation=None, calendar_type=None):
 	item_doc = frappe.get_doc("Item", item)
 	if not item_doc.enable_item_booking:
 		return []
@@ -239,12 +239,15 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 	if not uom:
 		uom = item_doc.sales_uom
 
-	duration = get_uom_in_minutes(uom)
-	if not duration:
-		return
-
 	init = datetime.datetime.strptime(start, '%Y-%m-%d') if type(start) == str else get_datetime(start)
 	finish = datetime.datetime.strptime(end, '%Y-%m-%d') if type(end) == str else get_datetime(end)
+
+	if calendar_type and calendar_type == "Monthly":
+		return _get_monthly_slots(item_doc, init, finish, uom, quotation)
+
+	duration = get_uom_in_minutes(uom)
+	if not duration:
+		return []
 
 	output = []
 	for dt in daterange(init, finish):
@@ -254,16 +257,33 @@ def get_availabilities(item, start, end, uom=None, quotation=None):
 
 	return output
 
+def _get_monthly_slots(item_doc, start, end, uom, quotation=None):
+	output = []
+
+	start_month = getdate(start).month
+	month_start = getdate(start) if getdate(start).day == 1 else getdate(start).replace(
+		day=1,
+		month=start_month + 1 if start_month < 12 else 1,
+		year=getdate(start).year if start_month < 12 else getdate(start).year + 1
+	)
+	month_end = get_last_day(month_start)
+	events = _get_events(month_start, month_end, item_doc)
+	if events:
+		output.extend(_get_selected_slots(events, quotation))
+		return output
+
+	return [get_available_dict(month_start, month_end)]
+
 def _check_availability(item, date, duration, quotation=None, uom=None):
 	date = getdate(date)
 	day = calendar.day_name[date.weekday()]
 
-	schedule = get_item_calendar(item.name, uom)
+	item_calendar = get_item_calendar(item.name, uom)
 
 	availability = []
 	schedules = []
-	if schedule:
-		schedule_for_the_day = filter(lambda x: x.day == day, schedule)
+	if item_calendar.get("calendar"):
+		schedule_for_the_day = filter(lambda x: x.day == day, item_calendar.get("calendar"))
 		for line in schedule_for_the_day:
 			start = get_datetime(now())
 			if datetime.datetime.combine(date, get_time(line.end_time)) > start:
@@ -398,6 +418,7 @@ def check_simultaneaous_bookings(item, scheduled_items):
 
 def _get_selected_slots(events, quotation=None):
 	linked_items = [x for x in events if x.get("status") == "In cart" and x.get("user") == frappe.session.user]
+
 	if not linked_items:
 		return []
 
@@ -469,16 +490,19 @@ def get_item_calendar(item, uom=None):
 	if not uom:
 		uom = frappe.get_cached_value("Item", item, "sales_uom")
 
-	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
+	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom", "calendar_type"])
 	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
 		dict(item=None, uom=uom), dict(item=None, uom=None)]:
 		filtered_calendars = [x.get("name") for x in calendars if \
 			(x.get("item") == filters.get("item") or x.get("item") == "") \
 			and (x.get("uom") == filters.get("uom") or x.get("uom") == "")]
 		if filtered_calendars:
-			return frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+			return {
+				"type": frappe.get_cached_value("Item Booking Calendar", filtered_calendars[0], "calendar_type") or "Daily",
+				"calendar": frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+			}
 
-	return []
+	return {"type": "Daily", "calendar": []}
 
 def get_uom_in_minutes(uom=None):
 	minute_uom = frappe.db.get_value("Venue Settings", None, "minute_uom")
