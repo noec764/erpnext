@@ -124,6 +124,7 @@ def get_item_price(item_code, uom):
 		return frappe._dict()
 
 	contact = frappe.db.get_value("Contact", {"user": frappe.session.user})
+	print("contact", contact)
 	cart_quotation = None
 	if contact:
 		cart_quotation = _get_cart_quotation()

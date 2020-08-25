@@ -414,8 +414,7 @@ def get_party(user=None):
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		if contact.links:
-			party_doctype = contact.links[0].link_doctype
-			party = contact.links[0].link_name
+			party_doctype, party = contact.get_link_to_doctype("Customer") or contact.get_link_to_doctype("Lead")
 
 	cart_settings = frappe.get_doc("Shopping Cart Settings")
 
@@ -437,7 +436,8 @@ def get_party(user=None):
 			"customer_name": fullname,
 			"customer_type": "Individual",
 			"customer_group": get_shopping_cart_settings().default_customer_group,
-			"territory": get_root_of("Territory")
+			"territory": get_root_of("Territory"),
+			"customer_primary_contact": contact_name
 		})
 
 		if debtors_account:
@@ -451,14 +451,23 @@ def get_party(user=None):
 		customer.flags.ignore_mandatory = True
 		customer.insert(ignore_permissions=True)
 
-		contact = frappe.new_doc("Contact")
-		contact.update({
-			"first_name": fullname
-		})
+		if contact_name:
+			contact = frappe.get_doc("Contact", contact_name)
+		else:
+			contact = frappe.new_doc("Contact")
+			contact.update({
+				"first_name": fullname
+			})
+
 		contact.add_email(user, is_primary=True)
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
 		contact.flags.ignore_mandatory = True
-		contact.insert(ignore_permissions=True)
+		contact.flags.ignore_permissions = True
+		contact.save()
+
+		if not contact_name:
+			customer.customer_primary_contact = contact.name
+			customer.save()
 
 		return customer
 
