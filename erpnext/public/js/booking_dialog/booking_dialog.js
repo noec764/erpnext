@@ -92,8 +92,12 @@ erpnext.booking_dialog = class BookingDialog {
 	update_sales_uom(value) {
 		this.sales_uom = value;
 		this.calendar.uom = this.sales_uom
-		this.calendar.get_item_calendar();
-		this.calendar.fullCalendar&&this.calendar.fullCalendar.refetchEvents();
+		this.calendar.get_item_calendar().then(() => {
+			this.calendar.set_initial_display_view();
+			this.calendar.set_option('headerToolbar', this.calendar.get_header_toolbar())
+			this.calendar.set_option('displayEventTime', this.calendar.get_time_display())
+			this.calendar.fullCalendar&&this.calendar.fullCalendar.refetchEvents();
+		})
 		this.get_item_price()
 	}
 
@@ -160,7 +164,7 @@ class BookingSidebar {
 		});
 
 		this.duration_selector.make();
-		this.duration_selector.fields_dict[this.parent.sales_uom].set_value(1);
+		this.parent.sales_uom&&this.duration_selector.fields_dict[this.parent.sales_uom].set_value(1);
 	}
 
 	toggle_click(field) {
@@ -248,6 +252,30 @@ class BookingCalendar {
 		this.alternative_items_wrapper = $('<div id="alternative-item"></div>').appendTo(calendarEl);
 	}
 
+	get_initial_display_view() {
+		return this.parent.calendar_type === "Monthly" ? 'dayGridMonth' : (frappe.is_mobile() ? 'listDay' : 'timeGridWeek')
+	}
+
+	set_initial_display_view() {
+		this.fullCalendar.changeView(this.get_initial_display_view());
+	}
+
+	get_header_toolbar() {
+		return {
+			left: this.parent.calendar_type === "Monthly" ? '' : (frappe.is_mobile() ? 'today' : 'timeGridWeek,listDay'),
+			center: 'prev,title,next',
+			right: frappe.is_mobile() ? 'closeButton' : 'today closeButton',
+		}
+	}
+
+	get_time_display() {
+		return !(this.get_initial_display_view() === "dayGridMonth")
+	}
+
+	set_option(option, value) {
+		this.fullCalendar.setOption(option, value);
+	}
+
 	destroy() {
 		this.fullCalendar.destroy();
 		document.getElementById('alternative-item').remove();
@@ -269,7 +297,7 @@ class BookingCalendar {
 		const me = this;
 		return {
 			eventClassNames: 'booking-calendar',
-			initialView: this.parent.calendar_type === "Monthly" ? 'dayGridMonth' : (frappe.is_mobile() ? 'listDay' : 'timeGridWeek'),
+			initialView: me.get_initial_display_view(),
 			customButtons: {
 				closeButton: {
 					text: __("Close"),
@@ -278,11 +306,7 @@ class BookingCalendar {
 					}
 				}
 			},
-			headerToolbar: {
-				left: this.parent.calendar_type === "Monthly" ? '' : (frappe.is_mobile() ? 'today' : 'timeGridWeek,listDay'),
-				center: 'prev,title,next',
-				right: frappe.is_mobile() ? 'closeButton' : 'today closeButton',
-			},
+			headerToolbar: me.get_header_toolbar(),
 			weekends: true,
 			buttonText: {
 				today: __("Today"),
@@ -313,6 +337,7 @@ class BookingCalendar {
 			datesSet: function(event) {
 				return me.datesSet(event);
 			},
+			displayEventTime: this.get_time_display(),
 			slotMinTime: this.start_time.toTimeString().slice(0, 8),
 			slotMaxTime: this.end_time.toTimeString().slice(0, 8)
 		}
