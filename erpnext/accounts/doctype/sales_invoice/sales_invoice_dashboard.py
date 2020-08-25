@@ -14,7 +14,8 @@ def get_data():
 			'Bank Transaction': 'payment_entry'
 		},
 		'internal_links': {
-			'Sales Order': ['items', 'sales_order']
+			'Sales Order': ['items', 'sales_order'],
+			'Delivery Note': ['items', 'delivery_note']
 		},
 		'transactions': [
 			{
