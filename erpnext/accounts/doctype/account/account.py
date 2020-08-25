@@ -330,10 +330,10 @@ def validate_account_number(name, account_number, company):
 
 @frappe.whitelist()
 def update_account_number(name, account_name, account_number=None, do_not_show_account_number_in_reports=False):
+	company, root_type = frappe.db.get_value("Account", name, ["company", "root_type"])
 
-	account, root_type = frappe.db.get_value("Account", name, ["company", "root_type"], as_dict=True)
-	if not account: return
-	validate_account_number(name, account_number, account.company)
+	if not (company and root_type): return
+	validate_account_number(name, account_number, company)
 	if account_number:
 		frappe.db.set_value("Account", name, "account_number", account_number.strip())
 	else:
@@ -342,7 +342,7 @@ def update_account_number(name, account_name, account_number=None, do_not_show_a
 
 	frappe.db.set_value("Account", name, "do_not_show_account_number", do_not_show_account_number_in_reports)
 
-	new_name = get_account_autoname(account_number, account_name, account.company, root_type)
+	new_name = get_account_autoname(account_number, account_name, company, root_type)
 	if name != new_name:
 		frappe.rename_doc("Account", name, new_name, force=1)
 		return new_name
