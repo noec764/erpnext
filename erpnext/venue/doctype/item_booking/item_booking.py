@@ -650,7 +650,7 @@ def make_sales_order(source_name, target_doc=None):
 	return doclist
 
 def get_calendar_item(account):
-	return frappe.db.get_value("Item", dict(google_calendar=account.name), ["item_code", "calendar_color"])
+	return frappe.db.get_value("Item", dict(google_calendar=account.name, disabled=0), ["item_code", "calendar_color"])
 
 def insert_event_to_calendar(account, event, recurrence=None):
 	"""
