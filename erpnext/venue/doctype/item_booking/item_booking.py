@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, get_first_day, get_last_day
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -189,7 +189,7 @@ def get_booked_slots(quotation=None, uom=None, item_code=None):
 
 	return frappe.get_all("Quotation Item", filters=filters, fields=["item_booking as name"])
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_detailed_booked_slots(quotation=None, uom=None, item_code=None):
 	slots = get_booked_slots(quotation, uom, item_code)
 
@@ -258,21 +258,12 @@ def get_availabilities(item, start, end, uom=None, quotation=None, calendar_type
 	return output
 
 def _get_monthly_slots(item_doc, start, end, uom, quotation=None):
-	output = []
-
-	start_month = getdate(start).month
-	month_start = getdate(start) if getdate(start).day == 1 else getdate(start).replace(
-		day=1,
-		month=start_month + 1 if start_month < 12 else 1,
-		year=getdate(start).year if start_month < 12 else getdate(start).year + 1
-	)
-	month_end = get_last_day(month_start)
-	events = _get_events(month_start, month_end, item_doc)
+	month_end = add_to_date(getdate(end), minutes=-1)
+	events = _get_events(getdate(start), month_end, item_doc)
 	if events:
-		output.extend(_get_selected_slots(events, quotation))
-		return output
+		return _get_selected_slots(events, quotation)
 
-	return [get_available_dict(month_start, month_end)]
+	return [get_available_dict(getdate(start), month_end)]
 
 def _check_availability(item, date, duration, quotation=None, uom=None):
 	date = getdate(date)

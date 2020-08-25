@@ -296,6 +296,7 @@ class BookingCalendar {
 				interactionPlugin,
 				dayGridPlugin
 			],
+			showNonCurrentDates: false,
 			locale: frappe.boot.lang || 'en',
 			timeZone: 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
