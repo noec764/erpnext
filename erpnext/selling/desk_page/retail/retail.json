@@ -20,7 +20,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Retail",
- "modified": "2020-08-17 09:19:41.463613",
+ "modified": "2020-08-20 18:00:07.515691",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Retail",
@@ -28,5 +28,27 @@
  "pin_to_bottom": 0,
  "pin_to_top": 0,
  "restrict_to_domain": "Retail",
- "shortcuts": []
+ "shortcuts": [
+	{
+	 "color": "#9deca2",
+	 "doc_view": "",
+	 "format": "{} Active",
+	 "label": "Point of Sale Profile",
+	 "link_to": "POS Profile",
+	 "stats_filter": "{\n    \"disabled\": 0\n}",
+	 "type": "DocType"
+	},
+	{
+	 "doc_view": "",
+	 "label": "Point of Sale",
+	 "link_to": "point-of-sale",
+	 "type": "Page"
+	},
+	{
+	 "doc_view": "",
+	 "label": "POS Settings",
+	 "link_to": "POS Settings",
+	 "type": "DocType"
+	}
+   ]
 }
