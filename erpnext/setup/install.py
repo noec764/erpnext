@@ -22,6 +22,8 @@ def after_install():
 	create_compact_item_print_custom_field()
 	create_print_zero_amount_taxes_custom_field()
 	add_all_roles_to("Administrator")
+	for role in ["Customer", "Supplier"]:
+		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
 	create_default_success_action()
 	create_default_energy_point_rules()
@@ -31,7 +33,7 @@ def after_install():
 
 def check_setup_wizard_not_completed():
 	if cint(frappe.db.get_single_value('System Settings', 'setup_complete') or 0):
-		message = """dokos can only be installed on a fresh site where the setup wizard is not completed. You can reinstall this site (after saving your data) using: bench --site [sitename] reinstall"""
+		message = """Dokos can only be installed on a fresh site where the setup wizard is not completed. You can reinstall this site (after saving your data) using: bench --site [sitename] reinstall"""
 		frappe.throw(message)
 
 
