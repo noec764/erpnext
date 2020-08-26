@@ -118,6 +118,7 @@ class WebhooksController():
 			payment_entry.reference_date = posting_date
 
 			if hasattr(self, 'add_fees_before_submission'):
+				payment_entry.deductions = []
 				self.add_fees_before_submission(payment_entry)
 
 			if self.payment_request:
@@ -130,7 +131,7 @@ class WebhooksController():
 				self.set_as_completed()
 			else:
 				payment_entry.save()
-				self.set_as_completed(_("Please allocated the remaining amount before submitting."))
+				self.set_as_completed(_("Please allocate the remaining amount before submitting."))
 
 			self.set_references(payment_entry.doctype, payment_entry.name)
 		elif frappe.db.exists("Payment Entry", dict(reference_no=reference, docstatus=1)):

@@ -307,7 +307,7 @@ class PaymentRequest(Document):
 		"""send email with payment link"""
 		email_args = {
 			"recipients": self.email_to,
-			"sender": None,
+			"sender": frappe.session.user if frappe.session.user not in ("Administrator", "Guest") else None,
 			"subject": self.subject,
 			"message": self.message,
 			"now": True,

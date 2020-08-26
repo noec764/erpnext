@@ -7,24 +7,19 @@ class SubscriptionPeriod:
 		self.start = start or self.subscription.current_invoice_start
 		self.end = end or self.subscription.current_invoice_end
 
-	def validate(self, commit=False):
+	def validate(self):
 		current_invoice_start = self.get_current_invoice_start()
 		if self.subscription.current_invoice_start != current_invoice_start:
 			self.subscription.current_invoice_start = current_invoice_start
-			if commit:
-				self.subscription.db_set("current_invoice_start", current_invoice_start)
+			self.subscription.db_set("current_invoice_start", current_invoice_start, update_modified=False)
 
 		current_invoice_end = self.get_current_invoice_end()
 		if self.subscription.current_invoice_end != current_invoice_end:
 			self.subscription.current_invoice_end = current_invoice_end
-			if commit:
-				self.subscription.db_set("current_invoice_end", current_invoice_end)
+			self.subscription.db_set("current_invoice_end", current_invoice_end, update_modified=False)
 
 			if not self.subscription.is_new():
 				self.subscription.add_subscription_event("New period")
-
-		if commit:
-			self.subscription.load_from_db()
 
 	def get_current_invoice_start(self):
 		if SubscriptionStateManager(self.subscription).is_trial() \

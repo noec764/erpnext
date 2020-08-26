@@ -71,7 +71,7 @@ class Subscription(Document):
 		self.grand_total = SubscriptionInvoiceGenerator(self).get_simulation()
 
 	def process(self):
-		SubscriptionPeriod(self).validate(True)
+		SubscriptionPeriod(self).validate()
 		SubscriptionPlansManager(self).set_plans_status()
 		SubscriptionPlansManager(self).set_plans_rates()
 		SubscriptionStateManager(self).set_status()
@@ -263,6 +263,7 @@ def process_all():
 	for subscription in subscriptions:
 		subscription = frappe.get_doc('Subscription', data['name'])
 		subscription.process()
+		frappe.db.commit()
 
 @frappe.whitelist()
 def cancel_subscription(**kwargs):
@@ -278,6 +279,7 @@ def restart_subscription(name):
 def get_subscription_updates(name):
 	subscription = frappe.get_doc('Subscription', name)
 	subscription.process()
+	frappe.db.commit()
 
 @frappe.whitelist()
 def get_payment_entry(name):
