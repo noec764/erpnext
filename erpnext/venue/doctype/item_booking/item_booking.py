@@ -153,6 +153,7 @@ def book_new_slot(**kwargs):
 			"user": kwargs.get("user"),
 			"status": kwargs.get("status") or "In cart",
 			"event": kwargs.get("event"),
+			"all_day": kwargs.get("all_day") or 0,
 			"sync_with_google_calendar": kwargs.get("sync_with_google_calendar") or frappe.db.get_single_value('Venue Settings', 'sync_with_google_calendar')
 		}).insert(ignore_permissions=True)
 

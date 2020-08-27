@@ -58,6 +58,7 @@ const new_booking = (frm, value) => {
 		start: frm.doc.starts_on,
 		end: frm.doc.ends_on,
 		status: "Not confirmed",
-		event: frm.doc.name
+		event: frm.doc.name,
+		all_day: frm.doc.all_day
 	})
 }
