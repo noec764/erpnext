@@ -7,7 +7,7 @@ frappe.listview_settings['Item Booking'] = {
 		} else if (doc.status == "In cart") {
 			return [__("In cart"), "orange", "status,=,In cart"];
 		} else if (doc.status == "Not Confirmed") {
-			return [__("Not Confirmed"), "darkgrey", "status,=,Not Confirmed"];
+			return [__("Not Confirmed"), "darkgray", "status,=,Not Confirmed"];
 		}
 	}
 };

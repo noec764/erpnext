@@ -12,7 +12,7 @@ frappe.listview_settings['POS Invoice'] = {
 			"Paid": "green",
 			"Submitted": "blue",
 			"Consolidated": "green",
-			"Return": "darkgrey",
+			"Return": "darkgray",
 			"Unpaid and Discounted": "orange",
 			"Overdue and Discounted": "red",
 			"Overdue": "red"

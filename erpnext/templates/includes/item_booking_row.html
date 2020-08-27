@@ -1,6 +1,6 @@
 <div class="web-list-item transaction-list-item" id="{{ doc.name }}">
 	<div class="col-6" style='margin-top: -3px;'>
-		{% set indicator = "red" if doc.status=="Cancelled" else "darkgrey" if doc.ends_on < frappe.utils.now_datetime() else "blue" if doc.status=="Confirmed" else "orange" %}
+		{% set indicator = "red" if doc.status=="Cancelled" else "darkgray" if doc.ends_on < frappe.utils.now_datetime() else "blue" if doc.status=="Confirmed" else "orange" %}
 		<div class="small">{{ doc.item_name }}</div>
 		<span class="indicator-pill small status-field {{ indicator }}">
 			{{ _(doc.status) }}
@@ -28,7 +28,7 @@ frappe.ready(function() {
 			}
 		}).then(r => {
 			$(".website-list #{{ doc.name }} .cancel-confirmation").hide()
-			const classes = ['darkgrey', 'blue', 'red']
+			const classes = ['darkgray', 'blue', 'red']
 			classes.forEach(value => {
 				$(".website-list #{{ doc.name }} .indicator-pill").removeClass(value)
 			})

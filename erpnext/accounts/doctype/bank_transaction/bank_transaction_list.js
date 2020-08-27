@@ -10,7 +10,7 @@ frappe.listview_settings['Bank Transaction'] = {
 		} else if (doc.status === "Reconciled") {
 			return [__("Reconciled", null, "Bank Transaction"), "green", "status,=,Reconciled"];
 		} else if (doc.status === "Closed") {
-			return [__("Closed"), "darkgrey", "status,=,Closed"];
+			return [__("Closed"), "darkgray", "status,=,Closed"];
 		} else if (doc.status === "Pending") {
 			return [__("Closed"), "blue", "status,=,Pending"];
 		} else if (doc.status === "Settled") {

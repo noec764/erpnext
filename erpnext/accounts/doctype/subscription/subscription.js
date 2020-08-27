@@ -6,7 +6,7 @@ frappe.ui.form.on('Subscription', {
 		frm.trigger('setup_listeners');
 
 		frm.set_indicator_formatter('item', function(doc) {
-			return (doc.status == "Active") ? "green" : (doc.status == "Upcoming") ? "orange" : "darkgrey";
+			return (doc.status == "Active") ? "green" : (doc.status == "Upcoming") ? "orange" : "darkgray";
 		});
 
 		frm.make_methods = {

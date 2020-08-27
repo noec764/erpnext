@@ -9,7 +9,7 @@ frappe.listview_settings['Subscription'] = {
 		} else if(doc.status === 'Paid') {
 			return [__("Paid"), "green"];
 		} else if(doc.status === 'Cancelled') {
-			return [__("Cancelled"), "darkgrey"];
+			return [__("Cancelled"), "darkgray"];
 		} else if(doc.status === 'Billable') {
 			return [__("Billable"), "orange"];
 		} else if(doc.status === 'Billing failed') {
