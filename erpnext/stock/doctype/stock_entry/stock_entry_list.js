@@ -7,7 +7,7 @@ frappe.listview_settings['Stock Entry'] = {
 
 		} else if (doc.purpose === 'Send to Warehouse' && doc.per_transferred < 100) {
 			// not delivered & overdue
-			return [__("Goods In Transit"), "grey", "per_transferred,<,100"];
+			return [__("Goods In Transit"), "gray", "per_transferred,<,100"];
 
 		} else if (doc.purpose === 'Send to Warehouse' && doc.per_transferred === 100) {
 			return [__("Goods Transferred"), "green", "per_transferred,=,100"];

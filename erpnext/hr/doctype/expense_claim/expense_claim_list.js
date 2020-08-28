@@ -6,7 +6,7 @@ frappe.listview_settings['Expense Claim'] = {
 		}else if(doc.status == "Unpaid") {
 			return [__("Unpaid"), "orange", "status,=,Unpaid"];
 		} else if(doc.status == "Rejected") {
-			return [__("Rejected"), "grey", "status,=,Rejected"];
+			return [__("Rejected"), "gray", "status,=,Rejected"];
 		}
 	}
 };

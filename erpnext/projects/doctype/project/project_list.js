@@ -9,7 +9,7 @@ frappe.listview_settings['Project'] = {
 		} else if (doc.status=="Completed") {
 			return [__(doc.status), "darkgray", "status,=," + doc.status];
 		} else if (doc.status=="Cancelled") {
-			return [__(doc.status), "grey", "status,=," + doc.status];
+			return [__(doc.status), "gray", "status,=," + doc.status];
 		} else {
 			return [__(doc.status), frappe.utils.guess_colour(doc.status), "status,=," + doc.status];
 		}

@@ -26,6 +26,8 @@ class Subscription(Document):
 	def validate(self):
 		self.validate_interval_count()
 		self.validate_trial_period()
+		SubscriptionPlansManager(self).set_plans_status()
+		SubscriptionPlansManager(self).set_plans_rates()
 		self.calculate_total()
 		self.calculate_grand_total()
 		self.validate_payment_request_generation()

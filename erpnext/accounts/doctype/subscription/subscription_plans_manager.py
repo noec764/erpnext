@@ -19,7 +19,7 @@ class SubscriptionPlansManager:
 				plan.status = "Inactive"
 
 			if previous_status != plan.status:
-				frappe.db.set_value("Subscription Plan Detail", plan.name, "status", status)
+				frappe.db.set_value("Subscription Plan Detail", plan.name, "status", plan.status)
 
 	def set_plans_rates(self):
 		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:

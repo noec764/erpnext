@@ -271,21 +271,25 @@ class SubscriptionPaymentRequestGenerator:
 	def make_payment_request(self):
 		if self.subscription.generate_payment_request and self.subscription.status == "Payable":
 			frappe.flags.mute_gateways_validation = True
-			payment_request = self.create_payment_request(submit=True, mute_email=True)
-			frappe.flags.mute_gateways_validation = False
+			if flt(self.subscription.grand_total) > 0:
+				payment_request = self.create_payment_request(submit=True, mute_email=True)
+				frappe.flags.mute_gateways_validation = False
 
-			if self.subscription.payment_gateway in self.get_immediate_payment_gateways() and \
-				not frappe.conf.mute_payment_gateways and \
-				payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:
-				doc = frappe.get_doc("Payment Request", payment_request.get("name"))
-				doc.run_method("process_payment_immediately")
+				if self.subscription.payment_gateway in self.get_immediate_payment_gateways() and \
+					not frappe.conf.mute_payment_gateways and \
+					payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:
+					doc = frappe.get_doc("Payment Request", payment_request.get("name"))
+					doc.run_method("process_payment_immediately")
 
 	@staticmethod
 	def get_immediate_payment_gateways():
 		return [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
 
-	@staticmethod
-	def get_payment_gateways():
+	def get_payment_gateways(self):
+		if self.subscription.subscription_template:
+			template = frappe.get_doc("Subscription Template", self.subscription.subscription_template)
+			return [{"payment_gateway": x.payment_gateway} for x in template.payment_gateways]
+
 		return [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway", filters={"disabled": 0})]
 
 	def create_payment_request(self, submit=False, mute_email=True):
@@ -298,7 +302,7 @@ class SubscriptionPaymentRequestGenerator:
 				"party": self.subscription.customer,
 				"submit_doc": False,
 				"mute_email": mute_email,
-				"currency": self.subscription.currency
+				"currency": self.subscription.currency,
 			})
 		)
 

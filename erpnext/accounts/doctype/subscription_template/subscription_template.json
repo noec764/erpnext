@@ -31,7 +31,9 @@
   "portal_section",
   "enable_on_portal",
   "portal_image",
-  "portal_description"
+  "portal_description",
+  "payment_gateways_section",
+  "payment_gateways"
  ],
  "fields": [
   {
@@ -175,11 +177,23 @@
    "fieldname": "generate_payment_request",
    "fieldtype": "Check",
    "label": "Generate a payment request automatically"
+  },
+  {
+   "fieldname": "payment_gateways_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Gateways"
+  },
+  {
+   "fieldname": "payment_gateways",
+   "fieldtype": "Table MultiSelect",
+   "label": "Autorized payment gateways",
+   "options": "Portal Payment Gateways"
   }
  ],
  "image_field": "portal_image",
+ "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-08-17 18:54:10.316841",
+ "modified": "2020-08-28 17:46:23.090182",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",
