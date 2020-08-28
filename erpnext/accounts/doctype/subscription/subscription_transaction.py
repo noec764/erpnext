@@ -286,11 +286,15 @@ class SubscriptionPaymentRequestGenerator:
 		return [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
 
 	def get_payment_gateways(self):
+		gateways = []
 		if self.subscription.subscription_template:
 			template = frappe.get_doc("Subscription Template", self.subscription.subscription_template)
-			return [{"payment_gateway": x.payment_gateway} for x in template.payment_gateways]
+			gateways = [{"payment_gateway": x.payment_gateway} for x in template.payment_gateways]
 
-		return [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway", filters={"disabled": 0})]
+		if not gateways:
+			gateways = [{"payment_gateway": x.name} for x in frappe.get_all("Payment Gateway", filters={"disabled": 0})]
+
+		return gateways
 
 	def create_payment_request(self, submit=False, mute_email=True):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
