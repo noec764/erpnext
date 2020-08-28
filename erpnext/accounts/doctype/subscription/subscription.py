@@ -361,3 +361,12 @@ def subscription_headline(name):
 	next_invoice_date = SubscriptionPeriod(subscription).get_next_invoice_date()
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date)) if next_invoice_date else ''
 
+@frappe.whitelist()
+def new_invoice_end(subscription, end_date):
+	new_date = getdate(end_date)
+	doc = frappe.get_doc("Subscription", subscription)
+
+	doc.current_invoice_end = new_date
+	doc.add_subscription_event("New period")
+	doc.save()
+

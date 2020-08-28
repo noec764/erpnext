@@ -211,6 +211,22 @@ frappe.ui.form.on('Subscription', {
 				frm.refresh_field("plans");
 			})
 		}
+	},
+	modify_current_invoicing_end_date(frm) {
+		frappe.prompt({
+			fieldtype: 'Date',
+			label: __('New Current Invoice End Date'),
+			fieldname: 'end_date',
+			reqd: 1,
+			default: frm.doc.current_invoice_end
+		}, data => {
+				frappe.xcall("erpnext.accounts.doctype.subscription.subscription.new_invoice_end", {
+					subscription: frm.doc.name,
+					end_date: data.end_date
+				}).then(() => {
+					frm.reload_doc();
+				})
+		}, __("Set a new date"), __("Submit"));
 	}
 });
 

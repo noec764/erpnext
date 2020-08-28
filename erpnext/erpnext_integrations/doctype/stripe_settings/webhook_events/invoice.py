@@ -40,8 +40,15 @@ class StripeInvoiceWebhookHandler(StripeWebhooksController):
 
 	def get_or_create_invoice(self):
 		reference = self.data.get("data", {}).get("object", {}).get("id")
+
+		if self.subscription and self.period_start and self.period_end:
+			period = self.subscription.get_payment_request_for_period(self.period_start, self.period_end)
+			if not period:
+				return self.set_as_queued(_("The corresponding period could not be found"))
+
 		period_start = self.period.get("period_start") or self.period_start
 		period_end = self.period.get("period_end") or self.period_end
+
 		invoice = self.get_sales_invoice(reference, period_start, period_end)
 
 		if not invoice:

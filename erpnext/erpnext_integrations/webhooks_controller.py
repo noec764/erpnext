@@ -250,6 +250,11 @@ class WebhooksController():
 		self.integration_request.update_status({}, "Completed")
 		self.update_payment_request()
 
+	def set_as_queued(self, message):
+		self.integration_request.db_set("error", str(message), update_modified=False)
+		self.integration_request.load_from_db()
+		self.integration_request.update_status({}, "Queued")
+
 	def update_payment_request(self):
 		if self.payment_request and self.status_map.get(self.action_type) and \
 			self.payment_request.status not in (self.status_map.get(self.action_type), 'Paid', 'Completed'):
