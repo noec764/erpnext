@@ -28,6 +28,7 @@ def after_install():
 	create_default_success_action()
 	create_default_energy_point_rules()
 	add_company_to_session_defaults()
+	add_standard_navbar_items()
 	frappe.db.commit()
 
 
@@ -105,3 +106,26 @@ def add_company_to_session_defaults():
 		"ref_doctype": "Company"
 	})
 	settings.save()
+
+def add_standard_navbar_items():
+	navbar_settings = frappe.get_single("Navbar Settings")
+
+	erpnext_navbar_items = []
+
+	current_nabvar_items = navbar_settings.help_dropdown
+	navbar_settings.set('help_dropdown', [])
+
+	for item in erpnext_navbar_items:
+		navbar_settings.append('help_dropdown', item)
+
+	for item in current_nabvar_items:
+		navbar_settings.append('help_dropdown', {
+			'item_label': item.item_label,
+			'item_type': item.item_type,
+			'route': item.route,
+			'action': item.action,
+			'is_standard': item.is_standard,
+			'hidden': item.hidden
+		})
+
+	navbar_settings.save()
