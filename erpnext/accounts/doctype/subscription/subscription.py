@@ -263,7 +263,7 @@ def update_grand_total():
 def process_all():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")})
 	for subscription in subscriptions:
-		subscription = frappe.get_doc('Subscription', data['name'])
+		subscription = frappe.get_doc('Subscription', subscription.name)
 		subscription.process()
 		frappe.db.commit()
 
