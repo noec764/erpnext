@@ -220,8 +220,9 @@ class calculate_taxes_and_totals(object):
 		return current_tax_fraction, inclusive_tax_amount_per_qty
 
 	def _get_tax_rate(self, tax, item_tax_map):
-		if tax.account_head in item_tax_map:
-			return flt(item_tax_map.get(tax.account_head), self.doc.precision("rate", tax))
+		for tax_map in item_tax_map:
+			if tax_map.get("account") == tax.account_head:
+				return flt(tax_map.get("rate"), self.doc.precision("rate", tax))
 		else:
 			return tax.rate
 

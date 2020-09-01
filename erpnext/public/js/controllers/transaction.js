@@ -789,16 +789,18 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 			})
 
 			// Get default company billing address in Purchase Invoice, Order and Receipt
-			frappe.call({
-				'method': 'frappe.contacts.doctype.address.address.get_default_address',
-				'args': {
-					'doctype': 'Company',
-					'name': this.frm.doc.company
-				},
-				'callback': function(r) {
-					me.frm.set_value('billing_address', r.message);
-				}
-			});
+			if (this.frm.doc.company) {
+				frappe.call({
+					'method': 'frappe.contacts.doctype.address.address.get_default_address',
+					'args': {
+						'doctype': 'Company',
+						'name': this.frm.doc.company
+					},
+					'callback': function(r) {
+						me.frm.set_value('billing_address', r.message);
+					}
+				});
+			}
 		} else {
 			set_party_account(set_pricing);
 		}
