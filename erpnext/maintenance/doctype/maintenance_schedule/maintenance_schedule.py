@@ -65,6 +65,7 @@ class MaintenanceSchedule(TransactionBase):
 				`tabMaintenance Schedule Detail` where sales_person=%s and item_code=%s and
 				parent=%s""", (d.sales_person, d.item_code, self.name), as_dict=1)
 
+			#TODO: Enhance with link to contact
 			for key in scheduled_date:
 				description =frappe._("Reference: {0}, Item Code: {1} and Customer: {2}").format(self.name, d.item_code, self.customer)
 				frappe.get_doc({
@@ -73,9 +74,7 @@ class MaintenanceSchedule(TransactionBase):
 					"subject": description,
 					"description": description,
 					"starts_on": cstr(key["scheduled_date"]) + " 10:00:00",
-					"event_type": "Private",
-					"ref_type": self.doctype,
-					"ref_name": self.name
+					"event_type": "Private"
 				}).insert(ignore_permissions=1)
 
 		frappe.db.set(self, 'status', 'Submitted')
