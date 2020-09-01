@@ -322,7 +322,7 @@ def get_statement_chart(account, start_date, end_date):
 		daily_balance.append(transaction.amount)
 		unallocated_amount.append(transaction.unallocated_amount)
 
-	bank_balance = np.cumsum(daily_balance)
+	bank_balance = np.round(np.cumsum(daily_balance), decimals=2)
 	mean_value = np.mean(bank_balance)
 
 	data = {

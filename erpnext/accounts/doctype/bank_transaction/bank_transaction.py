@@ -182,6 +182,7 @@ class BankTransaction(StatusUpdater):
 
 	@frappe.whitelist()
 	def close_transaction(self):
+		self.db_set("unallocated_amount", 0.0)
 		self.db_set("status", "Closed")
 
 	def check_bank_account_head(self):
