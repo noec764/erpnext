@@ -98,6 +98,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			frappe.throw(_("Please select another payment method. GoCardless does not support transactions in currency '{0}'").format(currency))
 
 	def get_payment_url(self, **kwargs):
+<<<<<<< HEAD
 		payment_key = {"key": kwargs.get("payment_key")}
 		return get_url("./integrations/gocardless_checkout?{0}".format(urlencode(kwargs) if not kwargs.get("payment_key") else urlencode(payment_key)))
 
@@ -107,6 +108,72 @@ class GoCardlessSettings(PaymentGatewayController):
 			redirect_flow.links.mandate,
 			customer
 		)
+=======
+		return get_url("./integrations/gocardless_checkout?{0}".format(urlencode(kwargs)))
+
+	def create_payment_request(self, data):
+		self.data = frappe._dict(data)
+
+		try:
+			self.integration_request = create_request_log(self.data, "Request", "GoCardless")
+			self._payment_request = frappe.get_doc("Payment Request", self.data.reference_docname)
+			self.reference_document = self._payment_request
+
+			self.create_charge_on_gocardless()
+			return self.finalize_request(self.output.attributes.get("id") if self.output.attributes else None)
+
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("GoCardless payment creation error"))
+
+	def create_charge_on_gocardless(self):
+		try:
+			self.output = self.create_payment_on_gocardless()
+			return self.process_output()
+		except Exception as e:
+			self.change_integration_request_status("Failed", "error", str(e))
+			return self.error_message(402, _("GoCardless Payment Error"))
+
+	def get_payments_on_gocardless(self, id=None, params=None):
+		return self.get_payment_by_id(id) if id else self.get_payment_list(params)
+
+	def get_payment_by_id(self, id):
+		return self.client.payments.get(id)
+
+	def get_payment_list(self, params=None):
+		return self.client.payments.list(params=params).records
+
+	def get_payout_by_id(self, id):
+		return self.client.payouts.get(id)
+
+	def get_payout_items_list(self, params):
+		return self.client.payout_items.list(params=params).records
+
+	def update_subscription(self, id, params=None):
+		return self.client.subscriptions.update(id, params=params)
+
+	def cancel_subscription(self, **kwargs):
+		return self.client.subscriptions.cancel(kwargs.get("subscription"))
+
+	def get_single_mandate(self, id):
+		return self.client.mandates.get(id)
+
+	@staticmethod
+	def get_base_amount(payout_items, gocardless_payment):
+		paid_amount = [x.amount for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == gocardless_payment)]
+		total = 0
+		for p in paid_amount:
+			total += flt(p)
+		return total / 100
+
+	@staticmethod
+	def get_fee_amount(payout_items, gocardless_payment):
+		fee_amount = [x.amount for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == gocardless_payment)]
+		total = 0
+		for p in fee_amount:
+			total += flt(p)
+		return total / 100
+>>>>>>> c967f3a40acc1140c04fdf7ccb5fa9ab4af284c9
 
 		GoCardlessCustomers(self).register(
 			redirect_flow.links.customer,
