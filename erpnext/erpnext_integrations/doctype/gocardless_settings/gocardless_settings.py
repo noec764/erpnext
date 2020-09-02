@@ -66,7 +66,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			if valid_mandate:
 				processed_data["links"] = valid_mandate
 
-				return GoCardlessPayments(self, payment_request).create(processed_data)
+				return GoCardlessPayments(self, payment_request).create(**processed_data)
 
 		except Exception:
 			frappe.log_error(frappe.get_traceback(),\
