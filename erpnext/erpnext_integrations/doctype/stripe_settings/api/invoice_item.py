@@ -3,7 +3,7 @@ from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idem
 from erpnext.erpnext_integrations.doctype.stripe_settings.api.errors import handle_stripe_errors
 
 class StripeInvoiceItem:
-	def __init__(self, gateway, payment_request):
+	def __init__(self, gateway):
 		self.gateway = gateway
 
 	@handle_idempotency
@@ -11,7 +11,7 @@ class StripeInvoiceItem:
 	def create(self, customer, **kwargs):
 		return self.gateway.stripe.InvoiceItem.create(
 			customer=customer,
-			idempotency_key=IdempotencyKey("invoice_item", "create", self.payment_request.name).get(),
+			idempotency_key=IdempotencyKey("invoice_item", "create", frappe.scrub(kwargs.description[:20])).get(),
 			**kwargs
 		)
 
