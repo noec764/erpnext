@@ -10,7 +10,8 @@
   "access_token",
   "webhooks_secret",
   "use_sandbox",
-  "settings_section"
+  "settings_section",
+  "bank_account"
  ],
  "fields": [
   {
@@ -43,10 +44,16 @@
    "fieldname": "settings_section",
    "fieldtype": "Section Break",
    "label": "Settings"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
   }
  ],
  "links": [],
- "modified": "2020-08-06 13:51:04.278077",
+ "modified": "2020-09-02 08:08:45.500904",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "GoCardless Settings",
