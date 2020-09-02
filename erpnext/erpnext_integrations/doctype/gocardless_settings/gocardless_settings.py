@@ -114,7 +114,7 @@ class GoCardlessSettings(PaymentGatewayController):
 
 		try:
 			self.integration_request = create_request_log(self.data, "Request", "GoCardless")
-			self._payment_request = frappe.get_doc("Payment Request", self.data.payment_request)
+			self._payment_request = frappe.get_doc("Payment Request", self.data.reference_docname)
 			self.reference_document = self._payment_request
 
 			self.create_charge_on_gocardless()
