@@ -599,6 +599,8 @@
    "fieldname": "unreconciled_to_amount",
    "fieldtype": "Currency",
    "label": "Unreconciled Amount",
+   "no_copy": 1,
+   "print_hide": 1,
    "read_only": 1
   },
   {
@@ -606,6 +608,8 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "Unreconciled Amount",
+   "no_copy": 1,
+   "print_hide": 1,
    "read_only": 1
   },
   {
@@ -629,11 +633,12 @@
    "options": "Payment Request"
   }
  ],
+ "index_web_pages_for_search": 1,
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-08-10 16:58:21.535790",
- "modified_by": "thierry@dokos.io",
+ "modified": "2020-09-02 15:58:10.098632",
+ "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
  "name_after_submit": 1,

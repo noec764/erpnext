@@ -56,8 +56,6 @@
    "print_width": "250px",
    "reqd": 1,
    "search_index": 1,
-   "show_days": 1,
-   "show_seconds": 1,
    "width": "250px"
   },
   {
@@ -65,9 +63,7 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Account Type",
-   "print_hide": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide": 1
   },
   {
    "fieldname": "balance",
@@ -78,9 +74,7 @@
    "oldfieldtype": "Data",
    "options": "account_currency",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "default": ":Company",
@@ -93,15 +87,11 @@
    "options": "Cost Center",
    "print_hide": 1,
    "print_width": "180px",
-   "show_days": 1,
-   "show_seconds": 1,
    "width": "180px"
   },
   {
    "fieldname": "col_break1",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "party_type",
@@ -109,9 +99,7 @@
    "in_list_view": 1,
    "label": "Party Type",
    "options": "DocType",
-   "search_index": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "search_index": 1
   },
   {
    "columns": 2,
@@ -119,9 +107,7 @@
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
    "label": "Party",
-   "options": "party_type",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "party_type"
   },
   {
    "fieldname": "party_balance",
@@ -129,16 +115,12 @@
    "label": "Party Balance",
    "options": "account_currency",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "fieldname": "currency_section",
    "fieldtype": "Section Break",
-   "label": "Currency",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Currency"
   },
   {
    "fieldname": "account_currency",
@@ -147,31 +129,23 @@
    "no_copy": 1,
    "options": "Currency",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "fieldname": "column_break_10",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
    "label": "Exchange Rate",
    "precision": "9",
-   "print_hide": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide": 1
   },
   {
    "fieldname": "sec_break1",
    "fieldtype": "Section Break",
-   "label": "Amount",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Amount"
   },
   {
    "bold": 1,
@@ -181,9 +155,7 @@
    "in_list_view": 1,
    "label": "Debit",
    "options": "account_currency",
-   "print_hide_if_no_value": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide_if_no_value": 1
   },
   {
    "bold": 1,
@@ -195,15 +167,11 @@
    "oldfieldtype": "Currency",
    "options": "Company:company:default_currency",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "fieldname": "col_break2",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "bold": 1,
@@ -213,9 +181,7 @@
    "in_list_view": 1,
    "label": "Credit",
    "options": "account_currency",
-   "print_hide_if_no_value": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide_if_no_value": 1
   },
   {
    "bold": 1,
@@ -227,55 +193,41 @@
    "oldfieldtype": "Currency",
    "options": "Company:company:default_currency",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "fieldname": "reference",
    "fieldtype": "Section Break",
-   "label": "Reference",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Reference"
   },
   {
    "fieldname": "reference_type",
    "fieldtype": "Select",
    "label": "Reference Type",
-   "options": "\nSales Invoice\nPurchase Invoice\nJournal Entry\nSales Order\nPurchase Order\nExpense Claim\nAsset\nLoan\nPayroll Entry\nEmployee Advance\nExchange Rate Revaluation\nInvoice Discounting\nFees",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "\nSales Invoice\nPurchase Invoice\nJournal Entry\nSales Order\nPurchase Order\nExpense Claim\nAsset\nLoan\nPayroll Entry\nEmployee Advance\nExchange Rate Revaluation\nInvoice Discounting\nFees"
   },
   {
    "fieldname": "reference_name",
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
    "label": "Reference Name",
-   "options": "reference_type",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "reference_type"
   },
   {
    "depends_on": "eval:doc.reference_type&&!in_list(doc.reference_type, ['Expense Claim', 'Asset', 'Employee Loan', 'Employee Advance'])",
    "fieldname": "reference_due_date",
    "fieldtype": "Select",
-   "label": "Reference Due Date",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Reference Due Date"
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
-   "options": "Project",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Project"
   },
   {
    "fieldname": "col_break3",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "is_advance",
@@ -285,18 +237,14 @@
    "oldfieldname": "is_advance",
    "oldfieldtype": "Select",
    "options": "No\nYes",
-   "print_hide": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide": 1
   },
   {
    "fieldname": "user_remark",
    "fieldtype": "Small Text",
    "label": "User Remark",
    "no_copy": 1,
-   "print_hide": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide": 1
   },
   {
    "fieldname": "against_account",
@@ -306,59 +254,50 @@
    "no_copy": 1,
    "oldfieldname": "against_account",
    "oldfieldtype": "Text",
-   "print_hide": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "print_hide": 1
   },
   {
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
-   "label": "Accounting Dimensions",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Accounting Dimensions"
   },
   {
    "fieldname": "dimension_col_break",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Link",
    "label": "Bank Account",
-   "options": "Bank Account",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Bank Account"
   },
   {
    "fieldname": "accounting_journal",
    "fieldtype": "Link",
    "label": "Accounting Journal",
-   "options": "Accounting Journal",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Accounting Journal"
   },
   {
    "fieldname": "unreconciled_amount",
    "fieldtype": "Currency",
    "label": "Unreconciled Amount",
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   },
   {
-    "fieldname": "reference_detail_no",
-    "fieldtype": "Data",
-    "hidden": 1,
-    "label": "Reference Detail No"
+   "fieldname": "reference_detail_no",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Reference Detail No"
   }
  ],
  "idx": 1,
+ "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-06-02 18:19:52.613892",
+ "modified": "2020-09-02 15:58:53.082599",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry Account",
