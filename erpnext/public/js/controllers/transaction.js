@@ -856,17 +856,17 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				(this.frm.doc.payment_schedule && this.frm.doc.payment_schedule.length)) {
 				var message1 = "";
 				var message2 = "";
-				var final_message = "Please clear the ";
+				var final_message = __("Please clear the");
 
 				if (this.frm.doc.payment_terms_template) {
-					message1 = "selected Payment Terms Template";
-					final_message = final_message + message1;
+					message1 = __("selected Payment Terms Template");
+					final_message = final_message + " " + message1;
 				}
 
 				if ((this.frm.doc.payment_schedule || []).length) {
-					message2 = "Payment Schedule Table";
-					if (message1.length !== 0) message2 = " and " + message2;
-					final_message = final_message + message2;
+					message2 = __("Payment Schedule Table");
+					if (message1.length !== 0) message2 = __("and") + " " + message2;
+					final_message = final_message + " " + message2;
 				}
 				frappe.msgprint(final_message);
 			}

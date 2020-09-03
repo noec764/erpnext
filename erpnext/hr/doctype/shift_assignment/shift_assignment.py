@@ -62,10 +62,10 @@ class ShiftAssignment(Document):
 			msg = _("Employee {0} already has Active Shift {1}: {2}").format(frappe.bold(self.employee), frappe.bold(self.shift_type), frappe.bold(shift_details.name))
 		if shift_details.start_date:
 			msg += _(" from {0}").format(getdate(self.start_date).strftime("%d-%m-%Y"))
-			title = "Ongoing Shift"
+			title = _("Ongoing Shift")
 			if shift_details.end_date:
 				msg += _(" to {0}").format(getdate(self.end_date).strftime("%d-%m-%Y"))
-				title = "Active Shift"
+				title = _("Active Shift")
 		if msg:
 			frappe.throw(msg, title=title)
 
