@@ -8,7 +8,7 @@ class StripePaymentMethod:
 	@handle_stripe_errors
 	def create(self, payment_method_type, **kwargs):
 		return self.gateway.stripe.PaymentMethod.create(
-			payment_method_type,
+			type=payment_method_type,
 			**kwargs
 		)
 
