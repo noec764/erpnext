@@ -78,7 +78,7 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nBillable\nBilling failed\nPayable\nDraft invoices\nCancelled and billable",
-   "read_only": 1
+   "hidden": 1
   },
   {
    "fieldname": "subscription_period",
@@ -375,7 +375,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-09-04 10:44:31.118260",
+ "modified": "2020-09-04 11:44:31.118260",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
