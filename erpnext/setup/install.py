@@ -20,6 +20,7 @@ def after_install():
 	frappe.get_doc({'doctype': "Role", "role_name": "Analytics"}).insert()
 	set_single_defaults()
 	create_compact_item_print_custom_field()
+	create_print_uom_after_qty_custom_field()
 	create_print_zero_amount_taxes_custom_field()
 	add_all_roles_to("Administrator")
 	for role in ["Customer", "Supplier"]:
@@ -66,6 +67,14 @@ def create_compact_item_print_custom_field():
 		'insert_after': 'with_letterhead'
 	})
 
+def create_print_uom_after_qty_custom_field():
+	create_custom_field('Print Settings', {
+		'label': _('Print UOM after Quantity'),
+		'fieldname': 'print_uom_after_quantity',
+		'fieldtype': 'Check',
+		'default': 0,
+		'insert_after': 'compact_item_print'
+	})
 
 def create_print_zero_amount_taxes_custom_field():
 	create_custom_field('Print Settings', {
