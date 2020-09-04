@@ -355,8 +355,7 @@
    "default": "0",
    "fieldname": "generate_payment_request",
    "fieldtype": "Check",
-   "label": "Generate a payment request automatically",
-   "read_only_depends_on": "eval:doc.payment_gateway"
+   "label": "Generate a payment request automatically"
   },
   {
    "default": "0",
@@ -376,7 +375,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-09-03 18:39:30.368681",
+ "modified": "2020-09-04 10:44:31.118260",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
