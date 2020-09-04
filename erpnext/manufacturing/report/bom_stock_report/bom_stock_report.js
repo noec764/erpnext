@@ -5,6 +5,14 @@ frappe.query_reports["BOM Stock Report"] = {
 			"label": __("BOM"),
 			"fieldtype": "Link",
 			"options": "BOM",
+			"get_query": function () {
+				return {
+					filters: {
+						"is_active": 1,
+						"docstatus": 1
+					}
+				}
+			},
 			"reqd": 1
 		}, {
 			"fieldname": "warehouse",
