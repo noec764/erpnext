@@ -109,8 +109,8 @@ def create_accounting_journals(bank_account_name, company):
 		},
 		{
 			"doctype": "Accounting Journal",
-			"journal_code": "SAL",
-			"journal_name":"Sales",
+			"journal_code": _("SAL"),
+			"journal_name": _("Sales"),
 			"type": "Sales",
 			"company": company,
 			"conditions": [
@@ -119,8 +119,8 @@ def create_accounting_journals(bank_account_name, company):
 		},
 		{
 			"doctype": "Accounting Journal",
-			"journal_code": "PUR",
-			"journal_name":"Purchases",
+			"journal_code": _("PUR"),
+			"journal_name": _("Purchases"),
 			"type": "Purchases",
 			"company": company,
 			"conditions": [
@@ -129,8 +129,8 @@ def create_accounting_journals(bank_account_name, company):
 		},
 		{
 			"doctype": "Accounting Journal",
-			"journal_code": "BAN",
-			"journal_name":"Bank",
+			"journal_code": _("BAN"),
+			"journal_name": _("Bank"),
 			"type": "Bank",
 			"company": company,
 			"account": bank_account_name,
@@ -144,6 +144,8 @@ def create_accounting_journals(bank_account_name, company):
 		try:
 			frappe.get_doc(journal).insert()
 		except frappe.DuplicateEntryError:
+			pass
+		except frappe.UniqueValidationError:
 			pass
 		except Exception:
 			print(frappe.get_traceback())
