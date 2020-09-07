@@ -1,9 +1,5 @@
 frappe.ui.form.on("Payment Request", {
 	setup(frm) {
-		frm.add_fetch("payment_gateway_account", "payment_account", "payment_account")
-		frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway")
-		frm.add_fetch("payment_gateways_template", "email_template", "email_template")
-
 		frm.set_query("reference_doctype", function() {
 			return {
 				filters: {
