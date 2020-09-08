@@ -1256,7 +1256,7 @@ def make_payment_order(source_name, target_doc=None):
 		reference_name=source.name,
 		bank_account=source.party_bank_account,
 		amount=source.paid_amount,
-		amount=source.paid_amount,
+		account=source.paid_to,
 		supplier=source.party,
 		mode_of_payment=source.mode_of_payment,
 	))
