@@ -118,6 +118,7 @@
    "collapsible": 1,
    "fieldname": "payment_plan_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Payment gateways and plans"
   },
   {
@@ -178,7 +179,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-08-21 18:23:13.633762",
+ "modified": "2020-09-08 14:28:16.862037",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan Detail",

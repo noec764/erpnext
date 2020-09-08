@@ -63,12 +63,7 @@ frappe.ui.form.on('Subscription', {
 			})
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
-
-		if (frm.doc.payment_gateway) {
-			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, "gateway_settings", r => {
-				frm.fields_dict["plans"].grid.set_column_disp(['payment_plan_section'], r.gateway_settings == "Stripe Settings");
-			})
-		}
+		frm.trigger("show_stripe_section");
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -227,6 +222,15 @@ frappe.ui.form.on('Subscription', {
 					frm.reload_doc();
 				})
 		}, __("Set a new date"), __("Submit"));
+	},
+	show_stripe_section(frm) {
+		if (frm.doc.payment_gateway) {
+			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, ["gateway_controller", "gateway_settings"], pg => {
+				(pg.gateway_settings == "Stripe Settings")&&frappe.db.get_value(pg.gateway_settings, pg.gateway_controller, "subscription_cycle_on_stripe", res => {
+					frm.fields_dict["plans"].grid.set_column_disp('payment_plan_section', res.subscription_cycle_on_stripe);
+				});
+			})
+		}
 	}
 });
 

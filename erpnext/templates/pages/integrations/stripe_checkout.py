@@ -34,7 +34,7 @@ def get_context(context):
 		context.payer_name = frappe.db.get_value("Customer", customer_id, "customer_name") if customer_id else ""
 		context.payer_email = payment_request.email_to or (frappe.session.user if frappe.session.user != "Guest" else "")
 		context.amount = fmt_money(amount=payment_request.grand_total, currency=payment_request.currency)
-		context.is_subscription = 1 if payment_request.is_linked_to_a_subscription() else 0
+		context.is_subscription = 1 if (payment_request.is_linked_to_a_subscription() and cint(gateway_controller.subscription_cycle_on_stripe)) else 0
 		context.payment_success_redirect = gateway_controller.redirect_url or "payment-success"
 		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "payment-failed"
 
