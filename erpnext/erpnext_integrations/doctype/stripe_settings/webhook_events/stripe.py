@@ -5,7 +5,7 @@ import datetime
 import frappe
 from frappe import _
 import json
-from frappe.utils import flt, getdate
+from frappe.utils import flt, getdate, add_days
 
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeCharge, StripeInvoice
@@ -55,10 +55,11 @@ class StripeWebhooksController(WebhooksController):
 		if self.metadata.get("reference_doctype") == "Subscription":
 			self.subscription = frappe.get_doc("Subscription", self.metadata.get("reference_name"))
 			if self.stripe_invoice:
-				self.period_start = getdate(datetime.datetime.utcfromtimestamp(self.stripe_invoice.get("period_start")))
-				self.period_end = getdate(datetime.datetime.utcfromtimestamp(self.stripe_invoice.get("period_end")))
+				period = self.stripe_invoice.get("lines", {}).get("data", [])[0].get("period", {})
+				self.period_start = getdate(datetime.datetime.utcfromtimestamp(period.get("start")))
+				self.period_end = getdate(datetime.datetime.utcfromtimestamp(period.get("end")))
 			if self.period_start and self.period_end:
-				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, self.period_end)
+				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, add_days(self.period_end, -1))
 
 		elif self.metadata.get("payment_request"):
 			payment_request_id = self.metadata.get("payment_request")
