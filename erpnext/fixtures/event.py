@@ -6,6 +6,10 @@ def get_dashboard_data(data):
 			{
 				'label': _('Venue'),
 				'items': ['Item Booking']
+			},
+			{
+				'label': _('Booking Slots'),
+				'items': ['Event Slot']
 			}
 		]
 	)
