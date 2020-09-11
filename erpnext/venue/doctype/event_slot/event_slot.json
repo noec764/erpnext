@@ -76,6 +76,7 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Already booked",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -101,7 +102,7 @@
    "link_fieldname": "event_slot"
   }
  ],
- "modified": "2020-09-11 14:39:23.815717",
+ "modified": "2020-09-11 18:23:50.836397",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Slot",
