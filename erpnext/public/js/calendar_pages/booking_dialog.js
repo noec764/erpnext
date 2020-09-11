@@ -324,7 +324,7 @@ class BookingCalendar {
 			locale: frappe.boot.lang || 'en',
 			timeZone: 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
-			noEventsContent: __("No events to display"),
+			noEventsContent: __("No slot available"),
 			events: function(info, callback) {
 				return me.getAvailableSlots(info, callback)
 			},

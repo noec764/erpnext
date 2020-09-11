@@ -85,7 +85,7 @@ frappe.ui.form.on('Item Booking', {
 	},
 	add_repeat_text(frm) {
 		if (frm.doc.rrule) {
-			new frappe.CalendarRecurrence(frm, false);
+			new frappe.CalendarRecurrence({frm: frm, show: false});
 		}
 	},
 	sync_with_google_calendar(frm) {
@@ -106,7 +106,7 @@ frappe.ui.form.on('Item Booking', {
 	},
 	repeat_this_event(frm) {
 		if(frm.doc.repeat_this_event === 1) {
-			new frappe.CalendarRecurrence(frm, true);
+			new frappe.CalendarRecurrence({frm: frm, show: true});
 		}
 	},
 	add_to_quotation(frm){

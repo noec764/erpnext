@@ -8,7 +8,7 @@
   {
    "hidden": 0,
    "label": "Bookings and events",
-   "links": "[\n    {\n        \"label\": \"Event\",\n        \"name\": \"Event\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking\",\n        \"name\": \"Item Booking\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking Calendar\",\n        \"name\": \"Item Booking Calendar\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Venue Settings\",\n        \"name\": \"Venue Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"label\": \"Event\",\n        \"name\": \"Event\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking\",\n        \"name\": \"Item Booking\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Event Slot\",\n        \"name\": \"Event Slot\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Event Slot Booking\",\n        \"name\": \"Event Slot Booking\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Item Booking Calendar\",\n        \"name\": \"Item Booking Calendar\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Venue Settings\",\n        \"name\": \"Venue Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,
@@ -45,7 +45,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-08-04 12:11:22.279371",
+ "modified": "2020-09-09 09:02:44.505862",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",

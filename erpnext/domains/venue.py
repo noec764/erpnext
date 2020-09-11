@@ -13,5 +13,12 @@ data = {
 		'CRM',
 		'Support',
 		'Accounting'
-	]
+	],
+	'restricted_roles': [
+		'Volunteer'
+	],
+	'modules': [
+		'Venue'
+	],
+	'on_setup': 'erpnext.venue.setup.setup_venue'
 }

@@ -59,8 +59,9 @@ def get_list_context(context=None):
 		'no_breadcrumbs': True,
 		"title": _("Bookings"),
 		"get_list": get_bookings_list,
-		"row_template": "templates/includes/item_booking_row.html",
-		"can_cancel": frappe.has_permission("Item Booking", "write")
+		"row_template": "templates/includes/item_booking/item_booking_row.html",
+		"can_cancel": frappe.has_permission("Item Booking", "write"),
+		"header_action": frappe.render_template("templates/includes/item_booking/item_booking_list_action.html", {})
 	})
 
 def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None):
@@ -80,6 +81,21 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length = 20
 		or_filters.append({"user": user, "party_name": customer})
 
 	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=False, or_filters=or_filters)
+
+@frappe.whitelist()
+def get_bookings_list_for_map(start, end):
+	bookings_list = _get_events(getdate(start), getdate(end), user=frappe.session.user)
+
+	return [
+		dict(
+			start=x.starts_on,
+			end=x.ends_on,
+			title=x.item_name,
+			status=x.status,
+			id=x.name,
+			backgroundColor="darkgray" if x.ends_on < frappe.utils.now_datetime() else ("#ff4d4d" if x.status=="Cancelled" else ("#6195ff" if x.status=="Confirmed" else "#ff7846")),
+			borderColor="darkgray"
+		) for x in bookings_list]
 
 @frappe.whitelist()
 def update_linked_transaction(transaction_type, line_item, item_booking):
@@ -124,7 +140,7 @@ def get_item_price(item_code, uom):
 		return frappe._dict()
 
 	contact = frappe.db.get_value("Contact", {"user": frappe.session.user})
-	print("contact", contact)
+
 	cart_quotation = None
 	if contact:
 		cart_quotation = _get_cart_quotation()
@@ -318,7 +334,13 @@ def _get_availability_from_schedule(item, schedules, date, quotation=None):
 
 	return available_slots
 
-def _get_events(start, end, item):
+def _get_events(start, end, item=None, user=None):
+	conditions = ""
+	if item:
+		conditions += " AND item='{0}' ".format(item.name)
+	if user:
+		conditions += " AND user='{0}' ".format(user)
+
 	events = frappe.db.sql("""
 		SELECT starts_on,
 				ends_on,
@@ -344,11 +366,10 @@ def _get_events(start, end, item):
 					AND coalesce(repeat_till, '3000-01-01') > date(%(start)s)
 				)
 			)
-		AND item = %(item_name)s
-		ORDER BY starts_on""", {
+		{conditions}
+		ORDER BY starts_on""".format(conditions=conditions), {
 			"start": start,
-			"end": end,
-			"item_name": item.name,
+			"end": end
 		}, as_dict=1)
 
 	result = events

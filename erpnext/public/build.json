@@ -46,8 +46,10 @@
     "js/portal-payments.min.js": [
         "public/js/portal_payments/portal_payments.js"
     ],
-    "js/booking-dialog.min.js": [
-        "public/js/booking_dialog/booking_dialog.js"
+    "js/portal-calendars.min.js": [
+        "public/js/calendar_pages/booking_dialog.js",
+        "public/js/calendar_pages/event_slots_calendar.js",
+        "public/js/calendar_pages/item_booking_calendar.js"
     ],
     "js/bank-transaction-importer.min.js": [
         "accounts/doctype/bank_transaction/bank_transaction_import/bank_transaction_import.js"

@@ -15,7 +15,7 @@ develop_version = '1.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
-web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/booking-dialog.min.js"]
+web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/portal-calendars.min.js"]
 web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
@@ -53,7 +53,7 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
 
-calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
+calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking", "Event Slot", "Event Slot Booking"]
 gcalendar_integrations = {
 	"Item Booking": {
 		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
@@ -171,8 +171,9 @@ standard_portal_menu_items = [
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"},
+	{"title": _("Event Slot Bookings"), "route": "/event-slots", "reference_doctype": "Event Slot Booking", "role": "Volunteer"},
 	{"title": _("Appointment Booking"), "route": "/book_appointment"},
-	{"title": _("Subscription"), "route": "/subscription"}
+	{"title": _("Subscription"), "route": "/subscription", "reference_doctype": "Subscription Template", "role": "Customer"}
 ]
 
 default_roles = [
@@ -195,7 +196,8 @@ has_website_permission = {
 	"Material Request": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Delivery Note": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
-	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission"
+	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
+	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission"
 }
 
 dump_report_map = "erpnext.startup.report_data_map.data_map"
@@ -282,7 +284,8 @@ auto_cancel_exempted_doctypes= [
 
 override_doctype_dashboards = {
 	"User": "erpnext.fixtures.user.get_dashboard_data",
-	"Event": "erpnext.fixtures.event.get_dashboard_data"
+	"Event": "erpnext.fixtures.event.get_dashboard_data",
+	"Payment Gateway": "erpnext.fixtures.payment_gateway.get_dashboard_data"
 }
 
 scheduler_events = {
