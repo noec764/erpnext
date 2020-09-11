@@ -15,6 +15,9 @@ class EventSlotBooking(Document):
 	def on_update(self):
 		self.update_slot()
 
+	def after_delete(self):
+		self.update_slot()
+
 	def check_slots_number(self):
 		slots_limit = frappe.db.get_value("Event Slot", self.event_slot, "available_bookings")
 
@@ -22,7 +25,9 @@ class EventSlotBooking(Document):
 			frappe.throw(_("Only {0} users can be booked against this event slot").format(cint(slots_limit)))
 
 	def update_slot(self):
-		frappe.db.set_value("Event Slot", self.event_slot, "already_booked", len(frappe.get_all("Event Slot Booking", filters={"event_slot": self.event_slot})))
+		users = [x.user for x in frappe.get_all("Event Slot Booking", filters={"event_slot": self.event_slot}, fields=["user"])]
+		frappe.db.set_value("Event Slot", self.event_slot, "already_booked", len(users))
+		frappe.db.set_value("Event Slot", self.event_slot, "registered_emails", ",".join(users) if users else "")
 
 
 @frappe.whitelist()

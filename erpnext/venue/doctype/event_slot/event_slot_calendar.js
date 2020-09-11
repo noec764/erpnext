@@ -6,7 +6,7 @@ frappe.views.calendar["Event Slot"] = {
 		"start": "starts_on",
 		"end": "ends_on",
         "id": "name",
-        "title": "event_subject"
+        "title": "slot_title"
     },
     no_all_day: true
 };

@@ -29,55 +29,11 @@ class EventSlot(Document):
 				for d in frappe.get_all("Event Slot Booking", filters={"event_slot": self.name}):
 					frappe.db.set_value("Event Slot Booking", d.name, field, getattr(self, field, None))
 
-@frappe.whitelist()
-def get_events(start, end, filters):
-	from frappe.desk.calendar import get_event_conditions
-	conditions = get_event_conditions("Event Slot Booking", filters)
-
-	slots = _get_slots(start, end, filters, conditions)
-
-	bookings = frappe.db.sql("""
-		select
-			`tabEvent Slot Booking`.name,
-			`tabEvent Slot Booking`.event_slot,
-			`tabEvent Slot Booking`.user_name as event_subject,
-			`tabEvent Slot Booking`.starts_on,
-			`tabEvent Slot Booking`.ends_on
-
-		from
-			`tabEvent Slot Booking`
-		WHERE (
-				(
-					(date(`tabEvent Slot Booking`.starts_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (date(`tabEvent Slot Booking`.ends_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (
-						date(`tabEvent Slot Booking`.starts_on) <= date(%(start)s)
-						AND date(`tabEvent Slot Booking`.ends_on) >= date(%(end)s)
-					)
-				)
-			)
-			{conditions}
-		""".format(conditions=conditions), {
-			"start": start,
-			"end": end
-		}, as_dict=True)
-
-	data = [dict({
-		"doctype": "Event Slot",
-		"redirect_id": x.get("event_slot")
-	}, **x) for x in bookings]
-
-	data.extend([dict({
-		"display": "background"
-	}, **x) for x in slots])
-
-	return data
-
 def _get_slots(start, end, filters=None, conditions=None):
 	return frappe.db.sql("""
 		select
 			`tabEvent Slot`.name,
-			`tabEvent Slot`.event_subject,
+			`tabEvent Slot`.slot_title,
 			`tabEvent Slot`.starts_on,
 			`tabEvent Slot`.ends_on,
 			`tabEvent Slot`.available_bookings,
@@ -111,7 +67,7 @@ def get_available_slots(start, end):
 		start=x.starts_on,
 		end=x.ends_on,
 		id=x.name,
-        title=x.event_subject,
+        title=x.slot_title,
 		description=get_formatted_description(x, cint(bookings.get(x.name))),
 		content=x.description,
 		available_slots=cint(x.available_bookings),

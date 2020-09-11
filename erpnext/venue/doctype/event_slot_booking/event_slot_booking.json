@@ -2,14 +2,14 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:{event_subject}-{user_name}-{####}",
+ "autoname": "format:{slot_title}-{user_name}-{####}",
  "creation": "2020-09-09 09:00:35.892540",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "event_slot",
-  "event_subject",
+  "slot_title",
   "starts_on",
   "ends_on",
   "column_break_2",
@@ -38,8 +38,8 @@
    "reqd": 1
   },
   {
-   "fetch_from": "event_slot.event_subject",
-   "fieldname": "event_subject",
+   "fetch_from": "event_slot.slot_title",
+   "fieldname": "slot_title",
    "fieldtype": "Data",
    "label": "Event Subject",
    "read_only": 1
@@ -68,7 +68,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-09-09 14:45:20.928904",
+ "modified": "2020-09-10 14:45:20.928904",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Slot Booking",

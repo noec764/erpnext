@@ -9,7 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "event",
-  "event_subject",
+  "slot_title",
   "column_break_3",
   "starts_on",
   "ends_on",
@@ -17,6 +17,9 @@
   "available_bookings",
   "column_break_8",
   "already_booked",
+  "registered_users_section",
+  "registered_users_html",
+  "registered_emails",
   "description_section",
   "description"
  ],
@@ -60,13 +63,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "event.subject",
-   "fieldname": "event_subject",
-   "fieldtype": "Data",
-   "label": "Event Subject",
-   "read_only": 1
-  },
-  {
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "label": "Description"
@@ -92,6 +88,28 @@
    "fieldname": "bookings_section",
    "fieldtype": "Section Break",
    "label": "Bookings"
+  },
+  {
+   "fetch_from": "event.subject",
+   "fetch_if_empty": 1,
+   "fieldname": "slot_title",
+   "fieldtype": "Data",
+   "label": "Slot Title"
+  },
+  {
+   "fieldname": "registered_users_section",
+   "fieldtype": "Section Break",
+   "label": "Registered Users"
+  },
+  {
+   "fieldname": "registered_users_html",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "registered_emails",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Registered Emails"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -102,8 +120,8 @@
    "link_fieldname": "event_slot"
   }
  ],
- "modified": "2020-09-11 18:23:50.836397",
- "modified_by": "Administrator",
+ "modified": "2020-09-11 19:09:18.268546",
+ "modified_by": "thierry@dokos.io",
  "module": "Venue",
  "name": "Event Slot",
  "owner": "Administrator",
@@ -145,5 +163,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "slot_title",
  "track_changes": 1
 }

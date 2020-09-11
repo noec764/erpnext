@@ -7,7 +7,7 @@ frappe.views.calendar["Event Slot Booking"] = {
 		"end": "ends_on",
         "id": "name",
         "title": "user_name",
-        "description": "event_subject"
+        "description": "slot_title"
     },
     no_all_day: true
 };
