@@ -87,8 +87,8 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 			output = ""
 			for p in payout_items.records:
-				output += str(p.__dict__)
-			frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, "output", json.dumps(output, indent=4))
+				output += (str(p.__dict__) + "\n") if getattr(p.links, "payment") == self.gocardless_payment.id else ""
+			frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, "output", output)
 
 			base_amount = self.get_base_amount(payout_items.records)
 			fee_amount = self.get_fee_amount(payout_items.records)
@@ -103,7 +103,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 				fees = flt(fee_amount) * flt(payment_entry.get("target_exchange_rate", 1))
 				payment_entry.update({
 					"paid_amount": flt(base_amount or payment_entry.paid_amount) + fees,
-					"received_amount": flt(payment_entry.received_amount) + fees,
+					"received_amount": flt(payment_entry.received_amount) + fees
 				})
 
 				payment_entry.append("deductions", {
@@ -130,4 +130,4 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 	@staticmethod
 	def get_exchange_rate(payment):
-		return flt(getattr(payment.fx, "exchange_rate", 1))
+		return flt(getattr(payment.fx, "exchange_rate", 1) or 1)
