@@ -473,11 +473,12 @@ def make_payment_request(**args):
 		if args.order_type == "Shopping Cart" or args.mute_email:
 			pr.flags.mute_email = True
 
-		gateway_account = get_gateway_details(args) or frappe._dict()
-		pr.update({
-			"payment_gateway_account": gateway_account.get("name"),
-			"payment_gateway": gateway_account.get("payment_gateway")
-		})
+		if args.get("payment_gateway") or args.order_type == "Shopping Cart":
+			gateway_account = get_gateway_details(args) or frappe._dict()
+			pr.update({
+				"payment_gateway_account": gateway_account.get("name"),
+				"payment_gateway": gateway_account.get("payment_gateway")
+			})
 
 		if args.submit_doc:
 			pr.insert(ignore_permissions=True)

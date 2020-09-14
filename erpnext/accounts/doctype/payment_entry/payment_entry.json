@@ -583,6 +583,7 @@
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "\nDraft\nCancelled\nUnreconciled\nReconciled",
    "read_only": 1
@@ -637,7 +638,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-09-02 15:58:10.098632",
+ "modified": "2020-09-14 18:42:35.357471",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
