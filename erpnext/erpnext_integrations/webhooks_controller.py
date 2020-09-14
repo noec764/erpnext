@@ -124,7 +124,10 @@ class WebhooksController():
 			if self.payment_request:
 				payment_entry.references = []
 				payment_entry.save()
-				self.add_subscription_references(payment_entry)
+				if self.subscription:
+					self.add_subscription_references(payment_entry)
+				else:
+					self.add_payment_request_references(payment_entry)
 
 			if flt(payment_entry.unallocated_amount) == 0.0:
 				payment_entry.submit()
@@ -142,15 +145,25 @@ class WebhooksController():
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
 
 	def add_subscription_references(self, payment_entry):
-		if self.subscription:
-			payment_entry.subscription = self.payment_request.is_linked_to_a_subscription()
-			references = self.subscription.get_references_for_payment_request(self.payment_request.name)
-			allocated = 0.0
-			for ref in references:
-				allocation = min(flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount")))
-				allocated += allocation
-				ref = dict(allocated_amount=allocation, **ref)
-				payment_entry.append('references', ref)
+		payment_entry.subscription = self.payment_request.is_linked_to_a_subscription()
+		references = self.subscription.get_references_for_payment_request(self.payment_request.name)
+		allocated = 0.0
+		for ref in references:
+			allocation = min(flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount")))
+			allocated += allocation
+			ref = dict(allocated_amount=allocation, **ref)
+			payment_entry.append('references', ref)
+		payment_entry.save()
+
+	def add_payment_request_references(self, payment_entry):
+		references = self.payment_request.create_payment_entry(submit=False).get("references")
+		for ref in references:
+			payment_entry.append('references', {
+				"reference_doctype": ref.reference_doctype,
+				"reference_name": ref.reference_name,
+				"outstanding_amount": ref.outstanding_amount,
+				"allocated_amount": min(ref.outstanding_amount, payment_entry.get("unallocated_amount"))
+			})
 			payment_entry.save()
 
 	def cancel_payment(self, reference=None):
