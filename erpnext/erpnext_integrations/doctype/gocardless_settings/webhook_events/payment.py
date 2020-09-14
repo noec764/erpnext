@@ -8,7 +8,7 @@ import json
 from frappe.utils import flt, getdate
 
 from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
-from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayments, GoCardlessPayouts
+from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayments, GoCardlessPayouts, GoCardlessPayoutItems
 
 EVENT_MAP = {
 	'created': 'create_payment',
@@ -82,15 +82,16 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 	def add_fees_before_submission(self, payment_entry):
 		self.get_payout()
 		if self.gocardless_payout:
-			payout_items =GoCardlessPayouts(self.gocardless_settings).get(self.gocardless_payout)
+			payout = GoCardlessPayouts(self.gocardless_settings).get(self.gocardless_payout)
+			payout_items = GoCardlessPayoutItems(self.gocardless_settings).get_list(self.gocardless_payout)
 
 			output = ""
-			for p in payout_items:
+			for p in payout_items.records:
 				output += str(p.__dict__)
 			frappe.db.set_value(self.integration_request.doctype, self.integration_request.name, "output", json.dumps(output, indent=4))
 
-			base_amount = self.get_base_amount(payout_items)
-			fee_amount = self.get_fee_amount(payout_items)
+			base_amount = self.get_base_amount(payout_items.records)
+			fee_amount = self.get_fee_amount(payout_items.records)
 			exchange_rate = self.get_exchange_rate(payout)
 
 			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
@@ -113,17 +114,15 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 				payment_entry.set_amounts()
 
-	@staticmethod
-	def get_base_amount(payout_items):
-		paid_amount = [x.amount for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == self.gocardless_payment.name)]
+	def get_base_amount(self, payout_items):
+		paid_amount = [x.amount for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == self.gocardless_payment.id)]
 		total = 0
 		for p in paid_amount:
 			total += flt(p)
 		return total / 100
 
-	@staticmethod
-	def get_fee_amount(payout_items):
-		fee_amount = [x.amount for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == self.gocardless_payment.name)]
+	def get_fee_amount(self, payout_items):
+		fee_amount = [x.amount for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == self.gocardless_payment.id)]
 		total = 0
 		for p in fee_amount:
 			total += flt(p)
