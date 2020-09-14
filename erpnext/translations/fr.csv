@@ -3752,7 +3752,7 @@ Invoice can't be made for zero billing hour,La facture ne peut pas être faite p
 Invoice generation error for subscription {0},Erreur de génération de facture pour l'abonnement {0},
 Invoice item created.,Poste de facture créé,
 Invoice payment failed. Please check it manually.,Le paiement de la facture a échoué. Veuillez vérifier manuellement.,
-Invoice/Journal Entry Details,Détails des facture / écritures de journal,
+Invoice/Journal Entry Details,Détails des factures / écritures de journal,
 Invoice,Facture,
 Invoiced Amount (Exclusive Tax),Montant facturé (Hors taxes),
 Invoiced Amount (Exculsive Tax),Montant facturé (Hors taxes),
