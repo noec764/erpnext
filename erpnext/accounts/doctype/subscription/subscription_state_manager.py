@@ -239,7 +239,7 @@ class SubscriptionStateManager:
 			else:
 				current_sales_invoices = current_payment_requests = []
 
-		if current_sales_invoices and not current_payment_requests:
+		if current_sales_invoices and sum([flt(x.outstanding_amount) for x in current_sales_invoices]) > 0.0 and not current_payment_requests:
 			return True
 
 		return False
