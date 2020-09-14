@@ -73,7 +73,7 @@ class WebhooksController():
 				payment_entry.reference_no = reference
 				payment_entry.payment_request = self.payment_request.name
 				payment_entry.insert(ignore_permissions=True)
-				self.add_subscription_references(self.payment_request, payment_entry)
+				self.add_subscription_references(payment_entry)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
@@ -95,7 +95,7 @@ class WebhooksController():
 				if self.payment_request:
 					payment_entry.payment_request = self.payment_request.name
 					payment_entry.references = []
-					self.add_subscription_references(self.payment_request, payment_entry)
+					self.add_subscription_references(payment_entry)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
@@ -124,7 +124,7 @@ class WebhooksController():
 			if self.payment_request:
 				payment_entry.references = []
 				payment_entry.save()
-				self.add_subscription_references(self.payment_request, payment_entry)
+				self.add_subscription_references(payment_entry)
 
 			if flt(payment_entry.unallocated_amount) == 0.0:
 				payment_entry.submit()
@@ -141,10 +141,10 @@ class WebhooksController():
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
 
-	def add_subscription_references(self, payment_request, payment_entry):
+	def add_subscription_references(self, payment_entry):
 		if self.subscription:
-			payment_entry.subscription = payment_request.is_linked_to_a_subscription()
-			references = self.subscription.get_references_for_payment_request(payment_request.name)
+			payment_entry.subscription = self.payment_request.is_linked_to_a_subscription()
+			references = self.subscription.get_references_for_payment_request(self.payment_request.name)
 			allocated = 0.0
 			for ref in references:
 				allocation = min(flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount")))
