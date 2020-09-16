@@ -26,7 +26,7 @@
    "links": "[\n    {\n        \"dependencies\": [\n            \"Item Booking\"\n        ],\n        \"is_query_report\": true,\n        \"label\": \"Item Booking Rate\",\n        \"name\": \"Item Booking Rate\",\n        \"type\": \"report\"\n    }\n]"
   }
  ],
- "category": "Domains",
+ "category": "Modules",
  "charts": [
   {
    "chart_name": "Item Booking Rate",
@@ -45,8 +45,8 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-09-09 09:02:44.505862",
- "modified_by": "Administrator",
+ "modified": "2020-09-16 10:13:40.376928",
+ "modified_by": "thierry@dokos.io",
  "module": "Venue",
  "name": "Venue",
  "owner": "Administrator",
