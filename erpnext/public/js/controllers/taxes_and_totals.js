@@ -224,8 +224,9 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 	},
 
 	_get_tax_rate: function(tax, item_tax_map) {
-		return (Object.keys(item_tax_map).indexOf(tax.account_head) != -1) ?
-			flt(item_tax_map[tax.account_head], precision("rate", tax)) : tax.rate;
+		const item_tax = item_tax_map.filter(f => f.account === tax.account_head)
+		return item_tax.length ?
+			flt(item_tax[0].rate, precision("rate", tax)) : tax.rate;
 	},
 
 	calculate_net_total: function() {
