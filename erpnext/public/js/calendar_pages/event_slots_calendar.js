@@ -85,6 +85,9 @@ class EventsCalendar {
 			initialView: me.get_initial_display_view(),
 			headerToolbar: me.get_header_toolbar(),
 			weekends: true,
+			allDayContent: function() {
+				return __("All Day");
+			},
 			buttonText: {
 				today: __("Today"),
 				timeGridWeek: __("Week"),
@@ -127,7 +130,6 @@ class EventsCalendar {
 			end: moment(parameters.end).format("YYYY-MM-DD")
 		}).then(result => {
 			this.slots = result.message || []
-			console.log(this.slots)
 
 			callback(this.slots);
 		})

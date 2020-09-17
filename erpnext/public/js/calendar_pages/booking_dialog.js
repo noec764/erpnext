@@ -339,7 +339,10 @@ class BookingCalendar {
 			},
 			displayEventTime: this.get_time_display(),
 			slotMinTime: this.start_time.toTimeString().slice(0, 8),
-			slotMaxTime: this.end_time.toTimeString().slice(0, 8)
+			slotMaxTime: this.end_time.toTimeString().slice(0, 8),
+			allDayContent: function() {
+				return __("All Day");
+			}
 		}
 	}
 

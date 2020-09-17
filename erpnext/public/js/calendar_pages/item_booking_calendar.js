@@ -113,7 +113,10 @@ class ItemCalendar {
 			datesSet: function(event) {
 				return me.datesSet(event);
 			},
-			displayEventTime: this.get_time_display()
+			displayEventTime: this.get_time_display(),
+			allDayContent: function() {
+				return __("All Day");
+			}
 		}
 	}
 
