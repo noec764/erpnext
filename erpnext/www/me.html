@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block title %}{{ _("My Account") }}{% endblock %}
-{% block header %}<h1>{{ _("My Account") }}</h1>{% endblock %}
+{% block header %}<h2>{{ _("My Account") }}</h2>{% endblock %}
 
 {% block page_content %}
 <!-- no-cache -->
@@ -15,7 +15,7 @@
 	<div>
 		<ul class="list-unstyled">
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Reset your password") }}</h5>
 						<a href="/update-password" class="btn btn-primary">{{ _("Reset password") }}</a>
@@ -23,7 +23,7 @@
 				  </div>
 			</li>
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Edit your user profile") }}</h5>
 						<a href="/update-profile?name={{ user }}" class="btn btn-primary">{{ _("Edit profile") }}</a>
@@ -32,7 +32,7 @@
 			</li>
 			{% if third_party_apps %}
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Manage your third party applications") }}</h5>
 						<a href="/third_party_apps" class="btn btn-primary">{{ _("Manage applications") }}</a>
@@ -42,7 +42,7 @@
 			{% endif %}
 			{% if subscription %}
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Your subscription") }}</h5>
 						{% for plan in subscription.plans %}
@@ -56,7 +56,7 @@
 			</li>
 			{% elif subscriptions_available %}
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Subscribe to a plan") }}</h5>
 						<a href="/subscription" class="btn btn-primary">{{ _("Subscribe") }}</a>
@@ -66,7 +66,7 @@
 			{% endif %}
 			{% if enable_stripe %}
 			<li>
-				<div class="frappe-card card w-50">
+				<div class="frappe-card w-50">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Manage your payment methods") }}</h5>
 						{% for details in stripe_payment_methods.data %}

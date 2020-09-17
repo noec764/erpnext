@@ -16,7 +16,7 @@ develop_version = '1.x.x-develop'
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
 web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/portal-calendars.min.js"]
-web_include_css = "assets/css/erpnext-web.css"
+#web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
 	"Communication": "public/js/communication.js",

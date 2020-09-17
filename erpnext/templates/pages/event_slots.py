@@ -8,6 +8,7 @@ def get_context(context):
 	context.no_cache = 1
 	context.show_sidebar = True
 	context.no_breadcrumbs = True
+	context.title = _("Event Slots")
 
 	if frappe.session.user == "Guest":
 		frappe.throw(_("You need to be logged in to access this page"), frappe.PermissionError)

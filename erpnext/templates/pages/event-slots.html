@@ -4,12 +4,12 @@
 <link rel="stylesheet" href="/assets/css/website-calendar.min.css">
 {% endblock -%}
 
-{% block title %} {{ title }} {% endblock %}
+{% block title %} {{ _(title) }} {% endblock %}
 
-{% block header %}<h2>{{ title }}</h2>{% endblock %}
+{% block header %}<h2>{{ _(title) }}</h2>{% endblock %}
 
 {% block page_content %}
-<div id="event-slots"></div>
+<div id="event-slots" class="portal-calendar"></div>
 {% endblock %}
 
 {% block script %}

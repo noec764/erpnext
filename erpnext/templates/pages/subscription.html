@@ -1,15 +1,15 @@
 {% extends "templates/web.html" %}
 
-{% block title %} {{ title }} {% endblock %}
+{% block title %} {{ _(title) }} {% endblock %}
 
-{% block header %}<h2>{{ title }}</h2>{% endblock %}
+{% block header %}<h2>{{ _(title) }}</h2>{% endblock %}
 
 {% block page_content %}
 <div class="subscriptions-section">
-	<div class="current-subscription card frappe-card hide"></div>
-	<div class="available-plans card frappe-card hide"></div>
-	<div class="invoicing-status card frappe-card hide"></div>
-	<div class="cancellation-options card frappe-card hide"></div>
+	<div class="current-subscription frappe-card hide"></div>
+	<div class="available-plans frappe-card hide"></div>
+	<div class="invoicing-status frappe-card hide"></div>
+	<div class="cancellation-options frappe-card hide"></div>
 	<div class="available-subscriptions hide"></div>
 </div>
 {% endblock %}

@@ -10,7 +10,8 @@
 		const calendar = content.appendChild(document.createElement('div'))
 		const listview = content.getElementsByClassName("website-list")[0]
 		listview.classList.add("d-block");
-		calendar.id = "calendar-section"
+		calendar.id = "calendar-section";
+		calendar.classList.add("portal-calendar");
 		calendar.classList.add("d-none");
 		document.getElementsByClassName("view-switcher")[0].addEventListener("click", function(e) {
 			e.preventDefault();

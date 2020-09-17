@@ -123,9 +123,8 @@ $.extend(shopping_cart, {
 			$(".cart-tax-items").hide();
 			$(".btn-place-order").hide();
 			$(".cart-addresses").hide();
-		}
-		else {
-			$cart.css("display", "inline");
+		} else {
+			$cart.css("display", "flex");
 		}
 
 		if(cart_count) {
