@@ -9,10 +9,11 @@
  "doctype": "Desk Page",
  "extends": "Settings",
  "extends_another_page": 1,
+ "hide_custom": 0,
  "idx": 0,
  "is_standard": 1,
  "label": "Dokos Settings",
- "modified": "2020-07-08 12:53:44.904241",
+ "modified": "2020-09-18 15:37:20.247142",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
@@ -85,6 +86,13 @@
    "icon": "setting",
    "label": "Domain Settings",
    "link_to": "Domain Settings",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "icon": "setting",
+   "label": "Global Defaults",
+   "link_to": "Global Defaults",
    "type": "DocType"
   }
  ]
