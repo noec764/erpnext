@@ -224,9 +224,13 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 	},
 
 	_get_tax_rate: function(tax, item_tax_map) {
-		const item_tax = item_tax_map.filter(f => f.account === tax.account_head)
-		return item_tax.length ?
-			flt(item_tax[0].rate, precision("rate", tax)) : tax.rate;
+		if (item_tax_map.length) {
+			const item_tax = item_tax_map.filter(f => f.account === tax.account_head)
+			return item_tax.length ?
+				flt(item_tax[0].rate, precision("rate", tax)) : tax.rate;
+		} else {
+			return tax.rate;
+		}
 	},
 
 	calculate_net_total: function() {
@@ -338,7 +342,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 	},
 
 	_load_item_tax_rate: function(item_tax_rate) {
-		return item_tax_rate ? JSON.parse(item_tax_rate) : {};
+		return item_tax_rate ? JSON.parse(item_tax_rate) : [];
 	},
 
 	get_current_tax_amount: function(item, tax, item_tax_map) {
