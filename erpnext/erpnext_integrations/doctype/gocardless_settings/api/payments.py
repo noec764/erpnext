@@ -21,6 +21,11 @@ class GoCardlessPayments:
 			id
 		)
 
+	def get_list(self, params):
+		return self.client.payments.list(
+			params=params
+		)
+
 	def update(self, id, **kwargs):
 		return self.client.payments.update(
 			id,

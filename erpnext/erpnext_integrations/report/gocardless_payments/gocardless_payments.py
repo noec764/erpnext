@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 from pandas import pandas as pd
+from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayments
 
 def execute(filters=None):
 	columns = get_columns(filters)
@@ -17,11 +18,11 @@ def get_data(filters):
 
 	for payment in gocardless_payments:
 		references = frappe.get_all("Integration Request", filters={"service_id": payment.get("payment_id"), "integration_request_service": "GoCardless"}, fields=["name", "reference_doctype", "reference_docname"])
-		subscriptions = [x.reference_docname for x in references if x.reference_doctype == "Subscription"]
 		payments = [x.reference_docname for x in references if x.reference_doctype == "Payment Entry"] + [x.name for x in frappe.get_all("Payment Entry", filters={"reference_no": payment.get("payment_id"), "docstatus": 1})]
+		subscriptions = [x.subscription for x in frappe.get_all("Payment Entry", filters={"name": ("in", list(set(payments)))}, fields=["subscription"])]
 		payment["dokos_payments"] = " ,".join(list(set(payments))) if payments else ""
 		payment["dokos_payment_status"] = " ,".join([_(x.status, context="Payment Entry") for x in frappe.get_all("Payment Entry", filters={"name": ("in", payments)}, fields=["status"])])
-		payment["dokos_subscription"] = " ,".join(list(set(subscriptions))) if subscriptions else ""
+		payment["dokos_subscription"] = " ,".join(list(set(subscriptions))) if subscriptions and subscriptions[0] is not None else ""
 
 	if filters.get("subscription"):
 		gocardless_payments = [x for x in gocardless_payments if filters.get("subscription") in x.get("dokos_subscription")]
@@ -45,7 +46,7 @@ def get_gocardless_payments(filters):
 	payments = []
 	for gateway in gocardless_gateways:
 		settings = frappe.get_doc("GoCardless Settings", gateway.gateway_controller)
-		payments.extend(settings.get_payment_list(params))
+		payments.extend(GoCardlessPayments(settings).get_list(params).records)
 
 	output = []
 	for payment in payments:

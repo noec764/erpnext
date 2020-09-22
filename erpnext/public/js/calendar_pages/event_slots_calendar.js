@@ -164,7 +164,7 @@ class EventsCalendar {
 		$(dialog.footer).prepend(`<span class="mr-2">${(event.event.extendedProps.available_slots - event.event.extendedProps.booked_slots) + " " + __("slots available")}</span>`)
 
 		if (event.event.extendedProps.booked_slots >= event.event.extendedProps.available_slots) {
-            dialog.disable_primary_action();
+			dialog.disable_primary_action();
 		}
 		dialog.show()
 	}
