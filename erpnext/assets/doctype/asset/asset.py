@@ -82,6 +82,11 @@ class Asset(AccountsController):
 		if not self.available_for_use_date:
 			frappe.throw(_("Available for use date is required"))
 
+		for d in self.finance_books:
+			if d.depreciation_start_date == self.available_for_use_date:
+				frappe.throw(_("Row #{}: Depreciation Posting Date should not be equal to Available for Use Date.").format(d.idx),
+					title=_("Incorrect Date"))
+
 	def set_missing_values(self):
 		if not self.asset_category:
 			self.asset_category = frappe.get_cached_value("Item", self.item_code, "asset_category")
@@ -173,7 +178,7 @@ class Asset(AccountsController):
 		if not row.depreciation_start_date:
 			if not self.available_for_use_date:
 				frappe.throw(_("Row {0}: Depreciation Start Date is required").format(row.idx))
-			row.depreciation_start_date = self.available_for_use_date
+			row.depreciation_start_date = get_last_day(self.available_for_use_date)
 
 		if not self.is_existing_asset:
 			self.opening_accumulated_depreciation = 0
