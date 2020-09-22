@@ -2,9 +2,8 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
-import frappe
 import json
+import frappe
 from frappe import _
 from frappe.model.document import Document
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
@@ -13,19 +12,22 @@ from frappe.utils import getdate, formatdate, today, add_months, cint
 from frappe.desk.doctype.tag.tag import add_tag
 
 class PlaidSettings(Document):
-	pass
+	@staticmethod
+	def get_link_token():
+		plaid = PlaidConnector()
+		return plaid.get_link_token()
 
 @frappe.whitelist()
-def plaid_configuration():
+def get_plaid_configuration():
 	if frappe.db.get_single_value("Plaid Settings", "enabled"):
 		plaid_settings = frappe.get_single("Plaid Settings")
 		return {
-			"plaid_public_key": plaid_settings.plaid_public_key,
 			"plaid_env": plaid_settings.plaid_env,
+			"link_token": plaid_settings.get_link_token(),
 			"client_name": frappe.local.site
 		}
-	else:
-		return "disabled"
+
+	return "disabled"
 
 @frappe.whitelist()
 def add_institution(token, response):
@@ -33,6 +35,7 @@ def add_institution(token, response):
 
 	plaid = PlaidConnector()
 	access_token = plaid.get_access_token(token)
+	bank = None
 
 	if not frappe.db.exists("Bank", response["institution"]["name"]):
 		try:
@@ -90,7 +93,7 @@ def add_bank_accounts(response, bank, company):
 				result.append(new_account.name)
 
 			except frappe.UniqueValidationError:
-				frappe.msgprint(_("Bank account {0} already exists and could not be created again").format(new_account.account_name))
+				frappe.msgprint(_("Bank account {0} already exists and could not be created again").format(account["name"]))
 			except Exception:
 				frappe.throw(frappe.get_traceback())
 
@@ -120,8 +123,8 @@ def add_account_subtype(account_subtype):
 
 @frappe.whitelist()
 def sync_transactions(bank, bank_account):
-	'''Sync transactions based on the last integration date as the start date, after the sync is completed
-	add the transaction date of the oldest transaction as the last integration date'''
+	"""Sync transactions based on the last integration date as the start date, after sync is completed
+	add the transaction date of the oldest transaction as the last integration date."""
 	last_transaction_date = frappe.db.get_value("Bank Account", bank_account, "last_integration_date")
 	if last_transaction_date:
 		start_date = formatdate(last_transaction_date, "YYYY-MM-dd")
@@ -181,8 +184,8 @@ def new_bank_transaction(transaction):
 
 	status = "Pending" if transaction["pending"] == "True" else "Settled"
 
+	tags = []
 	try:
-		tags  = []
 		tags += transaction["category"]
 		tags += ["Plaid Cat. {}".format(transaction["category_id"])]
 	except KeyError:
@@ -221,4 +224,8 @@ def automatic_synchronization():
 		plaid_accounts = frappe.get_all("Bank Account", filters={"integration_id": ["!=", ""]}, fields=["name", "bank"])
 
 		for plaid_account in plaid_accounts:
-			frappe.enqueue("erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions", bank=plaid_account.bank, bank_account=plaid_account.name)
+			frappe.enqueue(
+				"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions",
+				bank=plaid_account.bank,
+				bank_account=plaid_account.name
+			)

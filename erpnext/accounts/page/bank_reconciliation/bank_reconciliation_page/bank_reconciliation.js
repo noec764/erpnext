@@ -107,7 +107,7 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 			});
 
 			frappe.db.get_value("Plaid Settings", "Plaid Settings", "enabled", (r) => {
-				if (r && r.enabled == "1") {
+				if (r && r.enabled === "1") {
 					me.page.add_action_item(__("Synchronize this account"), function() {
 						new erpnext.accounts.bankTransactionUpload('plaid');
 					});
