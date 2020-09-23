@@ -289,6 +289,11 @@ override_doctype_dashboards = {
 }
 
 scheduler_events = {
+	"cron": {
+		"0/30 * * * *": [
+			"erpnext.utilities.doctype.video.video.update_youtube_data",
+		]
+	},
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
 		"erpnext.venue.doctype.item_booking.item_booking.clear_draft_bookings",
