@@ -344,7 +344,6 @@ def make_reverse_gl_entries(gl_entries=None, voucher_type=None, voucher_no=None,
 
 			entry['remarks'] = "On cancellation of " + entry['voucher_no']
 			entry['is_cancelled'] = 1
-			entry['posting_date'] = today()
 
 			if not entry.get("accounting_journal"):
 				get_accounting_journal(entry)
