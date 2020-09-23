@@ -130,6 +130,7 @@ class SupplierScorecard(Document):
 				period_card = make_supplier_scorecard(self.name, None)
 				period_card.start_date = start_date
 				period_card.end_date = end_date
+				period_card.insert(ignore_permissions=True)
 				period_card.submit()
 				scp_count = scp_count + 1
 				if start_date < first_start_date:
