@@ -28,7 +28,7 @@ class POSOpeningEntry(StatusUpdater):
 				{"parent": d.mode_of_payment, "company": self.company}, "default_account")
 			if not account:
 				frappe.throw(_("Please set default Cash or Bank account in Mode of Payment {0}")
-					.format(get_link_to_form("Mode of Payment", mode_of_payment)), title=_("Missing Account"))
+					.format(get_link_to_form("Mode of Payment", d.mode_of_payment)), title=_("Missing Account"))
 
 	def on_submit(self):
 		self.set_status(update=True)
