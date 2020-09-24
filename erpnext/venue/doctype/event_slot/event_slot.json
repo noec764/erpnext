@@ -97,6 +97,7 @@
    "label": "Slot Title"
   },
   {
+   "depends_on": "eval:doc.already_booked > 0",
    "fieldname": "registered_users_section",
    "fieldtype": "Section Break",
    "label": "Registered Users"
@@ -120,7 +121,7 @@
    "link_fieldname": "event_slot"
   }
  ],
- "modified": "2020-09-11 19:09:18.268546",
+ "modified": "2020-09-24 13:57:15.727827",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Slot",

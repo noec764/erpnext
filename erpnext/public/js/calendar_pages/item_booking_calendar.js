@@ -81,7 +81,7 @@ class ItemCalendar {
 	calendar_options() {
 		const me = this;
 		return {
-			eventClassNames: 'event-slot-calendar',
+			eventClassNames: 'item-booking-calendar',
 			initialView: me.get_initial_display_view(),
 			headerToolbar: me.get_header_toolbar(),
 			weekends: true,

@@ -109,7 +109,7 @@ class EventsCalendar {
 				return me.getAvailableSlots(info, callback)
 			},
 			eventContent: function(info) {
-				return { html: `<p>${info.event.title}</p>${info.event.extendedProps.description}`};
+				return { html: `${info.event.extendedProps.description}`};
 			},
 			selectAllow: this.getSelectAllow,
 			validRange: this.getValidRange,
@@ -161,9 +161,14 @@ class EventsCalendar {
 		});
 		const description = event.event.extendedProps.content ? event.event.extendedProps.content : `<div>${__("No description")}</div>`
 		dialog.fields_dict.event_description.$wrapper.html(description);
-		$(dialog.footer).prepend(`<span class="mr-2">${(event.event.extendedProps.available_slots - event.event.extendedProps.booked_slots) + " " + __("slots available")}</span>`)
+		$(dialog.footer).prepend(`
+			<span class="mr-2">
+				${event.event.extendedProps.booked_by_user ? __("You are already registered") + "<br/>" : ""}
+				${(event.event.extendedProps.available_slots - event.event.extendedProps.booked_slots) + " " + __("slots available")}
+			</span>`
+		)
 
-		if (event.event.extendedProps.booked_slots >= event.event.extendedProps.available_slots) {
+		if (event.event.extendedProps.booked_slots >= event.event.extendedProps.available_slots || event.event.extendedProps.booked_by_user) {
 			dialog.disable_primary_action();
 		}
 		dialog.show()
