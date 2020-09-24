@@ -170,7 +170,7 @@ class BookingSidebar {
 	toggle_click(field) {
 		this.duration_selector.fields_list.map(obj => {
 			if (obj.df.fieldname !== field) {
-				this.duration_selector_wrapper.find(`[data-fieldname=${obj.df.fieldname}]`).find(`:checkbox`).prop("checked", false);
+				this.duration_selector_wrapper.find(`[data-fieldname="${obj.df.fieldname}"]`).find(`:checkbox`).prop("checked", false);
 				this.duration_selector.set_value(0)
 			};
 		})
