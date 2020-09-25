@@ -56,20 +56,21 @@ frappe.ui.form.on("Payment Request", {
 						freeze: true,
 						callback: function(r){
 							if(!r.exc) {
-								var doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", r.message.doctype, r.message.name);
+								const doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							}
 						}
 					});
 				});
 			}
 
-			if (!frm.doc.payment_gateway || frm.doc.payment_gateway_account.toLowerCase().includes("gocardless")) {
-				frappe.call({
-					method: "check_if_immediate_payment_is_autorized",
-					doc: frm.doc,
-				}).then(r => {
-					if (r.message && r.message.length) {
+			if (!frm.doc.transaction_reference && (frm.doc.payment_gateway || frm.doc.payment_gateways.length === 1)) {
+				frappe.xcall("erpnext.accounts.doctype.payment_request.payment_request.check_if_immediate_payment_is_autorized",
+					{
+						payment_request: frm.doc.name,
+					}
+				).then(r => {
+					if (r) {
 						frm.trigger("process_payment_immediately");
 					}
 				})

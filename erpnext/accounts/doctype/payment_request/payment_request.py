@@ -138,53 +138,33 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist()
 	def check_if_immediate_payment_is_autorized(self):
-		try:
-			output = []
-			if self.payment_gateway:
-				result = self.check_immediate_payment_for_gateway(self.payment_gateway)
-				if result:
-					output.append(result)
+		if not self.payment_gateway:
+			self.payment_gateway = self.payment_gateways[0].payment_gateway
 
-			else:
-				for gateway in self.payment_gateways:
-					result = self.check_immediate_payment_for_gateway(gateway.payment_gateway)
-					if result:
-						output.append(result)
-
-			return output or False
-
-		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
-			return False
+		return self.check_immediate_payment_for_gateway(self.payment_gateway)
 
 	def check_immediate_payment_for_gateway(self, gateway):
+		"""Returns a boolean"""
 		controller = get_payment_gateway_controller(gateway)
 		if hasattr(controller, 'on_payment_request_submission'):
 			return controller.on_payment_request_submission(self)
 
+		return False
+
 	@frappe.whitelist()
 	def process_payment_immediately(self):
-		try:
-			if self.payment_gateway:
-				result = self.get_immediate_payment_for_gateway(self.payment_gateway)
-				if result:
-					return result
+		if not self.payment_gateway:
+			self.payment_gateway = self.payment_gateways[0].payment_gateway
 
-			for gateway in self.payment_gateways:
-				result = self.get_immediate_payment_for_gateway(gateway.payment_gateway)
-				if result:
-					return result
-
-			return
-
-		except Exception as e:
-			frappe.log_error(frappe.get_traceback(), _("Payment gateways validation error"))
-			frappe.throw(e, _("Payment gateways validation error"))
+		return self.get_immediate_payment_for_gateway(self.payment_gateway)
 
 	def get_immediate_payment_for_gateway(self, gateway):
 		controller = get_payment_gateway_controller(gateway)
 		if hasattr(controller, 'immediate_payment_processing'):
-			return controller.immediate_payment_processing(self)
+			result = controller.immediate_payment_processing(self)
+			self.db_set("transaction_reference", result, commit=True)
+			self.db_set("status", "Pending", commit=True)
+			return result
 
 	def generate_payment_key(self):
 		self.db_set('payment_key', frappe.generate_hash(json.dumps(self.as_dict())))
@@ -619,3 +599,7 @@ def get_message(doc, template):
 
 def get_payment_link(payment_key):
 	return get_url("/payments?link={0}".format(payment_key))
+
+@frappe.whitelist()
+def check_if_immediate_payment_is_autorized(payment_request):
+	return frappe.get_doc("Payment Request", payment_request).check_if_immediate_payment_is_autorized()

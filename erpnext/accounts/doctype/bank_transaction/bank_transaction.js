@@ -12,7 +12,7 @@ frappe.ui.form.on('Bank Transaction', {
 		});
 
 		frm.set_query('payment_entry', 'payment_entries', function(doc, cdt, cdn) {
-			const row  = locals[cdt][cdn];
+			const row = locals[cdt][cdn];
 			const filters = {
 				"filters": {
 					"unreconciled_amount": [">", 0]

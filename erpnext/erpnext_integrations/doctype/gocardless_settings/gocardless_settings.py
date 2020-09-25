@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 import gocardless_pro
+from gocardless_pro import errors
 from frappe import _
 from urllib.parse import urlencode
 from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day, add_days
@@ -41,10 +42,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		call_hook_method('payment_gateway_enabled', gateway='GoCardless-' + self.gateway_name)
 
 	def on_payment_request_submission(self, payment_request):
-		try:
-			return self.check_mandate_validity(payment_request.get_customer())
-		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("Sepa mandate validation failed for {0}".format(data.get("payer_name"))))
+		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
 
 	def immediate_payment_processing(self, payment_request):
 		try:
@@ -63,14 +61,16 @@ class GoCardlessSettings(PaymentGatewayController):
 
 			customer = payment_request.get_customer()
 			valid_mandate = self.check_mandate_validity(customer)
-			if valid_mandate:
+			if valid_mandate.get("mandate"):
 				processed_data["links"] = valid_mandate
 
-				return GoCardlessPayments(self, payment_request).create(**processed_data)
+				return getattr(GoCardlessPayments(self, payment_request).create(**processed_data), "id", None)
+			else:
+				frappe.throw(_("This customer has no valid mandate"))
 
 		except Exception:
 			frappe.log_error(frappe.get_traceback(),\
-				_("GoCardless direct processing failed for {0}".format(data.reference_name)))
+				_("GoCardless direct processing failed for {0}".format(payment_request.name)))
 
 	def check_mandate_validity(self, customer):
 		if frappe.db.exists("Sepa Mandate", dict(
@@ -82,13 +82,18 @@ class GoCardlessSettings(PaymentGatewayController):
 				customer=customer,
 				status=["not in", ["Cancelled", "Expired", "Failed"]]
 			), 'mandate')
-			mandate = GoCardlessMandates(self).get(registered_mandate)
 
-			if mandate.status == "pending_customer_approval" or mandate.status == "pending_submission"\
-				or mandate.status == "submitted" or mandate.status == "active":
-				return {
-					"mandate": registered_mandate
-				}
+			try:
+				mandate = GoCardlessMandates(self).get(registered_mandate)
+
+				if mandate.status == "pending_customer_approval" or mandate.status == "pending_submission"\
+					or mandate.status == "submitted" or mandate.status == "active":
+					return {
+						"mandate": registered_mandate
+					}
+			except errors.InvalidApiUsageError:
+				pass
+		return {}
 
 	def get_environment(self):
 		return 'sandbox' if self.use_sandbox else 'live'

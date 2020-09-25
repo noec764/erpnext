@@ -47,7 +47,8 @@ class StripeWebhooksController(WebhooksController):
 		else:
 			invoice = self.data.get("data", {}).get("object", {}).get("invoice")
 
-		self.stripe_invoice = StripeInvoice(self.stripe_settings).retrieve(invoice)
+		if invoice:
+			self.stripe_invoice = StripeInvoice(self.stripe_settings).retrieve(invoice)
 
 	def get_payment_request(self):
 		payment_request_id = None
