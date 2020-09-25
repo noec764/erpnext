@@ -317,7 +317,6 @@ def _get_availability_from_schedule(item, schedules, date, quotation=None):
 		duration = line.get("duration")
 
 		booked_items = _get_events(line.get("start"), line.get("end"), item)
-
 		scheduled_items = []
 		for event in booked_items:
 			if (get_datetime(event.get("starts_on")) >= line.get("start")\
@@ -366,6 +365,7 @@ def _get_events(start, end, item=None, user=None):
 					AND coalesce(repeat_till, '3000-01-01') > date(%(start)s)
 				)
 			)
+		AND status!="Cancelled"
 		{conditions}
 		ORDER BY starts_on""".format(conditions=conditions), {
 			"start": start,
