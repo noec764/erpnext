@@ -8,6 +8,7 @@
  "allow_print": 0,
  "amount": 0.0,
  "amount_based_on_field": 0,
+ "apply_document_permissions": 0,
  "creation": "2016-06-24 15:50:33.196990",
  "doc_type": "Address",
  "docstatus": 0,
@@ -16,7 +17,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-05-29 10:35:21.709513",
+ "modified": "2020-09-25 11:56:35.661505",
  "modified_by": "Administrator",
  "module": "Utilities",
  "name": "addresses",
@@ -41,7 +42,7 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 0,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 0
   },
   {
