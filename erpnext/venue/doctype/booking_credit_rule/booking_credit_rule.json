@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:rule_name",
+ "beta": 1,
+ "creation": "2020-09-29 11:28:13.500309",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "item",
+  "column_break_3",
+  "rule_type",
+  "addition_trigger",
+  "deduction_trigger",
+  "section_break_7",
+  "booking_credit_rules"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Rule Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rule_type",
+   "fieldtype": "Select",
+   "label": "Rule Type",
+   "options": "Booking Credits Addition\nBooking Credits Deduction",
+   "reqd": 1
+  },
+  {
+   "default": "Sales Order Submission",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "addition_trigger",
+   "fieldtype": "Select",
+   "label": "Addition Trigger",
+   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "options": "Sales Order Submission\nSales Invoice Submission"
+  },
+  {
+   "default": "Confirmed Item Booking End",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "deduction_trigger",
+   "fieldtype": "Select",
+   "label": "Deduction Trigger",
+   "options": "Confirmed Item Booking End\nItem Booking Confirmation"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "booking_credit_rules",
+   "fieldtype": "Table",
+   "label": "Booking Credit Rules",
+   "options": "Booking Credit Rules"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2020-09-29 13:50:05.821758",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Booking Credit Rule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Venue Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "rule_name",
+ "track_changes": 1
+}

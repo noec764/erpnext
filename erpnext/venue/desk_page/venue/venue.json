@@ -12,6 +12,11 @@
   },
   {
    "hidden": 0,
+   "label": "Booking Credits",
+   "links": "[\n    {\n        \"label\": \"Booking Credit\",\n        \"name\": \"Booking Credit\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Usage\",\n        \"name\": \"Booking Credit Usage\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Rule\",\n        \"name\": \"Booking Credit Rule\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
+  },
+  {
+   "hidden": 0,
    "label": "Website and portal",
    "links": "[\n    {\n        \"label\": \"Website Settings\",\n        \"name\": \"Website Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Portal Settings\",\n        \"name\": \"Portal Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Shopping Cart Settings\",\n        \"name\": \"Shopping Cart Settings\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Help Category\",\n        \"name\": \"Help Category\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Help Article\",\n        \"name\": \"Help Article\",\n        \"type\": \"doctype\"\n    }\n]"
   },
@@ -45,7 +50,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-09-16 10:13:40.376928",
+ "modified": "2020-09-29 13:18:41.969317",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",

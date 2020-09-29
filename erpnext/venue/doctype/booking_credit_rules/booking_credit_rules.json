@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2020-09-29 13:48:51.957088",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "condition",
+  "column_break_2",
+  "credit_qty",
+  "credit_uom"
+ ],
+ "fields": [
+  {
+   "fieldname": "condition",
+   "fieldtype": "Code",
+   "in_list_view": 1,
+   "label": "Condition",
+   "options": "Python",
+   "reqd": 1
+  },
+  {
+   "fieldname": "credit_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Credit Quantity",
+   "read_only_depends_on": "Credit minutes for a quantity of 1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "credit_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Credit Unit of Measure",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2020-09-29 14:08:23.235274",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Booking Credit Rules",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

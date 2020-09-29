@@ -234,11 +234,21 @@ doc_events = {
 	"Sales Invoice": {
 		"on_submit": [
 			"erpnext.regional.italy.utils.sales_invoice_on_submit",
-			"erpnext.erpnext_integrations.taxjar_integration.create_transaction"
+			"erpnext.erpnext_integrations.taxjar_integration.create_transaction",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
 		],
 		"on_cancel": [
 			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
-			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
+			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+		]
+	},
+	"Sales Order": {
+		"on_submit": [
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+		],
+		"on_cancel": [
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
 		]
 	},
 	"Purchase Invoice": {
@@ -270,7 +280,10 @@ doc_events = {
 	},
 	"Item Booking": {
 		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
-		"on_update": "erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
+		"on_update": [
+			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+		],
 		"on_cancel": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
 		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar"
 	},
