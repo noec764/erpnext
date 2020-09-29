@@ -216,7 +216,7 @@
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-08-03 08:10:02.689125",
+ "modified": "2020-09-29 10:50:34.213728",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",
@@ -230,6 +230,10 @@
    "role": "Stock Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Stock User"
   }
  ],
  "quick_entry": 1,
