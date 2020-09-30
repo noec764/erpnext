@@ -57,14 +57,14 @@ frappe.ui.form.on("Timesheet", {
 
 		if (frm.doc.docstatus < 1) {
 
-			let button = 'Start Timer';
+			let button = __('Start Timer');
 			$.each(frm.doc.time_logs || [], function(i, row) {
 				if ((row.from_time <= frappe.datetime.now_datetime()) && !row.completed) {
-					button = 'Resume Timer';
+					button = __('Resume Timer');
 				}
 			});
 
-			frm.add_custom_button(__(button), function() {
+			frm.add_custom_button(button, function() {
 				var flag = true;
 				$.each(frm.doc.time_logs || [], function(i, row) {
 					// Fetch the row for which from_time is not present
