@@ -7,9 +7,9 @@ def get_data():
 	return [
 		# Modules
 		{
-			"module_name": "Getting Started",
+			"module_name": "Home",
 			"category": "Modules",
-			"label": _("Getting Started"),
+			"label": _("Home"),
 			"color": "#1abc9c",
 			"icon": "fas fa-door-open",
 			"type": "module",
