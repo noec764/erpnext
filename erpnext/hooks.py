@@ -20,7 +20,6 @@ web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/portal-calendars.mi
 
 doctype_js = {
 	"Communication": "public/js/communication.js",
-	"Website Theme": "public/js/website_theme.js",
 	"Newsletter": "public/js/newsletter.js",
 	"Google Calendar": "public/js/google_calendar.js",
 	"Event": "public/js/event.js"
