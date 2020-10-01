@@ -19,15 +19,12 @@
  "documentation_url": "https://doc.dokos.io/dokos/selling/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-06-29 16:41:09.440378",
+ "modified": "2020-09-29 16:41:09.440378",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
  "owner": "Administrator",
  "steps": [
-  {
-   "step": "Introduction to Selling"
-  },
   {
    "step": "Create a Customer"
   },

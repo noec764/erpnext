@@ -11,7 +11,7 @@ class StripeInvoiceItem:
 	def create(self, customer, **kwargs):
 		return self.gateway.stripe.InvoiceItem.create(
 			customer=customer,
-			idempotency_key=IdempotencyKey("invoice_item", "create", frappe.scrub(kwargs.description)).get(),
+			idempotency_key=IdempotencyKey("invoice_item", "create", frappe.scrub(kwargs["description"])).get(),
 			**kwargs
 		)
 

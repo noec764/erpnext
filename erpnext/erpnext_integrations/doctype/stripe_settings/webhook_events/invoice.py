@@ -15,7 +15,6 @@ EVENT_MAP = {
 	'invoice.created': 'get_or_create_invoice',
 	'invoice.deleted': 'cancel_invoice',
 	'invoice.finalized': 'finalize_invoice',
-	'invoice.upcoming': 'get_or_create_invoice',
 	'invoice.voided': 'cancel_invoice'
 }
 
