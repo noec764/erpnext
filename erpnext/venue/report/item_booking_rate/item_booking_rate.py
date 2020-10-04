@@ -50,7 +50,7 @@ def get_data(filters, dates):
 	output = [{"item": x, **items_dict[x]} for x in items_dict]
 
 	for date in dates:
-		output = [{f"{frappe.scrub(str(date))}_percent": (flt(x.get(frappe.scrub(str(date)))) / flt(x[f"{frappe.scrub(str(date))}_capacity"]) * 100), **x} for x in output]
+		output = [{f"{frappe.scrub(str(date))}_percent": (flt(x.get(frappe.scrub(str(date)))) / flt(x[f"{frappe.scrub(str(date))}_capacity"] or 1) * 100), **x} for x in output]
 
 	scrubed_dates = [frappe.scrub(str(date)) for date in dates]
 
