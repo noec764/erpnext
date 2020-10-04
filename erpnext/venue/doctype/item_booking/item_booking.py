@@ -511,9 +511,10 @@ def get_item_calendar(item, uom=None):
 			(x.get("item") == filters.get("item") or x.get("item") == "") \
 			and (x.get("uom") == filters.get("uom") or x.get("uom") == "")]
 		if filtered_calendars:
+			cal = frappe.get_doc("Item Booking Calendar", filtered_calendars[0])
 			return {
-				"type": frappe.get_cached_value("Item Booking Calendar", filtered_calendars[0], "calendar_type") or "Daily",
-				"calendar": frappe.get_doc("Item Booking Calendar", filtered_calendars[0]).booking_calendar
+				"type": cal.calendar_type or "Daily",
+				"calendar": cal.booking_calendar
 			}
 
 	return {"type": "Daily", "calendar": []}

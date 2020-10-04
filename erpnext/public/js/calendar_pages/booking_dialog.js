@@ -96,6 +96,8 @@ erpnext.booking_dialog = class BookingDialog {
 			this.calendar.set_initial_display_view();
 			this.calendar.set_option('headerToolbar', this.calendar.get_header_toolbar())
 			this.calendar.set_option('displayEventTime', this.calendar.get_time_display())
+			this.calendar.set_option('slotMinTime', this.calendar.start_time.toTimeString().slice(0, 8))
+			this.calendar.set_option('slotMaxTime', this.calendar.end_time.toTimeString().slice(0, 8))
 			this.calendar.fullCalendar&&this.calendar.fullCalendar.refetchEvents();
 		})
 		this.get_item_price()
