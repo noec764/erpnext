@@ -131,7 +131,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				var internal = customer.is_internal_customer;
 				var disabled = customer.disabled;
 				if (internal == 1 && disabled == 0) {
-					me.frm.add_custom_button("Inter Company Invoice", function() {
+					me.frm.add_custom_button(__("Inter Company Invoice"), function() {
 						me.make_inter_company_invoice();
 					}, __('Create'));
 				}
