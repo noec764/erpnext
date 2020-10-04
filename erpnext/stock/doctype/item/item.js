@@ -46,10 +46,6 @@ frappe.ui.form.on("Item", {
 			}, __("View"));
 		}
 
-		if (!frm.doc.is_fixed_asset) {
-			erpnext.item.make_dashboard(frm);
-		}
-
 		if (frm.doc.is_fixed_asset) {
 			frm.trigger('is_fixed_asset');
 			frm.trigger('auto_create_assets');
@@ -124,6 +120,10 @@ frappe.ui.form.on("Item", {
 		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1:0);
 
 		frm.trigger("toggle_simultaneous_bookings");
+
+		if (!frm.doc.is_fixed_asset) {
+			erpnext.item.make_dashboard(frm);
+		}
 	},
 
 	validate: function(frm){

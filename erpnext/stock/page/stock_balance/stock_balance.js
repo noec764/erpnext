@@ -92,6 +92,4 @@ frappe.pages['stock-balance'].on_page_load = function(wrapper) {
 		setup_click('Item');
 		setup_click('Warehouse');
 	});
-
-
 }

@@ -1,11 +1,12 @@
 frappe.provide('erpnext.stock');
 
-erpnext.stock.ItemDashboard = Class.extend({
-	init: function(opts) {
-		$.extend(this, opts);
+erpnext.stock.ItemDashboard = class ItemDashboard {
+	constructor(opts) {
+		Object.assign(this, opts);
 		this.make();
-	},
-	make: function() {
+	}
+
+	make() {
 		var me = this;
 		this.start = 0;
 		if(!this.sort_by) {
@@ -63,29 +64,29 @@ erpnext.stock.ItemDashboard = Class.extend({
 			me.refresh();
 		});
 
-	},
-	refresh: function() {
+	}
+
+	refresh() {
 		if(this.before_refresh) {
 			this.before_refresh();
 		}
 
-		var me = this;
-		frappe.call({
-			method: 'erpnext.stock.dashboard.item_dashboard.get_data',
-			args: {
+		frappe.xcall(
+			'erpnext.stock.dashboard.item_dashboard.get_data',
+			{
 				item_code: this.item_code,
 				warehouse: this.warehouse,
 				item_group: this.item_group,
 				start: this.start,
 				sort_by: this.sort_by,
-				sort_order: this.sort_order,
-			},
-			callback: function(r) {
-				me.render(r.message);
+				sort_order: this.sort_order
+			}).then((r) => {
+				this.render(r);
 			}
-		});
-	},
-	render: function(data) {
+		);
+	}
+
+	render(data) {
 		if(this.start===0) {
 			this.max_count = 0;
 			this.result.empty();
@@ -108,11 +109,12 @@ erpnext.stock.ItemDashboard = Class.extend({
 		if (context.data.length > 0) {
 			$(frappe.render_template('item_dashboard_list', context)).appendTo(this.result);
 		} else {
-			var message = __("Currently no stock available in any warehouse");
+			const message = __("Currently no stock available in any warehouse");
 			$(`<span class='text-muted small'>  ${message} </span>`).appendTo(this.result);
 		}
-	},
-	get_item_dashboard_data: function(data, max_count, show_item) {
+	}
+
+	get_item_dashboard_data(data, max_count, show_item) {
 		if(!max_count) max_count = 0;
 		if(!data) data = [];
 
@@ -140,7 +142,7 @@ erpnext.stock.ItemDashboard = Class.extend({
 			show_item: show_item || false
 		}
 	}
-})
+}
 
 erpnext.stock.move_item = function(item, source, target, actual_qty, rate, callback) {
 	var dialog = new frappe.ui.Dialog({
