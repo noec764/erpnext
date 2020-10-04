@@ -10,12 +10,19 @@
  "engine": "InnoDB",
  "field_order": [
   "rule_name",
-  "item",
-  "column_break_3",
   "rule_type",
-  "addition_trigger",
-  "deduction_trigger",
-  "section_break_7",
+  "column_break_3",
+  "applicable_for",
+  "applicable_for_document_type",
+  "triggers_section",
+  "trigger_document",
+  "column_break_8",
+  "trigger_action",
+  "document_start_field",
+  "document_end_field",
+  "expected_status",
+  "applicable_rules_section",
+  "custom_rules_section",
   "booking_credit_rules"
  ],
  "fields": [
@@ -26,14 +33,6 @@
    "label": "Rule Name",
    "reqd": 1,
    "unique": 1
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
   },
   {
    "fieldname": "column_break_3",
@@ -47,36 +46,81 @@
    "reqd": 1
   },
   {
-   "default": "Sales Order Submission",
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
-   "fieldname": "addition_trigger",
-   "fieldtype": "Select",
-   "label": "Addition Trigger",
-   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
-   "options": "Sales Order Submission\nSales Invoice Submission"
-  },
-  {
-   "default": "Confirmed Item Booking End",
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
-   "fieldname": "deduction_trigger",
-   "fieldtype": "Select",
-   "label": "Deduction Trigger",
-   "options": "Confirmed Item Booking End\nItem Booking Confirmation"
-  },
-  {
-   "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "booking_credit_rules",
    "fieldtype": "Table",
-   "label": "Booking Credit Rules",
+   "label": "Custom Rules",
    "options": "Booking Credit Rules"
+  },
+  {
+   "fieldname": "applicable_for",
+   "fieldtype": "Select",
+   "label": "Applicable Only For",
+   "options": "\nItem\nItem Group\nCustomer\nCustomer Group"
+  },
+  {
+   "fieldname": "triggers_section",
+   "fieldtype": "Section Break",
+   "label": "Triggers"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.applicable_for",
+   "fieldname": "applicable_for_document_type",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Document Type",
+   "mandatory_depends_on": "eval:doc.applicable_for",
+   "options": "applicable_for"
+  },
+  {
+   "default": "Sales Order Submission",
+   "fieldname": "trigger_document",
+   "fieldtype": "Link",
+   "label": "Trigger Document",
+   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "options": "DocType"
+  },
+  {
+   "default": "After Document Start",
+   "fieldname": "trigger_action",
+   "fieldtype": "Select",
+   "label": "Trigger Action",
+   "options": "On Submit\nIf Status Changes\nAfter Document Start\nAfter Document End"
+  },
+  {
+   "depends_on": "eval:doc.trigger_action==\"After Document Start\"",
+   "fieldname": "document_start_field",
+   "fieldtype": "Select",
+   "label": "Document Start Field"
+  },
+  {
+   "depends_on": "eval:doc.trigger_action==\"After Document End\"",
+   "fieldname": "document_end_field",
+   "fieldtype": "Select",
+   "label": "Document End Field"
+  },
+  {
+   "depends_on": "eval:doc.trigger_action==\"If Status Changes\"",
+   "fieldname": "expected_status",
+   "fieldtype": "Select",
+   "label": "Expected Status"
+  },
+  {
+   "fieldname": "applicable_rules_section",
+   "fieldtype": "Section Break",
+   "label": "Applicable Rules"
+  },
+  {
+   "fieldname": "custom_rules_section",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-09-29 13:50:05.821758",
+ "modified": "2020-10-01 22:05:54.225414",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

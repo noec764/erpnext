@@ -9,7 +9,7 @@ frappe.ui.form.on('Booking Credit', {
 		frm.trigger("add_balance");
 	},
 	add_balance(frm) {
-		if (!frm.is_new && frm.doc.customer) {
+		if (!frm.is_new() && frm.doc.customer) {
 			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
 				customer: frm.doc.customer,
 				date: frm.doc.date
