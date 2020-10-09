@@ -7,7 +7,6 @@ def execute():
 		frappe.db.set_value("Payment Entry", payment.name, "unreconciled_from_amount", payment.paid_amount if payment.payment_type in ("Pay", "Internal Transfer") else 0.0, update_modified=False)
 		frappe.db.set_value("Payment Entry", payment.name, "unreconciled_to_amount", payment.paid_amount if payment.payment_type in ("Receive", "Internal Transfer") else 0.0, update_modified=False)
 
-
 	frappe.reload_doc("accounts", "doctype", "bank_transaction")
 	bank_transactions = frappe.get_all("Bank Transaction", fields=["name", "bank_account"])
 	bank_accounts = [x.bank_account for x in bank_transactions]
