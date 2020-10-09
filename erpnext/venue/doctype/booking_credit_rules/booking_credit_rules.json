@@ -6,21 +6,18 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "condition",
-  "column_break_2",
-  "credit_qty",
-  "credit_uom"
+  "duration",
+  "duration_interval",
+  "from_duration",
+  "to_duration",
+  "column_break_3",
+  "credit_uom",
+  "column_break_4",
+  "credit_qty"
  ],
  "fields": [
   {
-   "fieldname": "condition",
-   "fieldtype": "Code",
-   "in_list_view": 1,
-   "label": "Condition",
-   "options": "Python",
-   "reqd": 1
-  },
-  {
+   "default": "1",
    "fieldname": "credit_qty",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -37,14 +34,49 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_2",
+   "fieldname": "column_break_3",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:!doc.duration_interval",
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Duration (Mins)",
+   "mandatory_depends_on": "eval:!doc.duration_interval"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.duration",
+   "fieldname": "duration_interval",
+   "fieldtype": "Check",
+   "label": "Use a duration interval"
+  },
+  {
+   "depends_on": "eval:doc.duration_interval",
+   "fieldname": "from_duration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "From duration (Mins)",
+   "mandatory_depends_on": "eval:doc.duration_interval"
+  },
+  {
+   "depends_on": "eval:doc.duration_interval",
+   "fieldname": "to_duration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "To duration (Mins)",
+   "mandatory_depends_on": "eval:doc.duration_interval"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-09-29 14:08:23.235274",
+ "modified": "2020-10-08 08:49:25.064849",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rules",

@@ -2,17 +2,19 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:{customer}-{YYYY}-{MM}-{#####}",
+ "autoname": "naming_series:",
  "beta": 1,
  "creation": "2020-09-29 11:20:52.061434",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
+  "user",
   "customer",
   "customer_name",
   "column_break_3",
-  "date",
+  "datetime",
   "section_break_4",
   "quantity",
   "column_break_6",
@@ -21,20 +23,12 @@
  ],
  "fields": [
   {
-   "default": "Today",
-   "fieldname": "date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Date",
-   "reqd": 1
-  },
-  {
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer",
-   "reqd": 1
+   "mandatory_depends_on": "eval:!doc.user",
+   "options": "Customer"
   },
   {
    "fieldname": "column_break_3",
@@ -46,7 +40,8 @@
   },
   {
    "fieldname": "quantity",
-   "fieldtype": "Int",
+   "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Quantity",
    "reqd": 1
   },
@@ -57,6 +52,7 @@
   {
    "fieldname": "uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Unit of Measure",
    "options": "UOM",
    "reqd": 1
@@ -76,12 +72,34 @@
    "fieldtype": "Data",
    "label": "Customer Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "default": "BOOK-CREDIT-USAGE-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "BOOK-CREDIT-USAGE-"
+  },
+  {
+   "default": "Today",
+   "fieldname": "datetime",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Datetime",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-09-29 12:19:40.306706",
+ "modified": "2020-10-07 17:45:38.159309",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",
@@ -112,9 +130,8 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "customer",
+ "title_field": "user",
  "track_changes": 1
 }

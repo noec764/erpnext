@@ -7,10 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "user",
   "customer",
   "customer_name",
   "credits",
-  "original_uom",
+  "uom",
   "column_break_4",
   "reference_doctype",
   "reference_document",
@@ -20,7 +21,7 @@
   {
    "default": "Today",
    "fieldname": "date",
-   "fieldtype": "Date",
+   "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Date",
    "reqd": 1
@@ -30,8 +31,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer",
-   "reqd": 1
+   "options": "Customer"
   },
   {
    "fieldname": "credits",
@@ -76,16 +76,22 @@
    "read_only": 1
   },
   {
-   "fieldname": "original_uom",
+   "fieldname": "user",
    "fieldtype": "Link",
-   "label": "Original Unit of Measure",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "Unit of Measure",
    "options": "UOM"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-09-29 12:19:51.995334",
+ "modified": "2020-10-07 17:02:57.374070",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Ledger",

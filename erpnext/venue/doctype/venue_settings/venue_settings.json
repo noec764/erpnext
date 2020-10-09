@@ -6,11 +6,14 @@
  "engine": "InnoDB",
  "field_order": [
   "item_booking_section",
-  "minute_uom",
   "clear_item_booking_draft_duration",
   "column_break_4",
   "enable_simultaneous_booking",
-  "sync_with_google_calendar"
+  "sync_with_google_calendar",
+  "units_of_measure_section",
+  "minute_uom",
+  "column_break_8",
+  "month_uom"
  ],
  "fields": [
   {
@@ -48,11 +51,26 @@
    "fieldname": "sync_with_google_calendar",
    "fieldtype": "Check",
    "label": "Automatically synchronize with Google Calendar"
+  },
+  {
+   "fieldname": "units_of_measure_section",
+   "fieldtype": "Section Break",
+   "label": "Units of Measure"
+  },
+  {
+   "fieldname": "month_uom",
+   "fieldtype": "Link",
+   "label": "Month UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2020-08-03 09:06:17.733657",
+ "modified": "2020-10-07 14:20:06.714590",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

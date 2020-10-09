@@ -214,6 +214,13 @@ standard_queries = {
 }
 
 doc_events = {
+	"*": {
+		"after_insert": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_update": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_submit": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_cancel": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_trash": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
@@ -234,21 +241,11 @@ doc_events = {
 	"Sales Invoice": {
 		"on_submit": [
 			"erpnext.regional.italy.utils.sales_invoice_on_submit",
-			"erpnext.erpnext_integrations.taxjar_integration.create_transaction",
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+			"erpnext.erpnext_integrations.taxjar_integration.create_transaction"
 		],
 		"on_cancel": [
 			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
-			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction",
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
-		]
-	},
-	"Sales Order": {
-		"on_submit": [
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
-		],
-		"on_cancel": [
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
 		]
 	},
 	"Purchase Invoice": {
@@ -281,8 +278,7 @@ doc_events = {
 	"Item Booking": {
 		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
 		"on_update": [
-			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules"
+			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar"
 		],
 		"on_cancel": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
 		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar"
@@ -315,7 +311,8 @@ scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
 		"erpnext.venue.doctype.item_booking.item_booking.clear_draft_bookings",
-		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts"
+		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts",
+		"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_after_specific_time"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
@@ -362,7 +359,8 @@ scheduler_events = {
 		"erpnext.loan_management.doctype.loan_security_shortfall.loan_security_shortfall.create_process_loan_security_shortfall",
 		"erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
 		"erpnext.hr.utils.allocate_earned_leaves",
-		"erpnext.crm.doctype.lead.lead.daily_open_lead"
+		"erpnext.crm.doctype.lead.lead.daily_open_lead",
+		"erpnext.venue.doctype.booking_credit.booking_credit.process_expired_booking_credits"
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.process_deferred_accounting",

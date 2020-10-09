@@ -11,17 +11,34 @@
  "field_order": [
   "rule_name",
   "rule_type",
+  "disabled",
   "column_break_3",
   "applicable_for",
   "applicable_for_document_type",
   "triggers_section",
   "trigger_document",
+  "use_child_table",
+  "child_table",
   "column_break_8",
   "trigger_action",
-  "document_start_field",
-  "document_end_field",
   "expected_status",
-  "applicable_rules_section",
+  "fields_map",
+  "start_time_field",
+  "customer_field",
+  "uom_field",
+  "date_field",
+  "column_break_14",
+  "end_time_field",
+  "user_field",
+  "item_field",
+  "qty_field",
+  "applicable_deduction_rules_section",
+  "round_up",
+  "round_down",
+  "column_break_23",
+  "deduct_real_usage",
+  "fifo_deduction",
+  "custom_deduction_rule",
   "custom_rules_section",
   "booking_credit_rules"
  ],
@@ -35,10 +52,7 @@
    "unique": 1
   },
   {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
+   "default": "Booking Credits Deduction",
    "fieldname": "rule_type",
    "fieldtype": "Select",
    "label": "Rule Type",
@@ -46,10 +60,8 @@
    "reqd": 1
   },
   {
-   "fieldname": "booking_credit_rules",
-   "fieldtype": "Table",
-   "label": "Custom Rules",
-   "options": "Booking Credit Rules"
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "applicable_for",
@@ -58,25 +70,20 @@
    "options": "\nItem\nItem Group\nCustomer\nCustomer Group"
   },
   {
+   "depends_on": "eval:doc.applicable_for",
+   "fieldname": "applicable_for_document_type",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Document",
+   "mandatory_depends_on": "eval:doc.applicable_for",
+   "options": "applicable_for"
+  },
+  {
    "fieldname": "triggers_section",
    "fieldtype": "Section Break",
    "label": "Triggers"
   },
   {
-   "fieldname": "column_break_8",
-   "fieldtype": "Column Break"
-  },
-  {
-   "depends_on": "eval:doc.applicable_for",
-   "fieldname": "applicable_for_document_type",
-   "fieldtype": "Dynamic Link",
-   "in_list_view": 1,
-   "label": "Document Type",
-   "mandatory_depends_on": "eval:doc.applicable_for",
-   "options": "applicable_for"
-  },
-  {
-   "default": "Sales Order Submission",
    "fieldname": "trigger_document",
    "fieldtype": "Link",
    "label": "Trigger Document",
@@ -84,23 +91,15 @@
    "options": "DocType"
   },
   {
-   "default": "After Document Start",
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "After Document Start Datetime",
    "fieldname": "trigger_action",
    "fieldtype": "Select",
    "label": "Trigger Action",
-   "options": "On Submit\nIf Status Changes\nAfter Document Start\nAfter Document End"
-  },
-  {
-   "depends_on": "eval:doc.trigger_action==\"After Document Start\"",
-   "fieldname": "document_start_field",
-   "fieldtype": "Select",
-   "label": "Document Start Field"
-  },
-  {
-   "depends_on": "eval:doc.trigger_action==\"After Document End\"",
-   "fieldname": "document_end_field",
-   "fieldtype": "Select",
-   "label": "Document End Field"
+   "options": "After Insert\nOn Submit\nOn Cancel\nOn Delete\nIf Status Changes\nAfter Document Start Datetime\nAfter Document End Datetime"
   },
   {
    "depends_on": "eval:doc.trigger_action==\"If Status Changes\"",
@@ -109,18 +108,137 @@
    "label": "Expected Status"
   },
   {
-   "fieldname": "applicable_rules_section",
+   "depends_on": "eval:doc.custom_deduction_rule&&doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "custom_rules_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "booking_credit_rules",
+   "fieldtype": "Table",
+   "label": "Rules",
+   "options": "Booking Credit Rules"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "start_time_field",
+   "fieldtype": "Select",
+   "label": "Start Time Field",
+   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "end_time_field",
+   "fieldtype": "Select",
+   "label": "End Time Field",
+   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "applicable_deduction_rules_section",
    "fieldtype": "Section Break",
    "label": "Applicable Rules"
   },
   {
-   "fieldname": "custom_rules_section",
-   "fieldtype": "Section Break"
+   "fieldname": "customer_field",
+   "fieldtype": "Select",
+   "label": "Customer Field"
+  },
+  {
+   "fieldname": "user_field",
+   "fieldtype": "Select",
+   "label": "User Field"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:!(doc.start_time_field && doc.end_time_field)",
+   "fieldname": "fields_map",
+   "fieldtype": "Section Break",
+   "label": "Fields Mapping"
+  },
+  {
+   "fieldname": "uom_field",
+   "fieldtype": "Select",
+   "label": "Unit of Measure Field"
+  },
+  {
+   "fieldname": "item_field",
+   "fieldtype": "Select",
+   "label": "Item Field"
+  },
+  {
+   "default": "0",
+   "fieldname": "round_up",
+   "fieldtype": "Check",
+   "label": "Round the usage quantity up"
+  },
+  {
+   "default": "0",
+   "fieldname": "round_down",
+   "fieldtype": "Check",
+   "label": "Round the usage quantity down"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "fifo_deduction",
+   "fieldtype": "Check",
+   "label": "Deduct credits following a FIFO rule"
+  },
+  {
+   "default": "1",
+   "fieldname": "deduct_real_usage",
+   "fieldtype": "Check",
+   "label": "Deduct credits from the unit of measure closest from the real consumption",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "custom_deduction_rule",
+   "fieldtype": "Check",
+   "label": "Custom deduction rule"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "use_child_table",
+   "fieldtype": "Check",
+   "label": "Use a child table for item, unit of measure and quantity"
+  },
+  {
+   "depends_on": "eval:doc.use_child_table",
+   "fieldname": "child_table",
+   "fieldtype": "Select",
+   "label": "Child Table"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "date_field",
+   "fieldtype": "Select",
+   "label": "Date Field"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "qty_field",
+   "fieldtype": "Select",
+   "label": "Quantity Field"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-01 22:05:54.225414",
+ "modified": "2020-10-08 12:44:12.843668",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

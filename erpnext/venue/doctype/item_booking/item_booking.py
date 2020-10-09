@@ -55,6 +55,21 @@ class ItemBooking(Document):
 	def set_status(self, status):
 		self.db_set("status", status)
 
+	def on_update(self):
+		doc_before_save = self.get_doc_before_save()
+		if doc_before_save:
+			for field in ("status", "starts_on", "ends_on", "party_name"):
+				if doc_before_save.get(field) != self.get(field):
+					self.delete_linked_credit_usage()
+
+	def delete_linked_credit_usage(self):
+		for doc in frappe.get_all("Booking Credit Usage Reference",
+			filters={
+				"reference_doctype": "Item Booking",
+				"reference_document": self.name
+			}, fields=["booking_credit_usage"], pluck="booking_credit_usage"):
+			frappe.delete_doc("Booking Credit Usage", doc)
+
 def get_list_context(context=None):
 	context.update({
 		"show_sidebar": True,
@@ -503,7 +518,7 @@ def get_unavailable_dict(event):
 	}
 
 @frappe.whitelist(allow_guest=True)
-def get_item_calendar(item, uom=None):
+def get_item_calendar(item=None, uom=None):
 	if not uom:
 		uom = frappe.get_cached_value("Item", item, "sales_uom")
 

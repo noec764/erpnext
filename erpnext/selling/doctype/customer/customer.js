@@ -140,9 +140,29 @@ frappe.ui.form.on("Customer", {
 		var grid = cur_frm.get_field("sales_team").grid;
 		grid.set_column_disp("allocated_amount", false);
 		grid.set_column_disp("incentives", false);
+
+		frm.trigger("booking_credits_dashboard");
 	},
 	validate: function(frm) {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
 
 	},
+	booking_credits_dashboard: function(frm) {
+		if (frappe.boot.active_domains.includes("Venue") && !frm.is_new()) {
+			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
+				customer: frm.doc.name
+			}).then(r => {
+				const credits = r.map(d => { return d.balance });
+				const max_count = Math.max.apply(null, credits);
+				frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
+				{
+					balance: r,
+					customer: frm.doc.name,
+					date: frappe.datetime.now_date(),
+					max_count: max_count
+				}), __("Customer Balance"));
+				frm.dashboard.show();
+			})
+		}
+	}
 });

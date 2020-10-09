@@ -11,16 +11,18 @@ from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import cr
 class BookingCreditUsage(Document):
 	def on_submit(self):
 		create_ledger_entry(**{
+			"user": self.user,
 			"customer": self.customer,
-			"date": self.date,
-			"credits": self.get_credits() * -1,
+			"date": self.datetime,
+			"credits": self.quantity * -1,
 			"reference_doctype": self.doctype,
 			"reference_document": self.name,
-			"original_uom": self.uom
+			"uom": self.uom
 		})
 
 	def on_cancel(self):
 		frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name)).cancel()
 
-	def get_credits(self):
-		return get_uom_in_minutes(self.uom) * self.quantity
+	def on_trash(self):
+		for doc in frappe.get_all("Booking Credit Usage Reference", filters={"booking_credit_usage": self.name}, fields=["name"], pluck="name"):
+			frappe.delete_doc("Booking Credit Usage Reference", doc)

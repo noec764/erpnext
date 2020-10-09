@@ -1,0 +1,58 @@
+<div class="booking-credit-dashboard">
+	<h6 style="margin-bottom: 25px;">{{ __("Balance for {0} on {1}", [customer, frappe.datetime.global_date_format(date)]) }}</h6>
+	{% for d in balance %}
+	<div class="row">
+		<div class="col-xs-4">
+			<a class="small time-sheet-link" data-uom="{{ d.uom || "" }}">
+				{{ d.uom || "" }}</a>
+		</div>
+		<div class="col-xs-8">
+			<span class="inline-graph">
+				<span class="inline-graph-half">
+					{% if flt(d.balance) <= 0 %}
+						<span class="inline-graph-count">
+							{{ __("{0} {1}", [flt(d.balance, 2), d.uom]) }}
+						</span>
+						<span class="inline-graph-bar">
+							<span class="inline-graph-bar-inner warn"
+								style="width: {{ Math.min(Math.abs(cint(d.balance/max_count * 100)), 100) }}%">
+							</span>
+						</span>
+					{% endif %}
+				</span>
+				<span class="inline-graph-half" title="{{ __("Credits") }}">
+					{% if flt(d.balance) > 0 %}
+						<span class="inline-graph-count">
+							{{ __("{0} {1}", [flt(d.balance, 2), d.uom]) }}
+						</span>
+						<span class="inline-graph-bar">
+							<span class="inline-graph-bar-inner dark"
+								style="width: {{ cint(d.balance/max_count * 100) }}%">
+							</span>
+						</span>
+					{% endif %}
+				</span>
+			</span>
+		</div>
+	</div>
+	{% endfor %}
+
+	{% if !Object.keys(balance).length %}
+	<div class="col-xs-8">
+		<span class="inline-graph">
+			<span class="inline-graph-half">
+			</span>
+			<span class="inline-graph-half" title="{{ __("Credits") }}">
+				<span class="inline-graph-count">
+					{{ __("{0} {1}", [flt(0, 2), __("Credits")]) }}
+				</span>
+				<span class="inline-graph-bar">
+					<span class="inline-graph-bar-inner"
+						style="width: 100%">
+					</span>
+				</span>
+			</span>
+		</span>
+	</div>
+	{% endif %}
+</div>
