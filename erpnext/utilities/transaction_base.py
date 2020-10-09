@@ -172,7 +172,7 @@ class TransactionBase(StatusUpdater):
 				"document_type": self.doctype,
 				"document_name": self.name
 			})
-			start = getattr(self, "from_date", None) or subscription.current_invoice_start
+			start = getattr(self, "from_date", None) or subscription.current_invoice_start or subscription.start
 			end = getattr(self, "to_date", None) or subscription.current_invoice_end
 
 			if not subscription.generate_invoice_at_period_start:

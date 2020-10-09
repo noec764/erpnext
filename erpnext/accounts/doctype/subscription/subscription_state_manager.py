@@ -4,7 +4,7 @@ from frappe.utils.data import nowdate, getdate, add_days, get_last_day, add_to_d
 class SubscriptionPeriod:
 	def __init__(self, subscription, start=None, end=None):
 		self.subscription = subscription
-		self.start = start or self.subscription.current_invoice_start
+		self.start = start or self.subscription.current_invoice_start or self.subscription.start
 		self.end = end or self.subscription.current_invoice_end
 
 	def validate(self):
