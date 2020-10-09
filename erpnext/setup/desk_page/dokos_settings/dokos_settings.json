@@ -1,5 +1,11 @@
 {
- "cards": [],
+ "cards": [
+  {
+   "hidden": 0,
+   "label": "Email / Notifications",
+   "links": "[\n    {\n        \"description\": \"Email Digest\",\n        \"label\": \"Email Digest\",\n        \"name\": \"Email Digest\",\n        \"type\": \"doctype\"\n    }\n]"
+  }
+ ],
  "category": "Modules",
  "charts": [],
  "creation": "2020-03-12 14:47:51.166455",
@@ -13,7 +19,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Dokos Settings",
- "modified": "2020-09-18 15:37:20.247142",
+ "modified": "2020-10-09 17:27:55.294751",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
