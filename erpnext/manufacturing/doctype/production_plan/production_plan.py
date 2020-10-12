@@ -107,7 +107,8 @@ class ProductionPlan(Document):
 		# Check for empty table or empty rows
 		if not self.get("sales_orders") or not self.get_so_mr_list("sales_order", "sales_orders"):
 			frappe.throw(_("Please fill the Sales Orders table"), title=_("Sales Orders Required"))
-			so_list = self.get_so_mr_list("sales_order", "sales_orders")
+
+		so_list = self.get_so_mr_list("sales_order", "sales_orders")
 
 		item_condition = ""
 		if self.item_code:
