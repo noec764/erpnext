@@ -102,7 +102,7 @@ class EventsCalendar {
 			],
 			showNonCurrentDates: false,
 			locale: frappe.boot.lang || 'en',
-			timeZone: 'UTC',
+			timeZone: frappe.boot.timeZone || 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			noEventsContent: __("No events to display"),
 			events: function(info, callback) {
@@ -120,7 +120,8 @@ class EventsCalendar {
 			datesSet: function(event) {
 				return me.datesSet(event);
 			},
-			displayEventTime: this.get_time_display()
+			displayEventTime: this.get_time_display(),
+			height: "auto"
 		}
 	}
 
@@ -178,13 +179,6 @@ class EventsCalendar {
 		if (event.view.activeStart && this.parent.calendar_type !== "Monthly") {
 			this.fullCalendar.gotoDate(event.view.activeStart)
 		}
-	}
-
-	getTimeZone() {
-		frappe.call("frappe.core.doctype.system_settings.system_settings.get_timezone")
-		.then(r => {
-			this.fullCalendar.setOption("timeZone", r.message);
-		})
 	}
 
 	getSelectAllow(selectInfo) {
