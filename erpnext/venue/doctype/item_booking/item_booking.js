@@ -109,12 +109,12 @@ frappe.ui.form.on('Item Booking', {
 			new frappe.CalendarRecurrence({frm: frm, show: true});
 		}
 	},
-	add_to_quotation(frm){
+	add_to_quotation(frm) {
 		frm.page.add_action_item(__("Add to an existing quotation"), () => {
 			add_to_transaction(frm, "Quotation")
 		})
 	},
-	add_to_sales_order(frm){
+	add_to_sales_order(frm) {
 		frm.page.add_action_item(__("Add to an existing sales order"), () => {
 			add_to_transaction(frm, "Sales Order")
 		})

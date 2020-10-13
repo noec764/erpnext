@@ -230,6 +230,10 @@ frappe.ui.form.on("Item", {
 
 	enable_item_booking(frm) {
 		frm.trigger("toggle_simultaneous_bookings")
+		if (frm.doc.enable_item_booking) {
+			frm.set_value("is_stock_item", 0);
+			frm.set_value("include_item_in_manufacturing", 0);
+		}
 	},
 
 	toggle_simultaneous_bookings(frm) {
