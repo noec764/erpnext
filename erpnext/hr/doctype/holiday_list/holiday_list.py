@@ -32,7 +32,7 @@ class HolidayList(Document):
 
 
 	def validate_days(self):
-		if self.from_date > self.to_date:
+		if getdate(self.from_date) > getdate(self.to_date):
 			throw(_("To Date cannot be before From Date"))
 
 		for day in self.get("holidays"):
