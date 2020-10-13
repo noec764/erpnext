@@ -121,7 +121,7 @@
    "link_fieldname": "event_slot"
   }
  ],
- "modified": "2020-09-24 13:57:15.727827",
+ "modified": "2020-10-13 16:57:10.377564",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Slot",
@@ -161,7 +161,6 @@
    "share": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "slot_title",

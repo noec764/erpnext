@@ -2,6 +2,11 @@
 // License: See license.txt
 
 frappe.ui.form.on('Event', {
+	setup(frm) {
+		frm.custom_make_buttons = {
+			'Item Booking': 'Book an item'
+		}
+	},
 	refresh(frm) {
 		if (!frm.is_new()) {
 			frm.add_custom_button(__('Book an item'), function () {
