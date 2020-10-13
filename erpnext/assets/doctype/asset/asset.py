@@ -402,14 +402,18 @@ class Asset(AccountsController):
 			return 100 * (1 - flt(depreciation_rate, float_precision))
 
 def update_maintenance_status():
-	assets = frappe.get_all('Asset', filters = {'docstatus': 1, 'maintenance_required': 1})
+	assets = frappe.get_all(
+		"Asset", filters={"docstatus": 1, "maintenance_required": 1}
+	)
 
 	for asset in assets:
 		asset = frappe.get_doc("Asset", asset.name)
-		if frappe.db.exists('Asset Maintenance Task', {'parent': asset.name, 'next_due_date': today()}):
-			asset.set_status('In Maintenance')
-		if frappe.db.exists('Asset Repair', {'asset_name': asset.name, 'repair_status': 'Pending'}):
-			asset.set_status('Out of Order')
+		if frappe.db.exists("Asset Repair", {"asset_name": asset.name, "repair_status": "Pending"}):
+			asset.set_status("Out of Order")
+		elif frappe.db.exists("Asset Maintenance Task", {"parent": asset.name, "next_due_date": today()}):
+			asset.set_status("In Maintenance")
+		else:
+			asset.set_status()
 
 def make_post_gl_entry():
 
