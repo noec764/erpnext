@@ -20,6 +20,7 @@
   "is_down_payment_invoice",
   "column_break1",
   "company",
+  "company_tax_id",
   "posting_date",
   "posting_time",
   "set_posting_time",
@@ -1639,6 +1640,13 @@
    "label": "Down Payment Against",
    "options": "Sales Invoice",
    "read_only": 1
+  },
+  {
+    "fetch_from": "company.tax_id",
+    "fieldname": "company_tax_id",
+    "fieldtype": "Data",
+    "label": "Company Tax ID",
+    "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
