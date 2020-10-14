@@ -250,8 +250,6 @@ def get_conditions(filters):
 
 	filters["total_days_in_month"] = monthrange(cint(filters.year), cint(filters.month))[1]
 
-	filters["total_days_in_month"] = monthrange(cint(filters.year), filters.month)[1]
-
 	conditions = " and month(attendance_date) = %(month)s and year(attendance_date) = %(year)s"
 
 	if filters.get("company"): conditions += " and company = %(company)s"
