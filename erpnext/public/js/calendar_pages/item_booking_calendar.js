@@ -126,7 +126,6 @@ class ItemCalendar {
 			end: moment(parameters.end).format("YYYY-MM-DD")
 		}).then(result => {
 			this.slots = result.message || []
-			console.log(this.slots)
 
 			callback(this.slots);
 		})
