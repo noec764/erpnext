@@ -77,7 +77,7 @@ class LeaveAllocation(Document):
 				employee=%s AND leave_type=%s
 				AND name <> %s AND docstatus=1
 				AND to_date >= %s AND from_date <= %s""",
-			(self.employee, self.leave_type, self.name, self.from_date, self.to_date))
+			(frappe.db.escape(self.employee), frappe.db.escape(self.leave_type), self.name, self.from_date, self.to_date))
 
 		if leave_allocation:
 			frappe.msgprint(_("{0} already allocated for Employee {1} for period {2} to {3}")
@@ -89,7 +89,7 @@ class LeaveAllocation(Document):
 	def validate_back_dated_allocation(self):
 		future_allocation = frappe.db.sql("""select name, from_date from `tabLeave Allocation`
 			where employee=%s and leave_type=%s and docstatus=1 and from_date > %s
-			and carry_forward=1""", (self.employee, self.leave_type, self.to_date), as_dict=1)
+			and carry_forward=1""", (frappe.db.escape(self.employee), frappe.db.escape(self.leave_type), self.to_date), as_dict=1)
 
 		if future_allocation:
 			frappe.throw(_("Leave cannot be allocated before {0}, as leave balance has already been carry-forwarded in the future leave allocation record {1}")
@@ -179,8 +179,8 @@ def get_leave_allocation_for_period(employee, leave_type, from_date, to_date):
 	""", {
 		"from_date": from_date,
 		"to_date": to_date,
-		"employee": employee,
-		"leave_type": leave_type
+		"employee": frappe.db.escape(employee),
+		"leave_type": frappe.db.escape(leave_type)
 	}, as_dict=1)
 
 	if leave_allocations:

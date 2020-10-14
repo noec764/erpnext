@@ -105,7 +105,7 @@ class LeaveApplication(Document):
 		def _get_leave_allocation_record(date):
 			allocation = frappe.db.sql("""select name from `tabLeave Allocation`
 				where employee=%s and leave_type=%s and docstatus=1
-				and %s between from_date and to_date""", (self.employee, self.leave_type, date))
+				and %s between from_date and to_date""", (frappe.db.escape(self.employee), frappe.db.escape(self.leave_type), date))
 
 			return allocation and allocation[0][0]
 
@@ -121,7 +121,7 @@ class LeaveApplication(Document):
 	def validate_back_dated_application(self):
 		future_allocation = frappe.db.sql("""select name, from_date from `tabLeave Allocation`
 			where employee=%s and leave_type=%s and docstatus=1 and from_date > %s
-			and carry_forward=1""", (self.employee, self.leave_type, self.to_date), as_dict=1)
+			and carry_forward=1""", (frappe.db.escape(self.employee), frappe.db.escape(self.leave_type), self.to_date), as_dict=1)
 
 		if future_allocation:
 			frappe.throw(_("Leave cannot be applied/cancelled before {0}, as leave balance has already been carry-forwarded in the future leave allocation record {1}")
@@ -504,7 +504,7 @@ def get_leave_balance_on(employee, leave_type, date, to_date=None, consider_all_
 def get_leave_allocation_records(employee, date, leave_type=None):
 	''' returns the total allocated leaves and carry forwarded leaves based on ledger entries '''
 
-	conditions = ("and leave_type='%s'" % leave_type) if leave_type else ""
+	conditions = ("and leave_type='%s'" % frappe.db.escape(leave_type)) if leave_type else ""
 	allocation_details = frappe.db.sql("""
 		SELECT
 			SUM(CASE WHEN is_carry_forward = 1 THEN leaves ELSE 0 END) as cf_leaves,
@@ -523,7 +523,7 @@ def get_leave_allocation_records(employee, date, leave_type=None):
 			AND is_lwp=0
 			{0}
 		GROUP BY employee, leave_type
-	""".format(conditions), dict(date=date, employee=employee), as_dict=1) #nosec
+	""".format(conditions), dict(date=date, employee=frappe.db.escape(employee)), as_dict=1) #nosec
 
 	allocated_leaves = frappe._dict()
 	for d in allocation_details:
@@ -627,8 +627,8 @@ def get_leave_entries(employee, leave_type, from_date, to_date):
 	""", {
 		"from_date": from_date,
 		"to_date": to_date,
-		"employee": employee,
-		"leave_type": leave_type
+		"employee": frappe.db.escape(employee),
+		"leave_type": frappe.db.escape(leave_type)
 	}, as_dict=1)
 
 @frappe.whitelist()
@@ -782,8 +782,8 @@ def get_approved_leaves_for_period(employee, leave_type, from_date, to_date):
 	leave_applications = frappe.db.sql(query,{
 		"from_date": from_date,
 		"to_date": to_date,
-		"employee": employee,
-		"leave_type": leave_type
+		"employee": frappe.db.escape(employee),
+		"leave_type": frappe.db.escape(leave_type)
 	}, as_dict=1)
 
 	leave_days = 0

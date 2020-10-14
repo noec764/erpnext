@@ -94,8 +94,8 @@ class CompensatoryLeaveRequest(Document):
 		""", {
 			"from_date": leave_period[0].from_date,
 			"to_date": leave_period[0].to_date,
-			"employee": self.employee,
-			"leave_type": self.leave_type
+			"employee": frappe.db.escape(self.employee),
+			"leave_type": frappe.db.escape(self.leave_type)
 		}, as_dict=1)
 
 		if leave_allocation:
