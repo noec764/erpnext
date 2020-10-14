@@ -13,14 +13,14 @@
  "documentation_url": "https://doc.dokos.io/dokos/accounting/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-06-19 09:13:24.117177",
+ "modified": "2020-08-19 09:13:24.117177",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts",
  "owner": "Administrator",
  "steps": [
   {
-   "step": "Chart Of Accounts"
+   "step": "Chart of Accounts"
   },
   {
    "step": "Setup Taxes"
