@@ -54,7 +54,7 @@ class SubscriptionTransactionBase:
 				billing_address=document.customer_address,
 				shipping_address=document.shipping_address_name
 			)
-		document.append_taxes_from_master()
+		#document.append_taxes_from_master()
 
 		self.add_due_date(document)
 
