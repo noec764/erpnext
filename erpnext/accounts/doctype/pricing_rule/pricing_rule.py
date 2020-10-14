@@ -268,7 +268,7 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 						if pricing_rule.apply_rule_on_other else frappe.scrub(pricing_rule.get('apply_on')))
 				})
 
-			if pricing_rule.coupon_code_based==1 and args.coupon_code==None:
+			if pricing_rule.coupon_code_based==1 and frappe.db.get_value("Coupon Code", doc.get("coupon_code"), "pricing_rule") != pricing_rule.name:
 				return item_details
 
 			if not pricing_rule.validate_applied_rule:

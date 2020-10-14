@@ -437,7 +437,7 @@ def apply_pricing_rule_on_transaction(doc):
 	conditions = get_other_conditions(conditions, values, doc)
 
 	pricing_rules = frappe.db.sql(""" Select `tabPricing Rule`.* from `tabPricing Rule`
-		where  {conditions} and `tabPricing Rule`.disable = 0
+		where {conditions} and `tabPricing Rule`.disable = 0
 	""".format(conditions = conditions), values, as_dict=1)
 
 	if pricing_rules:
@@ -445,6 +445,9 @@ def apply_pricing_rule_on_transaction(doc):
 			doc.total, pricing_rules)
 
 		for d in pricing_rules:
+			if d.coupon_code_based==1 and frappe.db.get_value("Coupon Code", doc.coupon_code, "pricing_rule") != d.name:
+				continue
+
 			if d.price_or_product_discount == 'Price':
 				if d.apply_discount_on:
 					doc.set('apply_discount_on', d.apply_discount_on)
