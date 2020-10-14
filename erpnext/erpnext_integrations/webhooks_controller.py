@@ -68,12 +68,11 @@ class WebhooksController():
 			reference = self.integration_request.get("service_id")
 
 		if not frappe.db.exists("Payment Entry", dict(reference_no=reference, docstatus=("!=", 2))):
-			if self.payment_request:
+			if self.payment_request and not self.subscription:
 				payment_entry = self.payment_request.run_method("create_payment_entry", submit=False)
 				payment_entry.reference_no = reference
 				payment_entry.payment_request = self.payment_request.name
 				payment_entry.insert(ignore_permissions=True)
-				self.add_subscription_references(payment_entry)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
@@ -172,7 +171,10 @@ class WebhooksController():
 
 		if frappe.db.exists("Payment Entry", dict(reference_no=reference)):
 			payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=reference))
-			payment_entry.cancel()
+			if payment_entry.docstatus == 1
+				payment_entry.cancel()
+			elif payment_entry.docstatus == 0:
+				payment_entry.delete()
 			self.set_references(payment_entry.doctype, payment_entry.name)
 			self.set_as_completed()
 		else:
