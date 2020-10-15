@@ -23,16 +23,16 @@ class LeaveLedgerEntry(Document):
 
 def validate_leave_allocation_against_leave_application(ledger):
 	''' Checks that leave allocation has no leave application against it '''
-	leave_application_records = frappe.db.sql_list("""
+	leave_application_records = frappe.db.sql_list(f"""
 		SELECT transaction_name
 		FROM `tabLeave Ledger Entry`
 		WHERE
-			employee=%s
-			AND leave_type=%s
+			employee={frappe.db.escape(ledger.employee)}
+			AND leave_type={frappe.db.escape(ledger.leave_type)}
 			AND transaction_type='Leave Application'
-			AND from_date>=%s
-			AND to_date<=%s
-	""", (ledger.employee, ledger.leave_type, ledger.from_date, ledger.to_date))
+			AND from_date>={ledger.from_date}
+			AND to_date<={ledger.to_date}
+	""")
 
 	if leave_application_records:
 		frappe.throw(_("Leave allocation %s is linked with leave application %s"

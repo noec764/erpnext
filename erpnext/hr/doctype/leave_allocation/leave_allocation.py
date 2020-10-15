@@ -69,15 +69,14 @@ class LeaveAllocation(Document):
 			frappe.throw(_("Leaves must be allocated in multiples of 0.5"), ValueMultiplierError)
 
 	def validate_allocation_overlap(self):
-		leave_allocation = frappe.db.sql("""
+		leave_allocation = frappe.db.sql(f"""
 			SELECT
 				name
 			FROM `tabLeave Allocation`
 			WHERE
-				employee=%s AND leave_type=%s
-				AND name <> %s AND docstatus=1
-				AND to_date >= %s AND from_date <= %s""",
-			(self.employee, self.leave_type, self.name, self.from_date, self.to_date))
+				employee={frappe.db.escape(self.employee)} AND leave_type={frappe.db.escape(self.leave_type)}
+				AND name <> '{self.name}' AND docstatus=1
+				AND to_date >= {self.from_date} AND from_date <= {self.to_date}""")
 
 		if leave_allocation:
 			frappe.msgprint(_("{0} already allocated for Employee {1} for period {2} to {3}")
@@ -87,9 +86,9 @@ class LeaveAllocation(Document):
 				.format(leave_allocation[0][0]), OverlapError)
 
 	def validate_back_dated_allocation(self):
-		future_allocation = frappe.db.sql("""select name, from_date from `tabLeave Allocation`
-			where employee=%s and leave_type=%s and docstatus=1 and from_date > %s
-			and carry_forward=1""", (self.employee, self.leave_type, self.to_date), as_dict=1)
+		future_allocation = frappe.db.sql(f"""select name, from_date from `tabLeave Allocation`
+			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)} and docstatus=1 and from_date > {self.to_date}
+			and carry_forward=1""", as_dict=1)
 
 		if future_allocation:
 			frappe.throw(_("Leave cannot be allocated before {0}, as leave balance has already been carry-forwarded in the future leave allocation record {1}")
@@ -168,20 +167,15 @@ def get_previous_allocation(from_date, leave_type, employee):
 
 def get_leave_allocation_for_period(employee, leave_type, from_date, to_date):
 	leave_allocated = 0
-	leave_allocations = frappe.db.sql("""
+	leave_allocations = frappe.db.sql(f"""
 		select employee, leave_type, from_date, to_date, total_leaves_allocated
 		from `tabLeave Allocation`
-		where employee=%(employee)s and leave_type=%(leave_type)s
+		where employee={frappe.db.escape(employee)} and leave_type={frappe.db.escape(leave_type)}
 			and docstatus=1
-			and (from_date between %(from_date)s and %(to_date)s
-				or to_date between %(from_date)s and %(to_date)s
-				or (from_date < %(from_date)s and to_date > %(to_date)s))
-	""", {
-		"from_date": from_date,
-		"to_date": to_date,
-		"employee": employee,
-		"leave_type": leave_type
-	}, as_dict=1)
+			and (from_date between {from_date} and {to_date}
+				or to_date between {from_date} and {to_date}
+				or (from_date < {from_date} and to_date > {to_date}))
+	""", as_dict=1)
 
 	if leave_allocations:
 		for leave_alloc in leave_allocations:

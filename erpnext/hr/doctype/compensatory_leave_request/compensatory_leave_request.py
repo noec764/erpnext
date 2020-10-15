@@ -83,20 +83,15 @@ class CompensatoryLeaveRequest(Document):
 				create_additional_leave_ledger_entry(leave_allocation, date_difference * -1, add_days(self.work_end_date, 1))
 
 	def get_existing_allocation_for_period(self, leave_period):
-		leave_allocation = frappe.db.sql("""
+		leave_allocation = frappe.db.sql(f"""
 			select name
 			from `tabLeave Allocation`
-			where employee=%(employee)s and leave_type=%(leave_type)s
+			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)}
 				and docstatus=1
-				and (from_date between %(from_date)s and %(to_date)s
-					or to_date between %(from_date)s and %(to_date)s
-					or (from_date < %(from_date)s and to_date > %(to_date)s))
-		""", {
-			"from_date": leave_period[0].from_date,
-			"to_date": leave_period[0].to_date,
-			"employee": self.employee,
-			"leave_type": self.leave_type
-		}, as_dict=1)
+				and (from_date between {leave_period[0].from_date} and {leave_period[0].to_date}
+					or to_date between {leave_period[0].from_date} and {leave_period[0].to_date}
+					or (from_date < {leave_period[0].from_date} and to_date > {leave_period[0].to_date}))
+		""", as_dict=1)
 
 		if leave_allocation:
 			return frappe.get_doc("Leave Allocation", leave_allocation[0].name)
