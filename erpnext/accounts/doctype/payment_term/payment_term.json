@@ -29,6 +29,7 @@
   },
   {
    "bold": 1,
+   "description": "Provide the invoice portion in percent",
    "fieldname": "invoice_portion",
    "fieldtype": "Float",
    "label": "Invoice Portion"
@@ -52,6 +53,7 @@
   },
   {
    "bold": 1,
+   "description": "Give number of days according to prior selection",
    "depends_on": "eval:in_list(['Day(s) after invoice date', 'Day(s) after the end of the invoice month'], doc.due_date_based_on)",
    "fieldname": "credit_days",
    "fieldtype": "Int",
@@ -76,7 +78,7 @@
   }
  ],
  "links": [],
- "modified": "2020-03-10 22:01:27.499614",
+ "modified": "2020-10-10 22:01:27.499614",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Term",
