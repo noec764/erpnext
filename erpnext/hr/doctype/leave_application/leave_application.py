@@ -621,9 +621,9 @@ def get_leave_entries(employee, leave_type, from_date, to_date):
 			AND docstatus=1
 			AND (leaves<0
 				OR is_expired=1)
-			AND (from_date between {from_date} AND {to_date}
-				OR to_date between {from_date} AND {to_date}
-				OR (from_date < {from_date} AND to_date > {to_date}))
+			AND (from_date between {frappe.db.escape(from_date)} AND {frappe.db.escape(to_date)}
+				OR to_date between {frappe.db.escape(from_date)} AND {frappe.db.escape(to_date)}
+				OR (from_date < {frappe.db.escape(from_date)} AND to_date > {frappe.db.escape(to_date)}))
 	""", as_dict=1)
 
 @frappe.whitelist()
@@ -767,9 +767,9 @@ def get_approved_leaves_for_period(employee, leave_type, from_date, to_date):
 		from `tabLeave Application`
 		where employee={frappe.db.escape(employee)}
 			and docstatus=1
-			and (from_date between {from_date} and {to_date}
-				or to_date between {from_date} and {to_date}
-				or (from_date < {from_date} and to_date > {to_date}))
+			and (from_date between {frappe.db.escape(from_date)} and {frappe.db.escape(to_date)}
+				or to_date between {frappe.db.escape(from_date)} and {frappe.db.escape(to_date)}
+				or (from_date < {frappe.db.escape(from_date)} and to_date > {frappe.db.escape(to_date)}))
 	"""
 	if leave_type:
 		query += f"and leave_type={frappe.db.escape(leave_type)}"

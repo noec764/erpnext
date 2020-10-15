@@ -172,10 +172,10 @@ def get_allocated_and_expired_leaves(from_date, to_date, employee, leave_type):
 		FROM `tabLeave Ledger Entry`
 		WHERE employee={frappe.db.escape(employee)} AND leave_type={frappe.db.escape(leave_type)}
 			AND docstatus=1 AND leaves>0
-			AND (from_date between {from_date} AND {to_date}
-				OR to_date between {from_date} AND {to_date}
-				OR (from_date < {from_date} AND to_date > {to_date}))
-	""", as_dict=1, debug=True)
+			AND (from_date between {frappe.db.escape(from_date)} AND {frappe.db.escape(to_date)}
+				OR to_date between {frappe.db.escape(from_date)} AND {frappe.db.escape(to_date)}
+				OR (from_date < {frappe.db.escape(from_date)} AND to_date > {frappe.db.escape(to_date)}))
+	""", as_dict=1)
 
 	for record in records:
 		if record.to_date < getdate(to_date):
