@@ -445,7 +445,7 @@ def apply_pricing_rule_on_transaction(doc):
 			doc.total, pricing_rules)
 
 		for d in pricing_rules:
-			if d.coupon_code_based==1 and frappe.db.get_value("Coupon Code", doc.coupon_code, "pricing_rule") != d.name:
+			if d.coupon_code_based==1 and frappe.db.get_value("Coupon Code", doc.get("coupon_code"), "pricing_rule") != d.name:
 				continue
 
 			if d.price_or_product_discount == 'Price':
