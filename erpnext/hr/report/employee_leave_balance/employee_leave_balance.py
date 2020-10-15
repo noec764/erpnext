@@ -178,8 +178,8 @@ def get_allocated_and_expired_leaves(from_date, to_date, employee, leave_type):
 	""", {
 		"from_date": from_date,
 		"to_date": to_date,
-		"employee": frappe.db.escape(employee),
-		"leave_type": frappe.db.escape(leave_type)
+		"employee": employee,
+		"leave_type": leave_type
 	}, as_dict=1)
 
 	for record in records:

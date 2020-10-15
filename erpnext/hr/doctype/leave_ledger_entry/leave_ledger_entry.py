@@ -32,7 +32,7 @@ def validate_leave_allocation_against_leave_application(ledger):
 			AND transaction_type='Leave Application'
 			AND from_date>=%s
 			AND to_date<=%s
-	""", (frappe.db.escape(ledger.employee), frappe.db.escape(ledger.leave_type), ledger.from_date, ledger.to_date))
+	""", (ledger.employee, ledger.leave_type, ledger.from_date, ledger.to_date))
 
 	if leave_application_records:
 		frappe.throw(_("Leave allocation %s is linked with leave application %s"

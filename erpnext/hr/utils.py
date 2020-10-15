@@ -440,7 +440,7 @@ class EarnedLeaveAllocator():
 	def allocate(self):
 		for e_leave_type in self.e_leave_types:
 			leave_allocations = frappe.db.sql("""select name, employee, leave_type, from_date, to_date from `tabLeave Allocation` where %s
-				between from_date and to_date and docstatus=1 and leave_type=%s""", (self.today, frappe.db.escape(e_leave_type.name)), as_dict=1)
+				between from_date and to_date and docstatus=1 and leave_type=%s""", (self.today, e_leave_type.name), as_dict=1)
 			for allocation in leave_allocations:
 				self.calculator(self, e_leave_type, allocation).calculate_allocation()
 
