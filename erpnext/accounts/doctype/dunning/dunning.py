@@ -85,7 +85,7 @@ class Dunning(AccountsController):
 def resolve_dunning(doc, state):
 	for reference in doc.references:
 		if reference.reference_doctype == 'Sales Invoice' and reference.outstanding_amount <= 0:
-			dunnings = frappe.get_list('Dunning', filters={
+			dunnings = frappe.get_all('Dunning', filters={
 				'sales_invoice': reference.reference_name, 'status': ('!=', 'Resolved')})
 
 			for dunning in dunnings:
