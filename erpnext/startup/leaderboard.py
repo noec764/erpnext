@@ -14,6 +14,7 @@ def get_leaderboards():
 				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency', 'label': _("Outstanding Amount")}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_customers",
+			"icon": "customer"
 		},
 		"Item": {
 			"fields": [
@@ -25,6 +26,7 @@ def get_leaderboards():
 				{'fieldname': 'available_stock_value', 'fieldtype': 'Currency', 'label': _('Available Stock Value')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_items",
+			"icon": "stock"
 		},
 		"Supplier": {
 			"fields": [
@@ -33,6 +35,7 @@ def get_leaderboards():
 				{'fieldname': 'outstanding_amount', 'fieldtype': 'Currency', 'label': _('Outstanding Amount')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_suppliers",
+			"icon": "buying"
 		},
 		"Sales Partner": {
 			"fields": [
@@ -40,12 +43,14 @@ def get_leaderboards():
 				{'fieldname': 'total_commission', 'fieldtype': 'Currency', 'label': _('Total Commission')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_sales_partner",
+			"icon": "hr"
 		},
 		"Sales Person": {
 			"fields": [
 				{'fieldname': 'total_sales_amount', 'fieldtype': 'Currency', 'label': _('Total Sales Amount')}
 			],
 			"method": "erpnext.startup.leaderboard.get_all_sales_person",
+			"icon": "customer"
 		}
 	}
 
