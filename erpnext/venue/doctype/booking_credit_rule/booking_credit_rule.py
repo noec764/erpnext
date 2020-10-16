@@ -75,9 +75,8 @@ def trigger_after_specific_time():
 	rules = frappe.get_all("Booking Credit Rule", 
 		filters={
 			"disabled": 0,
-			"trigger_document": doc.doctype,
 			"trigger_action": ("in", ("After Document Start Datetime", "After Document End Datetime"))
-		}, fields=["trigger_document"])
+		}, fields=["name"])
 
 	for rule in rules:
 		frappe.get_doc("Booking Credit Rule", rule.name).process_timely_rule()
