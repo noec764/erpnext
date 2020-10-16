@@ -26,7 +26,7 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			fieldtype:'Date',
 			default: frappe.datetime.now_date(),
 			change:() => {
-				this.date_field = this.date_field.value;
+				this.date = this.date_field.value;
 				this.make_page();
 			}
 		});
@@ -37,7 +37,7 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			fieldtype:'Link',
 			options:'Customer',
 			change:() => {
-				this.customer_field = this.customer_field.value;
+				this.customer = this.customer_field.value;
 				this.make_page();
 			}
 		});

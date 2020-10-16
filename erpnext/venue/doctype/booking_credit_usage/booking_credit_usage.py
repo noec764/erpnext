@@ -21,8 +21,14 @@ class BookingCreditUsage(Document):
 		})
 
 	def on_cancel(self):
-		frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name)).cancel()
+		doc = frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name))
+		doc.flags.ignore_permissions = True
+		doc.cancel()
 
 	def on_trash(self):
+		self.delete_references()
+
+	def delete_references(self):
 		for doc in frappe.get_all("Booking Credit Usage Reference", filters={"booking_credit_usage": self.name}, fields=["name"], pluck="name"):
 			frappe.delete_doc("Booking Credit Usage Reference", doc)
+		

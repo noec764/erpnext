@@ -21,14 +21,22 @@ frappe.ui.form.on('Booking Credit Rule', {
 		frm.trigger("setup_item_options")
 		frm.trigger("setup_qty_options")
 	},
+	rule_type(frm) {
+		frm.doc.rule_type == "Booking Credits Addition" ? frm.set_value("trigger_action", "On Submit") : frm.set_value("trigger_action", "After Document Start Datetime");
+	},
+	use_child_table(frm) {
+		frm.trigger("child_table_fields");
+	},
 	child_table(frm) {
+		frm.trigger("child_table_fields");
+	},
+	child_table_fields(frm) {
 		if (frm.doc.child_table&&frm.doc.trigger_document) {
-			return frappe.model.with_doctype(frm.doc.trigger_document, () => {
+			frappe.model.with_doctype(frm.doc.trigger_document, () => {
 				const meta = frappe.get_meta(frm.doc.trigger_document).fields.map(v => {
 					return (v.fieldname == frm.doc.child_table)&&v.options ? v : null
 				}).filter(f => f != null)
 				frm.child_table_name = meta.length&&meta[0].options;
-			}).then(() => {
 				frm.trigger("get_fields");
 			})
 		} else {

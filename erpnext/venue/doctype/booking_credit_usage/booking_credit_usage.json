@@ -99,13 +99,15 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-10-07 17:45:38.159309",
+ "modified": "2020-10-16 14:18:04.667817",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -115,9 +117,12 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -127,6 +132,7 @@
    "report": 1,
    "role": "Venue Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

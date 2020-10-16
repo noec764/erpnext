@@ -22,6 +22,7 @@ from frappe.integrations.doctype.google_calendar.google_calendar import get_goog
 	format_date_according_to_google_calendar, get_timezone_naive_datetime
 from googleapiclient.errors import HttpError
 from frappe.desk.calendar import process_recurring_events
+from erpnext.venue.utils import get_linked_customers
 
 class ItemBooking(Document):
 	def validate(self):
@@ -68,7 +69,10 @@ class ItemBooking(Document):
 				"reference_doctype": "Item Booking",
 				"reference_document": self.name
 			}, fields=["booking_credit_usage"], pluck="booking_credit_usage"):
-			frappe.delete_doc("Booking Credit Usage", doc)
+			doc = frappe.get_doc("Booking Credit Usage", doc)
+			doc.flags.ignore_permissions = True
+			doc.cancel()
+			doc.delete()
 
 def get_list_context(context=None):
 	context.update({

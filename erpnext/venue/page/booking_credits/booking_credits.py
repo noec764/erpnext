@@ -15,7 +15,7 @@ def get_balance(limit=20, customer=None, customer_group=None, date=None):
 		date = nowdate()
 
 	if customer:
-		customers = (customer)
+		customers = [customer]
 	else:
 		customers = list(set(frappe.get_list("Booking Credit Ledger", filters=filters, limit=limit, fields=["customer as name"], pluck="name")))
 

@@ -109,8 +109,8 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Accounting",
- "modified": "2020-10-09 20:31:46.022470",
- "modified_by": "Administrator",
+ "modified": "2020-10-16 14:08:32.655377",
+ "modified_by": "thierry@dokos.io",
  "module": "Accounts",
  "name": "Accounting",
  "onboarding": "Accounts",
@@ -119,21 +119,25 @@
  "pin_to_top": 0,
  "shortcuts": [
   {
+   "color": "Gray",
    "label": "Chart of Accounts",
    "link_to": "Account",
    "type": "DocType"
   },
   {
+   "color": "Gray",
    "label": "Sales Invoice",
    "link_to": "Sales Invoice",
    "type": "DocType"
   },
   {
+   "color": "Gray",
    "label": "Purchase Invoice",
    "link_to": "Purchase Invoice",
    "type": "DocType"
   },
   {
+   "color": "Gray",
    "label": "Journal Entry",
    "link_to": "Journal Entry",
    "type": "DocType"

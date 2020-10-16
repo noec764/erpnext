@@ -14,7 +14,7 @@ from frappe.utils import time_diff_in_minutes, nowdate, getdate, now_datetime, a
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes, get_item_calendar
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
-from erpnext.controllers.website_list_for_contact import get_customers_suppliers
+from erpnext.venue.utils import get_linked_customers
 
 ACTION_MAP = {
 	"after_insert": "After Insert",
@@ -38,21 +38,29 @@ class BookingCreditRule(Document):
 			pluck="reference_document"
 		)
 
+		filters = {"name": ("not in", used_docs)} if used_docs else {}
+
+		meta = frappe.get_meta(self.trigger_document)
+		if meta.has_field("status"):
+			filters.update({"status": ("!=", "Cancelled")})
+
+		if meta.is_submittable:
+			filters.update({"docstatus": 1})
+
 		if self.trigger_action == "After Document Start Time":
 			time_field = self.start_time_field
 		else:
 			time_field = self.end_time_field
 
-		filters = {
+		filters.update({
 			time_field: ("<=", now_datetime()),
-			"name": ("not in", used_docs),
-			"creation": (">", self.creation)
-		}
+			self.start_time_field: (">", self.valid_from or self.creation)
+		})
 
 		docs = frappe.get_all(self.trigger_document, filters=filters)
-
 		for doc in docs:
-			self.process_rule(doc)
+			document = frappe.get_doc(self.trigger_document, doc.name)
+			self.process_rule(document)
 
 def trigger_credit_rules(doc, method):
 	if (frappe.flags.in_patch
@@ -62,14 +70,24 @@ def trigger_credit_rules(doc, method):
 		or frappe.flags.in_setup_wizard):
 		return
 
-	rules = frappe.get_all("Booking Credit Rule", 
-		filters={
-			"disabled": 0,
-			"trigger_document": doc.doctype,
-			"trigger_action": ACTION_MAP.get(method)
-		})
-	for rule in rules:
-		frappe.get_doc("Booking Credit Rule", rule.name).process_rule(doc)
+	filters={
+		"disabled": 0,
+		"trigger_document": doc.doctype,
+		"trigger_action": ACTION_MAP.get(method)
+	}
+
+	if doc.doctype in get_trigger_docs() and frappe.db.get_value("Booking Credit Rule", filters):
+		rules = frappe.get_all("Booking Credit Rule", 
+			filters=filters)
+
+		for rule in rules:
+			frappe.get_doc("Booking Credit Rule", rule.name).process_rule(doc)
+
+def get_trigger_docs():
+	def _get_booking_credit_documents():
+		return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
+
+	return frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
 
 def trigger_after_specific_time():
 	rules = frappe.get_all("Booking Credit Rule", 
@@ -154,7 +172,7 @@ class RuleProcessor:
 			if not self.user:
 				return
 
-			customers, dummy = get_customers_suppliers("Customer", self.user)
+			customers = get_linked_customers(self.user)
 			if customers:
 				self.customer = customers[0]
 
@@ -300,6 +318,7 @@ class RuleProcessor:
 			"customer": self.customer,
 			"quantity": self.qty,
 			"uom": self.uom,
+			"user": self.user
 		}).insert(ignore_permissions=True)
 
 		self.insert_deduction_reference(usage.name)
@@ -331,7 +350,7 @@ class RuleProcessor:
 			AND datetime < '{end_time}'
 			AND coalesce(customer, "") = {frappe.db.escape(self.customer)}
 			AND coalesce(user, "") = {frappe.db.escape(self.user)}
-		""", debug=True)
+		""")
 
 		for usage in usages:
 			self.insert_deduction_reference(usage[0])

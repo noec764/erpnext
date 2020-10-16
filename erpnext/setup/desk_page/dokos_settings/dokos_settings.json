@@ -19,8 +19,8 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Dokos Settings",
- "modified": "2020-10-09 17:27:55.294751",
- "modified_by": "Administrator",
+ "modified": "2020-10-16 14:08:43.284775",
+ "modified_by": "thierry@dokos.io",
  "module": "Setup",
  "name": "Dokos Settings",
  "owner": "Administrator",
@@ -95,7 +95,7 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
+   "color": "Gray",
    "icon": "setting",
    "label": "Global Defaults",
    "link_to": "Global Defaults",

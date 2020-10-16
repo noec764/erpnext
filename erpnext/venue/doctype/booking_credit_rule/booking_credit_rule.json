@@ -11,6 +11,7 @@
  "field_order": [
   "rule_name",
   "rule_type",
+  "valid_from",
   "disabled",
   "column_break_3",
   "applicable_for",
@@ -234,11 +235,19 @@
    "fieldname": "qty_field",
    "fieldtype": "Select",
    "label": "Quantity Field"
+  },
+  {
+   "default": "Today",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Valid From",
+   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-08 12:44:12.843668",
+ "modified": "2020-10-16 10:23:01.796738",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

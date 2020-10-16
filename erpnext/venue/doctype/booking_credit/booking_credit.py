@@ -8,7 +8,7 @@ from frappe.model.document import Document
 from frappe.utils import getdate, flt, now_datetime, add_days
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
-from erpnext.controllers.website_list_for_contact import get_customers_suppliers
+from erpnext.venue.utils import get_linked_customers
 
 class BookingCredit(Document):
 	def on_submit(self):
@@ -23,7 +23,9 @@ class BookingCredit(Document):
 		})
 
 	def on_cancel(self):
-		frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name)).cancel()
+		doc = frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name))
+		doc.flags.ignore_permissions = True
+		doc.cancel()
 
 @frappe.whitelist()
 def get_balance(customer, date=None):
@@ -101,5 +103,5 @@ def process_expired_booking_credits(date=None):
 
 @frappe.whitelist()
 def get_customer(user):
-	customers, suppliers = get_customers_suppliers("Customer", user)
+	customers = get_linked_customers(user)
 	return customers[0] if customers else ""
