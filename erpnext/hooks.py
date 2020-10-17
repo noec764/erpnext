@@ -19,10 +19,15 @@ web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/portal-calendars.mi
 #web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
+	"Address": "public/js/address.js",
 	"Communication": "public/js/communication.js",
 	"Newsletter": "public/js/newsletter.js",
 	"Google Calendar": "public/js/google_calendar.js",
 	"Event": "public/js/event.js"
+}
+
+override_doctype_class = {
+	'Address': 'erpnext.accounts.custom.address.ERPNextAddress'
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
