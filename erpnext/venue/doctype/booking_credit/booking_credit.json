@@ -20,6 +20,7 @@
   "quantity",
   "column_break_9",
   "uom",
+  "status",
   "amended_from"
  ],
  "fields": [
@@ -105,12 +106,20 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "BOOK-CREDIT-"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Draft\nActive\nExpired\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-10-07 15:47:51.844690",
+ "modified": "2020-10-16 19:24:06.405954",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

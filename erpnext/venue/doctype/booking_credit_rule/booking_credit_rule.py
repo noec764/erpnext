@@ -172,7 +172,7 @@ class RuleProcessor:
 			if not self.user:
 				return
 
-			customers = get_linked_customers(self.user)
+			customers, dummy = get_linked_customers(self.user)
 			if customers:
 				self.customer = customers[0]
 

@@ -93,6 +93,12 @@ status_map = {
 		["Open", "eval:self.docstatus == 1 and not self.pos_closing_entry"],
 		["Closed", "eval:self.docstatus == 1 and self.pos_closing_entry"],
 		["Cancelled", "eval:self.docstatus == 2"]
+	],
+	"Booking Credit": [
+		["Draft", None],
+		["Cancelled", "eval:self.docstatus == 2"]
+		["Active", "eval:self.docstatus == 1 and not self.is_expired"],
+		["Expired", "eval:self.docstatus == 1 and self.is_expired"]
 	]
 }
 

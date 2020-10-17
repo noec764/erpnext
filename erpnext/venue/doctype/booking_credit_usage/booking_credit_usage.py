@@ -9,6 +9,10 @@ from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 
 class BookingCreditUsage(Document):
+	def validate(self):
+		if not self.customer:
+			self.customer = get_customer(self.user)
+
 	def on_submit(self):
 		create_ledger_entry(**{
 			"user": self.user,

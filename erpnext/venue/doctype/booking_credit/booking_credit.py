@@ -5,12 +5,18 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-from frappe.utils import getdate, flt, now_datetime, add_days
+from frappe.utils import getdate, flt, now_datetime, add_days, get_datetime, nowdate
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
-from erpnext.venue.utils import get_linked_customers
+from erpnext.venue.utils import get_customer
+from erpnext.controllers.status_updater import StatusUpdater
 
-class BookingCredit(Document):
+class BookingCredit(StatusUpdater):
+	def validate(self):
+		if not self.customer:
+			self.customer = get_customer(self.user)
+		self.set_status()
+
 	def on_submit(self):
 		create_ledger_entry(**{
 			"user": self.user,
@@ -21,11 +27,13 @@ class BookingCredit(Document):
 			"reference_document": self.name,
 			"uom": self.uom
 		})
+		self.set_status(update=True)
 
 	def on_cancel(self):
 		doc = frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name))
 		doc.flags.ignore_permissions = True
 		doc.cancel()
+		self.set_status(update=True)
 
 @frappe.whitelist()
 def get_balance(customer, date=None):
@@ -58,11 +66,14 @@ def get_balance(customer, date=None):
 def process_expired_booking_credits(date=None):
 	expired_entries = frappe.get_all("Booking Credit", filters={
 		"is_expired": 0,
-		"expiration_date": ("<", getdate(date)),
+		"expiration_date": ("is", "set"),
 		"docstatus": 1
-	}, fields=["name", "quantity", "uom", "customer"])
+	}, fields=["name", "quantity", "uom", "customer", "expiration_date"])
 
 	for expired_entry in expired_entries:
+		if expired_entry.expiration_date >= getdate(nowdate()):
+			continue
+
 		balance = sum(frappe.get_all("Booking Credit Ledger",
 			filters={
 				"customer": expired_entry.customer,
@@ -93,15 +104,11 @@ def process_expired_booking_credits(date=None):
 				"customer": expired_entry.customer,
 				"date": get_datetime(expired_entry.expiration_date),
 				"credits": balance - credits_left,
-				"reference_doctype": expired_entry.doctype,
+				"reference_doctype": "Booking Credit",
 				"reference_document": expired_entry.name,
 				"uom": expired_entry.uom
 			})
 
 		frappe.db.set_value("Booking Credit", expired_entry.name, "is_expired", 1)
+		frappe.db.set_value("Booking Credit", expired_entry.name, "status", "Expired")
 
-
-@frappe.whitelist()
-def get_customer(user):
-	customers = get_linked_customers(user)
-	return customers[0] if customers else ""

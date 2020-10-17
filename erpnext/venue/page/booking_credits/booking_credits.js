@@ -13,10 +13,16 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 		this.page = page;
 		this.customer = null;
 		this.customer_group = null;
+		this.balances = [];
 		this.limit = 20;
+		this.limit_start = 0;
+		this.sort_by = 'customer';
+		this.sort_order = 'asc';
+		this.loading = false;
 		this.date = frappe.datetime.now_date();
 		this.make_form();
-		this.make_page();
+		this.make_sort_selector();
+		this.get_data();
 	}
 
 	make_form() {
@@ -27,7 +33,9 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			default: frappe.datetime.now_date(),
 			change:() => {
 				this.date = this.date_field.value;
-				this.make_page();
+				this.balances = [];
+				this.limit_start = 0;
+				this.get_data();
 			}
 		});
 
@@ -38,7 +46,9 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			options:'Customer',
 			change:() => {
 				this.customer = this.customer_field.value;
-				this.make_page();
+				this.balances = [];
+				this.limit_start = 0;
+				this.get_data();
 			}
 		});
 
@@ -49,7 +59,9 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			options:'Customer Group',
 			change:() => {
 				this.customer_group = this.customer_group_field.value;
-				this.make_page();
+				this.balances = [];
+				this.limit_start = 0;
+				this.get_data();
 			}
 		});
 
@@ -58,6 +70,11 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 				{
 					fieldtype: 'HTML',
 					fieldname: 'balance_html'
+				},
+				{
+					fieldtype: 'HTML',
+					fieldname: 'more_html',
+					hidden: 1
 				}
 			],
 			body: this.page.body
@@ -66,28 +83,92 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 		this.form.wrapper[0].classList.add("frappe-card");
 	}
 
-	make_page() {
-		frappe.xcall('erpnext.venue.page.booking_credits.booking_credits.get_balance', {
-			"customer": this.customer,
-			"date": this.date,
-			"limit": this.limit,
-			"customer_group": this.customer_group
-		}).then(r => {
-			let result = ""
-			if (r.length) {
-				result = r.map(customer => {
-					return frappe.render_template('booking_credit_dashboard',
-						{
-							balance: customer.balance,
-							customer: customer.customer,
-							date: customer.date,
-							max_count: customer.max_count
-						})
-					}).join("");
-			} else {
-				result = `<span class='text-muted small'>${__("No credits available for any customer")}</span>`;
+	make_sort_selector() {
+		const me = this;
+		new frappe.ui.SortSelector({
+			parent: this.page.wrapper.find('.page-form'),
+			args: {
+				sort_by: 'customer',
+				sort_order: 'asc',
+				options: [
+					{fieldname: 'customer', label: __('Customer Name')},
+					{fieldname: 'max_count', label: __('Balance')}
+				]
+			},
+			change: function(sort_by, sort_order) {
+				me.balances = [];
+				me.limit_start = 0;
+				me.sort_by = sort_by ? sort_by: me.sort_by;
+				me.sort_order = sort_order ? sort_order : me.sort_order;
+				!me.balances.length ? me.get_data() : me.render_balances()
 			}
-			this.form.get_field('balance_html').html(result);
+		});
+	}
+
+	get_data() {
+		if (!this.loading) {
+			this.loading = true;
+			frappe.xcall('erpnext.venue.page.booking_credits.booking_credits.get_balance', {
+				"customer": this.customer,
+				"date": this.date,
+				"limit": this.limit,
+				"limit_start": this.limit_start,
+				"customer_group": this.customer_group,
+				"sort_order": this.sort_order
+			}).then(r => {
+				if (r.length) {
+					r.length == 20 ? this.show_more_btn() : this.hide_more_btn();
+					r.forEach(value => {
+						!this.balances.some(d => { d.customer == value.customer})&&this.balances.push(value);
+					})
+					this.limit_start += this.limit;
+
+					this.render_balances();
+
+				} else if (!this.balances.length) {
+					this.form.get_field('balance_html').$wrapper.html(`<span class='text-muted small'>${__("No credits available for any customer")}</span>`);
+				} else {
+					this.hide_more_btn();
+				}
+
+				this.loading = false;
+			})
+		}
+	}
+
+	prepare_data() {
+		this.balances.sort((a, b) => {
+			return a[this.sort_by] - b[this.sort_by];
+		});
+
+		(this.sort_order == "desc") && this.balances.reverse();
+	}
+
+	render_balances() {
+		this.prepare_data()
+
+		const result = this.balances.map(customer => {
+			return frappe.render_template('booking_credit_dashboard',
+				{
+					balance: customer.balance,
+					customer: customer.customer,
+					date: customer.date,
+					max_count: customer.max_count
+				})
+			}).join("");
+		this.form.get_field('balance_html').$wrapper.html(result);
+	}
+
+	show_more_btn() {
+		this.form.get_field('more_html').$wrapper.toggleClass("hide-control", false)
+		this.form.get_field('more_html').html(`<button class="btn btn-default">${__("More")}</button>`);
+
+		this.form.get_field('more_html').$wrapper.on("click", (e) => {
+			this.get_data()
 		})
+	}
+
+	hide_more_btn() {
+		this.form.get_field('more_html').$wrapper.toggleClass("hide-control", true)
 	}
 }
