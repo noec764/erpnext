@@ -88,9 +88,9 @@ class CompensatoryLeaveRequest(Document):
 			from `tabLeave Allocation`
 			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)}
 				and docstatus=1
-				and (from_date between {leave_period[0].from_date} and {leave_period[0].to_date}
-					or to_date between {leave_period[0].from_date} and {leave_period[0].to_date}
-					or (from_date < {leave_period[0].from_date} and to_date > {leave_period[0].to_date}))
+				and (from_date between {frappe.db.escape(leave_period[0].from_date)} and {frappe.db.escape(leave_period[0].to_date)}
+					or to_date between {frappe.db.escape(leave_period[0].from_date)} and {frappe.db.escape(leave_period[0].to_date)}
+					or (from_date < {frappe.db.escape(leave_period[0].from_date)} and to_date > {frappe.db.escape(leave_period[0].to_date)}))
 		""", as_dict=1)
 
 		if leave_allocation:

@@ -105,7 +105,7 @@ class LeaveApplication(Document):
 		def _get_leave_allocation_record(date):
 			allocation = frappe.db.sql(f"""select name from `tabLeave Allocation`
 				where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)} and docstatus=1
-				and {date} between from_date and to_date""")
+				and {frappe.db.escape(date)} between from_date and to_date""")
 
 			return allocation and allocation[0][0]
 
@@ -120,7 +120,7 @@ class LeaveApplication(Document):
 
 	def validate_back_dated_application(self):
 		future_allocation = frappe.db.sql(f"""select name, from_date from `tabLeave Allocation`
-			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)} and docstatus=1 and from_date > {self.to_date}
+			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)} and docstatus=1 and from_date > {frappe.db.escape(self.to_date)}
 			and carry_forward=1""", as_dict=1)
 
 		if future_allocation:
