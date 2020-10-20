@@ -118,6 +118,18 @@ frappe.ui.form.on('Item Booking', {
 		frm.page.add_action_item(__("Add to an existing sales order"), () => {
 			add_to_transaction(frm, "Sales Order")
 		})
+	},
+	user(frm) {
+		if (frm.doc.user) {
+			frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.get_corresponding_party", {
+				user: frm.doc.user
+			}).then(r => {
+				if (r&&r.length) {
+					frm.set_value("party_type", r[0]);
+					frm.set_value("party_name", r[1]);
+				}
+			})
+		}
 	}
 });
 

@@ -31,6 +31,7 @@
   "notes",
   "reference_section",
   "party_type",
+  "uom",
   "column_break_7",
   "party_name",
   "event_section",
@@ -230,10 +231,17 @@
    "fieldtype": "Link",
    "label": "Event",
    "options": "Event"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Unit of Measure",
+   "options": "UOM"
   }
  ],
  "links": [],
- "modified": "2020-10-13 17:17:47.299954",
+ "modified": "2020-10-20 15:15:39.550915",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",

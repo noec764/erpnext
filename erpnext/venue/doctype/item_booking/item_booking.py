@@ -43,6 +43,9 @@ class ItemBooking(Document):
 		if not self.color:
 			self.color = frappe.db.get_value("Item", self.item, "calendar_color")
 
+		if not (self.party_type and self.party_name) and self.user:
+			self.party_type, self.party_name = get_corresponding_party(self.user)
+
 	def set_title(self):
 		if self.meta._fields["title"].hidden or not self.title:
 			self.title = self.item_name
@@ -192,6 +195,7 @@ def book_new_slot(**kwargs):
 			"status": kwargs.get("status") or "In cart",
 			"event": kwargs.get("event"),
 			"all_day": kwargs.get("all_day") or 0,
+			"uom": kwargs.get("uom"),
 			"sync_with_google_calendar": kwargs.get("sync_with_google_calendar") or frappe.db.get_single_value('Venue Settings', 'sync_with_google_calendar')
 		}).insert(ignore_permissions=True)
 
@@ -205,7 +209,7 @@ def remove_booked_slot(name):
 		for dt in ["Quotation Item", "Sales Order Item"]:
 			linked_docs = frappe.get_all(dt, filters={"item_booking": name})
 			for d in linked_docs:
-				frappe.db.set_value(dt, d.get("name"), "item_booking", None)
+				frappe.delete_doc(dt, d.get("name"), ignore_permissions=True, force=True)
 
 		return frappe.delete_doc("Item Booking", name, ignore_permissions=True, force=True)
 	except frappe.TimestampMismatchError:
@@ -881,3 +885,17 @@ def delete_event_in_google_calendar(doc, method=None):
 		frappe.msgprint(f'{_("Google Error")}: {json.loads(err.content)["error"]["message"]}')
 		frappe.msgprint(_("Google Calendar - Could not delete Event {0} from Google Calendar, error code {1}."\
 			).format(doc.name, err.resp.status))
+
+@frappe.whitelist()
+def get_corresponding_party(user):
+	customers, leads = get_linked_customers(user)
+	party_type = party_name = None
+	if customers:
+		party_type = "Customer"
+		party_name = customers[0]
+
+	elif leads:
+		party_type = "Lead"
+		party_name = lead[0]
+
+	return party_type, party_name

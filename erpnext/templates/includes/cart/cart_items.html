@@ -39,6 +39,10 @@
 			<div class="text-center mt-2">
 				<button class="btn btn-default btn-xs item-booking-btn" data-item-code="{{d.item_code}}" data-item-route="{{d.route}}">{{ _("Change booking") }}</button>
 			</div>
+		{% else %}
+			<div class="text-center">
+				<p class="text-muted small">{{ d.uom }}</p>
+			</div>
 		{% endif %}
 	</td>
 	<td class="text-right">
