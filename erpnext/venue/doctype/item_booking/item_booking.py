@@ -542,7 +542,7 @@ def get_item_calendar(item=None, uom=None):
 	return {"type": "Daily", "calendar": []}
 
 def get_uom_in_minutes(uom=None):
-	minute_uom = frappe.db.get_value("Venue Settings", None, "minute_uom")
+	minute_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 	if uom == minute_uom:
 		return 1
 
@@ -550,7 +550,7 @@ def get_uom_in_minutes(uom=None):
 		dict(from_uom=uom, to_uom=minute_uom), "value") or 0
 
 def get_sales_qty(item, start, end):
-	minute_uom = frappe.db.get_value("Venue Settings", None, "minute_uom")
+	minute_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 	sales_uom = frappe.get_cached_value("Item", item, "sales_uom")
 	duration = time_diff_in_minutes(end, start)
 

@@ -167,13 +167,13 @@ class SellingController(StockController):
 
 	def validate_selling_price(self):
 		def throw_message(idx, item_name, rate, ref_rate_field):
-			bold_net_rate = frappe.bold("net rate")
+			bold_net_rate = frappe.bold(_("net rate"))
 
 			msg = (_("""Row #{}: Selling rate for item {} is lower than its {}. Selling {} should be atleast {}""")
-						.format(idx, frappe.bold(item_name), frappe.bold(ref_rate_field), bold_net_rate, frappe.bold(rate)))
+						.format(idx, frappe.bold(item_name), frappe.bold(_(ref_rate_field)), bold_net_rate, frappe.bold(rate)))
 			msg += "<br><br>"
 			msg += (_("""You can alternatively disable selling price validation in {} to bypass this validation.""")
-						.format(get_link_to_form("Selling Settings", "Selling Settings")))
+						.format(get_link_to_form("Selling Settings", "Selling Settings", _("Selling Settings"))))
 			frappe.throw(msg, title=_("Invalid Selling Price"))
 
 		if not frappe.db.get_single_value("Selling Settings", "validate_selling_price"):

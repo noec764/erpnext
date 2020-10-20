@@ -6,11 +6,12 @@ from collections import defaultdict
 
 import calendar
 import math
+from datetime import datetime, date
 
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import time_diff_in_minutes, nowdate, getdate, now_datetime, add_to_date, get_datetime, time_diff, get_time, flt
+from frappe.utils import time_diff_in_minutes, nowdate, getdate, now_datetime, add_to_date, get_datetime, time_diff, get_time, flt, add_days
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes, get_item_calendar
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
@@ -25,7 +26,13 @@ ACTION_MAP = {
 }
 
 class BookingCreditRule(Document):
+	def validate(self):
+		set_trigger_docs()
+
 	def process_rule(self, doc):
+		if self.conditions and not frappe.safe_eval(self.conditions, {"doc": doc}):
+			return
+
 		if self.trigger_action == "If Status Changes" and doc.status != self.expected_status:
 			return
 
@@ -47,7 +54,7 @@ class BookingCreditRule(Document):
 		if meta.is_submittable:
 			filters.update({"docstatus": 1})
 
-		if self.trigger_action == "After Document Start Time":
+		if self.trigger_action == "After Document Start Datetime":
 			time_field = self.start_time_field
 		else:
 			time_field = self.end_time_field
@@ -58,6 +65,7 @@ class BookingCreditRule(Document):
 		})
 
 		docs = frappe.get_all(self.trigger_document, filters=filters)
+
 		for doc in docs:
 			document = frappe.get_doc(self.trigger_document, doc.name)
 			self.process_rule(document)
@@ -84,10 +92,13 @@ def trigger_credit_rules(doc, method):
 			frappe.get_doc("Booking Credit Rule", rule.name).process_rule(doc)
 
 def get_trigger_docs():
-	def _get_booking_credit_documents():
-		return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
-
 	return frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
+
+def set_trigger_docs():
+	return frappe.cache().set_value("booking_credit_documents", _get_booking_credit_documents())
+
+def _get_booking_credit_documents():
+	return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
 
 def trigger_after_specific_time():
 	rules = frappe.get_all("Booking Credit Rule", 
@@ -98,7 +109,6 @@ def trigger_after_specific_time():
 
 	for rule in rules:
 		frappe.get_doc("Booking Credit Rule", rule.name).process_timely_rule()
-
 
 @frappe.whitelist()
 def get_fieldtypes_options(doctype, fieldtypes):
@@ -114,7 +124,7 @@ def get_fieldtypes_options(doctype, fieldtypes):
 		},
 		fields=["fieldname as value", "label"])
 
-	return [{"value": _(x.value), "label": _(x.label)} for x in result]
+	return [{"value": x.value, "label": _(x.label)} for x in result]
 
 @frappe.whitelist()
 def get_status_options(doctype):
@@ -143,7 +153,7 @@ def get_link_options(doctype, link):
 			},
 			fields=["fieldname as value", "label"])
 
-	return [{"value": _(x.value), "label": _(x.label)} for x in result]
+	return [{"value": x.value, "label": _(x.label)} for x in result]
 
 @frappe.whitelist()
 def get_child_tables(doctype):
@@ -165,6 +175,13 @@ class RuleProcessor:
 		self.end = get_datetime(getattr(doc, self.rule.end_time_field, now_datetime())) if self.rule.end_time_field else now_datetime()
 		self.datetime = now_datetime()
 		self.duration = time_diff_in_minutes(self.end, self.start) or 1
+		self.days = 1
+
+		if (getattr(doc, "all_day", None) or getattr(doc, "allDay", None)):
+			self.start = self.start.replace(hour=0, minute=0, second=0)
+			self.end = add_days(self.end, 1).replace(hour=0, minute=0, second=0)
+			self.days = (self.end - self.start).days
+
 		self.min_time = None
 
 	def process(self):
@@ -209,6 +226,8 @@ class RuleProcessor:
 
 	def apply_addition_rules(self):
 		self.datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
+		self.expiration_date = self.get_expiration_date()
+
 		if self.rule.use_child_table:
 			for row in self.doc.get(self.rule.child_table) or []:
 				if self.rule.applicable_for and self.check_application_rule(row):
@@ -265,6 +284,24 @@ class RuleProcessor:
 			return self.deduct_credit()
 
 	def apply_custom_rules(self):
+		booking_calendar = None
+		if self.days > 1:
+			calendar_uom = (getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None) or frappe.db.get_single_value("Venue Settings", "minute_uom")
+			booking_calendar = get_item_calendar(self.item, calendar_uom)
+			if booking_calendar:
+				for d in range(self.days):
+					daily_slots = [x for x in booking_calendar.get("calendar") if x.day==calendar.day_name[add_days(self.start.date(), d).weekday()]]
+					min_time = min([x.start_time for x in daily_slots])
+					max_time = max([x.end_time for x in daily_slots])
+					time_diff = (datetime.combine(date.today(), get_time(max_time)) - datetime.combine(date.today(), get_time(min_time))).total_seconds()
+					total_duration = time_diff / 60
+					self.calculate_intervals(total_duration)
+
+		if not booking_calendar:
+			total_duration = self.duration
+			self.calculate_intervals(total_duration)
+
+	def calculate_intervals(self, total_duration):
 		import numpy as np
 		intervals = [(x.from_duration, x.to_duration) for x in self.rule.booking_credit_rules if x.duration_interval]
 		intervals.sort(key=lambda t: t[0])
@@ -274,14 +311,14 @@ class RuleProcessor:
 
 		corresponding_interval = None
 		for index, interval in enumerate(intervals):
-			if self.duration < interval[0]:
+			if total_duration < interval[0]:
 				corresponding_interval = (index - 1) if (index - 1) >= 0 else None
+				break
 
-			elif self.duration in range(interval[0], interval[1] + 1) or self.duration > interval[1]:
+			elif total_duration in range(interval[0], interval[1] + 1) or total_duration > interval[1]:
 				corresponding_interval = index
 
 		result = []
-		total_duration = self.duration
 		if corresponding_interval is not None:
 			selected_rule = [x for x in self.rule.booking_credit_rules if x.from_duration == intervals[corresponding_interval][0] and x.to_duration == intervals[corresponding_interval][1]][0]
 			total_duration -= min(flt(total_duration), flt(selected_rule.to_duration))
@@ -307,23 +344,25 @@ class RuleProcessor:
 			"date": getdate(self.datetime),
 			"customer": self.customer,
 			"quantity": self.qty,
-			"uom": self.uom
+			"uom": self.uom,
+			"expiration_date": self.expiration_date
 		}).insert(ignore_permissions=True)
 		return doc.submit()
 
 	def deduct_credit(self):
-		usage = frappe.get_doc({
-			"doctype": "Booking Credit Usage",
-			"datetime": self.datetime,
-			"customer": self.customer,
-			"quantity": self.qty,
-			"uom": self.uom,
-			"user": self.user
-		}).insert(ignore_permissions=True)
+		if self.rule.valid_from and getdate(self.datetime) >= getdate(self.rule.valid_from):
+			usage = frappe.get_doc({
+				"doctype": "Booking Credit Usage",
+				"datetime": self.datetime,
+				"customer": self.customer,
+				"quantity": self.qty,
+				"uom": self.uom,
+				"user": self.user
+			}).insert(ignore_permissions=True)
 
-		self.insert_deduction_reference(usage.name)
+			self.insert_deduction_reference(usage.name)
 
-		return usage.submit()
+			return usage.submit()
 
 	def insert_deduction_reference(self, usage):
 		frappe.get_doc({
@@ -375,3 +414,12 @@ class RuleProcessor:
 				order_by="value ASC",
 				pluck="from_uom"
 			)
+
+	def get_expiration_date(self):
+		if not self.rule.expiration_delay:
+			return None
+
+		years = self.rule.expiration_delay if self.rule.expiration_rule == "Add X years" else 0
+		months = self.rule.expiration_delay if self.rule.expiration_rule == "Add X months" else 0
+		days = self.rule.expiration_delay if self.rule.expiration_rule == "Add X days" else 0
+		return add_to_date(self.datetime, years=years, months=months, days=days)

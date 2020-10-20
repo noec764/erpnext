@@ -27,7 +27,13 @@ class BookingCredit(StatusUpdater):
 			"reference_document": self.name,
 			"uom": self.uom
 		})
+		self.check_if_expired()
 		self.set_status(update=True)
+
+	def check_if_expired(self):
+		if get_datetime(self.expiration_date) < now_datetime() and not self.is_expired:
+			_process_expired_booking_entry(self, self.date)
+			self.reload()
 
 	def on_cancel(self):
 		doc = frappe.get_doc("Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name))
@@ -71,9 +77,12 @@ def process_expired_booking_credits(date=None):
 	}, fields=["name", "quantity", "uom", "customer", "expiration_date"])
 
 	for expired_entry in expired_entries:
-		if expired_entry.expiration_date >= getdate(nowdate()):
+		if expired_entry.expiration_date >= getdate(date):
 			continue
 
+		_process_expired_booking_entry(expired_entry, date)
+
+def _process_expired_booking_entry(expired_entry, date):
 		balance = sum(frappe.get_all("Booking Credit Ledger",
 			filters={
 				"customer": expired_entry.customer,
@@ -92,7 +101,8 @@ def process_expired_booking_credits(date=None):
 				"is_expired": 0,
 				"date": (">=", expired_entry.date),
 				"uom": expired_entry.uom,
-				"docstatus": 1
+				"docstatus": 1,
+				"name": ("!=", expired_entry.name)
 			},
 			fields=["quantity"],
 			pluck="quantity"

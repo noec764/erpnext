@@ -3,8 +3,8 @@
 	{% for d in balance %}
 	<div class="row">
 		<div class="col-xs-4">
-			<a class="small time-sheet-link" data-uom="{{ d.uom || "" }}">
-				{{ d.uom || "" }}</a>
+			<p class="small" data-uom="{{ d.uom || "" }}">
+				{{ d.uom || "" }}</p>
 		</div>
 		<div class="col-xs-8">
 			<span class="inline-graph">
@@ -36,6 +36,19 @@
 		</div>
 	</div>
 	{% endfor %}
+
+	{% if reconciliation_uoms.length %}
+	<div class="row mb-2">
+		<div class="col-xs-4">
+			<p class="small">{{ __("Convert minutes into:") }}</p>
+		</div>
+		<div class="col-xs-8">
+			{% for u in reconciliation_uoms %}
+			<button class="btn btn-default uom-reconciliation-btn" data-uom="{{ u }}" data-customer="{{ customer }}">{{ u }}</button>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
 
 	{% if !Object.keys(balance).length %}
 	<div class="col-xs-8">

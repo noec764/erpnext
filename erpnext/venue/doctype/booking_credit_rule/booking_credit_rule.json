@@ -23,6 +23,11 @@
   "column_break_8",
   "trigger_action",
   "expected_status",
+  "conditions",
+  "expiration_section",
+  "expiration_rule",
+  "column_break_18",
+  "expiration_delay",
   "fields_map",
   "start_time_field",
   "customer_field",
@@ -243,11 +248,38 @@
    "fieldtype": "Date",
    "label": "Valid From",
    "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "expiration_section",
+   "fieldtype": "Section Break",
+   "label": "Expiration"
+  },
+  {
+   "fieldname": "expiration_rule",
+   "fieldtype": "Select",
+   "label": "Expiration Rule",
+   "options": "\nAdd X days\nAdd X months\nAdd X years"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expiration_delay",
+   "fieldtype": "Int",
+   "label": "Expiration Delay"
+  },
+  {
+   "depends_on": "eval:doc.trigger_document",
+   "fieldname": "conditions",
+   "fieldtype": "Small Text",
+   "label": "Conditions"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-16 10:23:01.796738",
+ "modified": "2020-10-19 16:03:04.919800",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

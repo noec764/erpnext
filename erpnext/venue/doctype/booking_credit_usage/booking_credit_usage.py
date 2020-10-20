@@ -7,6 +7,7 @@ import frappe
 from frappe.model.document import Document
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
+from erpnext.venue.utils import get_customer
 
 class BookingCreditUsage(Document):
 	def validate(self):

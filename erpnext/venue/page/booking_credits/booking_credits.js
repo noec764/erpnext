@@ -148,15 +148,23 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 		this.prepare_data()
 
 		const result = this.balances.map(customer => {
+
+			let reconciliation_uoms = []
+			if (customer.balance.some(e => e.balance < 0) && customer.balance.some(e => e.balance > 0)) {
+				reconciliation_uoms = customer.balance.map(v => { return v.balance > 0 ? v.uom : null }).filter(f => f)
+			}
+
 			return frappe.render_template('booking_credit_dashboard',
 				{
 					balance: customer.balance,
 					customer: customer.customer,
-					date: customer.date,
-					max_count: customer.max_count
+					date: this.date,
+					max_count: customer.max_count,
+					reconciliation_uoms: reconciliation_uoms
 				})
 			}).join("");
 		this.form.get_field('balance_html').$wrapper.html(result);
+		this.bind_reconciliation_btns();
 	}
 
 	show_more_btn() {
@@ -170,5 +178,24 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 
 	hide_more_btn() {
 		this.form.get_field('more_html').$wrapper.toggleClass("hide-control", true)
+	}
+
+	bind_reconciliation_btns() {
+		this.form.get_field('balance_html').$wrapper.find('.uom-reconciliation-btn').on("click", e => {
+			frappe.xcall("erpnext.venue.page.booking_credits.booking_credits.reconcile_credits", {
+				customer: $(e.target).attr("data-customer"),
+				target_uom: $(e.target).attr("data-uom"),
+				date: this.date
+			}).then(r => {
+				frappe.show_alert({
+					message: __("Credits successfully converted"),
+					indicator: "green"
+				})
+
+				this.balances = [];
+				this.limit_start = 0;
+				this.get_data();
+			})
+		})
 	}
 }

@@ -3,9 +3,10 @@
 
 frappe.ui.form.on('Booking Credit Rule', {
 	refresh(frm) {
-		frm.trigger("setup_child_tables")
+		frm.trigger("setup_child_tables");
 		frm.trigger("get_fields");
 		frm.trigger("toggle_applicable_rules");
+		frm.trigger("child_table_fields");
 	},
 	trigger_document(frm) {
 		frm.trigger("setup_child_tables")

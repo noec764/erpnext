@@ -1321,7 +1321,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			actions = { 'create': 'add', 'write': 'update'}
 
 			frappe.throw(_("You do not have permissions to {} items in a {}.")
-				.format(actions[perm_type], parent_doctype), title=_("Insufficient Permissions"))
+				.format(_(actions[perm_type]), _(parent_doctype)), title=_("Insufficient Permissions"))
 
 	def validate_workflow_conditions(doc):
 		workflow = get_workflow_name(doc.doctype)
@@ -1341,7 +1341,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 
 		if not transitions:
 			frappe.throw(
-				_("You are not allowed to update as per the conditions set in {} Workflow.").format(get_link_to_form("Workflow", workflow)),
+				_("You are not allowed to update as per the conditions set in {} Workflow.").format(get_link_to_form("Workflow", workflow, _("Workflow"))),
 				title=_("Insufficient Permissions")
 			)
 

@@ -61,6 +61,7 @@
    "fieldname": "is_expired",
    "fieldtype": "Check",
    "label": "Is Expired",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -112,6 +113,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "Draft\nActive\nExpired\nCancelled"
   }
@@ -119,7 +121,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-10-16 19:24:06.405954",
+ "modified": "2020-10-19 16:40:13.176645",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",
