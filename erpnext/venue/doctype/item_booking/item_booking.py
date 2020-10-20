@@ -206,12 +206,14 @@ def book_new_slot(**kwargs):
 @frappe.whitelist()
 def remove_booked_slot(name):
 	try:
-		for dt in ["Quotation Item", "Sales Order Item"]:
-			linked_docs = frappe.get_all(dt, filters={"item_booking": name}, fields=["name", "parent"])
+		for dt in ["Quotation", "Sales Order"]:
+			linked_docs = frappe.get_all(f"{dt} Item", filters={"item_booking": name, "parenttype": dt}, fields=["name", "parent"])
 			for d in linked_docs:
 				doc = frappe.get_doc(dt, d.get("parent"))
 				if len(doc.items) > 1:
-					frappe.delete_doc(dt, d.get("name"), ignore_permissions=True, force=True)
+					doc.items = [i for i in doc.items if i.item_booking != name]
+					doc.flags.ignore_permissions = True
+					doc.save()
 				else:
 					frappe.delete_doc(dt, doc.name, ignore_permissions=True, force=True)
 
