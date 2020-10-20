@@ -8,7 +8,7 @@ app_description = """ERP made simple"""
 app_email = "hello@dokos.io"
 app_license = "GNU General Public License (v3)"
 source_link = "https://gitlab.com/dokos/dokos"
-app_logo_url = '/assets/erpnext/images/dokos_logo.svg'
+app_logo_url = "/assets/erpnext/images/dokos_logo.svg"
 
 
 develop_version = '1.x.x-develop'
