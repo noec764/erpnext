@@ -36,7 +36,7 @@ class Account(NestedSet):
 		from erpnext.accounts.utils import get_autoname_with_number
 		if frappe.local.flags.allow_unverified_charts:
 			return
-		self.title = self.get_title()
+		self.title = get_title(self.account_name, self.account_number)
 		self.validate_parent()
 		self.validate_root_details()
 		if not self.is_group:
@@ -48,14 +48,6 @@ class Account(NestedSet):
 		self.validate_balance_must_be_debit_or_credit()
 		self.validate_account_currency()
 		self.validate_root_company_and_sync_account_to_children()
-
-	def get_title(self):
-		parts = [self.account_name.strip()]
-
-		if cstr(self.account_number).strip():
-			parts.insert(0, cstr(self.account_number).strip())
-
-		return ' - '.join(parts)
 
 	def validate_parent(self):
 		"""Fetch Parent Details and validate parent account"""
@@ -328,18 +320,25 @@ def validate_account_number(name, account_number, company):
 			frappe.throw(_("Account Number {0} already used in account {1}")
 				.format(account_number, account_with_same_number))
 
+def get_title(account_name, account_number):
+	parts = [account_name.strip()]
+
+	if cstr(account_number).strip():
+		parts.insert(0, cstr(account_number).strip())
+
+	return ' - '.join(parts)
+
 @frappe.whitelist()
 def update_account_number(name, account_name, account_number=None, do_not_show_account_number_in_reports=False, from_descendant=False):
 	company, root_type = frappe.db.get_value("Account", name, ["company", "root_type"])
 
 	if not (company and root_type): return
 
-	old_acc_name, old_acc_number = frappe.db.get_value('Account', name, \
-				["account_name", "account_number"])
+	old_acc_name, old_acc_number = frappe.db.get_value('Account', name, ["account_name", "account_number"])
 
 	# check if account exists in parent company
-	ancestors = get_ancestors_of("Company", account.company)
-	allow_independent_account_creation = frappe.get_value("Company", account.company, "allow_account_creation_against_child_company")
+	ancestors = get_ancestors_of("Company", company)
+	allow_independent_account_creation = frappe.get_value("Company", company, "allow_account_creation_against_child_company")
 
 	if ancestors and not allow_independent_account_creation:
 		for ancestor in ancestors:
@@ -350,7 +349,7 @@ def update_account_number(name, account_name, account_number=None, do_not_show_a
 				message = _("Account {0} exists in parent company {1}.").format(frappe.bold(old_acc_name), frappe.bold(ancestor))
 				message += "<br>" + _("Renaming it is only allowed via parent company {0}, \
 					to avoid mismatch.").format(frappe.bold(ancestor)) + "<br><br>"
-				message += _("To overrule this, enable '{0}' in company {1}").format(allow_child_account_creation, frappe.bold(account.company))
+				message += _("To overrule this, enable '{0}' in company {1}").format(allow_child_account_creation, frappe.bold(company))
 
 				frappe.throw(message, title=_("Rename Not Allowed"))
 
@@ -362,14 +361,16 @@ def update_account_number(name, account_name, account_number=None, do_not_show_a
 
 	frappe.db.set_value("Account", name, "account_name", account_name.strip())
 	frappe.db.set_value("Account", name, "do_not_show_account_number", do_not_show_account_number_in_reports)
+	frappe.db.set_value("Account", name, "title", get_title(account_name, account_number))
 
 	if not from_descendant:
 		# Update and rename in child company accounts as well
-		descendants = get_descendants_of('Company', account.company)
+		descendants = get_descendants_of('Company', company)
 		if descendants:
 			sync_update_account_number_in_child(descendants, old_acc_name, account_name, account_number, old_acc_number)
 
 	new_name = get_account_autoname(account_number, account_name, company, root_type)
+
 	if name != new_name:
 		frappe.rename_doc("Account", name, new_name, force=1)
 		return new_name
