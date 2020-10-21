@@ -850,6 +850,8 @@ class StockEntry(StockController):
 			frappe.throw(_("Posting date and posting time is mandatory"))
 
 		self.set_work_order_details()
+		self.flags.backflush_based_on = frappe.db.get_single_value("Manufacturing Settings",
+			"backflush_raw_materials_based_on")
 
 		if self.bom_no:
 
@@ -866,14 +868,16 @@ class StockEntry(StockController):
 							item["to_warehouse"] = self.pro_doc.wip_warehouse
 					self.add_to_stock_entry_detail(item_dict)
 
-				elif (self.work_order and (self.purpose == "Manufacture" or self.purpose == "Material Consumption for Manufacture")
-					and not self.pro_doc.skip_transfer and backflush_based_on == "Material Transferred for Manufacture"):
+				elif (self.work_order and (self.purpose == "Manufacture"
+					or self.purpose == "Material Consumption for Manufacture") and not self.pro_doc.skip_transfer
+					and self.flags.backflush_based_on == "Material Transferred for Manufacture"):
 					self.get_transfered_raw_materials()
 
-				elif (self.work_order and backflush_based_on== "BOM" and
-					(self.purpose == "Manufacture" or self.purpose == "Material Consumption for Manufacture")
+				elif (self.work_order and (self.purpose == "Manufacture" or
+					self.purpose == "Material Consumption for Manufacture") and self.flags.backflush_based_on== "BOM"
 					and frappe.db.get_single_value("Manufacturing Settings", "material_consumption")== 1):
 					self.get_unconsumed_raw_materials()
+
 				else:
 					if not self.fg_completed_qty:
 						frappe.throw(_("Manufacturing Quantity is mandatory"))
@@ -1138,12 +1142,24 @@ class StockEntry(StockController):
 		item_dict = self.get_pro_order_required_items(backflush_based_on)
 
 		max_qty = flt(self.pro_doc.qty)
+
+		allow_overproduction = False
+		overproduction_percentage = flt(frappe.db.get_single_value("Manufacturing Settings",
+			"overproduction_percentage_for_work_order"))
+
+		to_transfer_qty = flt(self.pro_doc.material_transferred_for_manufacturing) + flt(self.fg_completed_qty)
+		transfer_limit_qty = max_qty + ((max_qty * overproduction_percentage) / 100)
+
+		if transfer_limit_qty >= to_transfer_qty:
+			allow_overproduction = True
+
 		for item, item_details in iteritems(item_dict):
 			pending_to_issue = flt(item_details.required_qty) - flt(item_details.transferred_qty)
 			desire_to_transfer = flt(self.fg_completed_qty) * flt(item_details.required_qty) / max_qty
 
-			if (desire_to_transfer <= pending_to_issue or
-				(desire_to_transfer > 0 and backflush_based_on == "Material Transferred for Manufacture")):
+			if (desire_to_transfer <= pending_to_issue
+				or (desire_to_transfer > 0 and backflush_based_on == "Material Transferred for Manufacture")
+				or allow_overproduction):
 				item_dict[item]["qty"] = desire_to_transfer
 			elif pending_to_issue > 0:
 				item_dict[item]["qty"] = pending_to_issue
@@ -1370,7 +1386,7 @@ class StockEntry(StockController):
 		if self.outgoing_stock_entry:
 			parent_se = frappe.get_value("Stock Entry", self.outgoing_stock_entry, 'add_to_transit')
 
-		for item in self.items: 
+		for item in self.items:
 			material_request = item.material_request or None
 			if self.purpose == "Material Transfer" and material_request not in material_requests:
 				if self.outgoing_stock_entry and parent_se:
