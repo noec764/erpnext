@@ -19,6 +19,8 @@
   "quantity",
   "column_break_6",
   "uom",
+  "column_break_11",
+  "item",
   "amended_from"
  ],
  "fields": [
@@ -95,12 +97,23 @@
    "in_list_view": 1,
    "label": "Datetime",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-10-19 14:18:54.773830",
+ "modified": "2020-10-21 15:57:15.297974",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",

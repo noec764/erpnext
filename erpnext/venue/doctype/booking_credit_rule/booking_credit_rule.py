@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from collections import defaultdict
+from itertools import chain
 
 import calendar
 import math
@@ -170,7 +171,8 @@ class RuleProcessor:
 		self.doc = doc
 		self.user = getattr(doc, self.rule.user_field, None) if self.rule.user_field else None
 		self.customer = getattr(doc, self.rule.customer_field, None) if self.rule.customer_field else None
-		self.uom = self.qty = self.item = None
+		self.uom = getattr(doc, self.rule.uom_field, None) if self.rule.uom_field else None
+		self.qty = self.item = self.allowed_items = None
 		self.start = get_datetime(getattr(doc, self.rule.start_time_field, now_datetime())) if self.rule.start_time_field else now_datetime()
 		self.end = get_datetime(getattr(doc, self.rule.end_time_field, now_datetime())) if self.rule.end_time_field else now_datetime()
 		self.datetime = now_datetime()
@@ -202,6 +204,8 @@ class RuleProcessor:
 
 			if self.rule.applicable_for and self.check_application_rule(self.doc):
 				return
+
+			self.allowed_items = self.get_allowed_conversions()
 
 			if self.rule.custom_deduction_rule:
 				self.apply_custom_rules()
@@ -252,8 +256,11 @@ class RuleProcessor:
 
 	def apply_standard_rules(self):
 		default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
-		customer_balance = get_balance(self.customer, getdate(self.datetime))
-		customer_uoms = self.get_ordered_uoms(customer_balance)
+		balance = get_balance(self.customer, getdate(self.datetime))
+		customer_balance = {x: balance[x] for x in balance if x in [y for y in self.allowed_items]}
+		customer_uoms = None
+		if customer_balance:
+			customer_uoms = self.get_ordered_uoms(list(chain.from_iterable(customer_balance.values())))
 
 		if not self.rule.fifo_deduction and self.start.date() == self.end.date():
 			for uom in customer_uoms:
@@ -271,9 +278,10 @@ class RuleProcessor:
 				if self.uom and self.qty:
 					break
 
-		customer_uom = getattr(self.doc, self.rule.uom_field, None) if self.rule.uom_field else None or (customer_uoms[0] if customer_uoms else None)
+		customer_uom = customer_uoms[0] if customer_uoms else None
 		self.uom = self.uom or customer_uom or default_uom
 		self.qty = self.qty or self.duration / (get_uom_in_minutes(customer_uom or default_uom) or 1.0)
+		self.item = self.get_converted_item(customer_balance, self.uom)
 
 		if self.rule.round_up or self.rule.round_down:
 			func = math.ceil if self.rule.round_up else math.floor
@@ -345,7 +353,8 @@ class RuleProcessor:
 			"customer": self.customer,
 			"quantity": self.qty,
 			"uom": self.uom,
-			"expiration_date": self.expiration_date
+			"expiration_date": self.expiration_date,
+			"item": self.item
 		}).insert(ignore_permissions=True)
 		return doc.submit()
 
@@ -357,7 +366,8 @@ class RuleProcessor:
 				"customer": self.customer,
 				"quantity": self.qty,
 				"uom": self.uom,
-				"user": self.user
+				"user": self.user,
+				"item": self.item
 			}).insert(ignore_permissions=True)
 
 			self.insert_deduction_reference(usage.name)
@@ -404,7 +414,7 @@ class RuleProcessor:
 		if self.rule.fifo_deduction:
 			return [x["uom"] for x in sorted(balance, key = lambda i: i['date'])]
 		else:
-			uoms = [x["uom"] for x in customer_balance]
+			uoms = [x["uom"] for x in balance]
 			return frappe.get_all("UOM Conversion Factor",
 				filters={
 					"from_uom": ("in", uoms),
@@ -423,3 +433,20 @@ class RuleProcessor:
 		months = self.rule.expiration_delay if self.rule.expiration_rule == "Add X months" else 0
 		days = self.rule.expiration_delay if self.rule.expiration_rule == "Add X days" else 0
 		return add_to_date(self.datetime, years=years, months=months, days=days)
+
+	def get_allowed_conversions(self):
+		allowed_conversions = defaultdict(lambda: defaultdict(int))
+		for conversion in self.rule.booking_credit_conversion:
+			allowed_conversions[conversion.credit_item][conversion.uom] = conversion.qty
+
+		return dict(allowed_conversions)
+
+	def get_converted_item(self, balance, uom):
+		if uom:
+			enriched_balance = [dict(balance[x][0], **dict(item=x)) for x in balance if balance[x][0].get("uom") == uom]
+			if enriched_balance:
+				items_list = [x["item"] for x in sorted(enriched_balance, key = lambda i: i['date'])]
+				if items_list:
+					return items_list[0]
+
+		return self.item

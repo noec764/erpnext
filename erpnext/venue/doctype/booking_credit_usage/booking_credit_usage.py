@@ -22,7 +22,8 @@ class BookingCreditUsage(Document):
 			"credits": self.quantity * -1,
 			"reference_doctype": self.doctype,
 			"reference_document": self.name,
-			"uom": self.uom
+			"uom": self.uom,
+			"item": self.item
 		})
 
 	def on_cancel(self):

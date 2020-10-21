@@ -25,7 +25,8 @@ class BookingCredit(StatusUpdater):
 			"credits": self.quantity,
 			"reference_doctype": self.doctype,
 			"reference_document": self.name,
-			"uom": self.uom
+			"uom": self.uom,
+			"item": self.item
 		})
 		self.check_if_expired()
 		self.set_status(update=True)
@@ -45,27 +46,30 @@ class BookingCredit(StatusUpdater):
 def get_balance(customer, date=None):
 	booking_credits = frappe.get_all("Booking Credit Ledger",
 		filters={"customer": customer, "date": ("<", add_days(getdate(date), 1)), "docstatus": 1},
-		fields=["credits", "date", "uom"],
+		fields=["credits", "date", "uom", "item"],
 		order_by="date DESC"
 	)
 
-	uoms = list(set([x.uom for x in booking_credits if x.uom is not None]))
+	items = list(set([x.item for x in booking_credits if x.item is not None]))
 
-	balance = []
-	for uom in uoms:
-		row = {"uom": uom}
+	balance = {}
+	for item in items:
+		balance[item] = []
+		uoms = list(set([x.uom for x in booking_credits if x.uom is not None and x.item == item]))
+		for uom in uoms:
+			row = {"uom": uom}
 
-		fifo_date = now_datetime()
-		for credit in [x for x in booking_credits if x.uom == uom]:
-			bal = sum([x["credits"] for x in booking_credits if x.uom == uom and getdate(x["date"]) <= getdate(credit["date"])])
-			if bal <= 0:
-				break
-			else:
-				fifo_date = credit.date
+			fifo_date = now_datetime()
+			for credit in [x for x in booking_credits if x.uom == uom and x.item == item]:
+				bal = sum([x["credits"] for x in booking_credits if x.uom == uom and x.item == item and getdate(x["date"]) <= getdate(credit["date"])])
+				if bal <= 0:
+					break
+				else:
+					fifo_date = credit.date
 
-		row["date"] = fifo_date
-		row["balance"] = sum([x["credits"] for x in booking_credits if getdate(x["date"]) <= getdate(date) and x["uom"] == uom])
-		balance.append(row)
+			row["date"] = fifo_date
+			row["balance"] = sum([x["credits"] for x in booking_credits if getdate(x["date"]) <= getdate(date) and x["uom"] == uom])
+			balance[item].append(row)
 
 	return balance
 

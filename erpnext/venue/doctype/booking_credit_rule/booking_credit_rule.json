@@ -38,6 +38,8 @@
   "user_field",
   "item_field",
   "qty_field",
+  "credits_conversion_section",
+  "booking_credit_conversion",
   "applicable_deduction_rules_section",
   "round_up",
   "round_down",
@@ -179,7 +181,8 @@
   {
    "fieldname": "item_field",
    "fieldtype": "Select",
-   "label": "Item Field"
+   "label": "Item Field",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -275,11 +278,23 @@
    "fieldname": "conditions",
    "fieldtype": "Small Text",
    "label": "Conditions"
+  },
+  {
+   "fieldname": "credits_conversion_section",
+   "fieldtype": "Section Break",
+   "label": "Credits Conversion"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
+   "fieldname": "booking_credit_conversion",
+   "fieldtype": "Table",
+   "label": "Booking Credit Conversion",
+   "options": "Booking Credit Conversion"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-19 16:03:04.919800",
+ "modified": "2020-10-21 16:38:15.208201",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",
