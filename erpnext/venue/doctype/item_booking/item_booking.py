@@ -39,6 +39,9 @@ class ItemBooking(Document):
 		if get_datetime(self.starts_on) > get_datetime(self.ends_on):
 			frappe.throw(_("Please make sure the end time is greater than the start time"))
 
+		if not self.color:
+			self.color = frappe.db.get_value("Item", self.item, "calendar_color")
+
 	def set_title(self):
 		if self.meta._fields["title"].hidden or not self.title:
 			self.title = self.item_name
