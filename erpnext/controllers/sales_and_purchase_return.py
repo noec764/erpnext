@@ -82,11 +82,11 @@ def validate_returned_items(doc):
 
 				if ref.rate and doc.doctype in ("Delivery Note", "Sales Invoice") and flt(d.rate) > ref.rate:
 					frappe.throw(_("Row # {0}: Rate cannot be greater than the rate used in {1} {2}")
-						.format(d.idx, doc.doctype, doc.return_against))
+						.format(d.idx, _(doc.doctype), doc.return_against))
 
 				elif ref.batch_no and d.batch_no not in ref.batch_no:
 					frappe.throw(_("Row # {0}: Batch No must be same as {1} {2}")
-						.format(d.idx, doc.doctype, doc.return_against))
+						.format(d.idx, _(doc.doctype), doc.return_against))
 
 				elif ref.serial_no:
 					if not d.serial_no:
@@ -96,7 +96,7 @@ def validate_returned_items(doc):
 						for s in serial_nos:
 							if s not in ref.serial_no:
 								frappe.throw(_("Row # {0}: Serial No {1} does not match with {2} {3}")
-									.format(d.idx, s, doc.doctype, doc.return_against))
+									.format(d.idx, s, _(doc.doctype), doc.return_against))
 
 				if warehouse_mandatory and frappe.db.get_value("Item", d.item_code, "is_stock_item") \
 					and not d.get("warehouse"):

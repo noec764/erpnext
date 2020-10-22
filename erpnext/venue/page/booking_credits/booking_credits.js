@@ -149,18 +149,12 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 
 		const result = this.balances.map(customer => {
 
-			let reconciliation_uoms = []
-			if (customer.balance.some(e => e.balance < 0) && customer.balance.some(e => e.balance > 0)) {
-				reconciliation_uoms = customer.balance.map(v => { return v.balance > 0 ? v.uom : null }).filter(f => f)
-			}
-
 			return frappe.render_template('booking_credit_dashboard',
 				{
-					balance: customer.balance,
+					balance: Object.keys(customer.balance).map(f => { return {...customer.balance[f][0], item: f}}),
 					customer: customer.customer,
 					date: this.date,
-					max_count: customer.max_count,
-					reconciliation_uoms: reconciliation_uoms
+					max_count: customer.max_count
 				})
 			}).join("");
 		this.form.get_field('balance_html').$wrapper.html(result);
@@ -185,6 +179,8 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			frappe.xcall("erpnext.venue.page.booking_credits.booking_credits.reconcile_credits", {
 				customer: $(e.target).attr("data-customer"),
 				target_uom: $(e.target).attr("data-uom"),
+				target_item: $(e.target).attr("data-target-item"),
+				source_item: $(e.target).attr("data-source-item"),
 				date: this.date
 			}).then(r => {
 				frappe.show_alert({

@@ -155,21 +155,19 @@ frappe.ui.form.on("Customer", {
 			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
 				customer: frm.doc.name
 			}).then(r => {
-				const credits = r.map(d => { return d.balance });
-				const max_count = Math.max.apply(null, credits);
-
-				let reconciliation_uoms = []
-				if (r.some(e => e.balance < 0) && r.some(e => e.balance > 0)) {
-					reconciliation_uoms = r.map(v => { return v.balance > 0 ? v.uom : null }).filter(f => f)
-				}
+				const credits = Object.keys(r).map(m => {
+					return r[m]
+				}).flat().map(d => {
+					return d.balance
+				});
+				const max_count = Math.max.apply(null, credits) > 0 ? Math.max.apply(null, credits) : Math.min.apply(null, credits);
 
 				frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
 				{
-					balance: r,
+					balance: Object.keys(r).map(f => { return {...r[f][0], item: f}}),
 					customer: frm.doc.name,
 					date: frappe.datetime.now_date(),
-					max_count: max_count,
-					reconciliation_uoms: reconciliation_uoms
+					max_count: max_count
 				}), __("Booking Credits Balance"));
 				frm.dashboard.show();
 				frm.get_balance = false;
@@ -183,6 +181,8 @@ frappe.ui.form.on("Customer", {
 			frappe.xcall("erpnext.venue.page.booking_credits.booking_credits.reconcile_credits", {
 				customer: $(e.target).attr("data-customer"),
 				target_uom: $(e.target).attr("data-uom"),
+				target_item: $(e.target).attr("data-target-item"),
+				source_item: $(e.target).attr("data-source-item"),
 				date: frm.doc.date
 			}).then(r => {
 				frappe.show_alert({

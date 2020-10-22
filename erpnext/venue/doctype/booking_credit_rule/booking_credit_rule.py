@@ -172,7 +172,7 @@ class RuleProcessor:
 		self.user = getattr(doc, self.rule.user_field, None) if self.rule.user_field else None
 		self.customer = getattr(doc, self.rule.customer_field, None) if self.rule.customer_field else None
 		self.uom = getattr(doc, self.rule.uom_field, None) if self.rule.uom_field else None
-		self.qty = self.item = self.allowed_items = None
+		self.qty = self.item = None
 		self.start = get_datetime(getattr(doc, self.rule.start_time_field, now_datetime())) if self.rule.start_time_field else now_datetime()
 		self.end = get_datetime(getattr(doc, self.rule.end_time_field, now_datetime())) if self.rule.end_time_field else now_datetime()
 		self.datetime = now_datetime()
@@ -204,8 +204,6 @@ class RuleProcessor:
 
 			if self.rule.applicable_for and self.check_application_rule(self.doc):
 				return
-
-			self.allowed_items = self.get_allowed_conversions()
 
 			if self.rule.custom_deduction_rule:
 				self.apply_custom_rules()
@@ -257,7 +255,7 @@ class RuleProcessor:
 	def apply_standard_rules(self):
 		default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 		balance = get_balance(self.customer, getdate(self.datetime))
-		customer_balance = {x: balance[x] for x in balance if x in [y for y in self.allowed_items]}
+		customer_balance = {x: balance[x] for x in balance if x in self.get_allowed_conversions()}
 		customer_uoms = None
 		if customer_balance:
 			customer_uoms = self.get_ordered_uoms(list(chain.from_iterable(customer_balance.values())))
@@ -435,11 +433,7 @@ class RuleProcessor:
 		return add_to_date(self.datetime, years=years, months=months, days=days)
 
 	def get_allowed_conversions(self):
-		allowed_conversions = defaultdict(lambda: defaultdict(int))
-		for conversion in self.rule.booking_credit_conversion:
-			allowed_conversions[conversion.credit_item][conversion.uom] = conversion.qty
-
-		return dict(allowed_conversions)
+		return frappe.get_all("Booking Credit Conversions", filters={"convertible_item": self.item}, pluck="booking_credits_item")
 
 	def get_converted_item(self, balance, uom):
 		if uom:

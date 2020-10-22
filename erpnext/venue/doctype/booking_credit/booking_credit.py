@@ -32,7 +32,7 @@ class BookingCredit(StatusUpdater):
 		self.set_status(update=True)
 
 	def check_if_expired(self):
-		if get_datetime(self.expiration_date) < now_datetime() and not self.is_expired:
+		if self.expiration_date and get_datetime(self.expiration_date) < now_datetime() and not self.is_expired:
 			_process_expired_booking_entry(self, self.date)
 			self.reload()
 
@@ -44,6 +44,7 @@ class BookingCredit(StatusUpdater):
 
 @frappe.whitelist()
 def get_balance(customer, date=None):
+	default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 	booking_credits = frappe.get_all("Booking Credit Ledger",
 		filters={"customer": customer, "date": ("<", add_days(getdate(date), 1)), "docstatus": 1},
 		fields=["credits", "date", "uom", "item"],
@@ -69,7 +70,23 @@ def get_balance(customer, date=None):
 
 			row["date"] = fifo_date
 			row["balance"] = sum([x["credits"] for x in booking_credits if getdate(x["date"]) <= getdate(date) and x["uom"] == uom])
+			row["conversions"] = []
 			balance[item].append(row)
+
+	convertible_items = [x for x in frappe.get_all("Booking Credit Conversion", pluck="booking_credits_item") if x in balance]
+	for bal in balance:
+		if bal not in convertible_items:
+			for row in balance[bal]:
+				if flt(row.get("balance")) < 0 and row.get("uom") == default_uom:
+					for i in convertible_items:
+						for r in balance[i]:
+							conversion = {
+								"uom": r.get("uom"),
+								"item": i,
+								"qty": min(get_uom_in_minutes(row.get("uom")) * abs(flt(row.get("balance"))) / get_uom_in_minutes(r.get("uom")), r.get("balance"))
+							}
+							if conversion.get("qty") > 0:
+								row["conversions"].append(conversion)
 
 	return balance
 
@@ -120,7 +137,8 @@ def _process_expired_booking_entry(expired_entry, date):
 				"credits": balance - credits_left,
 				"reference_doctype": "Booking Credit",
 				"reference_document": expired_entry.name,
-				"uom": expired_entry.uom
+				"uom": expired_entry.uom,
+				"item": expired_entry.item
 			})
 
 		frappe.db.set_value("Booking Credit", expired_entry.name, "is_expired", 1)

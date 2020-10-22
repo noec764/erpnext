@@ -28,21 +28,21 @@ def get_balance(limit_start=0, limit=20, customer=None, customer_group=None, dat
 		result.append({
 			"customer": customer,
 			"balance": balance,
-			"max_count": max([x.get("balance") for x in balance]) if balance else 0
+			"max_count": max([balance[x][0].get("balance") for x in balance]) if balance else 0
 		})
 
 	return result
 
 @frappe.whitelist()
-def reconcile_credits(customer, target_uom, date=None):
+def reconcile_credits(customer, target_uom, source_item, target_item, date=None):
 	if not date:
 		date = nowdate()
 
 	minute_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 	balance = _get_balance(customer, date)
 
-	target_balance = [x.get("balance") for x in balance if x.get("uom") == target_uom]
-	source_balance = [x.get("balance") for x in balance if x.get("uom") == minute_uom]
+	target_balance = [x.get("balance") for x in balance.get(target_item) if x.get("uom") == target_uom]
+	source_balance = [x.get("balance") for x in balance.get(source_item) if x.get("uom") == minute_uom]
 
 	if target_balance and source_balance:
 		target_conversion_factor = get_uom_in_minutes(target_uom)
@@ -57,6 +57,7 @@ def reconcile_credits(customer, target_uom, date=None):
 				"customer": customer,
 				"quantity": convertible_qty * -1,
 				"uom": minute_uom,
+				"item": source_item
 			}).insert(ignore_permissions=True)
 			usage.submit()
 
@@ -65,7 +66,8 @@ def reconcile_credits(customer, target_uom, date=None):
 				"date": get_datetime(date),
 				"customer": customer,
 				"quantity": convertible_qty / target_conversion_factor,
-				"uom": target_uom
+				"uom": target_uom,
+				"item": target_item
 			}).insert(ignore_permissions=True)
 			credit.submit()
 
