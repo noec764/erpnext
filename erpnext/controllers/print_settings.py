@@ -48,7 +48,7 @@ def format_columns(display_columns, compact_fields):
 			final_columns.append(column)
 	return final_columns
 
-def has_items_field(doc)
+def has_items_field(doc):
 	meta = frappe.get_meta(doc.doctype)
 	items_field = meta.get_field('items')
 	if items_field and items_field.fieldtype == 'Table':
