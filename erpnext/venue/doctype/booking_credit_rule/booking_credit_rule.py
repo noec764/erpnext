@@ -137,7 +137,7 @@ def get_status_options(doctype):
 		fields=["options"],
 		pluck="options")
 
-	return options[0].split("\n") if options else ""
+	return [{"label": _(x), "value": x} for x in options[0].split("\n")] if options else ""
 
 @frappe.whitelist()
 def get_link_options(doctype, link):

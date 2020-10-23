@@ -11,6 +11,12 @@ frappe.ui.form.on('Booking Credit', {
 				}
 			}
 		});
+
+		frm.set_query("item", function() {
+			return {
+				query: "erpnext.venue.doctype.booking_credit_conversion.booking_credit_conversion.get_convertible_items",
+			};
+		});
 	},
 	onload: function(frm) {
 		frm.ignore_doctypes_on_cancel_all = ["Booking Credit Ledger"];
