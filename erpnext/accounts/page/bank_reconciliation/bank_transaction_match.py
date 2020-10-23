@@ -278,7 +278,7 @@ class BankTransactionMatch:
 		for transaction in self.bank_transactions:
 			for bank_transaction in reconciled_bank_transactions:
 				if transaction.get("description") and bank_transaction.get("description"):
-					seq = difflib.SequenceMatcher(lambda x: x == " ", transaction.get("description"), bank_transaction.get("description"))
+					seq = difflib.SequenceMatcher(lambda x: x == " ", transaction.get("description", ""), bank_transaction.get("description", ""))
 
 					if seq.ratio() > 0.6:
 						bank_transaction["ratio"] = seq.ratio()
