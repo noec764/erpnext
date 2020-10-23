@@ -255,6 +255,9 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 
 			if pricing_rule.get('suggestion'): continue
 
+			if pricing_rule.booking_credits_based and not check_booking_credit_rule(args, doc):
+				continue
+
 			item_details.validate_applied_rule = pricing_rule.get("validate_applied_rule", 0)
 			item_details.price_or_product_discount = pricing_rule.get("price_or_product_discount")
 
@@ -448,3 +451,40 @@ def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
 			'parent': ('in', items),
 			'uom': ("like", "{0}%".format(txt))
 		}, fields = ["distinct uom"], as_list=1)
+
+def check_booking_credit_rule(args, doc):
+	from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
+	from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
+
+	if args.get("customer"):
+		balance = get_balance(args.get("customer"), args.get("transaction_date"))
+		convertible_items = frappe.get_all("Booking Credit Conversions",
+			fields=["convertible_item", "booking_credits_item"]
+		)
+
+		booking_credit_items = [x.booking_credits_item for x in convertible_items]
+		simplified_balance = {x: {} for x in balance if x in booking_credit_items}
+		for bal in simplified_balance:
+			for d in balance[bal]:
+				simplified_balance[bal][d.get("uom")] = d.get("balance")
+
+		result = False
+		for item in doc.items:
+			if item.get("item_booking") and item.item_code in [x.convertible_item for x in convertible_items]:
+				booking_credit_items = [x.booking_credits_item for x in convertible_items if x.convertible_item == item.item_code]
+				qty = item.qty
+
+				for credit in booking_credit_items:
+					if qty > 0 and flt(simplified_balance.get(credit, {}).get(item.uom)) > 0:
+						removable_qty = min(qty, simplified_balance[credit][item.uom])
+						simplified_balance[credit][item.uom] -= removable_qty
+						qty -= removable_qty
+
+				result = False if qty > 0 else True
+
+			if item.name == args.get("child_docname"):
+				return result
+
+		return result
+
+	return False

@@ -111,6 +111,7 @@ erpnext.booking_dialog = class BookingDialog {
 			if (r && r.message) {
 				this.price = r.message.price ? r.message.price : 0;
 				this.formatted_price = r.message.price ? r.message.price.formatted_price : __("Unavailable");
+				this.formatted_total = r.message.total;
 				this.sidebar.display_price();
 			}
 		})
@@ -121,6 +122,7 @@ erpnext.booking_dialog = class BookingDialog {
 			item_code: this.item
 		}).then(r => {
 			this.sidebar.display_bookings(r.message);
+			this.get_item_price();
 		})
 	}
 }
@@ -183,12 +185,15 @@ class BookingSidebar {
 	}
 
 	display_price() {
-		if (this.price_display) {
-			this.price_display[0].innerHTML = this.parent.formatted_price;
-		} else {
+		if (!this.price_display) {
 			this.price_title = $(`<div class="sidebar-section"><h4>${__("Price")}</h4></div>`).appendTo(this.wrapper);
-			this.price_display = $(`<div class="formatted-price">${this.parent.formatted_price}</div>`).appendTo(this.price_title);
+			this.price_display = $(`<div></div>`).appendTo(this.price_title);
 		}
+
+		this.price_display[0].innerHTML = `
+			<div class="formatted-total"><span>${__("Total:")} </span>${this.parent.formatted_total}</div>
+			<div class="formatted-price small text-muted"><span>${__("Rate:")} </span>${this.parent.formatted_price}</div>
+		`
 	}
 
 	display_bookings(data) {

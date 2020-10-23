@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date, fmt_money
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -172,7 +172,7 @@ def get_item_price(item_code, uom):
 
 	price = get_price(
 		item_code=item_code,
-		price_list=cart_quotation.selling_price_list if contact else cart_settings.price_list,
+		price_list=cart_quotation.selling_price_list if cart_quotation else cart_settings.price_list,
 		customer_group=cart_settings.default_customer_group,
 		company=cart_settings.company,
 		uom=uom
@@ -180,7 +180,8 @@ def get_item_price(item_code, uom):
 
 	return {
 		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
-		"price": price
+		"price": price,
+		"total": fmt_money(cart_quotation.grand_total if cart_quotation else 0, currency=cart_quotation.currency if cart_quotation else None)
 	}
 
 @frappe.whitelist()

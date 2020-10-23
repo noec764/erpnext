@@ -21,14 +21,14 @@ from frappe.utils import cint, flt, get_datetime, get_link_to_form, getdate, tod
 class MultiplePricingRuleConflict(frappe.ValidationError): pass
 
 apply_on_table = {
-    'Item Code': 'items',
-    'Item Group': 'item_groups',
-    'Brand': 'brands'
+	'Item Code': 'items',
+	'Item Group': 'item_groups',
+	'Brand': 'brands'
 }
 
 def get_pricing_rules(args, doc=None):
 	pricing_rules = []
-	values =  {}
+	values = {}
 
 	for apply_on in ['Item Code', 'Item Group', 'Brand']:
 		pricing_rules.extend(_get_pricing_rules(apply_on, args, values))

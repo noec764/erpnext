@@ -43,10 +43,14 @@ class BookingCredit(StatusUpdater):
 		self.set_status(update=True)
 
 @frappe.whitelist()
-def get_balance(customer, date=None):
+def get_balance(customer, date=None, uom=None):
 	default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
+	query_filters = {"customer": customer, "date": ("<", add_days(getdate(date), 1)), "docstatus": 1}
+	if uom:
+		query_filters.update({"uom": uom})
+
 	booking_credits = frappe.get_all("Booking Credit Ledger",
-		filters={"customer": customer, "date": ("<", add_days(getdate(date), 1)), "docstatus": 1},
+		filters=query_filters,
 		fields=["credits", "date", "uom", "item"],
 		order_by="date DESC"
 	)
