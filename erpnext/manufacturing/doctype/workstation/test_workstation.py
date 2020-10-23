@@ -21,17 +21,20 @@ class TestWorkstation(unittest.TestCase):
 		self.assertRaises(WorkstationHolidayError, check_if_within_operating_hours,
 			"_Test Workstation 1", "Operation 1", "2013-02-01 10:00:00", "2013-02-02 20:00:00")
 
-def make_workstation(**args):
-	args = frappe._dict(args)
+def make_workstation(*args, **kwargs):
+	args = args if args else kwargs
+	if isinstance(args, tuple):
+		args = args[0]
 
+	workstation_name = args.workstation_name or args.workstation
 	try:
 		doc = frappe.get_doc({
 			"doctype": "Workstation",
-			"workstation_name": args.workstation_name
+			"workstation_name": workstation_name
 		})
 
 		doc.insert()
 
 		return doc
 	except frappe.DuplicateEntryError:
-		return frappe.get_doc("Workstation", args.workstation_name)
+		return frappe.get_doc("Workstation", workstation_name)
