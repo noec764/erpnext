@@ -20,7 +20,7 @@ from erpnext.venue.utils import get_linked_customers
 
 ACTION_MAP = {
 	"after_insert": "After Insert",
-	"on_update": "If Status Changes",
+	"on_change": "If Status Changes",
 	"on_submit": "On Submit",
 	"on_cancel": "On Cancel",
 	"on_trash": "On Delete"

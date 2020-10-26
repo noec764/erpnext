@@ -216,7 +216,7 @@ standard_queries = {
 doc_events = {
 	"*": {
 		"after_insert": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
-		"on_update": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_change": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		"on_submit": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		"on_cancel": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		"on_trash": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",

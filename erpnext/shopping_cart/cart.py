@@ -84,6 +84,9 @@ def place_order():
 				if item.qty > item_stock.stock_qty[0][0]:
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
 
+	if sales_order.grand_total == 0.0:
+		sales_order.per_billed = 100.0
+
 	sales_order.flags.ignore_permissions = True
 	sales_order.insert()
 	sales_order.submit()

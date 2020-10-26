@@ -57,7 +57,7 @@ class ItemBooking(Document):
 				self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title()
 
 	def set_status(self, status):
-		self.db_set("status", status)
+		self.db_set("status", status, update_modified=True, notify=True)
 
 	def on_update(self):
 		doc_before_save = self.get_doc_before_save()
@@ -181,7 +181,7 @@ def get_item_price(item_code, uom):
 	return {
 		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
 		"price": price,
-		"total": fmt_money(cart_quotation.grand_total if cart_quotation else 0, currency=cart_quotation.currency if cart_quotation else None)
+		"total": fmt_money((cart_quotation.grand_total or 0) if cart_quotation else 0, currency=cart_quotation.currency if cart_quotation else None)
 	}
 
 @frappe.whitelist()

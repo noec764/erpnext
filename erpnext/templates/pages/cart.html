@@ -100,14 +100,14 @@
 	{% endif %}
 </div>
 
-<div class="row mt-5">
+<div class="row my-5">
 	<div class="col-12">
 		{% if cart_settings.enable_checkout %}
-		<a href="/orders">
+		<a class ="btn btn-secondary" href="/orders">
 			{{ _('See past orders') }}
 		</a>
 		{% elif frappe.db.get_value("Portal Menu Item", dict(route="/quotations"), "enabled") == 1 %}
-		<a href="/quotations">
+		<a class ="btn btn-secondary" href="/quotations">
 			{{ _('See past quotations') }}
 		</a>
 		{% endif %}
