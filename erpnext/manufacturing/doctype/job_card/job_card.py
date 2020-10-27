@@ -333,8 +333,8 @@ class JobCard(Document):
 			filters={"docstatus": 1, "parent": self.work_order, "sequence_id": ('<', self.sequence_id)},
 			order_by = "sequence_id, idx")
 
-		message = "Job Card {0}: As per the sequence of the operations in the work order {1}".format(bold(self.name),
-			bold(get_link_to_form("Work Order", self.work_order)))
+		message = _("Job Card {0}: As per the sequence of the operations in the work order {1}").format(bold(self.name),
+			bold(get_link_to_form("Work Order", self.work_order, _("Work Order"))))
 
 		for row in data:
 			if row.status != "Completed" and row.completed_qty < current_operation_qty:
