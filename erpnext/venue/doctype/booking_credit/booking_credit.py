@@ -55,7 +55,7 @@ def get_balance(customer, date=None, uom=None):
 		filters=query_filters,
 		fields=["credits", "date", "uom", "item"],
 		order_by="date DESC"
-	)
+	) + _process_expired_booking_credits(date=date, customer=customer, submit=False)
 
 	items = list(set([x.item for x in booking_credits if x.item is not None]))
 
@@ -96,57 +96,77 @@ def get_balance(customer, date=None, uom=None):
 
 	return balance
 
-def process_expired_booking_credits(date=None):
-	expired_entries = frappe.get_all("Booking Credit", filters={
+def process_expired_booking_credits():
+	_process_expired_booking_credits()
+
+def _process_expired_booking_credits(date=None, customer=None, submit=True):
+	query_filters = {
 		"is_expired": 0,
 		"expiration_date": ("is", "set"),
 		"docstatus": 1
-	}, fields=["name", "quantity", "uom", "customer", "expiration_date"])
+	}
 
+	if customer:
+		query_filters.update({"customer": customer})
+
+	expired_entries = frappe.get_all("Booking Credit", filters=query_filters, fields=["name", "quantity", "uom", "customer", "expiration_date", "item"])
+
+	balance_entries = []
 	for expired_entry in expired_entries:
 		if expired_entry.expiration_date >= getdate(date):
 			continue
 
-		_process_expired_booking_entry(expired_entry, date)
+		balance = _calculate_expired_booking_entry(expired_entry, date)
+		if balance:
+			balance_entries.append(balance)
 
-def _process_expired_booking_entry(expired_entry, date):
-		balance = sum(frappe.get_all("Booking Credit Ledger",
-			filters={
-				"customer": expired_entry.customer,
-				"date": ("<", add_days(get_datetime(date), 1)),
-				"docstatus": 1,
-				"uom": expired_entry.uom
-			},
-			fields=["credits"],
-			order_by="date DESC",
-			pluck="credits"
-		))
+	if submit:
+		for balance_entry in balance_entries:
+			_process_expired_booking_entry(balance_entry)
 
-		credits_left = sum(frappe.get_all("Booking Credit", 
-			filters={
-				"customer": expired_entry.customer,
-				"is_expired": 0,
-				"date": (">=", expired_entry.date),
-				"uom": expired_entry.uom,
-				"docstatus": 1,
-				"name": ("!=", expired_entry.name)
-			},
-			fields=["quantity"],
-			pluck="quantity"
-		))
+	return balance_entries
 
-		if balance > credits_left:
-			create_ledger_entry(**{
-				"user": expired_entry.user,
-				"customer": expired_entry.customer,
-				"date": get_datetime(expired_entry.expiration_date),
-				"credits": balance - credits_left,
-				"reference_doctype": "Booking Credit",
-				"reference_document": expired_entry.name,
-				"uom": expired_entry.uom,
-				"item": expired_entry.item
-			})
+def _calculate_expired_booking_entry(expired_entry, date):
+	balance = sum(frappe.get_all("Booking Credit Ledger",
+		filters={
+			"customer": expired_entry.customer,
+			"date": ("<", add_days(get_datetime(date), 1)),
+			"docstatus": 1,
+			"uom": expired_entry.uom
+		},
+		fields=["credits"],
+		order_by="date DESC",
+		pluck="credits"
+	))
 
-		frappe.db.set_value("Booking Credit", expired_entry.name, "is_expired", 1)
-		frappe.db.set_value("Booking Credit", expired_entry.name, "status", "Expired")
+	credits_left = sum(frappe.get_all("Booking Credit",
+		filters={
+			"customer": expired_entry.customer,
+			"is_expired": 0,
+			"date": (">=", expired_entry.date),
+			"uom": expired_entry.uom,
+			"docstatus": 1,
+			"name": ("!=", expired_entry.name)
+		},
+		fields=["quantity"],
+		pluck="quantity"
+	))
 
+	if balance > credits_left:
+		return frappe._dict({
+			"user": expired_entry.user,
+			"customer": expired_entry.customer,
+			"date": get_datetime(expired_entry.expiration_date),
+			"credits": (balance - credits_left) * -1,
+			"reference_doctype": "Booking Credit",
+			"reference_document": expired_entry.name,
+			"uom": expired_entry.uom,
+			"item": expired_entry.item
+		})
+
+	return {}
+
+def _process_expired_booking_entry(balance_entry):
+	create_ledger_entry(**balance_entry)
+	frappe.db.set_value("Booking Credit", balance_entry.name, "is_expired", 1)
+	frappe.db.set_value("Booking Credit", balance_entry.name, "status", "Expired")
