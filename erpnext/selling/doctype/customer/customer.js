@@ -164,7 +164,9 @@ frappe.ui.form.on("Customer", {
 
 				frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
 				{
-					balance: Object.keys(r).map(f => { return {...r[f][0], item: f}}),
+					balance: Object.keys(r).map(f => {
+						return flatten_credits(r, f)
+					}).flat(),
 					customer: frm.doc.name,
 					date: frappe.datetime.now_date(),
 					max_count: max_count
@@ -194,3 +196,9 @@ frappe.ui.form.on("Customer", {
 		})
 	}
 });
+
+function flatten_credits(obj, item) {
+	return obj[item].map(f => {
+		return {...f, item: item}
+	})
+}
