@@ -24,9 +24,13 @@
   "trigger_action",
   "expected_status",
   "conditions",
+  "posting_date_section",
+  "posting_date_rule",
+  "column_break_18",
+  "posting_date_delay",
   "expiration_section",
   "expiration_rule",
-  "column_break_18",
+  "column_break_20",
   "expiration_delay",
   "fields_map",
   "start_time_field",
@@ -46,7 +50,9 @@
   "fifo_deduction",
   "custom_deduction_rule",
   "custom_rules_section",
-  "booking_credit_rules"
+  "custom_addition_rules",
+  "booking_credit_rules",
+  "addition_booking_credit_rules"
  ],
  "fields": [
   {
@@ -114,14 +120,15 @@
    "label": "Expected Status"
   },
   {
-   "depends_on": "eval:doc.custom_deduction_rule&&doc.rule_type==\"Booking Credits Deduction\"",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\" || (doc.custom_deduction_rule&&doc.rule_type==\"Booking Credits Deduction\")",
    "fieldname": "custom_rules_section",
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.custom_deduction_rule&&doc.rule_type==\"Booking Credits Deduction\"",
    "fieldname": "booking_credit_rules",
    "fieldtype": "Table",
-   "label": "Rules",
+   "label": "Deduction Rules",
    "options": "Booking Credit Rules"
   },
   {
@@ -276,11 +283,46 @@
    "fieldname": "conditions",
    "fieldtype": "Small Text",
    "label": "Conditions"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "posting_date_section",
+   "fieldtype": "Section Break",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "posting_date_rule",
+   "fieldtype": "Select",
+   "label": "Posting Date Rule",
+   "options": "\nAdd X days\nAdd X months\nAdd X years"
+  },
+  {
+   "fieldname": "posting_date_delay",
+   "fieldtype": "Int",
+   "label": "Posting Date Delay"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.custom_addition_rules",
+   "fieldname": "addition_booking_credit_rules",
+   "fieldtype": "Table",
+   "label": "Addition Rules",
+   "options": "Booking Credit Addition Rules"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "custom_addition_rules",
+   "fieldtype": "Check",
+   "label": "Custom Addition Rules"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-22 17:33:54.911501",
+ "modified": "2020-10-27 13:50:11.901801",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

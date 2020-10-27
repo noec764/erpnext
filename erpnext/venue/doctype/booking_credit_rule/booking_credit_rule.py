@@ -227,7 +227,7 @@ class RuleProcessor:
 		return True
 
 	def apply_addition_rules(self):
-		self.datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
+		self.datetime = self.get_posting_date()
 		self.expiration_date = self.get_expiration_date()
 
 		if self.rule.use_child_table:
@@ -239,6 +239,8 @@ class RuleProcessor:
 				self.uom = getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None
 				self.qty = getattr(row, self.rule.qty_field, None) if self.rule.qty_field else None
 
+				self.check_custom_addition_rules()
+
 				if self.uom and self.qty:
 					self.add_credit()
 		else:
@@ -249,8 +251,22 @@ class RuleProcessor:
 			if self.rule.applicable_for and self.check_application_rule(self.doc):
 				return
 
+			self.check_custom_addition_rules()
+
 			if self.uom and self.qty:
 				self.add_credit()
+
+	def check_custom_addition_rules(self):
+		if self.rule.custom_addition_rules:
+			uom = self.uom
+			qty = self.qty
+			self.uom = self.qty = None
+
+			for rule in self.rule.addition_booking_credit_rules:
+				if rule.source_unit_of_measure == uom:
+					self.uom = rule.target_unit_of_measure
+					self.qty = flt(rule.target_quantity) * flt(qty)
+					break
 
 	def apply_standard_rules(self):
 		default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
@@ -431,6 +447,18 @@ class RuleProcessor:
 		months = self.rule.expiration_delay if self.rule.expiration_rule == "Add X months" else 0
 		days = self.rule.expiration_delay if self.rule.expiration_rule == "Add X days" else 0
 		return add_to_date(self.datetime, years=years, months=months, days=days)
+
+	def get_posting_date(self):
+		datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
+
+		if not self.rule.posting_date_delay:
+			return datetime
+
+		years = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X years" else 0
+		months = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X months" else 0
+		days = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X days" else 0
+
+		return add_to_date(datetime, years=years, months=months, days=days)
 
 	def get_allowed_conversions(self):
 		return frappe.get_all("Booking Credit Conversions", filters={"convertible_item": self.item}, pluck="booking_credits_item")
