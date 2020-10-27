@@ -203,7 +203,7 @@ class BOM(WebsiteGenerator):
 								.format(arg["item_code"], self.buying_price_list), alert=True)
 						else:
 							frappe.msgprint(_("{0} not found for item {1}")
-								.format(self.rm_cost_as_per, arg["item_code"]), alert=True)
+								.format(_(self.rm_cost_as_per), arg["item_code"]), alert=True)
 		return flt(rate) * flt(self.plc_conversion_rate or 1) / (self.conversion_rate or 1)
 
 	def update_cost(self, update_parent=True, from_child_bom=False, save=True):
