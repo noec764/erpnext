@@ -40,6 +40,22 @@
 				</div>
 			</li>
 			{% endif %}
+			{% if credits_balance %}
+			<li>
+				<div class="frappe-card w-50">
+					<div class="card-body">
+						<h5 class="card-title">{{ _("Available booking credits") }}</h5>
+						{% for bal in credits_balance %}
+							<ul>
+								{% for credits in credits_balance[bal] %}
+									<li><p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p></li>
+								{% endfor %}
+							</ul>
+						{% endfor %}
+					</div>
+				</div>
+			</li>
+			{% endif %}
 			{% if subscription %}
 			<li>
 				<div class="frappe-card w-50">

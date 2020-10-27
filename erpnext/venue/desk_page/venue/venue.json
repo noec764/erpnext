@@ -13,7 +13,7 @@
   {
    "hidden": 0,
    "label": "Booking Credits",
-   "links": "[\n    {\n        \"label\": \"Booking Credit\",\n        \"name\": \"Booking Credit\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Usage\",\n        \"name\": \"Booking Credit Usage\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Balance\",\n        \"name\": \"booking-credits\",\n        \"onboard\": 1,\n        \"type\": \"page\"\n    },\n    {\n        \"label\": \"Booking Credit Rule\",\n        \"name\": \"Booking Credit Rule\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"label\": \"Booking Credit\",\n        \"name\": \"Booking Credit\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Usage\",\n        \"name\": \"Booking Credit Usage\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Balance\",\n        \"name\": \"booking-credits\",\n        \"onboard\": 1,\n        \"type\": \"page\"\n    },\n    {\n        \"label\": \"Booking Credit Rule\",\n        \"name\": \"Booking Credit Rule\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Booking Credit Conversion\",\n        \"name\": \"Booking Credit Conversion\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,
@@ -50,7 +50,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Venue",
- "modified": "2020-10-16 14:05:53.010146",
+ "modified": "2020-10-26 14:07:48.754828",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",

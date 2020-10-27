@@ -10,6 +10,7 @@ from erpnext.controllers.website_list_for_contact import get_customers_suppliers
 from erpnext.templates.pages.integrations.stripe_checkout import get_api_key
 
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePaymentMethod
+from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
 
 no_cache = 1
 
@@ -23,6 +24,7 @@ def get_context(context):
 	context.subscription = False
 	context.subscriptions_available = False
 	context.lang = frappe.local.lang
+	context.credits_balance = None
 
 	active_tokens = frappe.get_all("OAuth Bearer Token",\
 		filters=[["user", "=", frappe.session.user]],\
@@ -42,6 +44,8 @@ def get_context(context):
 			context.subscription = frappe.get_doc("Subscription", {"customer": customers[0]})
 
 		context.subscriptions_available = True if frappe.db.get_value("Subscription Template", {"enable_on_portal": 1}) else False
+
+		context.credits_balance = get_balance(customers[0]) or None
 
 def get_customer_payment_methods(references):
 	try:

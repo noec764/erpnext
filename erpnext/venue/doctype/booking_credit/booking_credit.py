@@ -45,9 +45,11 @@ class BookingCredit(StatusUpdater):
 @frappe.whitelist()
 def get_balance(customer, date=None, uom=None):
 	default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
-	query_filters = {"customer": customer, "date": ("<", add_days(getdate(date), 1)), "docstatus": 1}
+	query_filters = {"customer": customer, "docstatus": 1}
 	if uom:
 		query_filters.update({"uom": uom})
+	if date:
+		query_filters.update({"date": ("<", add_days(getdate(date), 1))})
 
 	booking_credits = frappe.get_all("Booking Credit Ledger",
 		filters=query_filters,
@@ -73,7 +75,7 @@ def get_balance(customer, date=None, uom=None):
 					fifo_date = credit.date
 
 			row["date"] = fifo_date
-			row["balance"] = sum([x["credits"] for x in booking_credits if getdate(x["date"]) <= getdate(date) and x["uom"] == uom])
+			row["balance"] = sum([x["credits"] for x in booking_credits if (getdate(x["date"]) <= getdate(date) if date else True) and x["uom"] == uom])
 			row["conversions"] = []
 			balance[item].append(row)
 
