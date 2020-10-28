@@ -664,7 +664,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 					child.charge_type = "On Net Total";
 					child.account_head = tax.account;
 					child.description = tax.description;
-					child.rate = rate;
+					child.rate = 0;
 				}
 			});
 		}
