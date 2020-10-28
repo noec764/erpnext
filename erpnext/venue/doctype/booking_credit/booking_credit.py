@@ -33,7 +33,7 @@ class BookingCredit(StatusUpdater):
 
 	def check_if_expired(self):
 		if self.expiration_date and get_datetime(self.expiration_date) < now_datetime() and not self.is_expired:
-			_process_expired_booking_entry(self, self.date)
+			_process_expired_booking_entry(self)
 			self.reload()
 
 	def on_cancel(self):
