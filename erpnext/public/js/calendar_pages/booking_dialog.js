@@ -264,7 +264,7 @@ class BookingCalendar {
 	}
 
 	set_initial_display_view() {
-		this.fullCalendar.changeView(this.get_initial_display_view());
+		this.fullCalendar&&this.fullCalendar.changeView(this.get_initial_display_view());
 	}
 
 	get_header_toolbar() {
@@ -280,11 +280,11 @@ class BookingCalendar {
 	}
 
 	set_option(option, value) {
-		this.fullCalendar.setOption(option, value);
+		this.fullCalendar&&this.fullCalendar.setOption(option, value);
 	}
 
 	destroy() {
-		this.fullCalendar.destroy();
+		this.fullCalendar&&this.fullCalendar.destroy();
 		document.getElementById('alternative-item').remove();
 	}
 
