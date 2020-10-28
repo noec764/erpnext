@@ -454,7 +454,7 @@ class SalesOrder(SellingController):
 					frappe.throw(_("Cannot ensure delivery by Serial No as Item {0} is added with and without Ensure Delivery by Serial No.").format(item.item_code))
 				if item.item_code not in reserved_items:
 					if not frappe.get_cached_value("Item", item.item_code, "has_serial_no"):
-						frappe.throw(_("Item {0} has no Serial No. Only serilialized items can have delivery based on Serial No").format(item.item_code))
+						frappe.throw(_("Item {0} has no Serial No. Only serialized items can have delivery based on Serial No").format(item.item_code))
 					if not frappe.db.exists("BOM", {"item": item.item_code, "is_active": 1}):
 						frappe.throw(_("No active BOM found for item {0}. Delivery by Serial No cannot be ensured").format(item.item_code))
 				reserved_items.append(item.item_code)

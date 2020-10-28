@@ -82,12 +82,12 @@ class OpeningInvoiceCreationTool(Document):
 			if self.create_missing_party:
 				self.add_party(row.party_type, row.party)
 			else:
-				frappe.throw(_("Row #{}: {} {} does not exist.").format(row.idx, frappe.bold(row.party_type), frappe.bold(row.party)))
+				frappe.throw(_("Row #{}: {} {} does not exist.").format(row.idx, frappe.bold(_(row.party_type)), frappe.bold(row.party)))
 
 		mandatory_error_msg = _("Row #{0}: {1} is required to create the Opening {2} Invoices")
 		for d in ("Party", "Outstanding Amount", "Temporary Opening Account"):
 			if not row.get(scrub(d)):
-				frappe.throw(mandatory_error_msg.format(row.idx, d, self.invoice_type))
+				frappe.throw(mandatory_error_msg.format(row.idx, d, _(self.invoice_type)))
 
 	def get_invoices(self):
 		invoices = []
