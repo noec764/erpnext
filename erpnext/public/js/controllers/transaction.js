@@ -1070,7 +1070,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				},
 				callback: function(r) {
 					if(!r.exc) {
-						me.conversion_factor(me.frm.doc, cdt, cdn);
+						frappe.model.set_value(cdt, cdn, 'conversion_factor', r.message.conversion_factor);
 					}
 				}
 			});

@@ -151,10 +151,12 @@ class PurchaseInvoice(BuyingController):
 			["account_type", "report_type", "account_currency"], as_dict=True)
 
 		if account.report_type != "Balance Sheet":
-			frappe.throw(_("Please ensure {} account is a Balance Sheet account. You can change the parent account to a Balance Sheet account or select a different account.").format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
+			frappe.throw(_("Please ensure {} account is a Balance Sheet account. You can change the parent account to a Balance Sheet account or select a different account.")
+				.format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
 
 		if self.supplier and account.account_type != "Payable":
-			frappe.throw(_("Please ensure {} account is a Payable account. Change the account type to Payable or select a different account.").format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
+			frappe.throw(_("Please ensure {} account is a Payable account. Change the account type to Payable or select a different account.")
+				.format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
 
 		self.party_account_currency = account.account_currency
 
@@ -287,10 +289,11 @@ class PurchaseInvoice(BuyingController):
 
 			for d in self.get('items'):
 				if not d.purchase_order:
-					throw(_("""Purchase Order Required for item {0}
-						To submit the invoice without purchase order please set
-						{1} as {2} in {3}""").format(frappe.bold(d.item_code), frappe.bold(_('Purchase Order Required')),
-						frappe.bold('No'), get_link_to_form('Buying Settings', 'Buying Settings', 'Buying Settings')))
+					msg = _("Purchase Order Required for item {}").format(frappe.bold(d.item_code))
+					msg += "<br><br>"
+					msg += _("To submit the invoice without purchase order please set {} ").format(frappe.bold(_('Purchase Order Required')))
+					msg += _("as {} in {}").format(frappe.bold('No'), get_link_to_form('Buying Settings', 'Buying Settings', _('Buying Settings')))
+					throw(msg, title=_("Mandatory Purchase Order"))
 
 	def pr_required(self):
 		stock_items = self.get_stock_items()
@@ -300,10 +303,11 @@ class PurchaseInvoice(BuyingController):
 
 			for d in self.get('items'):
 				if not d.purchase_receipt and d.item_code in stock_items:
-					throw(_("""Purchase Receipt Required for item {0}
-						To submit the invoice without purchase receipt please set
-						{1} as {2} in {3}""").format(frappe.bold(d.item_code), frappe.bold(_('Purchase Receipt Required')),
-						frappe.bold('No'), get_link_to_form('Buying Settings', 'Buying Settings', 'Buying Settings')))
+					msg = _("Purchase Receipt Required for item {}").format(frappe.bold(d.item_code))
+					msg += "<br><br>"
+					msg += _("To submit the invoice without purchase receipt please set {} ").format(frappe.bold(_('Purchase Receipt Required')))
+					msg += _("as {} in {}").format(frappe.bold('No'), get_link_to_form('Buying Settings', 'Buying Settings', _('Buying Settings')))
+					throw(msg, title=_("Mandatory Purchase Receipt"))
 
 	def validate_write_off_account(self):
 		if self.write_off_amount and not self.write_off_account:
