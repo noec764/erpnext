@@ -237,7 +237,9 @@ class BOM(WebsiteGenerator):
 			self.calculate_cost()
 		if save:
 			self.db_update()
-		self.update_exploded_items()
+
+		if not self.is_new():
+			self.update_exploded_items()
 
 		# update parent BOMs
 		if self.total_cost != existing_bom_cost and update_parent:
