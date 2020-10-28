@@ -93,12 +93,24 @@ erpnext.booking_dialog = class BookingDialog {
 		this.sales_uom = value;
 		this.calendar.uom = this.sales_uom
 		this.calendar.get_item_calendar().then(() => {
-			this.calendar.set_initial_display_view();
-			this.calendar.set_option('headerToolbar', this.calendar.get_header_toolbar())
-			this.calendar.set_option('displayEventTime', this.calendar.get_time_display())
-			this.calendar.set_option('slotMinTime', this.calendar.start_time.toTimeString().slice(0, 8))
-			this.calendar.set_option('slotMaxTime', this.calendar.end_time.toTimeString().slice(0, 8))
-			this.calendar.fullCalendar&&this.calendar.fullCalendar.refetchEvents();
+			if (this.calendar.item_calendar.length) {
+				this.calendar.set_initial_display_view();
+				this.calendar.set_option('headerToolbar', this.calendar.get_header_toolbar())
+				this.calendar.set_option('displayEventTime', this.calendar.get_time_display())
+
+				const start = this.calendar.start_time.toTimeString().slice(0, 8)
+				const end = this.calendar.end_time.toTimeString().slice(0, 8)
+
+				if (new Date(`2999-01-01 ${this.calendar.get_option('slotMinTime')}`) < this.calendar.start_time &&
+					new Date(`2999-01-01 ${this.calendar.get_option('slotMaxTime')}`) < this.calendar.end_time) {
+					this.calendar.set_option('slotMaxTime', end)
+					this.calendar.set_option('slotMinTime', start)
+				} else {
+					this.calendar.set_option('slotMinTime', start)
+					this.calendar.set_option('slotMaxTime', end)
+				}
+				this.calendar.fullCalendar&&this.calendar.fullCalendar.refetchEvents();
+			}
 		})
 		this.get_item_price()
 	}
@@ -245,7 +257,8 @@ class BookingCalendar {
 		})
 		this.get_item_calendar()
 		.then(() => {
-			this.render();
+			this.item_calendar.length&&this.render();
+			//TODO: Nice error view
 		})
 	}
 
@@ -281,6 +294,10 @@ class BookingCalendar {
 
 	set_option(option, value) {
 		this.fullCalendar&&this.fullCalendar.setOption(option, value);
+	}
+
+	get_option(option) {
+		return this.fullCalendar&&this.fullCalendar.getOption(option);
 	}
 
 	destroy() {
