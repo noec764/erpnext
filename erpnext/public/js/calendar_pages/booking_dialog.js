@@ -98,11 +98,11 @@ erpnext.booking_dialog = class BookingDialog {
 				this.calendar.set_option('headerToolbar', this.calendar.get_header_toolbar())
 				this.calendar.set_option('displayEventTime', this.calendar.get_time_display())
 
-				const start = this.calendar.start_time.toTimeString().slice(0, 8)
-				const end = this.calendar.end_time.toTimeString().slice(0, 8)
+				const start = this.calendar.start_time.format("HH:mm:ss")
+				const end = this.calendar.end_time.format("HH:mm:ss")
 
-				if (new Date(`2999-01-01 ${this.calendar.get_option('slotMinTime')}`) < this.calendar.start_time &&
-					new Date(`2999-01-01 ${this.calendar.get_option('slotMaxTime')}`) < this.calendar.end_time) {
+				if (moment(this.calendar.get_option('slotMinTime'), "HH:mm:ss") < this.calendar.start_time &&
+					moment(this.calendar.get_option('slotMaxTime'), "HH:mm:ss") < this.calendar.end_time) {
 					this.calendar.set_option('slotMaxTime', end)
 					this.calendar.set_option('slotMinTime', start)
 				} else {
@@ -312,8 +312,8 @@ class BookingCalendar {
 		).then(r => {
 			this.parent.calendar_type = r.message.type;
 			this.item_calendar = r.message.calendar;
-			this.start_time = new Date(Math.min.apply(0, this.item_calendar.map(f => new Date(`2999-01-01 ${f.start_time}`))))
-			this.end_time = new Date(Math.max.apply(0, this.item_calendar.map(f => new Date(`2999-01-01 ${f.end_time}`))))
+			this.start_time = moment.min(this.item_calendar.map(f => moment(f.start_time, frappe.defaultTimeFormat)))
+			this.end_time = moment.max(this.item_calendar.map(f => moment(f.end_time, frappe.defaultTimeFormat)))
 		})
 	}
 
@@ -362,8 +362,8 @@ class BookingCalendar {
 				return me.datesSet(event);
 			},
 			displayEventTime: this.get_time_display(),
-			slotMinTime: this.start_time.toTimeString().slice(0, 8),
-			slotMaxTime: this.end_time.toTimeString().slice(0, 8),
+			slotMinTime: this.start_time.format("HH:mm:ss"),
+			slotMaxTime: this.end_time.format("HH:mm:ss"),
 			allDayContent: function() {
 				return __("All Day");
 			}
