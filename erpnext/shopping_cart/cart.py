@@ -271,15 +271,9 @@ def decorate_quotation_doc(doc):
 
 	return doc
 
-
 def _get_cart_quotation(party=None):
 	'''Return the open Quotation of type "Shopping Cart" or make a new one'''
-	if not party:
-		party = get_party()
-
-	quotation = frappe.get_all("Quotation", fields=["name"], filters=
-		{"party_name": party.name, "order_type": "Shopping Cart", "docstatus": 0},
-		order_by="modified desc", limit_page_length=1)
+	party, quotation = has_cart_quotation(party)
 
 	if quotation:
 		qdoc = frappe.get_doc("Quotation", quotation[0].name)
@@ -305,6 +299,14 @@ def _get_cart_quotation(party=None):
 		apply_cart_settings(party, qdoc)
 
 	return qdoc
+
+def has_cart_quotation(party=None):
+	if not party:
+		party = get_party()
+
+	return party, frappe.get_all("Quotation", fields=["name"], filters=
+		{"party_name": party.name, "order_type": "Shopping Cart", "docstatus": 0},
+		order_by="modified desc", limit_page_length=1)
 
 def update_party(fullname, company_name=None, mobile_no=None, phone=None):
 	party = get_party()
@@ -409,39 +411,48 @@ def get_party(user=None):
 	if not user:
 		user = frappe.session.user
 
+	party = frappe.cache().hget('shopping_cart_party', user)
+	if party:
+		return party
+
+	return _get_party_document(user)
+
+def _get_party_document(user):
 	contact_name = frappe.db.get_value("Contact", {"user": user})
 	if not contact_name:
 		contact_name = get_contact_name(user)
-	party = None
 
+	party = None
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		if contact.links:
 			party_doctype, party = contact.get_link_to_doctype("Customer") or contact.get_link_to_doctype("Lead")
 
-	cart_settings = frappe.get_doc("Shopping Cart Settings")
-
-	debtors_account = ''
-
-	if cart_settings.enable_checkout:
-		debtors_account = get_debtors_account(cart_settings)
+	cart_settings = get_shopping_cart_settings()
 
 	if party:
-		return frappe.get_doc(party_doctype, party)
+		party_document = frappe.get_cached_doc(party_doctype, party)
+		frappe.cache().hset('shopping_cart_party', user, party_document)
+		return party_document
 
 	else:
 		if not cart_settings.enabled:
 			frappe.local.flags.redirect_location = "/contact"
 			raise frappe.Redirect
+
 		customer = frappe.new_doc("Customer")
 		fullname = get_fullname(user)
 		customer.update({
 			"customer_name": fullname,
 			"customer_type": "Individual",
-			"customer_group": get_shopping_cart_settings().default_customer_group,
+			"customer_group": cart_settings.default_customer_group,
 			"territory": get_root_of("Territory"),
 			"customer_primary_contact": contact_name
 		})
+
+		debtors_account = None
+		if cart_settings.enable_checkout:
+			debtors_account = get_debtors_account(cart_settings)
 
 		if debtors_account:
 			customer.update({
@@ -455,7 +466,7 @@ def get_party(user=None):
 		customer.insert(ignore_permissions=True)
 
 		if contact_name:
-			contact = frappe.get_doc("Contact", contact_name)
+			contact = frappe.get_cached_doc("Contact", contact_name)
 		else:
 			contact = frappe.new_doc("Contact")
 			contact.update({
@@ -472,6 +483,7 @@ def get_party(user=None):
 			customer.customer_primary_contact = contact.name
 			customer.save()
 
+		frappe.cache().hset('shopping_cart_party', user, customer)
 		return customer
 
 def get_debtors_account(cart_settings):

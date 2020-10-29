@@ -245,7 +245,7 @@ class BookingCalendar {
 		this.slots = []
 		this.alternative_items = []
 		this.quotation = null
-		this.loading = true
+		this.fetching_events = false
 		this.uom = this.sales_uom
 		this.item_calendar = []
 		this.triggered = false
@@ -451,7 +451,7 @@ class BookingCalendar {
 
 	eventClick(event) {
 		if (!this.parent.read_only) {
-			this.loading = true;
+			this.set_loading_state(true);
 			if (event.event.classNames.includes("available")) {
 				this.bookNewSlot(event)
 			} else {
@@ -470,6 +470,7 @@ class BookingCalendar {
 			frappe.call("erpnext.shopping_cart.cart.get_cart_quotation")
 			.then(r => {
 				this.quotation = r.message.doc.name
+				this.set_loading_state(false);
 			})
 		}
 	}
@@ -482,14 +483,14 @@ class BookingCalendar {
 			uom: this.uom,
 			user: frappe.session.user
 		}).then(r => {
-			this.getQuotation()
 			this.updateCart(r.message.name, 1)
+			this.getQuotation()
 		})
 	}
 
 	removeBookedSlot(booking_id) {
-		this.getQuotation()
 		this.updateCart(booking_id, 0)
+		this.getQuotation()
 	}
 
 	updateCart(booking, qty) {
@@ -500,7 +501,6 @@ class BookingCalendar {
 			booking: booking,
 			cart_dropdown: true
 		}).then(() => {
-			this.loading = false;
 			this.fullCalendar.refetchEvents()
 			this.parent.refresh_bookings()
 			this.triggered = false;
@@ -519,5 +519,9 @@ class BookingCalendar {
 
 	getValidRange() {
 		return { start: moment().add(1,'d').format("YYYY-MM-DD") }
+	}
+
+	set_loading_state(state) {
+		state ? frappe.freeze(__("Please wait...")) : frappe.unfreeze();
 	}
 }

@@ -11,7 +11,7 @@ import datetime
 from datetime import timedelta, date
 import calendar
 import json
-from erpnext.shopping_cart.cart import _get_cart_quotation
+from erpnext.shopping_cart.cart import has_cart_quotation
 from erpnext.utilities.product import get_price
 from erpnext.shopping_cart.product_info import get_product_info_for_website
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
@@ -168,7 +168,9 @@ def get_item_price(item_code, uom):
 
 	cart_quotation = None
 	if contact:
-		cart_quotation = _get_cart_quotation()
+		dummy, quotation = has_cart_quotation()
+		if quotation:
+			cart_quotation = frappe.db.get_value("Quotation", quotation[0].name, ["selling_price_list", "grand_total", "currency"], as_dict=True)
 
 	price = get_price(
 		item_code=item_code,
@@ -181,7 +183,7 @@ def get_item_price(item_code, uom):
 	return {
 		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
 		"price": price,
-		"total": fmt_money((cart_quotation.grand_total or 0) if cart_quotation else 0, currency=cart_quotation.currency if cart_quotation else None)
+		"total": fmt_money(cart_quotation.grand_total or 0, currency=cart_quotation.currency) if cart_quotation else _("Unavailable")
 	}
 
 @frappe.whitelist()
@@ -226,12 +228,12 @@ def remove_booked_slot(name):
 @frappe.whitelist()
 def get_booked_slots(quotation=None, uom=None, item_code=None):
 	if not quotation and not frappe.session.user == "Guest":
-		quotation = _get_cart_quotation().get("name")
+		dummy, quotation = has_cart_quotation()
 
 	if not quotation:
 		return []
 
-	filters = dict(parenttype="Quotation", parent=quotation)
+	filters = dict(parenttype="Quotation", parent=quotation[0].name)
 	if uom:
 		filters["uom"] = uom
 
@@ -242,14 +244,9 @@ def get_booked_slots(quotation=None, uom=None, item_code=None):
 
 @frappe.whitelist(allow_guest=True)
 def get_detailed_booked_slots(quotation=None, uom=None, item_code=None):
-	slots = get_booked_slots(quotation, uom, item_code)
+	slots = [x.name for x in get_booked_slots(quotation, uom, item_code) if x.name]
 
-	out = []
-	for slot in slots:
-		if slot.name:
-			out.extend(frappe.db.get_values("Item Booking", slot.name, ["name", "starts_on", "ends_on"], as_dict=True))
-
-	return out
+	return frappe.get_all("Item Booking", filters={"name": ("in", slots)}, fields=["name", "starts_on", "ends_on"])
 
 @frappe.whitelist()
 def reset_all_booked_slots():
@@ -283,7 +280,8 @@ def get_available_item(item, start, end):
 
 @frappe.whitelist(allow_guest=True)
 def get_availabilities(item, start, end, uom=None, quotation=None, calendar_type=None):
-	item_doc = frappe.get_doc("Item", item)
+	item_doc = frappe.db.get_value("Item", item, ["name", "sales_uom", "enable_item_booking", "simultaneous_bookings_allowed"], as_dict=True)
+
 	if not item_doc.enable_item_booking:
 		return []
 
@@ -470,7 +468,9 @@ def _get_selected_slots(events, quotation=None):
 		return []
 
 	if not quotation or quotation == "null":
-		quotation = _get_cart_quotation().get("name")
+		dummy, quotation_list = has_cart_quotation()
+		if quotation_list:
+			quotation = quotation_list[0].name
 
 	if quotation:
 		quotation_items = [x["item_booking"] for x in frappe.get_all("Quotation Item", \
@@ -540,14 +540,16 @@ def get_item_calendar(item=None, uom=None):
 	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom", "calendar_type"])
 	for filters in [dict(item=item, uom=uom), dict(item=item, uom=None),\
 		dict(item=None, uom=uom), dict(item=None, uom=None)]:
-		filtered_calendars = [x.get("name") for x in calendars if \
+		filtered_calendars = [x for x in calendars if \
 			(x.get("item") == filters.get("item") or x.get("item") == "") \
 			and (x.get("uom") == filters.get("uom") or x.get("uom") == "")]
 		if filtered_calendars:
-			cal = frappe.get_doc("Item Booking Calendar", filtered_calendars[0])
 			return {
-				"type": cal.calendar_type or "Daily",
-				"calendar": cal.booking_calendar
+				"type": filtered_calendars[0].calendar_type or "Daily",
+				"calendar": frappe.get_all("Item Booking Calendars", filters={
+					"parent": filtered_calendars[0].name,
+					"parenttype": "Item Booking Calendar"
+				}, fields=["start_time", "end_time", "day"])
 			}
 
 	return {"type": "Daily", "calendar": []}
