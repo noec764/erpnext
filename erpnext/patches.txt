@@ -687,6 +687,7 @@ erpnext.patches.v13_0.create_print_uom_after_qty_custom_field
 erpnext.patches.v13_0.change_default_pos_print_format
 erpnext.patches.v13_0.set_youtube_video_id
 erpnext.patches.v13_0.print_uom_after_quantity_patch
+erpnext.patches.v13_0.update_reason_for_resignation_in_employee
 
 # Dokos v1
 erpnext.patches.dokos.v1_0.remove_hospitality_domain

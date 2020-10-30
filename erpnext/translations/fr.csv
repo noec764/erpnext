@@ -2569,7 +2569,7 @@ Due Advance Amount,Montant de l'avance dû,
 Due Date Based On,Date d'échéance basée sur,
 Due Date cannot be before Posting / Supplier Invoice Date,La date d'échéance de paiement ne peut pas être avant la date de comptabilisation / date de la facture fournisseur,
 Due Date is mandatory,La Date d’Échéance est obligatoire,
-Due Date,Date d'échéance de paiement,
+Due Date,Date d'échéance de paiement,Sales Invoice
 Dunning Amount,Montant de la relance,
 Dunning Fee,Frais de la relance,
 Dunning Letter Text,Texte de la lettre de relance,
