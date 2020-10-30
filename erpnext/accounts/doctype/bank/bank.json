@@ -11,6 +11,7 @@
  "field_order": [
   "bank_details_section",
   "bank_name",
+  "bank_logo",
   "branch_code",
   "column_break_1",
   "website",
@@ -98,10 +99,17 @@
    "label": "Plaid Access Token",
    "no_copy": 1,
    "read_only": 1
-  }
+  },
+  {
+    "fieldname": "bank_logo",
+    "fieldtype": "Attach Image",
+    "hidden": 1,
+    "label": "Bank Logo"
+   }
  ],
+ "image_field": "bank_logo",
  "links": [],
- "modified": "2020-07-30 10:35:38.252581",
+ "modified": "2020-10-30 10:35:38.252581",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",
