@@ -288,7 +288,7 @@ def filter_pricing_rules(args, pricing_rules, doc=None):
 
 def validate_quantity_and_amount_for_suggestion(args, qty, amount, item_code, transaction_type):
 	fieldname, msg = '', ''
-	type_of_transaction = _('purchase') if transaction_type == 'buying' else _('sale')
+	type_of_transaction = _('purchase', context="Pricing Rule") if transaction_type == 'buying' else _('sale', context="Pricing Rule")
 
 	for field, value in {'min_qty': qty, 'min_amt': amount}.items():
 		if (args.get(field) and value < args.get(field)
