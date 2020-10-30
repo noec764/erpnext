@@ -36,7 +36,7 @@ class SubscriptionPlansManager:
 		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:
 			if not plan.to_date or getdate(plan.to_date) <= getdate(max_date):
 				date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
-				total += self.get_plan_rate(plan, date)
+				total += flt(plan.qty) * flt(self.get_plan_rate(plan, date))
 
 		return total
 
