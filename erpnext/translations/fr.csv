@@ -1353,6 +1353,7 @@ Cannot deduct when category is for 'Valuation' or 'Vaulation and Total',Vous ne 
 											to fullfill Sales Order {2}",Ne peut pas livrer le numéro de série {0} de l'article {1} car il est réservé \ à la commande client complète {2},
 "Cannot deliver Serial No {0} of item {1} as it is reserved to \
 												fullfill Sales Order {2}","Impossible de remettre le numéro de série {0} de l'article {1}, car il est réservé à la commande client \ fullfill {2}",
+Cannot deliver Serial No {0} of item {1} as it is reserved to fullfill Sales Order {2},Impossible de livrer le numéro de série {0} lié à l'article {1} car il est réservé à la commande client {2},
 Cannot enable Distributed Cost Center for a Cost Center already allocated in another Distributed Cost Center,Il n'est pas possible d'activer la distribution pour un centre de coût déjà inclus dans un autre centre de coût distribué,
 Cannot ensure delivery by Serial No as Item {0} is added with and without Ensure Delivery by Serial No.,La livraison par numéro de série n'est pas possible car l'aticle {0} est ajouté avec et sans l'option 'Assurer la livraison par numéro de série',
 "Cannot ensure delivery by Serial No as \
