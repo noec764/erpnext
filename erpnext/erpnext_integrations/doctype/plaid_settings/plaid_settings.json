@@ -12,7 +12,8 @@
   "plaid_client_id",
   "plaid_secret",
   "column_break_7",
-  "plaid_env"
+  "plaid_env",
+  "enable_european_access"
  ],
  "fields": [
   {
@@ -59,11 +60,17 @@
   {
    "fieldname": "column_break_7",
    "fieldtype": "Column Break"
+  },
+  {
+    "default": "0",
+    "fieldname": "enable_european_access",
+    "fieldtype": "Check",
+    "label": "Enable European Access"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2020-09-12 02:31:44.542385",
+ "modified": "2020-10-29 20:24:56.916104",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Plaid Settings",
