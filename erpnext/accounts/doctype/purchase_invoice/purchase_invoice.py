@@ -610,7 +610,7 @@ class PurchaseInvoice(BuyingController):
 						}, account_currency, item=item))
 
 					# If asset is bought through this document and not linked to PR
-					if self.update_stock and item.landed_cost_voucher_amount:
+					if item.is_fixed_asset and self.update_stock and item.landed_cost_voucher_amount:
 						expenses_included_in_asset_valuation = self.get_company_default("expenses_included_in_asset_valuation")
 						# Amount added through landed-cost-voucher
 						gl_entries.append(self.get_gl_dict({
