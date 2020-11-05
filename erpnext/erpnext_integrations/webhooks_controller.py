@@ -128,7 +128,7 @@ class WebhooksController():
 				else:
 					self.add_payment_request_references(payment_entry)
 
-			if flt(payment_entry.unallocated_amount) == 0.0:
+			if flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
 				payment_entry.submit()
 				self.set_as_completed()
 			else:

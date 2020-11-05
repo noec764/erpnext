@@ -105,7 +105,7 @@ class StripeWebhooksController(WebhooksController):
 
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
 				payment_entry.update({
-					"paid_amount": flt(payment_entry.base_received_amount or paid_amount or payment_entry.paid_amount) - fee_amount,
+					"paid_amount": flt(paid_amount or payment_entry.paid_amount) - fee_amount,
 					"received_amount": flt(received_amount or payment_entry.received_amount) - fee_amount
 				})
 
@@ -114,8 +114,6 @@ class StripeWebhooksController(WebhooksController):
 					"cost_center": self.payment_gateway.cost_center,
 					"amount": fee_amount
 				})
-
-				payment_entry.set_amounts()
 
 		self.integration_request.db_set("output", json.dumps(output, indent=4))
 
