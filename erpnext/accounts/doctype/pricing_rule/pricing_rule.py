@@ -263,7 +263,7 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 
 			if pricing_rule.get('suggestion'): continue
 
-			if pricing_rule.booking_credits_based and not check_booking_credit_rule(args, doc):
+			if pricing_rule.booking_credits_based and doc and not check_booking_credit_rule(args, doc):
 				continue
 
 			item_details.validate_applied_rule = pricing_rule.get("validate_applied_rule", 0)
