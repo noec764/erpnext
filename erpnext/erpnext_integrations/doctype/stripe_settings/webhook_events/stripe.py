@@ -72,7 +72,6 @@ class StripeWebhooksController(WebhooksController):
 
 	def add_fees_before_submission(self, payment_entry):
 		output = []
-		base_amount = exchange_rate = fee_amount = 0.0
 		for charge in self.charges:
 			stripe_charge = StripeCharge(self.stripe_settings).retrieve(charge)
 			output.append(stripe_charge)
@@ -93,8 +92,9 @@ class StripeWebhooksController(WebhooksController):
 			# We suppose all charges within the same payment intent have the same exchange rate
 			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate") or 1))
 
-			base_amount += flt(stripe_charge.balance_transaction.get("amount")) / 100
-			fee_amount += flt(stripe_charge.balance_transaction.get("fee")) / 100 * exchange_rate
+			received_amount = flt(stripe_charge.balance_transaction.get("amount")) / 100
+			paid_amount = received_amount * exchange_rate
+			fee_amount = flt(stripe_charge.balance_transaction.get("fee")) / 100 * exchange_rate
 
 			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
 
@@ -105,8 +105,8 @@ class StripeWebhooksController(WebhooksController):
 
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
 				payment_entry.update({
-					"paid_amount": flt(base_amount or payment_entry.paid_amount) - fee_amount,
-					"received_amount": flt(base_amount or payment_entry.received_amount) - fee_amount
+					"paid_amount": flt(payment_entry.base_received_amount or paid_amount or payment_entry.paid_amount) - fee_amount,
+					"received_amount": flt(received_amount or payment_entry.received_amount) - fee_amount
 				})
 
 				payment_entry.append("deductions", {
