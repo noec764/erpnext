@@ -449,8 +449,8 @@ class PaymentEntry(AccountsController):
 
 			if not total_negative_outstanding:
 				frappe.throw(_("Cannot {0} {1} {2} without any negative outstanding invoice")
-					.format(self.payment_type, (_("to") if self.party_type=="Customer" else _("from")),
-						self.party_type), InvalidPaymentEntry)
+					.format(_(self.payment_type).lower(), (_("to") if self.party_type=="Customer" else _("from")),
+						_(self.party_type)), InvalidPaymentEntry)
 
 			elif paid_amount - additional_charges > total_negative_outstanding:
 				frappe.throw(_("Paid Amount cannot be greater than total negative outstanding amount {0}")
