@@ -95,6 +95,12 @@ a:not([href]).btn-light {
 	text-align: right;
 }
 
+.cart-items {
+	.cart-btn {
+		padding: .38rem 1rem;
+	}
+}
+
 // Address
 .address-card {
 	cursor: pointer;

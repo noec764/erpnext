@@ -107,6 +107,9 @@ def request_for_quotation():
 def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=None, booking=None):
 	quotation = _get_cart_quotation()
 
+	if booking == 'None':
+		booking = None
+
 	empty_card = False
 	qty = flt(qty)
 	if qty == 0:
@@ -123,11 +126,15 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 			empty_card = True
 
 	else:
-		quotation_items = quotation.get("items", {"item_code": item_code, "uom": uom}) if uom\
-			else quotation.get("items", {"item_code": item_code})
-		non_booked_items = [x for x in quotation_items if x.item_code==item_code and not x.item_booking]
+		filters = {}
+		_keys = {"item_code": item_code, "uom": uom, "item_booking": booking}
+		for key in _keys:
+			if _keys[key]:
+				filters.update({key: _keys[key]})
 
-		if not quotation_items or not non_booked_items or booking:
+		quotation_items = quotation.get("items", filters)
+
+		if not quotation_items:
 			quotation.append("items", {
 				"doctype": "Quotation Item",
 				"item_code": item_code,
@@ -137,9 +144,6 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 				"item_booking": booking
 			})
 		else:
-			if non_booked_items:
-				quotation_items = non_booked_items
-
 			quotation_items[0].qty = qty
 			quotation_items[0].additional_notes = additional_notes
 			if uom:
@@ -156,6 +160,9 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 		quotation = None
 
 	set_cart_count(quotation)
+
+	if additional_notes and booking:
+		frappe.db.set_value("Item Booking", booking, "notes", additional_notes)
 
 	context = get_cart_quotation(quotation)
 

@@ -90,12 +90,14 @@ $.extend(shopping_cart, {
 		$('.cart-items').on('change', 'textarea', function() {
 			const $textarea = $(this);
 			const item_code = $textarea.attr('data-item-code');
+			const item_booking = $textarea.attr('data-item-booking');
 			const qty = $textarea.closest('tr').find('.cart-qty').val();
 			const notes = $textarea.val();
 			shopping_cart.shopping_cart_update({
 				item_code,
 				qty,
-				additional_notes: notes
+				additional_notes: notes,
+				booking: item_booking
 			});
 		});
 	},
