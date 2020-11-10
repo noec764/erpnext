@@ -133,6 +133,10 @@ frappe.ui.form.on("Timesheet", {
 			frm: frm
 		});
 	},
+
+	project: function(frm) {
+		set_project_in_timelog(frm);
+	},
 });
 
 frappe.ui.form.on("Timesheet Detail", {
@@ -162,14 +166,10 @@ frappe.ui.form.on("Timesheet Detail", {
 		frappe.model.set_value(cdt, cdn, "hours", hours);
 	},
 
-	time_logs_add: function(frm) {
-		var $trigger_again = $('.form-grid').find('.grid-row').find('.btn-open-row');
-		$trigger_again.on('click', () => {
-			$('.form-grid')
-				.find('[data-fieldname="timer"]')
-				.append(frappe.render_template("timesheet"));
-			frm.trigger("control_timer");
-		});
+	time_logs_add: function(frm, cdt, cdn) {
+		if(frm.doc.project) {
+			frappe.model.set_value(cdt, cdn, 'project', frm.doc.project);
+		}
 	},
 	hours: function(frm, cdt, cdn) {
 		calculate_end_time(frm, cdt, cdn);
@@ -299,3 +299,9 @@ const set_employee_and_company = function(frm) {
 		}
 	});
 };
+
+function set_project_in_timelog(frm) {
+	if(frm.doc.project){
+		erpnext.utils.copy_value_in_all_rows(frm.doc, frm.doc.doctype, frm.doc.name, "time_logs", "project");
+	}
+}
