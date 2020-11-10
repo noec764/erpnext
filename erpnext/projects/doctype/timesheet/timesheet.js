@@ -86,7 +86,7 @@ frappe.ui.form.on("Timesheet", {
 				if (flag) {
 					erpnext.timesheet.timer(frm);
 				}
-			}).addClass("btn-primary");
+			}).addClass("btn-primary").removeClass("btn-default");
 		}
 		if(frm.doc.per_billed > 0) {
 			frm.fields_dict["time_logs"].grid.toggle_enable("billing_hours", false);
