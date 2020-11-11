@@ -32,6 +32,10 @@
   "expiration_rule",
   "column_break_20",
   "expiration_delay",
+  "recurrence_section",
+  "recurrence_interval",
+  "column_break_26",
+  "recurrence_end",
   "fields_map",
   "start_time_field",
   "customer_field",
@@ -318,11 +322,32 @@
    "fieldname": "custom_addition_rules",
    "fieldtype": "Check",
    "label": "Custom Addition Rules"
+  },
+  {
+   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
+   "fieldname": "recurrence_section",
+   "fieldtype": "Section Break",
+   "label": "Recurrence"
+  },
+  {
+   "fieldname": "recurrence_interval",
+   "fieldtype": "Select",
+   "label": "Recurrence Interval",
+   "options": "Every Day\nEvery Week\nEvery Month"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "recurrence_end",
+   "fieldtype": "Select",
+   "label": "Recurrence End Field"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-10-27 13:50:11.901801",
+ "modified": "2020-11-10 16:27:25.123411",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

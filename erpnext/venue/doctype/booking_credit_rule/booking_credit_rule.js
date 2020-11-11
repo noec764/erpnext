@@ -58,6 +58,7 @@ frappe.ui.form.on('Booking Credit Rule', {
 			get_fieldtypes_options(frm, frm.doc.trigger_document, ["Datetime"], "start_time_field");
 			get_fieldtypes_options(frm, frm.doc.trigger_document, ["Datetime"], "end_time_field");
 			get_fieldtypes_options(frm, frm.doc.trigger_document, ["Date"], "date_field");
+			get_fieldtypes_options(frm, frm.doc.trigger_document, ["Date"], "recurrence_end");
 		}
 	},
 	setup_date_options(frm) {

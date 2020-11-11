@@ -18,7 +18,7 @@ class BookingCredit(StatusUpdater):
 		self.set_status()
 
 	def on_submit(self):
-		create_ledger_entry(**{
+		ledger_entry = {
 			"user": self.user,
 			"customer": self.customer,
 			"date": self.date,
@@ -27,13 +27,15 @@ class BookingCredit(StatusUpdater):
 			"reference_document": self.name,
 			"uom": self.uom,
 			"item": self.item
-		})
-		self.check_if_expired()
+		}
+
+		create_ledger_entry(**ledger_entry)
+		self.check_if_expired(frappe._dict(**ledger_entry, name=self.name))
 		self.set_status(update=True)
 
-	def check_if_expired(self):
+	def check_if_expired(self, ledger_entry):
 		if self.expiration_date and get_datetime(self.expiration_date) < now_datetime() and not self.is_expired:
-			_process_expired_booking_entry(self.as_dict())
+			_process_expired_booking_entry(ledger_entry)
 			self.reload()
 
 	def on_cancel(self):
@@ -161,12 +163,14 @@ def _calculate_expired_booking_entry(expired_entry, date):
 			"reference_doctype": "Booking Credit",
 			"reference_document": expired_entry.name,
 			"uom": expired_entry.uom,
-			"item": expired_entry.item
+			"item": expired_entry.item,
+			"name": expired_entry.name
 		})
 
 	return {}
 
 def _process_expired_booking_entry(balance_entry):
-	create_ledger_entry(**balance_entry)
+	entry = {x: balance_entry[x] for x in balance_entry if x != "name"}
+	create_ledger_entry(**entry)
 	frappe.db.set_value("Booking Credit", balance_entry.name, "is_expired", 1)
 	frappe.db.set_value("Booking Credit", balance_entry.name, "status", "Expired")

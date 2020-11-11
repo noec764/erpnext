@@ -25,7 +25,7 @@ class SubscriptionPeriod:
 		if SubscriptionStateManager(self.subscription).is_trial() \
 			or (self.subscription.cancellation_date and getdate(self.subscription.cancellation_date) < getdate(nowdate())):
 			return None
-		elif self.subscription.is_new() or self.start is None:
+		elif not self.subscription.current_invoice_start or not self.start:
 			return max(getdate(self.subscription.start), add_days(getdate(self.subscription.trial_period_end), 1)) if self.subscription.trial_period_end else self.subscription.start 
 		elif self.subscription.get_doc_before_save() \
 			and self.subscription.get_doc_before_save().billing_interval != self.subscription.billing_interval:

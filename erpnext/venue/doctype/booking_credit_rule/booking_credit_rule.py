@@ -228,33 +228,37 @@ class RuleProcessor:
 
 	def apply_addition_rules(self):
 		self.datetime = self.get_posting_date()
-		self.expiration_date = self.get_expiration_date()
+		recurrences = self.get_recurrence()
 
-		if self.rule.use_child_table:
-			for row in self.doc.get(self.rule.child_table) or []:
-				if self.rule.applicable_for and self.check_application_rule(row):
-					continue
+		for recurrence in recurrences:
+			self.datetime = get_datetime(recurrence)
+			self.expiration_date = self.get_expiration_date()
 
-				self.item = getattr(row, self.rule.item_field, None) if self.rule.item_field else None
-				self.uom = getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None
-				self.qty = getattr(row, self.rule.qty_field, None) if self.rule.qty_field else None
+			if self.rule.use_child_table:
+				for row in self.doc.get(self.rule.child_table) or []:
+					if self.rule.applicable_for and self.check_application_rule(row):
+						continue
+
+					self.item = getattr(row, self.rule.item_field, None) if self.rule.item_field else None
+					self.uom = getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None
+					self.qty = getattr(row, self.rule.qty_field, None) if self.rule.qty_field else None
+
+					self.check_custom_addition_rules()
+
+					if self.uom and self.qty:
+						self.add_credit()
+			else:
+				self.item = getattr(self.doc, self.rule.item_field, None) if self.rule.item_field else None
+				self.uom = getattr(self.doc, self.rule.uom_field, None) if self.rule.uom_field else None
+				self.qty = getattr(self.doc, self.rule.qty_field, None) if self.rule.qty_field else None
+
+				if self.rule.applicable_for and self.check_application_rule(self.doc):
+					return
 
 				self.check_custom_addition_rules()
 
 				if self.uom and self.qty:
 					self.add_credit()
-		else:
-			self.item = getattr(self.doc, self.rule.item_field, None) if self.rule.item_field else None
-			self.uom = getattr(self.doc, self.rule.uom_field, None) if self.rule.uom_field else None
-			self.qty = getattr(self.doc, self.rule.qty_field, None) if self.rule.qty_field else None
-
-			if self.rule.applicable_for and self.check_application_rule(self.doc):
-				return
-
-			self.check_custom_addition_rules()
-
-			if self.uom and self.qty:
-				self.add_credit()
 
 	def check_custom_addition_rules(self):
 		if self.rule.custom_addition_rules:
@@ -472,3 +476,22 @@ class RuleProcessor:
 					return items_list[0]
 
 		return self.item
+
+	def get_recurrence(self):
+		from dateutil import rrule, relativedelta
+
+		if self.rule.recurrence_interval and self.rule.recurrence_end:
+			end_date = getattr(self.doc, self.rule.recurrence_end, None) or now_datetime()
+
+			if self.rule.recurrence_interval == "Every Day":
+				frequency = rrule.DAILY
+
+			elif self.rule.recurrence_interval == "Every Week":
+				frequency = rrule.WEEKLY
+
+			elif self.rule.recurrence_interval == "Every Month":
+				frequency = rrule.MONTHLY
+
+			return [getdate(x) for x in rrule.rrule(frequency, dtstart=get_datetime(self.datetime), until=get_datetime(end_date))]
+
+		return [self.datetime]
