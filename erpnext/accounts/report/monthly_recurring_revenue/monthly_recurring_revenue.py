@@ -1,10 +1,9 @@
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import getdate, flt, date_diff, month_diff
+from frappe.utils import getdate, flt, date_diff, month_diff, nowdate
 from erpnext.accounts.report.financial_statements import (get_period_list, get_columns)
 
 PERIOD_MAP = {
@@ -36,7 +35,7 @@ def execute(filters=None):
 def get_data(filters, period_list):
 	invoices = frappe.get_all("Sales Invoice",
 		filters={
-			"posting_date": ("between", (filters.period_start_date, filters.period_end_date)),
+			#"posting_date": ("between", (filters.period_start_date, filters.period_end_date)),
 			"subscription": ("is", "set"),
 			"docstatus": 1
 		},
@@ -53,8 +52,7 @@ def get_data(filters, period_list):
 	filtered_invoices = []
 	for subscription in subscriptions:
 		filtered_invoices.extend([
-			x for x in invoices if (x.from_date != subscription.current_invoice_start and x.to_date != subscription.current_invoice_end)
-			and x.subscription == subscription.name
+			x for x in invoices if x.subscription == subscription.name
 		])
 
 	customers = list(set([x.customer for x in filtered_invoices] + [x.customer for x in subscriptions]))
@@ -65,22 +63,25 @@ def get_data(filters, period_list):
 	total_row.update({"customer": _("Total"), "total": 0})
 	for customer in customers:
 		customer_total = 0
-		average = 0
+		average_count = 0
 		row = { "customer": customer, "currency": frappe.get_cached_value('Company', filters.company, "default_currency") }
 		for index, period in enumerate(period_list):
-			total = sum(
-				[x.total for x in filtered_invoices if x.customer == customer and period.to_date >= getdate(x.posting_date) >= period.from_date]
-			)
+			total = get_invoices_mrr([x for x in filtered_invoices if x.customer == customer], period)
 
-			total += get_subscription_mrr([x for x in subscriptions if x.customer == customer], period)
+			customer_subscriptions = [x for x in subscriptions if x.customer == customer]
+			if not total and period.to_date >= getdate(nowdate()):
+				total = get_subscription_mrr(customer_subscriptions, period)
 
 			customer_total += total
 			total_row[period.key] += total
 			total_row["total"] += total
 
+			if total:
+				average_count += 1
+
 			row.update({ period.key: total })
 
-		row.update({ "total": flt(customer_total) / month_diff(filters.period_end_date, filters.period_start_date) })
+		row.update({ "total": flt(customer_total) / average_count })
 		result.append(row)
 
 	result.sort(key=lambda x:x["total"], reverse=True)
@@ -88,12 +89,33 @@ def get_data(filters, period_list):
 	result.append(total_row)
 	return result
 
+def get_invoices_mrr(invoices, period):
+	total = 0.0
+	for invoice in invoices:
+		if period.from_date <= getdate(invoice.from_date) <= period.to_date and period.to_date <= getdate(invoice.to_date) and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1:
+			return flt(invoice.total) / (monthdelta(invoice.from_date, invoice.to_date) + 1)
+
+		elif period.to_date >= getdate(invoice.posting_date) >= period.from_date:
+			total += flt(invoice.total)
+
+	return total
+
+def monthdelta(d1, d2):
+	from calendar import monthrange
+	from datetime import datetime, timedelta
+	delta = 0
+	while True:
+		mdays = monthrange(d1.year, d1.month)[1]
+		d1 += timedelta(days=mdays)
+		if d1 <= d2:
+			delta += 1
+		else:
+			break
+	return delta
+
 def get_subscription_mrr(subscriptions, period):
 	month_total = 0
 	for subscription in subscriptions:
-		if period.from_date < getdate(subscription.current_invoice_start):
-			continue
-
 		subscription_total = flt(subscription.total) / flt(subscription.billing_interval_count)
 
 		if subscription.billing_interval == "Month":
