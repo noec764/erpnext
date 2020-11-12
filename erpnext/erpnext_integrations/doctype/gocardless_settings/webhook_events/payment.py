@@ -13,7 +13,7 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardl
 EVENT_MAP = {
 	'created': 'create_payment',
 	'submitted': 'create_payment',
-	'confirmed': 'submit_payment',
+	'confirmed': 'create_payment',
 	'cancelled': 'cancel_payment',
 	'failed': 'cancel_payment',
 	'paid_out': 'submit_payment'
@@ -92,6 +92,7 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 
 			base_amount = self.get_base_amount(payout_items.records)
 			fee_amount = self.get_fee_amount(payout_items.records)
+			tax_amount = self.get_tax_amount(payout_items.records)
 			exchange_rate = self.get_exchange_rate(payout)
 
 			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
@@ -109,24 +110,38 @@ class GoCardlessPaymentWebhookHandler(WebhooksController):
 				payment_entry.append("deductions", {
 					"account": self.payment_gateway.fee_account,
 					"cost_center": self.payment_gateway.cost_center,
-					"amount": -1 * fee_amount
+					"amount": -1 * fee_amount - tax_amount
 				})
+
+				if tax_amount:
+					payment_entry.append("deductions", {
+						"account": self.payment_gateway.tax_account,
+						"cost_center": self.payment_gateway.cost_center,
+						"amount": tax_amount
+					})
 
 				payment_entry.set_amounts()
 
 	def get_base_amount(self, payout_items):
-		paid_amount = [x.amount for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == self.gocardless_payment.id)]
-		total = 0
-		for p in paid_amount:
-			total += flt(p)
-		return total / 100
+		paid_amount = sum(
+			[flt(x.amount) for x in payout_items if (x.type == "payment_paid_out" and getattr(x.links, "payment") == self.gocardless_payment.id)]
+		)
+		return paid_amount / 100
 
 	def get_fee_amount(self, payout_items):
-		fee_amount = [x.amount for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == self.gocardless_payment.id)]
-		total = 0
-		for p in fee_amount:
-			total += flt(p)
-		return total / 100
+		fee_amount = sum(
+			[flt(x.amount) for x in payout_items if ((x.type == "gocardless_fee" or x.type == "app_fee") \
+			and getattr(x.links, "payment") == self.gocardless_payment.id)]
+		)
+		return fee_amount / 100
+
+	def get_tax_amount(self, payout_items):
+		taxes = []
+		for x in payout_items:
+			if ((x.type == "gocardless_fee" or x.type == "app_fee") and getattr(x.links, "payment") == self.gocardless_payment.id):
+				taxes.extend(x.taxes)
+
+		return sum([flt(x.get("amount")) for x in taxes]) / 100
 
 	@staticmethod
 	def get_exchange_rate(payment):

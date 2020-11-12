@@ -23,7 +23,8 @@ doctype_js = {
 	"Communication": "public/js/communication.js",
 	"Newsletter": "public/js/newsletter.js",
 	"Google Calendar": "public/js/google_calendar.js",
-	"Event": "public/js/event.js"
+	"Event": "public/js/event.js",
+	"Payment Gateway": "public/js/payment_gateway.js"
 }
 
 override_doctype_class = {
