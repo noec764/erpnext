@@ -3,7 +3,7 @@
   {
    "hidden": 0,
    "label": "Goal and Procedure",
-   "links": "[\n    {\n        \"description\": \"Quality Goal.\",\n        \"label\": \"Quality Goal\",\n        \"name\": \"Quality Goal\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Quality Procedure.\",\n        \"label\": \"Quality Procedure\",\n        \"name\": \"Quality Procedure\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Tree of Quality Procedures.\",\n        \"icon\": \"fa fa-sitemap\",\n        \"label\": \"Tree of Procedures\",\n        \"name\": \"Quality Procedure\",\n        \"route\": \"#Tree/Quality Procedure\",\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"description\": \"Quality Goal.\",\n        \"label\": \"Quality Goal\",\n        \"name\": \"Quality Goal\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Quality Procedure.\",\n        \"label\": \"Quality Procedure\",\n        \"name\": \"Quality Procedure\",\n        \"onboard\": 1,\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Tree of Quality Procedures.\",\n        \"icon\": \"fa fa-sitemap\",\n        \"label\": \"Tree of Procedures\",\n        \"name\": \"Quality Procedure\",\n        \"route\": \"/app/Tree/Quality Procedure\",\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,

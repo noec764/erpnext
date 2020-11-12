@@ -63,7 +63,7 @@ def get_data():
 					"name": "Item Price",
 					"description": _("Multiple Item prices."),
 					"onboard": 1,
-					"route": "#Report/Item Price"
+					"route": "/app/Report/Item Price"
 				},
 				{
 					"type": "doctype",

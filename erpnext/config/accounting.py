@@ -139,7 +139,7 @@ def get_data():
 					"type": "doctype",
 					"name": "Account",
 					"label": _("Chart of Accounts"),
-					"route": "#Tree/Account",
+					"route": "/app/Tree/Account",
 					"description": _("Tree of financial accounts."),
 					"onboard": 1,
 				},
@@ -312,7 +312,7 @@ def get_data():
 					"type": "doctype",
 					"name": "Cost Center",
 					"label": _("Chart of Cost Centers"),
-					"route": "#Tree/Cost Center",
+					"route": "/app/Tree/Cost Center",
 					"description": _("Tree of financial Cost Centers."),
 				},
 				{

@@ -4,7 +4,7 @@ frappe.listview_settings['Company'] = {
 			type: 'Custom',
 			module: 'Accounts',
 			label: __('Accounting'),
-			route: '#workspace/Accounting'
+			route: '/app/workspace/Accounting'
 		});
 	}
 }

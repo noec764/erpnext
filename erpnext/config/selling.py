@@ -75,7 +75,7 @@ def get_data():
 					"type": "doctype",
 					"name": "Item Price",
 					"description": _("Multiple Item prices."),
-					"route": "#Report/Item Price",
+					"route": "/app/Report/Item Price",
 					"dependencies": ["Item", "Price List"],
 					"onboard": 1,
 				},

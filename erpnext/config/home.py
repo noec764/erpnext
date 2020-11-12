@@ -36,7 +36,7 @@ def get_data():
 					"type": "doctype",
 					"name": "Account",
 					"label": _("Chart of Accounts"),
-					"route": "#Tree/Account",
+					"route": "/app/Tree/Account",
 					"description": _("Tree of financial accounts."),
 					"onboard": 1,
 				},

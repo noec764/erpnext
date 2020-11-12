@@ -210,7 +210,7 @@ def start_import(invoices):
 			frappe.db.commit()
 	if errors:
 		frappe.msgprint(_("You had {} errors while creating opening invoices. Check {} for more details")
-			.format(errors, "<a href='#List/Error Log' class='variant-click'>Error Log</a>"), indicator="red", title=_("Error Occured"))
+			.format(errors, "<a href='/app/List/Error Log' class='variant-click'>Error Log</a>"), indicator="red", title=_("Error Occured"))
 	return names
 
 def publish(index, total, doctype):

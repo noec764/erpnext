@@ -121,7 +121,7 @@ export default {
 		mapped_transactions() {
 			return this.transactions.map(transaction => ({...transaction,
 				amount: transaction.unallocated_amount,
-				link: `/desk#Form/Bank Transaction/${transaction.name}`
+				link: `/app/Form/Bank Transaction/${transaction.name}`
 			}))
 		},
 		stripe_transactions() {

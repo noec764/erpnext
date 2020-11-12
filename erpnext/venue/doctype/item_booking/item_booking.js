@@ -237,7 +237,7 @@ class ItemSelector {
 					head ? `<span class="ellipsis">${__(frappe.model.unscrub(column))}</span>`
 
 					: (column !== "name" ? `<span class="ellipsis">${__(result[column])}</span>`
-						: `<a href="${"#Form/"+ me.doctype + "/" + result[column]}" class="list-id ellipsis">
+						: `<a href="${"/app/Form/"+ me.doctype + "/" + result[column]}" class="list-id ellipsis">
 							${__(result[column])}</a>`)
 				}
 			</div>`;

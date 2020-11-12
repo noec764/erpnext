@@ -21,7 +21,7 @@ frappe.ui.form.on('Sepa Direct Debit', {
 				if (r) {
 					frm.set_value("mode_of_payment", r.mode_of_payment);
 				} else {
-					frappe.msgprint(__("Please create <a href='/desk#List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}", [frm.doc.company]))
+					frappe.msgprint(__("Please create <a href='/app/List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}", [frm.doc.company]))
 				}
 			})
 		}

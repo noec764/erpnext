@@ -12,7 +12,7 @@
  "modified_by": "Administrator",
  "name": "Payroll Settings",
  "owner": "Administrator",
- "path": "#Form/Payroll Settings",
+ "path": "/app/Form/Payroll Settings",
  "show_full_form": 0,
  "title": "Payroll Settings",
  "validate_action": 1

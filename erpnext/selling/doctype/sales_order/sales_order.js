@@ -321,7 +321,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 									if(r.message) {
 										frappe.msgprint({
 											message: __('Work Orders Created: {0}', [r.message.map(function(d) {
-													return repl('<a href="#Form/Work Order/%(name)s">%(name)s</a>', {name:d})
+												return repl('<a href="/app/Form/Work Order/%(name)s">%(name)s</a>', {name:d})
 												}).join(', ')]),
 											indicator: 'green'
 										})
@@ -430,7 +430,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 					callback: function(r) {
 						if(r.message) {
 							frappe.msgprint(__('Material Request {0} submitted.',
-							['<a href="#Form/Material Request/'+r.message.name+'">' + r.message.name+ '</a>']));
+							['<a href="/app/Form/Material Request/'+r.message.name+'">' + r.message.name+ '</a>']));
 						}
 						d.hide();
 						me.frm.reload_doc();

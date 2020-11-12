@@ -115,7 +115,7 @@ export default {
 			return this.matching_documents[this.document_type].map(document => ({...document,
 				date: document.posting_date,
 				doctype: this.document_type,
-				link: `/desk#Form/${this.document_type}/${document.name}`
+				link: `/app/Form/${this.document_type}/${document.name}`
 			}))
 		}
 	},
