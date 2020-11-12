@@ -690,7 +690,7 @@ erpnext.patches.v13_0.print_uom_after_quantity_patch
 erpnext.patches.v13_0.update_reason_for_resignation_in_employee
 execute:frappe.delete_doc("Report", "Quoted Item Comparison")
 
-# Dokos v1
+# Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
 erpnext.patches.dokos.v1_0.remove_healthcare_domain
 erpnext.patches.dokos.v1_0.remove_education_domain #2020-05
@@ -728,3 +728,4 @@ erpnext.patches.dokos.v2_0.update_custom_fields_for_france
 erpnext.patches.dokos.v2_0.venue_module
 erpnext.patches.dokos.v2_0.subscription_cycle_on_stripe
 erpnext.patches.dokos.v2_0.correct_unreconciled_amount_for_internal_transfers
+erpnext.patches.dokos.v2_0.update_website_settings
