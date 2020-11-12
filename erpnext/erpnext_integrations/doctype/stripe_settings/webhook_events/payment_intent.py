@@ -13,7 +13,7 @@ from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeInvoi
 EVENT_MAP = {
 	'payment_intent.created': 'update_payment_request_status',
 	'payment_intent.canceled': 'update_payment_request_status',
-	'payment_intent.payment_failed': 'update_payment_request_status',
+	'payment_intent.payment_failed': 'cancel_payment',
 	'payment_intent.processing': 'update_payment_request_status',
 	'payment_intent.succeeded': 'create_submit_payment'
 }
