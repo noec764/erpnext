@@ -14,11 +14,6 @@ frappe.ui.form.on(cur_frm.doctype, {
 			}
 		});
 	},
-	refresh: function(frm) {
-		if (frm.doc.docstatus == 1) {
-			frm.add_custom_button(__('Accounting Journal Adjustment'), frm.trigger("adjust_accounting_journal"), __('Create'));
-		}
-	},
 	onload: function(frm) {
 		if(frm.get_field("taxes")) {
 			frm.set_query("account_head", "taxes", function(doc) {
@@ -70,10 +65,6 @@ frappe.ui.form.on(cur_frm.doctype, {
 				}
 			})
 		}
-	},
-
-	adjust_accounting_journal: function(frm) {
-		new erpnext.journalAdjustment({frm: frm})
 	}
 });
 

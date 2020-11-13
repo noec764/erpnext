@@ -154,6 +154,14 @@ frappe.ui.form.on('Payment Entry', {
 		frm.events.hide_unhide_fields(frm);
 		frm.events.set_dynamic_labels(frm);
 		frm.events.show_general_ledger(frm);
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Make'), true);
+		}
 	},
 
 	validate_company: (frm) => {

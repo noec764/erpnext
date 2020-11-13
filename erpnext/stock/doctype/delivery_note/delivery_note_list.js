@@ -52,6 +52,17 @@ frappe.listview_settings['Delivery Note'] = {
 			};
 		};
 
-		doclist.page.add_actions_menu_item(__('Create Delivery Trip'), action, false);
+		doclist.page.add_actions_menu_item(__('Create Delivery Trip'), action, true);
+
+		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+			doclist.page.add_actions_menu_item(
+				__("Accounting Journal Adjustment"),
+				() => {
+					const docnames = doclist.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: doclist.doctype, docnames: docnames})
+				},
+				true
+			);
+		});
 	}
 };

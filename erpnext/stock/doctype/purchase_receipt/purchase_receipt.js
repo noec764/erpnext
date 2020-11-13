@@ -75,6 +75,14 @@ frappe.ui.form.on("Purchase Receipt", {
 				})
 			}, __('Create'));
 		}
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Create'), true);
+		}
 	},
 
 	company: function(frm) {

@@ -11,5 +11,17 @@ frappe.listview_settings['Purchase Receipt'] = {
 		} else if (flt(doc.grand_total) === 0 || flt(doc.per_billed, 2) == 100) {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
+	},
+	onload: function(list_view) {
+		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+			list_view.page.add_actions_menu_item(
+				__("Accounting Journal Adjustment"),
+				() => {
+					const docnames = list_view.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: list_view.doctype, docnames: docnames})
+				},
+				true
+			);
+		});
 	}
 };

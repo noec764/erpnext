@@ -7,9 +7,9 @@ frappe.listview_settings['Payment Entry'] = {
 			return [__(doc.status, null, "Payment Entry"), doc.status === "Reconciled" ? "green": "orange", `status,==,${doc.status}`];
 		}
 	},
-	onload: function(listview) {
-		if (listview.page.fields_dict.party_type) {
-			listview.page.fields_dict.party_type.get_query = function() {
+	onload: function(list_view) {
+		if (list_view.page.fields_dict.party_type) {
+			list_view.page.fields_dict.party_type.get_query = function() {
 				return {
 					"filters": {
 						"name": ["in", Object.keys(frappe.boot.party_account_types)],
@@ -17,5 +17,16 @@ frappe.listview_settings['Payment Entry'] = {
 				};
 			};
 		}
+
+		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+			list_view.page.add_actions_menu_item(
+				__("Accounting Journal Adjustment"),
+				() => {
+					const docnames = list_view.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: list_view.doctype, docnames: docnames})
+				},
+				true
+			);
+		});
 	}
 };

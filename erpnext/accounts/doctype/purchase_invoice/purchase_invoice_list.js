@@ -23,5 +23,17 @@ frappe.listview_settings['Purchase Invoice'] = {
 		} else if(flt(doc.outstanding_amount)==0 && doc.docstatus==1) {
 			return [__("Paid"), "green", "outstanding_amount,=,0"];
 		}
+	},
+	onload: function(list_view) {
+		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+			list_view.page.add_actions_menu_item(
+				__("Accounting Journal Adjustment"),
+				() => {
+					const docnames = list_view.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: list_view.doctype, docnames: docnames})
+				},
+				true
+			);
+		});
 	}
 };

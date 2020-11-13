@@ -137,6 +137,14 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				}
 			});
 		}
+
+		if (me.frm.doc.docstatus === 1) {
+			me.frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: me.frm.doctype, docnames: [me.frm.docname]})
+				});
+			}, __('Create'), true);
+		}
 	},
 
 	make_maintenance_schedule: function() {

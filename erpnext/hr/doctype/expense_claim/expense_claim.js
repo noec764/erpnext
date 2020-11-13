@@ -250,6 +250,14 @@ frappe.ui.form.on("Expense Claim", {
 			frm.add_custom_button(__('Payment'),
 				function() { frm.events.make_payment_entry(frm); }, __('Create'));
 		}
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Make'), true);
+		}
 	},
 
 	calculate_grand_total: function(frm) {
