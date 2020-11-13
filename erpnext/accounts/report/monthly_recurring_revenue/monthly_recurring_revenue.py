@@ -5,6 +5,7 @@ import frappe
 from frappe import _
 from frappe.utils import getdate, flt, date_diff, month_diff, nowdate
 from erpnext.accounts.report.financial_statements import (get_period_list, get_columns)
+from erpnext.accounts.utils import get_currency_precision
 
 PERIOD_MAP = {
 	"Month": "Monthly",
@@ -59,6 +60,7 @@ def get_data(filters, period_list):
 
 
 	result = []
+	precision = get_currency_precision() or 2
 	total_row = {x.key: 0 for x in period_list if x.key != "total"}
 	total_row.update({"customer": _("Total"), "total": 0})
 	for customer in customers:
@@ -79,9 +81,9 @@ def get_data(filters, period_list):
 			if total:
 				average_count += 1
 
-			row.update({ period.key: total })
+			row.update({ period.key: flt(total, precision) })
 
-		row.update({ "total": flt(customer_total) / average_count })
+		row.update({ "total": flt(customer_total, precision) / average_count })
 		result.append(row)
 
 	result.sort(key=lambda x:x["total"], reverse=True)
@@ -134,9 +136,10 @@ def get_subscription_mrr(subscriptions, period):
 
 def get_chart_data(columns, data):
 	values = []
+	precision = get_currency_precision() or 2
 	for p in columns[2:]:
 		if p.get("fieldname") != "total":
-			values.append(data[-1].get(p.get("fieldname")))
+			values.append(flt(data[-1].get(p.get("fieldname")), precision))
 
 	chart = {
 		"data": {
@@ -146,7 +149,11 @@ def get_chart_data(columns, data):
 				"values": values
 			}]
 		},
-		"type": "line"
+		"type": "line",
+		"colors": ['#ffa00a'],
+		"lineOptions": {
+			"regionFill": 1
+		}
 	}
 
 	return chart

@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 from erpnext.accounts.report.financial_statements import (get_period_list, get_columns, get_data)
+from erpnext.accounts.utils import get_currency_precision
 
 def execute(filters=None):
 	period_list = get_period_list(filters.from_fiscal_year, filters.to_fiscal_year,
@@ -115,13 +116,15 @@ def get_chart_data(filters, columns, income, expense, net_profit_loss):
 
 	income_data, expense_data, net_profit = [], [], []
 
+	precision = get_currency_precision() or 2
+
 	for p in columns[2:]:
 		if income:
-			income_data.append(income[-2].get(p.get("fieldname")))
+			income_data.append(flt(income[-2].get(p.get("fieldname")), precision))
 		if expense:
-			expense_data.append(expense[-2].get(p.get("fieldname")))
+			expense_data.append(flt(expense[-2].get(p.get("fieldname")), precision))
 		if net_profit_loss:
-			net_profit.append(net_profit_loss.get(p.get("fieldname")))
+			net_profit.append(flt(net_profit_loss.get(p.get("fieldname")), precision))
 
 	datasets = []
 	if income_data:
