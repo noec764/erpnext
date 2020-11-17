@@ -15,9 +15,7 @@ class BookingCreditConversion(Document):
 def get_convertible_items(doctype, txt, searchfield, start, page_len, filters):
 	query_filters={}
 	if txt:
-		query_filters={"booking_credits_item", ("like", txt)}
+		query_filters={"booking_credits_item": ("like", txt)}
 	
-	out = frappe.get_all("Booking Credit Conversion", filters=query_filters, pluck="booking_credits_item")
-	if out:
-		return [out]
-	return []
+	items = frappe.get_all("Booking Credit Conversion", filters=query_filters, pluck="booking_credits_item")
+	return [[x] for x in items] if items else []
