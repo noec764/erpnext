@@ -333,7 +333,7 @@
    "fieldname": "recurrence_interval",
    "fieldtype": "Select",
    "label": "Recurrence Interval",
-   "options": "Every Day\nEvery Week\nEvery Month"
+   "options": "\nEvery Day\nEvery Week\nEvery Month"
   },
   {
    "fieldname": "column_break_26",
@@ -347,7 +347,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-11-10 16:27:25.123411",
+ "modified": "2020-11-17 07:51:52.585659",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",
