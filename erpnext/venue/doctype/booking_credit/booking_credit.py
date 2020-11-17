@@ -50,14 +50,17 @@ def get_balance(customer, date=None, uom=None):
 	query_filters = {"customer": customer, "docstatus": 1}
 	if uom:
 		query_filters.update({"uom": uom})
-	if date:
-		query_filters.update({"date": ("<", add_days(getdate(date), 1))})
+	# if date:
+	# 	query_filters.update({"date": ("<", add_days(getdate(date), 1))})
 
 	booking_credits = frappe.get_all("Booking Credit Ledger",
 		filters=query_filters,
 		fields=["credits", "date", "uom", "item"],
 		order_by="date DESC"
-	) + _process_expired_booking_credits(date=date, customer=customer, submit=False)
+	)
+
+	if date:
+		booking_credits += _process_expired_booking_credits(date=date, customer=customer, submit=False)
 
 	items = list(set([x.item for x in booking_credits if x.item is not None]))
 
@@ -77,7 +80,7 @@ def get_balance(customer, date=None, uom=None):
 					fifo_date = credit.date
 
 			row["date"] = fifo_date
-			row["balance"] = sum([x["credits"] for x in booking_credits if (getdate(x["date"]) <= getdate(date) if date else True) and x["uom"] == uom])
+			row["balance"] = sum([x["credits"] for x in booking_credits if x["uom"] == uom and x["item"] == item])
 			row["conversions"] = []
 			balance[item].append(row)
 
@@ -112,7 +115,6 @@ def _process_expired_booking_credits(date=None, customer=None, submit=True):
 		query_filters.update({"customer": customer})
 
 	expired_entries = frappe.get_all("Booking Credit", filters=query_filters, fields=["name", "quantity", "uom", "customer", "expiration_date", "item"])
-
 	balance_entries = []
 	for expired_entry in expired_entries:
 		if expired_entry.expiration_date >= getdate(date):
@@ -154,12 +156,12 @@ def _calculate_expired_booking_entry(expired_entry, date):
 		pluck="quantity"
 	))
 
-	if balance > credits_left:
+	if (credits_left - balance) >= 0:
 		return frappe._dict({
 			"user": expired_entry.user,
 			"customer": expired_entry.customer,
 			"date": get_datetime(expired_entry.expiration_date),
-			"credits": (balance - credits_left) * -1,
+			"credits": min(balance, credits_left) * -1,
 			"reference_doctype": "Booking Credit",
 			"reference_document": expired_entry.name,
 			"uom": expired_entry.uom,

@@ -48,7 +48,9 @@
 						{% for bal in credits_balance %}
 							<ul>
 								{% for credits in credits_balance[bal] %}
+									{% if credits["balance"] %}
 									<li><p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p></li>
+									{% endif %}
 								{% endfor %}
 							</ul>
 						{% endfor %}

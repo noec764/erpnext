@@ -12,6 +12,7 @@ from frappe.utils import flt, cint, getdate
 from frappe.model.document import Document
 
 from six import string_types
+from collections import defaultdict
 
 apply_on_dict = {"Item Code": "items",
 	"Item Group": "item_groups", "Brand": "brands"}
@@ -465,26 +466,33 @@ def check_booking_credit_rule(args, doc):
 	from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 
 	if args.get("customer") and doc:
-		balance = get_balance(args.get("customer"), args.get("transaction_date"))
 		convertible_items = frappe.get_all("Booking Credit Conversions",
 			fields=["convertible_item", "booking_credits_item"]
 		)
 
 		booking_credit_items = [x.booking_credits_item for x in convertible_items]
-		simplified_balance = {x: {} for x in balance if x in booking_credit_items}
-		for bal in simplified_balance:
-			for d in balance[bal]:
-				simplified_balance[bal][d.get("uom")] = d.get("balance")
 
 		result = False
+		used_qty = defaultdict(lambda: defaultdict(float))
 		for item in doc.items:
 			if item.get("item_booking") and item.item_code in [x.convertible_item for x in convertible_items]:
+				booking_date = frappe.db.get_value("Item Booking", item.get("item_booking"), "starts_on")
 				booking_credit_items = [x.booking_credits_item for x in convertible_items if x.convertible_item == item.item_code]
 				qty = item.qty
 
+				balance = get_balance(args.get("customer"), booking_date or item.get("transaction_date"))
+				simplified_balance = {x: {} for x in balance if x in booking_credit_items}
+				for bal in simplified_balance:
+					for d in balance[bal]:
+						simplified_balance[bal][d.get("uom")] = d.get("balance")
+
 				for credit in booking_credit_items:
+					if simplified_balance.get(credit, {}).get(item.uom):
+						simplified_balance[credit][item.uom] -= flt(used_qty.get(credit, {}).get(item.uom))
+
 					if qty > 0 and flt(simplified_balance.get(credit, {}).get(item.uom)) > 0:
 						removable_qty = min(qty, simplified_balance[credit][item.uom])
+						used_qty[credit][item.uom] += removable_qty
 						simplified_balance[credit][item.uom] -= removable_qty
 						qty -= removable_qty
 
