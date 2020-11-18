@@ -627,11 +627,13 @@ erpnext.work_order = {
 	},
 
 	show_prompt_for_qty_input: function(frm, purpose) {
+		// Keep for translations
+		// __('Manufacture'), __('Material Transfer for Manufacture')
 		let max = this.get_max_transferable_qty(frm, purpose);
 		return new Promise((resolve, reject) => {
 			frappe.prompt({
 				fieldtype: 'Float',
-				label: __('Qty for {0}', [purpose]),
+				label: __('Qty for {0}', [__(purpose)]),
 				fieldname: 'qty',
 				description: __('Max: {0}', [max]),
 				default: max

@@ -804,9 +804,11 @@ class BuyingController(StockController):
 		if not self.get("items"):
 			return
 
-		earliest_schedule_date = min([d.schedule_date for d in self.get("items")])
-		if earliest_schedule_date:
-			self.schedule_date = earliest_schedule_date
+		scheduled_dates = [d.schedule_date for d in self.get("items") if d.schedule_date is not None]
+		if scheduled_dates:
+			earliest_schedule_date = min(scheduled_dates)
+			if earliest_schedule_date:
+				self.schedule_date = earliest_schedule_date
 
 		if self.schedule_date:
 			for d in self.get('items'):
