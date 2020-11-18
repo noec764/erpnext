@@ -183,7 +183,9 @@ def get_item_price(item_code, uom):
 	return {
 		"item_name": frappe.db.get_value("Item", item_code, "item_name"),
 		"price": price,
-		"total": fmt_money(cart_quotation.grand_total or 0, currency=cart_quotation.currency) if cart_quotation else _("Unavailable")
+		"total": fmt_money(
+			(cart_quotation.grand_total or 0) if cart_quotation else 0,
+			currency=cart_quotation.currency if cart_quotation else price.get("currency"))
 	}
 
 @frappe.whitelist()

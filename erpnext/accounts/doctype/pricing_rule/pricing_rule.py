@@ -480,7 +480,8 @@ def check_booking_credit_rule(args, doc):
 				booking_credit_items = [x.booking_credits_item for x in convertible_items if x.convertible_item == item.item_code]
 				qty = item.qty
 
-				balance = get_balance(args.get("customer"), booking_date or item.get("transaction_date"))
+				balance = get_balance(args.get("customer"), getdate(booking_date or item.get("transaction_date")))
+
 				simplified_balance = {x: {} for x in balance if x in booking_credit_items}
 				for bal in simplified_balance:
 					for d in balance[bal]:
