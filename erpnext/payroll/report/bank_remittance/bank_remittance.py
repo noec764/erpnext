@@ -47,14 +47,18 @@ def execute(filters=None):
 			"fieldtype": "Int",
 			"fieldname": "employee_account_no",
 			"width": 50
-		},
-		{
+		}
+	]
+
+	if frappe.db.has_column('Employee', 'ifsc_code'):
+		columns.append({
 			"label": _("IFSC Code"),
 			"fieldtype": "Data",
 			"fieldname": "bank_code",
 			"width": 100
-		},
-		{
+		})
+
+	columns += [{
 			"label": _("Currency"),
 			"fieldtype": "Data",
 			"fieldname": "currency",
@@ -73,7 +77,9 @@ def execute(filters=None):
 	accounts = get_bank_accounts()
 	payroll_entries = get_payroll_entries(accounts, filters)
 	salary_slips = get_salary_slips(payroll_entries)
-	get_emp_bank_ifsc_code(salary_slips)
+
+	if frappe.db.has_column('Employee', 'ifsc_code'):
+		get_emp_bank_ifsc_code(salary_slips)
 
 	for salary in salary_slips:
 		if salary.bank_name and salary.bank_account_no and salary.debit_acc_no and salary.status in ["Submitted", "Paid"]:
