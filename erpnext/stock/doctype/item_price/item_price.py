@@ -4,13 +4,10 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-
-
-class ItemPriceDuplicateItem(frappe.ValidationError): pass
-
-
 from frappe.model.document import Document
 
+class ItemPriceDuplicateItem(frappe.ValidationError):
+	pass
 
 class ItemPrice(Document):
 	def validate(self):
@@ -37,8 +34,7 @@ class ItemPrice(Document):
 
 			if not price_list_details:
 				link = frappe.utils.get_link_to_form('Price List', self.price_list)
-				frappe.throw("The price list {0} does not exists or disabled".
-					format(link))
+				frappe.throw(_("The price list {0} does not exists or disabled").format(link))
 
 			self.buying, self.selling, self.currency = price_list_details
 
@@ -49,21 +45,28 @@ class ItemPrice(Document):
 
 	def check_duplicates(self):
 		conditions = "where item_code=%(item_code)s and price_list=%(price_list)s and name != %(name)s"
-		condition_data_dict = dict(item_code=self.item_code, price_list=self.price_list, name=self.name)
 
-		for field in ['uom', 'valid_from',
-			'valid_upto', 'packing_unit', 'customer', 'supplier']:
-			if field == 'uom' or self.get(field):
-				conditions += " and {0} = %({1})s".format(field, field)
-				condition_data_dict[field] = self.get(field)
+		for field in [
+			"uom",
+			"valid_from",
+			"valid_upto",
+			"packing_unit",
+			"customer",
+			"supplier",]:
+			if self.get(field):
+				conditions += " and {0} = %({0})s ".format(field)
+			else:
+				conditions += "and (isnull({0}) or {0} = '')".format(field)
 
 		price_list_rate = frappe.db.sql("""
 			SELECT price_list_rate
 			FROM `tabItem Price`
-			{conditions} """.format(conditions=conditions), condition_data_dict)
+			{conditions}
+		""".format(conditions=conditions),
+		self.as_dict(),)
 
-		if price_list_rate :
-			frappe.throw(_("Item Price appears multiple times based on Price List, Supplier/Customer, Currency, Item, UOM, Qty and Dates."), ItemPriceDuplicateItem)
+		if price_list_rate:
+			frappe.throw(_("Item Price appears multiple times based on Price List, Supplier/Customer, Currency, Item, UOM, Qty and Dates."), ItemPriceDuplicateItem,)
 
 	def before_save(self):
 		if self.selling:
