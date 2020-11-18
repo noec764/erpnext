@@ -249,7 +249,12 @@ doc_events = {
 		]
 	},
 	"Purchase Invoice": {
-		"validate": "erpnext.regional.india.utils.update_grand_total_for_rcm"
+		"validate": [
+			"erpnext.regional.india.utils.update_grand_total_for_rcm",
+			"erpnext.regional.united_arab_emirates.utils.update_grand_total_for_rcm",
+			"erpnext.regional.united_arab_emirates.utils.validate_returns"
+		]
+		
 	},
 	"Payment Entry": {
 		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning"
@@ -409,7 +414,8 @@ regional_overrides = {
 		'erpnext.accounts.doctype.purchase_invoice.purchase_invoice.make_regional_gl_entries': 'erpnext.regional.india.utils.make_regional_gl_entries'
 	},
 	'United Arab Emirates': {
-		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data'
+		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data',
+		'erpnext.accounts.doctype.purchase_invoice.purchase_invoice.make_regional_gl_entries': 'erpnext.regional.united_arab_emirates.utils.make_regional_gl_entries',
 	},
 	'Saudi Arabia': {
 		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data'
