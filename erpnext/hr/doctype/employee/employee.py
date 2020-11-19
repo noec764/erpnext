@@ -132,12 +132,14 @@ class Employee(NestedSet):
 			if not user.user_image:
 				user.user_image = self.image
 				try:
-					frappe.get_doc({
+					f = frappe.get_doc({
 						"doctype": "File",
 						"file_name": self.image,
 						"attached_to_doctype": "User",
 						"attached_to_name": self.user_id
-					}).insert()
+					})
+					f.flags.ignore_file_validate = True
+					f.insert()
 				except frappe.DuplicateEntryError:
 					# already exists
 					pass
