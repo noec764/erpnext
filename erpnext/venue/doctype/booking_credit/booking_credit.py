@@ -121,6 +121,7 @@ def _process_expired_booking_credits(date=None, customer=None, submit=True):
 			continue
 
 		balance = _calculate_expired_booking_entry(expired_entry, date)
+
 		if balance:
 			balance_entries.append(balance)
 
@@ -138,7 +139,6 @@ def _calculate_expired_booking_entry(expired_entry, date):
 			"docstatus": 1,
 			"uom": expired_entry.uom
 		},
-		fields=["credits"],
 		order_by="date DESC",
 		pluck="credits"
 	))
@@ -152,16 +152,15 @@ def _calculate_expired_booking_entry(expired_entry, date):
 			"docstatus": 1,
 			"name": ("!=", expired_entry.name)
 		},
-		fields=["quantity"],
 		pluck="quantity"
 	))
 
-	if (credits_left - balance) >= 0:
+	if (balance - credits_left) >= 0:
 		return frappe._dict({
 			"user": expired_entry.user,
 			"customer": expired_entry.customer,
 			"date": get_datetime(expired_entry.expiration_date),
-			"credits": min(balance, credits_left) * -1,
+			"credits": min(expired_entry.quantity, credits_left) * -1,
 			"reference_doctype": "Booking Credit",
 			"reference_document": expired_entry.name,
 			"uom": expired_entry.uom,

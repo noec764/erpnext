@@ -143,6 +143,7 @@ class BookingSidebar {
 	constructor(parent) {
 		this.parent = parent;
 		this.selector = parent.uoms.length > 1;
+		this.bookings = []
 		this.render();
 	}
 
@@ -153,6 +154,7 @@ class BookingSidebar {
 		this.duration_selector_wrapper = $(`<div class="sidebar-durations"></div>`).appendTo(this.duration_selector_title);
 		this.bookings_title = $(`<div class="sidebar-section"><h4>${__("Bookings")}</h4></div>`).appendTo(this.wrapper);
 		this.bookings_display = $(`<div></div>`).appendTo(this.bookings_title);
+
 		const fields = this.parent.uoms.map(value => {
 			return {
 				fieldname: value,
@@ -206,10 +208,13 @@ class BookingSidebar {
 			<div class="formatted-total"><span>${__("Total:")} </span>${this.parent.formatted_total}</div>
 			<div class="formatted-price small text-muted"><span>${__("Rate:")} </span>${this.parent.formatted_price}</div>
 		`
+		if (this.bookings.length && !this.cart_btn) {
+			this.cart_btn = $(`<div><a class="btn btn-primary btn-xs" href="/cart">${__("Validate")}</a></div>`).appendTo(this.wrapper);
+		}
 	}
 
 	display_bookings(data) {
-		const me = this;
+		this.bookings = data
 		if (!data.length) {
 			this.bookings_title[0].style.display = 'none';
 		} else {

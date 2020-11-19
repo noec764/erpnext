@@ -44,11 +44,18 @@ class Quotation(SellingController):
 			frappe.get_doc("Lead", self.party_name).set_status(update=True)
 
 	def update_item_bookings(self):
+		booking_credit_pricing_rules = frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}, pluck="name")
 		for item in self.items:
 			if item.item_booking:
 				booking = frappe.get_doc("Item Booking", item.item_booking)
 				booking.party_type = self.quotation_to
 				booking.party_name = self.party_name
+
+				if item.get("pricing_rules"):
+					res = [True for x in frappe.parse_json(item.pricing_rules) if x in booking_credit_pricing_rules]
+					if True in res:
+						booking.deduct_booking_credits = True
+
 				booking.save(ignore_permissions=True)
 
 	def set_customer_name(self):

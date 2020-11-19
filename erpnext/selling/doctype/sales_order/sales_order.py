@@ -466,9 +466,14 @@ class SalesOrder(SellingController):
 				frappe.throw(_("Cannot ensure delivery by Serial No as Item {0} is added with and without Ensure Delivery by Serial No.").format(item.item_code))
 
 	def update_item_bookings(self):
+		booking_credit_pricing_rules = frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}, pluck="name")
 		for d in self.get("items"):
 			if d.get("item_booking"):
-				frappe.db.set_value("Item Booking", d.get("item_booking"), "status", "Confirmed")
+				frappe.db.set_value("Item Booking", d.item_booking, "status", "Confirmed")
+				if d.get("pricing_rules"):
+					res = [True for x in frappe.parse_json(d.pricing_rules) if x in booking_credit_pricing_rules]
+					if True in res:
+						frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
