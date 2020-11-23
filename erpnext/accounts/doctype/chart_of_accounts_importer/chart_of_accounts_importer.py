@@ -91,7 +91,7 @@ def generate_data_from_excel(file_doc, extension, as_dict=False):
 	data = []
 	headers = rows[0]
 	del rows[0]
-
+	print("HEADERS", headers)
 	for row in rows:
 		if as_dict:
 			data.append({frappe.scrub(header): row[index] for index, header in enumerate(headers)})
