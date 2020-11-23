@@ -1,23 +1,9 @@
-{% include "erpnext/selling/page/point_of_sale/onscan.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_item_selector.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_item_cart.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_item_details.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_payment.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_number_pad.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_past_order_list.js" %}
-{% include "erpnext/selling/page/point_of_sale/pos_past_order_summary.js" %}
-
 erpnext.PointOfSale.Controller = class {
 	constructor(wrapper) {
 		this.wrapper = $(wrapper).find('.layout-main-section');
 		this.page = wrapper.page;
 
-		this.load_assets();
-	}
-
-	load_assets() {
-		// after loading assets first check if opening entry has been made
-		frappe.require(['assets/erpnext/css/pos.css'], this.check_opening_entry.bind(this));
+		this.check_opening_entry();
 	}
 
 	fetch_opening_entry() {
@@ -36,6 +22,7 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	create_opening_voucher() {
+		const me = this;
 		const table_fields = [
 			{
 				fieldname: "mode_of_payment", fieldtype: "Link",
@@ -93,7 +80,7 @@ erpnext.PointOfSale.Controller = class {
 					fields: table_fields
 				}
 			],
-			primary_action: async ({ company, pos_profile, balance_details }) => {
+			primary_action: async function({ company, pos_profile, balance_details }) {
 				if (!balance_details.length) {
 					frappe.show_alert({
 						message: __("Please add Mode of payments and opening balance details."),
@@ -103,7 +90,7 @@ erpnext.PointOfSale.Controller = class {
 				}
 				const method = "erpnext.selling.page.point_of_sale.point_of_sale.create_opening_voucher";
 				const res = await frappe.call({ method, args: { pos_profile, company, balance_details }, freeze:true });
-				!res.exc && this.prepare_app_defaults(res.message);
+				!res.exc && me.prepare_app_defaults(res.message);
 				dialog.hide();
 			},
 			primary_action_label: __('Submit')
@@ -157,10 +144,10 @@ erpnext.PointOfSale.Controller = class {
 
 	prepare_dom() {
 		this.wrapper.append(
-			`<div class="app grid grid-cols-10 pt-8 gap-6"></div>`
+			`<div class="point-of-sale-app"></div>`
 		);
 
-		this.$components_wrapper = this.wrapper.find('.app');
+		this.$components_wrapper = this.wrapper.find('.point-of-sale-app');
 	}
 
 	prepare_components() {
@@ -190,7 +177,7 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	toggle_recent_order() {
-		const show = this.recent_order_list.$component.hasClass('d-none');
+		const show = this.recent_order_list.$component.is(':hidden');
 		this.toggle_recent_order_list(show);
 	}
 
@@ -386,7 +373,7 @@ erpnext.PointOfSale.Controller = class {
 						this.order_summary.load_summary_of(doc);
 					});
 				},
-				reset_summary: () => this.order_summary.show_summary_placeholder()
+				reset_summary: () => this.order_summary.toggle_summary_placeholder(true)
 			}
 		})
 	}

@@ -12,6 +12,8 @@
     "url": "https://gitlab.com/dokos/dokos/issues"
   },
   "devDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "onscan.js": "^1.5.2"
+  },
   "scripts": {}
 }
