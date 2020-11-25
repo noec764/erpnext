@@ -215,19 +215,6 @@ def throw_overlap_error(doc, exists_for, overlap_doc, from_date, to_date):
 		+ _(") for {0}").format(exists_for)
 	frappe.throw(msg)
 
-def get_employee_leave_policy(employee):
-	leave_policy = frappe.db.get_value("Employee", employee, "leave_policy")
-	if not leave_policy:
-		employee_grade = frappe.db.get_value("Employee", employee, "grade")
-		if employee_grade:
-			leave_policy = frappe.db.get_value("Employee Grade", employee_grade, "default_leave_policy")
-			if not leave_policy:
-				frappe.throw(_("Employee {0} of grade {1} have no default leave policy").format(employee, employee_grade))
-	if leave_policy:
-		return frappe.get_doc("Leave Policy", leave_policy)
-	else:
-		frappe.throw(_("Please set leave policy for employee {0} in Employee / Grade record").format(employee))
-
 def validate_duplicate_exemption_for_payroll_period(doctype, docname, payroll_period, employee):
 	existing_record = frappe.db.exists(doctype, {
 		"payroll_period": payroll_period,
@@ -302,6 +289,19 @@ def generate_leave_encashment():
 def allocate_earned_leaves():
 	'''Allocate earned leaves to Employees'''
 	EarnedLeaveAllocator(EarnedLeaveCalculator).allocate()
+
+def get_leave_allocations(date, leave_type):
+	return frappe.db.sql("""select name, employee, from_date, to_date, leave_policy_assignment, leave_policy
+		from `tabLeave Allocation`
+		where
+			%s between from_date and to_date and docstatus=1
+			and leave_type=%s""",
+	(date, frappe.db.escape(leave_type)), as_dict=1)
+
+def get_earned_leaves():
+	return frappe.get_all("Leave Type",
+		fields=["name", "max_leaves_allowed", "earned_leave_frequency", "rounding", "based_on_date_of_joining"],
+		filters={'is_earned_leave' : 1})
 
 def create_additional_leave_ledger_entry(allocation, leaves, date):
 	''' Create leave ledger entry for leave types '''
@@ -413,34 +413,41 @@ def get_previous_claimed_amount(employee, payroll_period, non_pro_rata=False, co
 		total_claimed_amount = sum_of_claimed_amount[0].total_amount
 	return total_claimed_amount
 
-def check_frequency_hit(from_date, to_date, frequency):
-	'''Return True if current date matches frequency'''
-	from_dt = get_datetime(from_date)
-	to_dt = get_datetime(to_date)
+def check_effective_date(from_date, to_date, frequency, based_on_date_of_joining_date):
+	import calendar
 	from dateutil import relativedelta
-	rd = relativedelta.relativedelta(to_dt, from_dt)
-	months = rd.months
-	if frequency == "Quarterly":
-		return math.floor(months / 4)
-	elif frequency == "Half-Yearly":
-		return math.floor(months / 6)
-	elif frequency == "Yearly":
-		return math.floor(months / 12)
+
+	from_date = get_datetime(from_date)
+	to_date = get_datetime(to_date)
+	rd = relativedelta.relativedelta(to_date, from_date)
+	#last day of month
+	last_day =  calendar.monthrange(to_date.year, to_date.month)[1]
+
+	if (from_date.day == to_date.day and based_on_date_of_joining_date) or (not based_on_date_of_joining_date and to_date.day == last_day):
+		if frequency == "Monthly":
+			return True
+		elif frequency == "Quarterly" and rd.months % 3:
+			return True
+		elif frequency == "Half-Yearly" and rd.months % 6:
+			return True
+		elif frequency == "Yearly" and rd.months % 12:
+			return True
+
+	if frappe.flags.in_test:
+		return True
+
 	return False
 
 class EarnedLeaveAllocator():
 	def __init__(self, calculator):
 		self.calculator = calculator
-		self.e_leave_types = frappe.get_all("Leave Type",
-			fields=["name", "max_leaves_allowed", "earned_leave_frequency", "rounding", "earned_leave_frequency_formula"],
-			filters={'is_earned_leave' : 1})
+		self.e_leave_types = get_earned_leaves()
 		self.today = getdate()
-		self.divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
 
 	def allocate(self):
 		for e_leave_type in self.e_leave_types:
-			leave_allocations = frappe.db.sql(f"""select name, employee, leave_type, from_date, to_date from `tabLeave Allocation` where {self.today}
-				between from_date and to_date and docstatus=1 and leave_type={frappe.db.escape(e_leave_type.name)}""", as_dict=1)
+			leave_allocations = get_leave_allocations(self.today, e_leave_type.name)
+
 			for allocation in leave_allocations:
 				self.calculator(self, e_leave_type, allocation).calculate_allocation()
 
@@ -450,25 +457,24 @@ class EarnedLeaveCalculator():
 		self.parent = parent
 		self.leave_type = leave_type
 		self.allocation = allocation
-		self.leave_policy = get_employee_leave_policy(self.allocation.employee)
+		self.leave_policy = None
 		self.annual_allocation = []
 		self.attendance = {}
 		self.earneable_leaves = 0
 		self.earned_leaves = 0
 
 		self.formula_map = {}
+		self.divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
 
 	def calculate_allocation(self):
-		if not self.leave_policy:
+		if not allocation.leave_policy_assignment and not allocation.leave_policy:
 			return
 
-		if self.leave_type.earned_leave_frequency != "Custom Formula":
-			frequency = check_frequency_hit(self.allocation.from_date, self.parent.today, self.leave_type.earned_leave_frequency)
-			if not frequency:
-				return
+		self.leave_policy = allocation.leave_policy if allocation.leave_policy else frappe.db.get_value(
+			"Leave Policy Assignment", allocation.leave_policy_assignment, ["leave_policy"])
 
 		self.annual_allocation = frappe.db.get_value("Leave Policy Detail", filters={
-			'parent': self.leave_policy.name,
+			'parent': self.leave_policy,
 			'leave_type': self.leave_type.name
 		}, fieldname=['annual_allocation'])
 
@@ -478,7 +484,7 @@ class EarnedLeaveCalculator():
 			if self.leave_type.earned_leave_frequency == "Custom Formula" and self.formula_map.get(self.leave_type.earned_leave_frequency_formula):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
 			else:
-				self.earned_leaves = flt(self.annual_allocation) / self.parent.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
+				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
 				if self.leave_type.rounding == "None":
 					pass
 				elif self.leave_type.rounding == "0.5":
