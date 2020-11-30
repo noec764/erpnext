@@ -25,7 +25,7 @@ def create_leave_type(**args):
 		"earning_component": "Leave Encashment"
 	})
 
-	 if leave_type.is_ppl:
+	if leave_type.is_ppl:
 		leave_type.fraction_of_daily_salary_per_leave = args.fraction_of_daily_salary_per_leave or 0.5
 
 	return leave_type
