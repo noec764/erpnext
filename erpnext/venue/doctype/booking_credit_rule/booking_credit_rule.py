@@ -31,6 +31,9 @@ class BookingCreditRule(Document):
 	def on_update(self):
 		set_trigger_docs()
 
+	def after_insert(self):
+		set_trigger_docs()
+
 	def process_rule(self, doc):
 		if self.conditions and not frappe.safe_eval(self.conditions, {"doc": doc}):
 			return
