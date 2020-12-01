@@ -113,10 +113,15 @@ class TestSalarySlip(unittest.TestCase):
 
 		self.assertEqual(ss.leave_without_pay, 4)
 
+		#two day leave ppl with fraction_of_daily_salary_per_leave = 0.5 equivalent to single day lwp
+		make_leave_application(emp_id, add_days(first_sunday, 4), add_days(first_sunday, 5), "Test Partially Paid Leave")
+
+		self.assertEqual(ss.payment_days, days_in_month - no_of_holidays - 4)
+
 		days_in_month = no_of_days[0]
 		no_of_holidays = no_of_days[1]
 
-		self.assertEqual(ss.payment_days, days_in_month - no_of_holidays - 4)
+		self.assertEqual(flt(ss.gross_pay, 2), flt(gross_pay, 2))
 
 		frappe.db.set_value("Payroll Settings", None, "payroll_based_on", "Leave")
 

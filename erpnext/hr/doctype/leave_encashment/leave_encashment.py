@@ -16,9 +16,15 @@ class LeaveEncashment(Document):
 	def validate(self):
 		set_employee_name(self)
 		self.get_leave_details_for_encashment()
+		self.validate_salary_structure()
 
 		if not self.encashment_date:
 			self.encashment_date = getdate(nowdate())
+
+	def validate_salary_structure(self):
+		if not frappe.db.exists('Salary Structure Assignment', {'employee': self.employee}):
+			frappe.throw(_("There is no Salary Structure assigned to {0}. First assign a Salary Stucture.").format(self.employee))
+
 
 	def before_submit(self):
 		if self.encashment_amount <= 0:
@@ -30,6 +36,7 @@ class LeaveEncashment(Document):
 		additional_salary = frappe.new_doc("Additional Salary")
 		additional_salary.company = frappe.get_value("Employee", self.employee, "company")
 		additional_salary.employee = self.employee
+		additional_salary.currency = self.currency
 		earning_component = frappe.get_value("Leave Type", self.leave_type, "earning_component")
 		if not earning_component:
 			frappe.throw(_("Please set Earning Component for Leave type: {0}.").format(self.leave_type))
@@ -82,9 +89,9 @@ class LeaveEncashment(Document):
 		return True
 
 	def get_leave_allocation(self):
-		leave_allocation = frappe.db.sql(f"""select name, to_date, total_leaves_allocated, carry_forwarded_leaves_count from `tabLeave Allocation` where {frappe.db.escape(self.encashment_date or getdate(nowdate()))}
-		between from_date and to_date and docstatus=1 and leave_type={frappe.db.escape(self.leave_type)}
-		and employee= {frappe.db.escape(self.employee)}""", as_dict=1) #nosec
+		leave_allocation = frappe.db.sql("""select name, to_date, total_leaves_allocated, carry_forwarded_leaves_count from `tabLeave Allocation` where '{0}'
+		between from_date and to_date and docstatus=1 and leave_type='{1}'
+		and employee= '{2}'""".format(self.encashment_date or getdate(nowdate()), self.leave_type, self.employee), as_dict=1) #nosec
 
 		return leave_allocation[0] if leave_allocation else None
 

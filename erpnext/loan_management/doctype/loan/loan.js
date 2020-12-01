@@ -69,7 +69,6 @@ frappe.ui.form.on('Loan', {
 				frm.add_custom_button(__('Loan Repayment'), function() {
 					frm.trigger("make_repayment_entry");
 				},__('Create'));
-
 			}
 
 			if (["Sanctioned", "Partially Disbursed"].includes(frm.doc.status)) {
@@ -98,6 +97,7 @@ frappe.ui.form.on('Loan', {
 		frm.toggle_display("repayment_method", frm.doc.is_term_loan);
 		frm.toggle_display("repayment_periods", frm.doc.is_term_loan);
 	},
+
 
 	make_loan_disbursement: function (frm) {
 		frappe.call({
