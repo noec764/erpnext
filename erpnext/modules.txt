@@ -20,3 +20,4 @@ Communication
 Loan Management
 Payroll
 Venue
+Telephony
