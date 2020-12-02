@@ -522,8 +522,8 @@ def get_leave_allocation_records(employee, date, leave_type=None):
 			leave_type
 		FROM `tabLeave Ledger Entry`
 		WHERE
-			from_date <= {date}
-			AND to_date >= {date}
+			from_date <= {frappe.db.escape(date)}
+			AND to_date >= {frappe.db.escape(date)}
 			AND docstatus=1
 			AND transaction_type="Leave Allocation"
 			AND employee={frappe.db.escape(employee)}
