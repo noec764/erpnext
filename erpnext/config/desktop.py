@@ -105,7 +105,16 @@ def get_data():
 			"color": "#2ecc71",
 			"icon": "fas fa-users",
 			"type": "module",
-			"description": "Employees, attendance, payroll, leaves and shifts."
+			"description": "Employees, attendance, leaves and shifts."
+		},
+		{
+			"module_name": "Payroll",
+			"category": "Modules",
+			"label": _("Payroll"),
+			"color": "#15aabf",
+			"icon": "fas fa-file-invoice",
+			"type": "module",
+			"description": "Payroll"
 		},
 		{
 			"module_name": "Quality Management",
