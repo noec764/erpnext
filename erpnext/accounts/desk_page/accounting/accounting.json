@@ -48,7 +48,7 @@
   {
    "hidden": 0,
    "label": "Banking and Payments",
-   "links": "[\n    {\n        \"description\": \"Match non-linked Invoices and Payments.\",\n        \"label\": \"Match Payments with Invoices\",\n        \"name\": \"Payment Reconciliation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Update bank payment dates with journals.\",\n        \"label\": \"Update Bank Clearance Dates\",\n        \"name\": \"Bank Clearance\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Invoice Discounting\",\n        \"name\": \"Invoice Discounting\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"dependencies\": [\n            \"Journal Entry\"\n        ],\n        \"doctype\": \"Journal Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Bank Reconciliation Statement\",\n        \"name\": \"Bank Reconciliation Statement\",\n        \"type\": \"report\"\n    },\n    {\n        \"icon\": \"fa fa-bar-chart\",\n        \"label\": \"Bank Reconciliation\",\n        \"name\": \"bank-reconciliation\",\n        \"type\": \"page\"\n    },\n    {\n        \"dependencies\": [\n            \"Journal Entry\"\n        ],\n        \"doctype\": \"Journal Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Bank Clearance Summary\",\n        \"name\": \"Bank Clearance Summary\",\n        \"type\": \"report\"\n    },\n    {\n        \"label\": \"Bank Guarantee\",\n        \"name\": \"Bank Guarantee\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Setup cheque dimensions for printing\",\n        \"label\": \"Cheque Print Template\",\n        \"name\": \"Cheque Print Template\",\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"description\": \"Match non-linked Invoices and Payments.\",\n        \"label\": \"Match Payments with Invoices\",\n        \"name\": \"Payment Reconciliation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Update bank payment dates with journals.\",\n        \"label\": \"Update Bank Clearance Dates\",\n        \"name\": \"Bank Clearance\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Invoice Discounting\",\n        \"name\": \"Invoice Discounting\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"dependencies\": [\n            \"Journal Entry\"\n        ],\n        \"doctype\": \"Journal Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Bank Reconciliation Statement\",\n        \"name\": \"Bank Reconciliation Statement\",\n        \"type\": \"report\"\n    },\n    {\n        \"icon\": \"fa fa-bar-chart\",\n        \"label\": \"Bank Reconciliation\",\n        \"name\": \"bank-reconciliation\",\n        \"type\": \"page\"\n    },\n    {\n        \"dependencies\": [\n            \"Journal Entry\"\n        ],\n        \"doctype\": \"Journal Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Bank Clearance Summary\",\n        \"name\": \"Bank Clearance Summary\",\n        \"type\": \"report\"\n    },\n    {\n        \"label\": \"Bank Guarantee\",\n        \"name\": \"Bank Guarantee\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"Setup cheque dimensions for printing\",\n        \"label\": \"Cheque Print Template\",\n        \"name\": \"Cheque Print Template\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"SEPA Mandates\",\n        \"label\": \"SEPA Mandate\",\n        \"name\": \"SEPA Mandate\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"description\": \"SEPA Direct Debit\",\n        \"label\": \"SEPA Direct Debit\",\n        \"name\": \"SEPA Direct Debit\",\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,
@@ -84,11 +84,6 @@
    "hidden": 0,
    "label": "Profitability",
    "links": "[\n    {\n        \"dependencies\": [\n            \"Sales Invoice\"\n        ],\n        \"doctype\": \"Sales Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Gross Profit\",\n        \"name\": \"Gross Profit\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"GL Entry\"\n        ],\n        \"doctype\": \"GL Entry\",\n        \"is_query_report\": true,\n        \"label\": \"Profitability Analysis\",\n        \"name\": \"Profitability Analysis\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Sales Invoice\"\n        ],\n        \"doctype\": \"Sales Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Sales Invoice Trends\",\n        \"name\": \"Sales Invoice Trends\",\n        \"type\": \"report\"\n    },\n    {\n        \"dependencies\": [\n            \"Purchase Invoice\"\n        ],\n        \"doctype\": \"Purchase Invoice\",\n        \"is_query_report\": true,\n        \"label\": \"Purchase Invoice Trends\",\n        \"name\": \"Purchase Invoice Trends\",\n        \"type\": \"report\"\n    }\n]"
-  },
-  {
-    "hidden": 0,
-    "label": "Value-Added Tax (VAT UAE)",
-    "links": "[\n    {\n        \"country\": \"United Arab Emirates\",\n        \"label\": \"UAE VAT Settings\",\n        \"name\": \"UAE VAT Settings\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"country\": \"United Arab Emirates\",\n        \"is_query_report\": true,\n        \"label\": \"UAE VAT 201\",\n        \"name\": \"UAE VAT 201\",\n        \"type\": \"report\"\n    }\n\n]"
   }
  ],
  "category": "Modules",
@@ -114,7 +109,7 @@
  "idx": 0,
  "is_standard": 1,
  "label": "Accounting",
- "modified": "2020-10-16 14:08:32.655377",
+ "modified": "2020-12-02 19:00:47.436096",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
