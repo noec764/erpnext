@@ -69,7 +69,6 @@ frappe.ui.form.on('Booking Credit Rule', {
 				}
 			)
 			.then(r => {
-				console.log("date", r)
 				if (r.length) {
 					frm.fields_dict.start_time_field.df.options = [''].concat(r);
 					frm.fields_dict.end_time_field.df.options = [''].concat(r);
