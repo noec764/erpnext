@@ -291,16 +291,15 @@ def allocate_earned_leaves():
 	EarnedLeaveAllocator(EarnedLeaveCalculator).allocate()
 
 def get_leave_allocations(date, leave_type):
-	return frappe.db.sql("""select name, employee, from_date, to_date, leave_policy_assignment, leave_policy
+	return frappe.db.sql(f"""select name, employee, from_date, to_date, leave_policy_assignment, leave_policy
 		from `tabLeave Allocation`
 		where
-			%s between from_date and to_date and docstatus=1
-			and leave_type=%s""",
-	(date, frappe.db.escape(leave_type)), as_dict=1)
+			{frappe.db.escape(date)} between from_date and to_date and docstatus=1
+			and leave_type={frappe.db.escape(leave_type)}""", as_dict=1, debug=True)
 
 def get_earned_leaves():
 	return frappe.get_all("Leave Type",
-		fields=["name", "max_leaves_allowed", "earned_leave_frequency", "rounding", "based_on_date_of_joining"],
+		fields=["name", "max_leaves_allowed", "earned_leave_frequency", "rounding", "based_on_date_of_joining", "earned_leave_frequency_formula"],
 		filters={'is_earned_leave' : 1})
 
 def create_additional_leave_ledger_entry(allocation, leaves, date):
@@ -467,10 +466,10 @@ class EarnedLeaveCalculator():
 		self.divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
 
 	def calculate_allocation(self):
-		if not allocation.leave_policy_assignment and not allocation.leave_policy:
+		if not self.allocation.leave_policy_assignment and not self.allocation.leave_policy:
 			return
 
-		self.leave_policy = allocation.leave_policy if allocation.leave_policy else frappe.db.get_value(
+		self.leave_policy = self.allocation.leave_policy if self.allocation.leave_policy else frappe.db.get_value(
 			"Leave Policy Assignment", allocation.leave_policy_assignment, ["leave_policy"])
 
 		self.annual_allocation = frappe.db.get_value("Leave Policy Detail", filters={
@@ -481,9 +480,10 @@ class EarnedLeaveCalculator():
 		if self.annual_allocation:
 			self.earneable_leaves = flt(self.annual_allocation) / 12
 			self.attendance = get_attendance(self.allocation.employee, self.allocation.from_date, min(self.parent.today, self.allocation.to_date))
+
 			if self.leave_type.earned_leave_frequency == "Custom Formula" and self.formula_map.get(self.leave_type.earned_leave_frequency_formula):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
-			else:
+			elif self.leave_type.earned_leave_frequency != "Custom Formula":
 				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
 				if self.leave_type.rounding == "None":
 					pass
