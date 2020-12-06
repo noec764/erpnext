@@ -251,6 +251,7 @@ erpnext.accounts.PaymentReconciliationController = frappe.ui.form.Controller.ext
 		}
 
 		refresh_field("payments");
+		refresh_field("invoices");
 	},
 
 	toggle_primary_action: function() {

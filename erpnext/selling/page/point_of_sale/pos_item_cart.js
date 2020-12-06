@@ -453,18 +453,6 @@ erpnext.PointOfSale.ItemCart = class {
 			}
 		}
 
-<<<<<<< HEAD
-		function get_customer_image() {
-			if (!me.hide_images && image) {
-				return `<div class="icon flex items-center justify-center w-12 h-12 rounded bg-light-grey mr-4 text-grey-200">
-							<img class="h-full" src="${image}" alt="${image}" style="object-fit: cover;">
-						</div>`
-			} else {
-				return `<div class="icon flex items-center justify-center w-12 h-12 rounded bg-light-grey mr-4 text-grey-200 text-md">
-							${frappe.get_abbr(customer)}
-						</div>`
-			}
-=======
 	}
 
 	get_customer_image() {
@@ -473,7 +461,6 @@ erpnext.PointOfSale.ItemCart = class {
 			return `<div class="customer-image"><img src="${image}" alt="${image}""></div>`
 		} else {
 			return `<div class="customer-image customer-abbr">${frappe.get_abbr(customer)}</div>`
->>>>>>> 60a67b8671... refactor: POS for new UI
 		}
 	}
 	
