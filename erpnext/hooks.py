@@ -467,6 +467,7 @@ global_search_doctypes = {
 		{"doctype": "Sales Order", "index": 8},
 		{"doctype": "Quotation", "index": 9},
 		{"doctype": "Work Order", "index": 10},
+		{"doctype": "Purchase Order", "index": 11},
 		{"doctype": "Purchase Receipt", "index": 11},
 		{"doctype": "Purchase Invoice", "index": 12},
 		{"doctype": "Delivery Note", "index": 13},
