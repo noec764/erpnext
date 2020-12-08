@@ -161,9 +161,6 @@ def get():
 					}
 				},
 				_("Duties and Taxes"): {
-					_("TDS Payable"): {
-						"account_number": "2310"
-					},
 					"account_type": "Tax",
 					"is_group": 1
 				},
