@@ -95,10 +95,6 @@ def default_accounts_mapping(accounts, company):
 	return {x: ([y.name for y in accounts if cint(y.account_number)==account_map[x]] or [""])[0] for x in account_map}
 
 def setup_default_leaves():
-	leave_types = frappe.get_all("Leave Type")
-	for leave_type in leave_types:
-		frappe.delete_doc("Leave Type", leave_type.name)
-
 	leave_types = [
 		{'doctype': 'Leave Type', 'leave_type_name': _('Casual Leave'), 'name': _('Casual Leave'),
 			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 1},
