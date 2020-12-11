@@ -202,8 +202,8 @@ class PurchaseInvoice(BuyingController):
 				["Purchase Receipt", "purchase_receipt", "pr_detail"]
 			])
 
-	def validate_warehouse(self):
-		if self.update_stock:
+	def validate_warehouse(self, for_validate=True):
+		if self.update_stock and for_validate:
 			for d in self.get('items'):
 				if not d.warehouse:
 					frappe.throw(_("Warehouse required at Row No {0}, please set default warehouse for the item {1} for the company {2}").
@@ -229,7 +229,7 @@ class PurchaseInvoice(BuyingController):
 
 		if self.update_stock:
 			self.validate_item_code()
-			self.validate_warehouse()
+			self.validate_warehouse(for_validate)
 			if auto_accounting_for_stock:
 				warehouse_account = get_warehouse_account_map(self.company)
 
@@ -436,6 +436,7 @@ class PurchaseInvoice(BuyingController):
 			self.get_asset_gl_entry(gl_entries)
 
 		self.make_tax_gl_entries(gl_entries)
+		self.make_internal_transfer_gl_entries(gl_entries)
 
 		gl_entries = merge_similar_entries(gl_entries)
 
@@ -444,7 +445,6 @@ class PurchaseInvoice(BuyingController):
 		self.make_payment_gl_entries(gl_entries)
 		self.make_write_off_gl_entry(gl_entries)
 		self.make_gle_for_rounding_adjustment(gl_entries)
-
 		return gl_entries
 
 	def check_asset_cwip_enabled(self):
@@ -461,7 +461,7 @@ class PurchaseInvoice(BuyingController):
 		# because rounded_total had value even before introcution of posting GLE based on rounded total
 		grand_total = self.rounded_total if (self.rounding_adjustment and self.rounded_total) else self.grand_total
 
-		if grand_total:
+		if grand_total and not self.is_internal_transfer():
 			# Didnot use base_grand_total to book rounding loss gle
 			grand_total_in_company_currency = flt(grand_total * self.conversion_rate,
 				self.precision("grand_total"))
@@ -485,7 +485,6 @@ class PurchaseInvoice(BuyingController):
 	def make_item_gl_entries(self, gl_entries):
 		# item gl entries
 		stock_items = self.get_stock_items()
-		expenses_included_in_valuation = self.get_company_default("expenses_included_in_valuation")
 		if self.update_stock and self.auto_accounting_for_stock:
 			warehouse_account = get_warehouse_account_map(self.company)
 
@@ -533,16 +532,18 @@ class PurchaseInvoice(BuyingController):
 							"debit": -1 * flt(item.base_net_amount, item.precision("base_net_amount")),
 						}, warehouse_account[item.from_warehouse]["account_currency"], item=item))
 
-						gl_entries.append(
-							self.get_gl_dict({
-								"account": item.expense_account,
-								"against": self.supplier,
-								"debit": flt(item.base_net_amount, item.precision("base_net_amount")),
-								"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
-								"cost_center": item.cost_center,
-								"project": item.project
-							}, account_currency, item=item)
-						)
+						# Do not book expense for transfer within same company transfer
+						if not self.is_internal_transfer():
+							gl_entries.append(
+								self.get_gl_dict({
+									"account": item.expense_account,
+									"against": self.supplier,
+									"debit": flt(item.base_net_amount, item.precision("base_net_amount")),
+									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"cost_center": item.cost_center,
+									"project": item.project
+								}, account_currency, item=item)
+							)
 
 					else:
 						gl_entries.append(
@@ -819,7 +820,8 @@ class PurchaseInvoice(BuyingController):
 					}, account_currency, item=tax)
 				)
 			# accumulate valuation tax
-			if self.is_opening == "No" and tax.category in ("Valuation", "Valuation and Total") and flt(tax.base_tax_amount_after_discount_amount):
+			if self.is_opening == "No" and tax.category in ("Valuation", "Valuation and Total") and flt(tax.base_tax_amount_after_discount_amount) \
+				and not self.is_internal_transfer():
 				if self.auto_accounting_for_stock and not tax.cost_center:
 					frappe.throw(_("Cost Center is required in row {0} in Taxes table for type {1}").format(tax.idx, _(tax.category)))
 				valuation_tax.setdefault(tax.name, 0)
@@ -865,6 +867,18 @@ class PurchaseInvoice(BuyingController):
 							"remarks": self.remarks or "Accounting Entry for Stock"
 						}, item=tax)
 					)
+
+	def make_internal_transfer_gl_entries(self, gl_entries):
+		if self.is_internal_transfer() and flt(self.base_total_taxes_and_charges):
+			account_currency = get_account_currency(self.unrealized_profit_loss_account)
+			gl_entries.append(
+				self.get_gl_dict({
+					"account": self.unrealized_profit_loss_account,
+					"against": self.supplier,
+					"credit": flt(self.total_taxes_and_charges),
+					"credit_in_account_currency": flt(self.base_total_taxes_and_charges),
+					"cost_center": self.cost_center
+				}, account_currency, item=self))
 
 	def make_payment_gl_entries(self, gl_entries):
 		# Make Cash GL Entries
@@ -1083,7 +1097,9 @@ class PurchaseInvoice(BuyingController):
 			if self.docstatus == 2:
 				status = "Cancelled"
 			elif self.docstatus == 1:
-				if outstanding_amount > 0 and due_date < nowdate:
+				if self.is_internal_transfer():
+					self.status = 'Internal Transfer'
+				elif outstanding_amount > 0 and due_date < nowdate:
 					self.status = "Overdue"
 				elif outstanding_amount > 0 and due_date >= nowdate:
 					self.status = "Unpaid"
