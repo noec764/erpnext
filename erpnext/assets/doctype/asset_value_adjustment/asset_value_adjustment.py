@@ -25,7 +25,7 @@ class AssetValueAdjustment(Document):
 			frappe.throw(_("Cancel the journal entry {0} first").format(self.journal_entry))
 
 		self.reschedule_depreciations(self.current_asset_value)
-	
+
 	def validate_date(self):
 		asset_purchase_date = frappe.db.get_value('Asset', self.asset, 'purchase_date')
 		if getdate(self.date) < getdate(asset_purchase_date):
@@ -53,6 +53,7 @@ class AssetValueAdjustment(Document):
 		je.posting_date = self.date
 		je.company = self.company
 		je.remark = "Depreciation Entry against {0} worth {1}".format(self.asset, self.difference_amount)
+		je.finance_book = self.finance_book
 
 		credit_entry = {
 			"account": accumulated_depreciation_account,
