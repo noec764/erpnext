@@ -5,7 +5,7 @@ ofxtools==0.8.16
 plaid-python==3.4.0
 pycountry==19.8.18
 PyGithub==1.44.1
-python-stdnum==1.12
+python-stdnum==1.14
 python-youtube==0.6.0
 sepaxml==2.2.0
 taxjar==1.9.0
