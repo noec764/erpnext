@@ -14,7 +14,7 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 
 	make() {
 		this.dialog = new frappe.ui.Dialog({
-			size: 'large',
+			size: 'extra-large',
 			title: this.upload_type == 'plaid' ? __('Synchronize an account') : __('Upload New Bank Transactions'),
 			fields: [
 				{
