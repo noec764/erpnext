@@ -184,6 +184,9 @@ class SalesInvoice(SellingController):
 			# this sequence because outstanding may get -ve
 			self.make_gl_entries()
 
+			if self.update_stock == 1:
+				self.repost_future_sle_and_gle()
+
 		if not self.is_return and not self.is_down_payment_invoice:
 			self.update_billing_status_for_zero_amount_refdoc("Delivery Note")
 			self.update_billing_status_for_zero_amount_refdoc("Sales Order")
@@ -257,6 +260,10 @@ class SalesInvoice(SellingController):
 			self.update_stock_ledger()
 
 		self.make_gl_entries_on_cancel()
+
+		if self.update_stock == 1:
+			self.repost_future_sle_and_gle()
+
 		frappe.db.set(self, 'status', 'Cancelled')
 
 		if frappe.db.get_single_value('Selling Settings', 'sales_update_frequency') == "Each Transaction":
@@ -272,7 +279,7 @@ class SalesInvoice(SellingController):
 		unlink_inter_company_doc(self.doctype, self.name, self.inter_company_invoice_reference)
 		delete_linked_subscription_events(self)
 
-		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry')
+		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry', 'Repost Item Valuation')
 
 	def on_trash(self):
 		delete_linked_subscription_events(self)
@@ -720,22 +727,20 @@ class SalesInvoice(SellingController):
 			if d.delivery_note and frappe.db.get_value("Delivery Note", d.delivery_note, "docstatus") != 1:
 				throw(_("Delivery Note {0} is not submitted").format(d.delivery_note))
 
-	def make_gl_entries(self, gl_entries=None):
-		from erpnext.accounts.general_ledger import make_reverse_gl_entries
+	def make_gl_entries(self, gl_entries=None, from_repost=False):
+		from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_entries
 
 		auto_accounting_for_stock = erpnext.is_perpetual_inventory_enabled(self.company)
 		if not gl_entries:
 			gl_entries = self.get_gl_entries()
 
 		if gl_entries:
-			from erpnext.accounts.general_ledger import make_gl_entries
-
 			# if POS and amount is written off, updating outstanding amt after posting all gl entries
 			update_outstanding = "No" if (cint(self.is_pos) or self.write_off_account or
 				cint(self.redeem_loyalty_points)) else "Yes"
 
 			if self.docstatus == 1:
-				make_gl_entries(gl_entries, update_outstanding=update_outstanding, merge_entries=False)
+				make_gl_entries(gl_entries, update_outstanding=update_outstanding, merge_entries=False, from_repost=from_repost)
 			elif self.docstatus == 2:
 				make_reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 

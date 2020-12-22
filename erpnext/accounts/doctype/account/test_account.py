@@ -171,7 +171,7 @@ class TestAccount(unittest.TestCase):
 		for doc in to_delete:
 			frappe.delete_doc("Account", doc)
 
-def _make_test_records(verbose):
+def _make_test_records(verbose=None):
 	from frappe.test_runner import make_test_objects
 
 	accounts = [
