@@ -17,6 +17,7 @@ class OverlapError(frappe.ValidationError): pass
 
 class OperationMismatchError(frappe.ValidationError): pass
 class OperationSequenceError(frappe.ValidationError): pass
+class JobCardCancelError(frappe.ValidationError): pass
 
 class JobCard(Document):
 	def validate(self):
@@ -198,7 +199,7 @@ class JobCard(Document):
 	def validate_job_card(self):
 		if not self.time_logs:
 			frappe.throw(_("Time logs are required for {0} {1}")
-				.format(bold(_("Job Card")), get_link_to_form("Job Card", self.name)))
+				.format(bold("Job Card"), get_link_to_form("Job Card", self.name)))
 
 		if self.for_quantity and self.total_completed_qty != self.for_quantity:
 			total_completed_qty = bold(_("Total Completed Qty"))
@@ -217,33 +218,49 @@ class JobCard(Document):
 		field = "operation_id"
 		data = self.get_current_operation_data()
 		if data and len(data) > 0:
-			for_quantity = data[0].completed_qty
-			time_in_mins = data[0].time_in_mins
+			for_quantity = flt(data[0].completed_qty)
+			time_in_mins = flt(data[0].time_in_mins)
 
-		if self.get(field):
-			time_data = frappe.db.sql("""
+		wo = frappe.get_doc('Work Order', self.work_order)
+		if self.operation_id:
+			self.validate_produced_quantity(for_quantity, wo)
+			self.update_work_order_data(for_quantity, time_in_mins, wo)
+
+	def validate_produced_quantity(self, for_quantity, wo):
+		if self.docstatus < 2: return
+
+		if wo.produced_qty > for_quantity:
+			first_part_msg = (_("The {0} {1} is used to calculate the valuation cost for the finished good {2}.")
+				.format(frappe.bold(_("Job Card")), frappe.bold(self.name), frappe.bold(self.production_item)))
+
+			second_part_msg = (_("Kindly cancel the Manufacturing Entries first against the work order {0}.")
+				.format(frappe.bold(get_link_to_form("Work Order", self.work_order))))
+
+			frappe.throw(_("{0} {1}").format(first_part_msg, second_part_msg),
+				JobCardCancelError, title = _("Error"))
+
+	def update_work_order_data(self, for_quantity, time_in_mins, wo):
+		time_data = frappe.db.sql("""
 				SELECT
 					min(from_time) as start_time, max(to_time) as end_time
 				FROM `tabJob Card` jc, `tabJob Card Time Log` jctl
 				WHERE
 					jctl.parent = jc.name and jc.work_order = %s
-					and jc.{0} = %s and jc.docstatus = 1
-			""".format(field), (self.work_order, self.get(field)), as_dict=1)
+					and jc.operation_id = %s and jc.docstatus = 1
+			""", (self.work_order, self.operation_id), as_dict=1)
 
-			wo = frappe.get_doc('Work Order', self.work_order)
+		for data in wo.operations:
+			if data.get("name") == self.operation_id:
+				data.completed_qty = for_quantity
+				data.actual_operation_time = time_in_mins
+				data.actual_start_time = time_data[0].start_time if time_data else None
+				data.actual_end_time = time_data[0].end_time if time_data else None
 
-			for data in wo.operations:
-				if data.get("name") == self.get(field):
-					data.completed_qty = for_quantity
-					data.actual_operation_time = time_in_mins
-					data.actual_start_time = time_data[0].start_time if time_data else None
-					data.actual_end_time = time_data[0].end_time if time_data else None
-
-			wo.flags.ignore_validate_update_after_submit = True
-			wo.update_operation_status()
-			wo.calculate_operating_cost()
-			wo.set_actual_dates()
-			wo.save()
+		wo.flags.ignore_validate_update_after_submit = True
+		wo.update_operation_status()
+		wo.calculate_operating_cost()
+		wo.set_actual_dates()
+		wo.save()
 
 	def get_current_operation_data(self):
 		return frappe.get_all('Job Card',
@@ -345,8 +362,8 @@ class JobCard(Document):
 			filters={"docstatus": 1, "parent": self.work_order, "sequence_id": ('<', self.sequence_id)},
 			order_by = "sequence_id, idx")
 
-		message = _("Job Card {0}: As per the sequence of the operations in the work order {1}").format(bold(self.name),
-			bold(get_link_to_form("Work Order", self.work_order, _("Work Order"))))
+		message = "Job Card {0}: As per the sequence of the operations in the work order {1}".format(bold(self.name),
+			bold(get_link_to_form("Work Order", self.work_order)))
 
 		for row in data:
 			if row.status != "Completed" and row.completed_qty < current_operation_qty:
@@ -368,7 +385,6 @@ def get_operations(doctype, txt, searchfield, start, page_len, filters):
 	if not filters.get("work_order"):
 		frappe.msgprint(_("Please select a Work Order first."))
 		return []
-
 	args = {"parent": filters.get("work_order")}
 	if txt:
 		args["operation"] = ("like", "%{0}%".format(txt))
