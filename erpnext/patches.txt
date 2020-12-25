@@ -687,6 +687,7 @@ erpnext.patches.v13_0.change_default_pos_print_format
 erpnext.patches.v13_0.set_youtube_video_id
 erpnext.patches.v13_0.print_uom_after_quantity_patch
 erpnext.patches.v13_0.updates_for_multi_currency_payroll
+erpnext.patches.v12_0.setup_einvoice_fields #2020-12-02
 erpnext.patches.v13_0.update_reason_for_resignation_in_employee
 erpnext.patches.v13_0.update_custom_fields_for_shopify
 execute:frappe.delete_doc("Report", "Quoted Item Comparison")
