@@ -134,7 +134,7 @@ class Employee(NestedSet):
 				try:
 					f = frappe.get_doc({
 						"doctype": "File",
-						"file_name": self.image,
+						"file_url": self.image,
 						"attached_to_doctype": "User",
 						"attached_to_name": self.user_id
 					})
