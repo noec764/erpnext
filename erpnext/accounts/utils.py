@@ -21,10 +21,10 @@ class FiscalYearError(frappe.ValidationError): pass
 class DuplicateAccountNumberError(frappe.ValidationError): pass
 
 @frappe.whitelist()
-def get_fiscal_year(date=None, fiscal_year=None, label="Date", verbose=1, company=None, as_dict=False):
+def get_fiscal_year(date=None, fiscal_year=None, label=_("Date"), verbose=1, company=None, as_dict=False):
 	return get_fiscal_years(date, fiscal_year, label, verbose, company, as_dict=as_dict)[0]
 
-def get_fiscal_years(transaction_date=None, fiscal_year=None, label="Date", verbose=1, company=None, as_dict=False):
+def get_fiscal_years(transaction_date=None, fiscal_year=None, label=_("Date"), verbose=1, company=None, as_dict=False):
 	fiscal_years = frappe.cache().hget("fiscal_years", company) or []
 
 	if not fiscal_years:

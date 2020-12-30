@@ -803,8 +803,8 @@ class AccountsController(TransactionBase):
 
 	def raise_missing_debit_credit_account_error(self, party_type, party):
 		"""Raise an error if debit to/credit to account does not exist."""
-		db_or_cr = frappe.bold("Debit To") if self.doctype == "Sales Invoice" else frappe.bold("Credit To")
-		rec_or_pay = "Receivable" if self.doctype == "Sales Invoice" else "Payable"
+		db_or_cr = frappe.bold(_("Debit To")) if self.doctype == "Sales Invoice" else frappe.bold(_("Credit To"))
+		rec_or_pay = _("Receivable") if self.doctype == "Sales Invoice" else _("Payable")
 
 		link_to_party = frappe.utils.get_link_to_form(party_type, party)
 		link_to_company = frappe.utils.get_link_to_form("Company", self.company)
