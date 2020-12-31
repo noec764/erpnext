@@ -4,7 +4,10 @@
 
 from __future__ import unicode_literals
 # import frappe
+import erpnext
 from frappe.model.document import Document
 
 class IncomeTaxSlab(Document):
-	pass
+	def validate(self):
+		if self.company:
+			self.currency = erpnext.get_company_currency(self.company)
