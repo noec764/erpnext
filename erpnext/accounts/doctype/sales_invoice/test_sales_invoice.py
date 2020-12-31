@@ -1826,6 +1826,7 @@ class TestSalesInvoice(unittest.TestCase):
 
 	def test_eway_bill_json(self):
 		si = make_sales_invoice_for_ewaybill()
+
 		si.submit()
 
 		data = get_ewb_data("Sales Invoice", [si.name])
@@ -1840,8 +1841,8 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertEqual(data['billLists'][0]['sgstValue'], 5400)
 		self.assertEqual(data['billLists'][0]['vehicleNo'], 'KA12KA1234')
 		self.assertEqual(data['billLists'][0]['itemList'][0]['taxableAmount'], 60000)
-
-def test_einvoice_submission_without_irn(self):
+	
+	def test_einvoice_submission_without_irn(self):
 		# init
 		frappe.db.set_value('E Invoice Settings', 'E Invoice Settings', 'enable', 1)
 		country = frappe.flags.country
@@ -1856,7 +1857,7 @@ def test_einvoice_submission_without_irn(self):
 		# reset
 		frappe.db.set_value('E Invoice Settings', 'E Invoice Settings', 'enable', 0)
 		frappe.flags.country = country
-
+	
 	def test_einvoice_json(self):
 		from erpnext.regional.india.e_invoice.utils import make_einvoice
 
@@ -1884,8 +1885,8 @@ def test_einvoice_submission_without_irn(self):
 			"item_code": "_Test Item",
 			"uom": "Nos",
 			"warehouse": "_Test Warehouse - _TC",
-			"qty": 2,
-			"rate": 100,
+			"qty": 2000,
+			"rate": 12,
 			"income_account": "Sales - _TC",
 			"expense_account": "Cost of Goods Sold - _TC",
 			"cost_center": "_Test Cost Center - _TC",
@@ -1894,31 +1895,52 @@ def test_einvoice_submission_without_irn(self):
 			"item_code": "_Test Item 2",
 			"uom": "Nos",
 			"warehouse": "_Test Warehouse - _TC",
-			"qty": 4,
-			"rate": 150,
+			"qty": 420,
+			"rate": 15,
 			"income_account": "Sales - _TC",
 			"expense_account": "Cost of Goods Sold - _TC",
 			"cost_center": "_Test Cost Center - _TC",
 		})
+		si.discount_amount = 100
 		si.save()
 
 		einvoice = make_einvoice(si)
 
-		total_item_ass_value = sum([d['AssAmt'] for d in einvoice['ItemList']])
-		total_item_cgst_value = sum([d['CgstAmt'] for d in einvoice['ItemList']])
-		total_item_sgst_value = sum([d['SgstAmt'] for d in einvoice['ItemList']])
-		total_item_igst_value = sum([d['IgstAmt'] for d in einvoice['ItemList']])
-		total_item_value = sum([d['TotItemVal'] for d in einvoice['ItemList']])
+		total_item_ass_value = 0
+		total_item_cgst_value = 0
+		total_item_sgst_value = 0
+		total_item_igst_value = 0
+		total_item_value = 0
+
+		for item in einvoice['ItemList']:
+			total_item_ass_value += item['AssAmt']
+			total_item_cgst_value += item['CgstAmt']
+			total_item_sgst_value += item['SgstAmt']
+			total_item_igst_value += item['IgstAmt']
+			total_item_value += item['TotItemVal']
+
+			self.assertTrue(item['AssAmt'], item['TotAmt'] - item['Discount'])
+			self.assertTrue(item['TotItemVal'], item['AssAmt'] + item['CgstAmt'] + item['SgstAmt'] + item['IgstAmt'])
+
+		value_details = einvoice['ValDtls']
 
 		self.assertEqual(einvoice['Version'], '1.1')
-		self.assertEqual(einvoice['ValDtls']['AssVal'], total_item_ass_value)
-		self.assertEqual(einvoice['ValDtls']['CgstVal'], total_item_cgst_value)
-		self.assertEqual(einvoice['ValDtls']['SgstVal'], total_item_sgst_value)
-		self.assertEqual(einvoice['ValDtls']['IgstVal'], total_item_igst_value)
-		self.assertEqual(einvoice['ValDtls']['TotInvVal'], total_item_value)
+		self.assertEqual(value_details['AssVal'], total_item_ass_value)
+		self.assertEqual(value_details['CgstVal'], total_item_cgst_value)
+		self.assertEqual(value_details['SgstVal'], total_item_sgst_value)
+		self.assertEqual(value_details['IgstVal'], total_item_igst_value)
+
+		self.assertEqual(
+			value_details['TotInvVal'],
+			value_details['AssVal'] + value_details['CgstVal']
+			+ value_details['SgstVal'] + value_details['IgstVal']
+			+ value_details['OthChrg'] - value_details['Discount']
+		)
+
+		self.assertEqual(value_details['TotInvVal'], si.base_grand_total)
 		self.assertTrue(einvoice['EwbDtls'])
 
-def make_sales_invoice_for_ewaybill():
+def make_test_address_for_ewaybill():
 	if not frappe.db.exists('Address', '_Test Address for Eway bill-Billing'):
 		address = frappe.get_doc({
 			"address_line1": "_Test Address Line 1",
@@ -1967,6 +1989,7 @@ def make_sales_invoice_for_ewaybill():
 
 		address.save()
 
+def make_test_transporter_for_ewaybill():
 	if not frappe.db.exists('Supplier', '_Test Transporter'):
 		frappe.get_doc({
 			"doctype": "Supplier",
@@ -1977,12 +2000,17 @@ def make_sales_invoice_for_ewaybill():
 			"is_transporter": 1
 		}).insert()
 
+def make_sales_invoice_for_ewaybill():
+	make_test_address_for_ewaybill()
+	make_test_transporter_for_ewaybill()
+
 	gst_settings = frappe.get_doc("GST Settings")
 
 	gst_account = frappe.get_all(
 		"GST Account",
 		fields=["cgst_account", "sgst_account", "igst_account"],
-		filters = {"company": "_Test Company"})
+		filters = {"company": "_Test Company"}
+	)
 
 	if not gst_account:
 		gst_settings.append("gst_accounts", {
@@ -1994,7 +2022,7 @@ def make_sales_invoice_for_ewaybill():
 
 	gst_settings.save()
 
-	si = create_sales_invoice(do_not_save =1, rate = '60000')
+	si = create_sales_invoice(do_not_save=1, rate='60000')
 
 	si.distance = 2000
 	si.company_address = "_Test Address for Eway bill-Billing"
