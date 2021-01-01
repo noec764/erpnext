@@ -271,13 +271,14 @@
    "fieldname": "expiration_rule",
    "fieldtype": "Select",
    "label": "Expiration Rule",
-   "options": "\nAdd X days\nAdd X months\nAdd X years"
+   "options": "\nAdd X days\nAdd X months\nAdd X years\nEnd of the month\nEnd of the year"
   },
   {
    "fieldname": "column_break_18",
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:[\"Add X days\", \"Add X months\", \"Add X years\"].includes(doc.expiration_rule)",
    "fieldname": "expiration_delay",
    "fieldtype": "Int",
    "label": "Expiration Delay"
@@ -347,7 +348,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-11-17 07:51:52.585659",
+ "modified": "2021-01-01 08:17:53.601290",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

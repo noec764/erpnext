@@ -12,7 +12,8 @@ from datetime import datetime, date
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import time_diff_in_minutes, nowdate, getdate, now_datetime, add_to_date, get_datetime, time_diff, get_time, flt, add_days
+from frappe.utils import (time_diff_in_minutes, nowdate, getdate, now_datetime, add_to_date,
+	get_datetime, time_diff, get_time, flt, add_days, get_year_ending, get_last_day)
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes, get_item_calendar
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
@@ -444,6 +445,12 @@ class RuleProcessor:
 			)
 
 	def get_expiration_date(self):
+		if self.rule.expiration_rule == "End of the month":
+			return get_last_day(self.datetime)
+
+		if self.rule.expiration_rule == "End of the year":
+			return get_year_ending(self.datetime)
+
 		if not self.rule.expiration_delay:
 			return None
 
