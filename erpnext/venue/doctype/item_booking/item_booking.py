@@ -46,6 +46,35 @@ class ItemBooking(Document):
 		if not (self.party_type and self.party_name) and self.user:
 			self.party_type, self.party_name = get_corresponding_party(self.user)
 
+		self.check_overlaps()
+
+	def check_overlaps(self):
+		overlaps = frappe.db.sql(f"""
+			SELECT ib.name
+			FROM `tabItem Booking` as ib
+			WHERE
+			(
+				(ib.starts_on BETWEEN {frappe.db.escape(add_to_date(self.starts_on, seconds=1))} AND {frappe.db.escape(self.ends_on)})
+				OR (ib.ends_on BETWEEN {frappe.db.escape(add_to_date(self.starts_on, seconds=1))} AND {frappe.db.escape(self.ends_on)})
+				OR (
+					ib.starts_on <= {frappe.db.escape(add_to_date(self.starts_on, seconds=1))}
+					AND ib.ends_on >= {frappe.db.escape(self.ends_on)}
+				)
+			)
+		""")
+
+		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")
+		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
+
+		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
+			frappe.throw(_("An existing item booking for this item is overlapping with this document. Please change the dates to register this document of change your settings in Venue Settings."))
+
+		elif overlaps and len(overlaps) >= simultaneous_bookings_allowed and no_overlap_per_item:
+			frappe.throw(_("The maximum number of simultaneous bookings allowed for this item has been reached."))
+
+		elif overlaps:
+			frappe.publish_realtime("booking_overlap")
+
 	def set_title(self):
 		if self.meta._fields["title"].hidden or not self.title:
 			self.title = self.item_name

@@ -2,6 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Booking', {
+	onload(frm) {
+		frappe.realtime.on('booking_overlap', () => {
+			frappe.show_alert({
+				message: __("This item booking is overlapping with another item booking for the same item"),
+				indicator: orange
+			})
+		})
+	},
 	setup(frm) {
 		frappe.realtime.on('event_synced', (data) => {
 			frappe.show_alert({message: data.message, indicator: 'green'});
