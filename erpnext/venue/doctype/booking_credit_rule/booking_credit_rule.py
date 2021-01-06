@@ -460,29 +460,29 @@ class RuleProcessor:
 		return add_to_date(self.datetime, years=years, months=months, days=days)
 
 	def get_posting_date(self):
-		datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
+		posting_datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
 
 		if self.rule.posting_date_rule == "Next first day of the week":
-			dt = get_first_day_of_week(datetime)
-			if dt == getdate(datetime):
+			dt = get_first_day_of_week(posting_datetime)
+			if dt == getdate(posting_datetime):
 				return dt
 			else:
 				return dt + datetime.timedelta(days=7)
 
 		if self.rule.posting_date_rule == "Next first day of the month":
-			if get_first_day(datetime) == getdate(datetime):
-				return datetime
+			if get_first_day(posting_datetime) == getdate(posting_datetime):
+				return posting_datetime
 			else:
-				return get_first_day(datetime, d_months=1)
+				return get_first_day(posting_datetime, d_months=1)
 
 		if not self.rule.posting_date_delay:
-			return datetime
+			return posting_datetime
 
 		years = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X years" else 0
 		months = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X months" else 0
 		days = self.rule.posting_date_delay if self.rule.posting_date_rule == "Add X days" else 0
 
-		return add_to_date(datetime, years=years, months=months, days=days)
+		return add_to_date(posting_datetime, years=years, months=months, days=days)
 
 	def get_allowed_conversions(self):
 		return frappe.get_all("Booking Credit Conversions", filters={"convertible_item": self.item}, pluck="booking_credits_item")

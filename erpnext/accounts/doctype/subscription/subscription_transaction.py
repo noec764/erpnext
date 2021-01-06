@@ -193,7 +193,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 		try:
 			invoice = self.create_invoice(simulate=True)
 			# Hack to avoid mandatory sales orders and delivery notes
-			invoice.is_pos = True
+			invoice.so_dn_required = so_dn_required()
 			invoice.update_stock = True
 			invoice._action = "save"
 			invoice.run_method("validate")
@@ -205,6 +205,9 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 				self.subscription.cancel_subscription()
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription Grand Total Simulation Error"))
+
+def so_dn_required():
+	return
 
 class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
 	def create_new_sales_order(self):

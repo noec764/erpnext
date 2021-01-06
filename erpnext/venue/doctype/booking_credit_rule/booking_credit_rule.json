@@ -302,6 +302,7 @@
    "options": "\nAdd X days\nAdd X months\nAdd X years\nNext first day of the week\nNext first day of the month"
   },
   {
+   "depends_on": "eval:![\"Next first day of the week\", \"Next first day of the month\"].includes(doc.posting_date_rule)",
    "fieldname": "posting_date_delay",
    "fieldtype": "Int",
    "label": "Posting Date Delay"
@@ -348,7 +349,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-01-06 08:53:26.791693",
+ "modified": "2021-01-06 09:17:33.465423",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",
