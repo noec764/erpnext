@@ -46,10 +46,13 @@
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Available booking credits") }}</h5>
 						{% for bal in credits_balance %}
-							<ul>
+							<ul class="list-unstyled">
 								{% for credits in credits_balance[bal] %}
 									{% if credits["balance"] %}
-									<li><p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p></li>
+									<li>
+										<p class="text-muted mb-0">{{ bal }}</p>
+										<p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p>
+									</li>
 									{% endif %}
 								{% endfor %}
 							</ul>
