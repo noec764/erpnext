@@ -7,7 +7,7 @@ from itertools import chain
 
 import calendar
 import math
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 import frappe
 from frappe import _
@@ -467,7 +467,7 @@ class RuleProcessor:
 			if dt == getdate(posting_datetime):
 				return dt
 			else:
-				return dt + datetime.timedelta(days=7)
+				return dt + timedelta(days=7)
 
 		if self.rule.posting_date_rule == "Next first day of the month":
 			if get_first_day(posting_datetime) == getdate(posting_datetime):
