@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from erpnext.controllers.status_updater import StatusUpdater
-from frappe.utils import flt, getdate, fmt_money
+from frappe.utils import flt, getdate, fmt_money, formatdate
 from functools import reduce
 from frappe import _
 from itertools import zip_longest
@@ -188,6 +188,10 @@ class BankTransaction(StatusUpdater):
 	def check_bank_account_head(self):
 		if not self.bank_account_head:
 			self.bank_account_head = frappe.db.get_value("Bank Account", self.bank_account, "account")
+
+	def on_recurring(self, reference_doc, auto_repeat_doc):
+		self.date = auto_repeat_doc.next_schedule_date
+		self.reference_number = f"""{formatdate(self.date, "YYYYMMDD")}-{frappe.generate_hash("", 10)}"""
 
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")
