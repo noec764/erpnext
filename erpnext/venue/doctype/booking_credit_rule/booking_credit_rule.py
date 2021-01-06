@@ -277,7 +277,7 @@ class RuleProcessor:
 		default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 		balance = get_balance(self.customer, getdate(self.datetime))
 		customer_balance = {x: balance[x] for x in balance if x in self.get_allowed_conversions()}
-		customer_uoms = None
+		customer_uoms = []
 		if customer_balance:
 			customer_uoms = self.get_ordered_uoms(list(chain.from_iterable(customer_balance.values())))
 
