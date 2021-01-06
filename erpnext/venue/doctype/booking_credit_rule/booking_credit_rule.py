@@ -13,7 +13,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import (time_diff_in_minutes, nowdate, getdate, now_datetime, add_to_date,
-	get_datetime, time_diff, get_time, flt, add_days, get_year_ending, get_last_day)
+	get_datetime, time_diff, get_time, flt, add_days, get_year_ending, get_last_day, get_first_day_of_week)
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes, get_item_calendar
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
@@ -461,6 +461,19 @@ class RuleProcessor:
 
 	def get_posting_date(self):
 		datetime = getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
+
+		if self.rule.posting_date_rule == "Next first day of the week":
+			dt = get_first_day_of_week(datetime)
+			if dt == getdate(datetime):
+				return dt
+			else:
+				return dt + datetime.timedelta(days=7)
+
+		if self.rule.posting_date_rule == "Next first day of the month":
+			if get_first_day(datetime) == getdate(datetime):
+				return datetime
+			else:
+				return get_first_day(datetime, d_months=1)
 
 		if not self.rule.posting_date_delay:
 			return datetime

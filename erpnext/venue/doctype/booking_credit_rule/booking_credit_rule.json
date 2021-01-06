@@ -299,7 +299,7 @@
    "fieldname": "posting_date_rule",
    "fieldtype": "Select",
    "label": "Posting Date Rule",
-   "options": "\nAdd X days\nAdd X months\nAdd X years"
+   "options": "\nAdd X days\nAdd X months\nAdd X years\nNext first day of the week\nNext first day of the month"
   },
   {
    "fieldname": "posting_date_delay",
@@ -348,7 +348,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-01-01 08:17:53.601290",
+ "modified": "2021-01-06 08:53:26.791693",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",
