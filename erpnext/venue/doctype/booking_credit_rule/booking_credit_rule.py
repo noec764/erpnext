@@ -28,7 +28,7 @@ ACTION_MAP = {
 }
 
 class BookingCreditRule(Document):
-	def validate(self):
+	def on_update(self):
 		set_trigger_docs()
 
 	def process_rule(self, doc):
