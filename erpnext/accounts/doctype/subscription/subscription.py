@@ -80,6 +80,9 @@ class Subscription(Document):
 		if self.status in BILLING_STATUS:
 			self.process_active_subscription()
 			SubscriptionStateManager(self).set_status()
+		elif self.status == "To order":
+			self.generate_sales_order()
+			SubscriptionStateManager(self).set_status()
 
 	def process_active_subscription(self):
 		try:

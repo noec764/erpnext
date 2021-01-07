@@ -160,6 +160,8 @@ class SubscriptionStateManager:
 		elif not self.is_cancelled() and not self.is_trial():
 			if self.is_billable():
 				status = 'Billable'
+			elif self.needs_sales_order():
+				status = 'To order'
 			elif self.is_payable():
 				status = 'Payable'
 			elif self.is_draft():
@@ -247,3 +249,8 @@ class SubscriptionStateManager:
 	def is_paid(self):
 		if SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice"):
 			return True
+
+	def needs_sales_order(self):
+		if self.subscription.create_sales_order and not SubscriptionPeriod(self.subscription).get_current_documents("Sales Order"):
+			return True
+		return False
