@@ -123,24 +123,21 @@ class SubscriptionPeriod:
 				fields=["period_start", "period_end"], order_by="period_end DESC")
 
 	def get_next_invoice_date(self):
-		if self.subscription.current_invoice_start:
+		if self.subscription.generate_invoice_at_period_start \
+			and self.subscription.trial_period_end \
+			and getdate(self.subscription.trial_period_end) >= getdate(nowdate()):
+			return add_days(self.subscription.trial_period_end, 1)
+		elif not(self.subscription.generate_invoice_at_period_start) \
+			and self.subscription.trial_period_end \
+			and getdate(self.subscription.trial_period_end) >= getdate(nowdate()):
+			return add_to_date(add_days(self.subscription.trial_period_end, 1), **self.get_billing_cycle_data())
+		elif not(self.subscription.generate_invoice_at_period_start):
+			return add_days(self.subscription.current_invoice_end, 1)
+		elif self.subscription.current_invoice_start:
 			if self.get_current_documents("Sales Invoice"):
 				return add_days(self.subscription.current_invoice_end, 1)
 			else:
 				return self.subscription.current_invoice_start
-		elif self.subscription.generate_invoice_at_period_start and self.subscription.trial_period_end and getdate(self.subscription.trial_period_end) >= getdate(nowdate()):
-				return add_days(self.subscription.trial_period_end, 1)
-		elif not(self.subscription.generate_invoice_at_period_start) and self.subscription.trial_period_end and getdate(self.subscription.trial_period_end) >= getdate(nowdate()):
-			return add_to_date(add_days(self.subscription.trial_period_end, 1), **self.get_billing_cycle_data())
-		elif not(self.subscription.generate_invoice_at_period_start):
-			previous_period = self.get_previous_period()
-			if previous_period:
-				self.start = previous_period[0].period_start
-				self.end = previous_period[0].period_end
-			if self.get_current_documents("Sales Invoice"):
-				return add_to_date(add_days(self.subscription.current_invoice_end, 1), **self.get_billing_cycle_data())
-			else:
-				return add_days(self.subscription.current_invoice_end, 1)
 
 class SubscriptionStateManager:
 	def __init__(self, subscription=None):
