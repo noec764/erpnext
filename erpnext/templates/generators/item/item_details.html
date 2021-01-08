@@ -3,10 +3,12 @@
 	<h1 itemprop="name">
 		{{ item_name }}
 	</h1>
+	{% if show_item_code %}
 	<p class="text-muted">
 		<span>{{ _("Item Code") }}:</span>
 		<span itemprop="productID">{{ doc.name }}</span>
 	</p>
+	{% endif %}
 	<!-- description -->
 	<div itemprop="description">
 	{% if frappe.utils.strip_html(doc.web_long_description or '') %}

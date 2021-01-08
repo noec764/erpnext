@@ -9,6 +9,7 @@
   "enabled",
   "display_settings",
   "show_attachments",
+  "show_item_code",
   "show_price",
   "show_stock_availability",
   "show_configure_button",
@@ -100,8 +101,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Company",
-   "options": "Company",
    "mandatory_depends_on": "eval: doc.enabled === 1",
+   "options": "Company",
    "remember_last_selected_value": 1
   },
   {
@@ -109,8 +110,8 @@
    "fieldname": "price_list",
    "fieldtype": "Link",
    "label": "Price List",
-   "options": "Price List",
-   "mandatory_depends_on": "eval: doc.enabled === 1"
+   "mandatory_depends_on": "eval: doc.enabled === 1",
+   "options": "Price List"
   },
   {
    "fieldname": "column_break_4",
@@ -161,13 +162,20 @@
    "fieldtype": "Link",
    "label": "Payment Gateway Account",
    "options": "Payment Gateway Account"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_item_code",
+   "fieldtype": "Check",
+   "label": "Show Item Code"
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 1,
+ "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-08-02 18:21:43.873303",
+ "modified": "2021-01-08 17:33:38.944827",
  "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",

@@ -41,7 +41,8 @@ class Item(WebsiteGenerator):
 		page_title_field="item_name",
 		condition_field="show_in_website",
 		template="templates/generators/item/item.html",
-		no_cache=1
+		no_cache=1,
+		show_item_code=False
 	)
 
 	def onload(self):
