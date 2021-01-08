@@ -340,7 +340,7 @@ def get_title(account_name, account_number):
 
 @frappe.whitelist()
 def update_account_number(name, account_name, account_number=None, do_not_show_account_number_in_reports=False, from_descendant=False):
-	company, root_type = frappe.db.get_value("Account", name, ["company", "root_type"])
+	company, root_type = frappe.db.get_value("Account", name, ["company", "root_type"]) or (None, None)
 
 	if not (company and root_type): return
 
