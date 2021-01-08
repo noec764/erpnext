@@ -8,11 +8,41 @@ frappe.ui.form.on('Event', {
 		}
 	},
 	refresh(frm) {
+		frm.trigger('add_item_booking_details')
 		if (!frm.is_new()) {
 			frm.add_custom_button(__('Book an item'), function () {
 				itemBookingDialog(frm)
 			});
 		}
+	},
+	add_item_booking_details(frm) {
+		frappe.model.with_doctype("Item Booking", () => {
+			frappe.db.get_list('Item Booking', {filters: {event: frm.doc.name}, fields: ["name", "item_name", "color", "starts_on", "status"]}).then(data => {
+				if (data.length) {
+					const item_booking_section = data.map(d => {
+						const $card = $(`
+							<div class="item-booking-card" style="background-color: ${d.color || "var(--primary)"}">
+								<div class="flex align-items-center">
+									<div class="left-title" style="color: ${frappe.ui.color.get_contrast_color(d.color)}">${frappe.datetime.obj_to_user(d.starts_on).replace(new RegExp('[^\.]?' + moment(d.starts_on).format('YYYY') + '.?'), '')}</div>
+									<div class="right-body">
+										<div class="text-muted">${d.item_name}</div>
+										<div class="text-color small">${__(d.status)}</div>
+									</div>
+								</div>
+							</div>
+						`)
+	
+						$card.on("click", () => {
+							frappe.set_route("Form", "Item Booking", d.name)
+						})
+	
+						return $card
+					})
+	
+					frm.dashboard.add_section(item_booking_section).removeClass("form-dashboard-section")
+				}
+			})
+		})
 	}
 });
 
