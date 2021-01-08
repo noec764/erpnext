@@ -65,6 +65,7 @@ def default_accounts_mapping(accounts, company):
 		"default_receivable_account": 411,
 		"round_off_account": 658,
 		"write_off_account": 658,
+		"discount_allowed_account": 709,
 		"discount_received_account": 609,
 		"exchange_gain_loss_account": 666,
 		"unrealized_exchange_gain_loss_account": 686,

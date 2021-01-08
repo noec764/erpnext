@@ -48,6 +48,8 @@
   "round_off_account",
   "round_off_cost_center",
   "write_off_account",
+  "discount_allowed_account",
+  "discount_received_account",
   "exchange_gain_loss_account",
   "unrealized_exchange_gain_loss_account",
   "unrealized_profit_loss_account",
@@ -749,6 +751,18 @@
    "options": "Account"
   },
   {
+    "fieldname": "discount_allowed_account",
+    "fieldtype": "Link",
+    "label": "Discount Allowed Account",
+    "options": "Account"
+   },
+   {
+    "fieldname": "discount_received_account",
+    "fieldtype": "Link",
+    "label": "Discount Received Account",
+    "options": "Account"
+   },
+  {
     "fieldname": "unrealized_profit_loss_account",
     "fieldtype": "Link",
     "label": "Unrealized Profit / Loss Account",
@@ -760,7 +774,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2020-12-03 12:27:27.085094",
+ "modified": "2021-01-03 12:27:27.085094",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
