@@ -9,8 +9,8 @@
   "clear_item_booking_draft_duration",
   "column_break_4",
   "enable_simultaneous_booking",
-  "sync_with_google_calendar",
   "no_overlap_per_item",
+  "sync_with_google_calendar",
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
@@ -72,12 +72,12 @@
    "default": "0",
    "fieldname": "no_overlap_per_item",
    "fieldtype": "Check",
-   "label": "Do not allow overlapping bookings for the same item"
+   "label": "Do not allow overlapping bookings for the same item on desk"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-01-01 09:30:45.248520",
+ "modified": "2021-01-02 09:30:45.248520",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
