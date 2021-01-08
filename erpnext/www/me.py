@@ -62,7 +62,7 @@ def remove_payment_card(id):
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return StripePaymentMethod(stripe_settings).detach(id, account.stripe_customer_id)
+			return StripePaymentMethod(stripe_settings).detach(id)
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] Stripe payment source deletion error"))
