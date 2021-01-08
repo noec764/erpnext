@@ -116,7 +116,7 @@ def get_list_context(context=None):
 		"get_list": get_bookings_list,
 		"row_template": "templates/includes/item_booking/item_booking_row.html",
 		"can_cancel": allow_event_cancellation,
-		"cancellation_delay": int(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0,
+		"cancellation_delay": cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0,
 		"header_action": frappe.render_template("templates/includes/item_booking/item_booking_list_action.html", {})
 	})
 
