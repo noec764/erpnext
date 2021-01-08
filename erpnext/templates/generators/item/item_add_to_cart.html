@@ -12,7 +12,7 @@
 			{{ product_info.price.formatted_price_sales_uom }}
 			<small class="text-muted"> ({{ product_info.price.formatted_price }} / {{ product_info.uom }})</small>
 		</h4>
-		{% else %}
+		{% elif not disable_unit_purchasing %}
 		<small class="text-muted">{{ _("Unit of Measurement") }} : {{ product_info.uom }}</small>
 		{% endif %}
 
