@@ -80,7 +80,7 @@
    "default": "0",
    "fieldname": "allow_event_cancellation",
    "fieldtype": "Check",
-   "label": "Allow cancellation of events on the portal"
+   "label": "Allow cancellation of item bookings on the portal"
   },
   {
    "default": "1440",
