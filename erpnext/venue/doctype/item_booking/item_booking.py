@@ -107,6 +107,7 @@ class ItemBooking(Document):
 			doc.delete()
 
 def get_list_context(context=None):
+	allow_event_cancellation = frappe.db.get_single_value("Venue Settings", "allow_event_cancellation")
 	context.update({
 		"show_sidebar": True,
 		"show_search": True,
@@ -114,7 +115,8 @@ def get_list_context(context=None):
 		"title": _("Bookings"),
 		"get_list": get_bookings_list,
 		"row_template": "templates/includes/item_booking/item_booking_row.html",
-		"can_cancel": frappe.has_permission("Item Booking", "write"),
+		"can_cancel": allow_event_cancellation,
+		"cancellation_delay": int(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0,
 		"header_action": frappe.render_template("templates/includes/item_booking/item_booking_list_action.html", {})
 	})
 

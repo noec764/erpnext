@@ -11,6 +11,8 @@
   "enable_simultaneous_booking",
   "no_overlap_per_item",
   "sync_with_google_calendar",
+  "allow_event_cancellation",
+  "cancellation_delay",
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
@@ -73,11 +75,25 @@
    "fieldname": "no_overlap_per_item",
    "fieldtype": "Check",
    "label": "Do not allow overlapping bookings for the same item on desk"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_event_cancellation",
+   "fieldtype": "Check",
+   "label": "Allow cancellation of events on the portal"
+  },
+  {
+   "default": "1440",
+   "depends_on": "eval:doc.allow_event_cancellation",
+   "description": "Users will not be able to cancel later than this delay before the appointment",
+   "fieldname": "cancellation_delay",
+   "fieldtype": "Duration",
+   "label": "Cancellation delay"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-01-02 09:30:45.248520",
+ "modified": "2021-01-08 17:47:17.501379",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

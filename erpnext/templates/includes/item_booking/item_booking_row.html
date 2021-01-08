@@ -21,7 +21,7 @@
 		{% endif %}
 	</div>
 	<div class="col-2">
-		{% if doc.status != "Cancelled" and doc.starts_on > frappe.utils.now_datetime() and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
+		{% if doc.status != "Cancelled" and doc.starts_on > frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=cancellation_delay) and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
 	</div>
 </div>
 
@@ -31,7 +31,8 @@ frappe.ready(function() {
 		frappe.call({
 			method: "erpnext.venue.doctype.item_booking.item_booking.cancel_appointment",
 			args: {
-				id: "{{ doc.name }}"
+				id: "{{ doc.name }}",
+				force: 1
 			}
 		}).then(r => {
 			$(".website-list #{{ doc.name }} .cancel-confirmation").hide()
