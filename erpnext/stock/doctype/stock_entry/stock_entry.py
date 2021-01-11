@@ -78,7 +78,7 @@ class StockEntry(StockController):
 
 		self.validate_serialized_batch()
 		self.set_actual_qty()
-		self.set_incoming_rate()
+		self.calculate_rate_and_amount()
 
 	def on_submit(self):
 		self.update_stock_ledger()
@@ -328,7 +328,6 @@ class StockEntry(StockController):
 						d.s_warehouse = None
 						if not d.t_warehouse:
 							frappe.throw(_("Target warehouse is mandatory for row {0}").format(d.idx))
-
 					else:
 						d.t_warehouse = None
 						if not d.s_warehouse:
@@ -619,22 +618,20 @@ class StockEntry(StockController):
 				if flt(total_supplied, precision) > flt(total_allowed, precision):
 					frappe.throw(_("Row {0}# Item {1} cannot be transferred more than {2} against Purchase Order {3}")
 						.format(se_item.idx, se_item.item_code, total_allowed, self.purchase_order))
+		elif backflush_raw_materials_based_on == "Material Transferred for Subcontract":
+			for row in self.items:
+				if not row.subcontracted_item:
+					frappe.throw(_("Row {0}: Subcontracted Item is mandatory for the raw material {1}")
+						.format(row.idx, frappe.bold(row.item_code)))
+				elif not row.po_detail:
+					filters = {
+						"parent": self.purchase_order, "docstatus": 1,
+						"rm_item_code": row.item_code, "main_item_code": row.subcontracted_item
+					}
 
-				elif backflush_raw_materials_based_on == "Material Transferred for Subcontract":
-					for row in self.items:
-						if not row.subcontracted_item:
-							frappe.throw(_("Row {0}: Subcontracted Item is mandatory for the raw material {1}")
-								.format(row.idx, frappe.bold(row.item_code)))
-
-						elif not row.po_detail:
-							filters = {
-								"parent": self.purchase_order, "docstatus": 1,
-								"rm_item_code": row.item_code, "main_item_code": row.subcontracted_item
-							}
-
-							po_detail = frappe.db.get_value("Purchase Order Item Supplied", filters, "name")
-							if po_detail:
-								row.db_set("po_detail", po_detail)
+					po_detail = frappe.db.get_value("Purchase Order Item Supplied", filters, "name")
+					if po_detail:
+						row.db_set("po_detail", po_detail)
 
 	def validate_bom(self):
 		for d in self.get('items'):
@@ -948,7 +945,7 @@ class StockEntry(StockController):
 					self.add_to_stock_entry_detail(item_dict)
 
 				elif (self.work_order and (self.purpose == "Manufacture"
-					or self.purpose == "Material Consumption for Manufacture") and not self.pro_doc.skip_transfer
+						or self.purpose == "Material Consumption for Manufacture") and not self.pro_doc.skip_transfer
 					and self.flags.backflush_based_on == "Material Transferred for Manufacture"):
 					self.get_transfered_raw_materials()
 
@@ -1098,11 +1095,14 @@ class StockEntry(StockController):
 		for item in wo_items:
 			item_account_details = get_item_defaults(item.item_code, self.company)
 			# Take into account consumption if there are any.
+
 			wo_item_qty = item.transferred_qty or item.required_qty
+
 			req_qty_each = (
 				(flt(wo_item_qty) - flt(item.consumed_qty)) /
 					(flt(work_order_qty) - flt(wo.produced_qty))
 			)
+
 			qty = req_qty_each * flt(self.fg_completed_qty)
 
 			if qty > 0:
@@ -1280,7 +1280,6 @@ class StockEntry(StockController):
 		return item_dict
 
 	def add_to_stock_entry_detail(self, item_dict, bom_no=None):
-
 		for d in item_dict:
 			stock_uom = item_dict[d].get("stock_uom") or frappe.db.get_value("Item", d, "stock_uom")
 
@@ -1331,11 +1330,13 @@ class StockEntry(StockController):
 					{"name": material_request_item, "parent": material_request},
 					["item_code", "warehouse", "idx"], as_dict=True)
 				if mreq_item.item_code != item.item_code:
-					frappe.throw(_("Item for row {0} does not match Material Request").format(item.idx), frappe.MappingMismatchError)
+					frappe.throw(_("Item for row {0} does not match Material Request").format(item.idx),
+						frappe.MappingMismatchError)
 				elif self.purpose == "Material Transfer" and self.add_to_transit:
 					continue
 				elif mreq_item.warehouse != (item.s_warehouse if self.purpose == "Material Issue" else item.t_warehouse):
-					frappe.throw(_("Warehouse for row {0} does not match Material Request").format(item.idx), frappe.MappingMismatchError)
+					frappe.throw(_("Warehouse for row {0} does not match Material Request").format(item.idx),
+						frappe.MappingMismatchError)
 
 	def validate_batch(self):
 		if self.purpose in ["Material Transfer for Manufacture", "Manufacture", "Repack", "Send to Subcontractor"]:
@@ -1365,12 +1366,12 @@ class StockEntry(StockController):
 		frappe.db.sql("""UPDATE `tabPurchase Order Item Supplied` pos
 			SET
 				pos.supplied_qty = IFNULL((SELECT ifnull(sum(transfer_qty), 0)
-			FROM
-				`tabStock Entry Detail` sed, `tabStock Entry` se
-			WHERE
-				pos.name = sed.po_detail AND pos.rm_item_code = sed.item_code
-				AND pos.parent = se.purchase_order AND sed.docstatus = 1
-				AND se.name = sed.parent and se.purchase_order = %(po)s
+					FROM
+						`tabStock Entry Detail` sed, `tabStock Entry` se
+					WHERE
+						pos.name = sed.po_detail AND pos.rm_item_code = sed.item_code
+						AND pos.parent = se.purchase_order AND sed.docstatus = 1
+						AND se.name = sed.parent and se.purchase_order = %(po)s
 				), 0)
 			WHERE pos.docstatus = 1 and pos.parent = %(po)s""", {"po": self.purchase_order})
 
@@ -1405,8 +1406,10 @@ class StockEntry(StockController):
 				for sr in get_serial_nos(item.serial_no):
 					sales_order = frappe.db.get_value("Serial No", sr, "sales_order")
 					if sales_order:
-						frappe.throw(_("Item {0} (Serial No: {1}) cannot be consumed as is reserverd\
-						 to fullfill Sales Order {2}.").format(item.item_code, sr, sales_order))
+						msg = (_("(Serial No: {0}) cannot be consumed as it's reserverd to fullfill Sales Order {1}.")
+							.format(sr, sales_order))
+
+						frappe.throw(_("Item {0} {1}").format(item.item_code, msg))
 
 	def update_transferred_qty(self):
 		if self.purpose == 'Material Transfer' and self.outgoing_stock_entry:
@@ -1467,7 +1470,6 @@ class StockEntry(StockController):
 						'reference_type': reference_type,
 						'reference_name': reference_name
 					})
-
 	def set_material_request_transfer_status(self, status):
 		material_requests = []
 		if self.outgoing_stock_entry:
