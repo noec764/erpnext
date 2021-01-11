@@ -48,11 +48,11 @@ erpnext.PointOfSale.ItemCart = class {
 		this.$component.append(
 			`<div class="cart-container">
 				<div class="abs-cart-container">
-					<div class="cart-label">Item Cart</div>
+					<div class="cart-label">${__("Item Cart")}</div>
 					<div class="cart-header">
-						<div class="name-header">Item</div>
-						<div class="qty-header">Qty</div>
-						<div class="rate-amount-header">Amount</div>
+						<div class="name-header">${__("Item")}</div>
+						<div class="qty-header">${__("Qty")}</div>
+						<div class="rate-amount-header">${__("Amount")}</div>
 					</div>
 					<div class="cart-items-section"></div>
 					<div class="cart-totals-section"></div>
@@ -77,7 +77,7 @@ erpnext.PointOfSale.ItemCart = class {
 	make_no_items_placeholder() {
 		this.$cart_header.css('display', 'none');
 		this.$cart_items_wrapper.html(
-			`<div class="no-item-wrapper">No items in cart</div>`
+			`<div class="no-item-wrapper">${__("No items in cart")}</div>`
 		);
 	}
 
@@ -97,15 +97,15 @@ erpnext.PointOfSale.ItemCart = class {
 
 		this.$totals_section.append(
 			`<div class="add-discount-wrapper">
-				${this.get_discount_icon()} Add Discount
+				${this.get_discount_icon()} ${__("Add Discount")}
 			</div>
 			<div class="net-total-container">
-				<div class="net-total-label">Net Total</div>
+				<div class="net-total-label">${__("Net Total")}</div>
 				<div class="net-total-value">0.00</div>
 			</div>
 			<div class="taxes-container"></div>
 			<div class="grand-total-container">
-				<div>Grand Total</div>
+				<div>${__("Grand Total")}</div>
 				<div>0.00</div>
 			</div>
 			<div class="checkout-btn">${__("Checkout") }</div>
@@ -520,11 +520,11 @@ erpnext.PointOfSale.ItemCart = class {
 	get_cart_item({ item_code, batch_no, uom }) {
 		const batch_attr = `[data-batch-no="${escape(batch_no)}"]`;
 		const item_code_attr = `[data-item-code="${escape(item_code)}"]`;
-		const uom_attr = `[data-uom=${escape(uom)}]`;
+		const uom_attr = `[data-uom="${escape(uom)}"]`;
 
 		const item_selector = batch_no ? 
 			`.cart-item-wrapper${batch_attr}${uom_attr}` : `.cart-item-wrapper${item_code_attr}${uom_attr}`;
-			
+
 		return this.$cart_items_wrapper.find(item_selector);
 	}
 	

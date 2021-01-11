@@ -93,7 +93,7 @@ erpnext.PointOfSale.ItemSelector = class {
 			`<div class="item-wrapper"
 				data-item-code="${escape(item.item_code)}" data-serial-no="${escape(serial_no)}"
 				data-batch-no="${escape(batch_no)}" data-uom="${escape(stock_uom)}"
-				title="Avaiable Qty: ${actual_qty}">
+				title="${__("Available Qty")}: ${actual_qty}">
 
 				${get_item_image_html()}
 

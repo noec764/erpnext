@@ -93,7 +93,7 @@ erpnext.PointOfSale.Payment = class {
 				[ 1, 2, 3 ],
 				[ 4, 5, 6 ],
 				[ 7, 8, 9 ],
-				[ '.', 0, 'Delete' ]
+				[ '.', 0, __('Delete') ]
 			],
 		})
 
@@ -105,7 +105,7 @@ erpnext.PointOfSale.Payment = class {
 		const button_value = $btn.attr('data-button-value');
 
 		highlight_numpad_btn($btn);
-		this.numpad_value = button_value === 'delete' ? this.numpad_value.slice(0, -1) : this.numpad_value + button_value;
+		this.numpad_value = button_value === __('Delete') ? this.numpad_value.slice(0, -1) : this.numpad_value + button_value;
 		this.selected_mode.$input.get(0).focus();
 		this.selected_mode.set_value(this.numpad_value);
 
@@ -168,7 +168,7 @@ erpnext.PointOfSale.Payment = class {
 
 			if (data["ResultCode"] == 0) {
 				title = __("Payment Received");
-				$('.btn.btn-xs.btn-default[data-fieldname=request_for_payment]').html(`Payment Received`)
+				$('.btn.btn-xs.btn-default[data-fieldname=request_for_payment]').html(`${__("Payment Received")}`)
 				me.events.submit_invoice();
 			}
 
@@ -472,7 +472,7 @@ erpnext.PointOfSale.Payment = class {
 		if (docstatus === 0)
 			this.$payment_modes.append(
 				`<div class="w-full pr-2">
-					<div class="add-mode-of-payment w-half text-grey mb-4 no-select pointer">+ Add Payment Method</div>
+					<div class="add-mode-of-payment w-half text-grey mb-4 no-select pointer">${__("+ Add Payment Method")}</div>
 				</div>`
 			)
 	}
@@ -487,12 +487,12 @@ erpnext.PointOfSale.Payment = class {
 
 		this.$totals.html(
 			`<div class="col">
-				<div class="total-label">Grand Total</div>
+				<div class="total-label">${__("Grand Total")}</div>
 				<div class="value">${format_currency(doc.grand_total, currency)}</div>
 			</div>
 			<div class="seperator-y"></div>
 			<div class="col">
-				<div class="total-label">Paid Amount</div>
+				<div class="total-label">${__("Paid Amount")}</div>
 				<div class="value">${format_currency(paid_amount, currency)}</div>
 			</div>
 			<div class="seperator-y"></div>
