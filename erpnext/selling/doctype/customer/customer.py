@@ -175,25 +175,13 @@ class Customer(TransactionBase):
 						contact.save(ignore_permissions=self.flags.ignore_permissions)
 
 			else:
-				lead.lead_name = lead.lead_name.lstrip().split(" ")
-				lead.first_name = lead.lead_name[0]
-				lead.last_name = " ".join(lead.lead_name[1:])
-
 				# create contact from lead
-				contact = frappe.new_doc('Contact')
-				contact.first_name = lead.first_name
-				contact.last_name = lead.last_name
-				contact.gender = lead.gender
-				contact.salutation = lead.salutation
-				contact.email_id = lead.email_id
-				contact.phone = lead.phone
-				contact.mobile_no = lead.mobile_no
-				contact.is_primary_contact = 1
-				contact.append('links', dict(link_doctype='Customer', link_name=self.name))
-				contact.flags.ignore_permissions = self.flags.ignore_permissions
-				contact.autoname()
-				if not frappe.db.exists("Contact", contact.name):
-					contact.insert()
+				args = lead
+				args.customer_name = lead.lead_name
+				args.doctype = "Customer"
+				args.name = self.name
+
+				make_contact(args)
 
 	def validate_name_with_customer_group(self):
 		if frappe.db.exists("Customer Group", self.name):
@@ -554,7 +542,7 @@ def make_contact(args, is_primary_contact=1):
 		contact.add_email(args.get('email_id'), is_primary=True)
 	if args.get('mobile_no'):
 		contact.add_phone(args.get('mobile_no'), is_primary_mobile_no=True)
-	contact.insert()
+	contact.save()
 
 	return contact
 
