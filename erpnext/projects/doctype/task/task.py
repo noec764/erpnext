@@ -12,6 +12,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.utils import add_days, cstr, date_diff, get_link_to_form, getdate, today, flt
 from frappe.utils.nestedset import NestedSet
 
+
 class CircularReferenceError(frappe.ValidationError): pass
 class EndDateCannotBeGreaterThanProjectEndDateError(frappe.ValidationError): pass
 
@@ -33,6 +34,7 @@ class Task(NestedSet):
 		self.validate_progress()
 		self.validate_status()
 		self.update_depends_on()
+		self.validate_dependencies_for_template_task()
 
 	def validate_dates(self):
 		if self.exp_start_date and self.exp_end_date and getdate(self.exp_start_date) > getdate(self.exp_end_date):
@@ -54,10 +56,12 @@ class Task(NestedSet):
 			validate_project_dates(getdate(expected_end_date), self, "act_start_date", "act_end_date", "Actual")
 
 	def validate_status(self):
+		if self.is_template and self.status != "Template":
+			self.status = "Template"
 		if self.status!=self.get_db_value("status") and self.status == "Completed":
 			for d in self.depends_on:
 				if frappe.db.get_value("Task", d.task, "status") not in ("Completed", "Cancelled"):
-					frappe.throw(_("Cannot complete task {0} as its dependant task {1} are not completed / cancelled.").format(frappe.bold(self.name), frappe.bold(d.task)))
+					frappe.throw(_("Cannot complete task {0} as its dependant task {1} are not ccompleted / cancelled.").format(frappe.bold(self.name), frappe.bold(d.task)))
 
 			close_all_assignments(self.doctype, self.name)
 
@@ -71,10 +75,28 @@ class Task(NestedSet):
 		if self.status == 'Completed':
 			self.progress = 100
 
+	def validate_dependencies_for_template_task(self):
+		if self.is_template:
+			self.validate_parent_template_task()
+			self.validate_depends_on_tasks()
+
+	def validate_parent_template_task(self):
+		if self.parent_task:
+			if not frappe.db.get_value("Task", self.parent_task, "is_template"):
+				parent_task_format = """<a href="#Form/Task/{0}">{0}</a>""".format(self.parent_task)
+				frappe.throw(_("Parent Task {0} is not a Template Task").format(parent_task_format))
+
+	def validate_depends_on_tasks(self):
+		if self.depends_on:
+			for task in self.depends_on:
+				if not frappe.db.get_value("Task", task.task, "is_template"):
+					dependent_task_format = """<a href="#Form/Task/{0}">{0}</a>""".format(task.task)
+					frappe.throw(_("Dependent Task {0} is not a Template Task").format(dependent_task_format))
+
 	def update_depends_on(self):
 		depends_on_tasks = self.depends_on_tasks or ""
 		for d in self.depends_on:
-			if d.task and not d.task in depends_on_tasks:
+			if d.task and d.task not in depends_on_tasks:
 				depends_on_tasks += d.task + ","
 		self.depends_on_tasks = depends_on_tasks
 
@@ -160,7 +182,7 @@ class Task(NestedSet):
 	def populate_depends_on(self):
 		if self.parent_task:
 			parent = frappe.get_doc('Task', self.parent_task)
-			if not self.name in [row.task for row in parent.depends_on]:
+			if self.name not in [row.task for row in parent.depends_on]:
 				parent.append("depends_on", {
 					"doctype": "Task Depends On",
 					"task": self.name,
@@ -189,6 +211,7 @@ def check_if_child_exists(name):
 	child_tasks = frappe.get_all("Task", filters={"parent_task": name})
 	child_tasks = [get_link_to_form("Task", task.name) for task in child_tasks]
 	return child_tasks
+
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
@@ -223,6 +246,7 @@ def set_tasks_as_overdue():
 				continue
 		frappe.get_doc("Task", task.name).update_status()
 
+
 @frappe.whitelist()
 def make_timesheet(source_name, target_doc=None, ignore_permissions=False):
 	def set_missing_values(source, target):
@@ -240,6 +264,7 @@ def make_timesheet(source_name, target_doc=None, ignore_permissions=False):
 		}, target_doc, postprocess=set_missing_values, ignore_permissions=ignore_permissions)
 
 	return doclist
+
 
 @frappe.whitelist()
 def get_children(doctype, parent, task=None, project=None, is_root=False):
