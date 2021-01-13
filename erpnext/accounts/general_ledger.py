@@ -130,8 +130,6 @@ def save_entries(gl_map, adv_adj, update_outstanding, from_repost=False):
 
 		make_entry(entry, adv_adj, update_outstanding, from_repost)
 
-	validate_account_for_perpetual_inventory(gl_map)
-
 def make_entry(args, adv_adj, update_outstanding, from_repost=False):
 	gle = frappe.new_doc("GL Entry")
 	gle.update(args)
