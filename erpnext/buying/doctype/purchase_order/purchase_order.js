@@ -8,8 +8,8 @@ frappe.provide("erpnext.buying");
 frappe.ui.form.on("Purchase Order", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
-			'Purchase Receipt': 'Receipt',
-			'Purchase Invoice': 'Invoice',
+			'Purchase Receipt': 'Purchase Receipt',
+			'Purchase Invoice': 'Purchase Invoice',
 			'Stock Entry': 'Material to Supplier',
 			'Payment Entry': 'Payment'
 		}
