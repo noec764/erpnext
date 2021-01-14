@@ -675,7 +675,7 @@ class DepreciationSchedule:
 		self.asset.validate_asset_finance_books(self.finance_book)
 
 		self.method = None
-		self.value_to_depreciate = flt(self.asset.gross_purchase_amount) - flt(self.finance_book.expected_value_after_useful_life)
+		self.value_to_depreciate = flt(self.asset.gross_purchase_amount) - flt(self.asset.opening_accumulated_depreciation) - flt(self.finance_book.expected_value_after_useful_life)
 		self.start_date = self.booking_date = self.booking_calculation_date = None
 		self.coefficient = 1
 		self.number_of_depreciations = 0
@@ -730,6 +730,7 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 	def __init__(self, asset, finance_book):
 		super(ProrataStraightLineDepreciationSchedule, self).__init__(asset, finance_book)
 		self.method = "Prorated Straight Line (360 Days)"
+		self.remaining_value_to_depreciate = self.value_to_depreciate
 
 	def get_number_of_depreciations(self):
 		super(ProrataStraightLineDepreciationSchedule, self).get_number_of_depreciations()
@@ -758,6 +759,11 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 		precision = self.asset.precision("gross_purchase_amount")
 		self.depreciation_amount = (flt(self.value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
 
+		if self.depreciations_left == 1:
+			self.depreciation_amount = self.remaining_value_to_depreciate
+
+		self.remaining_value_to_depreciate -= self.depreciation_amount
+
 	def get_coefficient(self):
 		months = abs(month_diff(self.booking_calculation_date, self.start_date))
 
@@ -784,6 +790,7 @@ class StraightLineDepreciationSchedule(DepreciationSchedule):
 
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
+		print(self.value_to_depreciate, self.depreciations_basis, self.coefficient)
 		self.depreciation_amount = (flt(self.value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
 
 class ManualDepreciationSchedule(DepreciationSchedule):
@@ -803,10 +810,7 @@ class DoubleDecliningBalanceSchedule(DepreciationSchedule):
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
 		if self.depreciations_left == 1:
-			if self.finance_book.expected_value_after_useful_life > 0 and self.value_to_depreciate > 0:
-				self.depreciation_amount = min(self.value_to_depreciate, self.finance_book.expected_value_after_useful_life)
-			else:
-				self.depreciation_amount = self.value_to_depreciate
+			self.depreciation_amount = self.value_to_depreciate
 		else:
 			self.depreciation_amount = flt(self.value_to_depreciate * (flt(self.coefficient) / 100), precision)
 
