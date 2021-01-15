@@ -689,7 +689,6 @@ class DepreciationSchedule:
 	def create(self):
 		self.get_number_of_depreciations()
 		self.get_booking_dates()
-		print("booking dates", self.booking_dates)
 		for index, booking_date in enumerate(self.booking_dates):
 			if index == 0:
 				self.booking_start_date = getdate(self.asset.available_for_use_date)
@@ -701,10 +700,7 @@ class DepreciationSchedule:
 			if index in range(cint(self.asset.number_of_depreciations_booked)):
 				continue
 
-			print(index, booking_date, self.booking_start_date, self.booking_end_date)
-
 			self.get_coefficient()
-			print("coeff", self.coefficient)
 			self.get_depreciation_amount()
 			DepreciationRow(self).create()
 			self.depreciations_left -= 1
@@ -747,7 +743,7 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 						getdate(self.asset.available_for_use_date), cint(self.finance_book.frequency_of_depreciation) * (i + 2)
 					),
 				-1)
-				print("last_booking_date", last_booking_date)
+
 				self.booking_dates.append(getdate(last_booking_date))
 			else:
 				self.booking_dates.append(getdate(add_months(first_booking_date, cint(self.finance_book.frequency_of_depreciation) * (i + 1))))
