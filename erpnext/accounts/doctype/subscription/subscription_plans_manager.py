@@ -50,7 +50,7 @@ class SubscriptionPlansManager:
 				customer_doc = frappe.get_doc("Customer", self.subscription.customer)
 				price_list = get_default_price_list(customer_doc)
 			if not price_list:
-				price_list = frappe.db.get_value("Price List", {"selling": 1, "enabled": 1})
+				price_list = frappe.db.get_single_value("Selling Settings", "selling_price_list")
 
 			args = {
 				"company": self.subscription.company,
