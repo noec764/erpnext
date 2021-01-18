@@ -158,7 +158,7 @@ class PaymentEntry(AccountsController):
 			_party_name = "title" if self.party_type == "Shareholder" else self.party_type.lower() + "_name"
 			self.party_name = frappe.db.get_value(self.party_type, self.party, _party_name)
 
-		if self.party:
+		if self.party and (not self.party_account or self.down_payment):
 			self.party_balance = get_balance_on(party_type=self.party_type,
 				party=self.party, date=self.posting_date, company=self.company)
 
