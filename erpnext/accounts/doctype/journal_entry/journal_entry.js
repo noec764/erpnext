@@ -141,6 +141,8 @@ frappe.ui.form.on("Journal Entry", {
 				}
 			}
 		});
+
+		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 	},
 
 	voucher_type: function(frm){
@@ -218,6 +220,7 @@ erpnext.accounts.JournalEntry = frappe.ui.form.Controller.extend({
 		this.load_defaults();
 		this.setup_queries();
 		this.setup_balance_formatter();
+		erpnext.accounts.dimensions.setup_dimension_filters(this.frm, this.frm.doctype);
 	},
 
 	onload_post_render: function() {
@@ -241,15 +244,6 @@ erpnext.accounts.JournalEntry = frappe.ui.form.Controller.extend({
 
 		me.frm.set_query("account", "accounts", function(doc, cdt, cdn) {
 			return erpnext.journal_entry.account_query(me.frm);
-		});
-
-		me.frm.set_query("cost_center", "accounts", function(doc, cdt, cdn) {
-			return {
-				filters: {
-					company: me.frm.doc.company,
-					is_group: 0
-				}
-			};
 		});
 
 		me.frm.set_query("party_type", "accounts", function(doc, cdt, cdn) {
@@ -428,6 +422,7 @@ erpnext.accounts.JournalEntry = frappe.ui.form.Controller.extend({
 			}
 		}
 		cur_frm.cscript.update_totals(doc);
+		erpnext.accounts.dimensions.copy_dimension_from_first_row(this.frm, cdt, cdn, 'accounts');
 	},
 
 });
