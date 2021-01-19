@@ -47,6 +47,20 @@ class PlaidConnector():
 			}
 		}
 
+		if update_mode:
+			args["access_token"] = self.access_token
+		else:
+			args.update({
+				"client_id": self.settings.plaid_client_id,
+				"secret": self.settings.plaid_secret,
+				"products": self.products,
+			})
+
+		return args
+
+	def get_link_token(self, update_mode=False):
+		token_request = self.get_token_request(update_mode)
+
 		try:
 			response = self.client.LinkToken.create(token_request)
 		except InvalidRequestError:
