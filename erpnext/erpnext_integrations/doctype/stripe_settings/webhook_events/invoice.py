@@ -11,11 +11,12 @@ from frappe.utils import flt, getdate
 from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import StripeWebhooksController
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeSubscription
 
+# TODO: Fix invoice handling
 EVENT_MAP = {
-	'invoice.created': 'get_or_create_invoice',
-	'invoice.deleted': 'cancel_invoice',
-	'invoice.finalized': 'finalize_invoice',
-	'invoice.voided': 'cancel_invoice'
+	'invoice.created': '',
+	'invoice.deleted': '',
+	'invoice.finalized': '',
+	'invoice.voided': ''
 }
 
 class StripeInvoiceWebhookHandler(StripeWebhooksController):
