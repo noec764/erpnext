@@ -597,13 +597,13 @@ def get_uom_in_minutes(uom=None):
 
 def get_sales_qty(item, start, end):
 	minute_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
-	sales_uom = frappe.get_cached_value("Item", item, "sales_uom")
+	sales_uom = frappe.get_cached_value("Item", item, "sales_uom") or frappe.get_cached_value("Item", item, "stock_uom")
 	duration = time_diff_in_minutes(end, start)
 
 	if sales_uom == minute_uom:
 		return duration
 
-	conversion_factor = frappe.db.get_value("UOM Conversion Factor", dict(from_uom=sales_uom, to_uom=minute_uom), "value")
+	conversion_factor = frappe.db.get_value("UOM Conversion Factor", dict(from_uom=sales_uom, to_uom=minute_uom), "value") or 1
 
 	return flt(duration) / flt(conversion_factor)
 
@@ -733,7 +733,7 @@ def make_sales_order(source_name, target_doc=None):
 		"Item Booking": {
 			"doctype": "Sales Order",
 			"field_map": {
-				"party_type": "customer"
+				"party_name": "customer"
 			}
 		}
 	}, target_doc, set_missing_values)
