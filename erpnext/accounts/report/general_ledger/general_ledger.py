@@ -142,8 +142,8 @@ def get_gl_entries(filters, accounting_dimensions):
 
 	distributed_cost_center_query = ""
 	if filters and filters.get('cost_center'):
-		select_fields_with_percentage = """, debit*(DCC_allocation.percentage_allocation/100) as debit, credit*(DCC_allocation.percentage_allocation/100) as credit, debit_in_account_currency*(DCC_allocation.percentage_allocation/100) as debit_in_account_currency,
-		credit_in_account_currency*(DCC_allocation.percentage_allocation/100) as credit_in_account_currency """
+		select_fields_with_percentage = """, gl.debit*(DCC_allocation.percentage_allocation/100) as debit, gl.credit*(DCC_allocation.percentage_allocation/100) as credit, gl.debit_in_account_currency*(DCC_allocation.percentage_allocation/100) as debit_in_account_currency,
+		gl.credit_in_account_currency*(DCC_allocation.percentage_allocation/100) as credit_in_account_currency """
 
 		distributed_cost_center_query = """
 		UNION ALL
@@ -178,12 +178,14 @@ def get_gl_entries(filters, accounting_dimensions):
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			name as gl_entry, posting_date, account, party_type, party,
-			voucher_type, voucher_no, {dimension_fields} cost_center, project, accounting_journal,
-			against_voucher_type, against_voucher, account_currency,
-			remarks, against, is_opening, creation {select_fields}
-		from `tabGL Entry`
-		where company=%(company)s {conditions}
+			gl.name as gl_entry, gl.posting_date, gl.account, gl.party_type, gl.party,
+			gl.voucher_type, gl.voucher_no, {dimension_fields} gl.cost_center, gl.project, gl.accounting_journal,
+			gl.against_voucher_type, gl.against_voucher, gl.account_currency, acc.account_number,
+			gl.remarks, gl.against, gl.is_opening, gl.creation {select_fields}
+		from `tabGL Entry` as gl
+		join `tabAccount` as acc
+		on gl.account = acc.name
+		where gl.company=%(company)s {conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
 		""".format(
@@ -438,6 +440,12 @@ def get_columns(filters):
 			"fieldname": "posting_date",
 			"fieldtype": "Date",
 			"width": 90
+		},
+		{
+			"label": _("Account Number"),
+			"fieldname": "account_number",
+			"fieldtype": "Data",
+			"width": 120
 		},
 		{
 			"label": _("Account"),

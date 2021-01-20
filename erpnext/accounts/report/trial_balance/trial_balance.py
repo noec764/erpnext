@@ -253,17 +253,17 @@ def prepare_data(accounts, filters, total_row, parent_children_map, company_curr
 def get_columns():
 	return [
 		{
-			"fieldname": "account_number",
-			"label": _("Account Number"),
-			"fieldtype": "Data",
-			"width": 120
-		},
-		{
 			"fieldname": "account",
 			"label": _("Account"),
 			"fieldtype": "Link",
 			"options": "Account",
 			"width": 300
+		},
+		{
+			"fieldname": "account_number",
+			"label": _("Account Number"),
+			"fieldtype": "Data",
+			"width": 120
 		},
 		{
 			"fieldname": "currency",
