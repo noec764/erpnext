@@ -227,6 +227,7 @@ def prepare_data(accounts, balance_must_be, period_list, company_currency):
 		total = 0
 		row = frappe._dict({
 			"account": _(d.name),
+			"account_number": d.account_number,
 			"parent_account": _(d.parent_account) if d.parent_account else '',
 			"indent": flt(d.indent),
 			"year_start_date": year_start_date,
@@ -493,6 +494,13 @@ def get_columns(periodicity, period_list, accumulated_values=1, company=None):
 		"fieldtype": "Link",
 		"options": "Account",
 		"width": 500
+	},
+	{
+		"fieldname": "account_number",
+		"label": _("Account Number"),
+		"fieldtype": "Data",
+		"width": 120,
+		"hidden": 1
 	}]
 	if company:
 		columns.append({

@@ -445,7 +445,8 @@ def get_columns(filters):
 			"label": _("Account Number"),
 			"fieldname": "account_number",
 			"fieldtype": "Data",
-			"width": 120
+			"width": 120,
+			"hidden": 1
 		},
 		{
 			"label": _("Account"),
