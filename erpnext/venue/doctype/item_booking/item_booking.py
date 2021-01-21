@@ -61,9 +61,10 @@ class ItemBooking(Document):
 					AND ib.ends_on >= {frappe.db.escape(self.ends_on)}
 				)
 			)
+			AND ib.item={frappe.db.escape(self.item)}
 		""")
 
-		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")
+		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed") if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking") else None
 		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
 
 		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
