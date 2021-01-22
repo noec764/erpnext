@@ -7,27 +7,31 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block breadcrumbs %}
+<div class="item-breadcrumbs small text-muted">
 	{% include "templates/includes/breadcrumbs.html" %}
+</div>
 {% endblock %}
 
 {% block page_content %}
-{% from "erpnext/templates/includes/macros.html" import product_image %}
-<div class="item-content">
-	<div class="product-page-content mb-5" itemscope itemtype="http://schema.org/Product">
-		<div class="row mb-5 item-website-description">
-			{% include "templates/generators/item/item_image.html" %}
-			{% include "templates/generators/item/item_details.html" %}
-		</div>
+<div class="product-container">
+	{% from "erpnext/templates/includes/macros.html" import product_image %}
+	<div class="item-content">
+		<div class="product-page-content mb-5" itemscope itemtype="http://schema.org/Product">
+			<div class="row mb-5 item-website-description">
+				{% include "templates/generators/item/item_image.html" %}
+				{% include "templates/generators/item/item_details.html" %}
+			</div>
 
-		<div id="item-booking" class="portal-calendar">
-			<div class="calendar-card"></div>
-			<div class="calendar-sidebar"></div>
-		</div>
+			<div id="item-booking" class="portal-calendar">
+				<div class="calendar-card"></div>
+				<div class="calendar-sidebar"></div>
+			</div>
 
-		{% include "templates/generators/item/item_specifications.html" %}
+			{% include "templates/generators/item/item_specifications.html" %}
 
-		<div class="row item-website-content mt-5">
-			{{ doc.website_content or '' }}
+			<div class="row item-website-content mt-5">
+				{{ doc.website_content or '' }}
+			</div>
 		</div>
 	</div>
 </div>

@@ -17,7 +17,6 @@ frappe.ui.form.on("Shopping Cart Settings", {
 	enabled: function() {
 		if (frm.doc.enabled === 1) {
 			frm.set_value('enable_variants', 1);
-			frm.set_value('show_configure_button', 1);
 		} else {
 			frm.set_value('company', '');
 			frm.set_value('price_list', '');

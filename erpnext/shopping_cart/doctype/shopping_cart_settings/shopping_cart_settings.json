@@ -12,7 +12,7 @@
   "show_item_code",
   "show_price",
   "show_stock_availability",
-  "show_configure_button",
+  "enable_variants",
   "show_contact_us_button",
   "show_quantity_in_website",
   "show_apply_coupon_code_in_website",
@@ -62,9 +62,9 @@
   },
   {
    "default": "0",
-   "fieldname": "show_configure_button",
+   "fieldname": "enable_variants",
    "fieldtype": "Check",
-   "label": "Show Configure Button"
+   "label": "Enable Variants"
   },
   {
    "default": "0",
@@ -175,7 +175,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-01-08 17:33:38.944827",
+ "modified": "2021-01-21 17:33:38.944827",
  "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",
