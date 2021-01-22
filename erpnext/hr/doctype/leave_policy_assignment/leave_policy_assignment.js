@@ -8,7 +8,7 @@ frappe.ui.form.on('Leave Policy Assignment', {
 
 	refresh: function(frm) {
 		if (frm.doc.docstatus === 1 && frm.doc.leaves_allocated === 0) {
-			frm.add_custom_button(__("Grant Leave"), function() {
+			frm.add_custom_button(__("Grant Leaves"), function() {
 
 				frappe.call({
 					doc: frm.doc,

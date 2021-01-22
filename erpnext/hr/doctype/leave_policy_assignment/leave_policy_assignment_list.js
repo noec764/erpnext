@@ -78,7 +78,7 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 					};
 				},
 				add_filters_group: 1,
-				primary_action_label: "Assign",
+				primary_action_label: __("Assign"),
 				action(employees, data) {
 					frappe.call({
 						method: 'erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment.create_assignment_for_multiple_employees',
@@ -110,7 +110,7 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 					};
 				},
 				add_filters_group: 1,
-				primary_action_label: "Grant Leaves",
+				primary_action_label: __("Grant Leaves"),
 				action(leave_policy_assignments) {
 					frappe.call({
 						method: 'erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment.grant_leave_for_multiple_employees',
