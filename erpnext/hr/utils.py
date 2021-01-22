@@ -253,8 +253,8 @@ def get_total_exemption_amount(declarations):
 	total_exemption_amount = sum([flt(d.total_exemption_amount) for d in exemptions.values()])
 	return total_exemption_amount
 
-def get_leave_period(from_date, to_date, company):
-	leave_period = frappe.db.sql("""
+def get_leave_period(from_date, to_date, company, leave_type=None):
+	leave_periods = frappe.db.sql("""
 		select name, from_date, to_date
 		from `tabLeave Period`
 		where company=%(company)s and is_active=1
@@ -267,8 +267,14 @@ def get_leave_period(from_date, to_date, company):
 		"company": company
 	}, as_dict=1)
 
-	if leave_period:
-		return leave_period
+	if leave_periods:
+
+		if leave_type:
+			period_names = [x.name for x in leave_periods]
+			parents = frappe.get_all("Leave Period Types", filters={"leave_type": leave_type, "parent": ("in", period_names)}, pluck="parent")
+			leave_periods = [x for x in leave_periods if x.name in parents]
+
+		return leave_periods
 
 def generate_leave_encashment():
 	''' Generates a draft leave encashment on allocation expiry '''
