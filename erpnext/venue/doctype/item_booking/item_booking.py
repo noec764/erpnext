@@ -64,13 +64,13 @@ class ItemBooking(Document):
 			AND ib.item={frappe.db.escape(self.item)}
 		""")
 
-		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed") if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking") else None
+		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed") if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking") else 0
 		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
 
 		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
 			frappe.throw(_("An existing item booking for this item is overlapping with this document. Please change the dates to register this document of change your settings in Venue Settings."))
 
-		elif overlaps and len(overlaps) >= simultaneous_bookings_allowed and no_overlap_per_item:
+		elif overlaps and len(overlaps) >= cint(simultaneous_bookings_allowed) and no_overlap_per_item:
 			frappe.throw(_("The maximum number of simultaneous bookings allowed for this item has been reached."))
 
 		elif overlaps:
