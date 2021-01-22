@@ -49,16 +49,16 @@ class BankTransaction(StatusUpdater):
 		self.set_status(update=True)
 
 	def check_similar_entries(self):
-		filters = {"date": self.date, "credit": self.credit, "debit": self.debit, \
-			"currency": self.currency, "bank_account": self.bank_account, "docstatus": 1}
+		if self.flags.import_statement and self.reference_number:
+			filters = {"reference_number": self.reference_number}
+		else:
+			filters = {"date": self.date, "credit": self.credit, "debit": self.debit, \
+				"currency": self.currency, "bank_account": self.bank_account, "docstatus": 1, "description": self.description}
 		similar_entries = frappe.get_all("Bank Transaction", filters=filters)
 
 		if similar_entries:
 			if self.flags.import_statement:
-				filters.update({"description": self.description})
-				similar_entries = frappe.get_all("Bank Transaction", filters=filters)
-				if similar_entries:
-					raise frappe.DuplicateEntryError
+				raise frappe.DuplicateEntryError
 			else:
 				frappe.msgprint(_("The following entries exist already with the same date, debit, credit and currency:<br>{0}").format(", ".join([x.get("name") for x in similar_entries])))
 
