@@ -332,7 +332,7 @@ def filter_accounts(accounts, depth=20):
 
 	return filtered_accounts, accounts_by_name, parent_children_map
 
-
+# TODO: Diffferent sort by country
 def sort_accounts(accounts, is_root=False, key="name"):
 	"""Sort root types as Asset, Liability, Equity, Income, Expense"""
 
@@ -345,7 +345,7 @@ def sort_accounts(accounts, is_root=False, key="name"):
 				return -1
 			if a.root_type != b.root_type and a.root_type == "Asset":
 				return -1
-			if a.root_type == "Liability" and b.root_type == "Equity":
+			if a.root_type == "Equity" and b.root_type == "Liability":
 				return -1
 			if a.root_type == "Income" and b.root_type == "Expense":
 				return -1
