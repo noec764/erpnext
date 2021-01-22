@@ -307,10 +307,13 @@ def get_birthday_reminder_text_and_message(birthday_persons):
 		person_names = [d['name'] for d in birthday_persons]
 		last_person = person_names[-1]
 		birthday_person_text = ", ".join(person_names[:-1])
-		birthday_person_text += " & {}".format(last_person)
+		birthday_person_text = _("{} & {}").format(birthday_person_text, last_person)
 
 	reminder_text = _("Today is {0}'s birthday 🎉").format(birthday_person_text)
-	message = _("A friendly reminder of an important date for our team. Everyone, let’s congratulate {0} their birthday.").format(birthday_person_text)
+	message = _("A friendly reminder of an important date for our team.")
+
+	message += "<br>"
+	message += _("Everyone, let’s congratulate {0} on their birthday.").format(birthday_person_text)
 
 	return reminder_text, message
 
@@ -330,12 +333,28 @@ def send_birthday_reminder(recipients, reminder_text, birthday_persons, message)
 def get_employees_who_are_born_today():
 	"""Get all employee born today & group them based on their company"""
 	from collections import defaultdict
-	employees_born_today = frappe.db.get_all("Employee",
-		fields=["personal_email", "company", "company_email", "user_id", "employee_name as name", "image"],
-		filters={
-			"date_of_birth": ("like", "{}".format(format_datetime(getdate(), "-MM-dd"))),
-			"status": "Active",
-		})
+	employees_born_today = frappe.db.multisql({
+		"mariadb": """
+			SELECT `personal_email`, `company`, `company_email`, `user_id`, `employee_name` AS 'name', `image`
+			FROM `tabEmployee`
+			WHERE
+				DAY(date_of_birth) = DAY(%(today)s)
+			AND
+				MONTH(date_of_birth) = MONTH(%(today)s)
+			AND
+				`status` = 'Active'
+		""",
+		"postgres": """
+			SELECT "personal_email", "company", "company_email", "user_id", "employee_name" AS 'name', "image"
+			FROM "tabEmployee"
+			WHERE
+				DATE_PART('day', "date_of_birth") = date_part('day', %(today)s)
+			AND
+				DATE_PART('month', "date_of_birth") = date_part('month', %(today)s)
+			AND
+				"status" = 'Active'
+		""",
+	}, dict(today=today()), as_dict=1)
 
 	grouped_employees = defaultdict(lambda: [])
 
