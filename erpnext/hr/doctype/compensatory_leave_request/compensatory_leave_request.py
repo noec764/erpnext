@@ -47,7 +47,7 @@ class CompensatoryLeaveRequest(Document):
 		date_difference = date_diff(self.work_end_date, self.work_from_date) + 1
 		if self.half_day:
 			date_difference -= 0.5
-		leave_period = get_leave_period(self.work_from_date, self.work_end_date, company)
+		leave_period = get_leave_period(self.work_from_date, self.work_end_date, company, self.leave_type)
 		if leave_period:
 			leave_allocation = self.get_existing_allocation_for_period(leave_period)
 			if leave_allocation:

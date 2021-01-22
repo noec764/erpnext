@@ -279,7 +279,7 @@ class LeaveApplication(Document):
 				AttendanceAlreadyMarkedError)
 
 	def validate_optional_leave(self):
-		leave_period = get_leave_period(self.from_date, self.to_date, self.company)
+		leave_period = get_leave_period(self.from_date, self.to_date, self.company, self.leave_type)
 		if not leave_period:
 			frappe.throw(_("Cannot find active Leave Period"))
 		optional_holiday_list = frappe.db.get_value("Leave Period", leave_period[0]["name"], "optional_holiday_list")
