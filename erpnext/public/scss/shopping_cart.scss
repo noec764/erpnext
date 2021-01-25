@@ -84,6 +84,11 @@ body.product-page {
 	// 	}
 	// }
 
+	.card-img-container {
+		height: 210px;
+		width: 100%;
+	}
+
 	.card-img {
 		max-height: 210px;
 		object-fit: contain;
@@ -307,10 +312,6 @@ body.product-page {
 					}
 				}
 			}
-		}
-
-		svg {
-			display: none;
 		}
 	}
 }
