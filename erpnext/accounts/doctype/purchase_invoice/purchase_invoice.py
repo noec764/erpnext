@@ -592,6 +592,7 @@ class PurchaseInvoice(BuyingController):
 						amount = flt(item.base_net_amount, item.precision("base_net_amount"))
 					else:
 						amount = flt(item.base_net_amount + item.item_tax_amount, item.precision("base_net_amount"))
+						self.negative_expense_to_be_booked += flt(item.item_tax_amount, item.precision("item_tax_amount"))
 
 					auto_accounting_for_non_stock_items = cint(frappe.db.get_value('Company', self.company, 'enable_perpetual_inventory_for_non_stock_items'))
 
