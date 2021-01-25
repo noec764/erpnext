@@ -7,16 +7,19 @@ import frappe
 def execute():
 	frappe.reload_doc("projects", "doctype", "project_template")
 	frappe.reload_doc("projects", "doctype", "project_template_task")
-	frappe.reload_doc("projects", "doctype", "project_template")
 	frappe.reload_doc("projects", "doctype", "task")
 
-	for template_name in frappe.db.sql(""" 
-		select 
-			name 
-		from 
-			`tabProject Template` """, 
-		as_dict=1):
+	# Update property setter status if any
+	property_setter = frappe.db.get_value('Property Setter', {'doc_type': 'Task',
+		'field_name': 'status', 'property': 'options'})
 
+	if property_setter:
+		property_setter_doc = frappe.get_doc('Property Setter', {'doc_type': 'Task',
+			'field_name': 'status', 'property': 'options'})
+		property_setter_doc.value += "\nTemplate"
+		property_setter_doc.save()
+
+	for template_name in frappe.get_all('Project Template'):
 		template = frappe.get_doc("Project Template", template_name.name)
 		replace_tasks = False
 		new_tasks = []
@@ -40,5 +43,5 @@ def execute():
 				template.append("tasks", {
 					"task": tsk.name,
 					"subject": tsk.subject
-				})  
+				})
 			template.save()
