@@ -7,8 +7,11 @@ frappe.query_reports["Transactions Tax Summary"] = {
 		value = default_formatter(value || "", row, column, data);
 		if (data && data.indent == 0) {
 			value = $(`<span>${value}</span>`);
-
 			var $value = $(value).css("font-weight", "bold");
+
+			if (column.id == "difference" && data[column.fieldname] != 0) {
+				$value.addClass("text-danger");
+			}
 
 			value = $value.wrap("<p></p>").parent().html();
 		}
@@ -39,14 +42,11 @@ frappe.query_reports["Transactions Tax Summary"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname":"doctypes",
-			"label": __("Document Types"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('DocType', txt, filters={
-					"name": ["in", ["Sales Invoice", "Purchase Invoice"]]
-				});
-			}
+			"fieldname":"transaction_type",
+			"label": __("Transaction Type"),
+			"fieldtype": "Select",
+			"default": "Sales Invoice",
+			"options": [{"label": __("Sales Invoice"), "value": "Sales Invoice"}, {"label": __("Purchase Invoice"), "value": "Purchase Invoice"}]
 		}
 	]
 };

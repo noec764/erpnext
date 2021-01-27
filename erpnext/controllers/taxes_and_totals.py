@@ -749,9 +749,13 @@ def get_itemised_tax(taxes, with_tax_account=False):
 				else:
 					tax_rate = flt(tax_data)
 
+				if not tax_rate and tax_amount:
+					tax_rate = flt(frappe.db.get_value("Account", tax.account_head, "tax_rate"))
+
 				itemised_tax[item_code][tax.description] = frappe._dict(dict(
 					tax_rate = tax_rate,
-					tax_amount = tax_amount
+					tax_amount = tax_amount,
+					add_deduct_tax = tax.get("add_deduct_tax")
 				))
 
 				if with_tax_account:

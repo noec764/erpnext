@@ -5,7 +5,8 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.utils import flt
+from frappe.utils import flt, rounded
+from erpnext.controllers.taxes_and_totals import get_itemised_tax
 
 def execute(filters=None):
 	return get_data(filters)
@@ -25,9 +26,9 @@ class TaxSummary:
 		self.parents = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
 
 	def get_data(self):
-		if not self.filters.doctypes or "Sales Invoice" in self.filters.doctypes:
+		if not self.filters.transaction_type or self.filters.transaction_type == "Sales Invoice":
 			self.get_data_from_sales_invoices()
-		if not self.filters.doctypes or "Purchase Invoice" in self.filters.doctypes:
+		if self.filters.transaction_type == "Purchase Invoice":
 			self.get_data_from_purchase_invoices()
 
 		self.calculate_totals()
@@ -45,59 +46,70 @@ class TaxSummary:
 		self.get_data_from_transactions()
 
 	def get_data_from_transactions(self):
-		transactions_headers = {x.name: x.posting_date for x in frappe.get_all(self.transaction,
+		transactions_headers = {x.name: (x.posting_date, x.base_grand_total) for x in frappe.get_all(self.transaction,
 			filters={
 				"company": self.filters.company,
 				"posting_date": ("between", (self.filters.period_start_date, self.filters.period_end_date)),
 				"docstatus": 1
 			},
-			fields=["name", "posting_date"]
+			fields=["name", "posting_date", "base_grand_total"],
+			order_by="posting_date desc, name desc"
 		)}
 
-		transactions_items = frappe.get_all(f"{self.transaction} Item",
-			filters={
-				"parenttype": self.transaction,
-				"parent": ("in", transactions_headers.keys())
-			},
-			fields=["parent", "base_net_amount", "item_tax_rate", "item_code"],
-			order_by="parent"
-		)
-
-		for item in transactions_items:
-			if item.parent not in self.parents.get(self.transaction, {}).keys():
+		for document in transactions_headers.keys():
+			if document not in self.parents.get(self.transaction, {}).keys():
 				self.data.append({
-					"date": transactions_headers.get(item.parent),
+					"date": transactions_headers.get(document)[0],
 					"indent": 0,
 					"reference_doctype": self.transaction,
-					"reference_document": item.parent,
+					"reference_document": document,
+					"base_grand_total": transactions_headers.get(document)[1]
 				})
 
-			row = {
-				"indent": 1,
-				"item_code": item.item_code,
-				"base_net_amount": flt(item.base_net_amount),
-			}
+			doc = frappe.get_cached_doc(self.transaction, document)
+			itemised_tax = get_itemised_tax(doc.taxes, True)
 
-			self.parents[self.transaction][item.parent]["base_net_amount"] += flt(item.base_net_amount)
+			processed_items = []
+			for item in doc.items:
+				base_net_amount = item.base_net_amount
+				self.parents[self.transaction][item.parent]["base_net_amount"] += flt(base_net_amount)
 
-			for tax in frappe.parse_json(item.item_tax_rate):
-				if tax.get("rate", 0) not in self.tax_rates:
-					self.tax_rates.append(tax.get("rate", 0))
+				if item.item_code in processed_items:
+					for data in reversed(self.data):
+						if data.get("item_code") == item.item_code:
+							data["base_net_amount"] += flt(base_net_amount)
+					continue
+				else:
+					processed_items.append(item.item_code)
 
-				tax_amount = flt(item.base_net_amount) * flt(tax.get("rate", 0)) / 100.0
-				row.update({
-					tax.get("rate", 0): tax_amount
-				})
+				row = {
+					"indent": 1,
+					"item_code": item.item_code,
+					"base_net_amount": flt(base_net_amount),
+				}
 
-				self.parents[self.transaction][item.parent][tax.get("rate", 0)] += tax_amount
+				total_amount = 0
+				if itemised_tax:
+					for tax in itemised_tax.get(item.item_code):
+						tax_rate = flt(itemised_tax[item.item_code][tax].get("tax_rate")) * flt(-1.0 if itemised_tax[item.item_code][tax].get("add_deduct_tax") == "Deduct" else 1.0)
+						if tax_rate not in self.tax_rates:
+							self.tax_rates.append(tax_rate)
 
-			self.data.append(row)
+						tax_amount = flt(itemised_tax[item.item_code][tax].get("tax_amount")) * flt(-1.0 if itemised_tax[item.item_code][tax].get("add_deduct_tax") == "Deduct" else 1.0)
+						row.update({
+							tax_rate: tax_amount
+						})
+						self.parents[self.transaction][item.parent][tax_rate] += tax_amount
+
+				self.data.append(row)
 
 	def calculate_totals(self):
 		total_row = frappe._dict({
 			"item_code": _("Total"),
 			"indent": 0,
 			"base_net_amount": 0.0,
+			"base_grand_total": 0.0,
+			"difference": 0.0
 		})
 
 		for rate in self.tax_rates:
@@ -106,15 +118,24 @@ class TaxSummary:
 		for data in self.data:
 			if data.get("indent") == 0:
 				base_net_amount = flt(self.parents.get(data.get("reference_doctype"), {}).get(data.get("reference_document"), {}).get("base_net_amount"))
-				data.update({ "base_net_amount": base_net_amount})
+				data.update({"base_net_amount": base_net_amount})
 				total_row["base_net_amount"] += base_net_amount
 
+				total_row["base_grand_total"] += data.get("base_grand_total")
+
+				difference = flt(data.get("base_grand_total")) - flt(base_net_amount)
+
 				for tax in self.parents.get(data.get("reference_doctype"), {}).get(data.get("reference_document"), {}):
-					if tax != "base_net_amount":
+					if tax not in ("base_net_amount", "base_grand_amount"):
 						tax_amount = flt(self.parents.get(data.get("reference_doctype"), {}).get(data.get("reference_document"), {}).get(tax))
 						data.update({ tax: tax_amount })
 						total_row[tax] += tax_amount
+						difference -= tax_amount
 
+				data.update({"difference": rounded(difference, precision=2)})
+				total_row["difference"] += difference
+
+		total_row["difference"] = rounded(total_row["difference"], precision=2)
 		self.data.extend([
 			{},
 			total_row
@@ -150,6 +171,12 @@ class TaxSummary:
 				"width": 180
 			},
 			{
+				"fieldname": "base_grand_total",
+				"label": _("Base Grand Total"),
+				"fieldtype": "Currency",
+				"width": 180
+			},
+			{
 				"fieldname": "base_net_amount",
 				"label": _("Base Net Amount"),
 				"fieldtype": "Currency",
@@ -163,6 +190,12 @@ class TaxSummary:
 					"fieldname": str(rate),
 					"label": f"{str(rate)} %",
 					"fieldtype": "Currency",
-					"width": 180,
-					"default": 0.0
+					"width": 180
 				})
+
+		self.columns.append({
+			"fieldname": "difference",
+			"label": _("Difference"),
+			"fieldtype": "Currency",
+			"width": 100
+		})
