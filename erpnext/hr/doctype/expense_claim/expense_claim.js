@@ -229,6 +229,9 @@ frappe.ui.form.on("Expense Claim", {
 
 	refresh: function(frm) {
 		frm.trigger("toggle_fields");
+		if (!frappe.perm.has_perm(frm.doctype, 0, "submit")) {
+			frm.set_df_property('approval_status', 'read_only', 1);
+		}
 
 		if(frm.doc.docstatus > 0 && frm.doc.approval_status !== "Rejected") {
 			frm.add_custom_button(__('Accounting Ledger'), function() {
