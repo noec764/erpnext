@@ -174,7 +174,7 @@ def validate_balance_type(account, adv_adj=False):
 
 			if (balance_must_be=="Debit" and flt(balance) < 0) or \
 				(balance_must_be=="Credit" and flt(balance) > 0):
-				frappe.throw(_("Balance for Account {0} must always be {1}").format(account, _(balance_must_be)))
+				frappe.throw(_("Balance for Account {0} must always be {1}").format(account, _(balance_must_be).lower()))
 
 def update_outstanding_amt(account, party_type, party, against_voucher_type, against_voucher, on_cancel=False):
 	if party_type and party:
