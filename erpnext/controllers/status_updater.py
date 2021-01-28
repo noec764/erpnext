@@ -102,6 +102,12 @@ status_map = {
 		["Cancelled", "eval:self.docstatus == 2"],
 		["Active", "eval:self.docstatus == 1 and not self.is_expired"],
 		["Expired", "eval:self.docstatus == 1 and self.is_expired"]
+	],
+	"POS Closing Entry": [
+		["Draft", None],
+		["Submitted", "eval:self.docstatus == 1"],
+		["Queued", "eval:self.status == 'Queued'"],
+		["Cancelled", "eval:self.docstatus == 2"],
 	]
 }
 
