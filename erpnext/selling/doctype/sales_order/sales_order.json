@@ -106,6 +106,8 @@
   "tc_name",
   "terms",
   "more_info",
+  "is_internal_customer",
+  "represents_company",
   "inter_company_order_reference",
   "project",
   "party_account_currency",
@@ -910,7 +912,8 @@
    "fieldname": "inter_company_order_reference",
    "fieldtype": "Link",
    "label": "Inter Company Order Reference",
-   "options": "Purchase Order"
+   "options": "Purchase Order",
+   "read_only": 1
   },
   {
    "description": "Track this Sales Order against any Project",
@@ -1209,12 +1212,28 @@
    "label": "External Reference",
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "customer.is_internal_customer",
+   "fieldname": "is_internal_customer",
+   "fieldtype": "Check",
+   "label": "Is Internal Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.represents_company",
+   "fieldname": "represents_company",
+   "fieldtype": "Link",
+   "label": "Represents Company",
+   "options": "Company",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2020-10-30 13:59:18.628077",
+ "modified": "2021-01-20 23:40:39.929296",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
