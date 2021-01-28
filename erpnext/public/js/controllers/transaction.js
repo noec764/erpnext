@@ -589,6 +589,16 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 											});
 								},
 								() => {
+									// check if batch serial selector is disabled or not
+									if (show_batch_dialog && !frappe.flags.hide_serial_batch_dialog)
+										return frappe.db.get_single_value('Stock Settings', 'disable_serial_no_and_batch_selector')
+											.then((value) => {
+												if (value) {
+													frappe.flags.hide_serial_batch_dialog = true;
+												}
+											});
+								},
+								() => {
 									if(show_batch_dialog && !frappe.flags.hide_serial_batch_dialog) {
 										var d = locals[cdt][cdn];
 										$.each(r.message, function(k, v) {
