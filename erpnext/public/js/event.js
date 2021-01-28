@@ -38,8 +38,8 @@ frappe.ui.form.on('Event', {
 	
 						return $card
 					})
-	
-					frm.dashboard.add_section(item_booking_section).removeClass("form-dashboard-section")
+					$(".section-body .custom").remove();
+					frm.dashboard.add_section(item_booking_section).removeClass("form-dashboard-section");
 				}
 			})
 		})
