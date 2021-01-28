@@ -62,6 +62,7 @@ class ItemBooking(Document):
 				)
 			)
 			AND ib.item={frappe.db.escape(self.item)}
+			AND ib.status!='Cancelled'
 		""")
 
 		simultaneous_bookings_allowed = frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed") if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking") else 0
