@@ -5,8 +5,11 @@
     "engine": "InnoDB",
     "field_order": [
      "expense_account",
+     "account_currency",
+     "exchange_rate",
      "description",
      "col_break3",
+     "base_amount",
      "amount"
     ],
     "fields": [
@@ -27,7 +30,7 @@
       "fieldtype": "Currency",
       "in_list_view": 1,
       "label": "Amount",
-      "options": "Company:company:default_currency",
+      "options": "account_currency",
       "reqd": 1
      },
      {
@@ -37,12 +40,31 @@
       "in_list_view": 1,
       "label": "Expense Account",
       "options": "Account",
-      "mandatory_depends_on": "eval:cint(erpnext.is_perpetual_inventory_enabled(parent.company))",
-      "print_hide": 1
+      "mandatory_depends_on": "eval:cint(erpnext.is_perpetual_inventory_enabled(parent.company))"
+    },
+    {
+     "fieldname": "account_currency",
+     "fieldtype": "Link",
+     "label": "Account Currency",
+     "options": "Currency",
+     "read_only": 1
+    },
+    {
+     "fieldname": "exchange_rate",
+     "fieldtype": "Float",
+     "label": "Exchange Rate",
+     "precision": "9"
+    },
+    {
+     "fieldname": "base_amount",
+     "fieldtype": "Currency",
+     "label": "Base Amount",
+     "options": "Company:company:default_currency",
+     "read_only": 1
      }
     ],
     "istable": 1,
-    "modified": "2020-12-04 00:22:14.373312",
+    "modified": "2020-12-26 01:07:23.233604",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Landed Cost Taxes and Charges",
