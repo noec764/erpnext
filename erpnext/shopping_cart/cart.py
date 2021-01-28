@@ -231,6 +231,13 @@ def create_lead_for_item_inquiry(lead, subject, message):
 	lead_doc.update(lead)
 	lead_doc.set('lead_owner', '')
 
+	if not frappe.db.exists('Lead Source', _('Product Inquiry')):
+		frappe.get_doc({
+			'doctype': 'Lead Source',
+			'source_name' : _('Product Inquiry')
+		}).insert(ignore_permissions=True)
+	lead_doc.set('source', _('Product Inquiry'))
+
 	try:
 		lead_doc.save(ignore_permissions=True)
 	except frappe.exceptions.DuplicateEntryError:
