@@ -13,7 +13,6 @@ from frappe.desk.reportview import get_match_cond
 from erpnext.hr.doctype.daily_work_summary.daily_work_summary import get_users_email
 from erpnext.hr.doctype.holiday_list.holiday_list import is_holiday
 from frappe.model.document import Document
-from erpnext.education.doctype.student_attendance.student_attendance import get_holiday_list
 
 class Project(Document):
 	def get_feed(self):
@@ -542,7 +541,7 @@ def set_project_status(project, status):
 	project.save()
 
 def update_if_holiday(holiday_list, date):
-	holiday_list = holiday_list or get_holiday_list()
+	holiday_list = holiday_list
 	while is_holiday(holiday_list, date):
 		date = add_days(date, 1)
 	return date
