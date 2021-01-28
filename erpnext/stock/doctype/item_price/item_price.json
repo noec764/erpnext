@@ -18,6 +18,7 @@
   "price_list",
   "customer",
   "supplier",
+  "batch_no",
   "column_break_3",
   "buying",
   "selling",
@@ -203,12 +204,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Reference"
+  },
+  {
+    "fieldname": "batch_no",
+    "fieldtype": "Link",
+    "label": "Batch No",
+    "options": "Batch"
   }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2020-09-29 10:51:14.605879",
+ "modified": "2020-12-08 18:12:15.395772",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Price",
