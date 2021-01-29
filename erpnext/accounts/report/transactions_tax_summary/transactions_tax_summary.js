@@ -6,13 +6,13 @@ frappe.query_reports["Transactions Tax Summary"] = {
 	"formatter": function(value, row, column, data, default_formatter) {
 		value = default_formatter(value || "", row, column, data);
 		if (data && data.indent == 0) {
-			value = $(`<span>${value}</span>`);
-			var $value = $(value).css("font-weight", "bold");
-
-			if (column.id == "difference" && data[column.fieldname] != 0) {
-				$value.addClass("text-danger");
+			if (column.id == "base_grand_total" && data.difference != 0) {
+				value = $(value).append(`<span class="text-danger"> (${format_currency(data.difference, null, 2)})</span>`)
+			} else {
+				value = $(`<span>${value}</span>`);
 			}
 
+			var $value = $(value).css("font-weight", "bold");
 			value = $value.wrap("<p></p>").parent().html();
 		}
 

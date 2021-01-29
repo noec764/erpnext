@@ -22,7 +22,7 @@ class TaxSummary:
 		self.data = []
 		self.columns = []
 		self.tax_rates = []
-		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, fields=["name", "tax_rate"])
+		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, pluck="name")
 		self.parents = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
 
 	def get_data(self):
@@ -91,7 +91,11 @@ class TaxSummary:
 				total_amount = 0
 				if itemised_tax:
 					for tax in itemised_tax.get(item.item_code):
-						tax_rate = flt(itemised_tax[item.item_code][tax].get("tax_rate")) * flt(-1.0 if itemised_tax[item.item_code][tax].get("add_deduct_tax") == "Deduct" else 1.0)
+						if itemised_tax[item.item_code][tax].get("tax_account") not in self.tax_accounts:
+							tax_rate = -99.0
+						else:
+							tax_rate = flt(itemised_tax[item.item_code][tax].get("tax_rate")) * flt(-1.0 if itemised_tax[item.item_code][tax].get("add_deduct_tax") == "Deduct" else 1.0)
+
 						if tax_rate not in self.tax_rates:
 							self.tax_rates.append(tax_rate)
 
@@ -188,14 +192,7 @@ class TaxSummary:
 		for rate in self.tax_rates:
 			self.columns.append({
 					"fieldname": str(rate),
-					"label": f"{str(rate)} %",
+					"label": f"{str(rate)} %" if rate != -99.0 else _("Other charges"),
 					"fieldtype": "Currency",
 					"width": 180
 				})
-
-		self.columns.append({
-			"fieldname": "difference",
-			"label": _("Difference"),
-			"fieldtype": "Currency",
-			"width": 100
-		})
