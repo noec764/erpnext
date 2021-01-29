@@ -173,11 +173,11 @@ def get_report_summary(period_list, asset, liability, equity, provisional_profit
 	]
 
 def get_chart_data(filters, columns, asset, liability, equity):
-	labels = [d.get("label") for d in columns[2:]]
+	labels = [d.get("label") for d in columns[3:]]
 
 	asset_data, liability_data, equity_data = [], [], []
 
-	for p in columns[2:]:
+	for p in columns[3:]:
 		if asset:
 			asset_data.append(asset[-2].get(p.get("fieldname")))
 		if liability:
