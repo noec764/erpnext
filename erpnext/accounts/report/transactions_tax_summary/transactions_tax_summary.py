@@ -36,7 +36,6 @@ class TaxSummary:
 
 		return self.columns, self.data
 
-
 	def get_data_from_sales_invoices(self):
 		self.transaction = "Sales Invoice"
 		self.get_data_from_transactions()
