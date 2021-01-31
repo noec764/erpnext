@@ -490,6 +490,7 @@ def _get_party_document(user):
 			customer.customer_primary_contact = contact.name
 			customer.save()
 
+		frappe.db.commit()
 		frappe.cache().hset('shopping_cart_party', user, customer)
 		return customer
 
