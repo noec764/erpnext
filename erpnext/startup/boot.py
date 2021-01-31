@@ -43,6 +43,8 @@ def boot_session(bootinfo):
 		party_account_types = frappe.db.sql(""" select name, ifnull(account_type, '') from `tabParty Type`""")
 		bootinfo.party_account_types = frappe._dict(party_account_types)
 
+		frappe.cache().hdel('shopping_cart_party', frappe.session.user)
+
 def load_country_and_currency(bootinfo):
 	country = frappe.db.get_default("country")
 	if country and frappe.db.exists("Country", country):
