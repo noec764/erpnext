@@ -182,8 +182,8 @@ erpnext.PointOfSale.Controller = class {
 
 		this.frm.save(undefined, undefined, undefined, () => {
 			frappe.show_alert({
-				message:__("There was an error saving the document."), 
-				indicator:'red'
+				message: __("There was an error saving the document."), 
+				indicator: 'red'
 			});
 			frappe.utils.play_sound("error");
 		}).then(() => {
@@ -673,4 +673,4 @@ erpnext.PointOfSale.Controller = class {
 			})
 			.catch(e => console.log(e));
 	}
-}
+};
