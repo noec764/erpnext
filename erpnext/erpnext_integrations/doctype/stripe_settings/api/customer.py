@@ -9,7 +9,11 @@ class StripeCustomer:
 	@handle_stripe_errors
 	def get_or_create(self, customer_id, stripe_id=None):
 		if not stripe_id:
-			stripe_id = frappe.db.get_value("Integration References", dict(customer=customer_id), "stripe_customer_id")
+			stripe_id = frappe.db.get_value("Integration References",
+				dict(
+					customer=customer_id,
+					stripe_settings=self.gateway.name
+				), "stripe_customer_id")
 
 		if stripe_id:
 			customer = self.get(stripe_id)

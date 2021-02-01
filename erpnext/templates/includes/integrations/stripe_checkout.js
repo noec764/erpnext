@@ -298,4 +298,6 @@ class StripeCheckout {
 	}
 }
 
-new StripeCheckout();
+frappe.ready(() => {
+	new StripeCheckout();
+})

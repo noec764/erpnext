@@ -63,23 +63,21 @@
 }
 
 .stripe label {
-  position: relative;
   color: #8898AA;
   font-weight: 300;
   height: 40px;
-  line-height: 40px;
   margin-left: 20px;
-  display: block;
+  display: flex;
 }
 
 .stripe .group label:not(:last-child) {
   border-bottom: 1px solid #F0F5FA;
 }
 
-.stripe label>span {
+.stripe label>.stripe-label {
   width: 20%;
-  text-align: right;
-  float: left;
+  display: flex;
+  align-items: center;
 }
 
 .current-card {

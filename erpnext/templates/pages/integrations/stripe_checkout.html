@@ -23,19 +23,19 @@
 			<div class="frappe-card">
 				<div class="form-group">
 					<label>
-						<span>{{ _("Name") }}</span>
+						<div class="stripe-label"><span>{{ _("Name") }}</span></div>
 						<input id="cardholder-name" name="cardholder-name" class="field" placeholder="{{ _('John Doe') }}" value="{{payer_name}}"/>
 					</label>
 				</div>
 				<div class="form-group">
 					<label>
-						<span>{{ _("Email") }}</span>
+						<div class="stripe-label">{{ _("Email") }}</div>
 						<input id="cardholder-email" name="cardholder-email" class="field" placeholder="{{ _('john@doe.com') }}" value="{{payer_email}}"/>
 					</label>
 				</div>
 				<div class="form-group">
 					<label>
-						<span>{{ _("Card Details") }}</span>
+						<div class="stripe-label">{{ _("Card Details") }}</div>
 						<div id="card-element" name="card-element" class="field"></div>
 					</label>
 				</div>
