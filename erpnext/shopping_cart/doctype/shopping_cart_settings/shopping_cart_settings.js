@@ -10,6 +10,16 @@ frappe.ui.form.on("Shopping Cart Settings", {
 	},
 	refresh: function(frm){
 		toggle_mandatory(frm)
+		if (frm.doc.enabled) {
+			frm.get_field('store_page_docs').$wrapper.removeClass('hide-control').html(
+				`<div>${__("Follow these steps to create a landing page for your store")}:
+					<a href="https://docs.erpnext.com/docs/user/manual/en/website/store-landing-page"
+						style="color: var(--gray-600)">
+						docs/store-landing-page
+					</a>
+				</div>`
+			);
+		}
 	},
 	enable_checkout: function(frm){
 		toggle_mandatory(frm)
