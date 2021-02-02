@@ -37,7 +37,7 @@ $.extend(shopping_cart, {
 
 	get_update_address_dialog() {
 		let d = new frappe.ui.Dialog({
-			title: "Select Address",
+			title: __("Select Address"),
 			fields: [{
 				'fieldtype': 'HTML',
 				'fieldname': 'address_picker',
@@ -62,6 +62,7 @@ $.extend(shopping_cart, {
 							shopping_cart.parent.find(
 								`.address-container[data-address-type="${address_type}"]`
 							).html(r.message.address);
+							shopping_cart.bind_address_picker_dialog();
 						}
 					}
 				});

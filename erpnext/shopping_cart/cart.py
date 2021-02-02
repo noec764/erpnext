@@ -53,7 +53,7 @@ def get_shipping_addresses(party=None):
 		party = get_party()
 	addresses = get_address_docs(party=party)
 	return [{"name": address.name, "title": address.address_title, "display": address.display}
-		for address in addresses if address.address_type == "Shipping"
+		for address in addresses if (address.address_type == "Shipping" or address.is_shipping_address)
 	]
 
 @frappe.whitelist()
@@ -62,7 +62,7 @@ def get_billing_addresses(party=None):
 		party = get_party()
 	addresses = get_address_docs(party=party)
 	return [{"name": address.name, "title": address.address_title, "display": address.display}
-		for address in addresses if address.address_type == "Billing"
+		for address in addresses if (address.address_type == "Billing" or address.is_primary_address)
 	]
 
 @frappe.whitelist()

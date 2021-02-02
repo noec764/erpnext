@@ -7,7 +7,6 @@ from erpnext.shopping_cart.filters import ProductFiltersBuilder
 sitemap = 1
 
 def get_context(context):
-
 	if frappe.form_dict:
 		search = frappe.form_dict.search
 		field_filters = frappe.parse_json(frappe.form_dict.field_filters)
@@ -28,9 +27,6 @@ def get_context(context):
 
 	context.field_filters = filter_engine.get_field_filters()
 	context.attribute_filters = filter_engine.get_attribute_fitlers()
-
-	context.attribute_filters = get_attribute_filter_data() \
-		if product_settings.enable_attribute_filters else []
 
 	context.product_settings = product_settings
 	context.body_class = "product-page"
