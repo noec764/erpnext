@@ -681,7 +681,6 @@ class DepreciationSchedule:
 		self.coefficient = 1
 		self.total_number_of_depreciations = cint(self.finance_book.total_number_of_depreciations)
 		self.remaining_number_of_depreciations = self.depreciations_basis = cint(self.finance_book.total_number_of_depreciations) - cint(self.asset.number_of_depreciations_booked)
-		self.depreciations_left = self.remaining_number_of_depreciations
 		self.depreciation_amount = 0
 		self.current_depreciation = 0
 		self.booking_start_date = self.booking_end_date = None
@@ -689,6 +688,7 @@ class DepreciationSchedule:
 	def create(self):
 		self.get_number_of_depreciations()
 		self.get_booking_dates()
+
 		for index, booking_date in enumerate(self.booking_dates):
 			if index == 0:
 				self.booking_start_date = getdate(self.asset.available_for_use_date)
@@ -702,8 +702,9 @@ class DepreciationSchedule:
 
 			self.get_coefficient()
 			self.get_depreciation_amount()
+
 			DepreciationRow(self).create()
-			self.depreciations_left -= 1
+			self.remaining_number_of_depreciations -= 1
 
 	def get_number_of_depreciations(self):
 		pass
@@ -736,11 +737,11 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 		first_booking_date = getdate(self.finance_book.depreciation_start_date)
 		self.booking_dates = [first_booking_date]
 
-		for i in range(self.total_number_of_depreciations - 1):
-			if i == self.total_number_of_depreciations - 2:
+		for i in range(self.remaining_number_of_depreciations - 1):
+			if i == self.remaining_number_of_depreciations - 2:
 				last_booking_date = add_days(
 					add_months(
-						getdate(self.asset.available_for_use_date), cint(self.finance_book.frequency_of_depreciation) * (i + 2)
+						getdate(self.asset.available_for_use_date), cint(self.finance_book.frequency_of_depreciation) * (i + 1)
 					),
 				-1)
 
@@ -751,8 +752,7 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
 		self.depreciation_amount = (flt(self.total_value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
-
-		if self.depreciations_left == 1:
+		if self.remaining_number_of_depreciations == 1:
 			self.depreciation_amount = self.remaining_value_to_depreciate
 
 		self.remaining_value_to_depreciate -= self.depreciation_amount
@@ -769,7 +769,7 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 		else:
 			days = (cint(months) - 2) * 30 + min((31 - cint(self.booking_start_date.day)), 30) + min(cint(booking), 30)
 
-		if self.depreciations_left == 1:
+		if self.remaining_number_of_depreciations == 1:
 			days += 1
 
 		total_days = min(get_total_days(self.booking_end_date, self.finance_book.frequency_of_depreciation), 360)
@@ -801,7 +801,7 @@ class DoubleDecliningBalanceSchedule(DepreciationSchedule):
 
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
-		if self.depreciations_left == 1:
+		if self.remaining_number_of_depreciations == 1:
 			self.depreciation_amount = self.value_to_depreciate
 		else:
 			self.depreciation_amount = flt(self.value_to_depreciate * (flt(self.coefficient) / 100), precision)
