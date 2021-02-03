@@ -9851,7 +9851,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0} ({1}) cannot be greater than planned quantity ({2}) in Work Order {3},{0} ({1}) ne peut pas être supérieur à la quantité planifiée ({2}) dans l'ordre de travail {3},
 {0} Account not found against Customer {1}.,Compte {0} non trouvé pour le client {1}.,
 {0} Asset{2} Created for <b>{1}</b>,{0} actif {2} créé pour <b>{1}</b>,
-{0} Budget for Account {1} against {2} {3} is {4}. It will exceed by {5},{0} le Budget du Compte {1} pour {2} {3} est de {4}. Il dépassera de {5},
+{0} Budget for Account {1} against {2} {3} is {4}. It will exceed by {5},Le budget {0} du compte {1} pour {2} {3} est de {4}. Avec va être dépassé de {5},
 {0} Created,{0} créé,
 {0} Digest,Récapitulatif {0},
 {0} Name,Nom {0},

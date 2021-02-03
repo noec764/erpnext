@@ -259,8 +259,8 @@ def get_actual_details(name, filters):
 	if filters.get("budget_against") == "Cost Center":
 		cc_lft, cc_rgt = frappe.db.get_value("Cost Center", name, ["lft", "rgt"])
 		cond = """
-				and lft >= "{lft}"
-				and rgt <= "{rgt}"
+				and lft >= {lft}
+				and rgt <= {rgt}
 			""".format(lft=cc_lft, rgt=cc_rgt)
 
 	ac_details = frappe.db.sql(
@@ -282,7 +282,6 @@ def get_actual_details(name, filters):
 				and ba.account=gl.account
 				and b.{budget_against} = gl.{budget_against}
 				and gl.fiscal_year between %s and %s
-				and b.{budget_against} = %s
 				and exists(
 					select
 						name
@@ -296,7 +295,7 @@ def get_actual_details(name, filters):
 					gl.name
 				order by gl.fiscal_year
 		""".format(tab=filters.budget_against, budget_against=budget_against, cond=cond),
-		(filters.from_fiscal_year, filters.to_fiscal_year, name), as_dict=1)
+		(filters.from_fiscal_year, filters.to_fiscal_year), as_dict=1)
 
 	cc_actual_details = {}
 	for d in ac_details:
@@ -394,8 +393,8 @@ def get_chart_data(filters, columns, data):
 		'data': {
 			'labels': labels,
 			'datasets': [
-				{'name': 'Budget', 'chartType': 'bar', 'values': budget_values},
-				{'name': 'Actual Expense', 'chartType': 'bar', 'values': actual_values}
+				{'name': _('Budget'), 'chartType': 'bar', 'values': budget_values},
+				{'name': _('Actual Expense'), 'chartType': 'bar', 'values': actual_values}
 			]
 		}
 	}
