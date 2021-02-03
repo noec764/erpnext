@@ -25,6 +25,7 @@ class WebhooksController():
 		self.period = {}
 		self.event_map = {}
 		self.status_map = {}
+		self.make_sales_invoice = False
 
 	def handle_update(self):
 		self.process_metadata()
@@ -127,6 +128,7 @@ class WebhooksController():
 					self.add_subscription_references(payment_entry)
 				else:
 					self.add_payment_request_references(payment_entry)
+					self.make_sales_invoice = True
 
 			if flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
 				payment_entry.submit()
@@ -261,7 +263,7 @@ class WebhooksController():
 	def set_as_completed(self, message=None):
 		if message:
 			self.integration_request.db_set("error", str(message), update_modified=False)
-			self.integration_request.load_from_db()
+		self.integration_request.load_from_db()
 		self.integration_request.update_status({}, "Completed")
 		self.update_payment_request()
 
@@ -271,6 +273,9 @@ class WebhooksController():
 		self.integration_request.update_status({}, "Queued")
 
 	def update_payment_request(self):
+		if self.status_map.get(self.action_type) == "Paid" and self.make_sales_invoice:
+				self.payment_request.run_method("make_invoice")
+
 		if self.payment_request and self.status_map.get(self.action_type) and \
 			self.payment_request.status not in (self.status_map.get(self.action_type), 'Paid', 'Completed'):
 			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))

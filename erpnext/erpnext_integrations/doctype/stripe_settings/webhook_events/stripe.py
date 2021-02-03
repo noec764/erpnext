@@ -52,6 +52,8 @@ class StripeWebhooksController(WebhooksController):
 
 	def get_payment_request(self):
 		payment_request_id = None
+		if not self.metadata:
+			return
 
 		if self.metadata.get("reference_doctype") == "Subscription":
 			self.subscription = frappe.get_doc("Subscription", self.metadata.get("reference_name"))
