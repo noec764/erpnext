@@ -128,7 +128,8 @@ class WebhooksController():
 					self.add_subscription_references(payment_entry)
 				else:
 					self.add_payment_request_references(payment_entry)
-					self.make_sales_invoice = True
+					if self.sales_order:
+						self.make_sales_invoice = True
 
 			if flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
 				payment_entry.submit()
