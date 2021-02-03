@@ -261,6 +261,8 @@ frappe.ui.form.on("Expense Claim", {
 				});
 			}, __('Make'), true);
 		}
+
+		frm.trigger("sanctioned_amount_alert")
 	},
 
 	calculate_grand_total: function(frm) {
@@ -376,6 +378,15 @@ frappe.ui.form.on("Expense Claim", {
 					}
 				}
 			});
+		}
+	},
+
+	sanctioned_amount_alert: function(frm) {
+		if (frm.doc.approval_status=="Approved" && frm.doc.total_sanctioned_amount == 0) {
+			frappe.show_alert({
+				message: __("This expense claim has a total sanctionned amout equal to {0}", [format_currency(frm.doc.total_sanctioned_amount)]),
+				indicator: "orange"
+			})
 		}
 	}
 });
