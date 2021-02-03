@@ -150,6 +150,8 @@ class CadrageTVABase:
 									tax_rate = tax.get("rate")
 									if tax_rate not in self.tax_rates:
 										self.tax_rates.append(tax_rate)
+
+									taxable_amount_by_account[account][tax_rate] += item.get("base_net_amount")
 							else:
 								taxes = itemised_tax.get(item.get("item_code"))
 								for tax in taxes:
@@ -157,8 +159,9 @@ class CadrageTVABase:
 									if tax_rate not in self.tax_rates:
 										self.tax_rates.append(tax_rate)
 
+									taxable_amount_by_account[account][tax_rate] += item.get("base_net_amount")
+
 							calculated_base_net_amount += item.get("base_net_amount")
-							taxable_amount_by_account[account][tax_rate] += item.get("base_net_amount")
 
 						control_value = flt(doc.base_net_total) - flt(calculated_base_net_amount)
 						taxable_amount_by_account[account]["control"] = control_value
