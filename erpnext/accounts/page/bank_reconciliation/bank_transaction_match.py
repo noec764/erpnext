@@ -82,6 +82,7 @@ class BankTransactionMatch:
 			query_filters.update(filters)
 
 		if unreconciled and self.document_type == "Expense Claim":
+			query_filters.update({"total_sanctioned_amount": ("!=", 0)})
 			query_or_filters.update({"unreconciled_amount": ("!=", 0), "total_amount_reimbursed": ("=", 0)})
 		elif unreconciled and self.document_type in ["Sales Invoice", "Purchase Invoice"]:
 			query_or_filters.update({"unreconciled_amount": ("!=", 0), "outstanding_amount": (">", 0)})
