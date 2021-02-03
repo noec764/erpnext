@@ -545,6 +545,7 @@ class TestWorkOrder(unittest.TestCase):
 		for row in ste3.items:
 			self.assertEquals(row.qty, expected_qty.get(row.item_code))
 
+		ste_cancel_list.reverse()
 		for ste_doc in ste_cancel_list:
 			ste_doc.cancel()
 
@@ -587,6 +588,7 @@ class TestWorkOrder(unittest.TestCase):
 			if itemwise_qty.get(ste_row.item_code) and ste_row.s_warehouse:
 				self.assertEquals(ste_row.qty, itemwise_qty.get(ste_row.item_code) / 2)
 
+		ste_cancel_list.reverse()
 		for ste_doc in ste_cancel_list:
 			ste_doc.cancel()
 
