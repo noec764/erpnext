@@ -216,7 +216,19 @@ class RuleProcessor:
 
 	def check_application_rule(self, doc):
 		meta = frappe.get_meta(doc.doctype)
-		if self.rule.applicable_for not in [x.options for x in meta.fields]:
+		options = [x.options for x in meta.fields]
+		if self.rule.applicable_for not in options:
+			if self.rule.applicable_for == "Item Group" and "Item" in options:
+				fields = [x.fieldname for x in meta.fields if x.options == "Item"]
+				for field in fields:
+					item_group = frappe.db.get_value("Item", doc.get(field), "item_group")
+					return item_group != self.rule.applicable_for_document_type
+			elif self.rule.applicable_for == "Customer Group":
+				fields = [x.fieldname for x in meta.fields if x.options == "Customer"]
+				for field in fields:
+					customer_group = frappe.db.get_value("Customer", doc.get(field), "customer_group")
+					return customer_group != self.rule.applicable_for_document_type
+
 			return True
 
 		fields = [x.fieldname for x in meta.fields if x.options == self.rule.applicable_for]
