@@ -22,17 +22,19 @@ class CadrageTVABase:
 		self.data = []
 		self.columns = []
 		self.tax_rates = []
-		tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, fields=["name", "account_number"])
+		self.precision = 2
+		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, fields=["name", "account_number", "tax_rate"])
 		self.collection_accounts = [x.name for x in
-			tax_accounts
+			self.tax_accounts
 			if str(x.account_number).startswith("4457")
 		]
-
-		print("Collection accounts", self.collection_accounts)
 
 	def get_data(self):
 		self.get_income_entries()
 		self.get_vat_split()
+		self.get_vat_credits()
+		self.get_vat_debits()
+		self.control_values()
 
 		self.get_columns()
 
@@ -68,24 +70,16 @@ class CadrageTVABase:
 
 		grand_total = 0.0
 		for gl_entry in income_gl_entries:
-			grand_total += flt(gl_entry.get("total"))
+			grand_total += flt(gl_entry.get("total"), self.precision)
+
 			row = {
 				"account": gl_entry.get("account"),
 				"account_number": self.income_expense_accounts_number_dict.get(gl_entry.get("account")),
 				"account_name": self.income_expense_accounts_name_dict.get(gl_entry.get("account")),
-				"total": gl_entry.get("total")
+				"total": flt(gl_entry.get("total"), self.precision)
 			}
 
 			self.data.append(row)
-
-		self.data.append({
-			"account": "",
-			"is_total": True,
-			"account_number": "",
-			"account_name": _("Period Turnover"),
-			"total": grand_total,
-			"bold": True
-		})
 
 	def get_income_expense_accounts(self):
 		income_expense_accounts = frappe.get_all("Account",
@@ -102,10 +96,12 @@ class CadrageTVABase:
 		return frappe.get_all("GL Entry",
 			filters=dict(
 				account=("in", self.full_account_list),
-				posting_date=("between", self.period)
+				posting_date=("between", self.period),
+				is_cancelled=0
 			),
 			fields=fields,
-			group_by=group_by
+			group_by=group_by,
+			order_by="account asc"
 		)
 
 	def get_vat_split(self):
@@ -132,7 +128,6 @@ class CadrageTVABase:
 				if x.parenttype == gl_entry.voucher_type and x.parent == gl_entry.voucher_no and gl_entry.account == x.account]
 
 		taxable_amount_by_account = {}
-		control = 0.0
 		for account in gl_by_account:
 			taxable_amount_by_account[account] = defaultdict(float)
 			for voucher_type in gl_by_account[account]:
@@ -141,58 +136,107 @@ class CadrageTVABase:
 						doc = frappe.get_cached_doc(voucher_type, voucher)
 
 						itemised_tax = get_itemised_tax(doc.taxes, True)
-
-						calculated_base_net_amount = 0.0
 						for item in gl_by_account[account][voucher_type][voucher]:
-							if item.get("item_tax_rate"):
-								taxes = item.get("item_tax_rate")
-								for tax in frappe.parse_json(taxes):
+							if frappe.parse_json(item.get("item_tax_rate")):
+								taxes = frappe.parse_json(item.get("item_tax_rate"))
+								for tax in taxes:
 									tax_rate = tax.get("rate")
 									if tax_rate not in self.tax_rates:
 										self.tax_rates.append(tax_rate)
 
-									taxable_amount_by_account[account][tax_rate] += item.get("base_net_amount")
+									taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
+
 							else:
 								taxes = itemised_tax.get(item.get("item_code"))
 								for tax in taxes:
+									if taxes[tax].get("tax_account") not in self.collection_accounts:
+										continue
 									tax_rate = itemised_tax[item.get("item_code")][tax]["tax_rate"]
 									if tax_rate not in self.tax_rates:
 										self.tax_rates.append(tax_rate)
 
-									taxable_amount_by_account[account][tax_rate] += item.get("base_net_amount")
-
-							calculated_base_net_amount += item.get("base_net_amount")
-
-						control_value = flt(doc.base_net_total) - flt(calculated_base_net_amount)
-						taxable_amount_by_account[account]["control"] = control_value
-						control += control_value
+									taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
 
 					else:
 						continue
 
 		tax_total = defaultdict(float)
+		total = 0.0
 		for data in self.data:
-			if data.get("is_total"):
-				for tax_rate in self.tax_rates:
-					data.update({
-						str(tax_rate): tax_total.get(tax_rate, 0.0)
-					})
+			acc = data.get("account")
+			taxable_amount = taxable_amount_by_account.get(acc)
+			if not taxable_amount:
+				if frappe.db.get_value("Account", acc, "account_type") != "Income Account":
+					self.data = [x for x in self.data if x.get("account") != acc]
+					continue
+				else:
+					taxable_amount_by_account[acc][0.0] = data["total"]
+					if 0.0 not in self.tax_rates:
+						self.tax_rates.append(0.0)
+
+			total += flt(data.get("total"), self.precision)
+
+			for tax_rate in self.tax_rates:
+				tax_amount = taxable_amount.get(tax_rate, 0.0) if taxable_amount else 0.0
+				tax_total[tax_rate] += flt(tax_amount, self.precision)
 				data.update({
-					"control": control
+					str(tax_rate): tax_amount
 				})
-			else:
-				taxable_amount = taxable_amount_by_account.get(data.get("account"))
-				for tax_rate in self.tax_rates:
-					tax_amount = taxable_amount.get(tax_rate, 0.0) if taxable_amount else 0.0
-					tax_total[tax_rate] += flt(tax_amount)
-					data.update({
-						str(tax_rate): tax_amount
+
+		total_row = {
+			"account": "",
+			"is_total": True,
+			"account_number": "",
+			"account_name": _("Period Turnover"),
+			"total": total,
+			"bold": True
+		}
+
+		for tax_rate in self.tax_rates:
+			total_row.update({
+				str(tax_rate): tax_total.get(tax_rate, 0.0)
+			})
+
+		self.data.append(total_row)
+
+	def get_vat_credits(self):
+		self.data.append({})
+		self.get_vat_in_books("credit", _("+ Collected tax accounting balance"))
+
+	def get_vat_debits(self):
+		self.get_vat_in_books("debit", _("- CA3 entries corrections"))
+
+	def get_vat_in_books(self, balance_type="credit", label=None):
+		self.data.append({
+			"account": "",
+			"is_total": False,
+			"account_number": "",
+			"account_name": label,
+			"total": ""
+		})
+
+		for rate in self.tax_rates:
+			accounts = [x.name for x in self.tax_accounts if x.tax_rate == rate and str(x.account_number).startswith("4457")]
+			if accounts:
+				gl = frappe.get_all("GL Entry",
+					filters=dict(
+						account=("in", accounts),
+						posting_date=("between", self.period),
+						is_cancelled=0
+					),
+					fields=f"SUM({balance_type}) as total"
+				)
+
+				if gl:
+					self.data[-1].update({
+						str(rate): flt(gl[0].get("total"), self.precision)
 					})
 
-				if taxable_amount:
-					data.update({
-						"control": taxable_amount.get("control")
-					})
+
+	def control_values(self):
+		for data in self.data:
+			if data.get("total"):
+				data["control"] = flt(flt(data.get("total")) - sum([flt(data.get(str(t))) for t in self.tax_rates]), self.precision)
 
 	def get_columns(self):
 		self.columns = [
@@ -213,7 +257,7 @@ class CadrageTVABase:
 				"fieldname": "account_name",
 				"label": _("Account Name"),
 				"fieldtype": "Data",
-				"width": 150
+				"width": 350
 			},
 			{
 				"fieldname": "total",
