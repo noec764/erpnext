@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2021, Dokos SAS and Contributors
+# For license information, please see license.txt
+
 import frappe
 import erpnext
 from frappe import _
@@ -20,8 +24,10 @@ class SubscriptionTransactionBase:
 		self.previous_period = previous_period[0] if previous_period else frappe._dict(period_start=self.subscription.start, period_end=self.subscription.start)
 
 	def set_subscription_invoicing_details(self, document):
+		document.company = self.subscription.company
 		document.customer = self.subscription.customer
 		document.customer_group, document.territory = frappe.db.get_value("Customer", self.subscription.customer, ["customer_group", "territory"])
+		document.letter_head = frappe.db.get_value("Company", self.subscription.company, "default_letter_head")
 		document.set_missing_lead_customer_details()
 		document.subscription = self.subscription.name
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and "Fixed rate" in list(self.get_plans_pricing_rules()) else 0
