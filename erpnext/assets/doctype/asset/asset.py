@@ -61,11 +61,13 @@ class Asset(AccountsController):
 
 	def prepare_depreciation_data(self):
 		if self.calculate_depreciation:
+			self.value_after_depreciation = 0
 			self.set_depreciation_rate()
 			self.make_depreciation_schedule()
 			self.set_accumulated_depreciation()
 		else:
 			self.finance_books = []
+			self.value_after_depreciation = (flt(self.gross_purchase_amount) - flt(self.opening_accumulated_depreciation))
 
 	def validate_item(self):
 		item = frappe.get_cached_value("Item", self.item_code,
@@ -173,7 +175,7 @@ class Asset(AccountsController):
 			return
 
 		for d in self.get('finance_books'):
-			#d.expected_value_after_useful_life = 0
+			d.value_after_depreciation = (flt(self.gross_purchase_amount) - flt(self.opening_accumulated_depreciation))
 			DEPRECIATION_METHOD_MAP.get(d.depreciation_method)(self, d).create()
 
 	def validate_asset_finance_books(self, row):
