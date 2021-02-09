@@ -581,7 +581,7 @@ def item_manufacturer_query(doctype, txt, searchfield, start, page_len, filters)
 @frappe.validate_and_sanitize_search_inputs
 def get_purchase_receipts(doctype, txt, searchfield, start, page_len, filters):
 	query = """
-		select pr.name
+		select pr.name, pr.title, pr.posting_date
 		from `tabPurchase Receipt` pr, `tabPurchase Receipt Item` pritem
 		where pr.docstatus = 1 and pritem.parent = pr.name
 		and pr.name like {txt}""".format(txt = frappe.db.escape('%{0}%'.format(txt)))
@@ -595,7 +595,7 @@ def get_purchase_receipts(doctype, txt, searchfield, start, page_len, filters):
 @frappe.validate_and_sanitize_search_inputs
 def get_purchase_invoices(doctype, txt, searchfield, start, page_len, filters):
 	query = """
-		select pi.name
+		select pi.name, pi.title, pi.posting_date
 		from `tabPurchase Invoice` pi, `tabPurchase Invoice Item` piitem
 		where pi.docstatus = 1 and piitem.parent = pi.name
 		and pi.name like {txt}""".format(txt = frappe.db.escape('%{0}%'.format(txt)))
