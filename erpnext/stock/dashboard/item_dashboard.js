@@ -135,7 +135,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 			const message = __("No Stock Available Currently");
 			this.content.find('.result').css('text-align', 'center');
 
-			$(`<div class='text-muted' style='margin: 20px 5px; font-weight: lighter;'>
+			$(`<div class='text-muted' style='margin: 20px 5px;'>
 				${message} </div>`).appendTo(this.result);
 		}
 	}
