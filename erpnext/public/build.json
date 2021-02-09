@@ -1,7 +1,7 @@
 {
 	"css/erpnext.css": [
 		"public/less/erpnext.less",
-		"public/less/call_popup.less",
+		"public/scss/call_popup.scss",
 		"public/scss/point-of-sale.scss"
 	],
 	"js/erpnext-web.min.js": [
