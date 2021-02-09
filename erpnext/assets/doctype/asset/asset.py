@@ -747,7 +747,8 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 					),
 				-1)
 
-				self.booking_dates.append(getdate(last_booking_date))
+				if getdate(last_booking_date) > getdate(self.booking_dates[-1]):
+					self.booking_dates.append(getdate(last_booking_date))
 			else:
 				self.booking_dates.append(getdate(add_months(first_booking_date, cint(self.finance_book.frequency_of_depreciation) * (i + 1))))
 
