@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from erpnext import get_default_company
 from frappe.utils import cint
+from frappe import _
 
 def boot_session(bootinfo):
 	"""boot session - send website info if guest"""
@@ -57,27 +58,27 @@ def load_country_and_currency(bootinfo):
 def update_page_info(bootinfo):
 	bootinfo.page_info.update({
 		"Chart of Accounts": {
-			"title": "Chart of Accounts",
+			"title": _("Chart of Accounts"),
 			"route": "Tree/Account"
 		},
 		"Chart of Cost Centers": {
-			"title": "Chart of Cost Centers",
+			"title": _("Chart of Cost Centers"),
 			"route": "Tree/Cost Center"
 		},
 		"Item Group Tree": {
-			"title": "Item Group Tree",
+			"title": _("Item Group Tree"),
 			"route": "Tree/Item Group"
 		},
 		"Customer Group Tree": {
-			"title": "Customer Group Tree",
+			"title": _("Customer Group Tree"),
 			"route": "Tree/Customer Group"
 		},
 		"Territory Tree": {
-			"title": "Territory Tree",
+			"title": _("Territory Tree"),
 			"route": "Tree/Territory"
 		},
 		"Sales Person Tree": {
-			"title": "Sales Person Tree",
+			"title": _("Sales Person Tree"),
 			"route": "Tree/Sales Person"
 		}
 	})

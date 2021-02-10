@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.utils import add_days, flt, nowdate
+from frappe.utils import flt, nowdate, getdate, add_days
 from erpnext.controllers.taxes_and_totals import get_itemised_tax
 from erpnext.accounts.utils import get_balance_on
 from erpnext.accounts.utils import get_fiscal_year
@@ -20,7 +20,12 @@ def get_data(filters=None):
 class CadrageTVABase:
 	def __init__(self, filters):
 		self.filters = filters
-		self.period = (self.filters.period_start_date, self.filters.period_end_date)
+		self.fiscal_year = get_fiscal_year(fiscal_year=self.filters.fiscal_year, as_dict=True)
+
+		if not getdate(self.fiscal_year.year_start_date) <= getdate(self.filters.date) <= getdate(self.fiscal_year.year_end_date):
+			frappe.throw(_("Please select a date within the selected fiscal year"))
+
+		self.period = (self.fiscal_year.year_start_date, self.filters.date)
 		self.data = []
 		self.columns = []
 		self.tax_rates = []
@@ -28,8 +33,10 @@ class CadrageTVABase:
 		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, fields=["name", "account_number", "tax_rate"])
 		self.collection_accounts = [x.name for x in
 			self.tax_accounts
-			if str(x.account_number).startswith("4457")
+			if str(x.account_number).startswith("4457") or str(x.account_number).startswith("44587")
 		]
+		self.account_numbers = frappe.get_all("Account", pluck="account_number")
+		self.total_amounts = {}
 
 		self.total_row = {}
 
@@ -37,9 +44,12 @@ class CadrageTVABase:
 		self.get_income_entries()
 		self.get_vat_split()
 		self.get_corrections()
+		self.total_turnover()
 		self.get_total_collected_vat()
 		self.get_vat_credits()
 		self.get_vat_debits()
+		self.get_vat_in_accounts_total()
+		self.get_difference()
 		self.control_values()
 
 		self.get_columns()
@@ -164,7 +174,26 @@ class CadrageTVABase:
 									taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
 
 					else:
-						continue
+						gl_entries = frappe.get_all("GL Entry",
+							filters=dict(
+								account=("in", self.collection_accounts + self.income_accounts_list),
+								voucher_type=voucher_type,
+								voucher_no=voucher,
+								is_cancelled=0
+							),
+							fields=["debit", "credit", "account"]
+						)
+						income_entries = {x.account: (flt(x.debit) - flt(x.credit)) * -1 for x in gl_entries if x.account in self.income_accounts_list}
+						tax_entries = [x for x in gl_entries if x.account in self.collection_accounts]
+
+						if len(tax_entries) == 1:
+							tax_rates = [x for x in self.tax_accounts if x.name == tax_entries[0].account]
+							if tax_rates:
+								for income_entry in income_entries:
+									taxable_amount_by_account[income_entry][tax_rates[0].tax_rate] += flt(income_entries[income_entry], self.precision)
+						else:
+							# TODO: Handle special cases
+							continue
 
 		tax_total = defaultdict(float)
 		total = 0.0
@@ -212,36 +241,126 @@ class CadrageTVABase:
 			_("Fiscal year end corrections"),
 			_("Exceptional corrections"),
 		]
-		fiscal_year = get_fiscal_year(self.filters.start_date)
+		tax_accounts = frappe.get_all("Account",
+			filters={"is_group": 0, "account_number": ("like", "44587%")},
+			fields=["name", "account_number", "account_name", "tax_rate"]
+		)
 
+
+		self.data.append({})
 		for index, group in enumerate(account_groups):
+			if not [y for y in self.account_numbers for x in group if str(y).startswith(str(x))]:
+				return
+
 			self.data.append({
 				"account": "",
 				"is_total": False,
 				"account_number": "",
 				"account_name": labels[index],
-				"total": ""
+				"total": "",
+				"bold": True
 			})
 			for g in group:
 				accounts = frappe.get_all("Account", 
 					filters={"is_group": 0, "account_number": ("like", f"{g}%")},
-					fields=["name", "account_number"]
+					fields=["name", "account_number", "account_name"]
 				)
 
 				for account in accounts:
-					balance = get_balance_on(account.name, fiscal_year.year_start_date)
-					print(balance)
+					date = self.fiscal_year.year_end_date if index == 1 else add_days(self.fiscal_year.year_start_date, -1)
+					gl_entries = frappe.get_all("GL Entry",
+						filters=dict(
+							account=account.name,
+							posting_date=("between", self.period),
+							is_cancelled=0
+						),
+						fields=f"debit, credit, voucher_type, voucher_no"
+					)
 
+					if gl_entries:
+						debit = sum([flt(x.debit) for x in gl_entries])
+						credit = sum([flt(x.credit) for x in gl_entries])
+						self.data.append({
+							"account": account.name,
+							"is_total": False,
+							"account_number": account.account_number,
+							"account_name": account.account_name,
+							"total": (flt(debit) - flt(credit)) if index == 1 else (flt(credit) - flt(debit))
+						})
+
+						tax_added = False
+						for gl_entry in gl_entries:
+							for tax_account in tax_accounts:
+								vat_entries = frappe.get_all("GL Entry",
+									filters=dict(
+										account=tax_account.name,
+										posting_date=("between", self.period),
+										is_cancelled=0
+									),
+									fields="sum(credit - debit) as total" if index == 1 else "sum(debit - credit) as total"
+								)
+
+								if vat_entries and vat_entries[0].get("total"):
+									tax_added = True
+									self.data[-1].update({
+										"total": self.data[-1].get("total") - flt(vat_entries[0].get("total"), self.precision)
+									})
+
+									if tax_account.tax_rate not in self.tax_rates:
+										self.tax_rates.append(tax_account.tax_rate)
+
+									self.data[-1].update({
+										str(tax_account.tax_rate): flt(vat_entries[0].get("total"), self.precision) / (tax_account.tax_rate) * 100.0 if vat_entries[0].get("total") else (flt(debit) - flt(credit)) if index == 1 else (flt(credit) - flt(debit))
+									})
+
+						if not tax_added:
+							self.data[-1].update({
+								str(0.0): (flt(debit) - flt(credit)) if index == 1 else (flt(credit) - flt(debit))
+							})
+
+	def total_turnover(self):
+		turnover = sum([flt(data.get("total")) for data in self.data if not data.get("bold")])
+		self.data.append({
+			"account": "",
+			"is_total": False,
+			"account_number": "",
+			"account_name": _("Turnover billed during the fiscal year"),
+			"total": turnover,
+			"bold": True
+		})
+
+		for tax in self.tax_rates:
+			total = sum([flt(data.get(str(tax))) for data in self.data if not data.get("bold")])
+			self.data[-1].update({
+				str(tax): total
+			})
 
 	def get_total_collected_vat(self):
-		pass
+		self.data.append({
+			"account": "",
+			"is_total": False,
+			"account_number": "",
+			"account_name": _("Collected VAT calculated on the turnover billed during the fiscal year"),
+			"total": "",
+			"bold": True
+		})
+
+		for tax in self.tax_rates:
+			total = sum([flt(data.get(str(tax))) for data in self.data if not data.get("bold")])
+			vat_amount = flt(total) * flt(tax) / 100.0
+			self.total_amounts[tax] = [vat_amount, 0]
+			self.data[-1].update({
+				str(tax): vat_amount
+			})
 
 	def get_vat_credits(self):
 		self.data.append({})
 		self.get_vat_in_books("credit - debit", _("+ Collected tax accounting balance"))
 
 	def get_vat_debits(self):
-		self.get_vat_in_books("debit", _("+ CA3 entries corrections"))
+		pass
+		# TODO: Handle CA3 corrections
+		# self.get_vat_in_books("debit", _("+ CA3 entries corrections"))
 
 	def get_vat_in_books(self, balance_type="credit", label=None):
 		self.data.append({
@@ -269,6 +388,40 @@ class CadrageTVABase:
 						str(rate): flt(gl[0].get("total"), self.precision)
 					})
 
+	def get_vat_in_accounts_total(self):
+		self.data.append({
+			"account": "",
+			"is_total": False,
+			"account_number": "",
+			"account_name": _("VAT in accounts to compare"),
+			"total": "",
+			"bold": True
+		})
+
+		for tax in self.tax_rates:
+			total = sum([flt(data.get(str(tax))) for data in self.data[-4:] if not data.get("bold")])
+			self.total_amounts[tax][1] = total
+			self.data[-1].update({
+				str(tax): flt(total)
+			})
+
+	def get_difference(self):
+		self.data.append({})
+		self.data.append({
+			"account": "",
+			"is_total": False,
+			"account_number": "",
+			"account_name": _("Global difference"),
+			"total": "",
+			"bold": True,
+			"warn_if_negative": True
+		})
+
+		for tax in self.tax_rates:
+			difference = flt(self.total_amounts[tax][0], self.precision) - flt(self.total_amounts[tax][1], self.precision)
+			self.data[-1].update({
+				str(tax): difference
+			})
 
 	def control_values(self):
 		for data in self.data:
