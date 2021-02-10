@@ -196,7 +196,16 @@ class Opportunity(TransactionBase):
 
 
 @frappe.whitelist()
-def get_item_details(item_code):
+def get_item_details(item_code, qty=0, customer=None):
+	from erpnext.accounts.party import get_default_price_list
+	from erpnext.stock.get_item_details import get_price_list_rate_for
+
+	default_price_list = None
+	if customer:
+		default_price_list = get_default_price_list(frappe.get_doc("Customer", customer))
+	if not default_price_list:
+		default_price_list = frappe.db.get_single_value("Selling Settings", "selling_price_list")
+
 	item = frappe.db.sql("""select item_name, stock_uom, image, description, item_group, brand
 		from `tabItem` where name = %s""", item_code, as_dict=1)
 	return {
@@ -205,7 +214,13 @@ def get_item_details(item_code):
 		'description': item and item[0]['description'] or '',
 		'image': item and item[0]['image'] or '',
 		'item_group': item and item[0]['item_group'] or '',
-		'brand': item and item[0]['brand'] or ''
+		'brand': item and item[0]['brand'] or '',
+		'price': item and get_price_list_rate_for(args={
+			"price_list": default_price_list,
+			"uom": item and item[0]['stock_uom'],
+			"ignore_party": not customer,
+			"qty": qty
+		}, item_code=item_code)
 	}
 
 @frappe.whitelist()
