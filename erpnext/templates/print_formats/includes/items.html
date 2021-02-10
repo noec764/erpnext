@@ -16,6 +16,12 @@
 			</thead>
 			<tbody>
 				{% for d in data %}
+				{% if d.title or d.print_title %}
+				<tr>
+					<td class="table-sr"></td>
+					<td class="bold" {{ fieldmeta(df) }}>{{ d.title or d.print_title or "" }}</td>
+				</tr>
+				{% endif %}
 				<tr>
 					<td class="table-sr">{{ d.idx }}</td>
 					{% for tdf in visible_columns %}
