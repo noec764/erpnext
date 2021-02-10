@@ -9,7 +9,7 @@
 				<div>
 					<p class="small">{{ __("Convert minutes into:") }}</p>
 					{% for u in d.conversions %}
-						<button class="btn btn-default uom-reconciliation-btn" data-uom="{{ u.uom }}" data-customer="{{ customer }}" data-target-item="{{ u.item }}" data-source-item="{{ d.item }}">{{ u.qty}} {{u.uom}} - {{ u.item }}</button>
+						<button class="btn btn-secondary uom-reconciliation-btn mb-2" data-uom="{{ u.uom }}" data-customer="{{ customer }}" data-target-item="{{ u.item }}" data-source-item="{{ d.item }}">{{ u.qty}} {{u.uom}} - {{ u.item }}</button>
 					{% endfor %}
 				</div>
 				{% endif %}

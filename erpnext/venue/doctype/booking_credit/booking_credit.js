@@ -73,10 +73,7 @@ frappe.ui.form.on('Booking Credit', {
 				source_item: $(e.target).attr("data-source-item"),
 				date: frm.doc.date
 			}).then(r => {
-				frappe.show_alert({
-					message: __("Credits successfully converted"),
-					indicator: "green"
-				})
+				frappe.show_alert(r)
 				frm.refresh()
 			})
 		})

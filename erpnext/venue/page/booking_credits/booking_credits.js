@@ -183,10 +183,7 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 				source_item: $(e.target).attr("data-source-item"),
 				date: this.date
 			}).then(r => {
-				frappe.show_alert({
-					message: __("Credits successfully converted"),
-					indicator: "green"
-				})
+				frappe.show_alert(r)
 
 				this.balances = [];
 				this.limit_start = 0;

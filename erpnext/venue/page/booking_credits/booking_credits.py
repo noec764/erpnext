@@ -71,6 +71,16 @@ def reconcile_credits(customer, target_uom, source_item, target_item, date=None)
 			}).insert(ignore_permissions=True)
 			credit.submit()
 
+			return {
+				"indicator": "green",
+				"message": _("Credits successfully converted")
+			}
+
+	return {
+		"indicator": "orange",
+		"message": _("The amount could not be converted. Please check if the customer has enough credits and that at least one unit of credit can be converted.")
+	}
+
 def closestInteger(n, m) : 
 	q = int(n / m) 
 	n1 = m * q 

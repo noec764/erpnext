@@ -84,7 +84,7 @@ def get_balance(customer, date=None, uom=None):
 			row["conversions"] = []
 			balance[item].append(row)
 
-	convertible_items = [x for x in frappe.get_all("Booking Credit Conversion", pluck="booking_credits_item") if x in balance]
+	convertible_items = [x for x in frappe.get_all("Booking Credit Conversion", pluck="booking_credits_item") if x in [y for y in balance]]
 	for bal in balance:
 		if bal not in convertible_items:
 			for row in balance[bal]:
@@ -94,7 +94,7 @@ def get_balance(customer, date=None, uom=None):
 							conversion = {
 								"uom": r.get("uom"),
 								"item": i,
-								"qty": min(get_uom_in_minutes(row.get("uom")) * abs(flt(row.get("balance"))) / get_uom_in_minutes(r.get("uom")), r.get("balance"))
+								"qty": flt(min(get_uom_in_minutes(row.get("uom")) * abs(flt(row.get("balance"))) / get_uom_in_minutes(r.get("uom")), r.get("balance")), 2)
 							}
 							if conversion.get("qty") > 0:
 								row["conversions"].append(conversion)
