@@ -77,6 +77,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nBillable\nBilling failed\nPayable\nDraft invoices\nCancelled and billable\nTo order"
   },
@@ -375,7 +376,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-01-07 10:29:02.357652",
+ "modified": "2021-02-10 16:35:16.946675",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
