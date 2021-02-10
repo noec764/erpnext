@@ -5,8 +5,10 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.utils import add_days, flt
+from frappe.utils import add_days, flt, nowdate
 from erpnext.controllers.taxes_and_totals import get_itemised_tax
+from erpnext.accounts.utils import get_balance_on
+from erpnext.accounts.utils import get_fiscal_year
 
 def execute(filters=None):
 	return get_data(filters)
@@ -29,9 +31,13 @@ class CadrageTVABase:
 			if str(x.account_number).startswith("4457")
 		]
 
+		self.total_row = {}
+
 	def get_data(self):
 		self.get_income_entries()
 		self.get_vat_split()
+		self.get_corrections()
+		self.get_total_collected_vat()
 		self.get_vat_credits()
 		self.get_vat_debits()
 		self.control_values()
@@ -183,7 +189,7 @@ class CadrageTVABase:
 					str(tax_rate): tax_amount
 				})
 
-		total_row = {
+		self.total_row = {
 			"account": "",
 			"is_total": True,
 			"account_number": "",
@@ -193,18 +199,49 @@ class CadrageTVABase:
 		}
 
 		for tax_rate in self.tax_rates:
-			total_row.update({
+			self.total_row.update({
 				str(tax_rate): tax_total.get(tax_rate, 0.0)
 			})
 
-		self.data.append(total_row)
+		self.data.append(self.total_row)
+
+	def get_corrections(self):
+		account_groups = [[4181, 4198, 487], [4181, 4198, 487], [654]]
+		labels = [
+			_("Fiscal year start corrections"),
+			_("Fiscal year end corrections"),
+			_("Exceptional corrections"),
+		]
+		fiscal_year = get_fiscal_year(self.filters.start_date)
+
+		for index, group in enumerate(account_groups):
+			self.data.append({
+				"account": "",
+				"is_total": False,
+				"account_number": "",
+				"account_name": labels[index],
+				"total": ""
+			})
+			for g in group:
+				accounts = frappe.get_all("Account", 
+					filters={"is_group": 0, "account_number": ("like", f"{g}%")},
+					fields=["name", "account_number"]
+				)
+
+				for account in accounts:
+					balance = get_balance_on(account.name, fiscal_year.year_start_date)
+					print(balance)
+
+
+	def get_total_collected_vat(self):
+		pass
 
 	def get_vat_credits(self):
 		self.data.append({})
-		self.get_vat_in_books("credit", _("+ Collected tax accounting balance"))
+		self.get_vat_in_books("credit - debit", _("+ Collected tax accounting balance"))
 
 	def get_vat_debits(self):
-		self.get_vat_in_books("debit", _("- CA3 entries corrections"))
+		self.get_vat_in_books("debit", _("+ CA3 entries corrections"))
 
 	def get_vat_in_books(self, balance_type="credit", label=None):
 		self.data.append({
