@@ -1,0 +1,29 @@
+.custom {
+	display: inline-flex;
+	background-color: transparent;
+	box-shadow: none;
+	padding: 0;
+}
+
+.custom .section-body {
+	padding: 0 !important;
+}
+
+.item-booking-card {
+	border-radius: var(--border-radius-md);
+	box-shadow: var(--card-shadow);
+	margin: 0 1rem 1rem 0;
+	cursor: pointer;
+}
+
+.item-booking-card .right-body {
+	padding: var(--padding-sm);
+	background-color: var(--card-bg);
+	border-top-right-radius: var(--border-radius-md);
+	border-bottom-right-radius: var(--border-radius-md);
+	min-width: 100px;
+}
+
+.item-booking-card .left-title {
+	padding: 0 0.8em;
+}

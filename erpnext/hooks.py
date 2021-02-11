@@ -27,6 +27,10 @@ doctype_js = {
 	"Payment Gateway": "public/js/payment_gateway.js"
 }
 
+doctype_css = {
+	"Event": "public/css/event.css",
+}
+
 override_doctype_class = {
 	'Address': 'erpnext.accounts.custom.address.ERPNextAddress'
 }
