@@ -38,7 +38,7 @@ frappe.ui.form.on('Event', {
 	
 						return $card
 					})
-					$(".section-body .custom").remove();
+					$(".custom").remove();
 					frm.dashboard.add_section(item_booking_section).removeClass("form-dashboard-section");
 				}
 			})

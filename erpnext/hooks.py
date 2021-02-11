@@ -291,8 +291,11 @@ doc_events = {
 	('Quotation', 'Sales Order', 'Sales Invoice'): {
 		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
 	},
-	'Bin': {
-		'on_update': ["erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products.update_stock"]
+	"Bin": {
+		"on_update": "erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products.update_stock"
+	},
+	"Event": {
+		"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event"
 	}
 }
 

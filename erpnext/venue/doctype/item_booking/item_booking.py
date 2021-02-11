@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date, fmt_money
+from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date, fmt_money, add_days, date_diff
 import datetime
 from datetime import timedelta, date
 import calendar
@@ -944,3 +944,15 @@ def get_corresponding_party(user):
 		party_name = lead[0]
 
 	return party_type, party_name
+
+def move_booking_with_event(doc, method):
+	doc_before_save = doc.get_doc_before_save()
+	if doc_before_save and getdate(doc_before_save.starts_on) != getdate(doc.starts_on):
+		days = date_diff(doc.starts_on, doc_before_save.starts_on)
+		bookings = frappe.get_all("Item Booking", filters={"event": doc.name}, fields=["name", "starts_on", "ends_on"])
+
+		for booking in bookings:
+			doc = frappe.get_doc("Item Booking", booking.name)
+			doc.starts_on = add_days(booking.starts_on, days)
+			doc.ends_on = add_days(booking.ends_on, days)
+			doc.save()
