@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import frappe
 from frappe import _
-from frappe.utils import cint, fmt_money, getdate, nowdate, get_datetime
+from frappe.utils import cint, fmt_money, getdate, nowdate, get_datetime, flt
 from frappe.integrations.utils import get_gateway_controller
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import (StripeCustomer, 
 	StripePaymentMethod, StripePaymentIntent, StripeInvoice, StripeSubscription)
@@ -56,7 +56,7 @@ def make_payment_intent(payment_key, customer):
 	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
 
 	payment_intent = StripePaymentIntent(payment_gateway, payment_request).create(
-		amount=(cint(payment_request.grand_total) * 100),
+		amount=(flt(payment_request.grand_total) * 100),
 		currency=payment_request.currency,
 		customer=customer,
 		metadata={
