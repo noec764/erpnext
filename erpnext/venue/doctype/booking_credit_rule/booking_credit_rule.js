@@ -142,6 +142,20 @@ frappe.ui.form.on('Booking Credit Rule', {
 	}
 });
 
+// Use a script instead of configuration to avoid an infinite loop in form rendering
+frappe.ui.form.on('Booking Credit Rules', {
+	form_render(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.set_df_property(row.parentfield, "reqd", !row.duration_interval, row.parent, "duration")
+	},
+	duration_interval(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		frm.set_df_property(row.parentfield, "reqd", !row.duration_interval, row.parent, "duration")
+		frm.set_df_property(row.parentfield, "reqd", row.duration_interval, row.parent, "from_duration")
+		frm.set_df_property(row.parentfield, "reqd", row.duration_interval, row.parent, "to_duration")
+	}
+})
+
 const get_link_options = (frm, doctype, link, field) => {
 	if (doctype) {
 		frappe.xcall('erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.get_link_options',
