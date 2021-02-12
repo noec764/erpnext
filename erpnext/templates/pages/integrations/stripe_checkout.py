@@ -56,7 +56,7 @@ def make_payment_intent(payment_key, customer):
 	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
 
 	payment_intent = StripePaymentIntent(payment_gateway, payment_request).create(
-		amount=(flt(payment_request.grand_total) * 100),
+		amount=cint(flt(payment_request.grand_total) * 100),
 		currency=payment_request.currency,
 		customer=customer,
 		metadata={
