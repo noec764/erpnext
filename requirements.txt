@@ -2,7 +2,7 @@ braintree==3.57.1
 frappe
 gocardless-pro==1.21.0
 ofxtools==0.8.16
-plaid-python==3.4.0
+plaid-python==7.0.0
 pycountry==19.8.18
 PyGithub==1.44.1
 python-stdnum==1.14

@@ -23,7 +23,7 @@ class PlaidConnector():
 			client_id=self.settings.plaid_client_id,
 			secret=self.settings.get_password("plaid_secret"),
 			environment=self.settings.plaid_env,
-			api_version="2019-05-29"
+			api_version="2020-09-14"
 		)
 
 	def get_access_token(self, public_token):
