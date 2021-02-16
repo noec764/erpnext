@@ -83,7 +83,7 @@ def get_data(filters, period_list):
 
 			row.update({ period.key: flt(total, precision) })
 
-		row.update({ "total": flt(customer_total, precision) / average_count })
+		row.update({ "total": flt(customer_total, precision) / flt(average_count or 1) })
 		result.append(row)
 
 	result.sort(key=lambda x:x["total"], reverse=True)
