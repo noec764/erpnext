@@ -28,6 +28,10 @@ class WoocommerceSettings(Document):
 			for doctype in ["Customer", "Address"]:
 				df = dict(fieldname='woocommerce_email', label='Woocommerce Email', fieldtype='Data', read_only=1, print_hide=1)
 				create_custom_field(doctype, df)
+
+			for doctype in ["Item"]:
+				df = dict(fieldname='sync_with_woocommerce', label='Sync with Woocommerce', fieldtype='Check', insert_after='is_stock_item', print_hide=1)
+				create_custom_field(doctype, df)
 			
 			if not frappe.get_value("Item Group", {"name": _("WooCommerce Products", sys_lang)}):
 				item_group = frappe.new_doc("Item Group")
