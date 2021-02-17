@@ -703,6 +703,7 @@ erpnext.patches.v13_0.convert_qi_parameter_to_link_field
 erpnext.patches.v13_0.add_naming_series_to_old_projects #2021-02-01
 erpnext.patches.v12_0.add_state_code_for_ladakh
 erpnext.patches.v13_0.set_app_name
+erpnext.patches.v13_0.item_reposting_for_incorrect_sl_and_gl
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
