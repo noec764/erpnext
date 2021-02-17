@@ -524,6 +524,9 @@ def _get_party_document(user):
 		return customer
 
 def get_debtors_account(cart_settings):
+	if not cart_settings.payment_gateway_account:
+		frappe.throw(_("Payment Gateway Account not set"), _("Mandatory"))
+
 	payment_gateway_account_currency = \
 		frappe.get_doc("Payment Gateway Account", cart_settings.payment_gateway_account).currency
 
