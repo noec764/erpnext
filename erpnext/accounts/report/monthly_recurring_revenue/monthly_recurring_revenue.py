@@ -137,13 +137,13 @@ def get_subscription_mrr(subscriptions, period):
 def get_chart_data(columns, data):
 	values = []
 	precision = get_currency_precision() or 2
-	for p in columns[2:]:
+	for p in columns[3:]:
 		if p.get("fieldname") != "total":
 			values.append(flt(data[-1].get(p.get("fieldname")), precision))
 
 	chart = {
 		"data": {
-			'labels': [d.get("label") for d in columns[2:] if d.get("fieldname") != "total"],
+			'labels': [d.get("label") for d in columns[3:] if d.get("fieldname") != "total"],
 			'datasets': [{
 				"name" : _("Monthly Recurring Revenue"),
 				"values": values
