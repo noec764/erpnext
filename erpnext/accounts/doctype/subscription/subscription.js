@@ -193,7 +193,7 @@ frappe.ui.form.on('Subscription', {
 			frappe.xcall("erpnext.accounts.doctype.subscription.subscription.get_subscription_plan", {
 				plan: frm.doc.subscription_plan
 			}).then(r => {
-				if (frm.is_new()) {
+				if (frm.is_new() && frm.doc.plans.length) {
 					frm.doc.plans = frm.doc.plans.map(f => f.item).filter(f => f != undefined)
 				}
 
