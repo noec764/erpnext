@@ -13,8 +13,11 @@
   "api_consumer_key",
   "api_consumer_secret",
   "sb_accounting_details",
+  "get_tax_account",
   "tax_accounts",
-  "f_n_f_account",
+  "get_shipping_methods",
+  "shipping_accounts",
+  "fee_account",
   "defaults_section",
   "creation_user",
   "warehouse",
@@ -22,9 +25,13 @@
   "column_break_14",
   "company",
   "delivery_after_days",
-  "uom",
   "endpoints",
-  "endpoint"
+  "endpoint",
+  "section_break_21",
+  "price_list",
+  "customer_group",
+  "weight_unit",
+  "cost_center"
  ],
  "fields": [
   {
@@ -71,13 +78,6 @@
    "label": "Accounting Details"
   },
   {
-   "fieldname": "f_n_f_account",
-   "fieldtype": "Link",
-   "label": "Freight and Forwarding Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
    "fieldname": "defaults_section",
    "fieldtype": "Section Break",
    "label": "Defaults"
@@ -94,7 +94,7 @@
    "description": "This warehouse will be used to create Sales Orders. The fallback warehouse is \"Stores\".",
    "fieldname": "warehouse",
    "fieldtype": "Link",
-   "label": "Warehouse",
+   "label": "Default Warehouse",
    "options": "Warehouse"
   },
   {
@@ -106,13 +106,6 @@
    "fieldname": "sales_order_series",
    "fieldtype": "Select",
    "label": "Sales Order Series"
-  },
-  {
-   "description": "This is the default UOM used for items and Sales orders. The fallback UOM is \"Nos\".",
-   "fieldname": "uom",
-   "fieldtype": "Link",
-   "label": "UOM",
-   "options": "UOM"
   },
   {
    "fieldname": "endpoints",
@@ -145,12 +138,66 @@
    "label": "Tax Accounts",
    "options": "Woocommerce Taxes",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "label": "Price List",
+   "options": "Price List",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_group",
+   "fieldtype": "Link",
+   "label": "Customer Group",
+   "options": "Customer Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "weight_unit",
+   "fieldtype": "Link",
+   "label": "Weight Unit",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "get_tax_account",
+   "fieldtype": "Button",
+   "label": "Get tax accounts"
+  },
+  {
+   "fieldname": "shipping_accounts",
+   "fieldtype": "Table",
+   "label": "Woocommerce Shipping Methods",
+   "options": "Woocommerce Shipping Methods"
+  },
+  {
+   "fieldname": "get_shipping_methods",
+   "fieldtype": "Button",
+   "label": "Get Shipping Methods"
+  },
+  {
+   "fieldname": "fee_account",
+   "fieldtype": "Link",
+   "label": "Fee Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-02-15 11:31:22.408392",
+ "modified": "2021-02-20 09:07:34.992696",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

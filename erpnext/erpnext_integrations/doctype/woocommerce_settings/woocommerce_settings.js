@@ -41,6 +41,36 @@ frappe.ui.form.on('Woocommerce Settings', {
 		frm.set_df_property("woocommerce_server_url", "reqd", frm.doc.enable_sync);
 		frm.set_df_property("api_consumer_key", "reqd", frm.doc.enable_sync);
 		frm.set_df_property("api_consumer_secret", "reqd", frm.doc.enable_sync);
+	},
+
+	get_tax_account(frm) {
+		frappe.xcall("erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_taxes")
+		.then(r => {
+			frm.clear_table("tax_accounts")
+			if (r && r.length) {
+				r.forEach(tax => {
+					const child = frm.add_child("tax_accounts");
+					child.woocommerce_tax_id = tax.id;
+					child.woocommerce_tax_name = tax.name;
+				})
+				refresh_field("tax_accounts");
+			}
+		})
+	},
+
+	get_shipping_methods(frm) {
+		frappe.xcall("erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_shipping_methods")
+		.then(r => {
+			frm.clear_table("shipping_accounts")
+			if (r && r.length) {
+				r.forEach(method => {
+					const child = frm.add_child("shipping_accounts");
+					child.woocommerce_shipping_method_id = method.id;
+					child.woocommerce_shipping_method_title = method.title;
+				})
+				refresh_field("shipping_accounts");
+			}
+		})
 	}
 });
 
