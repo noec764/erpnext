@@ -124,8 +124,8 @@ def get_result(filters, account_details):
 
 def get_gl_entries(filters, accounting_dimensions):
 	currency_map = get_currency(filters)
-	select_fields = """, debit, credit, debit_in_account_currency,
-		credit_in_account_currency """
+	select_fields = """, `tabGL Entry`.debit, `tabGL Entry`.credit, `tabGL Entry`.debit_in_account_currency,
+		`tabGL Entry`.credit_in_account_currency """
 
 	order_by_statement = "order by posting_date, account, creation"
 
@@ -179,14 +179,14 @@ def get_gl_entries(filters, accounting_dimensions):
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			gl.name as gl_entry, gl.posting_date, gl.account, gl.party_type, gl.party,
-			gl.voucher_type, gl.voucher_no, {dimension_fields} gl.cost_center, gl.project, gl.accounting_journal,
-			gl.against_voucher_type, gl.against_voucher, gl.account_currency, acc.account_number,
-			gl.remarks, gl.against, gl.is_opening, gl.creation {select_fields}
-		from `tabGL Entry` as gl
-		join `tabAccount` as acc
-		on gl.account = acc.name
-		where gl.company=%(company)s {conditions}
+			`tabGL Entry`.name as gl_entry, `tabGL Entry`.posting_date, `tabGL Entry`.account, `tabGL Entry`.party_type, `tabGL Entry`.party,
+			`tabGL Entry`.voucher_type, `tabGL Entry`.voucher_no, {dimension_fields} `tabGL Entry`.cost_center, `tabGL Entry`.project, `tabGL Entry`.accounting_journal,
+			`tabGL Entry`.against_voucher_type, `tabGL Entry`.against_voucher, `tabGL Entry`.account_currency, acc.account_number,
+			`tabGL Entry`.remarks, `tabGL Entry`.against, `tabGL Entry`.is_opening, `tabGL Entry`.creation {select_fields}
+		from `tabGL Entry`
+		left join `tabAccount` as acc
+		on `tabGL Entry`.account = acc.name
+		where `tabGL Entry`.company=%(company)s {conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
 		""".format(
