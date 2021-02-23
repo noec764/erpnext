@@ -40,8 +40,9 @@ def sync_orders():
 
 
 def sync_order(wc_api, woocommerce_order):
+	print("SYNC")
 	customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
-
+	print("customer", customer)
 	if customer:
 		if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"))):
 			_update_sales_order(wc_api.settings, woocommerce_order, customer)
@@ -51,6 +52,7 @@ def sync_order(wc_api, woocommerce_order):
 def _sync_customer(wc_api, id):
 	try:
 		woocommerce_customer = wc_api.get(f"customers/{id}").json()
+		print("Woo customer", woocommerce_customer)
 		return sync_customer(wc_api.settings, woocommerce_customer)
 	except Exception as e:
 		frappe.log_error(str(e), "Woocommerce Customer Error")
@@ -188,3 +190,9 @@ def get_shipping_account_head(id):
 
 def _update_sales_order(settings, woocommerce_order, customer):
 	pass
+
+def create_update_order(data):
+	wc_api = WooCommerceOrders()
+	print("CREATE UPDATE ORDER", data)
+	sync_order(wc_api, data)
+	frappe.db.commit()

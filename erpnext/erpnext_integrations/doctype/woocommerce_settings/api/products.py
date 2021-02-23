@@ -2,6 +2,9 @@ import frappe
 from frappe.utils import flt, now_datetime, get_datetime
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 from erpnext.utilities.product import get_price, get_qty_in_stock
+from frappe.utils.nestedset import get_root_of
+
+PER_PAGE = 100
 
 class WooCommerceProducts(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -12,6 +15,24 @@ class WooCommerceProducts(WooCommerceAPI):
 			return self.post("products", data).json()
 		else:
 			return self.put(f"products/{data.get('id')}", data).json()
+
+	def get_products(self, params=None):
+		return self.get("products", params=params).json()
+
+def sync_items():
+	wc_api = WooCommerceProducts()
+	response = wc_api.get_products()
+	products = response
+
+	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) or 1):
+		response = wc_api.get_products(params={
+			"per_page": PER_PAGE,
+			"page": page_idx + 1
+		})
+	products.extend(response)
+
+	for product in frappe.parse_json(products):
+		create_item(wc_api, product)
 
 def sync_products():
 	wc_api = WooCommerceProducts()
@@ -170,3 +191,129 @@ def get_variant_attributes(item, price_list, warehouse):
 			"options": list(set(attr_dict[attr]))
 		})
 	return variant_list, options, variant_item_name
+
+
+def create_item(wc_api, product):
+	attributes = create_attributes(product)
+	if product.get("variations"):
+		create_template(wc_api, product, attributes)
+	elif not frappe.db.exists("Item", {"woocommerce_id": product.get("id")}):
+		create_simple_item(wc_api.settings, product)
+
+
+def create_template(wc_api, product, attributes):
+	if not frappe.db.exists("Item", {"woocommerce_id": product.get("id")}):
+		template_dict = get_simple_item(wc_api.settings, product)
+		template_dict.update({
+			"has_variants": True,
+			"attributes": attributes
+		})
+
+		try:
+			template = frappe.get_doc(template_dict).insert(ignore_permissions=True)
+		except frappe.exceptions.DuplicateEntryError as e:
+			template = frappe.get_doc("Item", dict(item_code=template_dict.get("item_code")))
+
+	else:
+		template = frappe.get_doc("Item", dict(woocommerce_id=product.get("id")))
+
+	for variant in product.get("variations"):
+		create_variant(wc_api, variant, template, attributes)
+
+def create_variant(wc_api, variant, template, attributes):
+	product = wc_api.get(f"products/{variant}").json()
+	item = get_simple_item(wc_api.settings, product)
+	item.update({
+		"item_code": product.get("slug") or product.get("sku"),
+		"variant_of": template.name,
+		"attributes": [
+			{
+				"attribute": x.get("name"),
+				"attribute_value": x.get("option")[:140]
+			} for x in product.get("attributes")
+		]
+	})
+	try:
+		frappe.get_doc(item).insert(ignore_permissions=True)
+	except frappe.exceptions.DuplicateEntryError as e:
+		pass
+
+def create_simple_item(settings, product):
+	item = get_simple_item(settings, product)
+	try:
+		frappe.get_doc(item).insert(ignore_permissions=True)
+	except frappe.exceptions.DuplicateEntryError as e:
+		pass
+
+def get_simple_item(settings, product):
+	return {
+		"doctype": "Item",
+		"woocommerce_id": product.get("id"),
+		"sync_with_woocommerce": 1,
+		"is_stock_item": product.get("manage_stock"),
+		"item_code": product.get("sku") or product.get("slug"),
+		"item_name": product.get("name"),
+		"description": product.get("description") or product.get("name"),
+		"item_group": get_item_group(product.get("categories")),
+		"has_variants": False,
+		"stock_uom": settings.default_uom,
+		"default_warehouse": settings.warehouse,
+		"image": get_item_image(product),
+		"weight_uom": product.get("weight_unit"),
+		"weight_per_unit": product.get("weight"),
+		"web_long_description": product.get("short_description") or product.get("name"),
+	}
+
+def get_item_group(categories):
+	for category in categories:
+		if frappe.db.exists("Item Group", category.get("name")):
+			return category.name
+	else:
+		return get_root_of("Item Group")
+
+def get_item_image(product):
+	if product.get("images"):
+		if len(product.get("images")) == 1:
+			return product.get("images")[0].get("src")
+		for image in product.get("images"):
+			if image.get("position") == 0:
+				return image.get("src")
+
+def create_attributes(product):
+	attributes = []
+	for attr in product.get('attributes'):
+		if not frappe.db.get_value("Item Attribute", attr.get("name"), "name"):
+			new_item_attribute_entry = frappe.get_doc({
+				"doctype": "Item Attribute",
+				"attribute_name": attr.get("name"),
+				"woocommerce_id": attr.get("id"),
+				"item_attribute_values": []
+			})
+			
+			for attr_value in attr.get("options"):
+				row = new_item_attribute_entry.append('item_attribute_values', {})
+				row.attribute_value = attr_value[:140]
+				row.abbr = attr_value[:140]
+			
+			new_item_attribute_entry.insert(ignore_permissions=True)
+		else:
+			item_attr = frappe.get_doc("Item Attribute", attr.get("name"))
+			if not item_attr.numeric_values:
+					item_attr.woocommerce_id = attr.get("id")
+					old_len = len(item_attr.item_attribute_values)
+					item_attr = set_new_attribute_values(item_attr, attr.get("options"))
+					if len(item_attr.item_attribute_values) > old_len:
+						item_attr.save()
+		attributes.append({"attribute": attr.get("name")})
+
+	return attributes
+
+def set_new_attribute_values(item_attr, values):
+	for attr_value in values:
+		if not any((d.abbr.lower() == attr_value[:140].lower() or d.attribute_value.lower() == attr_value[:140].lower())\
+		for d in item_attr.item_attribute_values):
+			item_attr.append("item_attribute_values", {
+				"attribute_value": attr_value[:140],
+				"abbr": attr_value[:140]
+			})
+	return item_attr

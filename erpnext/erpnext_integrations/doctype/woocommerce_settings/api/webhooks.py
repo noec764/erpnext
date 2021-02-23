@@ -41,7 +41,6 @@ def create_webhooks():
 def delete_webhooks():
 	wc_api = WooCommerceWebhooks()
 
-	webhooks = wc_api.get("webhooks").json()
+	webhooks = wc_api.get("webhooks", params={"per_page": 100}).json()
 	for webhook in webhooks:
 		res = wc_api.delete(f"webhooks/{webhook['id']}", params={"force": True}).json()
-		print(res)

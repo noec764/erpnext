@@ -19,19 +19,19 @@
   "shipping_accounts",
   "fee_account",
   "defaults_section",
-  "creation_user",
   "warehouse",
   "sales_order_series",
+  "price_list",
   "column_break_14",
   "company",
+  "cost_center",
   "delivery_after_days",
-  "endpoints",
-  "endpoint",
-  "section_break_21",
-  "price_list",
   "customer_group",
   "weight_unit",
-  "cost_center"
+  "default_uom",
+  "endpoints",
+  "endpoint",
+  "section_break_21"
  ],
  "fields": [
   {
@@ -83,14 +83,6 @@
    "label": "Defaults"
   },
   {
-   "description": "The user that will be used to create Customers, Items and Sales Orders. This user should have the relevant permissions.",
-   "fieldname": "creation_user",
-   "fieldtype": "Link",
-   "label": "Creation User",
-   "options": "User",
-   "reqd": 1
-  },
-  {
    "description": "This warehouse will be used to create Sales Orders. The fallback warehouse is \"Stores\".",
    "fieldname": "warehouse",
    "fieldtype": "Link",
@@ -136,8 +128,7 @@
    "fieldname": "tax_accounts",
    "fieldtype": "Table",
    "label": "Tax Accounts",
-   "options": "Woocommerce Taxes",
-   "reqd": 1
+   "options": "Woocommerce Taxes"
   },
   {
    "fieldname": "section_break_21",
@@ -192,12 +183,19 @@
    "label": "Cost Center",
    "options": "Cost Center",
    "reqd": 1
+  },
+  {
+   "fieldname": "default_uom",
+   "fieldtype": "Link",
+   "label": "Default Unit of Measure",
+   "options": "UOM",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-02-20 09:07:34.992696",
+ "modified": "2021-02-23 18:52:28.166264",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

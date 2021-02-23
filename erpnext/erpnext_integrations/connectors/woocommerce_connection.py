@@ -3,45 +3,43 @@ from __future__ import unicode_literals
 import frappe, base64, hashlib, hmac, json
 from frappe import _
 
-handler_map = {}
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import create_update_order
+
+handler_map = {
+	"order.created": create_update_order,
+	"order.updated": create_update_order
+}
 
 def woocommerce_webhook(f):
 	"""
-	Decorator checking and validating a woocommerce Webhook request.
+	Decorator validating a woocommerce Webhook request.
 	"""
-	def _hmac_is_valid(body, secret, hmac_to_verify):
-		secret = str(secret)
-		hash = hmac.new(secret, body, hashlib.sha256)
-		hmac_calculated = base64.b64encode(hash.digest())
-		return hmac_calculated == hmac_to_verify
-
 	@wraps(f)
 	def wrapper(*args, **kwargs):
 		# Try to get required headers and decode the body of the request.
-		try:
-			webhook_topic = frappe.local.request.headers.get('X-woocommerce-Topic')
-			webhook_hmac = frappe.local.request.headers.get('X-woocommerce-Hmac-Sha256')
-			webhook_data = frappe._dict(frappe.parse_json(frappe.local.request.get_data()))
-		except:
-			raise ValidationError()
+		sig = base64.b64encode(
+			hmac.new(
+				woocommerce_settings.secret.encode('utf8'),
+				frappe.request.data,
+				hashlib.sha256
+			).digest()
+		)
 
-		# Verify the HMAC.
-		woocommerce_settings = frappe.get_doc("Woocommerce Settings")
-		if not _hmac_is_valid(frappe.local.request.get_data(), woocommerce_settings.secret, webhook_hmac):
-			raise AuthenticationError()
-
-			# Otherwise, set properties on the request object and return.
-		frappe.local.request.webhook_topic = webhook_topic
-		frappe.local.request.webhook_data  = webhook_data
-		kwargs.pop('cmd')
+		if frappe.request.data and frappe.get_request_header("X-Wc-Webhook-Signature") and \
+			not sig == bytes(frappe.get_request_header("X-Wc-Webhook-Signature").encode()):
+				frappe.throw(_("Unverified Webhook Data"))
 
 		return f(*args, **kwargs)
 	return wrapper
 
 @frappe.whitelist(allow_guest=True)
 def webhooks(*args, **kwargs):
-	topic = frappe.local.request.webhook_topic
-	data = frappe.local.request.webhook_data
+	topic = frappe.local.request.headers.get('X-Wc-Webhook-Topic')
+	try:
+		data = frappe.parse_json(frappe.safe_decode(frappe.request.data))
+	except json.decoder.JSONDecodeError:
+		data = frappe.safe_decode(frappe.request.data)
+
 	handler = handler_map.get(topic)
 	if handler:
 		handler(data)

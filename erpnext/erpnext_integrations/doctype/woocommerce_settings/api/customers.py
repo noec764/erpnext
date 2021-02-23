@@ -39,9 +39,9 @@ def sync_customer(settings, woocommerce_customer):
 	customer_name = (woocommerce_customer.get("first_name") + " " + (woocommerce_customer.get("last_name") \
 		if woocommerce_customer.get("last_name") else "")) if woocommerce_customer.get("first_name")\
 		else woocommerce_customer.get("email")
-		
-	try:
 
+	print("Customer Name", customer_name)
+	try:
 		if frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
 			customer = frappe.get_doc("Customer", dict(woocommerce_id=woocommerce_customer.get("id")))
 
@@ -63,7 +63,7 @@ def sync_customer(settings, woocommerce_customer):
 				"customer_type": "Individual"
 			})
 			customer.flags.ignore_mandatory = True
-			customer.insert()
+			customer.insert(ignore_permissions=True)
 		
 		if customer:
 			billing_address = woocommerce_customer.get("billing")
@@ -79,8 +79,8 @@ def sync_customer(settings, woocommerce_customer):
 		frappe.db.commit()
 
 		return customer
-	except Exception as e:
-		frappe.log_error(e, "Woocommerce Customer Creation Error")
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Woocommerce Customer Creation Error")
 
 def add_billing_address(settings, customer, woocommerce_customer):
 	existing_address = get_preferred_address("Customer", customer.name, "is_primary_address")
@@ -122,10 +122,11 @@ def _add_update_address(settings, customer, woocommerce_customer, address_type, 
 			}]
 		})
 
+		doc.flags.ignore_permissions = True
 		doc.save()
 
-	except Exception as e:
-		frappe.log_error(e, "Woocommerce Address Error")
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Woocommerce Address Error")
 
 def add_contact(customer, woocommerce_customer):
 	existing_contact = frappe.db.get_value("Contact", dict(email_id=woocommerce_customer["billing"]["email"]), "name")
@@ -153,10 +154,11 @@ def add_contact(customer, woocommerce_customer):
 			}]
 		})
 
+		doc.flags.ignore_permissions = True
 		doc.save()
 
 	except Exception as e:
-		frappe.log_error(e, "Woocommerce Contact Error")
+		frappe.log_error(frappe.get_traceback(), "Woocommerce Contact Error")
 
 def get_country_name(code):
 	return frappe.db.get_value("Country", dict(code=code), "name")

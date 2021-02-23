@@ -3,16 +3,11 @@
 
 frappe.ui.form.on('Woocommerce Settings', {
 	refresh (frm) {
+		if (frm.doc.enable_sync) {
+			frm.trigger("sync_buttons");
+		}
 		frm.trigger("add_button_generate_secret");
 		frm.trigger("check_enabled");
-		frm.set_query("tax_account", ()=>{
-			return {
-				"filters": {
-					"company": frappe.defaults.get_default("company"),
-					"is_group": 0
-				}
-			};
-		});
 	},
 
 	enable_sync (frm) {
@@ -71,6 +66,30 @@ frappe.ui.form.on('Woocommerce Settings', {
 				refresh_field("shipping_accounts");
 			}
 		})
+	},
+
+	sync_buttons(frm) {
+		frm.add_custom_button(__('Get woocommerce products'), () => {
+			frappe.confirm(
+				__("Add WooCommerce products to Dokos ?"),
+				() => {
+					frappe.call({
+						type:"POST",
+						method:"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_products",
+					}).done(() => {
+						frappe.show_alert({
+							indicator: "green",
+							message: __("WooCommerce products added to Dokos")
+						})
+					}).fail(() => {
+						frappe.show_alert({
+							indicator: "red",
+							message: __("Synchronization failed")
+						})
+					});
+				}
+			);
+		}, __("Actions"));
 	}
 });
 

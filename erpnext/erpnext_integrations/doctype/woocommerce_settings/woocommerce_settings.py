@@ -11,19 +11,22 @@ from six.moves.urllib.parse import urlparse
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import WooCommerceTaxes, WooCommerceShippingMethods
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import sync_items
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.webhooks import create_webhooks, delete_webhooks
 
 class WoocommerceSettings(Document):
 	def validate(self):
 		self.validate_settings()
 		self.create_delete_custom_fields()
 		self.create_webhook_url()
+		self.create_webhooks()
 
 	def create_delete_custom_fields(self):
 		sys_lang = frappe.get_single("System Settings").language or 'en'
 		if self.enable_sync:
 			custom_fields = {}
 			# create
-			for doctype in ["Customer", "Sales Order", "Item", "Address"]:
+			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute"]:
 				fields = [
 					dict(fieldname='woocommerce_id', label='Woocommerce ID', fieldtype='Data', read_only=1, print_hide=1, translatable=0),
 					dict(fieldname='last_woocommerce_sync', label='Last Woocommerce Sync', fieldtype='Datetime', hidden=1, print_hide=1)
@@ -69,7 +72,7 @@ class WoocommerceSettings(Document):
 		endpoint = "/api/method/erpnext.erpnext_integrations.connectors.woocommerce_connection.webhooks"
 
 		try:
-			url = frappe.request.url
+			url = "http://b9c96296fe1a.ngrok.io" #frappe.request.url
 		except RuntimeError:
 			# for CI Test to work
 			url = "http://localhost:8000"
@@ -80,6 +83,13 @@ class WoocommerceSettings(Document):
 
 		delivery_url = server_url + endpoint
 		self.endpoint = delivery_url
+
+	def create_webhooks(self):
+		if self.enable_sync:
+			create_webhooks()
+		else:
+			delete_webhooks()
+
 
 @frappe.whitelist()
 def generate_secret():
@@ -104,3 +114,7 @@ def get_shipping_methods():
 	wc_api = WooCommerceShippingMethods()
 	shipping_methods = wc_api.get_shipping_methods()
 	return shipping_methods
+
+@frappe.whitelist()
+def get_products():
+	sync_items()
