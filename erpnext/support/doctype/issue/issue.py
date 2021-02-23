@@ -137,7 +137,7 @@ class Issue(Document):
 
 	def update_agreement_status_on_custom_status(self):
 		"""
-			Update Agreement Fulfilled status using Custom Scripts for Custom Issue Status
+			Update Agreement Fulfilled status using Client Scripts for Custom Issue Status
 		"""
 		if not self.first_responded_on: # first_responded_on set when first reply is sent to customer
 			self.response_by_variance = round(time_diff_in_seconds(self.response_by, now_datetime()), 2)
