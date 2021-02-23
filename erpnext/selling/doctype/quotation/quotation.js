@@ -220,7 +220,7 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 					doc: me.frm.doc,
 					args: {date: values.end_date}
 				}).then(() => {
-					me.frm.refresh_field("valid_till");
+					me.frm.refresh();
 				})
 				dialog.hide();
 			},

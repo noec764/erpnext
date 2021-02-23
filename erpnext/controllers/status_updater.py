@@ -32,6 +32,7 @@ status_map = {
 		["Draft", None],
 		["Open", "eval:self.docstatus==1"],
 		["Lost", "eval:self.status=='Lost'"],
+		["Expired", "eval:self.docstatus==1 and self.valid_till < nowdate()"],
 		["Ordered", "has_sales_order"],
 		["Cancelled", "eval:self.docstatus==2"],
 	],

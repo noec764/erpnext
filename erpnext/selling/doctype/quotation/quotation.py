@@ -138,6 +138,7 @@ class Quotation(SellingController):
 	def extend_validity(self, date):
 		self.flags.ignore_validate_update_after_submit = True
 		self.valid_till = date
+		self.set_status()
 		self.save()
 		self.flags.ignore_validate_update_after_submit = False
 		
