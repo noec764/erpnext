@@ -58,7 +58,9 @@ def validate_cancellation(args):
 			if repost_entry.status == 'In Progress':
 				frappe.throw(_("Cannot cancel the transaction. Reposting of item valuation on submission is not completed yet."))
 			if repost_entry.status == 'Queued':
-				frappe.delete_doc("Repost Item Valuation", repost_entry.name)
+				doc = frappe.get_doc("Repost Item Valuation", repost_entry.name)
+				doc.cancel()
+				doc.delete()
 
 def set_as_cancel(voucher_type, voucher_no):
 	frappe.db.sql("""update `tabStock Ledger Entry` set is_cancelled=1,
@@ -437,7 +439,7 @@ class update_entries_after(object):
 
 		# Recalculate subcontracted item's rate in case of subcontracted purchase receipt/invoice
 		if frappe.db.get_value(sle.voucher_type, sle.voucher_no, "is_subcontracted"):
-			doc = frappe.get_cached_doc(sle.voucher_type, sle.voucher_no)
+			doc = frappe.get_doc(sle.voucher_type, sle.voucher_no)
 			doc.update_valuation_rate(reset_outgoing_rate=False)
 			for d in (doc.items + doc.supplied_items):
 				d.db_update()
