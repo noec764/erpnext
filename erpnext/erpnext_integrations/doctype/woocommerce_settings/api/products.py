@@ -17,22 +17,25 @@ class WooCommerceProducts(WooCommerceAPI):
 			return self.put(f"products/{data.get('id')}", data).json()
 
 	def get_products(self, params=None):
-		return self.get("products", params=params).json()
+		return self.get("products", params=params)
 
 def sync_items():
 	wc_api = WooCommerceProducts()
 	response = wc_api.get_products()
-	products = response
+	products = response.json()
 
 	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) or 1):
 		response = wc_api.get_products(params={
 			"per_page": PER_PAGE,
 			"page": page_idx + 1
 		})
-	products.extend(response)
+	products.extend(response.json())
 
 	for product in frappe.parse_json(products):
-		create_item(wc_api, product)
+		try:
+			create_item(wc_api, product)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), "WooCommerce Products Sync Error")
 
 def sync_products():
 	wc_api = WooCommerceProducts()
@@ -200,6 +203,7 @@ def create_item(wc_api, product):
 	elif not frappe.db.exists("Item", {"woocommerce_id": product.get("id")}):
 		create_simple_item(wc_api.settings, product)
 
+	frappe.db.commit()
 
 def create_template(wc_api, product, attributes):
 	if not frappe.db.exists("Item", {"woocommerce_id": product.get("id")}):
@@ -211,7 +215,7 @@ def create_template(wc_api, product, attributes):
 
 		try:
 			template = frappe.get_doc(template_dict).insert(ignore_permissions=True)
-		except frappe.exceptions.DuplicateEntryError as e:
+		except frappe.exceptions.DuplicateEntryError:
 			template = frappe.get_doc("Item", dict(item_code=template_dict.get("item_code")))
 
 	else:
@@ -317,3 +321,7 @@ def set_new_attribute_values(item_attr, values):
 				"abbr": attr_value[:140]
 			})
 	return item_attr
+
+def update_stock(doc, method):
+	print("UPDATE STOCK", doc.as_dict())
+	wc_api = WooCommerceProducts()

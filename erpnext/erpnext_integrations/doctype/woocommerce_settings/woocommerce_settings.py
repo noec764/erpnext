@@ -72,7 +72,7 @@ class WoocommerceSettings(Document):
 		endpoint = "/api/method/erpnext.erpnext_integrations.connectors.woocommerce_connection.webhooks"
 
 		try:
-			url = "http://b9c96296fe1a.ngrok.io" #frappe.request.url
+			url = "http://994237ce4c52.ngrok.io" #frappe.request.url
 		except RuntimeError:
 			# for CI Test to work
 			url = "http://localhost:8000"

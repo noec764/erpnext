@@ -73,6 +73,7 @@ def get_woocommerce_orders(wc_api):
 def _new_sales_order(settings, woocommerce_order, customer):
 	so = frappe.get_doc({
 		"doctype": "Sales Order",
+		"order_type": "Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
 		"customer": customer.name,
