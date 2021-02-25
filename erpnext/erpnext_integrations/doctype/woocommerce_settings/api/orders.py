@@ -1,10 +1,16 @@
+from collections import defaultdict
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
-from frappe.utils import nowdate, cint, flt
+from frappe.utils import nowdate, cint, flt, now_datetime
 from frappe import _
+
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import sync_customer
+
+PER_PAGE = 100
 
 class WooCommerceOrders(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -36,15 +42,12 @@ def sync_orders():
 	woocommerce_orders = get_woocommerce_orders(wc_api)
 
 	for woocommerce_order in woocommerce_orders:
-		sync_order(wc_api, woocommerce_order)
-
+		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
 
 def sync_order(wc_api, woocommerce_order):
-	print("SYNC")
 	customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
-	print("customer", customer)
 	if customer:
-		if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"))):
+		if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=1)):
 			_update_sales_order(wc_api.settings, woocommerce_order, customer)
 		else:
 			_new_sales_order(wc_api.settings, woocommerce_order, customer)
@@ -52,7 +55,6 @@ def sync_order(wc_api, woocommerce_order):
 def _sync_customer(wc_api, id):
 	try:
 		woocommerce_customer = wc_api.get(f"customers/{id}").json()
-		print("Woo customer", woocommerce_customer)
 		return sync_customer(wc_api.settings, woocommerce_customer)
 	except Exception as e:
 		frappe.log_error(str(e), "Woocommerce Customer Error")
@@ -70,10 +72,10 @@ def get_woocommerce_orders(wc_api):
 
 	return woocommerce_orders
 
-def _new_sales_order(settings, woocommerce_order, customer):
-	so = frappe.get_doc({
+def create_sales_order(settings, woocommerce_order, customer):
+	return frappe.get_doc({
 		"doctype": "Sales Order",
-		"order_type": "Cart",
+		"order_type": "Shopping Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
 		"customer": customer.name,
@@ -87,11 +89,17 @@ def _new_sales_order(settings, woocommerce_order, customer):
 		"currency": woocommerce_order.get("currency"),
 		"taxes_and_charges": None,
 		"customer_address": get_preferred_address("Customer", customer.name, "is_primary_address"),
-		"shipping_address_name": get_preferred_address("Customer", customer.name, "is_shipping_address")
+		"shipping_address_name": get_preferred_address("Customer", customer.name, "is_shipping_address"),
+		"last_woocommerce_sync": now_datetime()
 	})
 
+def _new_sales_order(settings, woocommerce_order, customer):
+	so = create_sales_order(settings, woocommerce_order, customer)
+
 	if so.items:
-		so.insert(ignore_permissions=True)
+		so.flags.ignore_permissions = True
+		so.insert()
+		so.submit()
 	else:
 		frappe.log_error(f"No items found for Woocommerce order {woocommerce_order.get('id')}", "Woocommerce Order Error")
 
@@ -190,10 +198,80 @@ def get_shipping_account_head(id):
 		return accounts[0].account
 
 def _update_sales_order(settings, woocommerce_order, customer):
-	pass
+	original_so = frappe.get_doc("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=1))
+	updated_so = create_sales_order(settings, woocommerce_order, customer)
+	sales_order = original_so
+
+	so_are_similar = compare_sales_orders(original_so, updated_so)
+
+	if not so_are_similar and updated_so.items:
+		original_so.flags.ignore_permissions = True
+		original_so.cancel()
+
+		sales_order = updated_so
+		sales_order.flags.ignore_permissions = True
+		sales_order.insert()
+		sales_order.submit()
+		frappe.db.commit()
+
+	if sales_order and woocommerce_order.get("date_paid"):
+		register_payment_and_invoice(settings, woocommerce_order, sales_order)
+
+	frappe.db.set_value("Sales Order", sales_order.name, "last_woocommerce_sync", now_datetime())
+
+def compare_sales_orders(original, updated):
+	if updated.grand_total and original.grand_total != updated.grand_total:
+		return False
+
+	if len(updated.items) and len(original.items) != len(updated.items):
+		return False
+
+	if len(original.taxes) and len(updated.taxes) and len(original.taxes) != len(updated.taxes):
+		return False
+
+	original_qty_per_item = get_qty_per_item(original.items)
+	updated_qty_per_item = get_qty_per_item(updated.items)
+	for it in updated_qty_per_item:
+		if not original_qty_per_item.get(it):
+			return False
+
+		if original_qty_per_item.get(it) != updated_qty_per_item[it]:
+			return False
+
+	return True
+
+def get_qty_per_item(items):
+	qty_per_item = defaultdict(float)
+	for item in items:
+		qty_per_item[item.item_code] += item.qty
+
+	return qty_per_item
+
+def register_payment_and_invoice(settings, woocommerce_order, sales_order):
+	if sales_order.per_billed < 100:
+		try:
+			make_payment(woocommerce_order, sales_order)
+			make_sales_invoice_from_sales_order(sales_order)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), "Woocommerce Payment and Invoice Error")
+
+def make_payment(woocommerce_order, sales_order):
+	frappe.flags.ignore_account_permission = True
+	frappe.flags.ignore_permissions = True
+	payment_entry = get_payment_entry(sales_order.doctype, sales_order.name)
+	if payment_entry.paid_amount:
+		payment_entry.reference_no = woocommerce_order.get("transaction_id") or woocommerce_order.get("payment_method_title")
+		payment_entry.reference_date = woocommerce_order.get("date_paid")
+		payment_entry.insert(ignore_permissions=True)
+		payment_entry.submit()
+
+def make_sales_invoice_from_sales_order(sales_order):
+	si = make_sales_invoice(sales_order.name, ignore_permissions=True)
+	si.allocate_advances_automatically = True
+	si.insert(ignore_permissions=True)
+	si.submit()
 
 def create_update_order(data):
 	wc_api = WooCommerceOrders()
-	print("CREATE UPDATE ORDER", data)
 	sync_order(wc_api, data)
 	frappe.db.commit()

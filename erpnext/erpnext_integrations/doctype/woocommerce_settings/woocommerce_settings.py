@@ -10,8 +10,8 @@ from frappe.model.document import Document
 from six.moves.urllib.parse import urlparse
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import WooCommerceTaxes, WooCommerceShippingMethods
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import sync_items
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import WooCommerceTaxes, WooCommerceShippingMethods, sync_orders
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import sync_items, sync_products
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.webhooks import create_webhooks, delete_webhooks
 
 class WoocommerceSettings(Document):
@@ -22,7 +22,6 @@ class WoocommerceSettings(Document):
 		self.create_webhooks()
 
 	def create_delete_custom_fields(self):
-		sys_lang = frappe.get_single("System Settings").language or 'en'
 		if self.enable_sync:
 			custom_fields = {}
 			# create
@@ -47,12 +46,6 @@ class WoocommerceSettings(Document):
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
-			
-			if not frappe.get_value("Item Group", {"name": _("WooCommerce Products", sys_lang)}):
-				item_group = frappe.new_doc("Item Group")
-				item_group.item_group_name = _("WooCommerce Products", sys_lang)
-				item_group.parent_item_group = get_root_of("Item Group")
-				item_group.insert()
 
 	def validate_settings(self):
 		if self.enable_sync:
@@ -72,7 +65,7 @@ class WoocommerceSettings(Document):
 		endpoint = "/api/method/erpnext.erpnext_integrations.connectors.woocommerce_connection.webhooks"
 
 		try:
-			url = "http://994237ce4c52.ngrok.io" #frappe.request.url
+			url = frappe.request.url
 		except RuntimeError:
 			# for CI Test to work
 			url = "http://localhost:8000"
@@ -118,3 +111,8 @@ def get_shipping_methods():
 @frappe.whitelist()
 def get_products():
 	sync_items()
+
+def sync_woocommerce():
+	if cint(frappe.get_single_value("Woocommerce Settings", "enable_sync")):
+		sync_products()
+		sync_orders()

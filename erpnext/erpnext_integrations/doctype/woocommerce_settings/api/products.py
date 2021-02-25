@@ -39,6 +39,7 @@ def sync_items():
 
 def sync_products():
 	wc_api = WooCommerceProducts()
+
 	for item in get_items():
 		woo_item = prepare_item(wc_api.settings, item)
 
