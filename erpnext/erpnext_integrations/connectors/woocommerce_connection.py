@@ -17,6 +17,7 @@ def woocommerce_webhook(f):
 	@wraps(f)
 	def wrapper(*args, **kwargs):
 		# Try to get required headers and decode the body of the request.
+		woocommerce_settings = frappe.get_doc("Woocommerce Settings")
 		sig = base64.b64encode(
 			hmac.new(
 				woocommerce_settings.secret.encode('utf8'),
