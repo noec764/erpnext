@@ -3,16 +3,11 @@
 
 frappe.ui.form.on('Woocommerce Settings', {
 	refresh (frm) {
+		if (frm.doc.enable_sync) {
+			frm.trigger("sync_buttons");
+		}
 		frm.trigger("add_button_generate_secret");
 		frm.trigger("check_enabled");
-		frm.set_query("tax_account", ()=>{
-			return {
-				"filters": {
-					"company": frappe.defaults.get_default("company"),
-					"is_group": 0
-				}
-			};
-		});
 	},
 
 	enable_sync (frm) {
@@ -41,6 +36,60 @@ frappe.ui.form.on('Woocommerce Settings', {
 		frm.set_df_property("woocommerce_server_url", "reqd", frm.doc.enable_sync);
 		frm.set_df_property("api_consumer_key", "reqd", frm.doc.enable_sync);
 		frm.set_df_property("api_consumer_secret", "reqd", frm.doc.enable_sync);
+	},
+
+	get_tax_account(frm) {
+		frappe.xcall("erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_taxes")
+		.then(r => {
+			frm.clear_table("tax_accounts")
+			if (r && r.length) {
+				r.forEach(tax => {
+					const child = frm.add_child("tax_accounts");
+					child.woocommerce_tax_id = tax.id;
+					child.woocommerce_tax_name = tax.name;
+				})
+				refresh_field("tax_accounts");
+			}
+		})
+	},
+
+	get_shipping_methods(frm) {
+		frappe.xcall("erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_shipping_methods")
+		.then(r => {
+			frm.clear_table("shipping_accounts")
+			if (r && r.length) {
+				r.forEach(method => {
+					const child = frm.add_child("shipping_accounts");
+					child.woocommerce_shipping_method_id = method.id;
+					child.woocommerce_shipping_method_title = method.title;
+				})
+				refresh_field("shipping_accounts");
+			}
+		})
+	},
+
+	sync_buttons(frm) {
+		frm.add_custom_button(__('Get woocommerce products'), () => {
+			frappe.confirm(
+				__("Add WooCommerce products to Dokos ?"),
+				() => {
+					frappe.call({
+						type:"POST",
+						method:"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.get_products",
+					}).done(() => {
+						frappe.show_alert({
+							indicator: "green",
+							message: __("WooCommerce products added to Dokos")
+						})
+					}).fail(() => {
+						frappe.show_alert({
+							indicator: "red",
+							message: __("Synchronization failed")
+						})
+					});
+				}
+			);
+		}, __("Actions"));
 	}
 });
 
