@@ -335,7 +335,7 @@ scheduler_events = {
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
 		"erpnext.erpnext_integrations.connectors.shopify_connection.sync_old_orders",
-		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce
+		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce"
 	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",
