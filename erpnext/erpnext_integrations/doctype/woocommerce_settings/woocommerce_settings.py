@@ -19,6 +19,8 @@ class WoocommerceSettings(Document):
 		self.validate_settings()
 		self.create_delete_custom_fields()
 		self.create_webhook_url()
+
+	def on_update(self):
 		self.create_webhooks()
 
 	def create_delete_custom_fields(self):

@@ -73,6 +73,7 @@
    "label": "API consumer secret"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "sb_accounting_details",
    "fieldtype": "Section Break",
    "label": "Accounting Details"
@@ -87,7 +88,8 @@
    "fieldname": "warehouse",
    "fieldtype": "Link",
    "label": "Default Warehouse",
-   "options": "Warehouse"
+   "options": "Warehouse",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_14",
@@ -97,7 +99,8 @@
    "description": "The fallback series is \"SO-WOO-\".",
    "fieldname": "sales_order_series",
    "fieldtype": "Select",
-   "label": "Sales Order Series"
+   "label": "Sales Order Series",
+   "reqd": 1
   },
   {
    "fieldname": "endpoints",
@@ -195,7 +198,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-02-23 18:52:28.166264",
+ "modified": "2021-02-25 18:16:29.782458",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

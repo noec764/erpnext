@@ -2,7 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Woocommerce Settings', {
-	refresh (frm) {
+	setup(frm) {
+		frm.set_query("warehouse", () => {
+			return {
+				company: frm.doc.company
+			}
+		})
+	},
+	refresh(frm) {
 		if (frm.doc.enable_sync) {
 			frm.trigger("sync_buttons");
 		}
@@ -10,7 +17,7 @@ frappe.ui.form.on('Woocommerce Settings', {
 		frm.trigger("check_enabled");
 	},
 
-	enable_sync (frm) {
+	enable_sync(frm) {
 		frm.trigger("check_enabled");
 	},
 
