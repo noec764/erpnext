@@ -488,6 +488,10 @@ class SalesOrder(SellingController):
 
 				frappe.db.set_value("Item Booking", d.item_booking, "status", status)
 
+				res = [True for x in frappe.parse_json(d.pricing_rules) if x in booking_credit_pricing_rules]
+				if True in res:
+					frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
+
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
 	list_context = get_list_context(context)
