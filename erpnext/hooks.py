@@ -63,7 +63,7 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
 
-calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking", "Event Slot", "Event Slot Booking"]
+calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Item Booking", "Event Slot", "Event Slot Booking"]
 gcalendar_integrations = {
 	"Item Booking": {
 		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
