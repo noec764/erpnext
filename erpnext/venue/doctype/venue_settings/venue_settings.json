@@ -7,6 +7,7 @@
  "field_order": [
   "item_booking_section",
   "clear_item_booking_draft_duration",
+  "confirm_booking_after_payment",
   "column_break_4",
   "enable_simultaneous_booking",
   "no_overlap_per_item",
@@ -89,11 +90,18 @@
    "fieldname": "cancellation_delay",
    "fieldtype": "Duration",
    "label": "Cancellation delay"
+  },
+  {
+   "default": "0",
+   "description": "If not set, the booking will be considered confirmed when the order is placed",
+   "fieldname": "confirm_booking_after_payment",
+   "fieldtype": "Check",
+   "label": "Confirm booking after payment"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-01-08 17:47:17.501379",
+ "modified": "2021-02-26 11:21:39.708670",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

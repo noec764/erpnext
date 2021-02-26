@@ -22,7 +22,6 @@
   "repeat_till",
   "rrule",
   "sync_with_google_calendar",
-  "deduct_booking_credits",
   "google_calendar_section",
   "google_calendar",
   "column_break_20",
@@ -239,16 +238,10 @@
    "hidden": 1,
    "label": "Unit of Measure",
    "options": "UOM"
-  },
-  {
-   "default": "0",
-   "fieldname": "deduct_booking_credits",
-   "fieldtype": "Check",
-   "label": "Deduct booking credits"
   }
  ],
  "links": [],
- "modified": "2020-11-19 16:23:41.765730",
+ "modified": "2021-02-19 16:23:41.765730",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",

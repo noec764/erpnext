@@ -323,6 +323,10 @@ class SalesOrder(SellingController):
 	def on_update(self):
 		self.add_subscription_event()
 
+	def set_total_advance_paid(self):
+		super(SalesOrder, self).set_total_advance_paid()
+		self.update_item_bookings()
+
 	def before_update_after_submit(self):
 		self.validate_po()
 		self.validate_drop_ship()
@@ -469,11 +473,20 @@ class SalesOrder(SellingController):
 		booking_credit_pricing_rules = frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}, pluck="name")
 		for d in self.get("items"):
 			if d.get("item_booking"):
-				frappe.db.set_value("Item Booking", d.item_booking, "status", "Confirmed")
-				if d.get("pricing_rules"):
-					res = [True for x in frappe.parse_json(d.pricing_rules) if x in booking_credit_pricing_rules]
-					if True in res:
-						frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
+				confirm_after_payment = cint(frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment"))
+				status = "Not confirmed"
+				if confirm_after_payment:
+					if self.advance_paid == self.grand_total:
+						status = "Confirmed"
+					else:
+						linked_si = frappe.db.sql("""select t1.status
+							from `tabSales Invoice` t1,`tabSales Invoice Item` t2
+							where t1.name = t2.parent and t2.so_detail = %s and t1.docstatus = 1""",
+							d.name)
+						if linked_si and not [x for x in linked_si if x[0] != "Paid"]:
+							status = "Confirmed"
+
+				frappe.db.set_value("Item Booking", d.item_booking, "status", status)
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
