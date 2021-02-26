@@ -149,7 +149,7 @@ class BookingSidebar {
 
 	render() {
 		const me = this;
-		this.wrapper = $('<div class="sidebar-card sticky-top"></div>').appendTo($(this.parent.wrapper).find('.calendar-sidebar'));
+		this.wrapper = $('<div class="sidebar-card sticky-top flex-column"></div>').appendTo($(this.parent.wrapper).find('.calendar-sidebar'));
 		this.duration_selector_title = $(`<div class="sidebar-section"><h4>${__("Duration")}</h4></div>`).appendTo(this.wrapper);
 		this.duration_selector_wrapper = $(`<div class="sidebar-durations"></div>`).appendTo(this.duration_selector_title);
 		this.bookings_title = $(`<div class="sidebar-section"><h4>${__("Bookings")}</h4></div>`).appendTo(this.wrapper);
@@ -209,7 +209,7 @@ class BookingSidebar {
 			<div class="formatted-price small text-muted"><span>${__("Rate:")} </span>${this.parent.formatted_price}</div>
 		`
 		if (this.bookings.length && !this.cart_btn) {
-			this.cart_btn = $(`<div><a class="btn btn-primary btn-xs" href="/cart">${__("Validate")}</a></div>`).appendTo(this.wrapper);
+			this.cart_btn = $(`<div class="sidebar-button"><a class="btn btn-primary btn-xs" href="/cart">${__("Validate")}</a></div>`).appendTo(this.wrapper);
 		}
 	}
 
