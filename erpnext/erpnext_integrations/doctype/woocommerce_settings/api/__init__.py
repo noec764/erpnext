@@ -7,13 +7,16 @@ class WooCommerceAPI:
 	def __init__(self, version="wc/v3", *args, **kwargs):
 		self.settings = frappe.get_single("Woocommerce Settings")
 		self.version = version
-		self.api = API(
-			url=self.settings.woocommerce_server_url,
-			consumer_key=self.settings.api_consumer_key,
-			consumer_secret=self.settings.api_consumer_secret,
-			version=version,
-			timeout=5000
-		)
+		self.api = {}
+
+		if self.settings.woocommerce_server_url and self.settings.api_consumer_key and self.settings.api_consumer_secret:
+			self.api = API(
+				url=self.settings.woocommerce_server_url,
+				consumer_key=self.settings.api_consumer_key,
+				consumer_secret=self.settings.api_consumer_secret,
+				version=version,
+				timeout=5000
+			)
 
 	def get(self, path, params=None):
 		res = self.api.get(path, params=params or {})

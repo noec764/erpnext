@@ -40,7 +40,6 @@ def sync_customer(settings, woocommerce_customer):
 		if woocommerce_customer.get("last_name") else "")) if woocommerce_customer.get("first_name")\
 		else woocommerce_customer.get("email")
 
-	print("Customer Name", customer_name)
 	try:
 		if frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
 			customer = frappe.get_doc("Customer", dict(woocommerce_id=woocommerce_customer.get("id")))

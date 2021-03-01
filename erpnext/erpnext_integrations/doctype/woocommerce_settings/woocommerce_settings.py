@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
+from frappe.utils import cint
 from frappe.utils.nestedset import get_root_of
 from frappe.model.document import Document
 from six.moves.urllib.parse import urlparse
@@ -67,7 +68,7 @@ class WoocommerceSettings(Document):
 		endpoint = "/api/method/erpnext.erpnext_integrations.connectors.woocommerce_connection.webhooks"
 
 		try:
-			url = frappe.request.url
+			url = "http://7e5fe6c5cb30.ngrok.io" #frappe.request.url
 		except RuntimeError:
 			# for CI Test to work
 			url = "http://localhost:8000"
@@ -80,9 +81,9 @@ class WoocommerceSettings(Document):
 		self.endpoint = delivery_url
 
 	def create_webhooks(self):
-		if self.enable_sync:
+		if self.enable_sync and self.endpoint:
 			create_webhooks()
-		else:
+		elif not self.enable_sync and self.woocommerce_server_url and self.api_consumer_key and self.api_consumer_secret:
 			delete_webhooks()
 
 
@@ -115,6 +116,6 @@ def get_products():
 	sync_items()
 
 def sync_woocommerce():
-	if cint(frappe.get_single_value("Woocommerce Settings", "enable_sync")):
+	if cint(frappe.db.get_single_value("Woocommerce Settings", "enable_sync")):
 		sync_products()
 		sync_orders()

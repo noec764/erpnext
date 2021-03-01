@@ -84,10 +84,29 @@ def prepare_item(settings, item):
 	if item.get("woocommerce_id"):
 		item_data["id"] = item.get("woocommerce_id")
 
+	item_data.update(get_price_and_qty(item, settings))
+
+	if item.has_variants:
+		item_data.update({
+			"type": "variable"
+		})
+
+		if item.variant_of:
+			item = frappe.get_doc("Item", item.variant_of)
+
+		variant_list, options, variant_item_name = get_variant_attributes(item, settings)
+		item_data["attributes"] = options
+
+	else:
+		item_data["type"] = "simple"
+
+	return item_data
+
+def get_price_and_qty(item, settings):
 	price = get_price(item.item_code, settings.price_list, settings.customer_group, settings.company, qty=1)
-	item_data.update({
-		"regular_price": f"{flt(price.get('price_list_rate'))}"
-	})
+	item_data = {
+		"regular_price": f"{flt(price.get('price_list_rate') if price else 0.0)}"
+	}
 
 	if item.weight_per_unit and item.weight_uom and item.weight_uom.lower() in ["kg", "g", "oz", "lb", "lbs"]:
 		item_data.update({
@@ -100,20 +119,6 @@ def prepare_item(settings, item):
 			item_data.update({
 				"stock_quantity": f"{qty_in_stock.stock_qty[0][0]}"
 			})
-
-	if item.has_variants:
-		item_data.update({
-			"type": "variable"
-		})
-
-		if item.variant_of:
-			item = frappe.get_doc("Item", item.variant_of)
-
-		variant_list, options, variant_item_name = get_variant_attributes(item, settings.price_list, item.website_warehouse)
-		item_data["attributes"] = options
-
-	else:
-		item_data["type"] = "simple"
 
 	return item_data
 
@@ -158,7 +163,7 @@ def get_weight_in_woocommerce_unit(weight_unit, weight, weight_uom):
 	if weight_unit.lower() == "kg":
 		return weight * convert_to_kg[weight_uom.lower()]
 
-def get_variant_attributes(item, price_list, warehouse):
+def get_variant_attributes(item, settings):
 	options, variant_list, variant_item_name, attr_sequence = [], [], [], []
 	attr_dict = {}
 
@@ -167,7 +172,7 @@ def get_variant_attributes(item, price_list, warehouse):
 
 		item_variant = frappe.get_doc("Item", variant.get("name"))
 
-		data = (get_price_and_stock_details(item_variant, warehouse, price_list))
+		data = get_price_and_qty(item_variant, settings)
 		data["item_name"] = item_variant.name
 		data["attributes"] = []
 		for attr in item_variant.get('attributes'):
@@ -324,5 +329,26 @@ def set_new_attribute_values(item_attr, values):
 	return item_attr
 
 def update_stock(doc, method):
-	print("UPDATE STOCK", doc.as_dict())
-	wc_api = WooCommerceProducts()
+	frappe.enqueue("erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products._update_stock", doc=doc)
+
+def _update_stock(doc):
+	try:
+		wc_api = WooCommerceProducts()
+		if not wc_api.api:
+			return
+
+		item = frappe.get_cached_doc("Item", doc.item_code)
+
+		if item.get("woocommerce_id"):
+			if item.get("website_warehouse") == doc.warehouse or \
+				(not item.get("website_warehouse") and wc_api.settings.warehouse == doc.warehouse):
+
+				product = wc_api.get(f"products/{item.get('woocommerce_id')}").json()
+
+				if product.get("stock_quantity") != doc.actual_qty:
+					wc_api.put(f"products/{item.get('woocommerce_id')}", {
+						"stock_quantity": doc.actual_qty
+					})
+
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")

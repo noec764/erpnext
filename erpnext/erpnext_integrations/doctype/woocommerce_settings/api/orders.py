@@ -45,6 +45,9 @@ def sync_orders():
 		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
 
 def sync_order(wc_api, woocommerce_order):
+	if woocommerce_order.get("status") == "Completed":
+		return
+
 	customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
 	if customer:
 		if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=1)):
@@ -172,18 +175,19 @@ def update_taxes_with_fee_lines(taxes, fee_lines, settings):
 
 def update_taxes_with_shipping_lines(taxes, shipping_lines, settings):
 	for shipping_charge in shipping_lines:
-		account_head = get_shipping_account_head(shipping_charge.get("method_id"))
+		if shipping_charge.get('method_id'):
+			account_head = get_shipping_account_head(shipping_charge.get("method_id"))
 
-		if account_head:
-			taxes.append({
-				"charge_type": "Actual",
-				"account_head": account_head,
-				"description": shipping_charge.get("method_title"),
-				"tax_amount": shipping_charge.get("total"),
-				"cost_center": settings.cost_center
-			})
-		else:
-			frappe.log_error(f"Account head missing for Woocommerce shipping method: {shipping_charge.get('method_id')}", "Woocommerce Order Error")
+			if account_head:
+				taxes.append({
+					"charge_type": "Actual",
+					"account_head": account_head,
+					"description": shipping_charge.get("method_title"),
+					"tax_amount": shipping_charge.get("total"),
+					"cost_center": settings.cost_center
+				})
+			else:
+				frappe.log_error(f"Account head missing for Woocommerce shipping method: {shipping_charge.get('method_id')}", "Woocommerce Order Error")
 
 	return taxes
 
@@ -199,6 +203,9 @@ def get_shipping_account_head(id):
 
 def _update_sales_order(settings, woocommerce_order, customer):
 	original_so = frappe.get_doc("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=1))
+	if original_so.status in ("Completed", "Closed"):
+		return
+
 	updated_so = create_sales_order(settings, woocommerce_order, customer)
 	sales_order = original_so
 
@@ -256,20 +263,30 @@ def register_payment_and_invoice(settings, woocommerce_order, sales_order):
 			frappe.log_error(frappe.get_traceback(), "Woocommerce Payment and Invoice Error")
 
 def make_payment(woocommerce_order, sales_order):
-	frappe.flags.ignore_account_permission = True
-	frappe.flags.ignore_permissions = True
-	payment_entry = get_payment_entry(sales_order.doctype, sales_order.name)
-	if payment_entry.paid_amount:
-		payment_entry.reference_no = woocommerce_order.get("transaction_id") or woocommerce_order.get("payment_method_title")
-		payment_entry.reference_date = woocommerce_order.get("date_paid")
-		payment_entry.insert(ignore_permissions=True)
-		payment_entry.submit()
+	if sales_order.advance_paid < sales_order.grand_total:
+		frappe.flags.ignore_account_permission = True
+		frappe.flags.ignore_permissions = True
+		payment_entry = get_payment_entry(sales_order.doctype, sales_order.name)
+		if payment_entry.paid_amount:
+			payment_entry.reference_no = woocommerce_order.get("transaction_id") or woocommerce_order.get("payment_method_title")
+			payment_entry.reference_date = woocommerce_order.get("date_paid")
+			payment_entry.insert(ignore_permissions=True)
+			payment_entry.submit()
 
 def make_sales_invoice_from_sales_order(sales_order):
-	si = make_sales_invoice(sales_order.name, ignore_permissions=True)
-	si.allocate_advances_automatically = True
-	si.insert(ignore_permissions=True)
-	si.submit()
+	if not frappe.db.sql("""
+			select
+				si.name
+			from
+				`tabSales Invoice` si, `tabSales Invoice Item` si_item
+			where
+				si.name = si_item.parent
+				and si.docstatus = 0
+		"""):
+		si = make_sales_invoice(sales_order.name, ignore_permissions=True)
+		si.allocate_advances_automatically = True
+		si.insert(ignore_permissions=True)
+		si.submit()
 
 def create_update_order(data):
 	wc_api = WooCommerceOrders()
