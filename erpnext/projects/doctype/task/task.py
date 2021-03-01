@@ -224,17 +224,24 @@ def check_if_child_exists(name):
 @frappe.validate_and_sanitize_search_inputs
 def get_project(doctype, txt, searchfield, start, page_len, filters):
 	from erpnext.controllers.queries import get_match_cond
-	return frappe.db.sql(""" select name from `tabProject`
-			where %(key)s like %(txt)s
-				%(mcond)s
-			order by name
-			limit %(start)s, %(page_len)s""" % {
-				'key': searchfield,
-				'txt': frappe.db.escape('%' + txt + '%'),
-				'mcond':get_match_cond(doctype),
-				'start': start,
-				'page_len': page_len
-			})
+	meta = frappe.get_meta(doctype)
+	searchfields = meta.get_search_fields()
+	search_columns = ", " + ", ".join(searchfields) if searchfields else ''
+	search_cond = " or " + " or ".join([field + " like %(txt)s" for field in searchfields])
+
+	return frappe.db.sql(""" select name {search_columns} from `tabProject`
+		where %(key)s like %(txt)s
+			%(mcond)s
+			{search_condition}
+		order by name
+		limit %(start)s, %(page_len)s""".format(search_columns = search_columns,
+			search_condition=search_cond), {
+			'key': searchfield,
+			'txt': '%' + txt + '%',
+			'mcond':get_match_cond(doctype),
+			'start': start,
+			'page_len': page_len
+		})
 
 
 @frappe.whitelist()
