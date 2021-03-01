@@ -20,6 +20,7 @@ def make_tax_account_and_template(company, tax_data, template_name=None):
 
 	try:
 		make_sales_and_purchase_tax_templates(company, tax_data, template_name)
+		make_item_tax_templates(accounts, template_name)
 	except frappe.NameError:
 		if frappe.message_log: frappe.message_log.pop()
 	except RootNotEditable:
@@ -81,6 +82,27 @@ def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None)
 
 		doc = frappe.get_doc(purchase_tax_template)
 		doc.insert(ignore_permissions=True)
+
+def make_item_tax_templates(accounts, template_name=None):
+	if not template_name:
+		template_name = accounts[0].name
+
+	item_tax_template = {
+		"doctype": "Item Tax Template",
+		"title": template_name,
+		"company": accounts[0].company,
+		'taxes': []
+	}
+
+
+	for account in accounts:
+		item_tax_template['taxes'].append({
+			"tax_type": account.name,
+			"tax_rate": account.tax_rate
+		})
+
+	# Items
+	frappe.get_doc(copy.deepcopy(item_tax_template)).insert(ignore_permissions=True)
 
 def get_tax_account_group(company, account_number=None):
 	if account_number:
