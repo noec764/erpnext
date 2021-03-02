@@ -703,10 +703,72 @@ frappe.ui.form.on('Sales Invoice', {
 				refresh_field(['timesheets'])
 			}
 		})
+		frm.refresh();
 	},
 
 	onload: function(frm) {
 		frm.redemption_conversion_factor = null;
+	},
+
+	refresh: function(frm) {
+		if (frm.doc.project) {
+			frm.add_custom_button(__('Fetch Timesheet'), function() {
+				let d = new frappe.ui.Dialog({
+					title: __('Fetch Timesheet'),
+					fields: [
+						{
+							"label" : "From",
+							"fieldname": "from_time",
+							"fieldtype": "Date",
+							"reqd": 1,
+						},
+						{
+							fieldtype: 'Column Break',
+							fieldname: 'col_break_1',
+						},
+						{
+							"label" : "To",
+							"fieldname": "to_time",
+							"fieldtype": "Date",
+							"reqd": 1,
+						}
+					],
+					primary_action: function() {
+						let data = d.get_values();
+						frappe.call({
+							method: "erpnext.projects.doctype.timesheet.timesheet.get_projectwise_timesheet_data",
+							args: {
+								from_time: data.from_time,
+								to_time: data.to_time,
+								project: frm.doc.project
+							},
+							callback: function(r) {
+								if(!r.exc) {
+									if(r.message.length > 0) {
+										frm.clear_table('timesheets')
+										r.message.forEach((d) => {
+											frm.add_child('timesheets',{
+												'time_sheet': d.parent,
+												'billing_hours': d.billing_hours,
+												'billing_amount': d.billing_amt,
+												'timesheet_detail': d.name
+											});
+										});
+										frm.refresh_field('timesheets')
+									}
+									else {
+										frappe.msgprint(__('No Timesheet Found.'))
+									}
+									d.hide();
+								}
+							}
+						});
+					},
+					primary_action_label: __('Get Timesheets')
+				});
+				d.show();
+			})
+		}
 	},
 
 	update_stock: function(frm, dt, dn) {
