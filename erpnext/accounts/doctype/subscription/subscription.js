@@ -237,11 +237,12 @@ frappe.ui.form.on('Subscription', {
 frappe.ui.form.on('Subscription Plan Detail', {
 	item: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn]
-		frappe.db.get_value("Item", row.item, "description", r => {
-			if (r&&r.description) {
-				frappe.model.set_value(cdt, cdn, "description", r.description);
-			}
-		})
+		frappe.model.with_doc("Item", row.item, function() {
+			const item = frappe.get_doc("Item", row.item)
+			item.description&&frappe.model.set_value(cdt, cdn, "description", item.description);
+			const uom = item.sales_uom ? item.sales_uom : item.stock_uom;
+			frappe.model.set_value(cdt, cdn, "uom", uom);
+		});
 	},
 	add_invoice_item(frm, cdt, cdn) {
 		const row = locals[cdt][cdn]
