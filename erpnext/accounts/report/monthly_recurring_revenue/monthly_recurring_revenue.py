@@ -58,7 +58,6 @@ def get_data(filters, period_list):
 
 	customers = list(set([x.customer for x in filtered_invoices] + [x.customer for x in subscriptions]))
 
-
 	result = []
 	precision = get_currency_precision() or 2
 	total_row = {x.key: 0 for x in period_list if x.key != "total"}
@@ -69,7 +68,6 @@ def get_data(filters, period_list):
 		row = { "customer": customer, "currency": frappe.get_cached_value('Company', filters.company, "default_currency") }
 		for index, period in enumerate(period_list):
 			total = get_invoices_mrr([x for x in filtered_invoices if x.customer == customer], period)
-
 			customer_subscriptions = [x for x in subscriptions if x.customer == customer]
 			if not total and period.to_date >= getdate(nowdate()):
 				total = get_subscription_mrr(customer_subscriptions, period)
@@ -94,7 +92,7 @@ def get_data(filters, period_list):
 def get_invoices_mrr(invoices, period):
 	total = 0.0
 	for invoice in invoices:
-		if period.from_date <= getdate(invoice.from_date) <= period.to_date and period.to_date <= getdate(invoice.to_date) and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1:
+		if getdate(period.from_date).replace(day=1) >= getdate(invoice.from_date).replace(day=1) and getdate(period.to_date).replace(day=1) <= getdate(invoice.to_date).replace(day=1) and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1:
 			return flt(invoice.total) / (monthdelta(invoice.from_date, invoice.to_date) + 1)
 
 		elif period.to_date >= getdate(invoice.posting_date) >= period.from_date:
