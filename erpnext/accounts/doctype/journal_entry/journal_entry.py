@@ -1071,3 +1071,13 @@ def make_reverse_journal_entry(source_name, target_doc=None):
 	}, target_doc)
 
 	return doclist
+
+@frappe.whitelist()
+def set_journal_entry_as_reconciled(journal_entry):
+	je = frappe.get_doc("Journal Entry", journal_entry)
+
+	for line in je.accounts:
+		if flt(line.unreconciled_amount) > 0:
+			frappe.db.set_value("Journal Entry Account", line.name, "unreconciled_amount", 0)
+
+	frappe.db.set_value("Journal Entry", journal_entry, "unreconciled_amount", 0)

@@ -32,6 +32,19 @@ frappe.ui.form.on("Journal Entry", {
 			frm.add_custom_button(__('Reverse Journal Entry'), function() {
 				return erpnext.journal_entry.reverse_journal_entry(frm);
 			}, __('Make'));
+
+			if (frm.doc.unreconciled_amount > 0) {
+				frm.add_custom_button(__('Set as reconciled'), () => {
+					frappe.xcall("erpnext.accounts.doctype.journal_entry.journal_entry.set_journal_entry_as_reconciled", {journal_entry: frm.doc.name})
+					.then(() => {
+						frm.reload_doc()
+						frappe.show_alert({
+							message: __("Entry set as reconciled"),
+							indicator: "green"
+						})
+					})
+				}, __('Make'), true);
+			}
 		}
 
 		if (frm.doc.__islocal) {

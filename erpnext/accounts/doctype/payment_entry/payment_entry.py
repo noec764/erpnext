@@ -1272,3 +1272,9 @@ def make_payment_order(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	return doclist
+
+@frappe.whitelist()
+def set_payment_entry_as_reconciled(payment_entry):
+	for field in ["unreconciled_from_amount", "unreconciled_to_amount", "unreconciled_amount"]:
+		frappe.db.set_value("Payment Entry", payment_entry, field, 0)
+	frappe.get_doc("Payment Entry", payment_entry).set_status(update=True)

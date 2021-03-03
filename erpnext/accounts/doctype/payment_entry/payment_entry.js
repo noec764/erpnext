@@ -161,6 +161,19 @@ frappe.ui.form.on('Payment Entry', {
 					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
 				});
 			}, __('Make'), true);
+
+			if (frm.doc.unreconciled_amount > 0) {
+				frm.add_custom_button(__('Set as reconciled'), () => {
+					frappe.xcall("erpnext.accounts.doctype.payment_entry.payment_entry.set_payment_entry_as_reconciled", {payment_entry: frm.doc.name})
+					.then(() => {
+						frm.reload_doc()
+						frappe.show_alert({
+							message: __("Entry set as reconciled"),
+							indicator: "green"
+						})
+					})
+				}, __('Make'), true);
+			}
 		}
 	},
 
