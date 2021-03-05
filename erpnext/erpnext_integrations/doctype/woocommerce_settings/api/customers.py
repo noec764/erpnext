@@ -5,8 +5,6 @@ from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 
-PER_PAGE = 100
-
 class WooCommerceCustomers(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
 		super(WooCommerceCustomers, self).__init__(version, args, kwargs)
@@ -26,10 +24,10 @@ def get_woocommerce_customers(wc_api):
 	response = wc_api.get_customers()
 	woocommerce_customers = response.json()
 
-	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) or 1):
+	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) + 1):
 		response = wc_api.get_customers(params={
-			"per_page": PER_PAGE,
-			"page": page_idx + 1
+			"per_page": 100,
+			"page": page_idx
 		})
 		woocommerce_customers.extend(response.json())
 

@@ -38,7 +38,7 @@ class WoocommerceSettings(Document):
 
 			for doctype in ["Customer", "Address"]:
 				fields = [
-					dict(fieldname='woocommerce_email', label='Woocommerce Email', fieldtype='Data', read_only=1, print_hide=1)
+					dict(fieldname='woocommerce_email', label='Woocommerce Email', fieldtype='Data', read_only=1, print_hide=1, translatable=0)
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
@@ -108,7 +108,7 @@ def get_taxes():
 @frappe.whitelist()
 def get_shipping_methods():
 	wc_api = WooCommerceShippingMethods()
-	shipping_methods = wc_api.get_shipping_methods()
+	shipping_methods = wc_api.get_shipping_methods(params={"per_page": 100})
 	return shipping_methods
 
 @frappe.whitelist()
@@ -117,5 +117,6 @@ def get_products():
 
 def sync_woocommerce():
 	if cint(frappe.db.get_single_value("Woocommerce Settings", "enable_sync")):
-		sync_products()
+		if cint(frappe.db.get_single_value("Woocommerce Settings", "sync_products")):
+			sync_products()
 		sync_orders()

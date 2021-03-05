@@ -1,10 +1,8 @@
 import frappe
-from frappe.utils import flt, now_datetime, get_datetime
+from frappe.utils import flt, now_datetime, get_datetime, cint
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 from erpnext.utilities.product import get_price, get_qty_in_stock
 from frappe.utils.nestedset import get_root_of
-
-PER_PAGE = 100
 
 class WooCommerceProducts(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -24,14 +22,15 @@ def sync_items():
 	response = wc_api.get_products()
 	products = response.json()
 
-	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) or 1):
+	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) + 1):
 		response = wc_api.get_products(params={
-			"per_page": PER_PAGE,
-			"page": page_idx + 1
+			"per_page": 100,
+			"page": page_idx
 		})
-	products.extend(response.json())
+		products.extend(response.json())
 
-	for product in frappe.parse_json(products):
+	products_list = frappe.parse_json(products)
+	for product in sorted(products_list, key=lambda x: (x.get("type") != "woobs", x.get("type"))):
 		try:
 			create_item(wc_api, product)
 		except Exception:
@@ -211,6 +210,11 @@ def create_item(wc_api, product):
 
 	frappe.db.commit()
 
+	if product.get("type") in ("woosb"):
+		create_product_bundle(wc_api.settings, product)
+
+	frappe.db.commit()
+
 def create_template(wc_api, product, attributes):
 	if not frappe.db.exists("Item", {"woocommerce_id": product.get("id")}):
 		template_dict = get_simple_item(wc_api.settings, product)
@@ -231,22 +235,26 @@ def create_template(wc_api, product, attributes):
 		create_variant(wc_api, variant, template, attributes)
 
 def create_variant(wc_api, variant, template, attributes):
-	product = wc_api.get(f"products/{variant}").json()
-	item = get_simple_item(wc_api.settings, product)
-	item.update({
-		"item_code": product.get("slug") or product.get("sku"),
-		"variant_of": template.name,
-		"attributes": [
-			{
-				"attribute": x.get("name"),
-				"attribute_value": x.get("option")[:140]
-			} for x in product.get("attributes")
-		]
-	})
-	try:
-		frappe.get_doc(item).insert(ignore_permissions=True)
-	except frappe.exceptions.DuplicateEntryError as e:
-		pass
+	if not frappe.db.exists("Item", dict(woocommerce_id=variant)):
+		product = wc_api.get(f"products/{variant}").json()
+		item = get_simple_item(wc_api.settings, product)
+
+		item.update({
+			"item_code": get_item_code(product),
+			"variant_of": template.name,
+			"attributes": [
+				{
+					"attribute": x.get("name"),
+					"attribute_value": x.get("option")[:140]
+				} for x in product.get("attributes")
+			]
+		})
+		try:
+			frappe.get_doc(item).insert(ignore_permissions=True)
+		except frappe.exceptions.DuplicateEntryError as e:
+			pass
+		except Exception:
+			print(product.get("slug") or product.get("sku"), product.get("id"), frappe.get_traceback())
 
 def create_simple_item(settings, product):
 	item = get_simple_item(settings, product)
@@ -255,13 +263,39 @@ def create_simple_item(settings, product):
 	except frappe.exceptions.DuplicateEntryError as e:
 		pass
 
+def create_product_bundle(settings, product):
+	"""
+	Specific integration for WPC Product Bundles for WooCommerce
+	Can be extended for other product bundle plugins
+	"""
+	bundle_item = frappe.db.get_value("Item", dict(woocommerce_id=product.get("id")))
+	if bundle_item and not frappe.db.exists("Product Bundle", bundle_item):
+		items = []
+		for meta in product.get("meta_data"):
+			if meta.get("key") == "woosb_ids":
+				for d in meta.get("value").split(","):
+					code, qty = d.split("/")
+					item_code = frappe.db.get_value("Item", dict(woocommerce_id=code))
+					if item_code:
+						items.append({
+							"item_code": item_code,
+							"qty": cint(qty)
+						})
+
+		if items:
+			frappe.get_doc({
+				"doctype": "Product Bundle",
+				"new_item_code": bundle_item,
+				"items": items
+			}).insert(ignore_permissions=True)
+
 def get_simple_item(settings, product):
 	return {
 		"doctype": "Item",
 		"woocommerce_id": product.get("id"),
 		"sync_with_woocommerce": 1,
 		"is_stock_item": product.get("manage_stock"),
-		"item_code": product.get("sku") or product.get("slug"),
+		"item_code": get_item_code(product),
 		"item_name": product.get("name"),
 		"description": product.get("description") or product.get("name"),
 		"item_group": get_item_group(product.get("categories")),
@@ -272,14 +306,43 @@ def get_simple_item(settings, product):
 		"weight_uom": product.get("weight_unit"),
 		"weight_per_unit": product.get("weight"),
 		"web_long_description": product.get("short_description") or product.get("name"),
+		"include_item_in_manufacturing": 0,
+		"standard_rate": product.get("price"),
+		"item_defaults": [{
+			"company": settings.company,
+			"default_warehouse": settings.warehouse,
+			"default_price_list": settings.price_list
+		}]
 	}
+
+def get_item_code(product):
+	item_code = product.get("sku")
+
+	if not item_code or frappe.db.exists("Item", item_code):
+		item_code = product.get("slug")
+
+	if frappe.db.exists("Item", item_code):
+		item_code = product.get("name")
+
+		if frappe.db.exists("Item", item_code):
+			item_code = product.get("id")
+
+	return item_code
 
 def get_item_group(categories):
 	for category in categories:
 		if frappe.db.exists("Item Group", category.get("name")):
-			return category.name
+			return category.get("name")
 	else:
-		return get_root_of("Item Group")
+		if categories:
+			item_category = frappe.get_doc({
+				"doctype": "Item Group",
+				"parent_item_group": get_root_of("Item Group"),
+				"item_group_name": categories[0].get("name")
+			}).insert(ignore_permissions=True)
+			return item_category.name
+		else:
+			return get_root_of("Item Group")
 
 def get_item_image(product):
 	if product.get("images"):
@@ -339,7 +402,7 @@ def _update_stock(doc):
 
 		item = frappe.get_cached_doc("Item", doc.item_code)
 
-		if item.get("woocommerce_id"):
+		if item.get("woocommerce_id") and item.get("sync_with_woocommerce"):
 			if item.get("website_warehouse") == doc.warehouse or \
 				(not item.get("website_warehouse") and wc_api.settings.warehouse == doc.warehouse):
 
