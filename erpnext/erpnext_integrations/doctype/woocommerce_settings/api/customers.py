@@ -1,7 +1,7 @@
 import frappe
 import frappe.utils.nestedset
 from frappe import _
-
+from frappe.utils import cint
 from frappe.contacts.doctype.address.address import get_preferred_address
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 
@@ -39,7 +39,7 @@ def sync_customer(settings, woocommerce_customer):
 		else woocommerce_customer.get("email")
 
 	try:
-		if frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
+		if cint(woocommerce_customer.get("id")) and frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
 			customer = frappe.get_doc("Customer", dict(woocommerce_id=woocommerce_customer.get("id")))
 
 		elif frappe.db.exists("Customer", dict(woocommerce_email=woocommerce_customer.get("email"))):
