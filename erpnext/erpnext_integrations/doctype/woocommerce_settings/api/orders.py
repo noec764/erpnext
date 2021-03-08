@@ -10,6 +10,7 @@ from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice, 
 from erpnext.portal.product_configurator.utils import get_item_codes_by_attributes
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import sync_customer
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import get_simple_item
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
 
 class WooCommerceOrders(WooCommerceAPI):
@@ -43,8 +44,12 @@ def sync_orders():
 	wc_api = WooCommerceOrders()
 
 	woocommerce_orders = get_woocommerce_orders(wc_api)
+	excluded_ids = get_completed_and_excluded_orders()
 
 	for woocommerce_order in woocommerce_orders:
+		if woocommerce_order.get("id") in excluded_ids:
+			continue
+
 		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
 
 def sync_order(wc_api, woocommerce_order):
@@ -54,7 +59,7 @@ def sync_order(wc_api, woocommerce_order):
 	customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
 	if customer:
 		try:
-			if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=(">", 1))):
+			if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=(">=", 1))):
 				_update_sales_order(wc_api.settings, woocommerce_order, customer)
 			else:
 				_new_sales_order(wc_api.settings, woocommerce_order, customer)
@@ -69,30 +74,36 @@ def _sync_customer(wc_api, id):
 		frappe.log_error(str(e), "Woocommerce Customer Error")
 
 def get_woocommerce_orders(wc_api):
-	excluded_ids = get_completed_orders()
+	max_orders = wc_api.settings.max_orders
+	per_page = 100
+	documents_fetched = min(per_page, max_orders if max_orders else per_page)
 	response = wc_api.get_orders(params={
-		"exclude": excluded_ids
+		"per_page": documents_fetched
 	})
-	woocommerce_orders = response.json()
+	woocommerce_orders =response.json()
 
-	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) + 1):
-		response = wc_api.get_orders(params={
-			"per_page": 100,
-			"page": page_idx,
-			"exclude": excluded_ids
-		})
-		woocommerce_orders.extend(response.json())
+	if not max_orders or len(woocommerce_orders) < max_orders:
+		for page_idx in range(1, cint(response.headers.get('X-WP-TotalPages')) + 1):
+			if not max_orders or documents_fetched < cint(max_orders):
+				response = wc_api.get_orders(params={
+					"per_page": per_page,
+					"page": page_idx
+				})
+
+				new_orders = response.json() if documents_fetched + len(response.json()) < cint(max_orders) or not max_orders else response.json()[:cint(max_orders) - documents_fetched]
+				documents_fetched += per_page
+				woocommerce_orders.extend(new_orders)
 
 	return woocommerce_orders
 
-def get_completed_orders():
+def get_completed_and_excluded_orders():
 	return frappe.get_all("Sales Order",
 		filters={
 			"woocommerce_id": ("is", "set"),
 			"status": ("in", ("Completed", "Closed"))
 		},
 		pluck="woocommerce_id"
-	)
+	) + frappe.get_all("Woocommerce Excluded Order", pluck="name")
 
 def create_sales_order(settings, woocommerce_order, customer):
 	return frappe.get_doc({
@@ -112,39 +123,65 @@ def create_sales_order(settings, woocommerce_order, customer):
 		"taxes_and_charges": None,
 		"customer_address": get_preferred_address("Customer", customer.name, "is_primary_address"),
 		"shipping_address_name": get_preferred_address("Customer", customer.name, "is_shipping_address"),
-		"last_woocommerce_sync": now_datetime()
+		"last_woocommerce_sync": now_datetime(),
+		"disable_rounded_total": 0
 	})
 
 def _new_sales_order(settings, woocommerce_order, customer):
 	so = create_sales_order(settings, woocommerce_order, customer)
 
 	if so.items:
-		if woocommerce_order.get("status") == "on-hold":
-			so.status = "On Hold"
-		so.flags.ignore_permissions = True
-		so.insert()
-		so.submit()
+		try:
+			if woocommerce_order.get("status") == "on-hold":
+				so.status = "On Hold"
+			so.flags.ignore_permissions = True
+			so.insert()
+			so.submit()
+		except Exception as e:
+			exclude_order(woocommerce_order, str(e))
+			raise
 	else:
-		frappe.log_error(f"No items found for Woocommerce order {woocommerce_order.get('id')}", "Woocommerce Order Error")
+		error = f"No items found for Woocommerce order {woocommerce_order.get('id')}"
+		exclude_order(woocommerce_order, error)
+		frappe.log_error(error, "Woocommerce Order Error")
+
+def exclude_order(woocommerce_order, error=None):
+	try:
+		frappe.get_doc({
+			"doctype": "Woocommerce Excluded Order",
+			"woocommerce_id": woocommerce_order.get("id"),
+			"data": frappe.as_json(woocommerce_order),
+			"error": error
+		}).insert(ignore_permissions=True)
+	except frappe.DuplicateEntryError:
+		pass
 
 def get_order_items(order, settings, delivery_date):
 	items = []
+	item_code = None
 	for item in order.get("line_items"):
-		if item.get("product_id") == 0:
+		if flt(item.get("price")) == 0 and True in [x.get("key") == "_bundled_by" or x.get("key") == "_bundled_item_id" for x in item.get("meta_data")]:
 			continue
 
-		item_code = get_item_code_and_warehouse(item)
+		if item.get("product_id") == 0:
+			item_code = get_or_create_missing_item(settings, item)
+
+		if not item_code:
+			item_code = get_item_code_and_warehouse(item)
+
 		if item_code:
 			warehouse = frappe.db.get_value("Item", item_code, "website_warehouse")
 			stock_uom = frappe.db.get_value("Item", item_code, "stock_uom")
 			items.append({
 				"item_code": item_code,
-				"rate": item.get("price"),
+				"rate": flt(item.get("price")),
+				"is_free_item": flt(item.get("price")) == 0,
 				"delivery_date": delivery_date or nowdate(),
 				"qty": item.get("quantity"),
 				"warehouse": warehouse or settings.warehouse,
 				"stock_uom": stock_uom,
-				"uom": frappe.db.get_value("Item", item_code, "sales_uom") or stock_uom
+				"uom": frappe.db.get_value("Item", item_code, "sales_uom") or stock_uom,
+				"discount_percentage": 100 if flt(item.get("price")) == 0 else 0
 			})
 		else:
 			frappe.log_error(f"Order: {order.get('id')}\n\nItem missing for Woocommerce product: {item.get('product_id')}", "Woocommerce Order Error")
@@ -166,6 +203,19 @@ def get_item_code_and_warehouse(item):
 					item_code = variants[0]
 
 	return item_code
+
+def get_or_create_missing_item(settings, product):
+	item = frappe.db.get_value("Item", product.get("name"))
+
+	if not item:
+		item_doc = get_simple_item(settings, {
+			"name": product.get("name"),
+			"categories": []
+		})
+		item_doc.insert(ignore_permissions)
+		item = item_doc.name
+
+	return item
 
 def get_order_taxes(order, settings):
 	taxes = []
@@ -250,10 +300,6 @@ def _update_sales_order(settings, woocommerce_order, customer):
 		original_so.cancel()
 
 		sales_order = updated_so
-
-		if woocommerce_order.get("status") == "on-hold":
-			so.status = "On Hold"
-
 		sales_order.flags.ignore_permissions = True
 		sales_order.insert()
 		sales_order.submit()
@@ -269,6 +315,11 @@ def _update_sales_order(settings, woocommerce_order, customer):
 		register_delivery(settings, woocommerce_order, sales_order)
 
 	frappe.db.set_value("Sales Order", sales_order.name, "last_woocommerce_sync", now_datetime())
+
+	if woocommerce_order.get("status") == "on-hold":
+		frappe.db.set_value("Sales Order", sales_order.name, "status", "On Hold")
+	elif woocommerce_order.get("status") == "failed":
+		frappe.db.set_value("Sales Order", sales_order.name, "status", "Closed")
 
 def compare_sales_orders(original, updated):
 	if updated.grand_total and original.grand_total != updated.grand_total:
@@ -299,7 +350,7 @@ def get_qty_per_item(items):
 	return qty_per_item
 
 def register_payment_and_invoice(settings, woocommerce_order, sales_order):
-	if sales_order.per_billed < 100:
+	if sales_order.per_billed < 100 and sales_order.docstatus == 1:
 		try:
 			make_payment(woocommerce_order, sales_order)
 			make_sales_invoice_from_sales_order(sales_order)
@@ -320,11 +371,11 @@ def make_payment(woocommerce_order, sales_order):
 			payment_entry.submit()
 
 def add_stripe_fees(woocommerce_order, payment_entry):
-	settings = frappe.db.get_single("Woocommerce Settings")
+	settings = frappe.get_single("Woocommerce Settings")
 	if not settings.stripe_gateway:
 		return
 
-	stripe_gateway = frappe.get_doc("Stripe Gateway", settings.stripe_gateway)
+	stripe_gateway = frappe.get_doc("Payment Gateway", settings.stripe_gateway)
 	if not stripe_gateway.fee_account:
 		return
 
@@ -332,9 +383,9 @@ def add_stripe_fees(woocommerce_order, payment_entry):
 	charge = defaultdict(str)
 	for meta in woocommerce_order.get("meta_data"):
 		if meta.get("key") in keys:
-			charge[meta.get("key")] == meta.get("value")
+			charge[meta.get("key")] = meta.get("value")
 
-	if not charge.get("_stripe_charge_captured") or not charge.get("_stripe_charge_captured") == "yes":
+	if not charge.get("_stripe_charge_captured") and not charge.get("_stripe_charge_captured") == "yes":
 		return
 
 	payment_entry.update({
@@ -356,7 +407,7 @@ def make_sales_invoice_from_sales_order(sales_order):
 				`tabSales Invoice` si, `tabSales Invoice Item` si_item
 			where
 				si.name = si_item.parent
-				si_item.sales_order = {frappe.db.escape(sales_order.name)}
+				and si_item.sales_order = {frappe.db.escape(sales_order.name)}
 				and si.docstatus = 0
 		"""):
 		si = make_sales_invoice(sales_order.name, ignore_permissions=True)
@@ -392,6 +443,9 @@ def refund_sales_order(settings, woocommerce_order, sales_order):
 			payment_entry.reference_date = woocommerce_order.get("date_paid")
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
+
+	else:
+		frappe.db.set_value("Sales Order", sales_order.name, "status", "Closed")
 
 def create_update_order(data):
 	wc_api = WooCommerceOrders()

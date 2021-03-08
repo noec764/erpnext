@@ -9,6 +9,7 @@
   "column_break_2",
   "sync_products",
   "create_payments_and_sales_invoice",
+  "max_orders",
   "sb_00",
   "woocommerce_server_url",
   "secret",
@@ -220,12 +221,19 @@
    "fieldtype": "Link",
    "label": "Stripe Gateway",
    "options": "Payment Gateway"
+  },
+  {
+   "default": "100",
+   "depends_on": "eval:doc.enable_sync",
+   "fieldname": "max_orders",
+   "fieldtype": "Int",
+   "label": "Number of orders to sync"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-03-05 15:57:49.276665",
+ "modified": "2021-03-06 14:26:39.938190",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

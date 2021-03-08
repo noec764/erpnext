@@ -286,6 +286,7 @@ def create_product_bundle(settings, product):
 			frappe.get_doc({
 				"doctype": "Product Bundle",
 				"new_item_code": bundle_item,
+				"description": product.get("name"),
 				"items": items
 			}).insert(ignore_permissions=True)
 

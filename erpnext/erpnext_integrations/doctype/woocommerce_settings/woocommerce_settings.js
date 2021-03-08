@@ -15,6 +15,7 @@ frappe.ui.form.on('Woocommerce Settings', {
 		}
 		frm.trigger("add_button_generate_secret");
 		frm.trigger("check_enabled");
+		frm.trigger("excluded_orders_link")
 	},
 
 	enable_sync(frm) {
@@ -36,6 +37,12 @@ frappe.ui.form.on('Woocommerce Settings', {
 					});
 				}
 			);
+		});
+	},
+
+	excluded_orders_link(frm) {
+		frm.add_custom_button(__('Excluded WooCommerce Orders'), () => {
+			frappe.set_route("List", "Woocommerce Excluded Order")
 		});
 	},
 
