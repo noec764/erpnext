@@ -19,13 +19,14 @@ class WooCommerceProducts(WooCommerceAPI):
 
 def sync_items():
 	wc_api = WooCommerceProducts()
-	response = wc_api.get_products()
+	response = wc_api.get_products(params={"status": "publish"})
 	products = response.json()
 
 	for page_idx in range(1, int(response.headers.get('X-WP-TotalPages')) + 1):
 		response = wc_api.get_products(params={
 			"per_page": 100,
-			"page": page_idx
+			"page": page_idx,
+			"status": "publish"
 		})
 		products.extend(response.json())
 
@@ -34,7 +35,7 @@ def sync_items():
 		try:
 			create_item(wc_api, product)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), "WooCommerce Products Sync Error")
+			frappe.log_error(f"Product: {product.get('id')}\n\n{frappe.get_traceback()}", "WooCommerce Products Sync Error")
 
 def sync_products():
 	wc_api = WooCommerceProducts()
@@ -328,7 +329,7 @@ def get_item_code(product):
 		if frappe.db.exists("Item", item_code):
 			item_code = product.get("id")
 
-	return item_code
+	return str(item_code)
 
 def get_item_group(categories):
 	for category in categories:

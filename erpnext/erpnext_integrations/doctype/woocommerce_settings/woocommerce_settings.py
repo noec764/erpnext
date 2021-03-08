@@ -127,4 +127,7 @@ def sync_woocommerce():
 	if cint(frappe.db.get_single_value("Woocommerce Settings", "enable_sync")):
 		if cint(frappe.db.get_single_value("Woocommerce Settings", "sync_products")):
 			sync_products()
+		else:
+			sync_items()
+
 		sync_orders()

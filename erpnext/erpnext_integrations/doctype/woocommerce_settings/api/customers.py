@@ -42,6 +42,9 @@ def sync_customer(settings, woocommerce_customer):
 		if frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
 			customer = frappe.get_doc("Customer", dict(woocommerce_id=woocommerce_customer.get("id")))
 
+		elif frappe.db.exists("Customer", dict(woocommerce_email=woocommerce_customer.get("email"))):
+			customer = frappe.get_doc("Customer", dict(woocommerce_email=woocommerce_customer.get("email")))
+
 		else:
 			# try to match territory
 			country_name = get_country_name(woocommerce_customer["billing"]["country"])
@@ -78,6 +81,19 @@ def sync_customer(settings, woocommerce_customer):
 		return customer
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Woocommerce Customer Creation Error")
+
+def sync_guest_customers(order):
+	wc_api = WooCommerceCustomers()
+	customer_object = {
+		"first_name": order.get("billing", {}).get("first_name"),
+		"last_name": order.get("billing", {}).get("last_name"),
+		"email": order.get("billing", {}).get("email"),
+		"id": 0,
+		"billing": order.get("billing"),
+		"shipping": order.get("shipping")
+	}
+
+	return sync_customer(wc_api.settings, customer_object)
 
 def add_billing_address(settings, customer, woocommerce_customer):
 	existing_address = get_preferred_address("Customer", customer.name, "is_primary_address")

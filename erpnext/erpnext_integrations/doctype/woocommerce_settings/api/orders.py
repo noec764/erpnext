@@ -9,7 +9,7 @@ from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_ent
 from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice, make_delivery_note
 from erpnext.portal.product_configurator.utils import get_item_codes_by_attributes
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import sync_customer
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import sync_customer, sync_guest_customers
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import get_simple_item
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
 
@@ -53,10 +53,17 @@ def sync_orders():
 		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
 
 def sync_order(wc_api, woocommerce_order):
-	if woocommerce_order.get("customer_id") == 0:
+	if woocommerce_order.get("customer_id") == 0 and not woocommerce_order.get("billing", {}).get("email"):
 		return
 
-	customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
+	customer = None
+
+	if woocommerce_order.get("customer_id") != 0:
+		customer = _sync_customer(wc_api, woocommerce_order.get("customer_id"))
+
+	if not customer:
+		customer = sync_guest_customers(woocommerce_order)
+
 	if customer:
 		try:
 			if frappe.db.exists("Sales Order", dict(woocommerce_id=woocommerce_order.get("id"), docstatus=(">=", 1))):
