@@ -216,10 +216,12 @@ def get_or_create_missing_item(settings, product):
 	item = frappe.db.get_value("Item", product.get("name"))
 
 	if not item:
-		item_doc = get_simple_item(settings, {
-			"name": product.get("name"),
-			"categories": []
-		})
+		item_doc = frappe.get_doc(
+			get_simple_item(settings, {
+				"name": product.get("name"),
+				"categories": []
+			})
+		)
 		item_doc.insert(ignore_permissions)
 		item = item_doc.name
 
