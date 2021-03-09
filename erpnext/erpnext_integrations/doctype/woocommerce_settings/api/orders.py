@@ -47,7 +47,7 @@ def sync_orders():
 	excluded_ids = get_completed_and_excluded_orders()
 
 	for woocommerce_order in woocommerce_orders:
-		if woocommerce_order.get("id") in excluded_ids:
+		if str(woocommerce_order.get("id")) in excluded_ids:
 			continue
 
 		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
