@@ -118,9 +118,10 @@ def create_sales_order(settings, woocommerce_order, customer):
 		"order_type": "Shopping Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
+		"date": woocommerce_order.get("date_created_gmt") or nowdate(),
 		"customer": customer.name,
 		"customer_group": customer.customer_group,
-		"delivery_date": woocommerce_order.get("date_created_gmt") or nowdate(),
+		"delivery_date": add_days(woocommerce_order.get("date_created_gmt") or nowdate(), settings.delivery_after_days),
 		"company": settings.company,
 		"selling_price_list": settings.price_list,
 		"ignore_pricing_rule": 1,
@@ -365,16 +366,24 @@ def register_payment_and_invoice(settings, woocommerce_order, sales_order):
 			frappe.log_error(f"WooCommerce Order: {woocommerce_order.get('id')}\nSales Order: {sales_order.name}\n\n{frappe.get_traceback()}", "Woocommerce Payment and Invoice Error")
 
 def make_payment(woocommerce_order, sales_order):
-	if sales_order.advance_paid < sales_order.grand_total:
+	if sales_order.advance_paid < sales_order.grand_total and woocommerce_order.get("transaction_id") and not frappe.get_all("Payment Entry", dict(reference_no=woocommerce_order.get("transaction_id"))):
 		frappe.flags.ignore_account_permission = True
 		frappe.flags.ignore_permissions = True
 		payment_entry = get_payment_entry(sales_order.doctype, sales_order.name)
 		if payment_entry.paid_amount:
 			if woocommerce_order.get("payment_method") == "stripe":
 				add_stripe_fees(woocommerce_order, payment_entry)
+			payment_entry.posting_date = woocommerce_order.get("date_paid")
 			payment_entry.reference_no = woocommerce_order.get("transaction_id") or woocommerce_order.get("payment_method_title") or "WooCommerce Order"
 			payment_entry.reference_date = woocommerce_order.get("date_paid")
 			payment_entry.insert(ignore_permissions=True)
+
+			if payment_entry.difference_amount:
+				payment_entry.append("deductions", {
+					"account": frappe.db.get_value("Company", sales_order.company, "write_off_account"),
+					"cost_center": sales_order.cost_center or frappe.db.get_value("Company", payment_entry.company, "cost_center"),
+					"amount": payment_entry.difference_amount
+				})
 			payment_entry.submit()
 
 def add_stripe_fees(woocommerce_order, payment_entry):
@@ -418,6 +427,8 @@ def make_sales_invoice_from_sales_order(sales_order):
 				and si.docstatus = 0
 		"""):
 		si = make_sales_invoice(sales_order.name, ignore_permissions=True)
+		si.set_posting_time = True
+		si.posting_date = woocommerce_order.get("date_paid")
 		si.allocate_advances_automatically = True
 		si.insert(ignore_permissions=True)
 		si.submit()
@@ -428,6 +439,8 @@ def register_delivery(settings, woocommerce_order, sales_order):
 
 def _make_delivery_note(sales_order):
 	dn = make_delivery_note(sales_order.name)
+	dn.set_posting_time = True
+	dn.posting_date = woocommerce_order.get("date_completed")
 	dn.run_method('set_missing_values')
 	dn.insert(ignore_permissions=True)
 	dn.submit()
