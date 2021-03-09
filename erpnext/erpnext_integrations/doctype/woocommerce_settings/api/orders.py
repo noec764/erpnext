@@ -363,7 +363,7 @@ def register_payment_and_invoice(settings, woocommerce_order, sales_order):
 	if sales_order.per_billed < 100 and sales_order.docstatus == 1:
 		try:
 			make_payment(woocommerce_order, sales_order)
-			make_sales_invoice_from_sales_order(sales_order)
+			make_sales_invoice_from_sales_order(woocommerce_order, sales_order)
 		except Exception:
 			frappe.log_error(f"WooCommerce Order: {woocommerce_order.get('id')}\nSales Order: {sales_order.name}\n\n{frappe.get_traceback()}", "Woocommerce Payment and Invoice Error")
 
@@ -417,7 +417,7 @@ def add_stripe_fees(woocommerce_order, payment_entry):
 		"amount": flt(charge.get("_stripe_fee"))
 	})
 
-def make_sales_invoice_from_sales_order(sales_order):
+def make_sales_invoice_from_sales_order(woocommerce_order, sales_order):
 	if not frappe.db.sql(f"""
 			select
 				si.name
