@@ -437,9 +437,9 @@ def make_sales_invoice_from_sales_order(sales_order):
 
 def register_delivery(settings, woocommerce_order, sales_order):
 	if sales_order.per_delivered < 100:
-		_make_delivery_note(sales_order)
+		_make_delivery_note(woocommerce_order, sales_order)
 
-def _make_delivery_note(sales_order):
+def _make_delivery_note(woocommerce_order, sales_order):
 	dn = make_delivery_note(sales_order.name)
 	dn.set_posting_time = True
 	dn.posting_date = woocommerce_order.get("date_completed")
