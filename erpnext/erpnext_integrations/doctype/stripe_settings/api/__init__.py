@@ -7,3 +7,4 @@ from .charge import StripeCharge
 from .invoice_item import StripeInvoiceItem
 from .price import StripePrice
 from .setup_intent import StripeSetupIntent
+from .webhook_endpoints import StripeWebhookEndpoint

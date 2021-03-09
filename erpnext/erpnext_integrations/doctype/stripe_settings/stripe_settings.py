@@ -23,10 +23,21 @@ class StripeSettings(PaymentGatewayController):
 		'GBP': 0.30, 'NZD': 0.50, 'SGD': 0.50
 	}
 
+	enabled_events = [
+		"payment_intent.created",
+		"payment_intent.canceled",
+		"payment_intent.payment_failed",
+		"payment_intent.processing",
+		"payment_intent.succeeded"
+	]
+
 	def __init__(self, *args, **kwargs):
 		super(StripeSettings, self).__init__(*args, **kwargs)
 		if not self.is_new():
 			self.configure_stripe()
+
+	def before_insert(self):
+		self.gateway_name = frappe.scrub(self.gateway_name)
 
 	def configure_stripe(self):
 		self.stripe = stripe
@@ -135,3 +146,27 @@ def handle_webhooks(**kwargs):
 	}
 
 	_handle_webhooks(WEBHOOK_HANDLERS, **kwargs)
+
+
+@frappe.whitelist()
+def create_webhooks(settings):
+	from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeWebhookEndpoint
+	stripe_settings = frappe.get_doc("Stripe Settings", settings)
+	endpoint = "/api/method/erpnext.erpnext_integrations.doctype.stripe_settings.webhooks?account="
+	url = f"{frappe.utils.get_url(endpoint)}{stripe_settings.name}"
+
+	try:
+		StripeWebhookEndpoint(stripe_settings).create(url, stripe_settings.enabled_events)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "Stripe webhook creation error")
+
+@frappe.whitelist()
+def delete_webhooks(settings):
+	from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeWebhookEndpoint
+	stripe_settings = frappe.get_doc("Stripe Settings", settings)
+
+	for event in stripe_settings.enabled_events:
+		try:
+			StripeWebhookEndpoint(stripe_settings).delete(event)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), "Stripe webhook deletion error")
