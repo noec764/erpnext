@@ -1,7 +1,7 @@
 from collections import defaultdict
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
-from frappe.utils import nowdate, cint, flt, now_datetime
+from frappe.utils import nowdate, cint, flt, now_datetime, add_days
 from frappe import _
 from frappe.utils.background_jobs import get_jobs
 
