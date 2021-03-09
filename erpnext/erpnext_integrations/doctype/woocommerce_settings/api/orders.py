@@ -222,7 +222,7 @@ def get_or_create_missing_item(settings, product):
 				"categories": []
 			})
 		)
-		item_doc.insert(ignore_permissions)
+		item_doc.insert(ignore_permissions=True)
 		item = item_doc.name
 
 	return item
