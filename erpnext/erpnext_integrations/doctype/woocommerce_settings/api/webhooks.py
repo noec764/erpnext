@@ -12,6 +12,7 @@ class WooCommerceWebhooks(WooCommerceAPI):
 
 def create_webhooks():
 	wc_api = WooCommerceWebhooks()
+	webhooks = {x.get("topic"): x.get("delivery_url") for x in wc_api.get("webhooks", params={"per_page": 100}).json()}
 
 	for topic, name in {
 		"coupon.created": "Coupon Created",
@@ -31,12 +32,13 @@ def create_webhooks():
 		"product.deleted": "Product Deleted",
 		"product.restored": "Product Restored",
 	}.items():
-		wc_api.create({
-			"topic": topic,
-			"name": name,
-			"delivery_url": wc_api.settings.endpoint,
-			"secret": wc_api.settings.secret
-		})
+		if not webhooks.get(topic) == wc_api.settings.endpoint:
+			wc_api.create({
+				"topic": topic,
+				"name": name,
+				"delivery_url": wc_api.settings.endpoint,
+				"secret": wc_api.settings.secret
+			})
 
 def delete_webhooks():
 	wc_api = WooCommerceWebhooks()
