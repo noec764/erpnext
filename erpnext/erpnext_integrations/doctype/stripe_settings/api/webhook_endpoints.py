@@ -26,3 +26,7 @@ class StripeWebhookEndpoint:
 		return self.gateway.stripe.WebhookEndpoint.delete(
 			id
 		)
+
+	@handle_stripe_errors
+	def get_all(self):
+		return self.gateway.stripe.WebhookEndpoint.list(limit=100)

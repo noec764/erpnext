@@ -8,20 +8,24 @@ frappe.ui.form.on('Stripe Settings', {
 				__("Configure webhooks on your Stripe Dashboard"),
 				() => {
 					frappe.call({
-						method:"erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.create_webhooks",
+						method:"erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.create_delete_webhooks",
 						args: {
-							settings: frm.doc.name
+							settings: frm.doc.name,
+							action: "create"
 						}
-					}).done(() => {
-						frappe.show_alert({
-							"message": __("Webhooks successfully created"),
-							"indicator": "green"
-						})
-					}).fail(() => {
-						frappe.show_alert({
-							"message": __("Webhooks creation failed. Please check the error logs"),
-							"indicator": "red"
-						})
+					}).done((r) => {
+						if (r&&r.message) {
+							frappe.show_alert({
+								"message": __("Webhooks creation in progress"),
+								"indicator": "green"
+							})
+							frm.reload_doc()
+						} else {
+							frappe.show_alert({
+								"message": __("Webhooks creation failed. Please check the error logs"),
+								"indicator": "red"
+							})
+						}
 					});
 				}
 			);
@@ -33,20 +37,24 @@ frappe.ui.form.on('Stripe Settings', {
 				__("Delete webhooks configured on your Stripe Dashboard"),
 				() => {
 					frappe.call({
-						method:"erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.delete_webhooks",
+						method:"erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.create_delete_webhooks",
 						args: {
-							settings: frm.doc.name
+							settings: frm.doc.name,
+							action: "delete"
 						}
-					}).done(() => {
-						frappe.show_alert({
-							"message": __("Webhooks successfully deleted"),
-							"indicator": "green"
-						})
-					}).fail(() => {
-						frappe.show_alert({
-							"message": __("Webhooks deletion failed. Please check the error logs"),
-							"indicator": "red"
-						})
+					}).done((r) => {
+						if (r&&r.message) {
+							frappe.show_alert({
+								"message": __("Webhooks deletion in progress"),
+								"indicator": "green"
+							})
+							frm.reload_doc()
+						} else {
+							frappe.show_alert({
+								"message": __("Webhooks deletion failed. Please check the error logs"),
+								"indicator": "red"
+							})
+						}
 					});
 				}
 			);

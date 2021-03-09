@@ -11,7 +11,7 @@ from frappe.utils import get_url, call_hook_method, cint, flt, getdate, nowdate
 from frappe.integrations.utils import PaymentGatewayController, create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import (StripeChargeWebhookHandler, 
 	StripePaymentIntentWebhookHandler, StripeInvoiceWebhookHandler)
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice, StripeCustomer, StripePaymentIntent, StripeWebhookEndpoint
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 import stripe
 import json
@@ -136,6 +136,53 @@ class StripeSettings(PaymentGatewayController):
 			prorate=kwargs.get("prorate", False)
 		)
 
+	def on_payment_request_submission(self, payment_request):
+		customer = payment_request.get_customer()
+		stripe_customer_id = frappe.db.get_value("Integration References", dict(customer=customer, stripe_settings=self.name), "stripe_customer_id")
+
+		if stripe_customer_id:
+			stripe_customer = StripeCustomer(self).get(stripe_customer_id)
+			return True if stripe_customer.get("default_source") else False
+
+		return False
+
+	def immediate_payment_processing(self, payment_request):
+		try:
+			processed_data = dict(
+				amount=cint(flt(payment_request.grand_total, payment_request.precision("grand_total")) * 100),
+				currency=payment_request.currency,
+				description=payment_request.subject,
+				reference=payment_request.reference_name,
+				links={},
+				metadata={
+					"reference_doctype": payment_request.reference_doctype,
+					"reference_name": payment_request.reference_name,
+					"payment_request": payment_request.name
+				}
+			)
+
+			customer = payment_request.get_customer()
+			stripe_customer_id = frappe.db.get_value("Integration References", dict(customer=customer, stripe_settings=self.name), "stripe_customer_id")
+
+			payment_intent = StripePaymentIntent(self, payment_request).create(
+				amount=cint(flt(payment_request.grand_total, payment_request.precision("grand_total")) * 100),
+				description=payment_request.subject,
+				statement_descriptor=frappe.db.get_value(payment_request.reference_doctype, payment_request.reference_name, "company") or payment_request.subject[:22],
+				currency=payment_request.currency,
+				customer=stripe_customer_id,
+				confirm=True,
+				metadata={
+					"reference_doctype": payment_request.reference_doctype,
+					"reference_name": payment_request.reference_name,
+					"payment_request": payment_request.name
+				}
+			)
+
+			return payment_intent.get("id")
+
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), _("Stripe direct processing failed for {0}".format(payment_request.name)))
+
 def handle_webhooks(**kwargs):
 	from erpnext.erpnext_integrations.webhooks_controller import handle_webhooks as _handle_webhooks
 
@@ -149,24 +196,34 @@ def handle_webhooks(**kwargs):
 
 
 @frappe.whitelist()
-def create_webhooks(settings):
-	from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeWebhookEndpoint
+def create_delete_webhooks(settings, action="create"):
 	stripe_settings = frappe.get_doc("Stripe Settings", settings)
 	endpoint = "/api/method/erpnext.erpnext_integrations.doctype.stripe_settings.webhooks?account="
 	url = f"{frappe.utils.get_url(endpoint)}{stripe_settings.name}"
 
+	if action == "create":
+		return create_webhooks(stripe_settings, url)
+	elif action=="delete":
+		return delete_webhooks(stripe_settings, url)
+
+def create_webhooks(stripe_settings, url):
 	try:
-		StripeWebhookEndpoint(stripe_settings).create(url, stripe_settings.enabled_events)
+		result = StripeWebhookEndpoint(stripe_settings).create(url, stripe_settings.enabled_events)
+		if result:
+			frappe.db.set_value("Stripe Settings", stripe_settings.name, "webhook_secret_key", result.get("secret"))
+		return result
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Stripe webhook creation error")
 
-@frappe.whitelist()
-def delete_webhooks(settings):
-	from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeWebhookEndpoint
-	stripe_settings = frappe.get_doc("Stripe Settings", settings)
+def delete_webhooks(stripe_settings, url):
+	webhooks_list = StripeWebhookEndpoint(stripe_settings).get_all()
 
-	for event in stripe_settings.enabled_events:
-		try:
-			StripeWebhookEndpoint(stripe_settings).delete(event)
-		except Exception:
-			frappe.log_error(frappe.get_traceback(), "Stripe webhook deletion error")
+	for webhook in webhooks_list.get("data", []):
+		if webhook.get("url") == url:
+			try:
+				result = StripeWebhookEndpoint(stripe_settings).delete(webhook.get("id"))
+				frappe.db.set_value("Stripe Settings", stripe_settings.name, "webhook_secret_key", "")
+			except Exception:
+				frappe.log_error(frappe.get_traceback(), "Stripe webhook deletion error")
+
+	return webhooks_list
