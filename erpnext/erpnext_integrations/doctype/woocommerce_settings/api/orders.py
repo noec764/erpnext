@@ -222,8 +222,13 @@ def get_or_create_missing_item(settings, product):
 				"categories": []
 			})
 		)
-		item_doc.insert(ignore_permissions=True)
-		item = item_doc.name
+		try:
+			item_doc.insert(ignore_permissions=True)
+		except frappe.exceptions.DuplicateEntryError:
+			pass
+
+		if item_doc:
+			item = item_doc.name
 
 	return item
 
