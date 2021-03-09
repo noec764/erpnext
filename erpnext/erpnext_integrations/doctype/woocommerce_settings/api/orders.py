@@ -118,7 +118,7 @@ def create_sales_order(settings, woocommerce_order, customer):
 		"order_type": "Shopping Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
-		"date": woocommerce_order.get("date_created_gmt") or nowdate(),
+		"transaction_date": woocommerce_order.get("date_created_gmt") or nowdate(),
 		"customer": customer.name,
 		"customer_group": customer.customer_group,
 		"delivery_date": add_days(woocommerce_order.get("date_created_gmt") or nowdate(), settings.delivery_after_days),
