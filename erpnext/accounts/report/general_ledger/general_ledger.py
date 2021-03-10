@@ -127,7 +127,8 @@ def get_gl_entries(filters, accounting_dimensions):
 	select_fields = """, `tabGL Entry`.debit, `tabGL Entry`.credit, `tabGL Entry`.debit_in_account_currency,
 		`tabGL Entry`.credit_in_account_currency """
 
-	order_by_statement = "order by posting_date, account, creation"
+	if filters.get("include_dimensions"):
+		order_by_statement = "order by posting_date, creation"
 
 	if filters.get("group_by") == _("Group by Voucher"):
 		order_by_statement = "order by posting_date, voucher_type, voucher_no"
@@ -145,7 +146,9 @@ def get_gl_entries(filters, accounting_dimensions):
 
 	distributed_cost_center_query = ""
 	if filters and filters.get('cost_center'):
-		select_fields_with_percentage = """, debit*(DCC_allocation.percentage_allocation/100) as debit, credit*(DCC_allocation.percentage_allocation/100) as credit, debit_in_account_currency*(DCC_allocation.percentage_allocation/100) as debit_in_account_currency,
+		select_fields_with_percentage = """, debit*(DCC_allocation.percentage_allocation/100) as debit,
+		credit*(DCC_allocation.percentage_allocation/100) as credit,
+		debit_in_account_currency*(DCC_allocation.percentage_allocation/100) as debit_in_account_currency,
 		credit_in_account_currency*(DCC_allocation.percentage_allocation/100) as credit_in_account_currency """
 
 		distributed_cost_center_query = """
@@ -208,7 +211,7 @@ def get_gl_entries(filters, accounting_dimensions):
 
 def get_conditions(filters):
 	conditions = []
-	if filters.get("account"):
+	if filters.get("account") and not filters.get("include_dimensions"):
 		lft, rgt = frappe.db.get_value("Account", filters["account"], ["lft", "rgt"])
 		conditions.append("""account in (select name from tabAccount
 			where lft>=%s and rgt<=%s and docstatus<2)""" % (lft, rgt))
@@ -256,17 +259,18 @@ def get_conditions(filters):
 	if match_conditions:
 		conditions.append(match_conditions)
 
-	accounting_dimensions = get_accounting_dimensions(as_list=False)
+	if filters.get("include_dimensions"):
+		accounting_dimensions = get_accounting_dimensions(as_list=False)
 
-	if accounting_dimensions:
-		for dimension in accounting_dimensions:
-			if filters.get(dimension.fieldname):
-				if frappe.get_cached_value('DocType', dimension.document_type, 'is_tree'):
-					filters[dimension.fieldname] = get_dimension_with_children(dimension.document_type,
-						filters.get(dimension.fieldname))
-					conditions.append("{0} in %({0})s".format(dimension.fieldname))
-				else:
-					conditions.append("{0} in (%({0})s)".format(dimension.fieldname))
+		if accounting_dimensions:
+			for dimension in accounting_dimensions:
+				if filters.get(dimension.fieldname):
+					if frappe.get_cached_value('DocType', dimension.document_type, 'is_tree'):
+						filters[dimension.fieldname] = get_dimension_with_children(dimension.document_type,
+							filters.get(dimension.fieldname))
+						conditions.append("{0} in %({0})s".format(dimension.fieldname))
+					else:
+						conditions.append("{0} in (%({0})s)".format(dimension.fieldname))
 
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 
