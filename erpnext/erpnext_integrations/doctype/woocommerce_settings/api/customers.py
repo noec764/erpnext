@@ -116,6 +116,7 @@ def _add_update_address(settings, customer, woocommerce_customer, address_type, 
 		else:
 			doc = frappe.new_doc("Address")
 
+		doc.flags.ignore_permissions = True
 		doc.update({
 			"address_title": customer.name,
 			"address_type": address_type,
@@ -134,12 +135,10 @@ def _add_update_address(settings, customer, woocommerce_customer, address_type, 
 				"link_name": customer.name
 			}]
 		})
-
-		doc.flags.ignore_permissions = True
 		doc.save()
 
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), "Woocommerce Address Error")
+		frappe.log_error(f"Address: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Address Error")
 
 def add_contact(customer, woocommerce_customer):
 	existing_contact = frappe.db.get_value("Contact", dict(email_id=woocommerce_customer["billing"]["email"]), "name")
@@ -149,7 +148,7 @@ def add_contact(customer, woocommerce_customer):
 		else:
 			doc = frappe.new_doc("Contact")
 
-
+		doc.flags.ignore_permissions = True
 		doc.update({
 			"first_name": woocommerce_customer["billing"]["first_name"],
 			"last_name": woocommerce_customer["billing"]["last_name"],
@@ -166,12 +165,10 @@ def add_contact(customer, woocommerce_customer):
 				"link_name": customer.name
 			}]
 		})
-
-		doc.flags.ignore_permissions = True
 		doc.save()
 
 	except Exception as e:
-		frappe.log_error(frappe.get_traceback(), "Woocommerce Contact Error")
+		frappe.log_error(f"Contact: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Contact Error")
 
 def get_country_name(code):
 	return frappe.db.get_value("Country", dict(code=code), "name")

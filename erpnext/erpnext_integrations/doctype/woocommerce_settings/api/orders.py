@@ -445,6 +445,7 @@ def register_delivery(settings, woocommerce_order, sales_order):
 		_make_delivery_note(woocommerce_order, sales_order)
 
 def _make_delivery_note(woocommerce_order, sales_order):
+	frappe.set_user("administrator")
 	dn = make_delivery_note(sales_order.name)
 	dn.set_posting_time = True
 	dn.posting_date = woocommerce_order.get("date_completed")
