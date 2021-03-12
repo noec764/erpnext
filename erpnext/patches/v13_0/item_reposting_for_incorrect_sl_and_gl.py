@@ -6,8 +6,12 @@ from erpnext.accounts.utils import update_gl_entries_after
 
 def execute():
 	for doctype in ('repost_item_valuation', 'stock_entry_detail', 'purchase_receipt_item',
-			'purchase_invoice_item', 'delivery_note_item', 'sales_invoice_item', 'packed_item'):
+			'delivery_note_item', 'packed_item'):
 		frappe.reload_doc('stock', 'doctype', doctype)
+
+	for doctype in ('purchase_invoice_item', 'sales_invoice_item'):
+		frappe.reload_doc('accounts', 'doctype', doctype)
+
 	frappe.reload_doc('buying', 'doctype', 'purchase_receipt_item_supplied')
 
 	reposting_project_deployed_on = frappe.db.get_value("DocType", "Repost Item Valuation", "creation")
