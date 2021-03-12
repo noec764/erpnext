@@ -144,6 +144,14 @@ body.product-page {
 	}
 }
 
+.products-list {
+	.item-card {
+		.card-body {
+			padding: 1.8rem;
+		}
+	}
+}
+
 [data-doctype="Item Group"],
 #page-all-products {
 	.page-header {
@@ -191,7 +199,6 @@ body.product-page {
 
 	.product-details {
 		max-width: 40%;
-		margin-left: -30px;
 
 		.btn-add-to-cart {
 			font-size: var(--text-base);
@@ -329,8 +336,8 @@ body.product-page {
 .cart-icon {
 	.cart-badge {
 		position: relative;
-		top: -10px;
-		left: -12px;
+		top: -14px;
+		left: -5px;
 		background: var(--red-600);
 		width: 16px;
 		align-items: center;
@@ -400,7 +407,7 @@ body.product-page {
 				}
 
 				textarea {
-					width: 40%;
+					width: 70%;
 				}
 			}
 
@@ -452,6 +459,7 @@ body.product-page {
 		font-size: 18px;
 		color: var(--text-color);
 		font-weight: bold;
+		text-align: center;
 	}
 }
 

@@ -38,6 +38,11 @@
 				class="btn btn-light btn-view-in-cart {% if not product_info.qty %}hidden{% endif %}"
 				role="button"
 			>
+				<span class="mr-2">
+					<svg class="icon icon-md">
+						<use href="#icon-assets"></use>
+					</svg>
+				</span>
 				{{ _("View in Cart") }}
 			</a>
 			{% if not disable_unit_purchasing %}
@@ -59,6 +64,11 @@
 				data-item-code="{{item_code}}"
 				class="btn btn-primary item-booking-btn"
 			>
+				<span class="mr-2">
+					<svg class="icon icon-md">
+						<use href="#icon-calendar"></use>
+					</svg>
+				</span>
 				{{ _("Select a slot") }}
 			</button>
 			{% endif %}
