@@ -254,7 +254,7 @@ class PaymentEntry(AccountsController):
 		elif self.party_type == "Supplier":
 			valid_reference_doctypes = ("Purchase Order", "Purchase Invoice", "Journal Entry")
 		elif self.party_type == "Employee":
-			valid_reference_doctypes = ("Expense Claim", "Journal Entry", "Employee Advance")
+			valid_reference_doctypes = ("Expense Claim", "Journal Entry", "Employee Advance", "Gratuity")
 		elif self.party_type == "Shareholder":
 			valid_reference_doctypes = ("Journal Entry")
 
@@ -669,7 +669,7 @@ class PaymentEntry(AccountsController):
 		if self.payment_type in ("Receive", "Pay") and self.party:
 			for d in self.get("references"):
 				if d.allocated_amount \
-					and d.reference_doctype in ("Sales Order", "Purchase Order", "Employee Advance"):
+					and d.reference_doctype in ("Sales Order", "Purchase Order", "Employee Advance", "Gratuity"):
 						frappe.get_doc(d.reference_doctype, d.reference_name).set_total_advance_paid()
 
 				if d.allocated_amount and d.reference_doctype == "Sales Invoice":
@@ -1005,6 +1005,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 			exchange_rate = ref_doc.get("exchange_rate")
 			if party_account_currency != ref_doc.currency:
 				total_amount = flt(total_amount) * flt(exchange_rate)
+		elif ref_doc.doctype == "Gratuity":
+			total_amount = ref_doc.amount
 		elif ref_doc.doctype == "Subscription":
 				total_amount = ref_doc.grand_total
 		if not total_amount:
@@ -1033,6 +1035,8 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 					exchange_rate = 1
 		elif reference_doctype == "Subscription":
 			outstanding_amount = flt(total_amount)
+		elif reference_doctype == "Gratuity":
+			outstanding_amount = ref_doc.amount - flt(ref_doc.paid_amount)
 		else:
 			outstanding_amount = flt(total_amount) - flt(ref_doc.advance_paid)
 	else:
@@ -1238,7 +1242,7 @@ def set_party_type(dt):
 		party_type = "Customer"
 	elif dt in ("Purchase Invoice", "Purchase Order"):
 		party_type = "Supplier"
-	elif dt in ("Expense Claim", "Employee Advance"):
+	elif dt in ("Expense Claim", "Employee Advance", "Gratuity"):
 		party_type = "Employee"
 	return party_type
 
@@ -1252,6 +1256,8 @@ def set_party_account(dt, dn, doc, party_type):
 	elif dt == "Employee Advance":
 		party_account = doc.advance_account
 	elif dt == "Expense Claim":
+		party_account = doc.payable_account
+	elif dt == "Gratuity":
 		party_account = doc.payable_account
 	else:
 		party_account = get_party_account(party_type, doc.get(party_type.lower()), doc.company, getattr(doc, "down_payment", None))
@@ -1298,6 +1304,9 @@ def set_grand_total_and_outstanding_amount(party_amount, dt, party_account_curre
 	elif dt == "Dunning":
 		grand_total = doc.grand_total
 		outstanding_amount = doc.grand_total
+	elif dt == "Gratuity":
+		grand_total = doc.amount
+		outstanding_amount = flt(doc.amount) - flt(doc.paid_amount)
 	else:
 		if party_account_currency == doc.company_currency:
 			grand_total = flt(doc.get("base_rounded_total") or doc.base_grand_total)

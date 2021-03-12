@@ -705,6 +705,7 @@ erpnext.patches.v12_0.add_state_code_for_ladakh
 erpnext.patches.v13_0.set_app_name
 erpnext.patches.v13_0.item_reposting_for_incorrect_sl_and_gl
 erpnext.patches.v13_0.update_vehicle_no_reqd_condition
+erpnext.patches.v13_0.setup_gratuity_rule_for_india_and_uae
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
