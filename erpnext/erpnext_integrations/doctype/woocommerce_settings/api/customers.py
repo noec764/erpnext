@@ -135,7 +135,11 @@ def _add_update_address(settings, customer, woocommerce_customer, address_type, 
 				"link_name": customer.name
 			}]
 		})
-		doc.save()
+		try:
+			doc.save()
+		except frappe.exceptions.TimestampMismatchError:
+			# Handle the update of two sales orders contact details concurrently
+			pass
 
 	except Exception:
 		frappe.log_error(f"Address: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Address Error")
@@ -165,7 +169,11 @@ def add_contact(customer, woocommerce_customer):
 				"link_name": customer.name
 			}]
 		})
-		doc.save()
+		try:
+			doc.save()
+		except frappe.exceptions.TimestampMismatchError:
+			# Handle the update of two sales orders contact details concurrently
+			pass
 
 	except Exception as e:
 		frappe.log_error(f"Contact: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Contact Error")
