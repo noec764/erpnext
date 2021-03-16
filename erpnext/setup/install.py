@@ -30,6 +30,7 @@ def after_install():
 	create_default_energy_point_rules()
 	add_company_to_session_defaults()
 	add_standard_navbar_items()
+	add_app_name()
 	frappe.db.commit()
 
 
@@ -138,3 +139,6 @@ def add_standard_navbar_items():
 		})
 
 	navbar_settings.save()
+
+def add_app_name():
+	frappe.db.set_value('System Settings', None, 'app_name', 'Dokos')
