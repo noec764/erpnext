@@ -4,6 +4,10 @@
   {
    "chart_name": "Profit and Loss",
    "label": "Profit and Loss"
+  },
+  {
+   "chart_name": "Bank Balance",
+   "label": "Bank Balance"
   }
  ],
  "creation": "2020-03-02 15:41:59.515192",
@@ -15,6 +19,7 @@
  "hide_custom": 0,
  "icon": "accounting",
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
  "label": "Accounting",
  "links": [
@@ -113,6 +118,16 @@
    "type": "Card Break"
   },
   {
+   "dependencies": "GL Entry",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "General Ledger",
+   "link_to": "General Ledger",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -129,16 +144,6 @@
    "label": "Journal Entry Template",
    "link_to": "Journal Entry Template",
    "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "GL Entry",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "General Ledger",
-   "link_to": "General Ledger",
-   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   },
@@ -441,6 +446,7 @@
    "link_to": "DATEV",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "Germany",
    "type": "Link"
   },
   {
@@ -632,26 +638,6 @@
    "type": "Link"
   },
   {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bank Statement Transaction Entry",
-   "link_to": "Bank Statement Transaction Entry",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bank Statement Settings",
-   "link_to": "Bank Statement Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Subscription Management",
@@ -682,8 +668,8 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Subscription Settings",
-   "link_to": "Subscription Settings",
+   "label": "Subscription Template",
+   "link_to": "Subscription Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -1061,7 +1047,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-03-04 00:38:35.349024",
+ "modified": "2021-03-17 17:25:54.641523",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",

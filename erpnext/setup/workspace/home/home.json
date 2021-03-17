@@ -8,8 +8,9 @@
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 0,
- "icon": "getting-started",
+ "icon": "agriculture",
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
  "label": "Home",
  "links": [
@@ -249,7 +250,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-01-01 12:13:16.055668",
+ "modified": "2021-03-17 16:41:45.464670",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Home",

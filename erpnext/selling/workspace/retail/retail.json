@@ -1,5 +1,5 @@
 {
- "category": "Domains",
+ "category": "Modules",
  "charts": [],
  "creation": "2020-03-02 17:18:32.505616",
  "developer_mode_only": 0,
@@ -10,6 +10,7 @@
  "hide_custom": 0,
  "icon": "retail",
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
  "label": "Retail",
  "links": [
@@ -95,7 +96,7 @@
    "type": "Link"
   }
  ],
- "modified": "2020-12-01 13:38:36.758038",
+ "modified": "2021-03-17 17:15:29.267775",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Retail",
