@@ -30,7 +30,7 @@ class CadrageTVABase:
 		self.columns = []
 		self.tax_rates = []
 		self.precision = 2
-		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax"}, fields=["name", "account_number", "tax_rate"])
+		self.tax_accounts = frappe.get_all("Account", filters={"is_group": 0, "account_type": "Tax", "company": self.filters.company}, fields=["name", "account_number", "tax_rate"])
 		self.collection_accounts = [x.name for x in
 			self.tax_accounts
 			if str(x.account_number).startswith("4457") or str(x.account_number).startswith("44587")
@@ -42,6 +42,7 @@ class CadrageTVABase:
 
 	def get_data(self):
 		self.get_income_entries()
+		self.get_vat_account_per_item()
 		self.get_vat_split()
 		self.get_corrections()
 		self.total_turnover()
@@ -56,12 +57,12 @@ class CadrageTVABase:
 
 		return self.columns, self.data
 
-
 	def get_income_entries(self):
 		vat_entries = frappe.get_all("GL Entry",
 			filters=dict(
 				account=("in", self.collection_accounts),
-				posting_date=("between", self.period)
+				posting_date=("between", self.period),
+				company=self.filters.company
 			),
 			fields=["voucher_type", "voucher_no"]
 		)
@@ -74,7 +75,7 @@ class CadrageTVABase:
 		accounts = []
 		for voucher_type in by_voucher_type:
 			accounts.extend(frappe.get_all("GL Entry",
-				filters=dict(voucher_type=voucher_type, voucher_no=("in", by_voucher_type[voucher_type])),
+				filters=dict(voucher_type=voucher_type, voucher_no=("in", by_voucher_type[voucher_type]), company=self.filters.company),
 				pluck="account",
 				distinct=1
 			))
@@ -99,7 +100,7 @@ class CadrageTVABase:
 
 	def get_income_expense_accounts(self):
 		income_expense_accounts = frappe.get_all("Account",
-			filters=dict(account_type=("in", ("Income Account", "Expense Account"))),
+			filters=dict(account_type=("in", ("Income Account", "Expense Account")), company=self.filters.company),
 			fields=["name", "account_name", "account_number", "account_type"]
 		)
 
@@ -113,6 +114,7 @@ class CadrageTVABase:
 			filters=dict(
 				account=("in", self.full_account_list),
 				posting_date=("between", self.period),
+				company=self.filters.company,
 				is_cancelled=0
 			),
 			fields=fields,
@@ -120,7 +122,26 @@ class CadrageTVABase:
 			order_by="account asc"
 		)
 
+	def get_vat_account_per_item(self):
+		tax_templates = {x.parent: (x.tax_type, x.tax_rate) for x in frappe.get_all("Item Tax Template Detail",
+			filters={"tax_type": ("in", self.collection_accounts)},
+			fields=["parent", "tax_type", "tax_rate"]
+			)
+		}
+
+		item_taxes = frappe.get_all("Item Tax", filters={"item_tax_template": ("in", tax_templates.keys())}, fields=["parent", "item_tax_template", "valid_from"])
+
+		self.tax_per_item = defaultdict(float)
+
+		for tax in item_taxes:
+			self.tax_per_item[tax.parent] = tax_templates.get(tax.item_tax_template, ("", 0.0))
+
 	def get_vat_split(self):
+		def add_to_taxable_amount(taxable_amount_by_account, account, item, tax_rate):
+			if tax_rate not in self.tax_rates:
+				self.tax_rates.append(tax_rate)
+			taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
+
 		income_gl_entries = self.get_income_gl_entries(["account", "voucher_type", "voucher_no"])
 
 		gl_by_voucher_type = defaultdict(list)
@@ -133,10 +154,10 @@ class CadrageTVABase:
 				fields = ["item_code", "parent", "parenttype", "item_tax_rate", "base_net_amount"]
 				fields.append("income_account as account" if voucher_type == "Sales Invoice" else "expense_account as account")
 
-				items = frappe.get_all(f"{voucher_type} Item", 
+				items.extend(frappe.get_all(f"{voucher_type} Item",
 					filters=dict(parenttype=voucher_type, parent=("in", gl_by_voucher_type[voucher_type])),
 					fields=fields
-				)
+				))
 
 		gl_by_account = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 		for gl_entry in income_gl_entries:
@@ -153,14 +174,18 @@ class CadrageTVABase:
 
 						itemised_tax = get_itemised_tax(doc.taxes, True)
 						for item in gl_by_account[account][voucher_type][voucher]:
-							if frappe.parse_json(item.get("item_tax_rate")):
+							if self.tax_per_item.get(item.get("item_code")):
+								tax_account, tax_rate = self.tax_per_item.get(item.get("item_code"))
+								add_to_taxable_amount(taxable_amount_by_account, account, item, tax_rate)
+
+							elif not itemised_tax:
+								add_to_taxable_amount(taxable_amount_by_account, account, item, 0.0)
+
+							elif frappe.parse_json(item.get("item_tax_rate")):
 								taxes = frappe.parse_json(item.get("item_tax_rate"))
 								for tax in taxes:
 									tax_rate = tax.get("rate")
-									if tax_rate not in self.tax_rates:
-										self.tax_rates.append(tax_rate)
-
-									taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
+									add_to_taxable_amount(taxable_amount_by_account, account, item, tax_rate)
 
 							else:
 								taxes = itemised_tax.get(item.get("item_code"))
@@ -168,10 +193,7 @@ class CadrageTVABase:
 									if taxes[tax].get("tax_account") not in self.collection_accounts:
 										continue
 									tax_rate = itemised_tax[item.get("item_code")][tax]["tax_rate"]
-									if tax_rate not in self.tax_rates:
-										self.tax_rates.append(tax_rate)
-
-									taxable_amount_by_account[account][tax_rate] += flt(item.get("base_net_amount"), self.precision)
+									add_to_taxable_amount(taxable_amount_by_account, account, item, tax_rate)
 
 					else:
 						gl_entries = frappe.get_all("GL Entry",
@@ -179,6 +201,7 @@ class CadrageTVABase:
 								account=("in", self.collection_accounts + self.income_accounts_list),
 								voucher_type=voucher_type,
 								voucher_no=voucher,
+								company=self.filters.company,
 								is_cancelled=0
 							),
 							fields=["debit", "credit", "account"]
@@ -272,6 +295,7 @@ class CadrageTVABase:
 						filters=dict(
 							account=account.name,
 							posting_date=("between", self.period),
+							company=self.filters.company,
 							is_cancelled=0
 						),
 						fields=f"debit, credit, voucher_type, voucher_no"
@@ -295,6 +319,7 @@ class CadrageTVABase:
 									filters=dict(
 										account=tax_account.name,
 										posting_date=("between", self.period),
+										company=self.filters.company,
 										is_cancelled=0
 									),
 									fields="sum(credit - debit) as total" if index == 1 else "sum(debit - credit) as total"
@@ -310,7 +335,7 @@ class CadrageTVABase:
 										self.tax_rates.append(tax_account.tax_rate)
 
 									self.data[-1].update({
-										str(tax_account.tax_rate): flt(vat_entries[0].get("total"), self.precision) / (tax_account.tax_rate) * 100.0 if vat_entries[0].get("total") else (flt(debit) - flt(credit)) if index == 1 else (flt(credit) - flt(debit))
+										str(tax_account.tax_rate): flt(vat_entries[0].get("total"), self.precision) / (tax_account.tax_rate or 1.0) * 100.0 if vat_entries[0].get("total") else (flt(debit) - flt(credit)) if index == 1 else (flt(credit) - flt(debit))
 									})
 
 						if not tax_added:
@@ -358,11 +383,24 @@ class CadrageTVABase:
 		self.get_vat_in_books("credit - debit", _("+ Collected tax accounting balance"))
 
 	def get_vat_debits(self):
-		pass
-		# TODO: Handle CA3 corrections
-		# self.get_vat_in_books("debit", _("+ CA3 entries corrections"))
+		references = frappe.get_all("GL Entry",
+			filters=dict(
+				account=("like", "4455%"),
+				posting_date=("between", self.period),
+				company=self.filters.company,
+				is_cancelled=0,
+				credit=("!=", 0)
+			),
+			fields=["voucher_type", "voucher_no"]
+		)
 
-	def get_vat_in_books(self, balance_type="credit", label=None):
+		filters = dict(
+			voucher_type=("in", [x.voucher_type for x in references]),
+			voucher_no=("in", [x.voucher_no for x in references])
+		)
+		self.get_vat_in_books("debit", _("+ CA3 entries corrections"), filters)
+
+	def get_vat_in_books(self, balance_type="credit", label=None, filters=None):
 		self.data.append({
 			"account": "",
 			"is_total": False,
@@ -371,15 +409,20 @@ class CadrageTVABase:
 			"total": ""
 		})
 
+		if not filters:
+			filters = {}
+
 		for rate in self.tax_rates:
 			accounts = [x.name for x in self.tax_accounts if x.tax_rate == rate and str(x.account_number).startswith("4457")]
 			if accounts:
+				filters.update(dict(
+					account=("in", accounts),
+					posting_date=("between", self.period),
+					company=self.filters.company,
+					is_cancelled=0
+				))
 				gl = frappe.get_all("GL Entry",
-					filters=dict(
-						account=("in", accounts),
-						posting_date=("between", self.period),
-						is_cancelled=0
-					),
+					filters=filters,
 					fields=f"SUM({balance_type}) as total"
 				)
 

@@ -127,6 +127,8 @@ def get_gl_entries(filters, accounting_dimensions):
 	select_fields = """, `tabGL Entry`.debit, `tabGL Entry`.credit, `tabGL Entry`.debit_in_account_currency,
 		`tabGL Entry`.credit_in_account_currency """
 
+	order_by_statement = "order by posting_date, account, creation"
+
 	if filters.get("include_dimensions"):
 		order_by_statement = "order by posting_date, creation"
 
