@@ -355,7 +355,7 @@ class GSTR3BReport(Document):
 			where p.docstatus = 1 and p.name = i.parent
 			and (i.is_nil_exempt = 1 or i.is_non_gst = 1) and
 			month(p.posting_date) = %s and year(p.posting_date) = %s and p.company = %s and p.company_gstin = %s
-			group by p.place_of_supply """, (self.month_no, self.year, self.company, self.gst_details.get("gstin")), as_dict=1)
+			group by p.place_of_supply, i.is_nil_exempt, i.is_non_gst""", (self.month_no, self.year, self.company, self.gst_details.get("gstin")), as_dict=1)
 
 		inward_nil_exempt_details = {
 			"gst": {
