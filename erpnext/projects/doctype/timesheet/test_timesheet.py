@@ -16,6 +16,11 @@ from erpnext.payroll.doctype.salary_structure.test_salary_structure \
 from erpnext.hr.doctype.employee.test_employee import make_employee
 
 class TestTimesheet(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		make_earning_salary_component(setup=True, company_list=['_Test Company'])
+		make_deduction_salary_component(setup=True, company_list=['_Test Company'])
+
 	def setUp(self):
 		for dt in ["Salary Slip", "Salary Structure", "Salary Structure Assignment", "Timesheet"]:
 			frappe.db.sql("delete from `tab%s`" % dt)
