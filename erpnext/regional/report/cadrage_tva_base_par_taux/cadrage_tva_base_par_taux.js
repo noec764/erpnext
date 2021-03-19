@@ -40,23 +40,19 @@ frappe.query_reports["Cadrage TVA base par taux"] = {
 			"default": frappe.sys_defaults.fiscal_year,
 			"reqd": 1,
 			on_change: () => {
-				const fiscal_year = frappe.query_report.get_filter_value('fiscal_year')
-				frappe.model.with_doc("Fiscal Year", fiscal_year, function(r) {
-					const fy = frappe.model.get_doc("Fiscal Year", fiscal_year);
-					frappe.query_report.set_filter_value({
-						date: fy.year_end_date >= frappe.datetime.nowdate() ? frappe.datetime.nowdate() : fy.year_end_date
-					});
-				});
+				set_date()
 			}
 		},
 		{
 			"fieldname":"date",
 			"label": __("Date"),
 			"fieldtype": "Date",
-			"default": frappe.datetime.nowdate(),
 			"reqd": 1
 		}
 	],
+	onload: function(report) {
+		set_date()
+	},
 	after_datatable_render: (dt) => {
 		dt.style.setStyle(`.dt-cell--col-3:not(.dt-cell--header):not(.dt-cell--filter)`, {
 			backgroundColor: "#f5f7fa"
@@ -67,3 +63,13 @@ frappe.query_reports["Cadrage TVA base par taux"] = {
 		})
 	}
 };
+
+const set_date = () => {
+	const fiscal_year = frappe.query_report.get_filter_value('fiscal_year')
+	frappe.model.with_doc("Fiscal Year", fiscal_year, function(r) {
+		const fy = frappe.model.get_doc("Fiscal Year", fiscal_year);
+		frappe.query_report.set_filter_value({
+			date: fy.year_end_date >= frappe.datetime.nowdate() ? frappe.datetime.nowdate() : fy.year_end_date
+		});
+	});
+}
