@@ -689,6 +689,7 @@
    "link_to": "GST Settings",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -699,6 +700,7 @@
    "link_to": "GST HSN Code",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -709,6 +711,7 @@
    "link_to": "GSTR-1",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -719,6 +722,7 @@
    "link_to": "GSTR-2",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -729,6 +733,7 @@
    "link_to": "GSTR 3B Report",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -739,6 +744,7 @@
    "link_to": "GST Sales Register",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -749,6 +755,7 @@
    "link_to": "GST Purchase Register",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -759,6 +766,7 @@
    "link_to": "GST Itemised Sales Register",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -769,6 +777,7 @@
    "link_to": "GST Itemised Purchase Register",
    "link_type": "Report",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -779,6 +788,7 @@
    "link_to": "C-Form",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -789,6 +799,7 @@
    "link_to": "Lower Deduction Certificate",
    "link_type": "DocType",
    "onboard": 0,
+   "only_for": "India",
    "type": "Link"
   },
   {
@@ -934,6 +945,16 @@
   },
   {
    "hidden": 0,
+   "is_query_report": 1,
+   "label": "Fichier des Ecritures Comptables [FEC]",
+   "link_to": "Fichier des Ecritures Comptables [FEC]",
+   "link_type": "Report",
+   "onboard": 0,
+   "only_for": "France",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
    "is_query_report": 0,
    "label": "Taxes",
    "onboard": 0,
@@ -1047,7 +1068,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-03-17 17:25:54.641523",
+ "modified": "2021-03-19 10:12:55.849116",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",

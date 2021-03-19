@@ -32,13 +32,14 @@
    "type": "Link"
   }
  ],
- "modified": "2021-02-02 11:00:01.290986",
+ "modified": "2021-03-19 09:21:47.042128",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
+ "restrict_to_domain": "Venue",
  "shortcuts": [
   {
    "doc_view": "List",
