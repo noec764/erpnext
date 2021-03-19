@@ -12,7 +12,7 @@ from erpnext.hr.doctype.employee.test_employee import make_employee
 from erpnext.payroll.doctype.salary_slip.test_salary_slip import get_salary_component_account, \
 		make_earning_salary_component, make_deduction_salary_component, create_account, make_employee_salary_slip
 from erpnext.payroll.doctype.salary_structure.test_salary_structure import make_salary_structure, create_salary_structure_assignment
-from erpnext.loan_management.doctype.loan.test_loan import create_loan, make_loan_disbursement_entry
+from erpnext.loan_management.doctype.loan.test_loan import create_loan, make_loan_disbursement_entry, create_loan_type, create_loan_accounts
 from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import process_loan_interest_accrual_for_term_loans
 
 class TestPayrollEntry(unittest.TestCase):
@@ -107,7 +107,6 @@ class TestPayrollEntry(unittest.TestCase):
 			frappe.db.get_value("Company", "_Test Company", "default_payroll_payable_account") != "_Test Payroll Payable - _TC":
 				frappe.db.set_value("Company", "_Test Company", "default_payroll_payable_account",
 					"_Test Payroll Payable - _TC")
-
 		currency=frappe.db.get_value("Company", "_Test Company", "default_currency")
 		make_salary_structure("_Test Salary Structure 1", "Monthly", employee1, company="_Test Company", currency=currency, test_tax=False)
 		make_salary_structure("_Test Salary Structure 2", "Monthly", employee2, company="_Test Company", currency=currency, test_tax=False)
@@ -169,14 +168,22 @@ class TestPayrollEntry(unittest.TestCase):
 		salary_structure = "Test Salary Structure for Loan"
 		make_salary_structure(salary_structure, "Monthly", employee=employee_doc.name, company="_Test Company", currency=company_doc.default_currency)
 
+		if not frappe.db.exists("Loan Type", "Car Loan"):
+			create_loan_accounts()
+			create_loan_type("Car Loan", 500000, 8.4,
+				is_term_loan=1,
+				mode_of_payment='Cash',
+				payment_account='Payment Account - _TC',
+				loan_account='Loan Account - _TC',
+				interest_income_account='Interest Income Account - _TC',
+				penalty_income_account='Penalty Income Account - _TC')
+
 		loan = create_loan(applicant, "Car Loan", 280000, "Repay Over Number of Periods", 20, posting_date=add_months(nowdate(), -1))
 		loan.repay_from_salary = 1
 		loan.submit()
 
 		make_loan_disbursement_entry(loan.name, loan.loan_amount, disbursement_date=add_months(nowdate(), -1))
-
 		process_loan_interest_accrual_for_term_loans(posting_date=nowdate())
-
 
 		dates = get_start_end_dates('Monthly', nowdate())
 		make_payroll_entry(company="_Test Company", start_date=dates.start_date, payable_account=company_doc.default_payroll_payable_account,
