@@ -14,7 +14,7 @@ from erpnext.accounts.doctype.subscription.subscription_plans_manager import Sub
 class SubscriptionTransactionBase:
 	def __init__(self, subscription, start_date=None, end_date=None):
 		self.subscription = subscription
-		self.start_date = start_date or self.subscription.current_invoice_start
+		self.start_date = start_date or self.subscription.current_invoice_start or self.subscription.start
 		self.end_date = end_date or self.subscription.current_invoice_end
 		previous_period = SubscriptionPeriod(
 			self.subscription,
