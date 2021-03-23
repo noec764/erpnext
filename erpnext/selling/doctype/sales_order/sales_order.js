@@ -43,6 +43,17 @@ frappe.ui.form.on("Sales Order", {
 				}
 			}
 		});
+
+		let item_booking_field = frm.get_docfield("items", "item_booking");
+		if (item_booking_field) {
+			item_booking_field.get_route_options_for_new_doc = function(row) {
+				return {
+					"item": row.doc.item_code,
+					"starts_on": row.doc.delivery_date,
+					"ends_on": row.doc.delivery_date
+				}
+			};
+		}
 	},
 	refresh: function(frm) {
 		if(frm.doc.docstatus === 1 && frm.doc.status !== 'Closed'
