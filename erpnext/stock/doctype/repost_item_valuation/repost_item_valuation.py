@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 from frappe.model.document import Document
-from frappe.utils import cint, get_link_to_form
+from frappe.utils import cint, get_link_to_form, add_to_date, today
 from erpnext.stock.stock_ledger import repost_future_sle
 from erpnext.accounts.utils import update_gl_entries_after, check_if_stock_and_account_balance_synced
 from frappe.utils.user import get_users_with_role
@@ -30,7 +30,7 @@ class RepostItemValuation(Document):
 			self.company = frappe.get_cached_value(self.voucher_type, self.voucher_no, "company")
 		elif self.warehouse:
 			self.company = frappe.get_cached_value("Warehouse", self.warehouse, "company")
-	
+
 	def set_status(self, status=None):
 		if not status:
 			status = 'Queued'
@@ -55,7 +55,6 @@ def repost(doc):
 
 		repost_sl_entries(doc)
 		repost_gl_entries(doc)
-		check_if_stock_and_account_balance_synced(doc.posting_date, doc.company)
 
 		doc.set_status('Completed')
 	except Exception:
@@ -112,3 +111,25 @@ def notify_error_to_stock_managers(doc, traceback):
 		+ _("Please check the error message and take necessary actions to fix the error and then restart the reposting again.")
 	)
 	frappe.sendmail(recipients=recipients, subject=subject, message=message)
+
+def repost_entries():
+	riv_entries = get_repost_item_valuation_entries()
+
+	for row in riv_entries:
+		doc = frappe.get_cached_doc('Repost Item Valuation', row.name)
+		repost(doc)
+
+	riv_entries = get_repost_item_valuation_entries()
+	if riv_entries:
+		return
+
+	for d in frappe.get_all('Company', filters= {'enable_perpetual_inventory': 1}):
+		check_if_stock_and_account_balance_synced(today(), d.company)
+
+def get_repost_item_valuation_entries():
+	date = add_to_date(today(), hours=-12)
+
+	return frappe.db.sql(""" SELECT name from `tabRepost Item Valuation`
+		WHERE status != 'Completed' and creation <= %s and docstatus = 1
+		ORDER BY timestamp(posting_date, posting_time) asc, creation asc
+	""", date, as_dict=1)
