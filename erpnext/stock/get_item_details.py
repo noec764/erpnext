@@ -314,6 +314,8 @@ def get_basic_details(args, item, overwrite_warehouse=True):
 		"transaction_date": args.get("transaction_date"),
 		"against_blanket_order": args.get("against_blanket_order"),
 		"bom_no": item.get("default_bom"),
+		"weight_per_unit": args.get("weight_per_unit") or item.get("weight_per_unit"),
+		"weight_uom": args.get("weight_uom") or item.get("weight_uom")
 		"is_down_payment_item": item.get("is_down_payment_item"),
 		"down_payment_rate": item.get("down_payment_percentage")
 	})
@@ -363,6 +365,9 @@ def get_basic_details(args, item, overwrite_warehouse=True):
 	meta = frappe.get_meta(child_doctype)
 	if meta.get_field("barcode"):
 		update_barcode_value(out)
+
+	if out.get("weight_per_unit"):
+		out['total_weight'] = out.weight_per_unit * out.stock_qty
 
 	return out
 
