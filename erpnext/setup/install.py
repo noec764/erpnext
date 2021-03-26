@@ -120,15 +120,36 @@ def add_company_to_session_defaults():
 def add_standard_navbar_items():
 	navbar_settings = frappe.get_single("Navbar Settings")
 
-	erpnext_navbar_items = []
+	erpnext_navbar_items = [
+		{
+			'item_label': 'Documentation',
+			'item_type': 'Route',
+			'route': 'https://doc.dokos.io',
+			'is_standard': 1
+		},
+		{
+			'item_label': 'Community',
+			'item_type': 'Route',
+			'route': 'https://community.dokos.io',
+			'is_standard': 1
+		},
+		{
+			'item_label': 'Report an issue',
+			'item_type': 'Route',
+			'route': 'https://gitlab.com/dokos/dokos/issues',
+			'is_standard': 1
+		}
+	]
 
-	current_nabvar_items = navbar_settings.help_dropdown
+	current_navbar_items = navbar_settings.help_dropdown
 	navbar_settings.set('help_dropdown', [])
 
 	for item in erpnext_navbar_items:
-		navbar_settings.append('help_dropdown', item)
+		current_labels = [item.get('item_label') for item in current_navbar_items]
+		if not item.get('item_label') in current_labels:
+			navbar_settings.append('help_dropdown', item)
 
-	for item in current_nabvar_items:
+	for item in current_navbar_items:
 		navbar_settings.append('help_dropdown', {
 			'item_label': item.item_label,
 			'item_type': item.item_type,
