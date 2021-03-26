@@ -86,7 +86,7 @@ class ItemBooking(Document):
 				self.title += " - " + (user_name or self.user)
 
 			elif self.party_name and self.party_type:
-				self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title()
+				self.title += " - " + frappe.get_doc(self.party_type, self.party_name).get_title() or ""
 
 	def set_status(self, status):
 		self.db_set("status", status, update_modified=True, notify=True)
