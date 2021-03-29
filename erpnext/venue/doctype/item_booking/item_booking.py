@@ -439,12 +439,12 @@ def _get_events(start, end, item=None, user=None):
 			"end": end
 		}, as_dict=1)
 
-	result = events
+	result = []
 
-	if result:
-		for event in events:
-			if event.get("repeat_this_event") == 1:
-				result.extend(process_recurring_events(event, now_datetime(), end, "starts_on", "ends_on", "rrule"))
+	for event in events:
+		result.append(event)
+		if event.get("repeat_this_event") == 1:
+			result.extend(process_recurring_events(event, now_datetime(), end, "starts_on", "ends_on", "rrule"))
 
 	return result
 
