@@ -315,7 +315,7 @@ def get_basic_details(args, item, overwrite_warehouse=True):
 		"against_blanket_order": args.get("against_blanket_order"),
 		"bom_no": item.get("default_bom"),
 		"weight_per_unit": args.get("weight_per_unit") or item.get("weight_per_unit"),
-		"weight_uom": args.get("weight_uom") or item.get("weight_uom")
+		"weight_uom": args.get("weight_uom") or item.get("weight_uom"),
 		"is_down_payment_item": item.get("is_down_payment_item"),
 		"down_payment_rate": item.get("down_payment_percentage")
 	})
