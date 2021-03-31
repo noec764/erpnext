@@ -166,8 +166,9 @@ def exclude_order(woocommerce_order, error=None):
 
 def get_order_items(order, settings, delivery_date):
 	items = []
-	item_code = None
 	for item in order.get("line_items"):
+		item_code = None
+
 		if flt(item.get("price")) == 0 and True in [x.get("key") == "_bundled_by" or x.get("key") == "_bundled_item_id" for x in item.get("meta_data")]:
 			continue
 
@@ -367,6 +368,10 @@ def get_qty_per_item(items):
 def register_payment_and_invoice(settings, woocommerce_order, sales_order):
 	if sales_order.per_billed < 100 and sales_order.docstatus == 1:
 		try:
+
+			if sales_order.status in ("On Hold", "Closed"):
+				frappe.db.set_value("Sales Order", sales_order.name, "status", "To Bill")
+
 			make_payment(woocommerce_order, sales_order)
 			make_sales_invoice_from_sales_order(woocommerce_order, sales_order)
 		except Exception:
