@@ -96,7 +96,7 @@ def get_opening_balances(filters):
 def get_rootwise_opening_balances(filters, report_type):
 	additional_conditions = ""
 	if not filters.show_unclosed_fy_pl_balances:
-		additional_conditions = " and posting_date >= %(year_start_date)s" \
+		additional_conditions = " and posting_date >= %(year_start_date)s and posting_date <= %(year_end_date)s" \
 			if report_type == "Profit and Loss" else ""
 
 	if not flt(filters.with_period_closing_entry):
@@ -124,6 +124,7 @@ def get_rootwise_opening_balances(filters, report_type):
 		"from_date": filters.from_date,
 		"report_type": report_type,
 		"year_start_date": filters.year_start_date,
+		"year_end_date": filters.year_end_date,
 		"project": filters.project,
 		"finance_book": filters.finance_book,
 		"company_fb": frappe.db.get_value("Company", filters.company, 'default_finance_book')

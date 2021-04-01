@@ -194,7 +194,9 @@ def get_gl_entries(filters, accounting_dimensions):
 		from `tabGL Entry`
 		left join `tabAccount` as acc
 		on `tabGL Entry`.account = acc.name
-		where `tabGL Entry`.company=%(company)s {conditions}
+		where `tabGL Entry`.company=%(company)s
+		and `tabGL Entry`.posting_date<=%(to_date)s
+		{conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
 		""".format(
