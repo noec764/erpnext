@@ -13,6 +13,7 @@ from frappe.desk.doctype.tag.tag import add_tag
 
 class PlaidSettings(Document):
 	@staticmethod
+	@frappe.whitelist()
 	def get_link_token():
 		plaid = PlaidConnector()
 		return plaid.get_link_token()

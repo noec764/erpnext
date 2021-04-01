@@ -386,6 +386,7 @@ class SalesInvoice(SellingController):
 		if validate_against_credit_limit:
 			check_credit_limit(self.customer, self.company, bypass_credit_limit_check_at_sales_order)
 
+	@frappe.whitelist()
 	def set_missing_values(self, for_validate=False):
 		pos = self.set_pos_fields(for_validate)
 
@@ -727,6 +728,7 @@ class SalesInvoice(SellingController):
 		else:
 			self.calculate_billing_amount_for_timesheet()
 
+	@frappe.whitelist()
 	def add_timesheet_data(self):
 		self.set('timesheets', [])
 		if self.project:
