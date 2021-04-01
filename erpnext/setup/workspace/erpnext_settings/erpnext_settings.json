@@ -11,10 +11,29 @@
  "hide_custom": 0,
  "icon": "settings",
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
  "label": "ERPNext Settings",
- "links": [],
- "modified": "2020-12-01 13:38:37.759596",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Documents",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Naming Series",
+   "link_to": "Naming Series",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2021-04-01 12:04:39.799551",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "ERPNext Settings",
@@ -81,27 +100,6 @@
    "label": "Manufacturing Settings",
    "link_to": "Manufacturing Settings",
    "restrict_to_domain": "Manufacturing",
-   "type": "DocType"
-  },
-  {
-   "icon": "education",
-   "label": "Education Settings",
-   "link_to": "Education Settings",
-   "restrict_to_domain": "Education",
-   "type": "DocType"
-  },
-  {
-   "icon": "organization",
-   "label": "Hotel Settings",
-   "link_to": "Hotel Settings",
-   "restrict_to_domain": "Hospitality",
-   "type": "DocType"
-  },
-  {
-   "icon": "non-profit",
-   "label": "Healthcare Settings",
-   "link_to": "Healthcare Settings",
-   "restrict_to_domain": "Healthcare",
    "type": "DocType"
   },
   {

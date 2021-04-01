@@ -1,22 +1,23 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2020-08-20 19:30:48.138801",
+ "creation": "2020-07-31 10:38:54.021237",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "Integrations",
+ "extends": "Settings",
  "extends_another_page": 1,
- "hide_custom": 1,
+ "hide_custom": 0,
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
- "label": "ERPNext Integrations",
+ "label": "Dokos Integrations Settings",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Marketplace",
+   "label": "Integrations Settings",
    "onboard": 0,
    "type": "Card Break"
   },
@@ -34,16 +35,6 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Amazon MWS Settings",
-   "link_to": "Amazon MWS Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Shopify Settings",
    "link_to": "Shopify Settings",
    "link_type": "DocType",
@@ -51,38 +42,14 @@
    "type": "Link"
   },
   {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Payments",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "GoCardless Settings",
-   "link_to": "GoCardless Settings",
+   "label": "Amazon MWS Settings",
+   "link_to": "Amazon MWS Settings",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "M-Pesa Settings",
-   "link_to": "Mpesa Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Settings",
-   "onboard": 0,
-   "type": "Card Break"
   },
   {
    "dependencies": "",
@@ -105,10 +72,10 @@
    "type": "Link"
   }
  ],
- "modified": "2020-12-01 13:38:35.846528",
+ "modified": "2021-04-01 12:18:30.908584",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
- "name": "ERPNext Integrations",
+ "name": "Dokos Integrations Settings",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
