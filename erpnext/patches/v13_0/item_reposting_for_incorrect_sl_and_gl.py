@@ -7,14 +7,14 @@ from erpnext.accounts.utils import update_gl_entries_after
 def execute():
 	for doctype in ('repost_item_valuation', 'stock_entry_detail', 'purchase_receipt_item',
 			'delivery_note_item', 'packed_item', 'landed_cost_taxes_and_charges'):
-		frappe.reload_doc('stock', 'doctype', doctype, force=True)
+		frappe.reload_doc('stock', 'doctype', doctype)
 
 	for doctype in ('purchase_invoice_item', 'sales_invoice_item'):
 		frappe.reload_doc('accounts', 'doctype', doctype, force=True)
 
 	frappe.reload_doc('buying', 'doctype', 'purchase_receipt_item_supplied')
 
-	reposting_project_deployed_on = frappe.db.get_value("DocType", "Repost Item Valuation", "creation")
+	reposting_project_deployed_on = get_creation_time()
 	posting_date = getdate(reposting_project_deployed_on)
 	posting_time = get_time(reposting_project_deployed_on)
 
@@ -24,9 +24,11 @@ def execute():
 	frappe.clear_cache()
 	frappe.flags.warehouse_account_map = {}
 
+	company_list = []
+
 	data = frappe.db.sql('''
 		SELECT
-			name, item_code, warehouse, voucher_type, voucher_no, posting_date, posting_time
+			name, item_code, warehouse, voucher_type, voucher_no, posting_date, posting_time, company
 		FROM
 			`tabStock Ledger Entry`
 		WHERE
@@ -40,6 +42,9 @@ def execute():
 	total_sle = len(data)
 	i = 0
 	for d in data:
+		if d.company not in company_list:
+			company_list.append(d.company)
+
 		update_entries_after({
 			"item_code": d.item_code,
 			"warehouse": d.warehouse,
@@ -57,7 +62,13 @@ def execute():
 
 	print("Reposting General Ledger Entries...")
 
-	for row in frappe.get_all('Company', filters= {'enable_perpetual_inventory': 1}):
-		update_gl_entries_after(posting_date, posting_time, company=row.name)
+	if data:
+		for row in frappe.get_all('Company', filters= {'enable_perpetual_inventory': 1}):
+			if row.name in company_list:
+				update_gl_entries_after(posting_date, posting_time, company=row.name)
 
 	frappe.db.auto_commit_on_many_writes = 0
+
+def get_creation_time():
+	return frappe.db.sql(''' SELECT create_time FROM
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME = "tabRepost Item Valuation" ''', as_list=1)[0][0]
