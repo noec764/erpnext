@@ -228,27 +228,29 @@ class subscriptionPortal {
 	build_payment_status_section() {
 		frappe.call("erpnext.templates.pages.subscription.get_payment_requests", {subscription: this.subscription.name})
 		.then(r => {
-			const status = `
-				<div>
-					<p>${__("Outstanding amount:")}
-						<span> ${format_currency(this.subscription.outstanding_amount, this.subscription.currency)}</span>
-					<p>
-				</div>`
+			if (r&&r.message&&r.message.length) {
+				const status = `
+					<div>
+						<p>${__("Outstanding amount:")}
+							<span> ${format_currency(this.subscription.outstanding_amount, this.subscription.currency)}</span>
+						<p>
+					</div>`
 
-			let payment_request = "";
-			if (this.subscription.outstanding_amount > 0) {
-				payment_request = `<div><a class="btn btn-warning" href="${r.message[0].payment_link}">${__("Pay immediately")}</a></div>`
-			} else {
-				payment_request = `<div><a class="btn btn-info" href="/invoices">${ __("View invoices") }</a></div>`
+				let payment_request = "";
+				if (this.subscription.outstanding_amount > 0) {
+					payment_request = `<div><a class="btn btn-warning" href="${r.message[0].payment_link}">${__("Pay immediately")}</a></div>`
+				} else {
+					payment_request = `<div><a class="btn btn-info" href="/invoices">${ __("View invoices") }</a></div>`
+				}
+
+				this.$payment_section[0].innerHTML =
+				`<h5 class="subscriptions-section-title">${ __("Invoicing status") }</h5>
+					${status}
+					${payment_request}
+				`
+
+				this.$payment_section[0].classList.remove("hide");
 			}
-
-			this.$payment_section[0].innerHTML = 
-			`<h5 class="subscriptions-section-title">${ __("Invoicing status") }</h5>
-			${status}
-			${payment_request}
-			`
 		})
-
-		this.$payment_section[0].classList.remove("hide");
 	}
 }
