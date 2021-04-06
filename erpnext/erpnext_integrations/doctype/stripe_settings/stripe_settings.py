@@ -78,7 +78,7 @@ class StripeSettings(PaymentGatewayController):
 
 	def validate_payment_request(self, payment_request):
 		subscription = payment_request.get_linked_subscription()
-		if not subscription:
+		if not subscription or not self.subscription_cycle_on_stripe:
 			return
 
 		self.validate_subscription_lines(subscription)
