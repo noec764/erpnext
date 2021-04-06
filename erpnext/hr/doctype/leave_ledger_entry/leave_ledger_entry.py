@@ -35,8 +35,8 @@ def validate_leave_allocation_against_leave_application(ledger):
 	""")
 
 	if leave_application_records:
-		frappe.throw(_("Leave allocation %s is linked with leave application %s"
-			% (ledger.transaction_name, ', '.join(leave_application_records))))
+		frappe.throw(_("Leave allocation {0} is linked with the Leave Application {1}").format(
+			ledger.transaction_name, ', '.join(leave_application_records)))
 
 def create_leave_ledger_entry(ref_doc, args, submit=True):
 	ledger = frappe._dict(
