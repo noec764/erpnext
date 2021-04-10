@@ -18,21 +18,24 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 		this.result = this.content.find('.result');
 
 		this.content.on('click', '.btn-move', function() {
-			handle_move_add($(this), "Move")
+			handle_move_add($(this), "Move");
 		});
 
 		this.content.on('click', '.btn-add', function() {
-			handle_move_add($(this), "Add")
+			handle_move_add($(this), "Add");
 		});
 
 		this.content.on('click', '.btn-edit', function() {
 			let item = unescape($(this).attr('data-item'));
 			let warehouse = unescape($(this).attr('data-warehouse'));
 			let company = unescape($(this).attr('data-company'));
-			frappe.db.get_value('Putaway Rule',
-				{'item_code': item, 'warehouse': warehouse, 'company': company}, 'name', (r) => {
-					frappe.set_route("Form", "Putaway Rule", r.name);
-				});
+			frappe.db.get_value('Putaway Rule', {
+				'item_code': item,
+				'warehouse': warehouse,
+				'company': company
+			}, 'name', (r) => {
+				frappe.set_route("Form", "Putaway Rule", r.name);
+			});
 		});
 
 		function handle_move_add(element, action) {
@@ -40,17 +43,21 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 			let warehouse = unescape(element.attr('data-warehouse'));
 			let actual_qty = unescape(element.attr('data-actual_qty'));
 			let disable_quick_entry = Number(unescape(element.attr('data-disable_quick_entry')));
-			let entry_type = action === "Move" ? "Material Transfer": null;
+			let entry_type = action === "Move" ? "Material Transfer" : null;
 
 			if (disable_quick_entry) {
 				open_stock_entry(item, warehouse, entry_type);
 			} else {
 				if (action === "Add") {
 					let rate = unescape($(this).attr('data-rate'));
-					erpnext.stock.move_item(item, null, warehouse, actual_qty, rate, function() { me.refresh(); });
+					erpnext.stock.move_item(item, null, warehouse, actual_qty, rate, function () {
+						me.refresh();
+					});
 				}
 				else {
-					erpnext.stock.move_item(item, warehouse, null, actual_qty, null, function() { me.refresh(); });
+					erpnext.stock.move_item(item, warehouse, null, actual_qty, null, function () {
+						me.refresh();
+					});
 				}
 			}
 		}
@@ -65,7 +72,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 				row.s_warehouse = warehouse;
 
 				frappe.set_route('Form', doc.doctype, doc.name);
-			})
+			});
 		}
 
 		// more
@@ -77,7 +84,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 	}
 
 	refresh() {
-		if(this.before_refresh) {
+		if (this.before_refresh) {
 			this.before_refresh();
 		}
 
@@ -103,7 +110,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 	}
 
 	render(data) {
-		if (this.start===0) {
+		if (this.start === 0) {
 			this.max_count = 0;
 			this.result.empty();
 		}
@@ -118,7 +125,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 		this.max_count = this.max_count;
 
 		// show more button
-		if (data && data.length===(this.page_length + 1)) {
+		if (data && data.length === (this.page_length + 1)) {
 			this.content.find('.more').removeClass('hidden');
 
 			// remove the last element
@@ -141,14 +148,14 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 	}
 
 	get_item_dashboard_data(data, max_count, show_item) {
-		if(!max_count) max_count = 0;
-		if(!data) data = [];
+		if (!max_count) max_count = 0;
+		if (!data) data = [];
 
-		data.forEach(function(d) {
+		data.forEach(function (d) {
 			d.actual_or_pending = d.projected_qty + d.reserved_qty + d.reserved_qty_for_production + d.reserved_qty_for_sub_contract;
 			d.pending_qty = 0;
 			d.total_reserved = d.reserved_qty + d.reserved_qty_for_production + d.reserved_qty_for_sub_contract;
-			if(d.actual_or_pending > d.actual_qty) {
+			if (d.actual_or_pending > d.actual_qty) {
 				d.pending_qty = d.actual_or_pending - d.actual_qty;
 			}
 
@@ -164,7 +171,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 		return {
 			data: data,
 			max_count: max_count,
-			can_write:can_write,
+			can_write: can_write,
 			show_item: show_item || false
 		};
 	}
@@ -188,38 +195,62 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 	}
 }
 
-erpnext.stock.move_item = function(item, source, target, actual_qty, rate, callback) {
+erpnext.stock.move_item = function (item, source, target, actual_qty, rate, callback) {
 	var dialog = new frappe.ui.Dialog({
 		title: target ? __('Add Item') : __('Move Item'),
-		fields: [
-			{fieldname: 'item_code', label: __('Item'),
-				fieldtype: 'Link', options: 'Item', read_only: 1},
-			{fieldname: 'source', label: __('Source Warehouse'),
-				fieldtype: 'Link', options: 'Warehouse', read_only: 1},
-			{fieldname: 'target', label: __('Target Warehouse'),
-				fieldtype: 'Link', options: 'Warehouse', reqd: 1},
-			{fieldname: 'qty', label: __('Quantity'), reqd: 1,
-				fieldtype: 'Float', description: __('Available {0}', [actual_qty]) },
-			{fieldname: 'rate', label: __('Rate'), fieldtype: 'Currency', hidden: 1 },
+		fields: [{
+			fieldname: 'item_code',
+			label: __('Item'),
+			fieldtype: 'Link',
+			options: 'Item',
+			read_only: 1
+		},
+		{
+			fieldname: 'source',
+			label: __('Source Warehouse'),
+			fieldtype: 'Link',
+			options: 'Warehouse',
+			read_only: 1
+		},
+		{
+			fieldname: 'target',
+			label: __('Target Warehouse'),
+			fieldtype: 'Link',
+			options: 'Warehouse',
+			reqd: 1
+		},
+		{
+			fieldname: 'qty',
+			label: __('Quantity'),
+			reqd: 1,
+			fieldtype: 'Float',
+			description: __('Available {0}', [actual_qty])
+		},
+		{
+			fieldname: 'rate',
+			label: __('Rate'),
+			fieldtype: 'Currency',
+			hidden: 1
+		},
 		],
-	})
+	});
 	dialog.show();
 	dialog.get_field('item_code').set_input(item);
 
-	if(source) {
+	if (source) {
 		dialog.get_field('source').set_input(source);
 	} else {
 		dialog.get_field('source').df.hidden = 1;
 		dialog.get_field('source').refresh();
 	}
 
-	if(rate) {
+	if (rate) {
 		dialog.get_field('rate').set_value(rate);
 		dialog.get_field('rate').df.hidden = 0;
 		dialog.get_field('rate').refresh();
 	}
 
-	if(target) {
+	if (target) {
 		dialog.get_field('target').df.read_only = 1;
 		dialog.get_field('target').value = target;
 		dialog.get_field('target').refresh();
@@ -227,14 +258,14 @@ erpnext.stock.move_item = function(item, source, target, actual_qty, rate, callb
 
 	dialog.set_primary_action(__('Submit'), function() {
 		var values = dialog.get_values();
-		if(!values) {
+		if (!values) {
 			return;
 		}
-		if(source && values.qty > actual_qty) {
+		if (source && values.qty > actual_qty) {
 			frappe.msgprint(__('Quantity must be less than or equal to {0}', [actual_qty]));
 			return;
 		}
-		if(values.source === values.target) {
+		if (values.source === values.target) {
 			frappe.msgprint(__('Source and target warehouse must be different'));
 		}
 
@@ -242,21 +273,21 @@ erpnext.stock.move_item = function(item, source, target, actual_qty, rate, callb
 			method: 'erpnext.stock.doctype.stock_entry.stock_entry_utils.make_stock_entry',
 			args: values,
 			freeze: true,
-			callback: function(r) {
+			callback: function (r) {
 				frappe.show_alert(__('Stock Entry {0} created',
-					['<a href="/app/stock-entry/'+r.message.name+'">' + r.message.name+ '</a>']));
+					['<a href="/app/stock-entry/' + r.message.name + '">' + r.message.name + '</a>']));
 				dialog.hide();
 				callback(r);
 			},
 		});
 	});
 
-	$('<p style="margin-left: 10px;"><a class="link-open text-muted small">'
-		+ __("Add more items or open full form") + '</a></p>')
+	$('<p style="margin-left: 10px;"><a class="link-open text-muted small">' +
+		__("Add more items or open full form") + '</a></p>')
 		.appendTo(dialog.body)
 		.find('.link-open')
-		.on('click', function() {
-			frappe.model.with_doctype('Stock Entry', function() {
+		.on('click', function () {
+			frappe.model.with_doctype('Stock Entry', function () {
 				var doc = frappe.model.get_new_doc('Stock Entry');
 				doc.from_warehouse = dialog.get_value('source');
 				doc.to_warehouse = dialog.get_value('target');
@@ -269,6 +300,6 @@ erpnext.stock.move_item = function(item, source, target, actual_qty, rate, callb
 				row.transfer_qty = dialog.get_value('qty');
 				row.basic_rate = dialog.get_value('rate');
 				frappe.set_route('Form', doc.doctype, doc.name);
-			})
+			});
 		});
-}
+};
