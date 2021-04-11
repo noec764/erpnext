@@ -127,7 +127,7 @@ def get_data(
 def filter_accounts_by_root_type(accounts, accounts_by_name, parent_children_map, root_type, balance_must_be, period_list):
 	for account in accounts:
 		for period in period_list:
-			if account.account_type in DEPRECIATION_ACCOUNT_TYPES or not account.negative_in_balance_sheet:
+			if account.account_type in DEPRECIATION_ACCOUNT_TYPES or account.negative_in_balance_sheet:
 				continue
 
 			if account.root_type == root_type and account.get(period.key):
