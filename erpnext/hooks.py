@@ -259,7 +259,8 @@ doc_events = {
 			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
 		],
 		"validate": [
-			"erpnext.regional.india.utils.validate_document_name"
+			"erpnext.regional.india.utils.validate_document_name",
+			"erpnext.regional.india.utils.update_taxable_values"
 		]
 	},
 	"Purchase Invoice": {
