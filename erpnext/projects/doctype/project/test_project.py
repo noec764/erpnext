@@ -118,7 +118,6 @@ def make_project(args):
 		project_name = args.project_name,
 		status = 'Open',
 		expected_start_date = args.start_date,
-		expected_start_date = args.start_date,
 		company= args.company or '_Test Company'
 	))
 
