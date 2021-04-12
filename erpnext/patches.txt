@@ -710,6 +710,7 @@ erpnext.patches.v13_0.update_vehicle_no_reqd_condition
 erpnext.patches.v13_0.setup_gratuity_rule_for_india_and_uae
 erpnext.patches.v13_0.setup_uae_vat_fields
 execute:frappe.db.set_value('System Settings', None, 'app_name', 'Dokos')
+erpnext.patches.v12_0.add_gst_category_in_delivery_note
 erpnext.patches.v12_0.purchase_receipt_status
 
 # Dokos
