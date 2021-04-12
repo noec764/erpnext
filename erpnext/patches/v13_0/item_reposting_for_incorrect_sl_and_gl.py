@@ -26,8 +26,6 @@ def execute():
 
 	company_list = []
 
-	company_list = []
-
 	data = frappe.db.sql('''
 		SELECT
 			name, item_code, warehouse, voucher_type, voucher_no, posting_date, posting_time, company
