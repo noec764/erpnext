@@ -269,12 +269,6 @@ erpnext.PointOfSale.Controller = class {
 				form_updated: async (cdt, cdn, fieldname, value) => {
 					const item_row = frappe.model.get_doc(cdt, cdn);
 					if (item_row && item_row[fieldname] != value) {
-
-						if (fieldname === 'qty' && flt(value) == 0) {
-							this.remove_item_from_cart();
-							return;
-						}
-
 						const { item_code, batch_no, uom } = this.item_details.current_item;
 						const event = {
 							field: fieldname,
