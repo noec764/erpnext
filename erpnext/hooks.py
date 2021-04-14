@@ -328,6 +328,8 @@ override_doctype_dashboards = {
 	"Payment Gateway": "erpnext.fixtures.payment_gateway.get_dashboard_data"
 }
 
+after_migrate = ["erpnext.setup.install.update_select_perm_after_install"]
+
 scheduler_events = {
 	"cron": {
 		"0/30 * * * *": [
