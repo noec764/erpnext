@@ -50,7 +50,7 @@ class Quotation(SellingController):
 				booking.party_type = self.quotation_to
 				booking.party_name = self.party_name
 
-				res = [True for x in frappe.parse_json(item.pricing_rules) if x in booking_credit_pricing_rules]
+				res = [True for x in frappe.parse_json(item.pricing_rules or []) if x in booking_credit_pricing_rules]
 				if True in res:
 					booking.deduct_booking_credits = True
 
