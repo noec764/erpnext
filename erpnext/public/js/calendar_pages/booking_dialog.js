@@ -145,6 +145,7 @@ class BookingSidebar {
 		this.selector = parent.uoms.length > 1;
 		this.bookings = []
 		this.render();
+		this.lang = frappe.get_cookie('preferred_language') || 'en'
 	}
 
 	render() {
@@ -220,11 +221,11 @@ class BookingSidebar {
 		} else {
 			this.bookings_title[0].style.display = 'block';
 			const bookings = data.map(v => {
-				const monthly_end = `<span class="small d-inline-block">${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('Do MMMM YYYY')}</span>`
-				const daily_end = `<span class="small d-inline-block">${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('LT')}-${moment(v.ends_on).locale(frappe.boot.lang || 'en').format('LT')}</span>`
+				const monthly_end = `<span class="small d-inline-block">${moment(v.ends_on).locale(this.lang).format('Do MMMM YYYY')}</span>`
+				const daily_end = `<span class="small d-inline-block">${moment(v.starts_on).locale(this.lang).format('LT')}-${moment(v.ends_on).locale(this.lang).format('LT')}</span>`
 				return `
 					<p>
-						<span>${moment(v.starts_on).locale(frappe.boot.lang || 'en').format('Do MMMM YYYY')}</span>
+						<span>${moment(v.starts_on).locale(this.lang).format('Do MMMM YYYY')}</span>
 						<span class="pull-right remove-slot" data-booking=${v.name}><i class="uil uil-trash-alt"></i></span>
 						${this.parent.calendar_type === "Monthly" ? monthly_end : daily_end}
 					</p>
@@ -350,7 +351,7 @@ class BookingCalendar {
 				dayGridPlugin
 			],
 			showNonCurrentDates: false,
-			locale: frappe.boot.lang || 'en',
+			locale: frappe.get_cookie('preferred_language') || 'en',
 			timeZone: frappe.boot.timeZone || 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			noEventsContent: __("No slot available"),
