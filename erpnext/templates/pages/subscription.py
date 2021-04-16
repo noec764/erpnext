@@ -28,8 +28,9 @@ def get_subscription_context():
 	customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 	if customers:
 		customer_groups.append(frappe.db.get_value("Customer", customers[0], "customer_group"))
-		if frappe.db.exists("Subscription", {"customer": customers[0], "cancellation_date": ("is", "not set")}):
-			subscription = frappe.get_doc("Subscription", {"customer": customers[0], "cancellation_date": ("is", "not set")})
+		subscription_list = frappe.get_all("Subscription", filters={"customer": customers[0], "cancellation_date": ("is", "not set")})
+		if subscription_list:
+			subscription = frappe.get_doc("Subscription", subscription_list[0].name)
 
 	plans = frappe.get_all("Subscription Plan", filters={"enable_on_portal": 1, "customer_group": ("in", customer_groups)})
 	for plan in plans:
