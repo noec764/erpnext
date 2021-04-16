@@ -106,7 +106,7 @@ def make_pos_profile(**args):
 	pos_profile.append("payments", {
 		'mode_of_payment': 'Cash',
 		'default': 1
-	}]
+	})
 
 	if not frappe.db.exists("POS Profile", args.name or "_Test POS Profile"):
 		pos_profile.insert()
