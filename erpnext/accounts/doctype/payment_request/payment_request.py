@@ -444,7 +444,7 @@ def make_payment_request(**args):
 			"currency": ref_doc.currency,
 			"no_payment_link": args.no_payment_link,
 			"grand_total": grand_total,
-			"email_to": args.recipient_id or ref_doc.owner,
+			"email_to": args.recipient_id or ref_doc.get("contact_email") or ref_doc.owner,
 			"subject": _("Payment Request for {0}").format(args.dn),
 			"reference_doctype": args.dt,
 			"reference_name": args.dn
