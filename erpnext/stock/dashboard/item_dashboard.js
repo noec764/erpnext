@@ -99,12 +99,12 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 			sort_order: this.sort_order
 		};
 
-		frappe.xcall(
+		frappe.call(
 			{
 				method: this.method,
 				args: args,
 			}).then((r) => {
-				this.render(r);
+				this.render(r.message);
 			}
 		);
 	}
