@@ -112,7 +112,7 @@ export default {
 				frappe.xcall('erpnext.accounts.doctype.bank_transaction.bank_transaction_upload.create_bank_entries',
 					{
 						columns: this.columns,
-						data: include_credit_cards ? this.rows : this.rows.filter(f => f.statement == "Credit Card"),
+						data: include_credit_cards ? this.rows : this.rows.filter(f => f.statement != "Credit Card"),
 						bank_account: this.selectedBankAccount || this.bank_accounts[0].name,
 						upload_type: this.upload_type
 					}
