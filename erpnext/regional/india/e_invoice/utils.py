@@ -38,12 +38,13 @@ def validate_eligibility(doc):
 	einvoicing_eligible_from = frappe.db.get_single_value('E Invoice Settings', 'applicable_from') or '2021-04-01'
 	if getdate(doc.get('posting_date')) < getdate(einvoicing_eligible_from):
 		return False
-
+	
+	invalid_company = not frappe.db.get_value('E Invoice User', { 'company': doc.get('company') })
 	invalid_supply_type = doc.get('gst_category') not in ['Registered Regular', 'SEZ', 'Overseas', 'Deemed Export']
 	company_transaction = doc.get('billing_address_gstin') == doc.get('company_gstin')
 	no_taxes_applied = not doc.get('taxes')
 
-	if invalid_supply_type or company_transaction or no_taxes_applied:
+	if invalid_company or invalid_supply_type or company_transaction or no_taxes_applied:
 		return False
 
 	return True
@@ -400,7 +401,7 @@ def validate_totals(einvoice):
 	if abs(flt(value_details['AssVal']) - total_item_ass_value) > 1:
 		frappe.throw(_('Total Taxable Value of the items is not equal to the Invoice Net Total. Please check item taxes / discounts for any correction.'))
 
-	if abs(flt(value_details['TotInvVal']) + flt(value_details['Discount']) - total_item_value) > 1:
+	if abs(flt(value_details['TotInvVal']) + flt(value_details['Discount']) - flt(value_details['OthChrg']) - total_item_value) > 1:
 		frappe.throw(_('Total Value of the items is not equal to the Invoice Grand Total. Please check item taxes / discounts for any correction.'))
 
 	calculated_invoice_value = \
@@ -466,7 +467,6 @@ def make_einvoice(invoice):
 	try:
 		einvoice = safe_json_load(einvoice)
 		einvoice = santize_einvoice_fields(einvoice)
-
 	except Exception:
 		show_link_to_error_log(invoice, einvoice)
 
@@ -670,7 +670,6 @@ class GSPConnector():
 		except Exception:
 			log_error()
 			self.raise_error(True)
-
 	@staticmethod
 	def get_gstin_details(gstin):
 		'''fetch and cache GSTIN details'''
@@ -963,7 +962,6 @@ class GSPConnector():
 			'label': _('IRN Generated')
 		}
 		self.update_invoice()
-
 	def attach_qrcode_image(self):
 		qrcode = self.invoice.signed_qr_code
 		doctype = self.invoice.doctype
