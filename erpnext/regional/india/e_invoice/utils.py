@@ -49,7 +49,7 @@ def raise_document_name_too_long_error():
 	msg += _('You must {} your {} in order to have document id of {} length 16. ').format(
 		bold(_('modify')), bold(_('naming series')), bold(_('maximum'))
 	)
-	msg += _('Please account for ammended documents too. ')
+	msg += _('Please account for amended documents too.')
 	frappe.throw(msg, title=title)
 
 def read_json(name):

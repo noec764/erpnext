@@ -338,7 +338,7 @@ def check_serial_no_validity_on_cancel(serial_no, sle):
 	if sr and (actual_qty < 0 or is_stock_reco) and sr.warehouse != sle.warehouse:
 		# receipt(inward) is being cancelled
 		msg = _("Cannot cancel {0} {1} as Serial No {2} does not belong to the warehouse {3}").format(
-			sle.voucher_type, doc_link, sr_link, frappe.bold(sle.warehouse))
+			_(sle.voucher_type), doc_link, sr_link, frappe.bold(sle.warehouse))
 	elif sr and actual_qty > 0 and not is_stock_reco:
 		# delivery is being cancelled, check for warehouse.
 		if sr.warehouse:
@@ -348,7 +348,7 @@ def check_serial_no_validity_on_cancel(serial_no, sle):
 		elif sr.company != sle.company and sr.status == "Delivered":
 			# serial no is inactive (allowed) or delivered from another company (block).
 			msg = _("Cannot cancel {0} {1} as Serial No {2} does not belong to the company {3}").format(
-				sle.voucher_type, doc_link, sr_link, frappe.bold(sle.company))
+				_(sle.voucher_type), doc_link, sr_link, frappe.bold(sle.company))
 
 	if msg:
 		frappe.throw(msg, title=_("Cannot cancel"))

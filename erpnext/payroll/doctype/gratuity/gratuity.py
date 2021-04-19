@@ -139,7 +139,7 @@ def get_work_experience_using_method(method, current_work_experience, minimum_ye
 		current_work_experience = floor(current_work_experience)
 
 	if current_work_experience < minimum_year_for_gratuity:
-		frappe.throw(_("Employee: {0} have to complete minimum {1} years for gratuity").format(bold(employee), minimum_year_for_gratuity))
+		frappe.throw(_("Employee: {0} has to complete a minimum of {1} years for gratuity").format(bold(employee), minimum_year_for_gratuity))
 	return current_work_experience
 
 def get_non_working_days(employee, relieving_date, status):
