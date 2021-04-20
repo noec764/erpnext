@@ -16,6 +16,7 @@
  "hide_custom": 1,
  "icon": "sell",
  "idx": 0,
+ "is_default": 0,
  "is_standard": 1,
  "label": "Selling",
  "links": [
@@ -92,6 +93,15 @@
    "is_query_report": 0,
    "label": "Sales Person",
    "link_to": "Sales Person",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription",
+   "link_to": "Subscription",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -286,6 +296,15 @@
    "is_query_report": 0,
    "label": "Campaign",
    "link_to": "Campaign",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription Template",
+   "link_to": "Subscription Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -515,7 +534,7 @@
    "type": "Link"
   }
  ],
- "modified": "2020-12-01 13:38:35.971277",
+ "modified": "2021-04-20 08:50:25.460511",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",

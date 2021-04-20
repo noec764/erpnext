@@ -628,12 +628,56 @@
    "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Reconciliation",
+   "link_to": "Payment Reconciliation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
    "label": "Bank Reconciliation Statement",
    "link_to": "Bank Reconciliation Statement",
    "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Banking and Payments",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sepa Mandate",
+   "link_to": "Sepa Mandate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sepa Direct Debit",
+   "link_to": "Sepa Direct Debit",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sepa Direct Debit Settings",
+   "link_to": "Sepa Direct Debit Settings",
+   "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   },
@@ -1068,7 +1112,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-03-19 10:12:55.849116",
+ "modified": "2021-04-20 08:47:54.783573",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
