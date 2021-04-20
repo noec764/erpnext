@@ -970,7 +970,9 @@ class Item(WebsiteGenerator):
 				for field in fields:
 					if cstr(self.get(field)) != cstr(values.get(field)):
 						if not self.check_if_linked_document_exists(field):
-							break # no linked document, allowed
+							continue # no linked document, allowed
+						elif cstr(values.get(field)) == "0":
+							continue
 						else:
 							frappe.throw(_("As there are existing transactions against item {0}, you can not change the value of {1}").format(self.name, frappe.bold(_(self.meta.get_label(field)))))
 
