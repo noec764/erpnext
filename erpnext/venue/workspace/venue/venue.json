@@ -119,6 +119,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Venue Settings",
+   "link_to": "Venue Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Booking Credits",
    "link_type": "DocType",
    "onboard": 0,
@@ -266,7 +275,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-04-20 08:33:22.473601",
+ "modified": "2021-04-20 17:32:58.199177",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
