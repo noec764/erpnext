@@ -368,7 +368,7 @@
    "read_only": 1
   },
   {
-   "depends_on": "doc.current_invoice_end",
+   "depends_on": "eval:doc.current_invoice_end",
    "fieldname": "modify_current_invoicing_end_date",
    "fieldtype": "Button",
    "label": "Modify Current Invoicing End Date"
@@ -376,7 +376,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-02-10 16:35:16.946675",
+ "modified": "2021-02-11 16:35:16.946675",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
