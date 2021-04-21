@@ -259,7 +259,7 @@
      {
       "fieldname": "html_16",
       "fieldtype": "HTML",
-      "options": "Map Shopify Taxes / Shipping Charges to ERPNext Account"
+      "options": "Map Shopify Taxes / Shipping Charges to Dokos Account"
      },
      {
       "fieldname": "taxes",
@@ -330,7 +330,7 @@
     ],
     "issingle": 1,
     "links": [],
-    "modified": "2021-03-02 17:35:41.953317",
+    "modified": "2021-03-03 17:35:41.953317",
     "modified_by": "Administrator",
     "module": "ERPNext Integrations",
     "name": "Shopify Settings",
