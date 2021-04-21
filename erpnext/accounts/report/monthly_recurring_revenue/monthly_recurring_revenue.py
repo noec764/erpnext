@@ -74,14 +74,15 @@ def get_data(filters, period_list):
 
 			customer_total += total
 			total_row[period.key] += total
-			total_row["total"] += total
 
 			if total:
 				average_count += 1
 
 			row.update({ period.key: flt(total, precision) })
 
-		row.update({ "total": flt(customer_total, precision) / flt(average_count or 1) })
+		average_total = flt(customer_total, precision) / flt(average_count or 1)
+		total_row["total"] += average_total
+		row.update({ "total": average_total })
 		result.append(row)
 
 	result.sort(key=lambda x:x["total"], reverse=True)
