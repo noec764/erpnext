@@ -160,6 +160,72 @@ INV-.####<br>
 <p><b>L'article</b> du lot Item aura la valeur <b>Non</b> dans le champ <code>Maintenir le stock</code> et la valeur <b>Oui</b> and le champ <code>Est un article de vente</code>.</p>
 <h4>Exemple:</h4>
 <p>Si vous vendez des ordinateurs et des sacs à dos séparément et avez un prix spécial si le client achète les deux, alors la combinaison ordinateur + sac à dos sera un nouvel ensemble de produits.</p>",
+"<h3>Help</h3>
+
+<p>Notes:</p>
+
+<ol>
+<li>Use field <code>base</code> for using base salary of the Employee</li>
+<li>Use Salary Component abbreviations in conditions and formulas. <code>BS = Basic Salary</code></li>
+<li>Use field name for employee details in conditions and formulas. <code>Employment Type = employment_type</code><code>Branch = branch</code></li>
+<li>Use field name from Salary Slip in conditions and formulas. <code>Payment Days = payment_days</code><code>Leave without pay = leave_without_pay</code></li>
+<li>Direct Amount can also be entered based on Condition. See example 3</li></ol>
+
+<h4>Examples</h4>
+<ol>
+<li>Calculating Basic Salary based on <code>base</code>
+<pre><code>Condition: base &lt; 10000</code></pre>
+<pre><code>Formula: base * .2</code></pre></li>
+<li>Calculating HRA based on Basic Salary<code>BS</code> 
+<pre><code>Condition: BS &gt; 2000</code></pre>
+<pre><code>Formula: BS * .1</code></pre></li>
+<li>Calculating TDS based on Employment Type<code>employment_type</code> 
+<pre><code>Condition: employment_type==""Intern""</code></pre>
+<pre><code>Amount: 1000</code></pre></li>
+</ol>","<h3>Aide</h3>
+
+<p>Notes:</p>
+
+<ol>
+<li>Vous pouvez utiliser le champ <code>base</code> pour utiliser le salaire de base de l'employé</li>
+<li>Vous pouvez utiliser les abréviation de composantes salariale dans les conditions et les formules. <code>SB = Salaire de base</code></li>
+<li>Vous pouvez utiliser les noms de champs des détails de l'employé dans les conditions et les formules. <code>Type de poste = employment_type</code><code>Branche = branch</code></li>
+<li>Vous pouvez utiliser le nom de champ des fiches de paie dans les conditions et les formules. <code>Jours avant échéance = payment_days</code><code>Congés sans solde = leave_without_pay</code></li>
+<li>Le montant peut aussi être entré sur la base de conditions. Voir l'exemple 3</li></ol>
+
+<h4>Exemples</h4>
+<ol>
+<li>Calcul du salaire de base sur la base de <code>base</code>
+<pre><code>Condition: base &lt; 10000</code></pre>
+<pre><code>Formule: base * .2</code></pre></li>
+<li>Calcul de l'allocation logement sur la base du salaire de base<code>BS</code> 
+<pre><code>Condition: BS &gt; 2000</code></pre>
+<pre><code>Formule: BS * .1</code></pre></li>
+<li>Calcul du prélèvement à la source sur la base tu type de poste<code>employment_type</code> 
+<pre><code>Condition: employment_type==""Intern""</code></pre>
+<pre><code>Montant: 1000</code></pre></li>
+</ol>",
+"<h4>Body Text and Closing Text Example</h4>
+
+<div>We have noticed that you have not yet paid invoice {{sales_invoice}} for {{frappe.db.get_value(""Currency"", currency, ""symbol"")}} {{outstanding_amount}}. This is a friendly reminder that the invoice was due on {{due_date}}. Please pay the amount due immediately to avoid any further dunning cost.</div>
+
+<h4>How to get fieldnames</h4>
+
+<p>The fieldnames you can use in your template are the fields in the document. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Sales Invoice)</p>
+
+<h4>Templating</h4>
+
+<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Example de corps de texte</h4>
+
+<div>Votre facture {{sales_invoice}} présente un montant impayé de {{outstanding_amount}} {{frappe.db.get_value(""Currency"", currency, ""symbol"")}}. Cette facture est arrivée à échéance le {{due_date}}. Pouvez-vous procéder à son règlement au plus vite s'il vous plaît ?</div>
+
+<h4>Comment récupérer les noms des champs</h4>
+
+<p>Les noms de champs que vous pouvez utiliser dans vos modèles de contrat sont les champs dans le contrat pour lequel vous créez ce modèle. Vous pouvez trouver les champs de tous les types de documents via Paramètres &gt; Personnaliser le formulaire et en sélectionnant le type de document (ex. Facture de vente)</p>
+
+<h4>Modèle</h4>
+
+<p>Les modèles sont générés en utilisant le language Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
 "<h4>Condition Examples</h4>
 <ol>
 <li>Applying tax if employee born between 31-12-1937 and 01-01-1958 (Employees aged 60 to 80)<br>
