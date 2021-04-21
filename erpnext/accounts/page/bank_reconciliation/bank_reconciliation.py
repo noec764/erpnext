@@ -101,7 +101,7 @@ class BankReconciliation:
 		for bank_transaction in self.bank_transactions:
 			if abs(self.documents[0]["unreconciled_amount"]) > reconciled_amount:
 				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
-				allocated_amount = min(max(bank_transaction.unallocated_amount, 0), abs(self.documents[0]["unreconciled_amount"]))
+				allocated_amount = min(max(abs(bank_transaction.unallocated_amount), 0), abs(self.documents[0]["unreconciled_amount"]))
 				date_value = self.documents[0].get("reference_date")
 				if isinstance(date_value, str):
 					date_value = parse_date(date_value)
