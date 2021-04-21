@@ -149,6 +149,88 @@ INV-.####<br>
 </div>","<div>
 <h3> Toues les dimensions en centimètre seulement </h3>
 </div>",
+"<h3>About Product Bundle</h3>
+
+<p>Aggregate group of <b>Items</b> into another <b>Item</b>. This is useful if you are bundling a certain <b>Items</b> into a package and you maintain stock of the packed <b>Items</b> and not the aggregate <b>Item</b>.</p>
+<p>The package <b>Item</b> will have <code>Is Stock Item</code> as <b>No</b> and <code>Is Sales Item</code> as <b>Yes</b>.</p>
+<h4>Example:</h4>
+<p>If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.</p>","<h3>Les ensembles de produits</h3>
+
+<p>Cela permet de grouper certains <b>Articles</b> au sein d'un autre <b>Article</b>. Cela sert si vous vendez certains <b>Articles</b> au sein d'un lot et que vous souhaitez suivre les stocks des <b>Articles détaillés</b> et non celui du <b>Lot</b>.</p>
+<p><b>L'article</b> du lot Item aura la valeur <b>Non</b> dans le champ <code>Maintenir le stock</code> et la valeur <b>Oui</b> and le champ <code>Est un article de vente</code>.</p>
+<h4>Exemple:</h4>
+<p>Si vous vendez des ordinateurs et des sacs à dos séparément et avez un prix spécial si le client achète les deux, alors la combinaison ordinateur + sac à dos sera un nouvel ensemble de produits.</p>",
+"<h4>Condition Examples</h4>
+<ol>
+<li>Applying tax if employee born between 31-12-1937 and 01-01-1958 (Employees aged 60 to 80)<br>
+<code>Condition: date_of_birth&gt;date(1937, 12, 31) and date_of_birth&lt;date(1958, 01, 01)</code></li><br><li>Applying tax by employee gender<br>
+<code>Condition: gender==""Male""</code></li><br>
+<li>Applying tax by Salary Component<br>
+<code>Condition: base &gt; 10000</code></li></ol>","<h4>Exemples de conditions</h4>
+<ol>
+<li>Application d'une taxe si l'employé est né entre le 31/12/1937 et le 01/01/1958 (Employés agés de 60 à 80 ans)<br>
+<code>Condition: date_of_birth&gt;date(1937, 12, 31) and date_of_birth&lt;date(1958, 01, 01)</code></li><br><li>Application d'une taxe en fonction du sexe de l'employé<br>
+<code>Condition: gender==""Male""</code></li><br>
+<li>Application d'une taxe par composante salariale<br>
+<code>Condition: base &gt; 10000</code></li></ol>",
+"<h4>Contract Template Example</h4>
+
+<pre>Contract for Customer {{ party_name }}
+
+-Valid From : {{ start_date }} 
+-Valid To : {{ end_date }}
+</pre>
+
+<h4>How to get fieldnames</h4>
+
+<p>The field names you can use in your Contract Template are the fields in the Contract for which you are creating the template. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Contract)</p>
+
+<h4>Templating</h4>
+
+<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de modèle de contrat</h4>
+
+<pre>Contrat pour le client {{ party_name }}
+
+-Valide à partir du : {{ start_date }} 
+-Valide jusqu'au : {{ end_date }}
+</pre>
+
+<h4>Comment récupérer les noms des champs</h4>
+
+<p>Les noms de champs que vous pouvez utiliser dans vos modèles de contrat sont les champs dans le contrat pour lequel vous créez ce modèle. Vous pouvez trouver les champs de tous les types de documents via Paramètres &gt; Personnaliser le formulaire et en sélectionnant le type de document (ex. Contrat)</p>
+
+<h4>Modèle</h4>
+
+<p>Les modèles sont générés en utilisant le language Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
+"<h4>Standard Terms and Conditions Example</h4>
+
+<pre>Delivery Terms for Order number {{ name }}
+
+-Order Date : {{ transaction_date }} 
+-Expected Delivery Date : {{ delivery_date }}
+</pre>
+
+<h4>How to get fieldnames</h4>
+
+<p>The fieldnames you can use in your email template are the fields in the document from which you are sending the email. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Sales Invoice)</p>
+
+<h4>Templating</h4>
+
+<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemples de termes et conditions</h4>
+
+<pre>Termes de livraison pour la commande numéro {{ name }}
+
+-Date de la commande : {{ transaction_date }} 
+-Date de livraison prévue : {{ delivery_date }}
+</pre>
+
+<h4>Comment récupérer les noms des champs</h4>
+
+<p>Les noms de champs que vous pouvez utiliser dans votre email sont les champs du document à partir duquel vous envoyez votre email. Vous pouvez trouver les champs de tous les types de documents via Paramètres &gt; Personnaliser le formulaire et en sélectionnant le type de document (ex. Facture de vente)</p>
+
+<h4>Modèle</h4>
+
+<p>Les modèles sont générés en utilisant le language Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
 "<label class=""control-label"" style=""margin-bottom: 0px;"">Account Number Settings</label>","<label class=""control-label"" style=""margin-bottom: 0px;"">Paramètres du numéro de compte</label>",
 "<label class=""control-label"" style=""margin-bottom: 0px;"">Amount In Words</label>","<label class=""control-label"" style=""margin-bottom: 0px;"">Montant en lettres</label>",
 "<label class=""control-label"" style=""margin-bottom: 0px;"">Date Settings</label>","<label class=""control-label"" style=""margin-bottom: 0px;"">Paramètres de date</label>",
