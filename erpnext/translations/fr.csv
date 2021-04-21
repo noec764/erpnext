@@ -87,7 +87,63 @@
 <b>From Date</b> is a mandatory filter.,<b>Date de début</b> est un filtre obligatoire.,
 <b>From Time</b> cannot be later than <b>To Time</b> for {0},<b>La date de début</b> ne peut pas être après la <b>date de fin</b> pour {0},
 <b>To Date</b> is a mandatory filter.,<b>Date de fin</b> est un filtre obligatoire.,
+"<br>
+<h4>Note</h4>
+<ul>
+<li>
+You can use <a href=""https://jinja.palletsprojects.com/en/2.11.x/"" target=""_blank"">Jinja tags</a> in <b>Subject</b> and <b>Body</b> fields for dynamic values.
+</li><li>
+    All fields in this doctype are available under the <b>doc</b> object and all fields for the customer to whom the mail will go to is available under the  <b>customer</b> object.
+</li></ul>
+<h4> Examples</h4>
+<!-- {% raw %} -->
+<ul>
+    <li><b>Subject</b>:<br><br><pre><code>Statement Of Accounts for {{ customer.name }}</code></pre><br></li>
+    <li><b>Body</b>: <br><br>
+<pre><code>Hello {{ customer.name }},<br>PFA your Statement Of Accounts from {{ doc.from_date }} to {{ doc.to_date }}.</code> </pre></li>
+</ul>
+<!-- {% endraw %} -->","<br>
+<h4>Note</h4>
+<ul>
+<li>
+Vous pouvez utiliser les <a href=""https://jinja.palletsprojects.com/en/2.11.x/"" target=""_blank"">tags Jinja</a> dans les champs <b>Sujet</b> et <b>Message</b> pour utiliser des valeurs dynamiques.
+</li><li>
+    Tous les champs de ce type de document sont disponibles via l'objet <b>doc</b> et tous les champs pour le client à qui cet email va être envoyé sont disponibles via l'objet <b>customer</b>.
+</li></ul>
+<h4> Exemples</h4>
+<!-- {% raw %} -->
+<ul>
+    <li><b>Sujet</b>:<br><br><pre><code>Relevé de comptes de {{ customer.name }}</code></pre><br></li>
+    <li><b>Message</b>: <br><br>
+<pre><code>Bonjour {{ customer.name }},<br>Veuillez trouver ci-joint votre relevé de situation du {{ doc.from_date }} au {{ doc.to_date }}.</code> </pre></li>
+</ul>
+<!-- {% endraw %} -->",
 "<div class=""columnHeading"">Other Details</div>","<div class=""columnHeading"">Autres détails</div>",
+"<div class=""well"">
+Edit list of Series in the box below. Rules:
+<ul>
+<li>Each Series Prefix on a new line.</li>
+<li>Allowed special characters are ""/"" and ""-""</li>
+<li>Optionally, set the number of digits in the series using dot (.) followed by hashes (#). For example, "".####"" means that the series will have four digits. Default is five digits.</li>
+</ul>
+Examples:<br>
+INV-<br>
+INV-10-<br>
+INVK-<br>
+INV-.####<br>
+</div>","<div class=""well"">
+Modifiez la liste des séries dans le champ ci-dessous. Règles:
+<ul>
+<li>Chaque préfixe de série sur une ligne différente.</li>
+<li>Les caractères spéciaux autorisés sont ""/"" et ""-""</li>
+<li>En option, définissez le nombre de chiffres dans la série en utilisant un point (.) suivant de dièses (#). Par exemple, "".####"" veut dire que la série aura quatre chiffres. Par défaut il y en a cinq.</li>
+</ul>
+Exemples:<br>
+INV-<br>
+INV-10-<br>
+INVK-<br>
+INV-.####<br>
+</div>",
 "<div>
 <h3> All dimensions in centimeter only </h3>
 </div>","<div>
@@ -3712,6 +3768,7 @@ Gross Profit %,Bénéfice Brut %,
 Gross Profit / Loss,Bénéfice/Perte Brut,
 Gross Profit,Bénéfice Brut,
 Gross Purchase Amount is mandatory,Montant d'Achat Brut est obligatoire,
+Gross Purchase Amount should be <b>equal</b> to purchase amount of one single Asset.,Le montant d'achat brut doit être <b>égal</b> au montant d'achat d'un seul actif.,
 Gross Purchase Amount,Montant d'achat brut,
 Gross Weight UOM,Unité de mesure du poids brut,
 Gross Weight,Poids brut,
@@ -3927,6 +3984,7 @@ If this is not checked the loan by default will be considered as a Demand Loan,"
 If this is unchecked Journal Entries will be saved in a Draft state and will have to be submitted manually,"Si cette case est décochée, les écritures de journal seront enregistrées en brouillon et vous devrez les valider manuellement",
 If this is unchecked direct GL Entries will be created to book Deferred Revenue/Expense,"Si cette case est décochée, des écritures de grand livre seront créées directement pour comptabiliser les revenus/dépenses différés",
 "If this is unchecked, direct GL entries will be created to book deferred revenue or expense","Si décochée, les produits ou charges différés seront comptabilisés directement via des écritures de grand livre",
+If this is undesirable please cancel the corresponding Payment Entry.,"Si ce n'est pas ce que vous souhaitez, veuillez annuler l'écriture de paiement correspondante.",
 "If this item has variants, then it cannot be selected in sales orders etc.","Si cet article a des variantes, alors il ne peut pas être sélectionné dans les commandes clients, etc.",
 "If this option is configured 'Yes', Dokos will prevent you from creating a Purchase Invoice or Receipt without creating a Purchase Order first. This configuration can be overridden for a particular supplier by enabling the 'Allow Purchase Invoice Creation Without Purchase Order' checkbox in supplier master.","Si l'option est cochée, Dokos vous empêchera de créer une facture ou un reçu d'achat sans créer un bon de commande en premier. Cette configuration peut être écrasée pour un fournisseur en particulier en activant 'Autoriser la création de factures d'achat sans commande fournisseur' dans la fiche fournisseur.",
 "If this option is configured 'Yes', Dokos will prevent you from creating a Purchase Invoice without creating a Purchase Receipt first. This configuration can be overridden for a particular supplier by enabling the 'Allow Purchase Invoice Creation Without Purchase Receipt' checkbox in supplier master.","Si l'option est cochée, Dokos vous empêchera de créer une facture sans créer un reçu d'achat en premier. Cette configuration peut être écrasée pour un fournisseur en particulier en activant 'Autoriser la création de factures d'achat sans reçu d'achat' dans la fiche fournisseur.",
@@ -4022,6 +4080,7 @@ Include Non Stock Items,Inclure les articles non stockés,
 Include POS Transactions,Inclure les transactions du point de vente,
 Include Payment (POS),Paiement inclus (Point de vente),
 Include Reconciled Entries,Inclure les Écritures Réconciliées,
+Include Safety Stock in Required Qty Calculation,Inclure le stock de sécurité dans le calcul de la quantité requise,
 Include Sub-assembly Raw Materials,Inclure les matières premières de sous-assemblage,
 Include Subcontracted Items,Inclure les articles sous-traités,
 Include UOM,Inclure Unité de mesure,
@@ -4375,6 +4434,7 @@ Item Name,Nom de l'article,
 Item Naming By,Nommage des articles selon,
 Item Price Stock,Stock et prix par article,
 Item Price added for {0} in Price List {1},Prix de l'Article ajouté pour {0} dans la Liste de prix {1},
+"Item Price appears multiple times based on Price List, Supplier/Customer, Currency, Item, Batch, UOM, Qty, and Dates.","Le prix de l'article a été enregistré plusieurs fois sur la base de la liste de prix, des fournisseurs/clients, de la devise, de l'article, du lot, de l'unité de mesure, de la quantité ou des dates.",
 "Item Price appears multiple times based on Price List, Supplier/Customer, Currency, Item, UOM, Qty and Dates.","Le prix de l'article apparaît plusieurs fois en fonction de la liste de prix, du fournisseur / client, de la devise, de l'article, de l'unité de mesure, de la quantité et des dates.",
 Item Price updated for {0} in Price List {1},Prix de l'Article mis à jour pour {0} dans la Liste des Prix {1},
 Item Price,Prix de l'Article,
@@ -4419,6 +4479,7 @@ Item quantity can not be zero,La quantité d'article ne peut pas être zéro,
 Item taxes updated,Taxes de l'article mises à jour,
 Item to be manufactured or repacked,Article à produire ou à réemballer,
 Item valuation rate is recalculated considering landed cost voucher amount,Le taux de valorisation de l'article est recalculé compte tenu du montant du bon de prix au débarquement,
+Item valuation reposting in progress. Report might show incorrect item valuation.,Nouvelle comptabilisation de la valorisation de l'article en cours. Les rapports peuvent afficher une valorisation incorrected entre-temps.,
 Item variant {0} exists with same attributes,La variante de l'article {0} existe avec les mêmes caractéristiques,
 Item will be removed since no serial / batch no selected.,L'article va être supprimé car aucun numéro de série / lot n'a été sélectionné.,
 "Item {0} (Serial No: {1}) cannot be consumed as is reserverd\
@@ -4499,6 +4560,7 @@ Job Offer,Proposition de poste,
 Job Opening,Offre d'emploi,
 "Job Openings for designation {0} already open \
 					or hiring completed as per Staffing Plan {1}",Offre d'emploi pour la désignation {0} déjà ouverte \ ou recrutement complété selon le plan de dotation en personnel {1},
+Job Openings for designation {0} already open or hiring completed as per Staffing Plan {1},Les offres d'emploi pour le poste {0} sont déjà ouvertes ou le recrutement est terminé d'après le plan de dotation en personnel {1},
 Job Started,Tâche démarrée,
 Job Title,Titre de l'Emploi,
 Job card {0} created,Carte de travail {0} créée,
@@ -4530,6 +4592,7 @@ Key Performance Area,Domaine Essentiel de Performance,
 Key Reports,Rapports importants,
 Key Responsibility Area,Domaine de Responsabilités Principal,
 Kg,Kg,
+Kindly cancel the Manufacturing Entries first against the work order {0}.,Veuillez d'abord annuler les écritures de production liées à l'ordre de travail {0},
 LAL/,LAL/,
 LAP/,LAP/,
 LEAD-,LEAD-,
@@ -5801,6 +5864,7 @@ PUR,ACH,
 Package Code,Code de colis,
 Package Weight Details,Détails du poids du colis,
 Packed Item,Article Emballé,
+Packed Items cannot be transferred internally,Les articles colisés ne peuvent pas être transférés en interne,
 Packed Items,Articles Emballés,
 Packed quantity must equal quantity for Item {0} in row {1},La quantité emballée doit être égale à la quantité pour l'Article {0} à la ligne {1},
 Packing List,Liste de Colisage,
@@ -5848,6 +5912,7 @@ Parent Location,Localisation parente,
 Parent Procedure,Procédure parente,
 Parent Sales Person,Commercial Parent,
 Parent Supplier Group,Groupe de fournisseurs parent,
+Parent Task {0} is not a Template Task,La tâche parente {0} n'est pas un modèle de tâche,
 Parent Task,Tâche Parente,
 Parent Territory,Territoire Parent,
 Parent Warehouse,Entrepôt parent,
@@ -5879,6 +5944,7 @@ Party Type is mandatory,Type de tiers Obligatoire,
 Party Type,Type de tiers,
 Party User,Utilisateur chez le tiers,
 Party can only be one of ,Le tiers ne peut être que,
+Party can only be one of {0},Le tiers ne peut être que l'un des suivants: {0},
 Party is mandatory,Le Tiers est obligatoire,
 Party name,Nom du tiers,
 Party type,Type de tiers,
@@ -6096,6 +6162,7 @@ Pickup Date cannot be before this day,La date de collecte ne peut pas être avan
 Pickup Date,Date de collecte,
 Pickup From,Collecte depuis,
 Pickup Time cannot be in the past,L'heure de collecte ne peut pas être dans le passé,
+Pickup To time should be greater than Pickup From time,L'heure de fin du créneau de récupération doit être supérieure à l'heure de début du créneau de récupération,
 Pickup Type,Type de collecte,
 Pickup from,Collecte à partir,
 Pickup to,Collecte jusqu'au,
@@ -6198,6 +6265,7 @@ Please define your Stripe account in the webhook URL's query string,Veuillez dé
 "Please delete the Employee <a href='#Form/Employee/{0}'>{0}</a>\
 					to cancel this document","Veuillez supprimer l'employé <a href='#Form/Employee/{0}'>{0}</a>\
 					pour annuler ce document",
+Please do not book expense of multiple assets against one single Asset.,Veuillez ne pas comptabiliser les dépenses de plusieurs actifs en contrepartie d'un seul actif,
 Please do not create more than 500 items at a time,Veuillez ne pas créer plus de 500 articles à la fois.,
 Please enable Applicable on Booking Actual Expenses,Veuillez activer l'option : Applicable sur la base de l'enregistrement des dépenses réelles,
 Please enable Applicable on Purchase Order and Applicable on Booking Actual Expenses,Veuillez activer les options : Applicable sur la base des bons de commande d'achat et Applicable sur la base des bons de commande d'achat,
