@@ -63,7 +63,7 @@ class EmployeeAdvance(Document):
 			return_amount = flt(return_amount) / flt(self.exchange_rate)
 
 		if flt(paid_amount) > self.advance_amount:
-			frappe.throw(_("Row {0}# Paid Amount cannot be greater than requested advance amount"),
+			frappe.throw(_("Row #{0} Paid Amount cannot be greater than requested advance amount"),
 				EmployeeAdvanceOverPayment)
 
 		if flt(return_amount) > self.paid_amount - self.claimed_amount:

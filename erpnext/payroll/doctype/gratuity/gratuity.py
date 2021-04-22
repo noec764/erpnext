@@ -89,7 +89,7 @@ class Gratuity(AccountsController):
 		""", (self.name, self.employee), as_dict=1)[0].paid_amount
 
 		if flt(paid_amount) > self.amount:
-			frappe.throw(_("Row {0}# Paid Amount cannot be greater than Total amount"))
+			frappe.throw(_("Row #{0} Paid Amount cannot be greater than Total amount"))
 
 
 		self.db_set("paid_amount", paid_amount)
