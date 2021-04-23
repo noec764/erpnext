@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from frappe import _
 
 app_name = "erpnext"
-app_title = "dokos"
+app_title = "Dokos"
 app_publisher = "Dokos SAS"
 app_description = """ERP made simple"""
 app_email = "hello@dokos.io"
