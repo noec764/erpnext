@@ -4,17 +4,21 @@
 from __future__ import unicode_literals
 
 import frappe
-from erpnext.stock.utils import update_included_uom_in_report
+from frappe.utils import cint, flt
+from erpnext.stock.utils import update_included_uom_in_report, is_reposting_item_valuation_in_progress
 from frappe import _
+from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 
 
 def execute(filters=None):
+	is_reposting_item_valuation_in_progress()
 	include_uom = filters.get("include_uom")
 	columns = get_columns()
 	items = get_items(filters)
 	sl_entries = get_stock_ledger_entries(filters, items)
 	item_details = get_item_details(items, sl_entries, include_uom)
 	opening_row = get_opening_balance(filters, columns)
+	precision = cint(frappe.db.get_single_value("System Settings", "float_precision"))
 
 	data = []
 	conversion_factors = []
@@ -23,16 +27,17 @@ def execute(filters=None):
 
 	actual_qty = stock_value = 0
 
+	available_serial_nos = {}
 	for sle in sl_entries:
 		item_detail = item_details[sle.item_code]
 
 		sle.update(item_detail)
 
 		if filters.get("batch_no"):
-			actual_qty += sle.actual_qty
+			actual_qty += flt(sle.actual_qty, precision)
 			stock_value += sle.stock_value_difference
 
-			if sle.voucher_type == 'Stock Reconciliation':
+			if sle.voucher_type == 'Stock Reconciliation' and not sle.actual_qty:
 				actual_qty = sle.qty_after_transaction
 				stock_value = sle.stock_value
 
@@ -46,18 +51,8 @@ def execute(filters=None):
 			"out_qty": min(sle.actual_qty, 0)
 		})
 
-		# get the name of the item that was produced using this item
-		if sle.voucher_type == "Stock Entry":
-			purpose, work_order, fg_completed_qty = frappe.db.get_value(sle.voucher_type, sle.voucher_no, ["purpose", "work_order", "fg_completed_qty"])
-
-			if purpose == "Manufacture" and work_order:
-				finished_product = frappe.db.get_value("Work Order", work_order, "item_name")
-				finished_qty = fg_completed_qty
-
-				sle.update({
-					"finished_product": finished_product,
-					"finished_qty": finished_qty,
-				})
+		if sle.serial_no:
+			update_available_serial_nos(available_serial_nos, sle)
 
 		data.append(sle)
 
@@ -67,6 +62,26 @@ def execute(filters=None):
 	update_included_uom_in_report(columns, data, include_uom, conversion_factors)
 	return columns, data
 
+def update_available_serial_nos(available_serial_nos, sle):
+	serial_nos = get_serial_nos(sle.serial_no)
+	key = (sle.item_code, sle.warehouse)
+	if key not in available_serial_nos:
+		available_serial_nos.setdefault(key, [])
+
+	existing_serial_no = available_serial_nos[key]
+	for sn in serial_nos:
+		if sle.actual_qty > 0:
+			if sn in existing_serial_no:
+				existing_serial_no.remove(sn)
+			else:
+				existing_serial_no.append(sn)
+		else:
+			if sn in existing_serial_no:
+				existing_serial_no.remove(sn)
+			else:
+				existing_serial_no.append(sn)
+
+	sle.balance_serial_no = '\n'.join(existing_serial_no)
 
 def get_columns():
 	columns = [
@@ -77,8 +92,6 @@ def get_columns():
 		{"label": _("In Qty"), "fieldname": "in_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
 		{"label": _("Out Qty"), "fieldname": "out_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
 		{"label": _("Balance Qty"), "fieldname": "qty_after_transaction", "fieldtype": "Float", "width": 100, "convertible": "qty"},
-		{"label": _("Finished Product"), "fieldname": "finished_product", "width": 100},
-		{"label": _("Finished Qty"), "fieldname": "finished_qty", "fieldtype": "Float", "width": 100, "convertible": "qty"},
 		{"label": _("Voucher #"), "fieldname": "voucher_no", "fieldtype": "Dynamic Link", "options": "voucher_type", "width": 150},
 		{"label": _("Warehouse"), "fieldname": "warehouse", "fieldtype": "Link", "options": "Warehouse", "width": 150},
 		{"label": _("Item Group"), "fieldname": "item_group", "fieldtype": "Link", "options": "Item Group", "width": 100},
@@ -90,7 +103,8 @@ def get_columns():
 		{"label": _("Voucher Type"), "fieldname": "voucher_type", "width": 110},
 		{"label": _("Voucher #"), "fieldname": "voucher_no", "fieldtype": "Dynamic Link", "options": "voucher_type", "width": 100},
 		{"label": _("Batch"), "fieldname": "batch_no", "fieldtype": "Link", "options": "Batch", "width": 100},
-		{"label": _("Serial #"), "fieldname": "serial_no", "fieldtype": "Link", "options": "Serial No", "width": 100},
+		{"label": _("Serial No"), "fieldname": "serial_no", "fieldtype": "Link", "options": "Serial No", "width": 100},
+		{"label": _("Balance Serial No"), "fieldname": "balance_serial_no", "width": 100},
 		{"label": _("Project"), "fieldname": "project", "fieldtype": "Link", "options": "Project", "width": 100},
 		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 110}
 	]
@@ -125,7 +139,7 @@ def get_stock_ledger_entries(filters, items):
 			`tabStock Ledger Entry` sle
 		WHERE
 			company = %(company)s
-				AND posting_date BETWEEN %(from_date)s AND %(to_date)s
+				AND is_cancelled = 0 AND posting_date BETWEEN %(from_date)s AND %(to_date)s
 				{sle_conditions}
 				{item_conditions_sql}
 		ORDER BY

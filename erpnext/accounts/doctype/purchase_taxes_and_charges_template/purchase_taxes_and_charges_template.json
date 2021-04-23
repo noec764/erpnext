@@ -74,11 +74,11 @@
     ],
     "icon": "fa fa-money",
     "idx": 1,
-    "modified": "2019-11-25 13:05:26.220275",
+    "modified": "2019-11-26 13:05:26.220275",
     "modified_by": "Administrator",
     "module": "Accounts",
     "name": "Purchase Taxes and Charges Template",
-    "owner": "wasim@webnotestech.com",
+    "owner": "Administrator",
     "permissions": [
      {
       "email": 1,

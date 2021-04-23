@@ -8,6 +8,7 @@
  "doctype": "DocType",
  "document_type": "Document",
  "editable_grid": 1,
+ "email_append_to": 1,
  "engine": "InnoDB",
  "field_order": [
   "from_section",
@@ -15,6 +16,7 @@
   "opportunity_from",
   "party_name",
   "customer_name",
+  "source",
   "column_break0",
   "title",
   "opportunity_type",
@@ -22,7 +24,7 @@
   "converted_by",
   "sales_stage",
   "order_lost_reason",
-  "mins_to_first_response",
+  "first_response_time",
   "expected_closing",
   "next_contact",
   "contact_by",
@@ -48,11 +50,11 @@
   "contact_email",
   "contact_mobile",
   "more_info",
-  "source",
+  "company",
   "campaign",
   "column_break1",
-  "company",
   "transaction_date",
+  "language",
   "amended_from",
   "lost_reasons"
  ],
@@ -151,13 +153,6 @@
    "read_only": 1
   },
   {
-   "bold": 1,
-   "fieldname": "mins_to_first_response",
-   "fieldtype": "Float",
-   "label": "Mins to first response",
-   "read_only": 1
-  },
-  {
    "fieldname": "expected_closing",
    "fieldtype": "Date",
    "label": "Expected Closing Date"
@@ -214,7 +209,8 @@
   {
    "fieldname": "opportunity_amount",
    "fieldtype": "Currency",
-   "label": "Opportunity Amount"
+   "label": "Opportunity Amount",
+   "options": "currency"
   },
   {
    "default": "0",
@@ -325,6 +321,7 @@
    "fieldname": "contact_email",
    "fieldtype": "Data",
    "label": "Contact Email",
+   "options": "Email",
    "read_only": 1
   },
   {
@@ -338,7 +335,7 @@
    "collapsible": 1,
    "fieldname": "more_info",
    "fieldtype": "Section Break",
-   "label": "Source",
+   "label": "More Information",
    "oldfieldtype": "Section Break",
    "options": "fa fa-file-text"
   },
@@ -351,7 +348,6 @@
    "options": "Lead Source"
   },
   {
-   "depends_on": "eval: doc.source==\"Campaign\"",
    "description": "Enter name of campaign if source of enquiry is campaign",
    "fieldname": "campaign",
    "fieldtype": "Link",
@@ -405,7 +401,7 @@
    "fieldname": "lost_reasons",
    "fieldtype": "Table MultiSelect",
    "label": "Lost Reasons",
-   "options": "Lost Reason Detail",
+   "options": "Opportunity Lost Reason Detail",
    "read_only": 1
   },
   {
@@ -413,12 +409,25 @@
    "fieldtype": "Link",
    "label": "Converted By",
    "options": "User"
+  },
+  {
+    "bold": 1,
+    "fieldname": "first_response_time",
+    "fieldtype": "Duration",
+    "label": "First Response Time",
+    "read_only": 1
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Print Language",
+   "options": "Language"
   }
  ],
  "icon": "fa fa-info-sign",
  "idx": 195,
  "links": [],
- "modified": "2020-03-20 17:57:13.833359",
+ "modified": "2021-01-06 19:42:46.190051",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",
@@ -450,9 +459,11 @@
   }
  ],
  "search_fields": "status,transaction_date,party_name,opportunity_type,territory,company",
+ "sender_field": "contact_email",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "subject_field": "title",
  "timeline_field": "party_name",
  "title_field": "title",
  "track_seen": 1,

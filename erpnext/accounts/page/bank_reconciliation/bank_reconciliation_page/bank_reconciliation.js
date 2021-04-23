@@ -13,9 +13,9 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 
 		this.company = frappe.defaults.get_user_default("Company");
 		this.bank_account = frappe.boot.sysdefaults.default_bank_account_name;
-        this.date_range = [frappe.datetime.add_months(frappe.datetime.get_today(),-1), frappe.datetime.get_today()];
-        frappe.utils.make_event_emitter(erpnext.bank_reconciliation);
-        this.make();
+		this.date_range = [frappe.datetime.add_months(frappe.datetime.get_today(),-1), frappe.datetime.get_today()];
+		frappe.utils.make_event_emitter(erpnext.bank_reconciliation);
+		this.make();
 	}
 
 	make() {
@@ -28,15 +28,15 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 			label: __('Company'),
 			fieldname: 'company',
 			options: "Company",
-            default: frappe.defaults.get_user_default("Company"),
-            reqd: 1,
+			default: frappe.defaults.get_user_default("Company"),
+			reqd: 1,
 			onchange: function() {
 				if (this.value) {
 					me.company = this.value;
 				} else {
 					me.company = null;
 					me.bank_account = null;
-                }
+				}
 			}
 		})
 
@@ -46,7 +46,7 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 			fieldname: 'bank_account',
 			options: "Bank Account",
 			default: frappe.boot.sysdefaults.default_bank_account_name,
-            reqd: 1,
+			reqd: 1,
 			get_query: function() {
 				if(!me.company) {
 					frappe.throw(__("Please select company first"));
@@ -65,16 +65,16 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 					erpnext.bank_reconciliation.trigger("filter_change", {name: 'bankAccount', value: me.bank_account})
 				} else {
 					me.bank_account = null;
-                }
+				}
 			}
-        })
+		})
 
-        me.page.add_field({
+		me.page.add_field({
 			fieldtype: 'DateRange',
 			label: __('Date Range'),
 			fieldname: 'date_range',
-            default: [frappe.datetime.add_months(frappe.datetime.get_today(),-1), frappe.datetime.get_today()],
-            reqd: 1,
+			default: [frappe.datetime.add_months(frappe.datetime.get_today(),-1), frappe.datetime.get_today()],
+			reqd: 1,
 			onchange: function() {
 				if (this.value) {
 					me.date_range = this.value;
@@ -86,6 +86,8 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 		})
 		
 		this.make_reconciliation_tool();
+
+		me.add_actions()
 	}
 
 	make_reconciliation_tool() {
@@ -95,5 +97,28 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 				props: { bank_account: this.bank_account, date_range: this.date_range }
 			})
 		})
+	}
+
+	add_actions() {
+		const me = this;
+		frappe.require('assets/js/bank-transaction-importer.min.js', function() {
+			me.page.add_action_item(__("Go to Bank Reconciliation Statement"), function() {
+				frappe.set_route('query-report', "Bank Reconciliation Statement", {bank_account: me.bank_account, report_date: me.date_range ? me.date_range[1] : frappe.datetime.now_date()})
+			});
+
+			frappe.db.get_value("Plaid Settings", "Plaid Settings", "enabled", (r) => {
+				if (r && r.enabled === "1") {
+					me.page.add_action_item(__("Synchronize this account"), function() {
+						new erpnext.accounts.bankTransactionUpload('plaid');
+					});
+				}
+			})
+			me.page.add_action_item(__("Upload an ofx statement"), function() {
+				new erpnext.accounts.bankTransactionUpload('ofx');
+			});
+			me.page.add_action_item(__("Upload a csv/xlsx statement"), function() {
+				new erpnext.accounts.bankTransactionUpload('csv');
+			});
+		});
 	}
 }

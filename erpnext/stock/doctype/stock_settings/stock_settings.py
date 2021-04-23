@@ -8,6 +8,8 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils.html_utils import clean_html
+from frappe.utils import cint
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 class StockSettings(Document):
 	def validate(self):
@@ -53,13 +55,22 @@ class StockSettings(Document):
 			""")
 
 			if sle:
-				frappe.throw(_("Can't change valuation method, as there are transactions against some items which does not have it's own valuation method"))
+				frappe.throw(_("Can't change the valuation method, as there are transactions against some items which do not have its own valuation method"))
 
 	def validate_clean_description_html(self):
 		if int(self.clean_description_html or 0) \
 			and not int(self.db_get('clean_description_html') or 0):
 			# changed to text
 			frappe.enqueue('erpnext.stock.doctype.stock_settings.stock_settings.clean_all_descriptions', now=frappe.flags.in_test)
+
+	def on_update(self):
+		self.toggle_warehouse_field_for_inter_warehouse_transfer()
+
+	def toggle_warehouse_field_for_inter_warehouse_transfer(self):
+		make_property_setter("Sales Invoice Item", "target_warehouse", "hidden", 1 - cint(self.allow_from_dn), "Check")
+		make_property_setter("Delivery Note Item", "target_warehouse", "hidden", 1 - cint(self.allow_from_dn), "Check")
+		make_property_setter("Purchase Invoice Item", "from_warehouse", "hidden", 1 - cint(self.allow_from_pr), "Check")
+		make_property_setter("Purchase Receipt Item", "from_warehouse", "hidden", 1 - cint(self.allow_from_pr), "Check")
 
 
 def clean_all_descriptions():

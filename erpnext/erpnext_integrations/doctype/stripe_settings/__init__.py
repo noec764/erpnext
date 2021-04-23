@@ -67,8 +67,8 @@ def create_new_integration_log(event, account):
 		"doctype": "Integration Request",
 		"integration_type": "Webhook",
 		"integration_request_service": "Stripe",
-		"service_document": event.data.object.get("object"),
-		"service_status": event.data.object.get("status"),
+		"service_document": event.type.split(".")[0],
+		"service_status": event.type.split(".")[1],
 		"service_id": event.data.object.get("id"),
 		"data": json.dumps(event, indent=4),
 		"payment_gateway_controller": account

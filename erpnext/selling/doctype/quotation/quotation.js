@@ -7,7 +7,7 @@
 frappe.ui.form.on('Quotation', {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
-			'Sales Order': 'Make Sales Order'
+			'Sales Order': 'Sales Order'
 		},
 
 		frm.set_query("quotation_to", function() {
@@ -220,7 +220,7 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 					doc: me.frm.doc,
 					args: {date: values.end_date}
 				}).then(() => {
-					me.frm.refresh_field("valid_till");
+					me.frm.refresh();
 				})
 				dialog.hide();
 			},

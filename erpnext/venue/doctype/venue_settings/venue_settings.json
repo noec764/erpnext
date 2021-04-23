@@ -1,0 +1,134 @@
+{
+ "actions": [],
+ "creation": "2020-08-03 08:10:42.541814",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_booking_section",
+  "clear_item_booking_draft_duration",
+  "confirm_booking_after_payment",
+  "column_break_4",
+  "enable_simultaneous_booking",
+  "no_overlap_per_item",
+  "sync_with_google_calendar",
+  "allow_event_cancellation",
+  "cancellation_delay",
+  "units_of_measure_section",
+  "minute_uom",
+  "column_break_8",
+  "month_uom"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_booking_section",
+   "fieldtype": "Section Break",
+   "label": "Item Booking"
+  },
+  {
+   "description": "Used for slots calculation.<br>Please add an UOM conversion factor between each UOM used in booked items and this UOM.",
+   "fieldname": "minute_uom",
+   "fieldtype": "Link",
+   "label": "Minute UOM",
+   "options": "UOM"
+  },
+  {
+   "default": "15",
+   "description": "Minimum 3 minutes.<br>Set 0 to disable this functionality.",
+   "fieldname": "clear_item_booking_draft_duration",
+   "fieldtype": "Int",
+   "label": "Clear drafts after x minutes"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_simultaneous_booking",
+   "fieldtype": "Check",
+   "label": "Enable simultaneous booking"
+  },
+  {
+   "default": "0",
+   "description": "Applicable for shopping cart bookings",
+   "fieldname": "sync_with_google_calendar",
+   "fieldtype": "Check",
+   "label": "Automatically synchronize with Google Calendar"
+  },
+  {
+   "fieldname": "units_of_measure_section",
+   "fieldtype": "Section Break",
+   "label": "Units of Measure"
+  },
+  {
+   "fieldname": "month_uom",
+   "fieldtype": "Link",
+   "label": "Month UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_overlap_per_item",
+   "fieldtype": "Check",
+   "label": "Do not allow overlapping bookings for the same item on desk"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_event_cancellation",
+   "fieldtype": "Check",
+   "label": "Allow cancellation of item bookings on the portal"
+  },
+  {
+   "default": "1440",
+   "depends_on": "eval:doc.allow_event_cancellation",
+   "description": "Users will not be able to cancel later than this delay before the appointment",
+   "fieldname": "cancellation_delay",
+   "fieldtype": "Duration",
+   "label": "Cancellation delay"
+  },
+  {
+   "default": "0",
+   "description": "If not set, the booking will be considered confirmed when the order is placed",
+   "fieldname": "confirm_booking_after_payment",
+   "fieldtype": "Check",
+   "label": "Confirm booking after payment"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-02-26 11:21:39.708670",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Venue Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Venue Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Venue",
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

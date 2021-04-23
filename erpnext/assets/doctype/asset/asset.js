@@ -2,6 +2,7 @@
 // For license information, please see license.txt
 
 frappe.provide("erpnext.asset");
+frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on('Asset', {
 	onload: function(frm) {
@@ -32,13 +33,11 @@ frappe.ui.form.on('Asset', {
 			};
 		});
 
-		frm.set_query("cost_center", function() {
-			return {
-				"filters": {
-					"company": frm.doc.company,
-				}
-			};
-		});
+		erpnext.accounts.dimensions.setup_dimension_filters(frm, frm.doctype);
+	},
+
+	company: function(frm) {
+		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 	},
 
 	setup: function(frm) {
@@ -137,6 +136,14 @@ frappe.ui.form.on('Asset', {
 		if (frm.doc.docstatus == 0) {
 			frm.toggle_reqd("finance_books", frm.doc.calculate_depreciation);
 		}
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Create'), true);
+		}
 	},
 
 	toggle_reference_doc: function(frm) {
@@ -186,14 +193,14 @@ frappe.ui.form.on('Asset', {
 		var asset_values = [frm.doc.gross_purchase_amount];
 		var last_depreciation_date = frm.doc.purchase_date;
 
-		if(frm.doc.opening_accumulated_depreciation) {
-			last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
-				-1*frm.doc.frequency_of_depreciation);
+		// if(frm.doc.opening_accumulated_depreciation) {
+		// 	last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
+		// 		-1*frm.doc.frequency_of_depreciation);
 
-			x_intervals.push(last_depreciation_date);
-			asset_values.push(flt(frm.doc.gross_purchase_amount) -
-				flt(frm.doc.opening_accumulated_depreciation));
-		}
+		// 	x_intervals.push(last_depreciation_date);
+		// 	asset_values.push(flt(frm.doc.gross_purchase_amount) -
+		// 		flt(frm.doc.opening_accumulated_depreciation));
+		// }
 
 		$.each(frm.doc.schedules || [], function(i, v) {
 			x_intervals.push(v.schedule_date);
@@ -222,9 +229,11 @@ frappe.ui.form.on('Asset', {
 				labels: x_intervals,
 				datasets: [{
 					color: 'green',
-					values: asset_values,
-					formatted: asset_values.map(d => d.toFixed(2))
+					values: asset_values
 				}]
+			},
+			tooltipOptions: {
+				formatTooltipY: d => format_currency(d, frm.doc.currency),
 			},
 			type: 'line'
 		});
@@ -250,13 +259,6 @@ frappe.ui.form.on('Asset', {
 				}
 			}
 		})
-	},
-
-	available_for_use_date: function(frm) {
-		$.each(frm.doc.finance_books || [], function(i, d) {
-			if(!d.depreciation_start_date) d.depreciation_start_date = frm.doc.available_for_use_date;
-		});
-		refresh_field("finance_books");
 	},
 
 	is_existing_asset: function(frm) {
@@ -380,14 +382,15 @@ frappe.ui.form.on('Asset', {
 			doctype_field = frappe.scrub(doctype)
 			frm.set_value(doctype_field, '');
 			frappe.msgprint({
-				title: __(`Invalid ${doctype}`),
-				message: __(`The selected ${doctype} doesn't contains selected Asset Item.`),
+				title: __('Invalid {0}', [__(doctype)]),
+				message: __('The selected {0} does not contain the selected Asset Item.', [__(doctype)]),
 				indicator: 'red'
 			});
 		}
 		frm.set_value('gross_purchase_amount', item.base_net_rate + item.item_tax_amount);
 		frm.set_value('purchase_receipt_amount', item.base_net_rate + item.item_tax_amount);
-		frm.set_value('location', item.asset_location);
+		item.asset_location && frm.set_value('location', item.asset_location);
+		frm.set_value('cost_center', item.cost_center || purchase_doc.cost_center);
 	},
 
 	set_depreciation_rate: function(frm, row) {
@@ -406,7 +409,21 @@ frappe.ui.form.on('Asset', {
 				}
 			});
 		}
-	}
+	},
+	company: function(frm) {
+		if (frm.get_field("cost_center")) {
+			frappe.call({
+				method: "frappe.client.get_value",
+				args: {
+					doctype: "Company",
+					filters: {"name": frm.doc.company},
+					fieldname: "cost_center"
+				}
+			}).then(r => {
+				r&&r.message&&frm.set_value("cost_center", r.message.cost_center);
+			})
+		}
+	},
 });
 
 frappe.ui.form.on('Asset Finance Book', {
@@ -440,6 +457,15 @@ frappe.ui.form.on('Asset Finance Book', {
 		}
 
 		frappe.flags.dont_change_rate = false;
+	},
+
+	depreciation_start_date: function(frm, cdt, cdn) {
+		const book = locals[cdt][cdn];
+		if (frm.doc.available_for_use_date && book.depreciation_start_date == frm.doc.available_for_use_date) {
+			frappe.msgprint(__("Depreciation Posting Date should not be equal to Available for Use Date."));
+			book.depreciation_start_date = "";
+			frm.refresh_field("finance_books");
+		}
 	}
 });
 

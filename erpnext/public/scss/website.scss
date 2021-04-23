@@ -1,27 +1,8 @@
-@import "frappe/public/scss/variables";
-
-.product-image img {
-	min-height: 20rem;
-	max-height: 30rem;
-}
+@import "frappe/public/scss/website/variables";
 
 .filter-options {
 	max-height: 300px;
 	overflow: auto;
-}
-
-.item-slideshow-image {
-	height: 3rem;
-	width: 3rem;
-	object-fit: contain;
-	padding: 0.5rem;
-	border: 1px solid $border-color;
-	border-radius: 4px;
-	cursor: pointer;
-
-	&:hover, &.active {
-		border-color: $primary;
-	}
 }
 
 .address-card {
@@ -56,29 +37,41 @@
 	margin-top: 2rem;
 }
 
-.web-list-item {
+.result {
+	border-bottom: 1px solid $border-color;
+}
+
+.transaction-list-item {
+	padding: 1rem 0;
+	border-top: 1px solid $border-color;
 	position: relative;
-	display: block;
-	padding: 0.75rem 1.25rem;
-	margin-bottom: -1px;
-	background-color: #fff;
-	border-top: 1px solid rgba(0, 0, 0, 0.125);
 
-	&:first-child {
-		border-top-left-radius: 0.25rem;
-		border-top-right-radius: 0.25rem;
-		border: None;
-	}
-
-	&:hover {
-		background-color: #eaf1ff;
+	a.transaction-item-link {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		text-decoration: none;
+		opacity: 0;
+		overflow: hidden;
+		text-indent: -9999px;
+		z-index: 0;
 	}
 }
 
-.more-block {
-	padding-bottom: 30px;
+.place-order-container {
+	text-align: right;
 }
 
-.btn-more {
-	margin: 25px 0px;
+.kb-card {
+	.card-body > .card-title {
+		line-height: 1.3;
+	}
 }
+
+#footer-subscribe-button {
+	box-shadow: none;
+}
+
+@import "erpnext/public/scss/shopping_cart";

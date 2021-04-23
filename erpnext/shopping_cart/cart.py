@@ -37,17 +37,33 @@ def get_cart_quotation(doc=None):
 	addresses = get_address_docs(party=party)
 
 	if not doc.customer_address and addresses:
-		update_cart_address("customer_address", addresses[0].name)
+		update_cart_address("billing", addresses[0].name)
 
 	return {
 		"doc": decorate_quotation_doc(doc),
-		"shipping_addresses": [{"name": address.name, "display": address.display}
-			for address in addresses],
-		"billing_addresses": [{"name": address.name, "display": address.display}
-			for address in addresses],
+		"shipping_addresses": get_shipping_addresses(party),
+		"billing_addresses": get_billing_addresses(party),
 		"shipping_rules": get_applicable_shipping_rules(party),
 		"cart_settings": frappe.get_cached_doc("Shopping Cart Settings")
 	}
+
+@frappe.whitelist()
+def get_shipping_addresses(party=None):
+	if not party:
+		party = get_party()
+	addresses = get_address_docs(party=party)
+	return [{"name": address.name, "title": address.address_title, "display": address.display}
+		for address in addresses if (address.address_type == "Shipping" or address.is_shipping_address)
+	]
+
+@frappe.whitelist()
+def get_billing_addresses(party=None):
+	if not party:
+		party = get_party()
+	addresses = get_address_docs(party=party)
+	return [{"name": address.name, "title": address.address_title, "display": address.display}
+		for address in addresses if (address.address_type == "Billing" or address.is_primary_address)
+	]
 
 @frappe.whitelist()
 def place_order():
@@ -65,6 +81,9 @@ def place_order():
 		# company used to create customer accounts
 		frappe.defaults.set_user_default("company", quotation.company)
 
+	if not (quotation.shipping_address_name or quotation.customer_address):
+		frappe.throw(_("Set Shipping Address or Billing Address"))
+
 	from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 	sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
 	sales_order.payment_schedule = []
@@ -76,8 +95,13 @@ def place_order():
 
 			if is_stock_item:
 				item_stock = get_qty_in_stock(item.item_code, "website_warehouse")
+				if not cint(item_stock.in_stock):
+					throw(_("{1} Not in Stock").format(item.item_code))
 				if item.qty > item_stock.stock_qty[0][0]:
-					throw(_("Only {0} in stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
+					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
+
+	if sales_order.grand_total == 0.0:
+		sales_order.per_billed = 100.0
 
 	sales_order.flags.ignore_permissions = True
 	sales_order.insert()
@@ -99,6 +123,9 @@ def request_for_quotation():
 def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=None, booking=None):
 	quotation = _get_cart_quotation()
 
+	if booking == 'None':
+		booking = None
+
 	empty_card = False
 	qty = flt(qty)
 	if qty == 0:
@@ -107,6 +134,7 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 			frappe.delete_doc("Item Booking", booking, ignore_permissions=True, force=True)
 		else:
 			quotation_items = quotation.get("items", filters={"item_code": ["!=", item_code]})
+			quotation_items += quotation.get("items", filters={"item_code": ["=", item_code], "item_booking": ["!=", None]})
 
 		if quotation_items:
 			quotation.set("items", quotation_items)
@@ -114,10 +142,15 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 			empty_card = True
 
 	else:
-		quotation_items = quotation.get("items", {"item_code": item_code, "uom": uom}) if uom\
-			else quotation.get("items", {"item_code": item_code})
+		filters = {}
+		_keys = {"item_code": item_code, "uom": uom, "item_booking": booking}
+		for key in _keys:
+			if _keys[key]:
+				filters.update({key: _keys[key]})
 
-		if not quotation_items or booking:
+		quotation_items = quotation.get("items", filters)
+
+		if not quotation_items:
 			quotation.append("items", {
 				"doctype": "Quotation Item",
 				"item_code": item_code,
@@ -143,6 +176,9 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 		quotation = None
 
 	set_cart_count(quotation)
+
+	if additional_notes and booking:
+		frappe.db.set_value("Item Booking", booking, "notes", additional_notes)
 
 	context = get_cart_quotation(quotation)
 
@@ -195,6 +231,13 @@ def create_lead_for_item_inquiry(lead, subject, message):
 	lead_doc.update(lead)
 	lead_doc.set('lead_owner', '')
 
+	if not frappe.db.exists('Lead Source', _('Product Inquiry')):
+		frappe.get_doc({
+			'doctype': 'Lead Source',
+			'source_name' : _('Product Inquiry')
+		}).insert(ignore_permissions=True)
+	lead_doc.set('source', _('Product Inquiry'))
+
 	try:
 		lead_doc.save(ignore_permissions=True)
 	except frappe.exceptions.DuplicateEntryError:
@@ -216,21 +259,21 @@ def get_terms_and_conditions(terms_name):
 	return frappe.db.get_value('Terms and Conditions', terms_name, 'terms')
 
 @frappe.whitelist()
-def update_cart_address(address_fieldname, address_name):
+def update_cart_address(address_type, address_name):
 	quotation = _get_cart_quotation()
-	address_display = get_address_display(frappe.get_doc("Address", address_name).as_dict())
+	address_doc = frappe.get_doc("Address", address_name).as_dict()
+	address_display = get_address_display(address_doc)
 
-	if address_fieldname == "shipping_address_name":
-		quotation.shipping_address_name = address_name
-		quotation.shipping_address = address_display
-
-		if not quotation.customer_address:
-			address_fieldname == "customer_address"
-
-	if address_fieldname == "customer_address":
+	if address_type.lower() == "billing":
 		quotation.customer_address = address_name
 		quotation.address_display = address_display
-
+		quotation.shipping_address_name = quotation.shipping_address_name or address_name
+		address_doc = next((doc for doc in get_billing_addresses() if doc["name"] == address_name), None)
+	elif address_type.lower() == "shipping":
+		quotation.shipping_address_name = address_name
+		quotation.shipping_address = address_display
+		quotation.customer_address = quotation.customer_address or address_name
+		address_doc = next((doc for doc in get_shipping_addresses() if doc["name"] == address_name), None)
 
 	apply_cart_settings(quotation=quotation)
 
@@ -238,10 +281,14 @@ def update_cart_address(address_fieldname, address_name):
 	quotation.save()
 
 	context = get_cart_quotation(quotation)
+	context['address'] = address_doc
+
 	return {
 		"taxes": frappe.render_template("templates/includes/order/order_taxes.html",
 			context),
-		}
+		"address": frappe.render_template("templates/includes/cart/address_card.html",
+			context)
+	}
 
 def guess_territory():
 	territory = None
@@ -260,15 +307,9 @@ def decorate_quotation_doc(doc):
 
 	return doc
 
-
 def _get_cart_quotation(party=None):
 	'''Return the open Quotation of type "Shopping Cart" or make a new one'''
-	if not party:
-		party = get_party()
-
-	quotation = frappe.get_all("Quotation", fields=["name"], filters=
-		{"party_name": party.name, "order_type": "Shopping Cart", "docstatus": 0},
-		order_by="modified desc", limit_page_length=1)
+	party, quotation = has_cart_quotation(party)
 
 	if quotation:
 		qdoc = frappe.get_doc("Quotation", quotation[0].name)
@@ -294,6 +335,14 @@ def _get_cart_quotation(party=None):
 		apply_cart_settings(party, qdoc)
 
 	return qdoc
+
+def has_cart_quotation(party=None):
+	if not party:
+		party = get_party()
+
+	return party, frappe.get_all("Quotation", fields=["name"], filters=
+		{"party_name": party.name, "order_type": "Shopping Cart", "docstatus": 0},
+		order_by="modified desc", limit_page_length=1)
 
 def update_party(fullname, company_name=None, mobile_no=None, phone=None):
 	party = get_party()
@@ -341,7 +390,7 @@ def apply_cart_settings(party=None, quotation=None):
 def set_price_list_and_rate(quotation, cart_settings):
 	"""set price list based on billing territory"""
 
-	_set_price_list(quotation, cart_settings)
+	_set_price_list(cart_settings, quotation)
 
 	# reset values
 	quotation.price_list_currency = quotation.currency = \
@@ -356,23 +405,26 @@ def set_price_list_and_rate(quotation, cart_settings):
 		# set it in cookies for using in product page
 		frappe.local.cookie_manager.set_cookie("selling_price_list", quotation.selling_price_list)
 
-def _set_price_list(quotation, cart_settings):
+def _set_price_list(cart_settings, quotation=None):
 	"""Set price list based on customer or shopping cart default"""
 	from erpnext.accounts.party import get_default_price_list
+	party_name = quotation.get("party_name") if quotation else get_party().get("name")
 
 	# check if customer price list exists
 	selling_price_list = None
-	if quotation.party_name:
-		selling_price_list = frappe.db.get_value('Customer', quotation.party_name, 'default_price_list')
 
-	# else check for territory based price list
+	# check if default customer price list exists
+	if party_name and frappe.db.exists("Customer", party_name):
+		selling_price_list = get_default_price_list(frappe.get_doc("Customer", party_name))
+
+	# check default price list in shopping cart
 	if not selling_price_list:
 		selling_price_list = cart_settings.price_list
 
-	if not selling_price_list and quotation.party_name:
-		selling_price_list = get_default_price_list(frappe.get_doc("Customer", quotation.party_name))
+	if quotation:
+		quotation.selling_price_list = selling_price_list
 
-	quotation.selling_price_list = selling_price_list
+	return selling_price_list
 
 def set_taxes(quotation, cart_settings):
 	"""set taxes based on billing territory"""
@@ -395,39 +447,48 @@ def get_party(user=None):
 	if not user:
 		user = frappe.session.user
 
+	party = frappe.cache().hget('shopping_cart_party', user)
+	if party:
+		return party
+
+	return _get_party_document(user)
+
+def _get_party_document(user):
 	contact_name = frappe.db.get_value("Contact", {"user": user})
 	if not contact_name:
 		contact_name = get_contact_name(user)
-	party = None
 
+	party = None
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		if contact.links:
-			party_doctype = contact.links[0].link_doctype
-			party = contact.links[0].link_name
+			party_doctype, party = contact.get_link_to_doctype("Customer") or contact.get_link_to_doctype("Lead")
 
-	cart_settings = frappe.get_doc("Shopping Cart Settings")
-
-	debtors_account = ''
-
-	if cart_settings.enable_checkout:
-		debtors_account = get_debtors_account(cart_settings)
+	cart_settings = get_shopping_cart_settings()
 
 	if party:
-		return frappe.get_doc(party_doctype, party)
+		party_document = frappe.get_cached_doc(party_doctype, party)
+		frappe.cache().hset('shopping_cart_party', user, party_document)
+		return party_document
 
 	else:
 		if not cart_settings.enabled:
 			frappe.local.flags.redirect_location = "/contact"
 			raise frappe.Redirect
+
 		customer = frappe.new_doc("Customer")
 		fullname = get_fullname(user)
 		customer.update({
 			"customer_name": fullname,
 			"customer_type": "Individual",
-			"customer_group": get_shopping_cart_settings().default_customer_group,
-			"territory": get_root_of("Territory")
+			"customer_group": cart_settings.default_customer_group,
+			"territory": get_root_of("Territory"),
+			"customer_primary_contact": contact_name
 		})
+
+		debtors_account = None
+		if cart_settings.enable_checkout:
+			debtors_account = get_debtors_account(cart_settings)
 
 		if debtors_account:
 			customer.update({
@@ -440,18 +501,32 @@ def get_party(user=None):
 		customer.flags.ignore_mandatory = True
 		customer.insert(ignore_permissions=True)
 
-		contact = frappe.new_doc("Contact")
-		contact.update({
-			"first_name": fullname
-		})
+		if contact_name:
+			contact = frappe.get_cached_doc("Contact", contact_name)
+		else:
+			contact = frappe.new_doc("Contact")
+			contact.update({
+				"first_name": fullname
+			})
+
 		contact.add_email(user, is_primary=True)
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
 		contact.flags.ignore_mandatory = True
-		contact.insert(ignore_permissions=True)
+		contact.flags.ignore_permissions = True
+		contact.save()
 
+		if not contact_name:
+			customer.customer_primary_contact = contact.name
+			customer.save()
+
+		frappe.db.commit()
+		frappe.cache().hset('shopping_cart_party', user, customer)
 		return customer
 
 def get_debtors_account(cart_settings):
+	if not cart_settings.payment_gateway_account:
+		frappe.throw(_("Payment Gateway Account not set"), _("Mandatory"))
+
 	payment_gateway_account_currency = \
 		frappe.get_doc("Payment Gateway Account", cart_settings.payment_gateway_account).currency
 
@@ -565,27 +640,31 @@ def show_terms(doc):
 	return doc.tc_name
 
 @frappe.whitelist(allow_guest=True)
-def apply_coupon_code(applied_code,applied_referral_sales_partner):
+def apply_coupon_code(applied_code, applied_referral_sales_partner):
 	quotation = True
-	if applied_code:
-		coupon_list=frappe.get_all('Coupon Code', filters={"docstatus": ("<", "2"), 'coupon_code':applied_code }, fields=['name'])
-		if coupon_list:
-			coupon_name=coupon_list[0].name
-			from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
-			validate_coupon_code(coupon_name)
-			quotation = _get_cart_quotation()
-			quotation.coupon_code=coupon_name
+
+	if not applied_code:
+		frappe.throw(_("Please enter a coupon code"))
+
+	coupon_list = frappe.get_all('Coupon Code', filters={'coupon_code': applied_code})
+	if not coupon_list:
+		frappe.throw(_("Please enter a valid coupon code"))
+
+	coupon_name = coupon_list[0].name
+
+	from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
+	validate_coupon_code(coupon_name)
+	quotation = _get_cart_quotation()
+	quotation.coupon_code = coupon_name
+	quotation.flags.ignore_permissions = True
+	quotation.save()
+
+	if applied_referral_sales_partner:
+		sales_partner_list = frappe.get_all('Sales Partner', filters={'referral_code': applied_referral_sales_partner})
+		if sales_partner_list:
+			sales_partner_name = sales_partner_list[0].name
+			quotation.referral_sales_partner = sales_partner_name
 			quotation.flags.ignore_permissions = True
 			quotation.save()
-			if applied_referral_sales_partner:
-				sales_partner_list=frappe.get_all('Sales Partner', filters={'docstatus': 0, 'referral_code':applied_referral_sales_partner }, fields=['name'])
-				if sales_partner_list:
-					sales_partner_name=sales_partner_list[0].name
-					quotation.referral_sales_partner=sales_partner_name
-					quotation.flags.ignore_permissions = True
-					quotation.save()
-		else:
-			frappe.throw(_("Your coupon code is not valid."))
-	else:
-		frappe.throw(_("Your coupon code is not valid."))
+
 	return quotation

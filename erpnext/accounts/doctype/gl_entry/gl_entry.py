@@ -4,44 +4,47 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 from frappe import _
-from frappe.utils import flt, fmt_money, getdate, formatdate
+from frappe.utils import flt, fmt_money, getdate, formatdate, cint
 from frappe.model.document import Document
 from frappe.model.naming import set_name_from_naming_options
 from frappe.model.meta import get_field_precision
 from erpnext.accounts.party import validate_party_gle_currency, validate_party_frozen_disabled
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.exceptions import InvalidAccountCurrency
+from erpnext.exceptions import InvalidAccountCurrency, InvalidAccountDimensionError, MandatoryAccountDimensionError
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_checks_for_pl_and_bs_accounts
+from erpnext.accounts.doctype.accounting_dimension_filter.accounting_dimension_filter import get_dimension_filter_map
+from six import iteritems
 
 exclude_from_linked_with = True
 class GLEntry(Document):
 	def validate(self):
 		self.flags.ignore_submit_comment = True
-		self.check_mandatory()
 		self.validate_and_set_fiscal_year()
 		self.pl_must_have_cost_center()
-		self.validate_cost_center()
+		self.check_accounting_journal()
 
 		if not self.flags.from_repost:
+			self.check_mandatory()
+			self.validate_cost_center()
 			self.check_pl_account()
 			self.validate_party()
 			self.validate_currency()
 
-	def on_update_with_args(self, adv_adj, update_outstanding = 'Yes', from_repost=False):
-		if not from_repost:
+	def on_update(self):
+		adv_adj = self.flags.adv_adj
+		if not self.flags.from_repost:
 			self.validate_account_details(adv_adj)
 			self.validate_dimensions_for_pl_and_bs()
-			check_freezing_date(self.posting_date, adv_adj)
+			self.validate_allowed_dimensions()
+			validate_balance_type(self.account, adv_adj)
+			validate_frozen_account(self.account, adv_adj)
 
-		validate_frozen_account(self.account, adv_adj)
-		validate_balance_type(self.account, adv_adj)
-
-		# Update outstanding amt on against voucher
-		if self.against_voucher_type in ['Journal Entry', 'Sales Invoice', 'Purchase Invoice', 'Fees'] \
-			and self.against_voucher and update_outstanding == 'Yes' and not from_repost:
-				update_outstanding_amt(self.account, self.party_type, self.party, self.against_voucher_type,
-					self.against_voucher)
+			# Update outstanding amt on against voucher
+			if (self.against_voucher_type in ['Journal Entry', 'Sales Invoice', 'Purchase Invoice'] \
+				and self.against_voucher and self.flags.update_outstanding == 'Yes'):
+					update_outstanding_amt(self.account, self.party_type, self.party, self.against_voucher_type,
+						self.against_voucher)
 
 	def check_mandatory(self):
 		mandatory = ['account','voucher_type','voucher_no','company']
@@ -49,7 +52,7 @@ class GLEntry(Document):
 			if not self.get(k):
 				frappe.throw(_("{0} is required").format(_(self.meta.get_label(k))))
 
-		account_type = frappe.db.get_value("Account", self.account, "account_type")
+		account_type = frappe.get_cached_value("Account", self.account, "account_type")
 		if not (self.party_type and self.party):
 			if account_type == "Receivable":
 				frappe.throw(_("{0} {1}: Customer is required against Receivable account {2}")
@@ -64,23 +67,20 @@ class GLEntry(Document):
 				.format(self.voucher_type, self.voucher_no, self.account))
 
 	def pl_must_have_cost_center(self):
-		if frappe.db.get_value("Account", self.account, "report_type") == "Profit and Loss":
+		if frappe.get_cached_value("Account", self.account, "report_type") == "Profit and Loss":
 			if not self.cost_center and self.voucher_type != 'Period Closing Voucher':
 				frappe.throw(_("{0} {1}: Cost Center is required for 'Profit and Loss' account {2}. Please set up a default Cost Center for the Company.")
 					.format(self.voucher_type, self.voucher_no, self.account))
 		else:
-			from erpnext.accounts.utils import get_allow_cost_center_in_entry_of_bs_account
-			if not get_allow_cost_center_in_entry_of_bs_account() and self.cost_center:
+			if self.cost_center:
 				self.cost_center = None
 			if self.project:
 				self.project = None
 
 	def validate_dimensions_for_pl_and_bs(self):
-
 		account_type = frappe.db.get_value("Account", self.account, "report_type")
 
 		for dimension in get_checks_for_pl_and_bs_accounts():
-
 			if account_type == "Profit and Loss" \
 				and self.company == dimension.company and dimension.mandatory_for_pl and not dimension.disabled:
 				if not self.get(dimension.fieldname):
@@ -93,6 +93,25 @@ class GLEntry(Document):
 					frappe.throw(_("Accounting Dimension <b>{0}</b> is required for 'Balance Sheet' account {1}.")
 						.format(dimension.label, self.account))
 
+	def validate_allowed_dimensions(self):
+		dimension_filter_map = get_dimension_filter_map()
+		for key, value in iteritems(dimension_filter_map):
+			dimension = key[0]
+			account = key[1]
+
+			if self.account == account:
+				if value['is_mandatory'] and not self.get(dimension):
+					frappe.throw(_("{0} is mandatory for account {1}").format(
+						frappe.bold(frappe.unscrub(dimension)), frappe.bold(self.account)), MandatoryAccountDimensionError)
+
+				if value['allow_or_restrict'] == 'Allow':
+					if self.get(dimension) and self.get(dimension) not in value['allowed_dimensions']:
+						frappe.throw(_("Invalid value {0} for {1} against account {2}").format(
+							frappe.bold(self.get(dimension)), frappe.bold(frappe.unscrub(dimension)), frappe.bold(self.account)), InvalidAccountDimensionError)
+				else:
+					if self.get(dimension) and self.get(dimension) in value['allowed_dimensions']:
+						frappe.throw(_("Invalid value {0} for {1} against account {2}").format(
+							frappe.bold(self.get(dimension)), frappe.bold(frappe.unscrub(dimension)), frappe.bold(self.account)), InvalidAccountDimensionError)
 
 	def check_pl_account(self):
 		if self.is_opening=='Yes' and \
@@ -108,7 +127,7 @@ class GLEntry(Document):
 			from tabAccount where name=%s""", self.account, as_dict=1)[0]
 
 		if ret.is_group==1:
-			frappe.throw(_("{0} {1}: Account {2} cannot be a Group")
+			frappe.throw(_('''{0} {1}: Account {2} is a Group Account and group accounts cannot be used in transactions''')
 				.format(self.voucher_type, self.voucher_no, self.account))
 
 		if ret.docstatus==2:
@@ -120,19 +139,18 @@ class GLEntry(Document):
 				.format(self.voucher_type, self.voucher_no, self.account, self.company))
 
 	def validate_cost_center(self):
-		if not hasattr(self, "cost_center_company"):
-			self.cost_center_company = {}
+		if not self.cost_center: return
 
-		def _get_cost_center_company():
-			if not self.cost_center_company.get(self.cost_center):
-				self.cost_center_company[self.cost_center] = frappe.db.get_value(
-					"Cost Center", self.cost_center, "company")
+		is_group, company = frappe.get_cached_value('Cost Center',
+			self.cost_center, ['is_group', 'company'])
 
-			return self.cost_center_company[self.cost_center]
-
-		if self.cost_center and _get_cost_center_company() != self.company:
+		if company != self.company:
 			frappe.throw(_("{0} {1}: Cost Center {2} does not belong to Company {3}")
 				.format(self.voucher_type, self.voucher_no, self.cost_center, self.company))
+
+		if (self.voucher_type != 'Period Closing Voucher' and is_group):
+			frappe.throw(_("""{0} {1}: Cost Center {2} is a group cost center and group cost centers cannot be used in transactions""").format(
+				self.voucher_type, self.voucher_no, frappe.bold(self.cost_center)))
 
 	def validate_party(self):
 		validate_party_frozen_disabled(self.party_type, self.party)
@@ -142,7 +160,7 @@ class GLEntry(Document):
 		account_currency = get_account_currency(self.account)
 
 		if not self.account_currency:
-			self.account_currency = company_currency
+			self.account_currency = account_currency or company_currency
 
 		if account_currency != self.account_currency:
 			frappe.throw(_("{0} {1}: Accounting Entry for {2} can only be made in currency: {3}")
@@ -157,6 +175,9 @@ class GLEntry(Document):
 		if not self.fiscal_year:
 			self.fiscal_year = get_fiscal_year(self.posting_date, company=self.company)[0]
 
+	def check_accounting_journal(self):
+		if not self.accounting_journal and cint(frappe.db.get_single_value("Accounts Settings", "mandatory_accounting_journal")):
+			frappe.throw(_("An accounting journal could not be found for this transaction. Please configure it and try to submit again."))
 
 def validate_balance_type(account, adv_adj=False):
 	if not adv_adj and account:
@@ -167,20 +188,7 @@ def validate_balance_type(account, adv_adj=False):
 
 			if (balance_must_be=="Debit" and flt(balance) < 0) or \
 				(balance_must_be=="Credit" and flt(balance) > 0):
-				frappe.throw(_("Balance for Account {0} must always be {1}").format(account, _(balance_must_be)))
-
-def check_freezing_date(posting_date, adv_adj=False):
-	"""
-		Nobody can do GL Entries where posting date is before freezing date
-		except authorized person
-	"""
-	if not adv_adj:
-		acc_frozen_upto = frappe.db.get_value('Accounts Settings', None, 'acc_frozen_upto')
-		if acc_frozen_upto:
-			frozen_accounts_modifier = frappe.db.get_value( 'Accounts Settings', None,'frozen_accounts_modifier')
-			if getdate(posting_date) <= getdate(acc_frozen_upto) \
-					and not frozen_accounts_modifier in frappe.get_roles():
-				frappe.throw(_("You are not authorized to add or update entries before {0}").format(formatdate(acc_frozen_upto)))
+				frappe.throw(_("Balance for Account {0} must always be {1}").format(account, _(balance_must_be).lower()))
 
 def update_outstanding_amt(account, party_type, party, against_voucher_type, against_voucher, on_cancel=False):
 	if party_type and party:
@@ -225,14 +233,22 @@ def update_outstanding_amt(account, party_type, party, against_voucher_type, aga
 		if bal < 0 and not on_cancel:
 			frappe.throw(_("Outstanding for {0} cannot be less than zero ({1})").format(against_voucher, fmt_money(bal)))
 
-	# Update outstanding amt on against voucher
 	if against_voucher_type in ["Sales Invoice", "Purchase Invoice", "Fees"]:
 		ref_doc = frappe.get_doc(against_voucher_type, against_voucher)
-		ref_doc.db_set('outstanding_amount', bal)
+
+		# Down payment invoices have no GL entries attached, therefore initial balance is 0
+		# On payment relink, they should not be updated
+		if ref_doc.get("is_down_payment_invoice") and flt(bal) != 0.0:
+			bal = ref_doc.grand_total + bal
+
+		# Didn't use db_set for optimisation purpose
+		ref_doc.outstanding_amount = bal
+		frappe.db.set_value(against_voucher_type, against_voucher, 'outstanding_amount', bal)
+
 		ref_doc.set_status(update=True)
 
 def validate_frozen_account(account, adv_adj=None):
-	frozen_account = frappe.db.get_value("Account", account, "freeze_account")
+	frozen_account = frappe.get_cached_value("Account", account, "freeze_account")
 	if frozen_account == 'Yes' and not adv_adj:
 		frozen_accounts_modifier = frappe.db.get_value( 'Accounts Settings', None,
 			'frozen_accounts_modifier')
@@ -266,3 +282,7 @@ def update_against_account(voucher_type, voucher_no):
 
 		if d.against != new_against:
 			frappe.db.set_value("GL Entry", d.name, "against", new_against)
+
+def on_doctype_update():
+	frappe.db.add_index("GL Entry", ["against_voucher_type", "against_voucher"])
+	frappe.db.add_index("GL Entry", ["voucher_type", "voucher_no"])

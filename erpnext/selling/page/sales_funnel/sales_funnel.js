@@ -42,14 +42,14 @@ erpnext.SalesFunnel = class SalesFunnel {
 				{value: 'sales_pipeline', label:__("Sales Pipeline")},
 				{value: 'opp_by_lead_source', label:__("Opportunities by lead source")}]),
 			refresh_btn: wrapper.page.set_primary_action(__("Refresh"),
-				function() { me.get_data(); }, "fas fa-sync-alt"),
+				function() { me.get_data(); }),
 		};
 
 		this.elements.no_data = $('<div class="alert alert-warning">' + __("No Data") + '</div>')
 			.toggle(false)
 			.appendTo(this.elements.layout);
 
-		this.elements.funnel_wrapper = $('<div class="funnel-wrapper text-center"></div>')
+		this.elements.funnel_wrapper = $('<div class="funnel-wrapper"></div>')
 			.appendTo(this.elements.layout);
 
 		this.company = frappe.defaults.get_user_default('company');
@@ -90,6 +90,10 @@ erpnext.SalesFunnel = class SalesFunnel {
 
 	get_data(btn) {
 		var me = this;
+		if (!this.company) {
+			frappe.throw(__("Please Select a Company."));
+		}
+
 		const method_map = {
 			"sales_funnel": "erpnext.selling.page.sales_funnel.sales_funnel.get_funnel_data",
 			"opp_by_lead_source": "erpnext.selling.page.sales_funnel.sales_funnel.get_opp_by_lead_source",

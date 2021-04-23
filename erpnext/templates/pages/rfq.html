@@ -1,7 +1,7 @@
 {% extends "templates/web.html" %}
 
 {% block header %}
-<h1>{{ doc.name }}</h1>
+<h2>{{ doc.name }}</h2>
 {% endblock %}
 
 {% block script %}
@@ -75,16 +75,14 @@
 					<div class="result">
 						{% for d in doc.rfq_links %}
 							<div class="web-list-item transaction-list-item quotations" idx="{{d.name}}">
-								<div class="row">
-									<div class="col-sm-6">
-										<span class="indicator darkgrey">{{d.name}}</span>
-									</div>
-									<div class="col-sm-3">
-										<span class="small darkgrey">{{d.status}}</span>
-									</div>
-									<div class="col-sm-3">
-										<span class="small darkgrey">{{d.transaction_date}}</span>
-									</div>
+								<div class="col-sm-6">
+									<span class="indicator darkgray">{{d.name}}</span>
+								</div>
+								<div class="col-sm-3">
+									<span class="small darkgray">{{d.status}}</span>
+								</div>
+								<div class="col-sm-3">
+									<span class="small darkgray">{{d.transaction_date}}</span>
 								</div>
 								<a class="transaction-item-link" href="/quotations/{{d.name}}">Link</a>
 							</div>

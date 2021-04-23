@@ -6,12 +6,12 @@ from __future__ import unicode_literals
 import frappe
 from erpnext import get_default_company
 from frappe.utils import cint
+from frappe import _
 
 def boot_session(bootinfo):
 	"""boot session - send website info if guest"""
 
 	bootinfo.custom_css = frappe.db.get_value('Style Settings', None, 'custom_css') or ''
-	bootinfo.website_settings = frappe.get_doc('Website Settings')
 
 	if frappe.session['user']!='Guest':
 		update_page_info(bootinfo)
@@ -44,6 +44,8 @@ def boot_session(bootinfo):
 		party_account_types = frappe.db.sql(""" select name, ifnull(account_type, '') from `tabParty Type`""")
 		bootinfo.party_account_types = frappe._dict(party_account_types)
 
+		frappe.cache().hdel('shopping_cart_party', frappe.session.user)
+
 def load_country_and_currency(bootinfo):
 	country = frappe.db.get_default("country")
 	if country and frappe.db.exists("Country", country):
@@ -56,27 +58,27 @@ def load_country_and_currency(bootinfo):
 def update_page_info(bootinfo):
 	bootinfo.page_info.update({
 		"Chart of Accounts": {
-			"title": "Chart of Accounts",
+			"title": _("Chart of Accounts"),
 			"route": "Tree/Account"
 		},
 		"Chart of Cost Centers": {
-			"title": "Chart of Cost Centers",
+			"title": _("Chart of Cost Centers"),
 			"route": "Tree/Cost Center"
 		},
 		"Item Group Tree": {
-			"title": "Item Group Tree",
+			"title": _("Item Group Tree"),
 			"route": "Tree/Item Group"
 		},
 		"Customer Group Tree": {
-			"title": "Customer Group Tree",
+			"title": _("Customer Group Tree"),
 			"route": "Tree/Customer Group"
 		},
 		"Territory Tree": {
-			"title": "Territory Tree",
+			"title": _("Territory Tree"),
 			"route": "Tree/Territory"
 		},
 		"Sales Person Tree": {
-			"title": "Sales Person Tree",
+			"title": _("Sales Person Tree"),
 			"route": "Tree/Sales Person"
 		}
 	})

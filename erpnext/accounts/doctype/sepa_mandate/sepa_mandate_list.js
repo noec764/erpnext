@@ -3,7 +3,7 @@ frappe.listview_settings['Sepa Mandate'] = {
 		if (doc.status == "Pending customer approval") {
 			return [__("Pending customer approval"), "orange", "status,=,Pending customer approval"];
 		} else if (doc.status == "Expired") {
-			return [__("Expired"), "grey", "status,=,Expired"];
+			return [__("Expired"), "gray", "status,=,Expired"];
 		} else if (doc.status == "Cancelled") {
 			return [__("Cancelled"), "red", "status,=,Cancelled"];
 		} else if (doc.status == "Failed") {
@@ -15,7 +15,7 @@ frappe.listview_settings['Sepa Mandate'] = {
 		} else if (doc.status == "Pending submission") {
 			return [__("Pending submission"), "orange", "status,=,Pending submission"];
 		} else {
-			return [__("Created"), "grey", "status,=,Created"];
+			return [__("Created"), "gray", "status,=,Created"];
 		}
 	}
 };

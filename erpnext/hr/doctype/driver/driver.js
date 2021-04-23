@@ -22,7 +22,7 @@ frappe.ui.form.on("Driver", {
 		});
 	},
 
- 	transporter: function(frm, cdt, cdn) {
+	transporter: function(frm, cdt, cdn) {
 		// this assumes that supplier's address has same title as supplier's name
 		frappe.db
 			.get_doc("Address", null, { address_title: frm.doc.transporter })

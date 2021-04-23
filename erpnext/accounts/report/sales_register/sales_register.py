@@ -6,7 +6,7 @@ import frappe
 from frappe.utils import flt
 from frappe import msgprint, _
 from frappe.model.meta import get_field_precision
-from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 
 def execute(filters=None):
 	return _execute(filters)
@@ -15,13 +15,14 @@ def _execute(filters, additional_table_columns=None, additional_query_columns=No
 	if not filters: filters = frappe._dict({})
 
 	invoice_list = get_invoices(filters, additional_query_columns)
-	columns, income_accounts, tax_accounts = get_columns(invoice_list, additional_table_columns)
+	columns, income_accounts, tax_accounts, unrealized_profit_loss_accounts = get_columns(invoice_list, additional_table_columns)
 
 	if not invoice_list:
 		msgprint(_("No record found"))
 		return columns, invoice_list
 
 	invoice_income_map = get_invoice_income_map(invoice_list)
+	internal_invoice_map = get_internal_invoice_map(invoice_list)
 	invoice_income_map, invoice_tax_map = get_invoice_tax_map(invoice_list,
 		invoice_income_map, income_accounts)
 	#Cost Center & Warehouse Map
@@ -70,10 +71,20 @@ def _execute(filters, additional_table_columns=None, additional_query_columns=No
 		# map income values
 		base_net_total = 0
 		for income_acc in income_accounts:
-			income_amount = flt(invoice_income_map.get(inv.name, {}).get(income_acc))
+			if inv.is_internal_customer and inv.company == inv.represents_company:
+				income_amount = 0
+			else:
+				income_amount = flt(invoice_income_map.get(inv.name, {}).get(income_acc))
+
 			base_net_total += income_amount
 			row.update({
 				frappe.scrub(income_acc): income_amount
+			})
+
+		# Add amount in unrealized account
+		for account in unrealized_profit_loss_accounts:
+			row.update({
+				frappe.scrub(account): flt(internal_invoice_map.get((inv.name, account)))
 			})
 
 		# net total
@@ -230,6 +241,8 @@ def get_columns(invoice_list, additional_table_columns):
 	tax_accounts = []
 	income_columns = []
 	tax_columns = []
+	unrealized_profit_loss_accounts = []
+	unrealized_profit_loss_account_columns = []
 
 	if invoice_list:
 		income_accounts = frappe.db.sql_list("""select distinct income_account
@@ -243,12 +256,18 @@ def get_columns(invoice_list, additional_table_columns):
 			and parent in (%s) order by account_head""" %
 			', '.join(['%s']*len(invoice_list)), tuple([inv.name for inv in invoice_list]))
 
+		unrealized_profit_loss_accounts = frappe.db.sql_list("""SELECT distinct unrealized_profit_loss_account
+			from `tabSales Invoice` where docstatus = 1 and name in (%s)
+			and ifnull(unrealized_profit_loss_account, '') != ''
+			order by unrealized_profit_loss_account""" %
+			', '.join(['%s']*len(invoice_list)), tuple([inv.name for inv in invoice_list]))
+
 	for account in income_accounts:
 		income_columns.append({
 			"label": account,
 			"fieldname": frappe.scrub(account),
 			"fieldtype": "Currency",
-			"options": 'currency',
+			"options": "currency",
 			"width": 120
 		})
 
@@ -258,15 +277,24 @@ def get_columns(invoice_list, additional_table_columns):
 				"label": account,
 				"fieldname": frappe.scrub(account),
 				"fieldtype": "Currency",
-				"options": 'currency',
+				"options": "currency",
 				"width": 120
 			})
+
+	for account in unrealized_profit_loss_accounts:
+		unrealized_profit_loss_account_columns.append({
+			"label": account,
+			"fieldname": frappe.scrub(account),
+			"fieldtype": "Currency",
+			"options": "currency",
+			"width": 120
+		})
 
 	net_total_column = [{
 		"label": _("Net Total"),
 		"fieldname": "net_total",
 		"fieldtype": "Currency",
-		"options": 'currency',
+		"options": "currency",
 		"width": 120
 	}]
 
@@ -275,35 +303,36 @@ def get_columns(invoice_list, additional_table_columns):
 			"label": _("Tax Total"),
 			"fieldname": "tax_total",
 			"fieldtype": "Currency",
-			"options": 'currency',
+			"options": "currency",
 			"width": 120
 		},
 		{
 			"label": _("Grand Total"),
 			"fieldname": "grand_total",
 			"fieldtype": "Currency",
-			"options": 'currency',
+			"options": "currency",
 			"width": 120
 		},
 		{
 			"label": _("Rounded Total"),
 			"fieldname": "rounded_total",
 			"fieldtype": "Currency",
-			"options": 'currency',
+			"options": "currency",
 			"width": 120
 		},
 		{
 			"label": _("Outstanding Amount"),
 			"fieldname": "outstanding_amount",
 			"fieldtype": "Currency",
-			"options": 'currency',
+			"options": "currency",
 			"width": 120
 		}
 	]
 
-	columns = columns + income_columns + net_total_column + tax_columns + total_columns
+	columns = columns + income_columns + unrealized_profit_loss_account_columns + \
+		net_total_column + tax_columns + total_columns
 
-	return columns, income_accounts, tax_accounts
+	return columns, income_accounts, tax_accounts, unrealized_profit_loss_accounts
 
 def get_conditions(filters):
 	conditions = ""
@@ -341,15 +370,22 @@ def get_conditions(filters):
 			 where parent=`tabSales Invoice`.name
 			 	and ifnull(`tabSales Invoice Item`.item_group, '') = %(item_group)s)"""
 
-	accounting_dimensions = get_accounting_dimensions()
+	accounting_dimensions = get_accounting_dimensions(as_list=False)
 
 	if accounting_dimensions:
+		common_condition = """
+			and exists(select name from `tabSales Invoice Item`
+				where parent=`tabSales Invoice`.name
+			"""
 		for dimension in accounting_dimensions:
-			if filters.get(dimension):
-				conditions += """ and exists(select name from `tabSales Invoice Item`
-					where parent=`tabSales Invoice`.name
-						and ifnull(`tabSales Invoice Item`.{0}, '') = %({0})s)""".format(dimension)
+			if filters.get(dimension.fieldname):
+				if frappe.get_cached_value('DocType', dimension.document_type, 'is_tree'):
+					filters[dimension.fieldname] = get_dimension_with_children(dimension.document_type,
+						filters.get(dimension.fieldname))
 
+					conditions += common_condition + "and ifnull(`tabSales Invoice Item`.{0}, '') in %({0})s)".format(dimension.fieldname)
+				else:
+					conditions += common_condition + "and ifnull(`tabSales Invoice Item`.{0}, '') in (%({0})s))".format(dimension.fieldname)
 
 	return conditions
 
@@ -361,7 +397,8 @@ def get_invoices(filters, additional_query_columns):
 	return frappe.db.sql("""
 		select name, posting_date, debit_to, project, customer,
 		customer_name, owner, remarks, territory, tax_id, customer_group,
-		base_net_total, base_grand_total, base_rounded_total, outstanding_amount {0}
+		base_net_total, base_grand_total, base_rounded_total, outstanding_amount,
+		is_internal_customer, represents_company, company {0}
 		from `tabSales Invoice`
 		where docstatus = 1 %s order by posting_date desc, name desc""".format(additional_query_columns or '') %
 		conditions, filters, as_dict=1)
@@ -377,6 +414,19 @@ def get_invoice_income_map(invoice_list):
 		invoice_income_map[d.parent][d.income_account] = flt(d.amount)
 
 	return invoice_income_map
+
+def get_internal_invoice_map(invoice_list):
+	unrealized_amount_details = frappe.db.sql("""SELECT name, unrealized_profit_loss_account,
+		base_net_total as amount from `tabSales Invoice` where name in (%s)
+		and is_internal_customer = 1 and company = represents_company""" %
+		', '.join(['%s']*len(invoice_list)), tuple([inv.name for inv in invoice_list]), as_dict=1)
+
+	internal_invoice_map = {}
+	for d in unrealized_amount_details:
+		if d.unrealized_profit_loss_account:
+			internal_invoice_map.setdefault((d.name, d.unrealized_profit_loss_account), d.amount)
+
+	return internal_invoice_map
 
 def get_invoice_tax_map(invoice_list, invoice_income_map, income_accounts):
 	tax_details = frappe.db.sql("""select parent, account_head,

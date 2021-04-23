@@ -8,6 +8,7 @@ from frappe import msgprint, _
 from frappe.model.document import Document
 import datetime
 
+exclude_from_linked_with = True
 class SepaDirectDebit(Document):
 	def validate(self):
 		self.total_amount = 0
@@ -78,6 +79,9 @@ class SepaDirectDebit(Document):
 			if not frappe.db.exists("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active")):
 				frappe.throw(_("Please create or activate a SEPA Mandate for customer {0}".format(customer)))
 
+			if len(frappe.get_all("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active"))) > 1:
+				frappe.throw(_("Customer {0} has several active mandates. Please keep only one active mandate.".format(customer)))
+
 			mandate = frappe.get_doc("Sepa Mandate", dict(customer=customer, registered_on_gocardless=0, status="Active"))
 			if not mandate.bank_account:
 				frappe.throw(_("Please add a bank account in mandate {0} for customer {1}".format(mandate.name, customer)))
@@ -134,18 +138,21 @@ class SepaDirectDebit(Document):
 def create_sepa_payment_entries(from_date, to_date, mode_of_payment):
 	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 
-	open_invoices = frappe.get_all("Sales Invoice", filters={'status': ['in', ('Unpaid', 'Overdue')], 'due_date': ['between', (from_date, to_date)]}, fields=["name", "customer", "due_date"])
+	try:
+		open_invoices = frappe.get_all("Sales Invoice", filters={'status': ['in', ('Unpaid', 'Overdue')], 'due_date': ['between', (from_date, to_date)]}, fields=["name", "customer", "due_date"])
+		for open_invoice in open_invoices:
+			if frappe.db.exists("Sepa Mandate", dict(customer=open_invoice.customer, status="Active", registered_on_gocardless=0)):
 
-	for open_invoice in open_invoices:
-		if frappe.db.exists("Sepa Mandate", dict(customer=open_invoice.customer, status="Active", registered_on_gocardless=0)):
+				payment_entry = get_payment_entry("Sales Invoice", open_invoice.name)
+				payment_entry.mode_of_payment = mode_of_payment
+				payment_entry.reference_no = open_invoice.customer + "/" + open_invoice.name
+				payment_entry.reference_date = open_invoice.due_date
+				payment_entry.insert()
+				payment_entry.submit()
+				frappe.db.commit()
 
-			payment_entry = get_payment_entry("Sales Invoice", open_invoice.name)
-			payment_entry.mode_of_payment = mode_of_payment
-			payment_entry.reference_no = open_invoice.customer + "/" + open_invoice.name
-			payment_entry.reference_date = open_invoice.due_date
-			payment_entry.insert()
-			payment_entry.submit()
-			frappe.db.commit()
-
-	return "Success"
+		return "Success"
+	except Exception as e:
+		frappe.log_error(frappe.get_tracebeck(), "SEPA payments generation error")
+		return "Error"
 

@@ -8,11 +8,6 @@ frappe.views.calendar["Timesheet"] = {
 		"child_name": "name",
 		"title": "title"
 	},
-	style_map: {
-		"0": "info", 
-		"1": "standard", 
-		"2": "danger"
-	},
 	gantt: true,
 	filters: [
 		{

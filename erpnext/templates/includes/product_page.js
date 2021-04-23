@@ -58,14 +58,13 @@ frappe.ready(function() {
 		erpnext.shopping_cart.update_cart({
 			item_code: get_item_code(),
 			qty: $("#item-spinner .cart-qty").val(),
-			callback: function(r) {
-				if(!r.exc) {
-					toggle_update_cart(1);
-					qty = 1;
-				}
-			},
 			btn: this,
-		});
+		}).then(r => {
+			if(!r.exc) {
+				toggle_update_cart(1);
+				qty = 1;
+			}
+		})
 	});
 
 	$("#item-spinner").on('click', '.number-spinner button', function () {

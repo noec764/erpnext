@@ -1,0 +1,54 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2020-09-10 12:21:22.335307",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Tools",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "icon": "",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Utilities",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Video",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Video",
+   "link_to": "Video",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Video Settings",
+   "link_to": "Video Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2021-02-02 09:55:44.836197",
+ "modified_by": "Administrator",
+ "module": "Utilities",
+ "name": "Utilities",
+ "owner": "user@erpnext.com",
+ "pin_to_bottom": 1,
+ "pin_to_top": 0,
+ "shortcuts": []
+}

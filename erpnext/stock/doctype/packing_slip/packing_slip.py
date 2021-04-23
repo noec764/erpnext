@@ -152,6 +152,7 @@ class PackingSlip(Document):
 
 		return cint(recommended_case_no[0][0]) + 1
 
+	@frappe.whitelist()
 	def get_items(self):
 		self.set("items", [])
 
@@ -175,6 +176,8 @@ class PackingSlip(Document):
 
 		self.update_item_details()
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
 def item_details(doctype, txt, searchfield, start, page_len, filters):
 	from erpnext.controllers.queries import get_match_cond
 	return frappe.db.sql("""select name, item_name, description from `tabItem`

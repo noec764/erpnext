@@ -19,13 +19,12 @@ class Quotation(SellingController):
 			self.indicator_color = 'blue'
 			self.indicator_title = 'Submitted'
 		if self.valid_till and getdate(self.valid_till) < getdate(nowdate()):
-			self.indicator_color = 'darkgrey'
+			self.indicator_color = 'darkgray'
 			self.indicator_title = 'Expired'
 
 	def validate(self):
 		super(Quotation, self).validate()
 		self.set_status()
-		self.update_opportunity()
 		self.validate_uom_is_integer("stock_uom", "qty")
 		self.validate_valid_till()
 		self.set_customer_name()
@@ -44,13 +43,17 @@ class Quotation(SellingController):
 			frappe.get_doc("Lead", self.party_name).set_status(update=True)
 
 	def update_item_bookings(self):
+		booking_credit_pricing_rules = frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}, pluck="name")
 		for item in self.items:
 			if item.item_booking:
 				booking = frappe.get_doc("Item Booking", item.item_booking)
 				booking.party_type = self.quotation_to
 				booking.party_name = self.party_name
-				booking.billing_qty = item.qty
-				booking.sales_uom = item.uom
+
+				res = [True for x in frappe.parse_json(item.pricing_rules or []) if x in booking_credit_pricing_rules]
+				if True in res:
+					booking.deduct_booking_credits = True
+
 				booking.save(ignore_permissions=True)
 
 	def set_customer_name(self):
@@ -60,32 +63,38 @@ class Quotation(SellingController):
 			lead_name, company_name = frappe.db.get_value("Lead", self.party_name, ["lead_name", "company_name"])
 			self.customer_name = company_name or lead_name
 
-	def update_opportunity(self):
+	def update_opportunity(self, status):
 		for opportunity in list(set([d.prevdoc_docname for d in self.get("items")])):
 			if opportunity:
-				self.update_opportunity_status(opportunity)
+				self.update_opportunity_status(status, opportunity)
 
 		if self.opportunity:
-			self.update_opportunity_status()
+			self.update_opportunity_status(status, opportunity)
 
-	def update_opportunity_status(self, opportunity=None):
+	def update_opportunity_status(self, status, opportunity=None):
 		if not opportunity:
 			opportunity = self.opportunity
 
 		opp = frappe.get_doc("Opportunity", opportunity)
-		opp.set_status(update=True)
+		opp.set_status(status=status, update=True)
 
+	@frappe.whitelist()
 	def declare_enquiry_lost(self, lost_reasons_list, detailed_reason=None):
 		if not self.has_sales_order():
+			get_lost_reasons = frappe.get_list('Quotation Lost Reason', fields = ["name"])
+			lost_reasons_lst = [reason.get('name') for reason in get_lost_reasons]
 			frappe.db.set(self, 'status', 'Lost')
 
 			if detailed_reason:
 				frappe.db.set(self, 'order_lost_reason', detailed_reason)
 
 			for reason in lost_reasons_list:
-				self.append('lost_reasons', reason)
+				if reason.get('lost_reason') in lost_reasons_lst:
+					self.append('lost_reasons', reason)
+				else:
+					frappe.throw(_("Invalid lost reason {0}, please create a new lost reason".format(frappe.bold(reason.get('lost_reason')))))
 
-			self.update_opportunity()
+			self.update_opportunity('Lost')
 			self.update_lead()
 			self.save()
 
@@ -98,16 +107,18 @@ class Quotation(SellingController):
 			self.company, self.base_grand_total, self)
 
 		#update enquiry status
-		self.update_opportunity()
+		self.update_opportunity('Quotation')
 		self.update_lead()
 		self.update_item_bookings()
 
 	def on_cancel(self):
+		if self.lost_reasons:
+			self.lost_reasons = []
 		super(Quotation, self).on_cancel()
 
 		#update enquiry status
 		self.set_status(update=True)
-		self.update_opportunity()
+		self.update_opportunity('Open')
 		self.update_lead()
 
 	def print_other_charges(self,docname):
@@ -126,6 +137,7 @@ class Quotation(SellingController):
 	def extend_validity(self, date):
 		self.flags.ignore_validate_update_after_submit = True
 		self.valid_till = date
+		self.set_status()
 		self.save()
 		self.flags.ignore_validate_update_after_submit = False
 		
@@ -174,6 +186,11 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 
 	def update_item(obj, target, source_parent):
 		target.stock_qty = flt(obj.qty) * flt(obj.conversion_factor)
+
+		if obj.against_blanket_order:
+			target.against_blanket_order = obj.against_blanket_order
+			target.blanket_order = obj.blanket_order
+			target.blanket_order_rate = obj.blanket_order_rate
 
 	doclist = get_mapped_doc("Quotation", source_name, {
 			"Quotation": {
@@ -279,9 +296,17 @@ def _make_customer(source_name, ignore_permissions=False):
 						return customer
 					else:
 						raise
-				except frappe.MandatoryError:
+				except frappe.MandatoryError as e:
+					mandatory_fields = e.args[0].split(':')[1].split(',')
+					mandatory_fields = [customer.meta.get_label(field.strip()) for field in mandatory_fields]
+
 					frappe.local.message_log = []
-					frappe.throw(_("Please create Customer from Lead {0}").format(lead_name))
+					lead_link = frappe.utils.get_link_to_form("Lead", lead_name)
+					message = _("Could not auto create Customer due to the following missing mandatory field(s):") + "<br>"
+					message += "<br><ul><li>" + "</li><li>".join(mandatory_fields) + "</li></ul>"
+					message += _("Please create Customer from Lead {0}.").format(lead_link)
+
+					frappe.throw(message, title=_("Mandatory Missing"))
 			else:
 				return customer_name
 		else:

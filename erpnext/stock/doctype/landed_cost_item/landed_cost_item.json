@@ -95,7 +95,8 @@
       "fieldtype": "Currency",
       "in_list_view": 1,
       "label": "Applicable Charges",
-      "options": "Company:company:default_currency"
+      "options": "Company:company:default_currency",
+        "read_only_depends_on": "eval:parent.distribute_charges_based_on != 'Distribute Manually'"
      },
      {
       "fieldname": "purchase_receipt_item",
@@ -133,11 +134,11 @@
     ],
     "idx": 1,
     "istable": 1,
-    "modified": "2019-11-12 15:41:21.053462",
+    "modified": "2021-01-25 23:09:23.322282",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Landed Cost Item",
-    "owner": "wasim@webnotestech.com",
+    "owner": "Administrator",
     "permissions": [],
     "sort_field": "modified",
     "sort_order": "DESC"

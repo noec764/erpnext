@@ -25,9 +25,11 @@
   "payment_gateways",
   "section_break_15",
   "payment_gateway",
+  "transaction_reference",
   "column_break_17",
   "payment_gateway_account",
   "recipient_and_message",
+  "subject",
   "mute_email",
   "column_break_9",
   "email_to",
@@ -35,7 +37,6 @@
   "make_sales_invoice",
   "section_break_10",
   "email_template",
-  "subject",
   "message",
   "payment_url",
   "amended_from"
@@ -52,14 +53,14 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "ACC-PRQ-.YYYY.-",
+   "default": "ACC-PRQ-.YYYY.-.MM.-.DD.-",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
    "in_list_view": 1,
    "label": "Series",
    "no_copy": 1,
-   "options": "ACC-PRQ-.YYYY.-",
+   "options": "ACC-PRQ-.YYYY.-.MM.-.DD.-",
    "print_hide": 1,
    "reqd": 1
   },
@@ -124,11 +125,10 @@
    "options": "Email"
   },
   {
-   "depends_on": "eval:!doc.mute_email",
    "fieldname": "subject",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "Subject"
+   "label": "Subject / Description"
   },
   {
    "fieldname": "column_break_9",
@@ -141,7 +141,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nDraft\nInitiated\nPending\nPaid\nFailed\nCancelled",
+   "options": "\nDraft\nInitiated\nPending\nPaid\nFailed\nCancelled\nCompleted",
    "read_only": 1
   },
   {
@@ -214,6 +214,7 @@
    "fieldname": "payment_gateways",
    "fieldtype": "Table MultiSelect",
    "label": "Payment Gateways",
+   "mandatory_depends_on": "eval:!doc.no_payment_link",
    "options": "Portal Payment Gateways"
   },
   {
@@ -276,11 +277,18 @@
    "fieldname": "no_payment_link",
    "fieldtype": "Check",
    "label": "Do not create a payment link"
+  },
+  {
+   "fieldname": "transaction_reference",
+   "fieldtype": "Data",
+   "label": "Transaction Reference",
+   "read_only": 1
   }
  ],
+ "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-29 17:24:58.775495",
+ "modified": "2020-09-24 15:22:45.055942",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

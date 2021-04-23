@@ -57,14 +57,14 @@ frappe.ui.form.on("Timesheet", {
 
 		if (frm.doc.docstatus < 1) {
 
-			let button = 'Start Timer';
+			let button = __('Start Timer');
 			$.each(frm.doc.time_logs || [], function(i, row) {
 				if ((row.from_time <= frappe.datetime.now_datetime()) && !row.completed) {
-					button = 'Resume Timer';
+					button = __('Resume Timer');
 				}
 			});
 
-			frm.add_custom_button(__(button), function() {
+			frm.add_custom_button(button, function() {
 				var flag = true;
 				$.each(frm.doc.time_logs || [], function(i, row) {
 					// Fetch the row for which from_time is not present
@@ -86,19 +86,12 @@ frappe.ui.form.on("Timesheet", {
 				if (flag) {
 					erpnext.timesheet.timer(frm);
 				}
-			}).addClass("btn-primary");
+			}).addClass("btn-primary").removeClass("btn-default");
 		}
 		if(frm.doc.per_billed > 0) {
 			frm.fields_dict["time_logs"].grid.toggle_enable("billing_hours", false);
 			frm.fields_dict["time_logs"].grid.toggle_enable("billable", false);
 		}
-	},
-
-	company: function(frm) {
-		frappe.db.get_value('Company', { 'company_name' : frm.doc.company }, 'standard_working_hours')
-			.then(({ message }) => {
-				(frappe.working_hours = message.standard_working_hours || 0);
-			});
 	},
 
 	make_invoice: function(frm) {
@@ -140,6 +133,10 @@ frappe.ui.form.on("Timesheet", {
 			frm: frm
 		});
 	},
+
+	parent_project: function(frm) {
+		set_project_in_timelog(frm);
+	},
 });
 
 frappe.ui.form.on("Timesheet Detail", {
@@ -162,29 +159,17 @@ frappe.ui.form.on("Timesheet Detail", {
 
 	to_time: function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
-		var time_diff = (moment(child.to_time).diff(moment(child.from_time),"seconds")) / ( 60 * 60 * 24);
-		var std_working_hours = 0;
 
 		if(frm._setting_hours) return;
 
 		var hours = moment(child.to_time).diff(moment(child.from_time), "seconds") / 3600;
-		std_working_hours = time_diff * frappe.working_hours;
-
-		if (std_working_hours < hours && std_working_hours > 0) {
-			frappe.model.set_value(cdt, cdn, "hours", std_working_hours);
-		} else {
-			frappe.model.set_value(cdt, cdn, "hours", hours);
-		}
+		frappe.model.set_value(cdt, cdn, "hours", hours);
 	},
 
-	time_logs_add: function(frm) {
-		var $trigger_again = $('.form-grid').find('.grid-row').find('.btn-open-row');
-		$trigger_again.on('click', () => {
-			$('.form-grid')
-				.find('[data-fieldname="timer"]')
-				.append(frappe.render_template("timesheet"));
-			frm.trigger("control_timer");
-		});
+	time_logs_add: function(frm, cdt, cdn) {
+		if(frm.doc.parent_project) {
+			frappe.model.set_value(cdt, cdn, 'project', frm.doc.parent_project);
+		}
 	},
 	hours: function(frm, cdt, cdn) {
 		calculate_end_time(frm, cdt, cdn);
@@ -237,29 +222,24 @@ var calculate_end_time = function(frm, cdt, cdn) {
 
 	let d = moment(child.from_time);
 	if(child.hours) {
-		var time_diff = (moment(child.to_time).diff(moment(child.from_time),"seconds")) / (60 * 60 * 24);
-		var std_working_hours = 0;
-		var hours = moment(child.to_time).diff(moment(child.from_time), "seconds") / 3600;
+		d.add(child.hours, "hours");
 
-		std_working_hours = time_diff * frappe.working_hours;
-
-		if (std_working_hours < hours && std_working_hours > 0) {
-			frappe.model.set_value(cdt, cdn, "hours", std_working_hours);
-			frappe.model.set_value(cdt, cdn, "to_time", d.add(hours, "hours").format(frappe.defaultDatetimeFormat));
-		} else {
-			d.add(child.hours, "hours");
-			frm._setting_hours = true;
-			frappe.model.set_value(cdt, cdn, "to_time",
-				d.format(frappe.defaultDatetimeFormat)).then(() => {
-				frm._setting_hours = false;
-			});
-		}
+		frm._setting_hours = true;
+		frappe.model.set_value(cdt, cdn, "to_time",
+			d.format(frappe.defaultDatetimeFormat)).then(() => {
+			frm._setting_hours = false;
+		});
 	}
 };
 
 var update_billing_hours = function(frm, cdt, cdn){
 	var child = locals[cdt][cdn];
-	if(!child.billable) frappe.model.set_value(cdt, cdn, 'billing_hours', 0.0);
+	if(!child.billable) {
+		frappe.model.set_value(cdt, cdn, 'billing_hours', 0.0);
+	} else {
+		// bill all hours by default
+		frappe.model.set_value(cdt, cdn, "billing_hours", child.hours);
+	}
 };
 
 var update_time_rates = function(frm, cdt, cdn){
@@ -319,3 +299,11 @@ const set_employee_and_company = function(frm) {
 		}
 	});
 };
+
+function set_project_in_timelog(frm) {
+	if (frm.doc.parent_project) {
+		$.each(frm.doc.time_logs || [], function(i, item) {
+			frappe.model.set_value(item.doctype, item.name, "project", frm.doc.parent_project);
+		});
+	}
+}

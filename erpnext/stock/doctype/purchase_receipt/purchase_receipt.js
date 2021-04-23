@@ -25,7 +25,7 @@ frappe.ui.form.on("Purchase Receipt", {
 
 		frm.custom_make_buttons = {
 			'Stock Entry': 'Return',
-			'Purchase Invoice': 'Invoice'
+			'Purchase Invoice': 'Purchase Invoice'
 		};
 
 		frm.set_query("expense_account", "items", function() {
@@ -37,7 +37,10 @@ frappe.ui.form.on("Purchase Receipt", {
 
 		frm.set_query("taxes_and_charges", function() {
 			return {
-				filters: {'company': frm.doc.company }
+				filters: {
+					'company': frm.doc.company,
+					'disabled': 0
+				}
 			}
 		});
 
@@ -46,6 +49,8 @@ frappe.ui.form.on("Purchase Receipt", {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
 		});
+
+		erpnext.accounts.dimensions.setup_dimension_filters(frm, frm.doctype);
 	},
 
 	refresh: function(frm) {
@@ -63,10 +68,28 @@ frappe.ui.form.on("Purchase Receipt", {
 
 			frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
+
+		if (frm.doc.docstatus === 1 && frm.doc.is_internal_supplier && !frm.doc.inter_company_reference) {
+			frm.add_custom_button(__('Delivery Note'), function() {
+				frappe.model.open_mapped_doc({
+					method: 'erpnext.stock.doctype.purchase_receipt.purchase_receipt.make_inter_company_delivery_note',
+					frm: cur_frm,
+				})
+			}, __('Create'));
+		}
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Create'), true);
+		}
 	},
 
 	company: function(frm) {
 		frm.trigger("toggle_display_account_head");
+		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 	},
 
 	toggle_display_account_head: function(frm) {
@@ -84,7 +107,7 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 	refresh: function() {
 		var me = this;
 		this._super();
-		if(this.frm.doc.docstatus===1) {
+		if(this.frm.doc.docstatus > 0) {
 			this.show_stock_ledger();
 			//removed for temporary
 			this.show_general_ledger();
@@ -108,12 +131,19 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 			if (this.frm.doc.docstatus == 0) {
 				this.frm.add_custom_button(__('Purchase Order'),
 					function () {
+						if (!me.frm.doc.supplier) {
+							frappe.throw({
+								title: __("Mandatory"),
+								message: __("Please Select a Supplier")
+							});
+						}
 						erpnext.utils.map_current_doc({
 							method: "erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_receipt",
 							source_doctype: "Purchase Order",
 							target: me.frm,
 							setters: {
-								supplier: me.frm.doc.supplier || undefined,
+								supplier: me.frm.doc.supplier,
+								schedule_date: undefined
 							},
 							get_query_filters: {
 								docstatus: 1,
@@ -198,6 +228,10 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 		});
 	},
 
+	apply_putaway_rule: function() {
+		if (this.frm.doc.apply_putaway_rule) erpnext.apply_putaway_rule(this.frm);
+	}
+
 });
 
 // for backward compatibility: combine new and previous states
@@ -224,13 +258,6 @@ cur_frm.fields_dict['items'].grid.get_field('project').get_query = function(doc,
 			['Project', 'status', 'not in', 'Completed, Cancelled']
 		]
 	}
-}
-
-cur_frm.cscript.select_print_heading = function(doc, cdt, cdn) {
-	if(doc.select_print_heading)
-		cur_frm.pformat.print_heading = doc.select_print_heading;
-	else
-		cur_frm.pformat.print_heading = "Purchase Receipt";
 }
 
 cur_frm.fields_dict['select_print_heading'].get_query = function(doc, cdt, cdn) {

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
-from erpnext.regional.india.setup import update_address_template
+from erpnext.regional.address_template.setup import set_up_address_templates
 
 def execute():
 	company = frappe.get_all('Company', filters = {'country': 'India'})
@@ -10,7 +10,7 @@ def execute():
 
 	update_existing_custom_fields()
 	add_custom_fields()
-	update_address_template()
+	set_up_address_templates(default_country='India')
 	frappe.reload_doc("regional", "print_format", "gst_tax_invoice")
 
 def update_existing_custom_fields():

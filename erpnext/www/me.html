@@ -1,15 +1,21 @@
 {% extends "templates/web.html" %}
 
+{% block head_include %}
+	{% if enable_stripe %}
+		<script src="https://js.stripe.com/v3/"></script>
+	{% endif %}
+{% endblock %}
+
 {% block title %}{{ _("My Account") }}{% endblock %}
-{% block header %}<h1>{{ _("My Account") }}</h1>{% endblock %}
+{% block header %}<h2>{{ _("My Account") }}</h2>{% endblock %}
 
 {% block page_content %}
 <!-- no-cache -->
-<div class="row your-account-info d-none d-sm-block">
+<div class="your-account-info">
 	<div>
 		<ul class="list-unstyled">
 			<li>
-				<div class="card w-50">
+				<div class="frappe-card">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Reset your password") }}</h5>
 						<a href="/update-password" class="btn btn-primary">{{ _("Reset password") }}</a>
@@ -17,7 +23,7 @@
 				  </div>
 			</li>
 			<li>
-				<div class="card w-50">
+				<div class="frappe-card">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Edit your user profile") }}</h5>
 						<a href="/update-profile?name={{ user }}" class="btn btn-primary">{{ _("Edit profile") }}</a>
@@ -26,7 +32,7 @@
 			</li>
 			{% if third_party_apps %}
 			<li>
-				<div class="card w-50">
+				<div class="frappe-card">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Manage your third party applications") }}</h5>
 						<a href="/third_party_apps" class="btn btn-primary">{{ _("Manage applications") }}</a>
@@ -34,9 +40,54 @@
 				</div>
 			</li>
 			{% endif %}
+			{% if credits_balance %}
+			<li>
+				<div class="frappe-card">
+					<div class="card-body">
+						<h5 class="card-title">{{ _("Available booking credits") }}</h5>
+						{% for bal in credits_balance %}
+							<ul class="list-unstyled">
+								{% for credits in credits_balance[bal] %}
+									{% if credits["balance"] %}
+									<li>
+										<p class="text-muted mb-0">{{ bal }}</p>
+										<p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p>
+									</li>
+									{% endif %}
+								{% endfor %}
+							</ul>
+						{% endfor %}
+					</div>
+				</div>
+			</li>
+			{% endif %}
+			{% if subscription %}
+			<li>
+				<div class="frappe-card">
+					<div class="card-body">
+						<h5 class="card-title">{{ _("Your subscription") }}</h5>
+						{% for plan in subscription.plans %}
+							{% set item_name = frappe.db.get_value("Item", plan.item, "item_name") %}
+							<label>{{ item_name }}</label>
+							<p class="card-text">{{ plan.description or "" }}</p>
+						{% endfor %}
+						<a href="/subscription" class="btn btn-primary">{{ _("Edit subscription") }}</a>
+					</div>
+				</div>
+			</li>
+			{% elif subscriptions_available %}
+			<li>
+				<div class="frappe-card">
+					<div class="card-body">
+						<h5 class="card-title">{{ _("Subscribe to a plan") }}</h5>
+						<a href="/subscription" class="btn btn-primary">{{ _("Subscribe") }}</a>
+					</div>
+				</div>
+			</li>
+			{% endif %}
 			{% if enable_stripe %}
 			<li>
-				<div class="card w-50">
+				<div class="frappe-card">
 					<div class="card-body">
 						<h5 class="card-title">{{ _("Manage your payment methods") }}</h5>
 						{% for details in stripe_payment_methods.data %}
@@ -45,7 +96,7 @@
 							<h5>{{ details.card.name or '' }} xxxxx-{{ details.card.last4 or '' }}</h5>
 							<p>{{ _("Expires") }} {{ details.card.exp_month }}/{{ details.card.exp_year }}</p>
 							{% if stripe_payment_methods.data|length > 1 %}
-								<a href="#" class="btn btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</a>
+								<button class="btn btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</button>
 							{% endif %}
 						</div>
 						<hr>
@@ -65,7 +116,7 @@
 							
 							<button class="btn btn-primary" id="card-submit">{{ _("Add this card") }}</button>
 						</form>
-						<a href="#" class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</a>
+						<button class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</button>
 					</div>
 				</div>
 			</li>
@@ -88,9 +139,6 @@
 {% endblock %}
 
 {% block script %}
-	{% if enable_stripe %}
-		<script src="https://js.stripe.com/v3/"></script>
-	{% endif %}
 	<script>
 		{% include "templates/includes/payment_methods.js" %}
 	</script>
@@ -99,25 +147,6 @@
 
 {% block style %}
 <style>
-.list-unstyled li {
-	margin: 15px 15px 15px 0px;
-}
-
-.list-unstyled .card {
-	min-width: 18rem;
-}
-
-.mobile-sidebar .list-group-item {
-	border-bottom: None;
-	border-left: None;
-	border-right: None;
-	border-top: 1px solid rgba(0, 0, 0, 0.125);
-}
-
-.mobile-sidebar .list-group-item:first-child {
-	border: None;
-}
-
 .StripeElement {
 	box-sizing: border-box;
 

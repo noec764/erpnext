@@ -8,18 +8,19 @@
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
-  "asset_name",
+  "company",
   "item_code",
   "item_name",
-  "asset_category",
   "asset_owner",
   "asset_owner_company",
+  "is_existing_asset",
   "supplier",
   "customer",
   "image",
   "column_break_3",
-  "company",
+  "naming_series",
+  "asset_name",
+  "asset_category",
   "location",
   "custodian",
   "department",
@@ -35,7 +36,6 @@
   "column_break_18",
   "calculate_depreciation",
   "allow_monthly_depreciation",
-  "is_existing_asset",
   "opening_accumulated_depreciation",
   "number_of_depreciations_booked",
   "section_break_23",
@@ -92,12 +92,14 @@
    "reqd": 1
   },
   {
+    "depends_on": "item_code",
    "fetch_from": "item_code.item_name",
    "fieldname": "item_name",
    "fieldtype": "Read Only",
    "label": "Item Name"
   },
   {
+    "depends_on": "item_code",
    "fetch_from": "item_code.asset_category",
    "fieldname": "asset_category",
    "fieldtype": "Link",
@@ -255,7 +257,7 @@
    "depends_on": "calculate_depreciation",
    "fieldname": "section_break_23",
    "fieldtype": "Section Break",
-   "label": "Depreciation"
+   "label": "Finance Books"
   },
   {
    "fieldname": "finance_books",
@@ -272,7 +274,7 @@
    "fieldname": "depreciation_method",
    "fieldtype": "Select",
    "label": "Depreciation Method",
-   "options": "\nStraight Line\nProrated Straight Line (360 Days)\nDouble Declining Balance\nManual"
+   "options": "\nStraight Line\nProrated Straight Line (360 Days)\nDouble Declining Balance\nWritten Down Value\nManual"
   },
   {
    "fieldname": "value_after_depreciation",
@@ -311,7 +313,7 @@
   {
    "fieldname": "schedules",
    "fieldtype": "Table",
-   "label": "Depreciation Schedules",
+   "label": "Depreciation Schedule",
    "no_copy": 1,
    "options": "Depreciation Schedule"
   },
@@ -463,8 +465,24 @@
  "idx": 72,
  "image_field": "image",
  "is_submittable": 1,
- "links": [],
- "modified": "2020-04-16 16:48:19.427842",
+ "links": [
+    {
+     "group": "Maintenance",
+     "link_doctype": "Asset Maintenance",
+     "link_fieldname": "asset_name"
+    },
+    {
+     "group": "Repair",
+     "link_doctype": "Asset Repair",
+     "link_fieldname": "asset_name"
+    },
+    {
+     "group": "Value",
+     "link_doctype": "Asset Value Adjustment",
+     "link_fieldname": "asset"
+    }
+   ],
+ "modified": "2021-01-22 12:38:59.091510",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset",
@@ -504,5 +522,6 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "asset_name"
+ "title_field": "asset_name",
+ "track_changes": 1
 }

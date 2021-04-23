@@ -38,7 +38,6 @@
   "accounting_details",
   "company",
   "mode_of_payment",
-  "unreconciled_amount",
   "clearance_date",
   "column_break_24",
   "payable_account",
@@ -67,6 +66,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_global_search": 1,
+   "in_standard_filter": 1,
    "label": "From Employee",
    "oldfieldname": "employee",
    "oldfieldtype": "Link",
@@ -79,7 +79,6 @@
    "fieldname": "employee_name",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "in_preview": 1,
    "label": "Employee Name",
    "oldfieldname": "employee_name",
    "oldfieldtype": "Data",
@@ -139,13 +138,11 @@
   {
    "default": "0",
    "depends_on": "eval:(doc.docstatus==0 || doc.is_paid)",
-   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "is_paid",
    "fieldtype": "Check",
-   "hidden": 1,
    "label": "Is Paid",
-   "no_copy": 1,
-   "print_hide": 1
+   "hidden": "1",
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
    "fieldname": "expense_details",
@@ -170,6 +167,7 @@
    "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_standard_filter": 1,
    "label": "Posting Date",
    "oldfieldname": "posting_date",
    "oldfieldtype": "Date",
@@ -203,7 +201,6 @@
    "fieldname": "total_amount_reimbursed",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "in_preview": 1,
    "label": "Total Amount Reimbursed",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -243,6 +240,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Company",
    "oldfieldname": "company",
    "oldfieldtype": "Link",
@@ -252,23 +250,17 @@
   },
   {
    "depends_on": "is_paid",
-   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "mode_of_payment",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Mode of Payment",
-   "no_copy": 1,
    "options": "Mode of Payment",
-   "print_hide": 1
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
-   "description": "Deprecated: Kept for compatibility only but will be removed in the future",
    "fieldname": "clearance_date",
    "fieldtype": "Date",
-   "hidden": 1,
    "label": "Clearance Date",
-   "no_copy": 1,
-   "print_hide": 1
+   "description": "Deprecated: Kept for compatibility only but will be removed in the future"
   },
   {
    "fieldname": "column_break_24",
@@ -282,11 +274,11 @@
    "reqd": 1
   },
   {
-    "fieldname": "cost_center",
-    "fieldtype": "Link",
-    "label": "Cost Center",
-    "options": "Cost Center"
-   },
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
   {
    "collapsible": 1,
    "fieldname": "more_details",
@@ -363,7 +355,6 @@
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "in_preview": 1,
    "label": "Grand Total",
    "options": "Company:company:default_currency",
    "read_only": 1
@@ -378,21 +369,13 @@
    "label": "Total Taxes and Charges",
    "options": "Company:company:default_currency",
    "read_only": 1
-  },
-  {
-   "fieldname": "unreconciled_amount",
-   "fieldtype": "Currency",
-   "label": "Unreconciled Amount",
-   "no_copy": 1,
-   "print_hide": 1,
-   "read_only": 1
   }
  ],
  "icon": "fa fa-money",
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-26 10:41:25.900772",
+ "modified": "2020-07-16 12:43:04.099803",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Expense Claim",
@@ -455,7 +438,6 @@
  ],
  "search_fields": "employee,employee_name",
  "show_name_in_global_search": 1,
- "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "employee",

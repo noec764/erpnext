@@ -2,27 +2,37 @@ from __future__ import unicode_literals
 from frappe import _
 
 app_name = "erpnext"
-app_title = "dokos"
+app_title = "Dokos"
 app_publisher = "Dokos SAS"
 app_description = """ERP made simple"""
 app_email = "hello@dokos.io"
 app_license = "GNU General Public License (v3)"
 source_link = "https://gitlab.com/dokos/dokos"
-app_logo_url = '/assets/erpnext/images/dokos_logo.svg'
+app_logo_url = "/assets/erpnext/images/dokos_logo.svg"
 
 
 develop_version = '1.x.x-develop'
 
-app_include_js = "assets/js/erpnext.min.js"
-app_include_css = "assets/css/erpnext.css"
-web_include_js = ["assets/js/erpnext-web.min.js", "assets/js/booking-dialog.min.js"]
-web_include_css = "assets/css/erpnext-web.css"
+app_include_js = "/assets/js/erpnext.min.js"
+app_include_css = "/assets/css/erpnext.css"
+web_include_js = ["/assets/js/erpnext-web.min.js", "/assets/js/portal-calendars.min.js"]
+#web_include_css = "assets/css/erpnext-web.css"
 
 doctype_js = {
+	"Address": "public/js/address.js",
 	"Communication": "public/js/communication.js",
-	"Website Theme": "public/js/website_theme.js",
 	"Newsletter": "public/js/newsletter.js",
-	"Google Calendar": "public/js/google_calendar.js"
+	"Google Calendar": "public/js/google_calendar.js",
+	"Event": "public/js/event.js",
+	"Payment Gateway": "public/js/payment_gateway.js"
+}
+
+doctype_css = {
+	"Event": "public/css/event.css",
+}
+
+override_doctype_class = {
+	'Address': 'erpnext.accounts.custom.address.ERPNextAddress'
 }
 
 welcome_email = "erpnext.setup.utils.welcome_email"
@@ -39,6 +49,8 @@ boot_session = "erpnext.startup.boot.boot_session"
 notification_config = "erpnext.startup.notifications.get_notification_config"
 get_help_messages = "erpnext.utilities.activation.get_help_messages"
 leaderboards = "erpnext.startup.leaderboard.get_leaderboards"
+filters_config = "erpnext.startup.filters.get_filters_config"
+additional_print_settings = "erpnext.controllers.print_settings.get_print_settings"
 
 on_session_creation = [
 	"erpnext.portal.utils.create_customer_or_supplier",
@@ -46,28 +58,26 @@ on_session_creation = [
 ]
 on_logout = "erpnext.shopping_cart.utils.clear_cart_count"
 
-treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Group', 'Sales Person', 'Territory', 'Assessment Group']
+treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Group', 'Sales Person', 'Territory', 'Supplier Group']
 
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
 
-email_append_to = ["Job Applicant", "Lead", "Opportunity", "Issue"]
-
-calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Course Schedule", "Item Booking"]
+calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Item Booking", "Event Slot", "Event Slot Booking"]
 gcalendar_integrations = {
 	"Item Booking": {
-		"pull_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_to_calendar",
-		"pull_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_calendar",
-		"pull_delete": "erpnext.stock.doctype.item_booking.item_booking.cancel_event_in_calendar"
+		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
+		"pull_update": "erpnext.venue.doctype.item_booking.item_booking.update_event_in_calendar",
+		"pull_delete": "erpnext.venue.doctype.item_booking.item_booking.cancel_event_in_calendar"
 	}
 }
-
 
 domains = {
 	'Distribution': 'erpnext.domains.distribution',
 	'Manufacturing': 'erpnext.domains.manufacturing',
 	'Retail': 'erpnext.domains.retail',
 	'Services': 'erpnext.domains.services',
+	'Venue': 'erpnext.domains.venue',
 }
 
 website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
@@ -171,18 +181,24 @@ standard_portal_menu_items = [
 	{"title": _("Newsletter"), "route": "/newsletters", "reference_doctype": "Newsletter"},
 	{"title": _("Material Request"), "route": "/material-requests", "reference_doctype": "Material Request", "role": "Customer"},
 	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"},
-	{"title": _("Appointment Booking"), "route": "/book_appointment"}
+	{"title": _("Event Slot Bookings"), "route": "/event-slots", "reference_doctype": "Event Slot Booking", "role": "Volunteer"},
+	{"title": _("Appointment Booking"), "route": "/book_appointment"},
+	{"title": _("Subscription"), "route": "/subscription", "reference_doctype": "Subscription Template", "role": "Customer"}
 ]
 
 default_roles = [
 	{'role': 'Customer', 'doctype':'Contact', 'email_field': 'email_id'},
-	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'},
+	{'role': 'Supplier', 'doctype':'Contact', 'email_field': 'email_id'}
 ]
 
 sounds = [
 	{"name": "incoming-call", "src": "/assets/erpnext/sounds/incoming-call.mp3", "volume": 0.2},
-	{"name": "call-disconnect", "src": "/assets/erpnext/sounds/call-disconnect.mp3", "volume": 0.2},
+	{"name": "call-disconnect", "src": "/assets/erpnext/sounds/call-disconnect.mp3", "volume": 0.2}
 ]
+
+has_upload_permission = {
+	"Employee": "erpnext.hr.doctype.employee.employee.has_upload_permission"
+}
 
 has_website_permission = {
 	"Sales Order": "erpnext.controllers.website_list_for_contact.has_website_permission",
@@ -194,7 +210,8 @@ has_website_permission = {
 	"Material Request": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Delivery Note": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
-	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission"
+	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
+	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission"
 }
 
 dump_report_map = "erpnext.startup.report_data_map.data_map"
@@ -206,12 +223,18 @@ standard_queries = {
 }
 
 doc_events = {
+	"*": {
+		"after_insert": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_change": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_submit": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_cancel": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		"on_trash": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
 	},
 	"User": {
-		"after_insert": "frappe.contacts.doctype.contact.contact.update_contact",
 		"validate": "erpnext.hr.doctype.employee.employee.validate_employee_role",
 		"on_update": ["erpnext.hr.doctype.employee.employee.update_user_permissions",
 			"erpnext.portal.utils.set_default_role"]
@@ -223,36 +246,72 @@ doc_events = {
 	"Website Settings": {
 		"validate": "erpnext.portal.doctype.products_settings.products_settings.home_page_is_products"
 	},
+	"Tax Category": {
+		"validate": "erpnext.regional.india.utils.validate_tax_category"
+	},
 	"Sales Invoice": {
-		"on_submit": ["erpnext.regional.italy.utils.sales_invoice_on_submit"],
-		"on_cancel": "erpnext.regional.italy.utils.sales_invoice_on_cancel"
+		"on_submit": [
+			"erpnext.regional.italy.utils.sales_invoice_on_submit",
+			"erpnext.erpnext_integrations.taxjar_integration.create_transaction"
+		],
+		"on_cancel": [
+			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
+			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
+		],
+		"validate": [
+			"erpnext.regional.india.utils.validate_document_name",
+			"erpnext.regional.india.utils.update_taxable_values"
+		]
+	},
+	"Purchase Invoice": {
+		"validate": [
+			"erpnext.regional.india.utils.update_grand_total_for_rcm",
+			"erpnext.regional.united_arab_emirates.utils.update_grand_total_for_rcm",
+			"erpnext.regional.united_arab_emirates.utils.validate_returns"
+		]
+		
+	},
+	"Payment Entry": {
+		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning"
 	},
 	'Address': {
 		'validate': ['erpnext.regional.india.utils.validate_gstin_for_india', 'erpnext.regional.italy.utils.set_state_code', 'erpnext.regional.india.utils.update_gst_category']
+	},
+	'Supplier': {
+		'validate': 'erpnext.regional.india.utils.validate_pan_for_india'
 	},
 	('Sales Invoice', 'Sales Order', 'Delivery Note', 'Purchase Invoice', 'Purchase Order', 'Purchase Receipt'): {
 		'validate': ['erpnext.regional.india.utils.set_place_of_supply']
 	},
 	"Contact":{
 		"on_trash": "erpnext.support.doctype.issue.issue.update_issue",
-		"after_insert": "erpnext.communication.doctype.call_log.call_log.set_caller_information"
-	},
-	"Lead": {
-		"after_insert": "erpnext.communication.doctype.call_log.call_log.set_caller_information"
+		"after_insert": "erpnext.telephony.doctype.call_log.call_log.link_existing_conversations",
+		"validate": "erpnext.crm.utils.update_lead_phone_numbers"
 	},
 	"Email Unsubscribe": {
 		"after_insert": "erpnext.crm.doctype.email_campaign.email_campaign.unsubscribe_recipient"
 	},
 	"Quotation": {
-		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_linked_item_bookings",
-		"on_submit": "erpnext.stock.doctype.item_booking.item_booking.confirm_linked_item_bookings"
+		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_linked_item_bookings",
+		"on_submit": "erpnext.venue.doctype.item_booking.item_booking.confirm_linked_item_bookings"
 	},
 	"Item Booking": {
-		"after_insert": "erpnext.stock.doctype.item_booking.item_booking.insert_event_in_google_calendar",
-		"on_update": "erpnext.stock.doctype.item_booking.item_booking.update_event_in_google_calendar",
-		"on_cancel": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar",
-		"on_trash": "erpnext.stock.doctype.item_booking.item_booking.delete_event_in_google_calendar"
+		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
+		"on_update": [
+			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar"
+		],
+		"on_cancel": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar"
 	},
+	('Quotation', 'Sales Order', 'Sales Invoice'): {
+		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
+	},
+	"Bin": {
+		"on_update": "erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products.update_stock"
+	},
+	"Event": {
+		"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event"
+	}
 }
 
 # On cancel event Payment Entry will be exempted and all linked submittable doctype will get cancelled.
@@ -263,22 +322,36 @@ auto_cancel_exempted_doctypes= [
 	"Asset Movement"
 ]
 
+override_doctype_dashboards = {
+	"User": "erpnext.fixtures.user.get_dashboard_data",
+	"Event": "erpnext.fixtures.event.get_dashboard_data",
+	"Payment Gateway": "erpnext.fixtures.payment_gateway.get_dashboard_data"
+}
+
 scheduler_events = {
+	"cron": {
+		"0/30 * * * *": [
+			"erpnext.utilities.doctype.video.video.update_youtube_data",
+		]
+	},
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
-		"erpnext.stock.doctype.item_booking.item_booking.clear_draft_bookings"
+		"erpnext.venue.doctype.item_booking.item_booking.clear_draft_bookings",
+		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts",
+		"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_after_specific_time"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
 		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.erpnext_integrations.doctype.amazon_mws_settings.amazon_mws_settings.schedule_get_order_details",
 		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
-		"erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.check_integrated_documents",
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
-		"erpnext.accounts.doctype.subscription.subscription.check_gateway_payments"
+		"erpnext.erpnext_integrations.connectors.shopify_connection.sync_old_orders",
+		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce",
+		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries"
 	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",
@@ -301,27 +374,35 @@ scheduler_events = {
 		"erpnext.support.doctype.service_level_agreement.service_level_agreement.check_agreement_status",
 		"erpnext.crm.doctype.email_campaign.email_campaign.send_email_to_leads_or_contacts",
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status",
-		"erpnext.selling.doctype.quotation.quotation.set_expired_status"
+		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
+		"erpnext.buying.doctype.supplier_quotation.supplier_quotation.set_expired_status",
+		"erpnext.hr.doctype.holiday_list.holiday_list.replace_expired_holiday_lists",
+		"erpnext.accounts.doctype.process_statement_of_accounts.process_statement_of_accounts.send_auto_email"
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
+		"erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment.automatically_allocate_leaves_based_on_leave_policy",
 		"erpnext.hr.utils.generate_leave_encashment",
-		"erpnext.projects.doctype.project.project.update_project_sales_billing"
+		"erpnext.hr.utils.allocate_earned_leaves",
+		"erpnext.projects.doctype.project.project.update_project_sales_billing",
+		"erpnext.loan_management.doctype.process_loan_security_shortfall.process_loan_security_shortfall.create_process_loan_security_shortfall",
+		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
+		"erpnext.crm.doctype.lead.lead.daily_open_lead",
+		"erpnext.venue.doctype.booking_credit.booking_credit.process_expired_booking_credits"
 	],
 	"monthly_long": [
-		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",
-		"erpnext.accounts.deferred_revenue.convert_deferred_expense_to_expense",
-		"erpnext.hr.utils.allocate_earned_leaves"
+		"erpnext.accounts.deferred_revenue.process_deferred_accounting",
+		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_demand_loans"
 	]
 }
 
 email_brand_image = "assets/erpnext/images/dokos_logo.svg"
 
-default_mail_footer = """
+default_mail_footer = f"""
 	<span>
-		Sent via
+		{_("Sent via")}
 		<a class="text-muted" href="https://dokos.io?source=via_email_footer" target="_blank">
 			dokos
 		</a>
@@ -340,20 +421,36 @@ get_site_info = 'erpnext.utilities.get_site_info'
 
 payment_gateway_enabled = "erpnext.accounts.utils.create_payment_gateway_account"
 
+communication_doctypes = ["Customer", "Supplier"]
+
+accounting_dimension_doctypes = ["GL Entry", "Sales Invoice", "Purchase Invoice", "Payment Entry", "Asset",
+	"Expense Claim", "Expense Claim Detail", "Expense Taxes and Charges", "Stock Entry", "Budget", "Payroll Entry", "Delivery Note",
+	"Sales Invoice Item", "Purchase Invoice Item", "Purchase Order Item", "Journal Entry Account", "Material Request Item", "Delivery Note Item",
+	"Purchase Receipt Item", "Stock Entry Detail", "Payment Entry Deduction", "Sales Taxes and Charges", "Purchase Taxes and Charges", "Shipping Rule",
+	"Landed Cost Item", "Asset Value Adjustment", "Loyalty Program", "Fee Schedule", "Fee Structure", "Stock Reconciliation",
+	"Travel Request", "Fees", "POS Profile", "Opening Invoice Creation Tool", "Opening Invoice Creation Tool Item", "Subscription",
+	"Subscription Plan"
+]
+
 regional_overrides = {
 	'France': {
-		'erpnext.tests.test_regional.test_method': 'erpnext.regional.france.utils.test_method'
+		'erpnext.accounts.report.balance_sheet.balance_sheet.execute': 'erpnext.regional.france.report.balance_sheet.balance_sheet.execute',
+		'erpnext.hr.utils.allocate_earned_leaves': 'erpnext.regional.france.hr.utils.allocate_earned_leaves',
 	},
 	'India': {
 		'erpnext.tests.test_regional.test_method': 'erpnext.regional.india.utils.test_method',
 		'erpnext.controllers.taxes_and_totals.get_itemised_tax_breakup_header': 'erpnext.regional.india.utils.get_itemised_tax_breakup_header',
 		'erpnext.controllers.taxes_and_totals.get_itemised_tax_breakup_data': 'erpnext.regional.india.utils.get_itemised_tax_breakup_data',
 		'erpnext.accounts.party.get_regional_address_details': 'erpnext.regional.india.utils.get_regional_address_details',
+		'erpnext.controllers.taxes_and_totals.get_regional_round_off_accounts': 'erpnext.regional.india.utils.get_regional_round_off_accounts',
 		'erpnext.hr.utils.calculate_annual_eligible_hra_exemption': 'erpnext.regional.india.utils.calculate_annual_eligible_hra_exemption',
-		'erpnext.hr.utils.calculate_hra_exemption_for_period': 'erpnext.regional.india.utils.calculate_hra_exemption_for_period'
+		'erpnext.hr.utils.calculate_hra_exemption_for_period': 'erpnext.regional.india.utils.calculate_hra_exemption_for_period',
+		'erpnext.accounts.doctype.purchase_invoice.purchase_invoice.make_regional_gl_entries': 'erpnext.regional.india.utils.make_regional_gl_entries',
+		'erpnext.controllers.accounts_controller.validate_einvoice_fields': 'erpnext.regional.india.e_invoice.utils.validate_einvoice_fields'
 	},
 	'United Arab Emirates': {
-		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data'
+		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data',
+		'erpnext.accounts.doctype.purchase_invoice.purchase_invoice.make_regional_gl_entries': 'erpnext.regional.united_arab_emirates.utils.make_regional_gl_entries',
 	},
 	'Saudi Arabia': {
 		'erpnext.controllers.taxes_and_totals.update_itemised_tax_data': 'erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data'
@@ -398,6 +495,7 @@ global_search_doctypes = {
 		{"doctype": "Sales Order", "index": 8},
 		{"doctype": "Quotation", "index": 9},
 		{"doctype": "Work Order", "index": 10},
+		{"doctype": "Purchase Order", "index": 11},
 		{"doctype": "Purchase Receipt", "index": 11},
 		{"doctype": "Purchase Invoice", "index": 12},
 		{"doctype": "Delivery Note", "index": 13},
@@ -435,4 +533,8 @@ global_search_doctypes = {
 		{"doctype": "Maintenance Visit", "index": 45},
 		{"doctype": "Warranty Claim", "index": 46}
 	]
+}
+
+additional_timeline_content = {
+	'*': ['erpnext.telephony.doctype.call_log.call_log.get_linked_call_logs']
 }

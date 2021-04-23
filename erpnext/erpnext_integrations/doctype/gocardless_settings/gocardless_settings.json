@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:gateway_name",
  "creation": "2018-02-06 16:11:10.028249",
  "doctype": "DocType",
@@ -10,7 +11,7 @@
   "webhooks_secret",
   "use_sandbox",
   "settings_section",
-  "check_for_updates"
+  "bank_account"
  ],
  "fields": [
   {
@@ -23,7 +24,7 @@
   },
   {
    "fieldname": "access_token",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "in_list_view": 1,
    "label": "Access Token",
    "reqd": 1
@@ -45,14 +46,14 @@
    "label": "Settings"
   },
   {
-   "default": "1",
-   "description": "Hourly status updates for mandates and payments",
-   "fieldname": "check_for_updates",
-   "fieldtype": "Check",
-   "label": "Check for updates"
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
   }
  ],
- "modified": "2019-10-01 19:17:53.580964",
+ "links": [],
+ "modified": "2020-09-02 08:08:45.500904",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "GoCardless Settings",

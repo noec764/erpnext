@@ -7,6 +7,7 @@ import frappe
 from erpnext.accounts.doctype.cash_flow_mapper.default_cash_flow_mapper import DEFAULT_MAPPERS
 from .default_success_action import get_default_success_action
 from frappe import _
+from frappe.utils import cint
 from frappe.desk.page.setup_wizard.setup_wizard import add_all_roles_to
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 from erpnext.setup.default_energy_point_rules import get_default_energy_point_rules
@@ -19,22 +20,24 @@ def after_install():
 	frappe.get_doc({'doctype': "Role", "role_name": "Analytics"}).insert()
 	set_single_defaults()
 	create_compact_item_print_custom_field()
+	create_print_uom_after_qty_custom_field()
 	create_print_zero_amount_taxes_custom_field()
 	add_all_roles_to("Administrator")
+	for role in ["Customer", "Supplier"]:
+		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
 	create_default_success_action()
 	create_default_energy_point_rules()
 	add_company_to_session_defaults()
+	add_standard_navbar_items()
+	add_app_name()
 	frappe.db.commit()
 
 
 def check_setup_wizard_not_completed():
-	if frappe.db.get_default('desktop:home_page') == 'desktop':
-		print()
-		print("dokos can only be installed on a fresh site where the setup wizard is not completed")
-		print("You can reinstall this site (after saving your data) using: bench --site [sitename] reinstall")
-		print()
-		return False
+	if cint(frappe.db.get_single_value('System Settings', 'setup_complete') or 0):
+		message = """Dokos can only be installed on a fresh site where the setup wizard is not completed. You can reinstall this site (after saving your data) using: bench --site [sitename] reinstall"""
+		frappe.throw(message)
 
 
 def set_single_defaults():
@@ -65,6 +68,14 @@ def create_compact_item_print_custom_field():
 		'insert_after': 'with_letterhead'
 	})
 
+def create_print_uom_after_qty_custom_field():
+	create_custom_field('Print Settings', {
+		'label': _('Print UOM after Quantity'),
+		'fieldname': 'print_uom_after_quantity',
+		'fieldtype': 'Check',
+		'default': 0,
+		'insert_after': 'compact_item_print'
+	})
 
 def create_print_zero_amount_taxes_custom_field():
 	create_custom_field('Print Settings', {
@@ -105,3 +116,50 @@ def add_company_to_session_defaults():
 		"ref_doctype": "Company"
 	})
 	settings.save()
+
+def add_standard_navbar_items():
+	navbar_settings = frappe.get_single("Navbar Settings")
+
+	erpnext_navbar_items = [
+		{
+			'item_label': 'Documentation',
+			'item_type': 'Route',
+			'route': 'https://doc.dokos.io',
+			'is_standard': 1
+		},
+		{
+			'item_label': 'Community',
+			'item_type': 'Route',
+			'route': 'https://community.dokos.io',
+			'is_standard': 1
+		},
+		{
+			'item_label': 'Report an issue',
+			'item_type': 'Route',
+			'route': 'https://gitlab.com/dokos/dokos/issues',
+			'is_standard': 1
+		}
+	]
+
+	current_navbar_items = navbar_settings.help_dropdown
+	navbar_settings.set('help_dropdown', [])
+
+	for item in erpnext_navbar_items:
+		current_labels = [item.get('item_label') for item in current_navbar_items]
+		if not item.get('item_label') in current_labels:
+			navbar_settings.append('help_dropdown', item)
+
+	for item in current_navbar_items:
+		navbar_settings.append('help_dropdown', {
+			'item_label': item.item_label,
+			'item_type': item.item_type,
+			'route': item.route,
+			'action': item.action,
+			'is_standard': item.is_standard,
+			'hidden': item.hidden
+		})
+
+	navbar_settings.save()
+
+def add_app_name():
+	frappe.db.set_value('System Settings', None, 'app_name', 'Dokos')

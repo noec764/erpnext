@@ -35,7 +35,7 @@ def get_data(report_filters):
 		gl_data = voucher_wise_gl_data.get(key) or {}
 		d.account_value = gl_data.get("account_value", 0)
 		d.difference_value = (d.stock_value - d.account_value)
-		if abs(d.difference_value) > 1.0/10 ** currency_precision:
+		if abs(d.difference_value) > 0.1:
 			data.append(d)
 
 	return data
@@ -57,8 +57,7 @@ def get_gl_data(report_filters, filters):
 	if report_filters.account:
 		stock_accounts = [report_filters.account]
 	else:
-		stock_accounts = [k.name
-			for k in get_stock_accounts(report_filters.company)]
+		stock_accounts = get_stock_accounts(report_filters.company)
 
 	filters.update({
 		"account": ("in", stock_accounts)

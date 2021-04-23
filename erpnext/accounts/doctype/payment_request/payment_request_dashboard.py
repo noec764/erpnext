@@ -10,7 +10,7 @@ def get_data():
 		'transactions': [
 			{
                 'label': _("Payment Logs"),
-				'items': ['Integration Request']
+				'items': ['Integration Request', 'Payment Entry']
 			}
 		]
 	}

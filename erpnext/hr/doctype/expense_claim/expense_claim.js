@@ -2,11 +2,22 @@
 // License: GNU General Public License v3. See license.txt
 
 frappe.provide("erpnext.hr");
+frappe.provide("erpnext.accounts.dimensions");
 
-erpnext.hr.ExpenseClaimController = frappe.ui.form.Controller.extend({
-	expense_type: function(doc, cdt, cdn) {
+frappe.ui.form.on('Expense Claim', {
+	onload: function(frm) {
+		erpnext.accounts.dimensions.setup_dimension_filters(frm, frm.doctype);
+	},
+	company: function(frm) {
+		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
+	},
+});
+
+
+frappe.ui.form.on('Expense Claim Detail', {
+	expense_type: function(frm, cdt, cdn) {
 		var d = locals[cdt][cdn];
-		if(!doc.company) {
+		if (!frm.doc.company) {
 			d.expense_type = "";
 			frappe.msgprint(__("Please set the Company"));
 			this.frm.refresh_fields();
@@ -17,21 +28,20 @@ erpnext.hr.ExpenseClaimController = frappe.ui.form.Controller.extend({
 			return;
 		}
 		return frappe.call({
-			method: "erpnext.hr.doctype.expense_claim.expense_claim.get_expense_claim_account",
+			method: "erpnext.hr.doctype.expense_claim.expense_claim.get_expense_claim_account_and_cost_center",
 			args: {
 				"expense_claim_type": d.expense_type,
-				"company": doc.company
+				"company": frm.doc.company
 			},
 			callback: function(r) {
 				if (r.message) {
 					d.default_account = r.message.account;
+					d.cost_center = r.message.cost_center;
 				}
 			}
 		});
 	}
 });
-
-$.extend(cur_frm.cscript, new erpnext.hr.ExpenseClaimController({frm: cur_frm}));
 
 cur_frm.add_fetch('employee', 'company', 'company');
 cur_frm.add_fetch('employee','employee_name','employee_name');
@@ -112,6 +122,14 @@ cur_frm.cscript.calculate_total_amount = function(doc,cdt,cdn){
 	cur_frm.cscript.calculate_total(doc,cdt,cdn);
 };
 
+cur_frm.fields_dict['cost_center'].get_query = function(doc) {
+	return {
+		filters: {
+			"company": doc.company
+		}
+	}
+};
+
 erpnext.expense_claim = {
 	set_title: function(frm) {
 		if (!frm.doc.task) {
@@ -158,7 +176,7 @@ frappe.ui.form.on("Expense Claim", {
 			};
 		});
 
-		frm.set_query("cost_center", "expenses", function() {
+		frm.set_query("cost_center", function() {
 			return {
 				filters: {
 					"company": frm.doc.company,
@@ -211,13 +229,19 @@ frappe.ui.form.on("Expense Claim", {
 
 	refresh: function(frm) {
 		frm.trigger("toggle_fields");
+		if (!frappe.perm.has_perm(frm.doctype, 0, "submit")) {
+			frm.set_df_property('approval_status', 'read_only', 1);
+		}
 
-		if(frm.doc.docstatus === 1 && frm.doc.approval_status !== "Rejected") {
+		if(frm.doc.docstatus > 0 && frm.doc.approval_status !== "Rejected") {
 			frm.add_custom_button(__('Accounting Ledger'), function() {
 				frappe.route_options = {
 					voucher_no: frm.doc.name,
 					company: frm.doc.company,
-					group_by_voucher: false
+					from_date: frm.doc.posting_date,
+					to_date: moment(frm.doc.modified).format('YYYY-MM-DD'),
+					group_by: '',
+					show_cancelled_entries: frm.doc.docstatus === 2
 				};
 				frappe.set_route("query-report", "General Ledger");
 			}, __("View"));
@@ -229,6 +253,16 @@ frappe.ui.form.on("Expense Claim", {
 			frm.add_custom_button(__('Payment'),
 				function() { frm.events.make_payment_entry(frm); }, __('Create'));
 		}
+
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
+				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+				});
+			}, __('Make'), true);
+		}
+
+		frm.trigger("sanctioned_amount_alert")
 	},
 
 	calculate_grand_total: function(frm) {
@@ -252,6 +286,20 @@ frappe.ui.form.on("Expense Claim", {
 				amount_to_be_allocated = 0;
 			}
 			frm.refresh_field("advances");
+		});
+	},
+
+	cost_center: function(frm) {
+		frm.events.set_child_cost_center(frm);
+	},
+	validate: function(frm) {
+		frm.events.set_child_cost_center(frm);
+	},
+	set_child_cost_center: function(frm){
+		(frm.doc.expenses || []).forEach(function(d) {
+			if (!d.cost_center){
+				d.cost_center = frm.doc.cost_center;
+			}
 		});
 	},
 
@@ -331,14 +379,19 @@ frappe.ui.form.on("Expense Claim", {
 				}
 			});
 		}
+	},
+
+	sanctioned_amount_alert: function(frm) {
+		if (frm.doc.approval_status=="Approved" && frm.doc.total_sanctioned_amount == 0) {
+			frappe.show_alert({
+				message: __("This expense claim has a total sanctionned amout equal to {0}", [format_currency(frm.doc.total_sanctioned_amount)]),
+				indicator: "orange"
+			})
+		}
 	}
 });
 
 frappe.ui.form.on("Expense Claim Detail", {
-	expenses_add: function(frm, cdt, cdn) {
-		var row = frappe.get_doc(cdt, cdn);
-		frm.script_manager.copy_from_first_row("expenses", row, ["cost_center"]);
-	},
 	amount: function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 		frappe.model.set_value(cdt, cdn, 'sanctioned_amount', child.amount);

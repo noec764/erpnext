@@ -11,8 +11,10 @@
   "event_type",
   "section_break_5",
   "document_type",
+  "previous_status",
   "column_break_7",
   "document_name",
+  "new_status",
   "section_break_9",
   "period_start",
   "column_break_11",
@@ -48,7 +50,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Event Type",
-   "options": "New period\nSales order created\nSales invoice created\nPayment request created",
+   "options": "New period\nSales order created\nSales invoice created\nPayment entry created\nPayment request created\nStatus updated",
    "read_only": 1,
    "reqd": 1
   },
@@ -108,11 +110,25 @@
    "fieldname": "section_break_13",
    "fieldtype": "Section Break",
    "read_only": 1
+  },
+  {
+   "fieldname": "previous_status",
+   "fieldtype": "Select",
+   "label": "Previous Status",
+   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nBillable\nBilling failed\nPayable\nDraft invoices\nCancelled and billable\nTo order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "new_status",
+   "fieldtype": "Select",
+   "label": "New Status",
+   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nBillable\nBilling failed\nPayable\nDraft invoices\nCancelled and billable\nTo order",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "links": [],
- "modified": "2020-03-30 14:27:11.982668",
+ "modified": "2021-01-07 10:33:07.347351",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Event",

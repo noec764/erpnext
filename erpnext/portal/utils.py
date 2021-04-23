@@ -5,7 +5,7 @@ from erpnext.shopping_cart.cart import get_debtors_account
 from frappe.utils.nestedset import get_root_of
 
 def set_default_role(doc, method):
-	'''Set customer, supplier, student, guardian based on email'''
+	'''Set customer, supplier, based on email'''
 	if frappe.flags.setting_role or frappe.flags.in_migrate:
 		return
 
@@ -20,10 +20,6 @@ def set_default_role(doc, method):
 				doc.add_roles('Customer')
 			elif link.link_doctype=='Supplier' and 'Supplier' not in roles:
 				doc.add_roles('Supplier')
-	elif frappe.get_value('Student', dict(student_email_id=doc.email)) and 'Student' not in roles:
-		doc.add_roles('Student')
-	elif frappe.get_value('Guardian', dict(email_address=doc.email)) and 'Guardian' not in roles:
-		doc.add_roles('Guardian')
 
 def create_customer_or_supplier():
 	'''Based on the default Role (Customer, Supplier), create a Customer / Supplier.
@@ -90,19 +86,29 @@ def create_customer_or_supplier():
 	party.flags.ignore_mandatory = True
 	party.insert(ignore_permissions=True)
 
+	alternate_doctype = "Customer" if doctype == "Supplier" else "Supplier"
+
+	if party_exists(alternate_doctype, user):
+		# if user is both customer and supplier, alter fullname to avoid contact name duplication
+		fullname +=  "-" + doctype
+
+	create_party_contact(doctype, fullname, user, party.name)
+
+	return party
+
+def create_party_contact(doctype, fullname, user, party_name):
 	contact = frappe.new_doc("Contact")
 	contact.update({
 		"first_name": fullname,
 		"email_id": user
 	})
-	contact.append('links', dict(link_doctype=doctype, link_name=party.name))
+	contact.append('links', dict(link_doctype=doctype, link_name=party_name))
+	contact.append('email_ids', dict(email_id=user))
 	contact.flags.ignore_mandatory = True
 	contact.insert(ignore_permissions=True)
 
-	return party
-
-
 def party_exists(doctype, user):
+	# check if contact exists against party and if it is linked to the doctype
 	contact_name = frappe.db.get_value("Contact", {"email_id": user})
 
 	if contact_name:

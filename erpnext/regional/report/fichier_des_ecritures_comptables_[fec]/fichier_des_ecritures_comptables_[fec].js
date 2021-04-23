@@ -59,7 +59,7 @@ let fec_export = function(query_report) {
 
 let downloadify = function(data, roles, title) {
 	if (roles && roles.length && !has_common(roles, roles)) {
-		frappe.msgprint(__("Export not allowed. You need {0} role to export.", [frappe.utils.comma_or(roles)]));
+		frappe.msgprint(__("Export not allowed. You need {0} role to export.", [frappe.utils.comma_or(roles.map(r => __(r)))]));
 		return;
 	}
 

@@ -4,30 +4,27 @@
 // attach required files
 {% include 'erpnext/public/js/controllers/buying.js' %};
 
-frappe.ui.form.on('Suppier Quotation', {
+erpnext.buying.SupplierQuotationController = erpnext.buying.BuyingController.extend({
 	setup: function(frm) {
 		frm.custom_make_buttons = {
-			'Purchase Order': 'Purchase Order'
+			'Purchase Order': 'Purchase Order',
+			'Quotation': 'Quotation'
 		}
-	}
-});
-
-erpnext.buying.SupplierQuotationController = erpnext.buying.BuyingController.extend({
+		this._super();
+	},
 	refresh: function() {
 		var me = this;
 		this._super();
+
+		if (this.frm.doc.__islocal && !this.frm.doc.valid_till) {
+			this.frm.set_value('valid_till', frappe.datetime.add_months(this.frm.doc.transaction_date, 1));
+		}
 		if (this.frm.doc.docstatus === 1) {
 			cur_frm.add_custom_button(__("Purchase Order"), this.make_purchase_order,
 				__('Create'));
 			cur_frm.page.set_inner_btn_group_as_primary(__('Create'));
 			cur_frm.add_custom_button(__("Quotation"), this.make_quotation,
 				__('Create'));
-
-			if(!this.frm.doc.auto_repeat) {
-				cur_frm.add_custom_button(__('Auto Repeat'), function() {
-					erpnext.utils.make_auto_repeat(me.frm.doc.doctype, me.frm.doc.name)
-				}, __('Create'))
-			}
 		}
 		else if (this.frm.doc.docstatus===0) {
 
@@ -38,14 +35,44 @@ erpnext.buying.SupplierQuotationController = erpnext.buying.BuyingController.ext
 						source_doctype: "Material Request",
 						target: me.frm,
 						setters: {
-							company: me.frm.doc.company
+							schedule_date: undefined,
+							status: undefined
 						},
 						get_query_filters: {
 							material_request_type: "Purchase",
 							docstatus: 1,
 							status: ["!=", "Stopped"],
-							per_ordered: ["<", 99.99]
+							per_ordered: ["<", 100],
+							company: me.frm.doc.company
 						}
+					})
+				}, __("Get items from"));
+
+			// Link Material Requests
+			this.frm.add_custom_button(__('Link to Material Requests'),
+				function() {
+					erpnext.buying.link_to_mrs(me.frm);
+				}, __("Tools"));
+
+			this.frm.add_custom_button(__("Request for Quotation"),
+				function() {
+					if (!me.frm.doc.supplier) {
+						frappe.throw({message:__("Please select a Supplier"), title:__("Mandatory")})
+					}
+					erpnext.utils.map_current_doc({
+						method: "erpnext.buying.doctype.request_for_quotation.request_for_quotation.make_supplier_quotation_from_rfq",
+						source_doctype: "Request for Quotation",
+						target: me.frm,
+						setters: {
+							company: me.frm.doc.company,
+							transaction_date: null
+						},
+						get_query_filters: {
+							supplier: me.frm.doc.supplier,
+							company: me.frm.doc.company
+						},
+						get_query_method: "erpnext.buying.doctype.request_for_quotation.request_for_quotation.get_rfq_containing_supplier"
+	
 					})
 				}, __("Get items from"));
 		}

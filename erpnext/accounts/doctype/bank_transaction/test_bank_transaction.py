@@ -9,15 +9,19 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
 from erpnext.accounts.doctype.payment_entry.test_payment_entry import get_payment_entry
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import reconcile, get_linked_payments
+from erpnext.accounts.doctype.pos_profile.test_pos_profile import make_pos_profile
 
 test_dependencies = ["Item", "Cost Center"]
 
 class TestBankTransaction(unittest.TestCase):
-	def setUp(self):
+	@classmethod
+	def setUpClass(cls):
+		make_pos_profile()
 		add_transactions()
 		add_payments()
 
-	def tearDown(self):
+	@classmethod
+	def tearDownClass(cls):
 		for bt in frappe.get_all("Bank Transaction"):
 			doc = frappe.get_doc("Bank Transaction", bt.name)
 			doc.cancel()
@@ -27,8 +31,8 @@ class TestBankTransaction(unittest.TestCase):
 		frappe.db.sql("""delete from `tabPayment Entry Reference`""")
 		frappe.db.sql("""delete from `tabPayment Entry`""")
 
-		frappe.flags.test_bank_transactions_created = False
-		frappe.flags.test_payments_created = False
+		# Delete POS Profile
+		frappe.db.sql("delete from `tabPOS Profile`")
 
 	# This test checks if ERPNext is able to provide a linked payment for a bank transaction based on the amount of the bank transaction.
 	def test_linked_payments(self):
@@ -38,8 +42,8 @@ class TestBankTransaction(unittest.TestCase):
 
 	# This test validates a simple reconciliation leading to the clearance of the bank transaction and the payment
 	def test_reconcile(self):
-		bank_transaction = frappe.get_doc("Bank Transaction", dict(description="1512567 BG/000002918 OPSKATTUZWXXX AT776000000098709837 Herr G"))
-		payment = frappe.get_doc("Payment Entry", dict(party="Mr G", paid_amount=1200))
+		bank_transaction = frappe.get_doc("Bank Transaction", dict(description="1512567 BG/000003025 OPSKATTUZWXXX AT776000000098709849 Herr G"))
+		payment = frappe.get_doc("Payment Entry", dict(party="Mr G", paid_amount=1700))
 		reconcile(bank_transaction.name, "Payment Entry", payment.name)
 
 		unallocated_amount = frappe.db.get_value("Bank Transaction", bank_transaction.name, "unallocated_amount")
@@ -91,15 +95,11 @@ class TestBankTransaction(unittest.TestCase):
 		self.assertEqual(frappe.db.get_value("Bank Transaction", bank_transaction.name, "unallocated_amount"), 0)
 		self.assertTrue(frappe.db.get_value("Sales Invoice Payment", dict(parent=payment.name), "clearance_date") is not None)
 
-def add_transactions():
-	if frappe.flags.test_bank_transactions_created:
-		return
-
-	frappe.set_user("Administrator")
+def create_bank_account(bank_name="Citi Bank", account_name="_Test Bank - _TC"):
 	try:
 		frappe.get_doc({
 			"doctype": "Bank",
-			"bank_name":"Citi Bank",
+			"bank_name":bank_name,
 		}).insert()
 	except frappe.DuplicateEntryError:
 		pass
@@ -108,11 +108,14 @@ def add_transactions():
 		frappe.get_doc({
 			"doctype": "Bank Account",
 			"account_name":"Checking Account",
-			"bank": "Citi Bank",
-			"account": "_Test Bank - _TC"
+			"bank": bank_name,
+			"account": account_name
 		}).insert()
 	except frappe.DuplicateEntryError:
 		pass
+
+def add_transactions():
+	create_bank_account()
 
 	doc = frappe.get_doc({
 		"doctype": "Bank Transaction",
@@ -164,14 +167,7 @@ def add_transactions():
 	}).insert()
 	doc.submit()
 
-	frappe.flags.test_bank_transactions_created = True
-
 def add_payments():
-	if frappe.flags.test_payments_created:
-		return
-
-	frappe.set_user("Administrator")
-
 	try:
 		frappe.get_doc({
 			"doctype": "Supplier",
@@ -241,13 +237,6 @@ def add_payments():
 	pe.insert()
 	pe.submit()
 
-	si = create_sales_invoice(customer="Poore Simon's", qty=1, rate=3900)
-	pe = get_payment_entry("Sales Invoice", si.name, bank_account="_Test Bank - _TC")
-	pe.reference_no = "Poore Simon's Oct 18"
-	pe.reference_date = "2018-10-28"
-	pe.insert()
-	pe.submit()
-
 	try:
 		frappe.get_doc({
 			"doctype": "Customer",
@@ -277,14 +266,12 @@ def add_payments():
 		})
 		mode_of_payment.save()
 
-	si = create_sales_invoice(customer="Fayva", qty=1, rate=109080, do_not_submit=1)
+	si = create_sales_invoice(customer="Fayva", qty=1, rate=109080, do_not_save=1)
 	si.is_pos = 1
 	si.append("payments", {
 		"mode_of_payment": "Cash",
 		"account": "_Test Bank - _TC",
 		"amount": 109080
 	})
-	si.save()
+	si.insert()
 	si.submit()
-
-	frappe.flags.test_payments_created = True

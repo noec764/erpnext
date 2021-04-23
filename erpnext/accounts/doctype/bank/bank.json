@@ -1,13 +1,24 @@
 {
  "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
  "autoname": "field:bank_name",
  "creation": "2018-04-07 16:59:59.496668",
  "doctype": "DocType",
+ "document_type": "Setup",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "bank_details_section",
   "bank_name",
   "bank_logo",
+  "branch_code",
+  "column_break_1",
+  "website",
+  "address_and_contact",
+  "address_html",
+  "column_break_13",
+  "contact_html",
   "data_import_configuration_section",
   "bank_transaction_mapping",
   "section_break_4",
@@ -17,10 +28,53 @@
   {
    "fieldname": "bank_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Bank Name",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Details"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "search_index": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "branch_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Branch Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "address_and_contact",
+   "fieldtype": "Section Break",
+   "label": "Address and Contact",
+   "options": "fa fa-map-marker"
+  },
+  {
+   "fieldname": "address_html",
+   "fieldtype": "HTML",
+   "label": "Address HTML"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_html",
+   "fieldtype": "HTML",
+   "label": "Contact HTML"
   },
   {
    "collapsible": 1,
@@ -47,15 +101,15 @@
    "read_only": 1
   },
   {
-   "fieldname": "bank_logo",
-   "fieldtype": "Attach Image",
-   "hidden": 1,
-   "label": "Bank Logo"
-  }
+    "fieldname": "bank_logo",
+    "fieldtype": "Attach Image",
+    "hidden": 1,
+    "label": "Bank Logo"
+   }
  ],
  "image_field": "bank_logo",
  "links": [],
- "modified": "2019-12-06 11:44:53.366219",
+ "modified": "2020-10-30 10:35:38.252581",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",

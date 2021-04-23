@@ -5,19 +5,19 @@ frappe.listview_settings['Asset'] = {
 			return [__("Fully Depreciated"), "green", "status,=,Fully Depreciated"];
 
 		} else if (doc.status === "Partially Depreciated") {
-			return [__("Partially Depreciated"), "grey", "status,=,Partially Depreciated"];
+			return [__("Partially Depreciated"), "gray", "status,=,Partially Depreciated"];
 
 		} else if (doc.status === "Sold") {
 			return [__("Sold"), "green", "status,=,Sold"];
 
 		} else if (doc.status === "Scrapped") {
-			return [__("Scrapped"), "grey", "status,=,Scrapped"];
+			return [__("Scrapped"), "gray", "status,=,Scrapped"];
 
 		} else if (doc.status === "In Maintenance") {
 			return [__("In Maintenance"), "orange", "status,=,In Maintenance"];
 
 		} else if (doc.status === "Out of Order") {
-			return [__("Out of Order"), "grey", "status,=,Out of Order"];
+			return [__("Out of Order"), "gray", "status,=,Out of Order"];
 
 		} else if (doc.status === "Issue") {
 			return [__("Issue"), "orange", "status,=,Issue"];

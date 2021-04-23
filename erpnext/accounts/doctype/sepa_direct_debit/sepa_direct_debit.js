@@ -21,7 +21,7 @@ frappe.ui.form.on('Sepa Direct Debit', {
 				if (r) {
 					frm.set_value("mode_of_payment", r.mode_of_payment);
 				} else {
-					frappe.msgprint(__("Please create <a href='/desk#List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}", [frm.doc.company]))
+					frappe.msgprint(__("Please create <a href='/app/List/Sepa Direct Debit Settings/List'>Sepa Direct Debit Settings</a> for company {0}", [frm.doc.company]))
 				}
 			})
 		}
@@ -68,17 +68,18 @@ frappe.ui.form.on('Sepa Direct Debit', {
 	add_payment_btn(frm) {
 		frm.add_custom_button(__("Generate SEPA Payments"), function(){
 			frappe.confirm(__("Automatically generate payment entries for all unpaid sales invoice with a due date between {0} and {1} for customers with a valid Sepa mandate ?", [frappe.datetime.obj_to_user(frm.doc.from_date), frappe.datetime.obj_to_user(frm.doc.to_date)]), () => {
-				return frappe.call({
+				frappe.call({
 					method: "erpnext.accounts.doctype.sepa_direct_debit.sepa_direct_debit.create_sepa_payment_entries",
 					args: {
 						"from_date": frm.doc.from_date,
 						"to_date": frm.doc.to_date,
 						"mode_of_payment": frm.doc.mode_of_payment
-					},
-					callback: function(r, rt) {
-						if (r.message == "Success") {
-							frappe.msgprint(__("All missing SEPA payment entries have been generated"));
-						};
+					}
+				}).then(r => {
+					if (r == "Success") {
+						frappe.show_alert({message:__("All missing SEPA payment entries have been generated"), indicator: 'green'});
+					} else {
+						frappe.show_alert({message:__("An error prevented the creation of all SEPA payment entries"), indicator: 'red'});
 					}
 				});
 			})

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.utils import cint, getdate, formatdate, today
+from frappe.utils import cint, getdate, formatdate, today, nowdate
 from frappe import throw, _
 from frappe.model.document import Document
 
@@ -15,6 +15,7 @@ class HolidayList(Document):
 		self.validate_days()
 		self.total_holidays = len(self.holidays)
 
+	@frappe.whitelist()
 	def get_weekly_off_dates(self):
 		self.validate_values()
 		date_list = self.get_weekly_off_date_list(self.from_date, self.to_date)
@@ -23,6 +24,7 @@ class HolidayList(Document):
 			ch = self.append('holidays', {})
 			ch.description = self.weekly_off
 			ch.holiday_date = d
+			ch.weekly_off = 1
 			ch.idx = last_idx + i + 1
 
 	def validate_values(self):
@@ -31,7 +33,7 @@ class HolidayList(Document):
 
 
 	def validate_days(self):
-		if self.from_date > self.to_date:
+		if getdate(self.from_date) > getdate(self.to_date):
 			throw(_("To Date cannot be before From Date"))
 
 		for day in self.get("holidays"):
@@ -94,3 +96,13 @@ def is_holiday(holiday_list, date=today()):
 			dict(name=holiday_list, holiday_date=date)))
 	else:
 		return False
+
+def replace_expired_holiday_lists():
+	applicable_holiday_lists = {x.replaces_holiday_list: x.name for x in frappe.get_all("Holiday List", filters={"from_date": ("<=", nowdate()), "to_date": (">=", nowdate())}, fields=["name", "replaces_holiday_list"]) if x.replaces_holiday_list is not None}
+	for dt in frappe.get_all("DocField", filters={"fieldtype": "Link", "options": "Holiday List", "parent": ("!=", "Holiday List")}, fields=["parent", "fieldname"]):
+		if not frappe.model.meta.is_single(dt.parent):
+			for doc in frappe.get_all(dt.parent, filters={dt.fieldname: ("in", applicable_holiday_lists.keys())}):
+				frappe.db.set_value(dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname)))
+
+		elif frappe.model.meta.is_single(dt.parent) and frappe.db.get_single_value(dt.parent, dt.fieldname) in applicable_holiday_lists.keys():
+			frappe.db.set_value(dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname)))

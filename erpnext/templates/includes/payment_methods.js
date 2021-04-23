@@ -1,16 +1,21 @@
 // Copyright (c) 2019, Dokos SAS and Contributors
 // License: See license.txt
 
-const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
-const elements = stripe.elements();
-
 $(document).ready(function() {
-	new stripe_payment_methods();
+	if (typeof Stripe != "undefined") {
+		const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
+		frappe.require([
+			'/assets/js/dialog.min.js',
+			'/assets/js/control.min.js',
+		], () => {
+			new stripe_payment_methods({stripe: stripe});
+		});
+	}
 });
 
 stripe_payment_methods = class {
 	constructor(opts) {
-		$.extend(this, opts);
+		Object.assign(this, opts);
 		this.bind_buttons()
 	}
 
@@ -21,6 +26,9 @@ stripe_payment_methods = class {
 		})
 
 		$(".remove-card").click(function(event){
+			event.target.setAttribute("disabled", "disabled");
+			event.target.classList.add("disabled")
+			event.target.innerText = __("Processing...");
 			me.delete_card(event.target.id)
 		})
 	}
@@ -28,7 +36,7 @@ stripe_payment_methods = class {
 	add_new_card() {
 		$("#add-card").addClass('d-none');
 		$("#card-form").addClass('d-block');
-		this.cardElement = elements.create('card', {
+		this.cardElement = this.stripe.elements().create('card', {
 			hidePostalCode: true,
 			style: {
 				base: {
@@ -68,27 +76,34 @@ stripe_payment_methods = class {
 		const submitButton = document.getElementById('card-submit');
 		submitButton.addEventListener('click', function(event) {
 			event.preventDefault();
-		
-			stripe.createToken(me.cardElement).then(function(result) {
+			event.target.disabled = true;
+			event.target.classList.add("disabled")
+			event.target.innerText = __("Processing...");
+
+			me.stripe.createPaymentMethod({
+				type: 'card',
+				card: me.cardElement,
+				billing_details: {
+					name: 'Jenny Rosen',
+				},
+			}).then(function(result) {
 				if (result.error) {
-					// Inform the user if there was an error.
 					const errorElement = document.getElementById('card-errors');
 					errorElement.textContent = result.error.message;
 				} else {
-					// Send the token to your server.
-					me.stripeTokenHandler(result.token);
+					me.stripeResultHandler(result);
 				}
 			});
 		});
 	}
 
-	stripeTokenHandler(token) {
+	stripeResultHandler(result) {
 		frappe.call({
 			method:"erpnext.www.me.add_new_payment_card",
 			freeze:true,
 			headers: {"X-Requested-With": "XMLHttpRequest"},
 			args: {
-				token: token
+				payment_method: result.paymentMethod.id
 			}
 		}).then(r => {
 			location.reload()
@@ -96,15 +111,18 @@ stripe_payment_methods = class {
 	}
 
 	delete_card(id) {
-		frappe.call({
-			method:"erpnext.www.me.remove_payment_card",
-			freeze:true,
-			headers: {"X-Requested-With": "XMLHttpRequest"},
-			args: {
-				id: id
-			}
-		}).then(r => {
-			location.reload()
+		frappe.confirm(
+			__('Do you want to delete this payment method ?'), () => {
+			frappe.call({
+				method:"erpnext.www.me.remove_payment_card",
+				freeze:true,
+				headers: {"X-Requested-With": "XMLHttpRequest"},
+				args: {
+					id: id
+				}
+			}).then(r => {
+				location.reload()
+			})
 		});
 	}
 }

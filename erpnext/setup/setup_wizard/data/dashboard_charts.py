@@ -23,21 +23,29 @@ def get_default_dashboards():
 		"Dashboards": [
 			{
 				"doctype": "Dashboard",
-				"dashboard_name": _("Accounts"),
+				"dashboard_name": "Accounts",
 				"charts": [
-					{ "chart": _("Outgoing Bills (Sales Invoice)") },
-					{ "chart": _("Incoming Bills (Purchase Invoice)") },
-					{ "chart": _("Bank Balance") },
-					{ "chart": _("Income") },
-					{ "chart": _("Expenses") }
+					{ "chart": "Outgoing Bills (Sales Invoice)" },
+					{ "chart": "Incoming Bills (Purchase Invoice)" },
+					{ "chart": "Bank Balance" },
+					{ "chart": "Income" },
+					{ "chart": "Expenses" },
+					{ "chart": "Patient Appointments" }
 				]
-			}
+			},
+			{
+				"doctype": "Dashboard",
+				"dashboard_name": "Project",
+				"charts": [
+					{ "chart": "Project Summary", "width": "Full" }
+				]
+			},
 		],
 		"Charts": [
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": _("Income"),
+				"chart_name": "Income",
 				"timespan": "Last Year",
 				"color": None,
 				"filters_json": json.dumps({"company": company.name, "account": income_account}),
@@ -51,7 +59,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": _("Expenses"),
+				"chart_name": "Expenses",
 				"timespan": "Last Year",
 				"color": None,
 				"filters_json": json.dumps({"company": company.name, "account": expense_account}),
@@ -65,7 +73,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Quarterly",
-				"chart_name": _("Bank Balance"),
+				"chart_name": "Bank Balance",
 				"timespan": "Last Year",
 				"color": "#ffb868",
 				"filters_json": json.dumps({"company": company.name, "account": bank_account}),
@@ -79,7 +87,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Monthly",
-				"chart_name": _("Incoming Bills (Purchase Invoice)"),
+				"chart_name": "Incoming Bills (Purchase Invoice)",
 				"timespan": "Last Year",
 				"color": "#a83333",
 				"value_based_on": "base_grand_total",
@@ -95,7 +103,7 @@ def get_default_dashboards():
 			{
 				"doctype": "Dashboard Chart",
 				"time_interval": "Monthly",
-				"chart_name": _("Outgoing Bills (Sales Invoice)"),
+				"chart_name": "Outgoing Bills (Sales Invoice)",
 				"timespan": "Last Year",
 				"color": "#7b933d",
 				"value_based_on": "base_grand_total",
@@ -106,6 +114,32 @@ def get_default_dashboards():
 				"owner": "Administrator",
 				"document_type": "Sales Invoice",
 				"type": "Bar",
+				"width": "Half"
+			},
+			{
+				'doctype': 'Dashboard Chart',
+				'name': 'Project Summary',
+				'chart_name': 'Project Summary',
+				'chart_type': 'Report',
+				'report_name': 'Project Summary',
+				'is_public': 1,
+				'filters_json': json.dumps({"company": company.name, "status": "Open"}),
+				'type': 'Bar',
+				'custom_options': '{"type": "bar", "colors": ["#fc4f51", "#78d6ff", "#7575ff"], "axisOptions": { "shortenYAxisNumbers": 1}, "barOptions": { "stacked": 1 }}',
+			},
+			{
+				"doctype": "Dashboard Chart",
+				"time_interval": "Daily",
+				"chart_name": "Patient Appointments",
+				"timespan": "Last Month",
+				"color": "#77ecca",
+				"filters_json": json.dumps({}),
+				"chart_type": "Count",
+				"timeseries": 1,
+				"based_on": "appointment_datetime",
+				"owner": "Administrator",
+				"document_type": "Patient Appointment",
+				"type": "Line",
 				"width": "Half"
 			}
 		]

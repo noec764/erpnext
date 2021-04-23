@@ -7,17 +7,30 @@ frappe.listview_settings['Sales Invoice'] = {
 		"currency", "is_return"],
 	get_indicator: function(doc) {
 		var status_color = {
-			"Draft": "grey",
+			"Draft": "gray",
 			"Unpaid": "orange",
 			"Paid": "green",
-			"Return": "darkgrey",
-			"Credit Note Issued": "darkgrey",
+			"Return": "darkgray",
+			"Credit Note Issued": "darkgray",
 			"Unpaid and Discounted": "orange",
 			"Overdue and Discounted": "red",
-			"Overdue": "red"
+			"Overdue": "red",
+			"Internal Transfer": "darkgrey"
 
 		};
 		return [__(doc.status), status_color[doc.status], "status,=,"+doc.status];
 	},
-	right_column: "grand_total"
+	right_column: "grand_total",
+	onload: function(list_view) {
+		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+			list_view.page.add_actions_menu_item(
+				__("Accounting Journal Adjustment"),
+				() => {
+					const docnames = list_view.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: list_view.doctype, docnames: docnames})
+				},
+				true
+			);
+		});
+	}
 };

@@ -3,29 +3,6 @@
 
 frappe.provide('erpnext');
 
-// add toolbar icon
-$(document).bind('toolbar_setup', function() {
-	frappe.app.name = "dokos";
-
-	frappe.help_feedback_link = '<p><a class="text-muted" \
-		href="https://discuss.erpnext.com">Feedback</a></p>'
-
-	$('[data-link="docs"]').attr("href", "https://doc.dokos.io")
-	$('[data-link="issues"]').attr("href", "https://gitlab.com/dokos/dokos/issues")
-
-
-
-	// additional help links for erpnext
-	var $help_menu = $('.dropdown-help ul .documentation-links');
-	$('<li><a data-link-type="doc" href="https://doc.dokos.io" \
-		target="_blank">'+__('Documentation')+'</a></li>').insertBefore($help_menu);
-	$('<li><a data-link-type="doc" href="https://community.dokos.io" \
-		target="_blank">'+__('Community')+'</a></li>').insertBefore($help_menu);
-	$('<li><a href="https://gitlab.com/dokos/dokos/issues" \
-		target="_blank">'+__('Report an Issue')+'</a></li>').insertBefore($help_menu);
-
-});
-
 // preferred modules for breadcrumbs
 $.extend(frappe.breadcrumbs.preferred, {
 	"Item Group": "Stock",
@@ -34,15 +11,17 @@ $.extend(frappe.breadcrumbs.preferred, {
 	"Territory": "Selling",
 	"Sales Person": "Selling",
 	"Sales Partner": "Selling",
-	"Brand": "Selling"
+	"Brand": "Selling",
+	"Maintenance Schedule": "Support",
+	"Maintenance Visit": "Support"
 });
 
 $.extend(frappe.breadcrumbs.module_map, {
 	'ERPNext Integrations': 'Integrations',
 	'Geo': 'Settings',
-	'Accounts': 'Accounting',
 	'Portal': 'Website',
 	'Utilities': 'Settings',
 	'Shopping Cart': 'Website',
-	'Contacts': 'CRM'
+	'Contacts': 'CRM',
+	'Accounts': 'Accounting'
 });

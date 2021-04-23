@@ -12,7 +12,7 @@ frappe.ui.form.on('Bank Transaction', {
 		});
 
 		frm.set_query('payment_entry', 'payment_entries', function(doc, cdt, cdn) {
-			const row  = locals[cdt][cdn];
+			const row = locals[cdt][cdn];
 			const filters = {
 				"filters": {
 					"unreconciled_amount": [">", 0]
@@ -48,6 +48,27 @@ frappe.ui.form.on('Bank Transaction', {
 				make_new_doc(frm.doc, "Payment Entry");			
 			});
 		}
+
+		if (frm.doc.status === "Unreconciled" && frm.doc.docstatus === 1) {
+			frm.add_custom_button(__('Set status as Closed'), function () {
+				frm.trigger("close_bank_transaction");
+			});
+		}
+
+		frm.add_custom_button(__('Bank reconciliation dashboard'), function () {
+			frappe.set_route("bank-reconciliation");
+		});
+	},
+	close_bank_transaction(frm) {
+		return frappe.call({
+			doc: frm.doc,
+			method: 'close_transaction',
+		}).then(r => {
+			frm.refresh();
+		})
+	},
+	account_do_not_exist() {
+		frappe.throw(__("This bank account could not be found on the selected payment document"))
 	}
 });
 
@@ -64,29 +85,35 @@ frappe.ui.form.on('Bank Transaction Payments', {
 				case "Sales Invoice":
 					frappe.db.get_value(row.payment_document, row.payment_entry, ["is_return", "customer", "due_date"], r => {
 						frappe.model.set_value(cdt, cdn, "payment_type", r.is_return ? "Credit": "Debit");
+						r&&r.customer&&frappe.model.set_value(cdt, cdn, "party", r.customer);
+						r&&r.due_date&&frappe.model.set_value(cdt, cdn, "date", r.due_date);
 					});
 					break;
 				case "Purchase Invoice":
 					frappe.db.get_value(row.payment_document, row.payment_entry, ["is_return", "supplier", "due_date"], r => {
 						frappe.model.set_value(cdt, cdn, "payment_type", r.is_return ? "Debit": "Credit");
+						r&&r.supplier&&frappe.model.set_value(cdt, cdn, "party", r.supplier);
+						r&&r.due_date&&frappe.model.set_value(cdt, cdn, "date", r.due_date);
 					});
 					break;
 				case "Payment Entry":
-					frappe.db.get_value(row.payment_document, row.payment_entry, ["payment_type", "party", "posting_date"], r => {
-						frappe.model.set_value(cdt, cdn, "payment_type", r.payment_type == "Receive" ? "Debit": "Credit");
-					});
-					break;
+					if (frm.doc.bank_account_head) {
+						frappe.db.get_value(row.payment_document, row.payment_entry, ["paid_to", "paid_from", "party_name", "posting_date"], r => {
+							r&&r.paid_from&&frappe.model.set_value(cdt, cdn, "payment_type", r.paid_from == frm.doc.bank_account_head ? "Credit": r.paid_to == frm.doc.bank_account_head ? "Debit" : frm.trigger("account_do_not_exist"));
+							r&&r.party_name&&frappe.model.set_value(cdt, cdn, "party", r.party_name);
+							r&&r.posting_date&&frappe.model.set_value(cdt, cdn, "date", r.posting_date);
+						});
+						break;
+					}
 				case "Journal Entry":
-					if (frm.doc.bank_account) {
-						frappe.db.get_value("Bank Account", frm.doc.bank_account, "account", r => {
-							frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: r.account}, "debit_in_account_currency", (value) => {
-								value&&value.debit_in_account_currency&&frappe.model.set_value(cdt, cdn, "payment_type", value.debit_in_account_currency == 0 ? "Credit" : "Debit");
-							}, 'Journal Entry');
+					if (frm.doc.bank_account_head) {
+						frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: frm.doc.bank_account_head}, "debit_in_account_currency", (value) => {
+							value&&value.debit_in_account_currency&&frappe.model.set_value(cdt, cdn, "payment_type", value.debit_in_account_currency == 0 ? "Credit" : "Debit");
+						}, 'Journal Entry');
 
-							frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: ["!=", r.account]}, "party", (value) => {
-								value&&value.party&&frappe.model.set_value(cdt, cdn, "party", value.party);
-							}, 'Journal Entry');
-						})
+						frappe.db.get_value("Journal Entry Account", {parent: row.payment_entry, account: ["!=", frm.doc.bank_account_head]}, "party", (value) => {
+							value&&value.party&&frappe.model.set_value(cdt, cdn, "party", value.party);
+						}, 'Journal Entry');
 
 						frappe.db.get_value("Journal Entry", row.payment_entry, "posting_date", (value) => {
 							value&&value.posting_date&&frappe.model.set_value(cdt, cdn, "date", value.posting_date);

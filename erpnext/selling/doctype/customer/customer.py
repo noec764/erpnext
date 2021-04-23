@@ -3,16 +3,18 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
 from frappe.model.naming import set_name_by_naming_series
-from frappe import _, msgprint, throw
+from frappe import _, msgprint
 import frappe.defaults
-from frappe.utils import flt, cint, cstr, today
+from frappe.utils import flt, cint, cstr, today, get_formatted_email
 from frappe.desk.reportview import build_match_conditions, get_filters_cond
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.accounts.party import validate_party_accounts, get_dashboard_info, get_timeline_data # keep this
 from frappe.contacts.address_and_contact import load_address_and_contact, delete_contact_and_address
 from frappe.model.rename_doc import update_linked_doctypes
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils.user import get_users_with_role
 
 class Customer(TransactionBase):
 	def get_feed(self):
@@ -35,11 +37,18 @@ class Customer(TransactionBase):
 			set_name_by_naming_series(self)
 
 	def get_customer_name(self):
-		if frappe.db.get_value("Customer", self.customer_name):
+		if frappe.db.get_value("Customer", self.customer_name) and not frappe.flags.in_import:
 			count = frappe.db.sql("""select ifnull(MAX(CAST(SUBSTRING_INDEX(name, ' ', -1) AS UNSIGNED)), 0) from tabCustomer
 				 where name like %s""", "%{0} - %".format(self.customer_name), as_list=1)[0][0]
 			count = cint(count) + 1
-			return "{0} - {1}".format(self.customer_name, cstr(count))
+
+			new_customer_name = "{0} - {1}".format(self.customer_name, cstr(count))
+
+			msgprint(_("Changed customer name to '{}' as '{}' already exists.")
+					.format(new_customer_name, self.customer_name),
+					title=_("Note"), indicator="yellow")
+
+			return new_customer_name
 
 		return self.customer_name
 
@@ -55,6 +64,7 @@ class Customer(TransactionBase):
 		self.set_loyalty_program()
 		self.check_customer_group_change()
 		self.validate_default_bank_account()
+		self.validate_internal_customer()
 
 		# set loyalty program tier
 		if frappe.db.exists('Customer', self.name):
@@ -76,12 +86,22 @@ class Customer(TransactionBase):
 	def validate_default_bank_account(self):
 		if self.default_bank_account:
 			is_company_account = frappe.db.get_value('Bank Account', self.default_bank_account, 'is_company_account')
-			frappe.throw(_("{0} is not a company bank account").format(frappe.bold(self.default_bank_account)))
+			if not is_company_account:
+				frappe.throw(_("{0} is not a company bank account").format(frappe.bold(self.default_bank_account)))
+
+	def validate_internal_customer(self):
+		internal_customer = frappe.db.get_value("Customer",
+			{"is_internal_customer": 1, "represents_company": self.represents_company, "name": ("!=", self.name)}, "name")
+
+		if internal_customer:
+			frappe.throw(_("Internal Customer for company {0} already exists").format(
+				frappe.bold(self.represents_company)))
 
 	def on_update(self):
 		self.validate_name_with_customer_group()
 		self.create_primary_contact()
 		self.create_primary_address()
+		self.validate_primary_contact()
 
 		if self.flags.old_lead != self.lead_name:
 			self.update_lead_status()
@@ -98,12 +118,28 @@ class Customer(TransactionBase):
 				self.customer_group, ignore_doctypes)
 
 	def create_primary_contact(self):
-		if not self.customer_primary_contact and not self.lead_name:
+		if not self.customer_primary_contact and not self.lead_name and self.customer_type == "Individual":
 			if self.mobile_no or self.email_id:
 				contact = make_contact(self)
 				self.db_set('customer_primary_contact', contact.name)
 				self.db_set('mobile_no', self.mobile_no)
 				self.db_set('email_id', self.email_id)
+
+	def validate_primary_contact(self):
+		primary_contacts = frappe.get_all('Dynamic Link', filters={
+			"parenttype":"Contact",
+			"link_doctype":"Customer",
+			"link_name":self.name
+		}, fields=["parent as name"])
+
+		if len(primary_contacts) > 1:
+			for contact in primary_contacts:
+				is_primary_contact = frappe.db.get_value("Contact", contact.name, "is_primary_contact")
+				if contact.name != self.customer_primary_contact \
+					and cint(is_primary_contact) == 1:
+					frappe.db.set_value("Contact", contact.name, "is_primary_contact", 0)
+				elif contact.name == self.customer_primary_contact and cint(is_primary_contact) == 0:
+					frappe.db.set_value("Contact", contact.name, "is_primary_contact", 1)
 
 	def create_primary_address(self):
 		if self.flags.is_new_doc and self.get('address_line1'):
@@ -113,7 +149,9 @@ class Customer(TransactionBase):
 		'''If Customer created from Lead, update lead status to "Converted"
 		update Customer link in Quotation, Opportunity'''
 		if self.lead_name:
-			frappe.db.set_value('Lead', self.lead_name, 'status', 'Converted', update_modified=False)
+			lead = frappe.get_doc('Lead', self.lead_name)
+			lead.status = 'Converted'
+			lead.save()
 
 	def create_lead_address_contact(self):
 		if self.lead_name:
@@ -128,7 +166,7 @@ class Customer(TransactionBase):
 				address = frappe.get_doc('Address', address_name.get('name'))
 				if not address.has_link('Customer', self.name):
 					address.append('links', dict(link_doctype='Customer', link_name=self.name))
-					address.save()
+					address.save(ignore_permissions=self.flags.ignore_permissions)
 
 			lead = frappe.db.get_value("Lead", self.lead_name, ["organization_lead", "lead_name", "email_id", "phone", "mobile_no", "gender", "salutation"], as_dict=True)
 
@@ -146,28 +184,16 @@ class Customer(TransactionBase):
 					contact = frappe.get_doc('Contact', contact_name.get('name'))
 					if not contact.has_link('Customer', self.name):
 						contact.append('links', dict(link_doctype='Customer', link_name=self.name))
-						contact.save()
+						contact.save(ignore_permissions=self.flags.ignore_permissions)
 
 			else:
-				lead.lead_name = lead.lead_name.split(" ")
-				lead.first_name = lead.lead_name[0]
-				lead.last_name = " ".join(lead.lead_name[1:])
-
 				# create contact from lead
-				contact = frappe.new_doc('Contact')
-				contact.first_name = lead.first_name
-				contact.last_name = lead.last_name
-				contact.gender = lead.gender
-				contact.salutation = lead.salutation
-				contact.email_id = lead.email_id
-				contact.phone = lead.phone
-				contact.mobile_no = lead.mobile_no
-				contact.is_primary_contact = 1
-				contact.append('links', dict(link_doctype='Customer', link_name=self.name))
-				contact.flags.ignore_permissions = self.flags.ignore_permissions
-				contact.autoname()
-				if not frappe.db.exists("Contact", contact.name):
-					contact.insert()
+				args = lead
+				args.customer_name = lead.lead_name
+				args.doctype = "Customer"
+				args.name = self.name
+
+				make_contact(args)
 
 	def validate_name_with_customer_group(self):
 		if frappe.db.exists("Customer Group", self.name):
@@ -175,6 +201,14 @@ class Customer(TransactionBase):
 
 	def validate_credit_limit_on_change(self):
 		if self.get("__islocal") or not self.credit_limits:
+			return
+
+		past_credit_limits = [d.credit_limit
+			for d in frappe.db.get_all("Customer Credit Limit", filters={'parent': self.name}, fields=["credit_limit"], order_by="company")]
+
+		current_credit_limits = [d.credit_limit for d in sorted(self.credit_limits, key=lambda k: k.company)]
+
+		if past_credit_limits == current_credit_limits:
 			return
 
 		company_record = []
@@ -203,13 +237,20 @@ class Customer(TransactionBase):
 			frappe.db.set(self, "customer_name", newdn)
 
 	def set_loyalty_program(self):
-		if self.loyalty_program: return
+		if self.loyalty_program:
+			return
+
 		loyalty_program = get_loyalty_programs(self)
-		if not loyalty_program: return
+		if not loyalty_program:
+			return
+
 		if len(loyalty_program) == 1:
 			self.loyalty_program = loyalty_program[0]
 		else:
-			frappe.msgprint(_("Multiple Loyalty Program found for the Customer. Please select manually."))
+			frappe.msgprint(
+				_("Multiple Loyalty Programs found for Customer {}. Please select manually.")
+				.format(frappe.bold(self.customer_name))
+			)
 
 	def create_onboarding_docs(self, args):
 		defaults = frappe.defaults.get_defaults()
@@ -267,9 +308,11 @@ def make_quotation(source_name, target_doc=None):
 	target_doc.run_method("set_other_charges")
 	target_doc.run_method("calculate_taxes_and_totals")
 
-	price_list = frappe.get_value("Customer", source_name, 'default_price_list')
+	price_list, currency = frappe.db.get_value("Customer", {'name': source_name}, ['default_price_list', 'default_currency'])
 	if price_list:
 		target_doc.selling_price_list = price_list
+	if currency:
+		target_doc.currency = currency
 
 	return target_doc
 
@@ -311,7 +354,6 @@ def _set_missing_values(source, target):
 @frappe.whitelist()
 def get_loyalty_programs(doc):
 	''' returns applicable loyalty programs for a customer '''
-	from frappe.desk.treeview import get_children
 
 	lp_details = []
 	loyalty_programs = frappe.get_all("Loyalty Program",
@@ -320,20 +362,43 @@ def get_loyalty_programs(doc):
 			"ifnull(to_date, '2500-01-01')": [">=", today()]})
 
 	for loyalty_program in loyalty_programs:
-		customer_groups = [d.value for d in get_children("Customer Group", loyalty_program.customer_group)] + [loyalty_program.customer_group]
-		customer_territories = [d.value for d in get_children("Territory", loyalty_program.customer_territory)] + [loyalty_program.customer_territory]
-
-		if (not loyalty_program.customer_group or doc.customer_group in customer_groups)\
-			and (not loyalty_program.customer_territory or doc.territory in customer_territories):
+		if (
+			(not loyalty_program.customer_group
+			or doc.customer_group in get_nested_links(
+				"Customer Group",
+				loyalty_program.customer_group,
+				doc.flags.ignore_permissions
+			))
+			and (not loyalty_program.customer_territory
+			or doc.territory in get_nested_links(
+				"Territory",
+				loyalty_program.customer_territory,
+				doc.flags.ignore_permissions
+			))
+		):
 			lp_details.append(loyalty_program.name)
 
 	return lp_details
 
+def get_nested_links(link_doctype, link_name, ignore_permissions=False):
+	from frappe.desk.treeview import _get_children
+
+	links = [link_name]
+	for d in _get_children(link_doctype, link_name, ignore_permissions):
+		links.append(d.value)
+
+	return links
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
 def get_customer_list(doctype, txt, searchfield, start, page_len, filters=None):
+	from erpnext.controllers.queries import get_fields
+	fields = ["name", "customer_name", "customer_group", "territory"]
+
 	if frappe.db.get_default("cust_master_name") == "Customer Name":
 		fields = ["name", "customer_group", "territory"]
-	else:
-		fields = ["name", "customer_name", "customer_group", "territory"]
+
+	fields = get_fields("Customer", fields)
 
 	match_conditions = build_match_conditions("Customer")
 	match_conditions = "and {}".format(match_conditions) if match_conditions else ""
@@ -342,14 +407,17 @@ def get_customer_list(doctype, txt, searchfield, start, page_len, filters=None):
 		filter_conditions = get_filters_cond(doctype, filters, [])
 		match_conditions += "{}".format(filter_conditions)
 
-	return frappe.db.sql("""select %s from `tabCustomer` where docstatus < 2
-		and (%s like %s or customer_name like %s)
-		{match_conditions}
+	return frappe.db.sql("""
+		select %s
+		from `tabCustomer`
+		where docstatus < 2
+			and (%s like %s or customer_name like %s)
+			{match_conditions}
 		order by
-		case when name like %s then 0 else 1 end,
-		case when customer_name like %s then 0 else 1 end,
-		name, customer_name limit %s, %s""".format(match_conditions=match_conditions) %
-		(", ".join(fields), searchfield, "%s", "%s", "%s", "%s", "%s", "%s"),
+			case when name like %s then 0 else 1 end,
+			case when customer_name like %s then 0 else 1 end,
+			name, customer_name limit %s, %s
+		""".format(match_conditions=match_conditions) % (", ".join(fields), searchfield, "%s", "%s", "%s", "%s", "%s", "%s"),
 		("%%%s%%" % txt, "%%%s%%" % txt, "%%%s%%" % txt, "%%%s%%" % txt, start, page_len))
 
 
@@ -364,10 +432,44 @@ def check_credit_limit(customer, company, ignore_outstanding_sales_order=False, 
 			.format(customer, customer_outstanding, credit_limit))
 
 		# If not authorized person raise exception
-		credit_controller = frappe.db.get_value('Accounts Settings', None, 'credit_controller')
-		if not credit_controller or credit_controller not in frappe.get_roles():
-			throw(_("Please contact to the user who have Sales Master Manager {0} role")
-				.format(" / " + credit_controller if credit_controller else ""))
+		credit_controller_role = frappe.db.get_single_value('Accounts Settings', 'credit_controller')
+		if not credit_controller_role or credit_controller_role not in frappe.get_roles():
+			# form a list of emails for the credit controller users
+			credit_controller_users = get_users_with_role(credit_controller_role or "Sales Master Manager")
+
+			# form a list of emails and names to show to the user
+			credit_controller_users_formatted = [get_formatted_email(user).replace("<", "(").replace(">", ")") for user in credit_controller_users]
+
+			if not credit_controller_users_formatted:
+				frappe.throw(_("Please contact your administrator to extend the credit limits for {0}.").format(customer))
+
+			message = _("""Please contact any of the following users to extend the credit limits for {0}:
+				<br><br><ul><li>{1}</li></ul>""").format(customer, '<li>'.join(credit_controller_users_formatted))
+
+			# if the current user does not have permissions to override credit limit,
+			# prompt them to send out an email to the controller users
+			frappe.msgprint(message,
+				title="Notify",
+				raise_exception=1,
+				primary_action={
+					'label': 'Send Email',
+					'server_action': 'erpnext.selling.doctype.customer.customer.send_emails',
+					'args': {
+						'customer': customer,
+						'customer_outstanding': customer_outstanding,
+						'credit_limit': credit_limit,
+						'credit_controller_users_list': credit_controller_users
+					}
+				}
+			)
+
+@frappe.whitelist()
+def send_emails(args):
+	args = json.loads(args)
+	subject = (_("Credit limit reached for customer {0}").format(args.get('customer')))
+	message = (_("Credit limit has been crossed for customer {0} ({1}/{2})")
+			.format(args.get('customer'), args.get('customer_outstanding'), args.get('credit_limit')))
+	frappe.sendmail(recipients=args.get('credit_controller_users_list'), subject=subject, message=message)
 
 def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=False, cost_center=None):
 	# Outstanding based on GL Entries
@@ -445,20 +547,38 @@ def get_credit_limit(customer, company):
 	return flt(credit_limit)
 
 def make_contact(args, is_primary_contact=1):
-	contact = frappe.get_doc({
-		'doctype': 'Contact',
-		'first_name': args.get('name'),
-		'is_primary_contact': is_primary_contact,
-		'links': [{
+	names = args.get('customer_name').strip().split(" ")
+	if len(names) > 1:
+		first_name, last_name = names[0], " ".join(names[1:])
+	else:
+		first_name, last_name = args.get('customer_name'), None
+
+	if args.get('email_id'):
+		parent = frappe.db.get_value("Contact Email", {"email_id": args.get('email_id')}, "parent")
+	if not parent and args.get('mobile_no'):
+		parent = frappe.db.get_value("Contact Phone", {"phone": args.get('mobile_no')}, "parent")
+
+	if parent:
+		contact = frappe.get_doc("Contact", parent)
+	else:
+		contact = frappe.get_doc({
+			'doctype': 'Contact',
+			'first_name': first_name,
+			'last_name': last_name,
+			'is_primary_contact': is_primary_contact
+		})
+
+	if not contact.has_link(args.get('doctype'), args.get('name')):
+		contact.append('links', {
 			'link_doctype': args.get('doctype'),
 			'link_name': args.get('name')
-		}]
-	})
+		})
+
 	if args.get('email_id'):
 		contact.add_email(args.get('email_id'), is_primary=True)
 	if args.get('mobile_no'):
 		contact.add_phone(args.get('mobile_no'), is_primary_mobile_no=True)
-	contact.insert()
+	contact.save()
 
 	return contact
 
@@ -490,6 +610,8 @@ def make_address(args, is_primary_address=1):
 
 	return address
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
 def get_customer_primary_contact(doctype, txt, searchfield, start, page_len, filters):
 	customer = filters.get('customer')
 	return frappe.db.sql("""

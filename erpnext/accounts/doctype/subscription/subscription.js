@@ -6,26 +6,15 @@ frappe.ui.form.on('Subscription', {
 		frm.trigger('setup_listeners');
 
 		frm.set_indicator_formatter('item', function(doc) {
-			return (doc.status == "Active") ? "green" : "darkgrey";
+			return (doc.status == "Active") ? "green" : (doc.status == "Upcoming") ? "orange" : "darkgray";
 		});
 
 		frm.make_methods = {
 			'Payment Request': () => {
-				frappe.call({
-					method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_request",
-					freeze: true,
-					args: {
-						dt: me.frm.doc.doctype,
-						dn: me.frm.doc.name,
-						party_type: "Customer",
-						party: me.frm.doc.customer
-					}
-				}).then(r => {
-					if (r.message) {
-						const doc = frappe.model.sync(r.message)[0];
-						frappe.set_route("Form", doc.doctype, doc.name);
-					}
-				});
+				frm.events.create_payment_request(frm);
+			},
+			'Payment Entry': () => {
+				frm.events.create_payment(frm);
 			}
 		}
 
@@ -40,14 +29,10 @@ frappe.ui.form.on('Subscription', {
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
 		if(!frm.is_new()){
-			frm.page.add_action_item(
-				__('Create payment'),
-				() => frm.events.create_payment(frm)
-			);
 			if(frm.doc.status !== 'Cancelled'){
 				if(!frm.doc.cancellation_date){
 					frm.page.add_action_item(
-						__('Cancel Subscription'),
+						__('Stop Subscription'),
 						() => frm.events.cancel_this_subscription(frm)
 					);
 				} else {
@@ -56,7 +41,7 @@ frappe.ui.form.on('Subscription', {
 						() => frm.events.abort_cancel_this_subscription(frm)
 					);
 				}
-				frm.page.add_action_item(
+				frm.add_custom_button(
 					__('Fetch Subscription Updates'),
 					() => frm.events.get_subscription_updates(frm)
 				);
@@ -78,6 +63,7 @@ frappe.ui.form.on('Subscription', {
 			})
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
+		frm.trigger("show_stripe_section");
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -90,7 +76,7 @@ frappe.ui.form.on('Subscription', {
 			{
 				"fieldtype": "Check",
 				"label": __("Prorate last invoice"),
-				"fieldname": "prorate_invoice"
+				"fieldname": "prorate_last_invoice"
 			}
 		]
 
@@ -154,15 +140,17 @@ frappe.ui.form.on('Subscription', {
 
 	get_subscription_updates: function(frm) {
 		const doc = frm.doc;
+		frappe.show_alert({message: __("Subscription update in progress"), indicator: "orange"})
 		frappe.call({
 			method:
 			"erpnext.accounts.doctype.subscription.subscription.get_subscription_updates",
-			args: {name: doc.name},
-			freeze: true,
-			callback: function(data){
-				if(!data.exc){
-					frm.reload_doc();
-				}
+			args: {name: doc.name}
+		}).then(r => {
+			if(!r.exc){
+				frm.reload_doc();
+				frappe.show_alert({message: __("Subscription up to date"), indicator: "green"})
+			} else {
+				frappe.show_alert({message: __("Subscription update failed. Please try again or check the error log."), indicator: "red"})
 			}
 		});
 	},
@@ -189,12 +177,58 @@ frappe.ui.form.on('Subscription', {
 			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 		});
 	},
+	create_payment_request(frm) {
+		return frappe.call({
+			method: "erpnext.accounts.doctype.subscription.subscription.get_payment_request",
+			args: {
+				"name": frm.doc.name
+			}
+		}).then(r => {
+			const doclist = frappe.model.sync(r.message);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		});
+	},
 	subscription_plan(frm) {
 		if (frm.doc.subscription_plan) {
-			frappe.model.with_doc("Subscription Plan", frm.doc.subscription_plan, function() {
-				const plan = frappe.get_doc("Subscription Plan", frm.doc.subscription_plan);
-				frm.doc.plans.push.apply(frm.doc.plans, plan.subscription_plans_template);
+			frappe.xcall("erpnext.accounts.doctype.subscription.subscription.get_subscription_plan", {
+				plan: frm.doc.subscription_plan
+			}).then(r => {
+				if (frm.is_new() && frm.doc.plans.length) {
+					frm.doc.plans = frm.doc.plans.map(f => f.item).filter(f => f != undefined)
+				}
+
+				r.forEach(values => {
+					const row = frappe.model.add_child(frm.doc, "Subscription Plan Detail", "plans");
+					Object.keys(values).forEach(v => {
+						frappe.model.set_value(row.doctype, row.name, v, values[v])
+					})
+				})
 				frm.refresh_field("plans");
+			})
+		}
+	},
+	modify_current_invoicing_end_date(frm) {
+		frappe.prompt({
+			fieldtype: 'Date',
+			label: __('New Current Invoice End Date'),
+			fieldname: 'end_date',
+			reqd: 1,
+			default: frm.doc.current_invoice_end
+		}, data => {
+				frappe.xcall("erpnext.accounts.doctype.subscription.subscription.new_invoice_end", {
+					subscription: frm.doc.name,
+					end_date: data.end_date
+				}).then(() => {
+					frm.reload_doc();
+				})
+		}, __("Set a new date"), __("Submit"));
+	},
+	show_stripe_section(frm) {
+		if (frm.doc.payment_gateway) {
+			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, ["gateway_controller", "gateway_settings"], pg => {
+				(pg.gateway_settings == "Stripe Settings")&&frappe.db.get_value(pg.gateway_settings, pg.gateway_controller, "subscription_cycle_on_stripe", res => {
+					frm.fields_dict["plans"].grid.set_column_disp('payment_plan_section', res.subscription_cycle_on_stripe);
+				});
 			})
 		}
 	}
@@ -203,10 +237,33 @@ frappe.ui.form.on('Subscription', {
 frappe.ui.form.on('Subscription Plan Detail', {
 	item: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn]
-		frappe.db.get_value("Item", row.item, "description", r => {
-			if (r&&r.description) {
-				frappe.model.set_value(cdt, cdn, "description", r.description);
-			}
-		})
+		frappe.model.with_doc("Item", row.item, function() {
+			const item = frappe.get_doc("Item", row.item)
+			item.description&&frappe.model.set_value(cdt, cdn, "description", item.description);
+			const uom = item.sales_uom ? item.sales_uom : item.stock_uom;
+			frappe.model.set_value(cdt, cdn, "uom", uom);
+		});
+	},
+	add_invoice_item(frm, cdt, cdn) {
+		const row = locals[cdt][cdn]
+		if (!row.stripe_invoice_item) {
+			frappe.call({
+				method: "create_stripe_invoice_item",
+				doc: frm.doc,
+				args: {
+					"plan_details": row
+				}
+			}).then(r => {
+				if (r && r.message) {
+					frappe.model.set_value(cdt, cdn, "stripe_invoice_item", r.message.id);
+					frappe.show_alert({
+						message: __("Invoice item created."),
+						color: "green"
+					})
+				}
+			})
+		} else {
+			frappe.throw(__("This plan is already linked to an invoice item."))
+		}
 	}
 })

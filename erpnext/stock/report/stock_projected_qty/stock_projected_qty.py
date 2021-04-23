@@ -5,9 +5,10 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import flt, today
-from erpnext.stock.utils import update_included_uom_in_report
+from erpnext.stock.utils import update_included_uom_in_report, is_reposting_item_valuation_in_progress
 
 def execute(filters=None):
+	is_reposting_item_valuation_in_progress()
 	filters = frappe._dict(filters or {})
 	include_uom = filters.get("include_uom")
 	columns = get_columns()
@@ -44,7 +45,9 @@ def execute(filters=None):
 				re_order_level = d.warehouse_reorder_level
 				re_order_qty = d.warehouse_reorder_qty
 
-		shortage_qty = re_order_level - flt(bin.projected_qty) if (re_order_level or re_order_qty) else 0
+		shortage_qty = 0
+		if (re_order_level or re_order_qty) and re_order_level > bin.projected_qty:
+			shortage_qty = re_order_level - flt(bin.projected_qty)
 
 		data.append([item.name, item.item_name, item.description, item.item_group, item.brand, bin.warehouse,
 			item.stock_uom, bin.actual_qty, bin.planned_qty, bin.indented_qty, bin.ordered_qty,

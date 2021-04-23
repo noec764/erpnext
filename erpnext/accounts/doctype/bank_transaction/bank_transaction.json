@@ -14,6 +14,7 @@
   "column_break_2",
   "company",
   "bank_account",
+  "bank_account_head",
   "currency",
   "section_break_4",
   "debit",
@@ -50,7 +51,8 @@
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Date"
+   "label": "Date",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_2",
@@ -63,7 +65,7 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nPending\nSettled\nUnreconciled\nReconciled\nCancelled",
+   "options": "\nPending\nSettled\nUnreconciled\nReconciled\nCancelled\nClosed",
    "read_only": 1
   },
   {
@@ -71,7 +73,8 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Bank Account",
-   "options": "Bank Account"
+   "options": "Bank Account",
+   "reqd": 1
   },
   {
    "fetch_from": "bank_account.company",
@@ -80,7 +83,8 @@
    "in_standard_filter": 1,
    "label": "Company",
    "options": "Company",
-   "read_only": 1
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "fieldname": "section_break_4",
@@ -106,7 +110,8 @@
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
-   "options": "Currency"
+   "options": "Currency",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_10",
@@ -122,7 +127,7 @@
   {
    "fieldname": "section_break_14",
    "fieldtype": "Section Break",
-   "options": "noBottomBorder"
+   "hide_border": 1
   },
   {
    "fieldname": "reference_number",
@@ -171,7 +176,7 @@
   {
    "fieldname": "section_break_17",
    "fieldtype": "Section Break",
-   "options": "noBottomBorder"
+   "hide_border": 1
   },
   {
    "allow_on_submit": 1,
@@ -190,11 +195,20 @@
    "fieldtype": "Currency",
    "label": "Total Credit",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "bank_account.account",
+   "fieldname": "bank_account_head",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Bank Account Head",
+   "options": "Account"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-07 11:00:57.414755",
+ "modified": "2021-01-06 18:06:32.402578",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

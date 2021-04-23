@@ -8,6 +8,7 @@
  "field_order": [
   "naming_series",
   "customer",
+  "subscription_template",
   "cb_1",
   "company",
   "currency",
@@ -16,20 +17,21 @@
   "start",
   "trial_period_start",
   "trial_period_end",
-  "trial_validated",
   "cancellation_date",
-  "prorate_invoice",
+  "prorate_last_invoice",
   "column_break_11",
   "current_invoice_start",
   "current_invoice_end",
-  "days_until_due",
+  "modify_current_invoicing_end_date",
   "settings_section",
   "create_sales_order",
   "generate_invoice_at_period_start",
   "submit_invoice",
+  "generate_payment_request",
   "column_break_18",
   "billing_interval",
   "billing_interval_count",
+  "days_until_due",
   "sb_4",
   "subscription_plan",
   "plans",
@@ -46,6 +48,7 @@
   "total",
   "column_break_25",
   "grand_total",
+  "outstanding_amount",
   "terms_section",
   "terms_and_conditions",
   "accounting_dimensions_section",
@@ -74,8 +77,9 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nTrial\nActive\nCancelled"
+   "options": "\nTrial\nActive\nCancelled\nUnpaid\nPaid\nBillable\nBilling failed\nPayable\nDraft invoices\nCancelled and billable\nTo order"
   },
   {
    "fieldname": "subscription_period",
@@ -86,6 +90,7 @@
    "fieldname": "start",
    "fieldtype": "Date",
    "label": "Subscription Start Date",
+   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -99,7 +104,8 @@
    "depends_on": "eval:doc.trial_period_start",
    "fieldname": "trial_period_end",
    "fieldtype": "Date",
-   "label": "Trial Period End Date"
+   "label": "Trial Period End Date",
+   "mandatory_depends_on": "eval:doc.trial_period_start"
   },
   {
    "fieldname": "column_break_11",
@@ -220,15 +226,6 @@
    "options": "Terms and Conditions"
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.prorate_invoice",
-   "fieldname": "prorate_invoice",
-   "fieldtype": "Check",
-   "label": "Prorate last invoice",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
@@ -256,7 +253,7 @@
   {
    "fieldname": "cancellation_date",
    "fieldtype": "Date",
-   "label": "Cancellation Date",
+   "label": "Subscription End Date",
    "no_copy": 1,
    "read_only": 1
   },
@@ -324,13 +321,6 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.trial_period_start",
-   "fieldname": "trial_validated",
-   "fieldtype": "Check",
-   "label": "Trial Validated"
-  },
-  {
    "default": "Month",
    "fieldname": "billing_interval",
    "fieldtype": "Select",
@@ -348,10 +338,45 @@
    "fieldtype": "Link",
    "label": "Subscription Plan",
    "options": "Subscription Plan"
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Outstanding Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "subscription_template",
+   "fieldtype": "Link",
+   "label": "From Template",
+   "options": "Subscription Template",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_payment_request",
+   "fieldtype": "Check",
+   "label": "Generate a payment request automatically"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.prorate_invoice",
+   "fieldname": "prorate_last_invoice",
+   "fieldtype": "Check",
+   "label": "Prorate last invoice",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.current_invoice_end",
+   "fieldname": "modify_current_invoicing_end_date",
+   "fieldtype": "Button",
+   "label": "Modify Current Invoicing End Date"
   }
  ],
+ "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-02-29 17:17:58.887601",
+ "modified": "2021-02-11 16:35:16.946675",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
@@ -394,7 +419,7 @@
    "write": 1
   }
  ],
- "route": "/desk#Form/DocType/Subscription",
+ "route": "/app/Form/DocType/Subscription",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "customer",

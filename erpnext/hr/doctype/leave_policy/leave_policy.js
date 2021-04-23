@@ -29,3 +29,11 @@ frappe.ui.form.on('Leave Policy Detail',{
 		}
 	}
 });
+
+frappe.tour['Leave Policy'] = [
+	{
+		fieldname: "leave_policy_details",
+		title: __("Leave Policy Details"),
+		description: __("Set an annual allocation for each leave type in this policy.")
+	}
+]

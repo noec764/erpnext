@@ -20,9 +20,11 @@
   "stock_uom",
   "column_break0",
   "disabled",
+  "is_down_payment_item",
   "allow_alternative_item",
   "is_stock_item",
   "include_item_in_manufacturing",
+  "enable_item_booking",
   "opening_stock",
   "valuation_rate",
   "standard_rate",
@@ -32,6 +34,7 @@
   "asset_naming_series",
   "over_delivery_receipt_allowance",
   "over_billing_allowance",
+  "down_payment_percentage",
   "image",
   "section_break_11",
   "brand",
@@ -105,24 +108,26 @@
   "item_tax_section_break",
   "taxes",
   "inspection_criteria",
+  "quality_inspection_template",
   "inspection_required_before_purchase",
   "inspection_required_before_delivery",
-  "quality_inspection_template",
   "manufacturing",
   "default_bom",
   "is_sub_contracted_item",
   "column_break_74",
   "customer_code",
+  "default_item_manufacturer",
+  "default_manufacturer_part_no",
   "website_section",
   "show_in_website",
   "show_variant_in_website",
-  "enable_item_booking",
   "disable_unit_purchasing",
   "simultaneous_bookings_allowed",
   "route",
   "weightage",
   "slideshow",
   "website_image",
+  "website_image_alt",
   "thumbnail",
   "cb72",
   "website_warehouse",
@@ -134,7 +139,7 @@
   "web_long_description",
   "website_content",
   "total_projected_qty",
-  "google_calendar_section",
+  "calendar_section",
   "google_calendar",
   "column_break_127",
   "calendar_color"
@@ -222,6 +227,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.is_down_payment_item",
    "fieldname": "allow_alternative_item",
    "fieldtype": "Check",
    "label": "Allow Alternative Item"
@@ -229,6 +235,7 @@
   {
    "bold": 1,
    "default": "1",
+   "depends_on": "eval:!doc.is_down_payment_item",
    "fieldname": "is_stock_item",
    "fieldtype": "Check",
    "label": "Maintain Stock",
@@ -237,6 +244,7 @@
   },
   {
    "default": "1",
+   "depends_on": "eval:!doc.is_down_payment_item",
    "fieldname": "include_item_in_manufacturing",
    "fieldtype": "Check",
    "label": "Include Item In Manufacturing"
@@ -256,13 +264,14 @@
   },
   {
    "bold": 1,
-   "depends_on": "eval:doc.__islocal",
+   "depends_on": "eval:doc.__islocal&&!doc.is_down_payment_item",
    "fieldname": "standard_rate",
    "fieldtype": "Currency",
    "label": "Standard Selling Rate"
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.is_down_payment_item",
    "fieldname": "is_fixed_asset",
    "fieldtype": "Check",
    "label": "Is Fixed Asset",
@@ -337,7 +346,8 @@
   {
    "fieldname": "shelf_life_in_days",
    "fieldtype": "Int",
-   "label": "Shelf Life In Days"
+   "label": "Shelf Life In Days",
+   "mandatory_depends_on": "eval:doc.has_batch_no && doc.has_expiry_date"
   },
   {
    "default": "2099-12-31",
@@ -464,6 +474,7 @@
   },
   {
    "default": "0",
+   "depends_on": "has_batch_no",
    "fieldname": "retain_sample",
    "fieldtype": "Check",
    "label": "Retain Sample"
@@ -490,7 +501,7 @@
    "oldfieldtype": "Select"
   },
   {
-   "depends_on": "eval:doc.is_stock_item || doc.is_fixed_asset",
+   "depends_on": "has_serial_no",
    "description": "Example: ABCD.#####\nIf series is set and Serial No is not mentioned in transactions, then automatic serial number will be created based on this series. If you always want to explicitly mention Serial Nos for this item. leave this blank.",
    "fieldname": "serial_no_series",
    "fieldtype": "Data",
@@ -803,7 +814,6 @@
    "label": "Inspection Required before Delivery"
   },
   {
-   "depends_on": "eval:(doc.inspection_required_before_purchase || doc.inspection_required_before_delivery)",
    "fieldname": "quality_inspection_template",
    "fieldtype": "Link",
    "label": "Quality Inspection Template",
@@ -993,7 +1003,6 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.show_in_website||doc.show_variant_in_website",
    "fieldname": "enable_item_booking",
    "fieldtype": "Check",
    "label": "Enable Item Booking"
@@ -1013,13 +1022,6 @@
    "hidden": 1,
    "label": "Simultaneous bookings allowed",
    "print_hide": 1
-  },
-  {
-   "collapsible": 1,
-   "collapsible_depends_on": "eval:doc.enable_item_booking",
-   "fieldname": "google_calendar_section",
-   "fieldtype": "Section Break",
-   "label": "Google Calendar"
   },
   {
    "description": "Used for item bookings synchronization with Google Calendar",
@@ -1043,15 +1045,54 @@
    "fieldname": "auto_create_assets",
    "fieldtype": "Check",
    "label": "Auto Create Assets on Purchase"
+  },
+  {
+   "fieldname": "default_item_manufacturer",
+   "fieldtype": "Data",
+   "label": "Default Item Manufacturer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "default_manufacturer_part_no",
+   "fieldtype": "Data",
+   "label": "Default Manufacturer Part No",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.show_in_website || doc.show_variant_in_website",
+   "fieldname": "website_image_alt",
+   "fieldtype": "Data",
+   "label": "Image Description"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.is_stock_item",
+   "fieldname": "is_down_payment_item",
+   "fieldtype": "Check",
+   "label": "Is Down Payment Item"
+  },
+  {
+   "depends_on": "eval:doc.is_down_payment_item",
+   "fieldname": "down_payment_percentage",
+   "fieldtype": "Percent",
+   "label": "Down Payment Percentage"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.enable_item_booking",
+   "fieldname": "calendar_section",
+   "fieldtype": "Section Break",
+   "label": "Calendar Section"
   }
  ],
  "has_web_view": 1,
  "icon": "fa fa-tag",
  "idx": 2,
  "image_field": "image",
+ "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 1,
- "modified": "2020-02-11 11:27:53.709645",
+ "modified": "2021-03-18 14:04:38.575519",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1103,6 +1144,22 @@
   {
    "read": 1,
    "role": "Manufacturing User"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Venue Manager"
+},
+{
+ "email": 1,
+ "export": 1,
+ "print": 1,
+ "report": 1,
+ "role": "Supplier",
+ "select": 1,
+ "share": 1
   }
  ],
  "quick_entry": 1,

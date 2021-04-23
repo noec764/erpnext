@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import flt
-from erpnext.accounts.utils import get_fiscal_year, getdate
+from erpnext.accounts.utils import get_fiscal_year
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category \
 	import get_advance_vouchers, get_debit_note_amount
 
@@ -18,7 +18,7 @@ def execute(filters=None):
 
 def validate_filters(filters):
 	''' Validate if dates are properly set and lie in the same fiscal year'''
-	if getdate(filters.from_date) > getdate(filters.to_date):
+	if filters.from_date > filters.to_date:
 		frappe.throw(_("From Date must be before To Date"))
 
 	from_year = get_fiscal_year(filters.from_date)[0]
@@ -44,13 +44,18 @@ def get_result(filters):
 	out = []
 	for supplier in filters.supplier:
 		tds = frappe.get_doc("Tax Withholding Category", supplier.tax_withholding_category)
-		rate = [d.tax_withholding_rate for d in tds.rates if d.fiscal_year == filters.fiscal_year][0]
+		rate = [d.tax_withholding_rate for d in tds.rates if d.fiscal_year == filters.fiscal_year]
+
+		if rate:
+			rate = rate[0]
+
 		try:
 			account = [d.account for d in tds.accounts if d.company == filters.company][0]
+
 		except IndexError:
 			account = []
 		total_invoiced_amount, tds_deducted = get_invoice_and_tds_amount(supplier.name, account,
-			filters.company, filters.from_date, filters.to_date)
+			filters.company, filters.from_date, filters.to_date, filters.fiscal_year)
 
 		if total_invoiced_amount or tds_deducted:
 			row = [supplier.pan, supplier.name]
@@ -63,7 +68,7 @@ def get_result(filters):
 
 	return out
 
-def get_invoice_and_tds_amount(supplier, account, company, from_date, to_date):
+def get_invoice_and_tds_amount(supplier, account, company, from_date, to_date, fiscal_year):
 	''' calculate total invoice amount and total tds deducted for given supplier  '''
 
 	entries = frappe.db.sql("""
@@ -76,7 +81,7 @@ def get_invoice_and_tds_amount(supplier, account, company, from_date, to_date):
 	supplier_credit_amount = flt(sum([d.credit for d in entries]))
 
 	vouchers = [d.voucher_no for d in entries]
-	vouchers += get_advance_vouchers(supplier, company=company,
+	vouchers += get_advance_vouchers([supplier], company=company,
 		from_date=from_date, to_date=to_date)
 
 	tds_deducted = 0
@@ -89,7 +94,9 @@ def get_invoice_and_tds_amount(supplier, account, company, from_date, to_date):
 		""".format(', '.join(["'%s'" % d for d in vouchers])),
 			(account, from_date, to_date, company))[0][0])
 
-	debit_note_amount = get_debit_note_amount(supplier, from_date, to_date, company=company)
+	date_range_filter = [fiscal_year, from_date, to_date]
+
+	debit_note_amount = get_debit_note_amount([supplier], date_range_filter, company=company)
 
 	total_invoiced_amount = supplier_credit_amount + tds_deducted - debit_note_amount
 

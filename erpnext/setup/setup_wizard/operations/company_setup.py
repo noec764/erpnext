@@ -90,6 +90,66 @@ def create_bank_and_bank_account(bank_account_name, account):
 	except frappe.DuplicateEntryError:
 		pass
 
+def create_accounting_journals(bank_account_name, company):
+	journals = [
+		{
+			"doctype": "Accounting Journal",
+			"journal_code": _("MOP"),
+			"journal_name":_("Miscellaneous Operations"),
+			"type": "Miscellaneous",
+			"company": company,
+			"conditions": [
+				{"document_type": "Journal Entry"},
+				{"document_type": "Period Closing Voucher"},
+				{"document_type": "Delivery Note"},
+				{"document_type": "Purchase Receipt"},
+				{"document_type": "Stock Entry"},
+				{"document_type": "Expense Claim"}
+			]
+		},
+		{
+			"doctype": "Accounting Journal",
+			"journal_code": _("SAL"),
+			"journal_name": _("Sales"),
+			"type": "Sales",
+			"company": company,
+			"conditions": [
+				{"document_type": "Sales Invoice"}
+			]
+		},
+		{
+			"doctype": "Accounting Journal",
+			"journal_code": _("PUR"),
+			"journal_name": _("Purchases"),
+			"type": "Purchases",
+			"company": company,
+			"conditions": [
+				{"document_type": "Purchase Invoice"}
+			]
+		},
+		{
+			"doctype": "Accounting Journal",
+			"journal_code": _("BAN"),
+			"journal_name": _("Bank"),
+			"type": "Bank",
+			"company": company,
+			"account": bank_account_name,
+			"conditions": [
+				{"document_type": "Payment Entry"}
+			]
+		}
+	]
+
+	for journal in journals:
+		try:
+			frappe.get_doc(journal).insert()
+		except frappe.DuplicateEntryError:
+			pass
+		except frappe.UniqueValidationError:
+			pass
+		except Exception:
+			print(frappe.get_traceback())
+
 def create_email_digest():
 	from frappe.utils.user import get_system_managers
 	system_managers = get_system_managers(only_name=True)

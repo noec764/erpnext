@@ -7,6 +7,10 @@ import json
 from frappe import _
 import frappe.www.list
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
+from erpnext.templates.pages.integrations.stripe_checkout import get_api_key
+
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePaymentMethod
+from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
 
 no_cache = 1
 
@@ -17,7 +21,10 @@ def get_context(context):
 	context.show_sidebar = True
 	context.enable_stripe = False
 	context.enable_gocardless = False
+	context.subscription = False
+	context.subscriptions_available = False
 	context.lang = frappe.local.lang
+	context.credits_balance = None
 
 	active_tokens = frappe.get_all("OAuth Bearer Token",\
 		filters=[["user", "=", frappe.session.user]],\
@@ -31,12 +38,19 @@ def get_context(context):
 			if references.get("stripe_customer_id") and references.get("stripe_settings"):
 				context.enable_stripe = True
 				context.stripe_payment_methods = get_customer_payment_methods(references)
-				context.publishable_key = frappe.db.get_value("Stripe Settings", references.stripe_settings, "publishable_key")
+				context.publishable_key = get_api_key(references.stripe_settings)
+
+		if frappe.db.exists("Subscription", {"customer": customers[0]}):
+			context.subscription = frappe.get_doc("Subscription", {"customer": customers[0]})
+
+		context.subscriptions_available = True if frappe.db.get_value("Subscription Template", {"enable_on_portal": 1}) else False
+
+		context.credits_balance = get_balance(customers[0]) or None
 
 def get_customer_payment_methods(references):
 	try:
 		stripe_settings = frappe.get_doc("Stripe Settings", references.stripe_settings)
-		return stripe_settings.get_payment_methods(references.stripe_customer_id)
+		return StripePaymentMethod(stripe_settings).get_list(references.stripe_customer_id)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(),\
 			_("[Portal] Stripe payment methods retrieval error for {0}").format(references.customer))
@@ -48,20 +62,19 @@ def remove_payment_card(id):
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return stripe_settings.delete_source(account.stripe_customer_id, id)
+			return StripePaymentMethod(stripe_settings).detach(id)
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] Stripe payment source deletion error"))
 
 @frappe.whitelist()
-def add_new_payment_card(token):
+def add_new_payment_card(payment_method):
 	try:
-		token = json.loads(token)
 		customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 		account = frappe.get_doc("Integration References", dict(customer=customers[0]))
 		if account.stripe_settings:
 			stripe_settings = frappe.get_doc("Stripe Settings", account.stripe_settings)
-			return stripe_settings.create_source(account.stripe_customer_id, token.get("id"))
+			return StripePaymentMethod(stripe_settings).attach(payment_method, account.stripe_customer_id)
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("[Portal] New stripe payment source registration error"))

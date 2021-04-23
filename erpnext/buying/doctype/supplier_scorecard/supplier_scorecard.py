@@ -130,6 +130,7 @@ class SupplierScorecard(Document):
 				period_card = make_supplier_scorecard(self.name, None)
 				period_card.start_date = start_date
 				period_card.end_date = end_date
+				period_card.insert(ignore_permissions=True)
 				period_card.submit()
 				scp_count = scp_count + 1
 				if start_date < first_start_date:
@@ -169,8 +170,8 @@ def get_timeline_data(doctype, name):
 	return out
 
 def daterange(start_date, end_date):
-    for n in range(int ((end_date - start_date).days)+1):
-        yield start_date + timedelta(n)
+	for n in range(int ((end_date - start_date).days)+1):
+		yield start_date + timedelta(n)
 
 def refresh_scorecards():
 	scorecards = frappe.db.sql("""

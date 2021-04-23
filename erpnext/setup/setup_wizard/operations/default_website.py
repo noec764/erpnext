@@ -29,6 +29,7 @@ class website_maker(object):
 		# update in home page in settings
 		website_settings = frappe.get_doc("Website Settings", "Website Settings")
 		website_settings.home_page = 'home'
+		website_settings.website_theme = 'Dokos'
 		website_settings.brand_html = self.company
 		website_settings.copyright = self.company
 		website_settings.top_bar_items = []

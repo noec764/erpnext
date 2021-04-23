@@ -19,7 +19,7 @@ def get_data():
 			},
 			{
 				'label': _('Payments'),
-				'items': ['Payment Request']
+				'items': ['Payment Request', 'Payment Entry']
 			},
 			{
 				'label': _('Events'),

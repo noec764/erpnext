@@ -18,7 +18,6 @@ class ValueMultiplierError(frappe.ValidationError): pass
 class LeaveAllocation(Document):
 	def validate(self):
 		self.validate_period()
-		self.validate_new_leaves_allocated_value()
 		self.validate_allocation_overlap()
 		self.validate_back_dated_allocation()
 		self.set_total_leaves_allocated()
@@ -29,17 +28,17 @@ class LeaveAllocation(Document):
 
 	def validate_leave_allocation_days(self):
 		company = frappe.db.get_value("Employee", self.employee, "company")
-		leave_period = get_leave_period(self.from_date, self.to_date, company)
-		max_leaves_allowed = frappe.db.get_value("Leave Type", self.leave_type, "max_leaves_allowed")
+		leave_period = get_leave_period(self.from_date, self.to_date, company, self.leave_type)
+		max_leaves_allowed = flt(frappe.db.get_value("Leave Type", self.leave_type, "max_leaves_allowed"))
 		if max_leaves_allowed > 0:
 			leave_allocated = 0
 			if leave_period:
 				leave_allocated = get_leave_allocation_for_period(self.employee, self.leave_type,
 					leave_period[0].from_date, leave_period[0].to_date)
-			leave_allocated += self.new_leaves_allocated
+			leave_allocated += flt(self.new_leaves_allocated)
 			if leave_allocated > max_leaves_allowed:
 				frappe.throw(_("Total allocated leaves are more days than maximum allocation of {0} leave type for employee {1} in the period")
-				.format(self.leave_type, self.employee))
+					.format(self.leave_type, self.employee))
 
 	def on_submit(self):
 		self.create_leave_ledger_entry()
@@ -50,9 +49,20 @@ class LeaveAllocation(Document):
 			expire_allocation(allocation)
 
 	def on_cancel(self):
+		self.ignore_linked_doctypes = ('Leave Ledger Entry')
 		self.create_leave_ledger_entry(submit=False)
+		if self.leave_policy_assignment:
+			self.update_leave_policy_assignments_when_no_allocations_left()
 		if self.carry_forward:
 			self.set_carry_forwarded_leaves_in_previous_allocation(on_cancel=True)
+
+	def update_leave_policy_assignments_when_no_allocations_left(self):
+		allocations = frappe.db.get_list("Leave Allocation", filters = {
+			"docstatus": 1,
+			"leave_policy_assignment": self.leave_policy_assignment
+		})
+		if len(allocations) == 0:
+			frappe.db.set_value("Leave Policy Assignment", self.leave_policy_assignment ,"leaves_allocated", 0)
 
 	def validate_period(self):
 		if date_diff(self.to_date, self.from_date) <= 0:
@@ -62,39 +72,34 @@ class LeaveAllocation(Document):
 		if frappe.db.get_value("Leave Type", self.leave_type, "is_lwp"):
 			frappe.throw(_("Leave Type {0} cannot be allocated since it is leave without pay").format(self.leave_type))
 
-	def validate_new_leaves_allocated_value(self):
-		"""validate that leave allocation is in multiples of 0.5"""
-		if flt(self.new_leaves_allocated) % 0.5:
-			frappe.throw(_("Leaves must be allocated in multiples of 0.5"), ValueMultiplierError)
-
 	def validate_allocation_overlap(self):
-		leave_allocation = frappe.db.sql("""
+		leave_allocation = frappe.db.sql(f"""
 			SELECT
 				name
 			FROM `tabLeave Allocation`
 			WHERE
-				employee=%s AND leave_type=%s
-				AND name <> %s AND docstatus=1
-				AND to_date >= %s AND from_date <= %s""",
-			(self.employee, self.leave_type, self.name, self.from_date, self.to_date))
+				employee={frappe.db.escape(self.employee)} AND leave_type={frappe.db.escape(self.leave_type)}
+				AND name <> {frappe.db.escape(self.name)} AND docstatus=1
+				AND to_date >= {frappe.db.escape(self.from_date)} AND from_date <= {frappe.db.escape(self.to_date)}""")
 
 		if leave_allocation:
 			frappe.msgprint(_("{0} already allocated for Employee {1} for period {2} to {3}")
 				.format(self.leave_type, self.employee, formatdate(self.from_date), formatdate(self.to_date)))
 
-			frappe.throw(_('Reference') + ': <a href="#Form/Leave Allocation/{0}">{0}</a>'
+			frappe.throw(_('Reference') + ': <a href="/app/Form/Leave Allocation/{0}">{0}</a>'
 				.format(leave_allocation[0][0]), OverlapError)
 
 	def validate_back_dated_allocation(self):
-		future_allocation = frappe.db.sql("""select name, from_date from `tabLeave Allocation`
-			where employee=%s and leave_type=%s and docstatus=1 and from_date > %s
-			and carry_forward=1""", (self.employee, self.leave_type, self.to_date), as_dict=1)
+		future_allocation = frappe.db.sql(f"""select name, from_date from `tabLeave Allocation`
+			where employee={frappe.db.escape(self.employee)} and leave_type={frappe.db.escape(self.leave_type)} and docstatus=1 and from_date > {frappe.db.escape(self.to_date)}
+			and carry_forward=1""", as_dict=1)
 
 		if future_allocation:
 			frappe.throw(_("Leave cannot be allocated before {0}, as leave balance has already been carry-forwarded in the future leave allocation record {1}")
 				.format(formatdate(future_allocation[0].from_date), future_allocation[0].name),
 					BackDatedAllocationError)
 
+	@frappe.whitelist()
 	def set_total_leaves_allocated(self):
 		self.unused_leaves = get_carry_forwarded_leaves(self.employee,
 			self.leave_type, self.from_date, self.carry_forward)
@@ -167,20 +172,15 @@ def get_previous_allocation(from_date, leave_type, employee):
 
 def get_leave_allocation_for_period(employee, leave_type, from_date, to_date):
 	leave_allocated = 0
-	leave_allocations = frappe.db.sql("""
+	leave_allocations = frappe.db.sql(f"""
 		select employee, leave_type, from_date, to_date, total_leaves_allocated
 		from `tabLeave Allocation`
-		where employee=%(employee)s and leave_type=%(leave_type)s
+		where employee={frappe.db.escape(employee)} and leave_type={frappe.db.escape(leave_type)}
 			and docstatus=1
-			and (from_date between %(from_date)s and %(to_date)s
-				or to_date between %(from_date)s and %(to_date)s
-				or (from_date < %(from_date)s and to_date > %(to_date)s))
-	""", {
-		"from_date": from_date,
-		"to_date": to_date,
-		"employee": employee,
-		"leave_type": leave_type
-	}, as_dict=1)
+			and (from_date between {frappe.db.escape(from_date)} and {frappe.db.escape(to_date)}
+				or to_date between {frappe.db.escape(from_date)} and {frappe.db.escape(to_date)}
+				or (from_date < {frappe.db.escape(from_date)} and to_date > {frappe.db.escape(to_date)}))
+	""", as_dict=1)
 
 	if leave_allocations:
 		for leave_alloc in leave_allocations:

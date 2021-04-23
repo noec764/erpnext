@@ -18,10 +18,10 @@ from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_ac
 
 PARTY_FIELD = {
 	"Payment Entry": "party",
-	"Journal Entry": "against",
+	"Journal Entry": "party",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
-	"Expense Claim": "Employee"
+	"Expense Claim": "employee_name"
 }
 
 PARTY_TYPES = {
@@ -43,6 +43,7 @@ class BankTransactionMatch:
 		self.amount = sum([x.get("amount") for x in self.bank_transactions]) or 0
 		self.currency = self.bank_transactions[0]["currency"] if self.bank_transactions else None
 		self.bank_account = self.bank_transactions[0]["bank_account"] if self.bank_transactions else None
+		self.account = frappe.db.get_value("Bank Account", self.bank_account, "account") if self.bank_account else None
 		self.company = frappe.db.get_value("Bank Account", self.bank_account, "company") if self.bank_account else get_default_company()
 
 	def get_linked_payments(self):
@@ -66,7 +67,6 @@ class BankTransactionMatch:
 		result = amount_matches + similar_transactions_matches
 		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
 			key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)
-
 		return [dict(x, **{"vgtSelected": True}) for x in output] if len(output) == 1 else self.check_matching_dates(output)
 
 	def get_linked_documents(self, document_names=None, unreconciled=True, filters=None):
@@ -82,6 +82,7 @@ class BankTransactionMatch:
 			query_filters.update(filters)
 
 		if unreconciled and self.document_type == "Expense Claim":
+			query_filters.update({"total_sanctioned_amount": ("!=", 0)})
 			query_or_filters.update({"unreconciled_amount": ("!=", 0), "total_amount_reimbursed": ("=", 0)})
 		elif unreconciled and self.document_type in ["Sales Invoice", "Purchase Invoice"]:
 			query_or_filters.update({"unreconciled_amount": ("!=", 0), "outstanding_amount": (">", 0)})
@@ -103,20 +104,22 @@ class BankTransactionMatch:
 
 		if self.document_type == "Payment Entry":
 			for result in query_result:
-				if (result.get("payment_type") == "Pay" and result.get("paid_from_account_currency") == self.currency):
+				if (result.get("paid_from_account_currency") == self.currency and result.get("paid_from") == self.account):
 					filtered_result.append(dict(result, **{
-						"amount": result.get("unreconciled_amount", 0) * -1,\
+						"amount": result.get("unreconciled_from_amount", 0) * -1,\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field)
+						"reference_string": result.get(reference_field),
+						"unreconciled_amount": result.get("unreconciled_from_amount", 0)
 					}))
 
-				elif (result.get("payment_type") == "Receive" and result.get("paid_to_account_currency") == self.currency):
+				elif (result.get("paid_to_account_currency") == self.currency and result.get("paid_to") == self.account):
 					filtered_result.append(dict(result, **{
-						"amount": result.get("unreconciled_amount", 0),\
+						"amount": result.get("unreconciled_to_amount", 0),\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field)
+						"reference_string": result.get(reference_field),
+						"unreconciled_amount": result.get("unreconciled_to_amount", 0)
 					}))
 
 		elif self.document_type == "Purchase Invoice":
@@ -141,7 +144,7 @@ class BankTransactionMatch:
 
 		elif self.document_type == "Expense Claim":
 			return [dict(x, **{
-				"amount": x.get("unreconciled_amount", 0) * -1,
+				"amount": x.get("total_amount_reimbursed", 0) - x.get("total_sanctioned_amount", 0),
 				"party": x.get(party_field),
 				"reference_date": x.get(date_field), \
 				"reference_string": x.get(reference_field)
@@ -153,9 +156,7 @@ class BankTransactionMatch:
 		return filtered_result
 
 	def get_linked_journal_entries(self, document_names=None, unreconciled=True, filters=None):
-		account = frappe.db.get_value("Bank Account", self.bank_account, "account")
-
-		child_query_filters = {"account_currency": self.currency, "account": account}
+		child_query_filters = {"account_currency": self.currency, "account": self.account, "docstatus": 1}
 		parent_query_filters = {"company": self.company}
 
 		if unreconciled:
@@ -172,21 +173,21 @@ class BankTransactionMatch:
 			fields=["name", "posting_date", "cheque_no", "cheque_date", "unreconciled_amount", "remark", "user_remark"])
 		parent_map = {x.get("name"): x for x in parent_query_result}
 
-		child_query_filters.update({"voucher_type": "Journal Entry", "voucher_no": ("in", [x.name for x in parent_query_result])})
+		child_query_filters.update({"parenttype": "Journal Entry", "parent": ("in", [x.name for x in parent_query_result])})
 
 		if filters:
 			child_query_filters.update(filters)
 
-		party_query_result = frappe.get_all("GL Entry", filters=child_query_filters, fields=["*"])
+		party_query_result = frappe.get_all("Journal Entry Account", filters=child_query_filters, fields=["*"])
 
 		result = [dict(x, **{
-			"name": parent_map.get(x.get("voucher_no"), {}).get("name"),
-			"amount": x.get("debit_in_account_currency") - x.get("credit_in_account_currency"), \
-			"posting_date": parent_map.get(x.get("voucher_no"), {}).get("posting_date"), \
-			"reference_date": parent_map.get(x.get("voucher_no"), {}).get("cheque_date"), \
-			"reference_string": parent_map.get(x.get("voucher_no"), {}).get("cheque_no") \
-				or parent_map.get(x.get("voucher_no"), {}).get("remark") or parent_map.get(x.get("voucher_no"), {}).get("userremark"), \
-			"unreconciled_amount": parent_map.get(x.get("voucher_no"), {}).get("unreconciled_amount")
+			"name": parent_map.get(x.get("parent"), {}).get("name"),
+			"amount": x.get("unreconciled_amount"), \
+			"posting_date": parent_map.get(x.get("parent"), {}).get("posting_date"), \
+			"reference_date": parent_map.get(x.get("parent"), {}).get("cheque_date"), \
+			"reference_string": parent_map.get(x.get("parent"), {}).get("cheque_no") \
+				or parent_map.get(x.get("parent"), {}).get("remark") or parent_map.get(x.get("parent"), {}).get("user_remark"), \
+			"unreconciled_amount": x.get("unreconciled_amount")
 			}) for x in party_query_result]
 
 		return [x for x in result if x.get("amount") and x.get("name")]
@@ -206,7 +207,7 @@ class BankTransactionMatch:
 			"Journal Entry": "cheque_date",
 			"Sales Invoice": "due_date",
 			"Purchase Invoice": "due_date",
-			"Expense Claim": "total_claimed_amount"
+			"Expense Claim": "posting_date"
 		}.get(self.document_type)
 
 	def get_reference_field(self):
@@ -278,7 +279,7 @@ class BankTransactionMatch:
 		for transaction in self.bank_transactions:
 			for bank_transaction in reconciled_bank_transactions:
 				if transaction.get("description") and bank_transaction.get("description"):
-					seq = difflib.SequenceMatcher(lambda x: x == " ", transaction.get("description"), bank_transaction.get("description"))
+					seq = difflib.SequenceMatcher(lambda x: x == " ", transaction.get("description", ""), bank_transaction.get("description", ""))
 
 					if seq.ratio() > 0.6:
 						bank_transaction["ratio"] = seq.ratio()
@@ -322,7 +323,7 @@ def get_statement_chart(account, start_date, end_date):
 		daily_balance.append(transaction.amount)
 		unallocated_amount.append(transaction.unallocated_amount)
 
-	bank_balance = np.cumsum(daily_balance)
+	bank_balance = np.round(np.cumsum(daily_balance), decimals=2)
 	mean_value = np.mean(bank_balance)
 
 	data = {

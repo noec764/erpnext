@@ -11,7 +11,7 @@ class OverAllowanceError(frappe.ValidationError): pass
 
 def validate_status(status, options):
 	if status not in options:
-		frappe.throw(_("Status must be one of {0}").format(comma_or(options)))
+		frappe.throw(_("Status must be one of {0}").format(comma_or([_(x) for x in options])))
 
 status_map = {
 	"Lead": [
@@ -32,6 +32,7 @@ status_map = {
 		["Draft", None],
 		["Open", "eval:self.docstatus==1"],
 		["Lost", "eval:self.status=='Lost'"],
+		["Expired", "eval:self.docstatus==1 and getdate(self.valid_till) < getdate(nowdate())"],
 		["Ordered", "has_sales_order"],
 		["Cancelled", "eval:self.docstatus==2"],
 	],
@@ -44,16 +45,6 @@ status_map = {
 		["Cancelled", "eval:self.docstatus==2"],
 		["Closed", "eval:self.status=='Closed'"],
 		["On Hold", "eval:self.status=='On Hold'"],
-	],
-	"Purchase Invoice": [
-		["Draft", None],
-		["Submitted", "eval:self.docstatus==1"],
-		["Paid", "eval:self.outstanding_amount==0 and self.docstatus==1"],
-		["Return", "eval:self.is_return==1 and self.docstatus==1"],
-		["Debit Note Issued", "eval:self.outstanding_amount <= 0 and self.docstatus==1 and self.is_return==0 and get_value('Purchase Invoice', {'is_return': 1, 'return_against': self.name, 'docstatus': 1})"],
-		["Unpaid", "eval:self.outstanding_amount > 0 and getdate(self.due_date) >= getdate(nowdate()) and self.docstatus==1"],
-		["Overdue", "eval:self.outstanding_amount > 0 and getdate(self.due_date) < getdate(nowdate()) and self.docstatus==1"],
-		["Cancelled", "eval:self.docstatus==2"],
 	],
 	"Purchase Order": [
 		["Draft", None],
@@ -69,6 +60,7 @@ status_map = {
 	"Delivery Note": [
 		["Draft", None],
 		["To Bill", "eval:self.per_billed < 100 and self.docstatus == 1"],
+		["Return Issued", "eval:self.per_returned == 100 and self.docstatus == 1"],
 		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
 		["Cancelled", "eval:self.docstatus==2"],
 		["Closed", "eval:self.status=='Closed'"],
@@ -76,6 +68,7 @@ status_map = {
 	"Purchase Receipt": [
 		["Draft", None],
 		["To Bill", "eval:self.per_billed < 100 and self.docstatus == 1"],
+		["Return Issued", "eval:self.per_returned == 100 and self.docstatus == 1"],
 		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
 		["Cancelled", "eval:self.docstatus==2"],
 		["Closed", "eval:self.status=='Closed'"],
@@ -97,6 +90,24 @@ status_map = {
 		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount!=0"],
 		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount==0"],
 		["Cancelled", "eval:self.docstatus == 2"]
+	],
+	"POS Opening Entry": [
+		["Draft", None],
+		["Open", "eval:self.docstatus == 1 and not self.pos_closing_entry"],
+		["Closed", "eval:self.docstatus == 1 and self.pos_closing_entry"],
+		["Cancelled", "eval:self.docstatus == 2"]
+	],
+	"Booking Credit": [
+		["Draft", None],
+		["Cancelled", "eval:self.docstatus == 2"],
+		["Active", "eval:self.docstatus == 1 and not self.is_expired"],
+		["Expired", "eval:self.docstatus == 1 and self.is_expired"]
+	],
+	"POS Closing Entry": [
+		["Draft", None],
+		["Submitted", "eval:self.docstatus == 1"],
+		["Queued", "eval:self.status == 'Queued'"],
+		["Cancelled", "eval:self.docstatus == 2"],
 	]
 }
 
@@ -216,7 +227,7 @@ class StatusUpdater(Document):
 		else:
 			action_msg = _('To allow over billing, update "Over Billing Allowance" in Accounts Settings or the Item.')
 
-		frappe.throw(_('This document is over limit by {0} {1} for item {4}. Are you making another {3} against the same {2}?')
+		frappe.throw(_('This document is over limit by a/an {0} of {1} for item {4}. Are you making another {3} against the same {2}?')
 			.format(
 				frappe.bold(_(item["target_ref_field"].title())),
 				frappe.bold(item["reduce_by"]),
@@ -239,7 +250,7 @@ class StatusUpdater(Document):
 
 			self._update_children(args, update_modified)
 
-			if "percent_join_field" in args:
+			if "percent_join_field" in args or "percent_join_field_parent" in args:
 				self._update_percent_field_in_targets(args, update_modified)
 
 	def _update_children(self, args, update_modified):
@@ -259,33 +270,43 @@ class StatusUpdater(Document):
 				if not args.get("second_source_extra_cond"):
 					args["second_source_extra_cond"] = ""
 
-				args['second_source_condition'] = """ + ifnull((select sum(%(second_source_field)s)
+				args['second_source_condition'] = frappe.db.sql(""" select ifnull((select sum(%(second_source_field)s)
 					from `tab%(second_source_dt)s`
 					where `%(second_join_field)s`="%(detail_id)s"
-					and (`tab%(second_source_dt)s`.docstatus=1) %(second_source_extra_cond)s), 0) """ % args
+					and (`tab%(second_source_dt)s`.docstatus=1)
+					%(second_source_extra_cond)s), 0) """ % args)[0][0]
 
 			if args['detail_id']:
 				if not args.get("extra_cond"): args["extra_cond"] = ""
 
-				frappe.db.sql("""update `tab%(target_dt)s`
-					set %(target_field)s = (
+				args["source_dt_value"] = frappe.db.sql("""
 						(select ifnull(sum(%(source_field)s), 0)
-							from `tab%(source_dt)s` where `%(join_field)s`="%(detail_id)s"
-							and (docstatus=1 %(cond)s) %(extra_cond)s)
-						%(second_source_condition)s
-					)
-					%(update_modified)s
+						from `tab%(source_dt)s` where `%(join_field)s`="%(detail_id)s"
+						and (docstatus=1 %(cond)s) %(extra_cond)s)
+						""" % args)[0][0] or 0.0
+
+				if args['second_source_condition']:
+					args["source_dt_value"] += flt(args['second_source_condition'])
+
+				frappe.db.sql("""update `tab%(target_dt)s`
+					set %(target_field)s = %(source_dt_value)s %(update_modified)s
 					where name='%(detail_id)s'""" % args)
 
 	def _update_percent_field_in_targets(self, args, update_modified=True):
 		"""Update percent field in parent transaction"""
-		distinct_transactions = set([d.get(args['percent_join_field'])
-			for d in self.get_all_children(args['source_dt'])])
+		if args.get('percent_join_field_parent'):
+			# if reference to target doc where % is to be updated, is
+			# in source doc's parent form, consider percent_join_field_parent
+			args['name'] = self.get(args['percent_join_field_parent'])
+			self._update_percent_field(args, update_modified)
+		else:
+			distinct_transactions = set([d.get(args['percent_join_field'])
+				for d in self.get_all_children(args['source_dt'])])
 
-		for name in distinct_transactions:
-			if name:
-				args['name'] = name
-				self._update_percent_field(args, update_modified)
+			for name in distinct_transactions:
+				if name:
+					args['name'] = name
+					self._update_percent_field(args, update_modified)
 
 	def _update_percent_field(self, args, update_modified=True):
 		"""Update percent field in parent transaction"""
@@ -360,10 +381,12 @@ class StatusUpdater(Document):
 			ref_doc.db_set("per_billed", per_billed)
 			ref_doc.set_status(update=True)
 
-def get_allowance_for(item_code, item_allowance={}, global_qty_allowance=None, global_amount_allowance=None, qty_or_amount="qty"):
+def get_allowance_for(item_code, item_allowance=None, global_qty_allowance=None, global_amount_allowance=None, qty_or_amount="qty"):
 	"""
 		Returns the allowance for the item, if not set, returns global allowance
 	"""
+	if item_allowance is None:
+		item_allowance = {}
 	if qty_or_amount == "qty":
 		if item_allowance.get(item_code, frappe._dict()).get("qty"):
 			return item_allowance[item_code].qty, item_allowance, global_qty_allowance, global_amount_allowance

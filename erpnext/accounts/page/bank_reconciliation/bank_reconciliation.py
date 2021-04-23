@@ -101,7 +101,7 @@ class BankReconciliation:
 		for bank_transaction in self.bank_transactions:
 			if abs(self.documents[0]["unreconciled_amount"]) > reconciled_amount:
 				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
-				allocated_amount = min(max(bank_transaction.unallocated_amount, 0), abs(self.documents[0]["unreconciled_amount"]))
+				allocated_amount = min(max(abs(bank_transaction.unallocated_amount), 0), abs(self.documents[0]["unreconciled_amount"]))
 				date_value = self.documents[0].get("reference_date")
 				if isinstance(date_value, str):
 					date_value = parse_date(date_value)
@@ -121,7 +121,7 @@ class BankReconciliation:
 	def reconcile_one_transaction_with_multiple_documents(self):
 		for document in self.documents:
 			bank_transaction = frappe.get_doc("Bank Transaction", self.bank_transactions[0]["name"])
-			date_value = document.get("reference_date")
+			date_value = document.get("reference_date") or document.get("date")
 			if isinstance(date_value, str):
 				date_value = parse_date(date_value)
 
@@ -186,9 +186,8 @@ class BankReconciliation:
 		account_currency = frappe.db.get_value("Account", bank_account.account, "account_currency")
 
 		paid_amount = received_amount = 0
-		outstanding_amount = sum([x.get("outstanding_amount") for x in self.documents])
 		amount_to_pay_or_receive = abs(transaction.get("unallocated_amount")) \
-				if abs(transaction.get("unallocated_amount")) <= outstanding_amount else outstanding_amount
+				if abs(transaction.get("unallocated_amount")) <= total_outstanding_amount else total_outstanding_amount
 		if party_account_currency == account_currency:
 			paid_amount = received_amount = amount_to_pay_or_receive
 		elif payment_type == "Receive":

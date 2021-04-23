@@ -4,13 +4,9 @@
 
 {%- block header -%}{% endblock %}
 
-{% block script %}
-<script>{% include "templates/includes/integrations/gocardless_confirmation.js" %}</script>
-{% endblock %}
-
 {%- block page_content -%}
 <div style="min-height: 50vh;">
-	<p class='lead text-center '>
+	<p class='lead text-center'>
 		<span class='gocardless-loading'>{{ _("Payment Confirmation") }}</span>
 	</p>
 </div>

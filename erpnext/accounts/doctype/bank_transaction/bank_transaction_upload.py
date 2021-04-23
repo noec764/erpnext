@@ -10,6 +10,7 @@ from frappe.utils import getdate, flt, formatdate
 from frappe.utils.dateutils import parse_date
 from six import iteritems
 from ofxtools.Parser import OFXTree
+from ofxtools.models.bank import STMTRS, CCSTMTRS
 
 @frappe.whitelist()
 def upload_csv_bank_statement():
@@ -88,14 +89,14 @@ def upload_ofx_bank_statement():
 			for stmt in stmts:
 				txs = stmt.transactions or []
 				for transaction in txs:
-					data.append(make_transaction_row(transaction, stmt.curdef))
+					data.append(make_transaction_row(stmt, transaction, stmt.curdef))
 	
 		return {"columns": columns, "data": data}
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
 		frappe.throw(_("OFX Parser Error. Please contact the support."))
 
-def make_transaction_row(transaction, currency=None):
+def make_transaction_row(stmt, transaction, currency=None):
 	return {
 		"id": transaction.fitid,
 		"type": transaction.trntype,
@@ -103,7 +104,8 @@ def make_transaction_row(transaction, currency=None):
 		"description": (transaction.name or "") + " | " + (transaction.memo or ""),
 		"debit": abs(transaction.trnamt) if flt(transaction.trnamt) < 0 else 0,
 		"credit": transaction.trnamt if flt(transaction.trnamt) > 0 else 0,
-		"currency": currency
+		"currency": currency,
+		"statement": "Bank" if type(stmt) == STMTRS else "Credit Card"
 	}
 
 @frappe.whitelist()

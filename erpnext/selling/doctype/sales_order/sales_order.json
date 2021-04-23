@@ -1,5 +1,6 @@
 {
  "allow_import": 1,
+ "allow_auto_repeat": 1,
  "autoname": "naming_series:",
  "creation": "2013-06-18 12:39:59",
  "doctype": "DocType",
@@ -59,9 +60,9 @@
   "base_total",
   "base_net_total",
   "column_break_33",
+  "total_net_weight",
   "total",
   "net_total",
-  "total_net_weight",
   "taxes_section",
   "tax_category",
   "column_break_38",
@@ -105,6 +106,8 @@
   "tc_name",
   "terms",
   "more_info",
+  "is_internal_customer",
+  "represents_company",
   "inter_company_order_reference",
   "project",
   "party_account_currency",
@@ -283,6 +286,7 @@
    "width": "100px"
   },
   {
+    "fetch_from": "customer.tax_id",
    "fieldname": "tax_id",
    "fieldtype": "Data",
    "label": "Tax Id",
@@ -766,6 +770,7 @@
    "fieldname": "base_in_words",
    "fieldtype": "Data",
    "label": "In Words (Company Currency)",
+   "length": 240,
    "oldfieldname": "in_words",
    "oldfieldtype": "Data",
    "print_hide": 1,
@@ -814,6 +819,7 @@
    "fieldname": "in_words",
    "fieldtype": "Data",
    "label": "In Words",
+   "length": 240,
    "oldfieldname": "in_words_export",
    "oldfieldtype": "Data",
    "print_hide": 1,
@@ -906,7 +912,8 @@
    "fieldname": "inter_company_order_reference",
    "fieldtype": "Link",
    "label": "Inter Company Order Reference",
-   "options": "Purchase Order"
+   "options": "Purchase Order",
+   "read_only": 1
   },
   {
    "description": "Track this Sales Order against any Project",
@@ -1140,6 +1147,7 @@
   },
   {
    "allow_on_submit": 1,
+   "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
    "label": "Auto Repeat Section",
@@ -1204,12 +1212,28 @@
    "label": "External Reference",
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "customer.is_internal_customer",
+   "fieldname": "is_internal_customer",
+   "fieldtype": "Check",
+   "label": "Is Internal Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.represents_company",
+   "fieldname": "represents_company",
+   "fieldtype": "Link",
+   "label": "Represents Company",
+   "options": "Company",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2019-10-23 14:26:42.767189",
+ "modified": "2021-01-20 23:40:39.929296",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
@@ -1283,7 +1307,7 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "customer",
- "title_field": "title",
+ "title_field": "customer_name",
  "track_changes": 1,
  "track_seen": 1
 }

@@ -8,8 +8,10 @@ import frappe, os, json
 from frappe import _
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
 from frappe.utils import cstr, getdate
-from erpnext.accounts.doctype.account.account import RootNotEditable
 from frappe.desk.doctype.global_search_settings.global_search_settings import update_global_search_doctypes
+
+from erpnext.accounts.doctype.account.account import RootNotEditable
+from erpnext.regional.address_template.setup import set_up_address_templates
 
 default_lead_sources = ["Existing Customer", "Reference", "Advertisement",
 	"Cold Calling", "Exhibition", "Supplier Reference", "Mass Mailing",
@@ -25,8 +27,9 @@ def install(country=None):
 		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
 		{ 'doctype': 'Domain', 'domain': 'Retail'},
 		{ 'doctype': 'Domain', 'domain': 'Services'},
+		{ 'doctype': 'Domain', 'domain': 'Venue'},
 
-		# address template
+		# ensure at least an empty Address Template exists for this Country
 		{'doctype':"Address Template", "country": country},
 
 		# item group
@@ -44,7 +47,7 @@ def install(country=None):
 			'is_group': 0, 'parent_item_group': _('All Item Groups') },
 
 		# salary component
-		{'doctype': 'Salary Component', 'salary_component': _('Income Tax'), 'description': _('Income Tax'), 'type': 'Deduction'},
+		{'doctype': 'Salary Component', 'salary_component': _('Income Tax'), 'description': _('Income Tax'), 'type': 'Deduction', 'is_income_tax_component': 1},
 		{'doctype': 'Salary Component', 'salary_component': _('Basic'), 'description': _('Basic'), 'type': 'Earning'},
 		{'doctype': 'Salary Component', 'salary_component': _('Arrear'), 'description': _('Arrear'), 'type': 'Earning'},
 		{'doctype': 'Salary Component', 'salary_component': _('Leave Encashment'), 'description': _('Leave Encashment'), 'type': 'Earning'},
@@ -89,8 +92,6 @@ def install(country=None):
 		{'doctype': 'Stock Entry Type', 'name': 'Send to Subcontractor', 'purpose': 'Send to Subcontractor'},
 		{'doctype': 'Stock Entry Type', 'name': 'Material Transfer for Manufacture', 'purpose': 'Material Transfer for Manufacture'},
 		{'doctype': 'Stock Entry Type', 'name': 'Material Consumption for Manufacture', 'purpose': 'Material Consumption for Manufacture'},
-		{'doctype': 'Stock Entry Type', 'name': 'Send to Warehouse', 'purpose': 'Send to Warehouse'},
-		{'doctype': 'Stock Entry Type', 'name': 'Receive at Warehouse', 'purpose': 'Receive at Warehouse'},
 
 		# Designation
 		{'doctype': 'Designation', 'designation_name': _('CEO')},
@@ -231,7 +232,10 @@ def install(country=None):
 		{"doctype": "Sales Stage", "stage_name": _("Identifying Decision Makers")},
 		{"doctype": "Sales Stage", "stage_name": _("Perception Analysis")},
 		{"doctype": "Sales Stage", "stage_name": _("Proposal/Price Quote")},
-		{"doctype": "Sales Stage", "stage_name": _("Negotiation/Review")}
+		{"doctype": "Sales Stage", "stage_name": _("Negotiation/Review")},
+
+		# Warehouse Type
+		{'doctype': 'Warehouse Type', 'name': 'Transit'},
 	]
 
 	from erpnext.setup.setup_wizard.data.industry_type import get_industry_types
@@ -258,12 +262,11 @@ def install(country=None):
 
 	# Records for the Supplier Scorecard
 	from erpnext.buying.doctype.supplier_scorecard.supplier_scorecard import make_default_records
+
 	make_default_records()
-
 	make_records(records)
-
+	set_up_address_templates(default_country=country)
 	set_more_defaults()
-
 	update_global_search_doctypes()
 
 	# path = frappe.get_app_path('erpnext', 'regional', frappe.scrub(country))
@@ -324,13 +327,14 @@ def add_uom_data():
 				"category_name": _(d.get("category"))
 			}).insert(ignore_permissions=True)
 
-		uom_conversion = frappe.get_doc({
-			"doctype": "UOM Conversion Factor",
-			"category": _(d.get("category")),
-			"from_uom": _(d.get("from_uom")),
-			"to_uom": _(d.get("to_uom")),
-			"value": d.get("value")
-		}).insert(ignore_permissions=True)
+		if not frappe.db.exists("UOM Conversion Factor", {"from_uom": _(d.get("from_uom")), "to_uom": _(d.get("to_uom"))}):
+			uom_conversion = frappe.get_doc({
+				"doctype": "UOM Conversion Factor",
+				"category": _(d.get("category")),
+				"from_uom": _(d.get("from_uom")),
+				"to_uom": _(d.get("to_uom")),
+				"value": d.get("value")
+			}).insert(ignore_permissions=True)
 
 def add_market_segments():
 	records = [
@@ -371,7 +375,7 @@ def install_company(args):
 		{
 			"doctype":"Company",
 			'company_name': args.company_name,
-			'enable_perpetual_inventory': 1,
+			'enable_perpetual_inventory': 0,
 			'abbr': args.company_abbr,
 			'default_currency': args.currency,
 			'country': args.country,
@@ -385,7 +389,8 @@ def install_company(args):
 
 
 def install_post_company_fixtures(args=None):
-	existing_parent = frappe.db.get_value("Department", filters={"parent_department": ""})
+	existing_parents = [x.name for x in frappe.get_all("Department", filters={"parent_department": ""}, fields=["name"])]
+	existing_parent = existing_parents[0] if existing_parents else None
 	root_department = existing_parent if existing_parent else _('All Departments')
 
 	records = [
@@ -453,7 +458,7 @@ def install_defaults(args=None):
 	stock_settings.save()
 
 	if args.bank_account:
-		from erpnext.setup.setup_wizard.operations.company_setup import create_bank_and_bank_account
+		from erpnext.setup.setup_wizard.operations.company_setup import create_bank_and_bank_account, create_accounting_journals
 		company_name = args.company_name
 		bank_account_group =  frappe.db.get_value("Account",
 			{"account_type": "Bank", "is_group": 1, "root_type": "Asset",
@@ -473,14 +478,13 @@ def install_defaults(args=None):
 				frappe.db.set_value("Company", args.company_name, "default_bank_account", bank_account.name, update_modified=False)
 
 				create_bank_and_bank_account(args.bank_account, doc.name)
+				create_accounting_journals(doc.name, company_name)
 
 			except RootNotEditable:
 				frappe.throw(_("Bank account cannot be named as {0}").format(args.bank_account))
 			except frappe.DuplicateEntryError:
 				# bank account same as a CoA entry
 				pass
-
-	add_dashboards()
 
 	# Now, with fixtures out of the way, onto concrete stuff
 	records = [
@@ -498,27 +502,6 @@ def install_defaults(args=None):
 	]
 
 	make_records(records)
-
-def add_dashboards():
-	from erpnext.setup.setup_wizard.data.dashboard_charts import get_company_for_dashboards
-
-	if not get_company_for_dashboards():
-		return
-
-	from erpnext.setup.setup_wizard.data.dashboard_charts import get_default_dashboards
-	from frappe.modules.import_file import import_file_by_path
-
-	dashboard_data = get_default_dashboards()
-
-	# create account balance timeline before creating dashbaord charts
-	doctype = "dashboard_chart_source"
-	docname = "account_balance_timeline"
-	folder = os.path.dirname(frappe.get_module("erpnext.accounts").__file__)
-	doc_path = os.path.join(folder, doctype, docname, docname) + ".json"
-	import_file_by_path(doc_path, force=0, for_sync=True)
-
-	make_records(dashboard_data["Charts"])
-	make_records(dashboard_data["Dashboards"])
 
 def get_fy_details(fy_start_date, fy_end_date):
 	start_year = getdate(fy_start_date).year

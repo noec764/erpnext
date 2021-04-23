@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from erpnext.controllers.status_updater import StatusUpdater
-from frappe.utils import flt, getdate, fmt_money
+from frappe.utils import flt, getdate, fmt_money, formatdate
 from functools import reduce
 from frappe import _
 from itertools import zip_longest
@@ -19,6 +19,7 @@ class BankTransaction(StatusUpdater):
 		self.check_transaction_references()
 
 	def before_save(self):
+		self.check_bank_account_head()
 		self.check_payment_types()
 		self.calculate_totals()
 		self.check_reconciliation_amounts()
@@ -31,6 +32,7 @@ class BankTransaction(StatusUpdater):
 		self.set_status()
 
 	def before_update_after_submit(self):
+		self.check_bank_account_head()
 		self.check_payment_types()
 		self.calculate_totals()
 
@@ -44,18 +46,19 @@ class BankTransaction(StatusUpdater):
 	def on_cancel(self):
 		for entry in self.payment_entries:
 			self.set_unreconciled_amount(entry, False)
+		self.set_status(update=True)
 
 	def check_similar_entries(self):
-		filters = {"date": self.date, "credit": self.credit, "debit": self.debit, \
-			"currency": self.currency, "bank_account": self.bank_account, "docstatus": 1}
+		if self.flags.import_statement and self.reference_number:
+			filters = {"reference_number": self.reference_number}
+		else:
+			filters = {"date": self.date, "credit": self.credit, "debit": self.debit, \
+				"currency": self.currency, "bank_account": self.bank_account, "docstatus": 1, "description": self.description}
 		similar_entries = frappe.get_all("Bank Transaction", filters=filters)
 
 		if similar_entries:
 			if self.flags.import_statement:
-				filters.update({"description": self.description})
-				similar_entries = frappe.get_all("Bank Transaction", filters=filters)
-				if similar_entries:
-					raise frappe.DuplicateEntryError
+				raise frappe.DuplicateEntryError
 			else:
 				frappe.msgprint(_("The following entries exist already with the same date, debit, credit and currency:<br>{0}").format(", ".join([x.get("name") for x in similar_entries])))
 
@@ -80,13 +83,38 @@ class BankTransaction(StatusUpdater):
 		updated_amount = (flt(unreconciled_amount) - flt(payment.allocated_amount)) \
 			if clear else (flt(unreconciled_amount) + flt(payment.allocated_amount))
 
-		frappe.db.set_value(payment.payment_document, payment.payment_entry, \
-			"unreconciled_amount", updated_amount)
+		if payment.payment_document == "Payment Entry":
+			paid_from, paid_to = frappe.db.get_value("Payment Entry", payment.payment_entry, ["paid_from", "paid_to"])
+
+			if paid_from == self.bank_account_head:
+				unreconciled_amount_field = "unreconciled_from_amount"
+			elif paid_to == self.bank_account_head:
+				unreconciled_amount_field = "unreconciled_to_amount"
+			else:
+				frappe.throw(_("This bank account could not be found on the selected payment document"))
+
+			unreconciled_split_amount = frappe.db.get_value(payment.payment_document, payment.payment_entry, unreconciled_amount_field)
+			updated_split_amount = (flt(unreconciled_split_amount) - flt(payment.allocated_amount)) if clear else (flt(unreconciled_split_amount) + flt(payment.allocated_amount))
+			frappe.db.set_value(payment.payment_document, payment.payment_entry, unreconciled_amount_field, updated_split_amount)
+
+		elif payment.payment_document == "Journal Entry":
+			journal_entry_accounts = frappe.get_all("Journal Entry Account", \
+				filters={"parent": payment.payment_entry, "parenttype": "Journal Entry", "account": self.bank_account_head}, \
+				fields=["name", "unreconciled_amount"])
+			total_split_amount = flt(payment.allocated_amount)
+			for journal_entry_account in journal_entry_accounts:
+				if total_split_amount > 0:
+					unreconciled_split_amount = journal_entry_account.unreconciled_amount
+					updated_split_amount = (flt(unreconciled_split_amount) - flt(payment.allocated_amount)) if clear else (flt(unreconciled_split_amount) + flt(payment.allocated_amount))
+					frappe.db.set_value("Journal Entry Account", journal_entry_account.name, "unreconciled_amount", max(updated_split_amount, 0))
+					total_split_amount = (total_split_amount - updated_split_amount) if updated_split_amount <= 0 else 0
+
+		frappe.db.set_value(payment.payment_document, payment.payment_entry, "unreconciled_amount", updated_amount)
 
 		if not clear:
 			self.set_payment_entries_clearance_date(True)
 
-		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status()
+		frappe.get_doc(payment.payment_document, payment.payment_entry).set_status(update=True)
 
 	def set_allocation_in_bank_transaction(self):
 		allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])\
@@ -134,8 +162,13 @@ class BankTransaction(StatusUpdater):
 			elif payment.payment_document == "Purchase Invoice":
 				payment.payment_type = "Credit" if not frappe.db.get_value("Purchase Invoice", payment.payment_entry, "is_return") else "Debit"
 			if payment.payment_document == "Payment Entry":
-				pt = frappe.db.get_value("Payment Entry", payment.payment_entry, "payment_type")
-				payment.payment_type = "Debit" if pt == "Receive" else "Credit"
+				paid_from, paid_to = frappe.db.get_value("Payment Entry", payment.payment_entry, ("paid_from", "paid_to"))
+				if self.bank_account_head == paid_from:
+					payment.payment_type = "Credit"
+				elif self.bank_account_head == paid_to:
+					payment.payment_type = "Debit"
+				else:
+					frappe.throw(_("This bank account could not be found on the selected payment document"))
 			if payment.payment_document == "Journal Entry":
 				bank_account = frappe.db.get_value("Bank Account", self.bank_account, "account")
 				debit_in_account_currency = frappe.db.get_value("Journal Entry Account", {"parent": payment.payment_entry, "account": bank_account}, "debit_in_account_currency")
@@ -146,6 +179,19 @@ class BankTransaction(StatusUpdater):
 	def calculate_totals(self):
 		self.total_debit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Debit"])
 		self.total_credit = sum([x.allocated_amount for x in self.payment_entries if x.payment_type == "Credit"])
+
+	@frappe.whitelist()
+	def close_transaction(self):
+		self.db_set("unallocated_amount", 0.0)
+		self.db_set("status", "Closed")
+
+	def check_bank_account_head(self):
+		if not self.bank_account_head:
+			self.bank_account_head = frappe.db.get_value("Bank Account", self.bank_account, "account")
+
+	def on_recurring(self, reference_doc, auto_repeat_doc):
+		self.date = auto_repeat_doc.next_schedule_date
+		self.reference_number = f"""{formatdate(self.date, "YYYYMMDD")}-{frappe.generate_hash("", 10)}"""
 
 def get_unreconciled_amount(payment_entry):
 	return frappe.db.get_value(payment_entry.payment_document, payment_entry.payment_entry, "unreconciled_amount")

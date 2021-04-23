@@ -6,6 +6,7 @@
     "creation": "2013-04-10 11:45:37",
     "doctype": "DocType",
     "document_type": "Document",
+    "email_append_to": 1,
     "engine": "InnoDB",
     "field_order": [
      "organization_lead",
@@ -33,6 +34,7 @@
      "notes",
      "address_info",
      "address_html",
+     "address_type",
      "address_title",
      "address_line1",
      "address_line2",
@@ -47,6 +49,7 @@
      "phone",
      "mobile_no",
      "fax",
+     "website",
      "more_info",
      "type",
      "market_segment",
@@ -54,8 +57,8 @@
      "request_type",
      "column_break3",
      "company",
-     "website",
      "territory",
+     "language",
      "unsubscribed",
      "title"
     ],
@@ -170,7 +173,6 @@
       "options": "Customer"
      },
      {
-      "depends_on": "eval: doc.source==\"Campaign\"",
       "fieldname": "campaign_name",
       "fieldtype": "Link",
       "label": "Campaign Name",
@@ -239,6 +241,7 @@
      },
      {
       "depends_on": "eval: doc.__islocal",
+      "description": "Home, Work, etc.",
       "fieldname": "address_title",
       "fieldtype": "Data",
       "label": "Address Title"
@@ -247,7 +250,8 @@
       "depends_on": "eval: doc.__islocal",
       "fieldname": "address_line1",
       "fieldtype": "Data",
-      "label": "Address Line 1"
+      "label": "Address Line 1",
+      "mandatory_depends_on": "eval: doc.address_title && doc.address_type"
      },
      {
       "depends_on": "eval: doc.__islocal",
@@ -259,7 +263,8 @@
       "depends_on": "eval: doc.__islocal",
       "fieldname": "city",
       "fieldtype": "Data",
-      "label": "City/Town"
+      "label": "City/Town",
+      "mandatory_depends_on": "eval: doc.address_title && doc.address_type"
      },
      {
       "depends_on": "eval: doc.__islocal",
@@ -278,14 +283,14 @@
       "fieldname": "country",
       "fieldtype": "Link",
       "label": "Country",
+      "mandatory_depends_on": "eval: doc.address_title && doc.address_type",
       "options": "Country"
      },
      {
       "depends_on": "eval: doc.__islocal",
       "fieldname": "pincode",
       "fieldtype": "Data",
-      "label": "Postal Code",
-      "options": "Country"
+      "label": "Postal Code"
      },
      {
       "fieldname": "column_break2",
@@ -303,7 +308,8 @@
       "fieldtype": "Data",
       "label": "Phone",
       "oldfieldname": "contact_no",
-      "oldfieldtype": "Data"
+      "oldfieldtype": "Data",
+      "options": "Phone"
      },
      {
       "depends_on": "eval: doc.__islocal",
@@ -311,7 +317,8 @@
       "fieldtype": "Data",
       "label": "Mobile No.",
       "oldfieldname": "mobile_no",
-      "oldfieldtype": "Data"
+      "oldfieldtype": "Data",
+      "options": "Phone"
      },
      {
       "depends_on": "eval: doc.__islocal",
@@ -426,13 +433,27 @@
       "fieldname": "contact_section",
       "fieldtype": "Section Break",
       "label": "Contact"
+     },
+     {
+        "default": "Billing",
+        "depends_on": "eval: doc.__islocal",
+        "fieldname": "address_type",
+        "fieldtype": "Select",
+        "label": "Address Type",
+        "options": "Billing\nShipping\nOffice\nPersonal\nPlant\nPostal\nShop\nSubsidiary\nWarehouse\nCurrent\nPermanent\nOther"
+      },
+      {
+       "fieldname": "language",
+       "fieldtype": "Link",
+       "label": "Print Language",
+       "options": "Language"
      }
     ],
     "icon": "fa fa-user",
     "idx": 5,
     "image_field": "image",
     "links": [],
-    "modified": "2020-04-05 16:00:44.239168",
+    "modified": "2021-01-06 19:39:58.748978",
     "modified_by": "Administrator",
     "module": "CRM",
     "name": "Lead",
@@ -489,20 +510,13 @@
       "read": 1,
       "report": 1,
       "role": "Sales User"
-     },
-     {
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "Guest",
-      "share": 1
      }
     ],
     "search_fields": "lead_name,lead_owner,status",
+    "sender_field": "email_id",
     "show_name_in_global_search": 1,
     "sort_field": "modified",
     "sort_order": "DESC",
+    "subject_field": "title",
     "title_field": "title"
    }

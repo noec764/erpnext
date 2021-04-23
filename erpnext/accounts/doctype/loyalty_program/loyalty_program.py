@@ -7,7 +7,7 @@ import frappe
 
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import today, flt, fmt_money
+from frappe.utils import today, flt
 
 class LoyaltyProgram(Document):
 	pass
@@ -36,7 +36,8 @@ def get_loyalty_details(customer, loyalty_program, expiry_date=None, company=Non
 		return {"loyalty_points": 0, "total_spent": 0}
 
 @frappe.whitelist()
-def get_loyalty_program_details_with_points(customer, loyalty_program=None, expiry_date=None, company=None, silent=False, include_expired_entry=False, current_transaction_amount=0):
+def get_loyalty_program_details_with_points(customer, loyalty_program=None, expiry_date=None, company=None, \
+		silent=False, include_expired_entry=False, current_transaction_amount=0):
 	lp_details = get_loyalty_program_details(customer, loyalty_program, company=company, silent=silent)
 	loyalty_program = frappe.get_doc("Loyalty Program", loyalty_program)
 	lp_details.update(get_loyalty_details(customer, loyalty_program.name, expiry_date, company, include_expired_entry))
@@ -59,10 +60,10 @@ def get_loyalty_program_details(customer, loyalty_program=None, expiry_date=None
 	if not loyalty_program:
 		loyalty_program = frappe.db.get_value("Customer", customer, "loyalty_program")
 
-		if not (loyalty_program or silent):
+		if not loyalty_program and not silent:
 			frappe.throw(_("Customer isn't enrolled in any Loyalty Program"))
 		elif silent and not loyalty_program:
-			return frappe._dict({"loyalty_program": None})
+			return frappe._dict({"loyalty_programs": None})
 
 	if not company:
 		company = frappe.db.get_default("company") or frappe.get_all("Company")[0].name
@@ -83,17 +84,6 @@ def get_redeemption_factor(loyalty_program=None, customer=None):
 	else:
 		frappe.throw(_("Customer isn't enrolled in any Loyalty Program"))
 
-@frappe.whitelist()
-def get_redeemed_amount(customer, points_redeemed, grand_total, currency=None):
-	redeemption_factor = get_redeemption_factor(customer=customer)
-	redeemed_amount = flt(points_redeemed) * flt(redeemption_factor)
-
-	return {
-		"loyalty_amount": fmt_money(redeemed_amount, currency=currency),
-		"remaining_amount": fmt_money(flt(grand_total) - redeemed_amount, currency=currency),
-		"redeemable_points": flt(grand_total) /flt(redeemption_factor),
-		"redeem_accepted": redeemed_amount <= flt(grand_total)
-	}
 
 def validate_loyalty_points(ref_doc, points_to_redeem):
 	loyalty_program = None

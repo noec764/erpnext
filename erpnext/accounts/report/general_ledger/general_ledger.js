@@ -18,6 +18,12 @@ frappe.query_reports["General Ledger"] = {
 			"options": "Finance Book"
 		},
 		{
+			"fieldname":"accounting_journal",
+			"label": __("Accounting Journal"),
+			"fieldtype": "Link",
+			"options": "Accounting Journal"
+		},
+		{
 			"fieldname":"from_date",
 			"label": __("From Date"),
 			"fieldtype": "Date",
@@ -53,7 +59,7 @@ frappe.query_reports["General Ledger"] = {
 			"label": __("Voucher No"),
 			"fieldtype": "Data",
 			on_change: function() {
-				frappe.query_report.set_filter_value('group_by', "");
+				frappe.query_report.set_filter_value('group_by', "Group by Voucher (Consolidated)");
 			}
 		},
 		{
@@ -147,6 +153,12 @@ frappe.query_reports["General Ledger"] = {
 			}
 		},
 		{
+			"fieldname": "include_dimensions",
+			"label": __("Consider Accounting Dimensions"),
+			"fieldtype": "Check",
+			"default": 0
+		},
+		{
 			"fieldname": "show_opening_entries",
 			"label": __("Show Opening Entries"),
 			"fieldtype": "Check"
@@ -156,16 +168,14 @@ frappe.query_reports["General Ledger"] = {
 			"label": __("Include Default Book Entries"),
 			"fieldtype": "Check",
 			"default": 1
+		},
+		{
+			"fieldname": "show_cancelled_entries",
+			"label": __("Show Cancelled Entries"),
+			"fieldtype": "Check"
 		}
 	]
 }
 
-erpnext.dimension_filters.forEach((dimension) => {
-	frappe.query_reports["General Ledger"].filters.splice(15, 0 ,{
-		"fieldname": dimension["fieldname"],
-		"label": __(dimension["label"]),
-		"fieldtype": "Link",
-		"options": dimension["document_type"]
-	});
-});
+erpnext.utils.add_dimensions('General Ledger', 15)
 

@@ -12,35 +12,29 @@ def create_sales_tax(args):
 		for sales_tax, tax_data in country_wise_tax.items():
 			make_tax_account_and_template(
 				args.get("company_name"),
-				tax_data.get('account_name'),
-				tax_data.get('tax_rate'), sales_tax)
+				tax_data, sales_tax)
 
-def make_tax_account_and_template(company, account_name, tax_rate, template_name=None):
-	if not isinstance(account_name, (list, tuple)):
-		account_name = [account_name]
-		tax_rate = [tax_rate]
-
-	accounts = []
-	for i, name in enumerate(account_name):
-		tax_account = make_tax_account(company, account_name[i], tax_rate[i])
-		if tax_account:
-			accounts.append(tax_account)
+def make_tax_account_and_template(company, tax_data, template_name=None):
+	for tax in tax_data.get("taxes"):
+		tax["tax_account"] = make_tax_account(company, tax.get("account_name"), tax.get("rate"), tax.get("account_number"))
 
 	try:
-		if accounts:
-			make_sales_and_purchase_tax_templates(accounts, template_name)
+		make_sales_and_purchase_tax_templates(company, tax_data, template_name)
+		make_item_tax_templates(company, tax_data, template_name)
 	except frappe.NameError:
 		if frappe.message_log: frappe.message_log.pop()
 	except RootNotEditable:
 		pass
 
-def make_tax_account(company, account_name, tax_rate):
-	tax_group = get_tax_account_group(company)
+def make_tax_account(company, account_name, tax_rate, account_number=None):
+	tax_group = get_tax_account_group(company, account_number)
+
 	if tax_group:
 		try:
 			return frappe.get_doc({
 				"doctype":"Account",
 				"company": company,
+				"account_number": account_number,
 				"parent_account": tax_group,
 				"account_name": account_name,
 				"is_group": 0,
@@ -52,39 +46,73 @@ def make_tax_account(company, account_name, tax_rate):
 		except frappe.NameError:
 			if frappe.message_log: frappe.message_log.pop()
 			abbr = frappe.get_cached_value('Company',  company,  'abbr')
-			account = '{0} - {1}'.format(account_name, abbr)
+			account = '{0} - {1}'.format(account_name, abbr) if not account_number else '{0} - {1} - {2}'.format(account_number, account_name, abbr)
 			return frappe.get_doc('Account', account)
 
-def make_sales_and_purchase_tax_templates(accounts, template_name=None):
+def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None):
 	if not template_name:
-		template_name = accounts[0].name
+		template_name = tax_data.get("taxes", [])[0].get("account_name")
 
 	sales_tax_template = {
 		"doctype": "Sales Taxes and Charges Template",
 		"title": template_name,
-		"company": accounts[0].company,
+		"company": company,
+		"is_default": tax_data.get("default", 0),
 		'taxes': []
 	}
 
-	for account in accounts:
-		sales_tax_template['taxes'].append({
-			"category": "Total",
-			"charge_type": "On Net Total",
-			"account_head": account.name,
-			"description": "{0} @ {1}".format(account.account_name, account.tax_rate),
-			"rate": account.tax_rate
-		})
+	for tax_details in tax_data.get("taxes"):
+		if tax_details.get("tax_account"):
+			tax_details.update({
+				"category": "Total",
+				"charge_type": "On Net Total",
+				"account_head": tax_details.get("tax_account", {}).get("name"),
+				"description": tax_details.get("description") or tax_details.get("account_name")
+			})
+			sales_tax_template['taxes'].append(tax_details)
+
 	# Sales
-	frappe.get_doc(copy.deepcopy(sales_tax_template)).insert(ignore_permissions=True)
+	if not tax_data.get("purchase_tax"):
+		frappe.get_doc(copy.deepcopy(sales_tax_template)).insert(ignore_permissions=True)
 
 	# Purchase
-	purchase_tax_template = copy.deepcopy(sales_tax_template)
-	purchase_tax_template["doctype"] = "Purchase Taxes and Charges Template"
+	if not tax_data.get("sales_tax"):
+		purchase_tax_template = copy.deepcopy(sales_tax_template)
+		purchase_tax_template["doctype"] = "Purchase Taxes and Charges Template"
 
-	doc = frappe.get_doc(purchase_tax_template)
-	doc.insert(ignore_permissions=True)
+		doc = frappe.get_doc(purchase_tax_template)
+		doc.insert(ignore_permissions=True)
 
-def get_tax_account_group(company):
+def make_item_tax_templates(company, tax_data, template_name=None):
+	if not template_name:
+		template_name = tax_data.get("taxes", [])[0].get("account_name")
+
+	item_tax_template = {
+		"doctype": "Item Tax Template",
+		"title": template_name,
+		"company": company,
+		'taxes': []
+	}
+
+	for tax_details in tax_data.get("taxes"):
+		if tax_details.get("tax_account"):
+			item_tax_template['taxes'].append({
+				"tax_type": tax_details.get("tax_account", {}).get("name"),
+				"tax_rate": tax_details.get("rate", 0)
+			})
+
+	# Items
+	frappe.get_doc(copy.deepcopy(item_tax_template)).insert(ignore_permissions=True)
+
+def get_tax_account_group(company, account_number=None):
+	if account_number:
+		tax_groups = frappe.get_all("Account",
+			filters={"is_group": 1, "company": company, "account_number": ("in", (account_number[:-1], account_number[:-2]))},
+			order_by="lft DESC")
+
+		if tax_groups:
+			tax_group = tax_groups[0]
+
 	tax_group = frappe.db.get_value("Account",
 		{"account_name": "Duties and Taxes", "is_group": 1, "company": company})
 	if not tax_group:

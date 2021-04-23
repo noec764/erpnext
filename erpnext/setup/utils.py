@@ -39,7 +39,7 @@ def before_tests():
 			"fy_end_date"		:"2011-12-31",
 			"language"			:"english",
 			"company_tagline"	:"Testing",
-			"email"				:"test@erpnext.com",
+			"email"				:"test@dokos.io",
 			"password"			:"test",
 			"chart_of_accounts" : "Standard",
 			"domains"			: ["Manufacturing"],
@@ -142,6 +142,6 @@ def insert_record(records):
 				raise
 
 def welcome_email():
-	site_name = get_default_company()
+	site_name = get_default_company() or "Dokos"
 	title = _("Welcome to {0}").format(site_name)
 	return title

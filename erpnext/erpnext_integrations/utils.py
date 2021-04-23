@@ -41,3 +41,11 @@ def get_webhook_address(connector_name, method, exclude_uri=False):
 	server_url = '{uri.scheme}://{uri.netloc}/api/method/{endpoint}'.format(uri=urlparse(url), endpoint=endpoint)
 
 	return server_url
+
+def get_tracking_url(carrier, tracking_number):
+	# Return the formatted Tracking URL.
+	tracking_url = ''
+	url_reference = frappe.get_value('Parcel Service', carrier, 'url_reference')
+	if url_reference:
+		tracking_url = frappe.render_template(url_reference, {'tracking_number': tracking_number})
+	return tracking_url

@@ -73,7 +73,7 @@ def get_gl_entries(filters):
 			sum(gl.debit_in_account_currency) as debitCurr, sum(gl.credit_in_account_currency) as creditCurr,
 			gl.voucher_type, gl.voucher_no, gl.against_voucher_type,
 			gl.against_voucher, gl.account_currency, gl.against,
-			gl.party_type, gl.party,
+			gl.party_type, gl.party, gl.accounting_journal,
 			inv.name as InvName, inv.title as InvTitle, inv.posting_date as InvPostDate,
 			pur.name as PurName, pur.title as PurTitle, pur.posting_date as PurPostDate,
 			jnl.cheque_no as JnlRef, jnl.posting_date as JnlPostDate, jnl.title as JnlTitle,
@@ -107,12 +107,8 @@ def get_result_as_list(data, filters):
 	party_data = [x for x in data if x.get("against_voucher")]
 
 	for d in data:
-		JournalCode = re.split("-|/|[0-9]", d.get("voucher_no"))[0]
-
-		if d.get("voucher_no").startswith("{0}-".format(JournalCode)) or d.get("voucher_no").startswith("{0}/".format(JournalCode)):
-			EcritureNum = re.split("-|/", d.get("voucher_no"))[1]
-		else:
-			EcritureNum = re.search("{0}(\d+)".format(JournalCode), d.get("voucher_no"), re.IGNORECASE).group(1)
+		JournalCode = d.get("accounting_journal") or re.split("-|/|[0-9]", d.get("voucher_no"))[0]
+		EcritureNum = d.get("GlName")
 
 		EcritureDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 

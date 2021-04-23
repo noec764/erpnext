@@ -22,6 +22,13 @@ frappe.ready(() => {
 			},
 			{
 				fieldtype: 'Data',
+				label: __('Phone Number'),
+				fieldname: 'phone',
+				options: 'Phone',
+				reqd: 1
+			},
+			{
+				fieldtype: 'Data',
 				label: __('Subject'),
 				fieldname: 'subject',
 				reqd: 1
@@ -59,7 +66,7 @@ frappe.ready(() => {
 	$('.btn-inquiry').click((e) => {
 		const $btn = $(e.target);
 		const item_code = $btn.data('item-code');
-		d.set_value('subject', 'Inquiry about ' + item_code);
+		d.set_value('subject', __('Inquiry about') + " " + item_code);
 		if (!['Administrator', 'Guest'].includes(frappe.session.user)) {
 			d.set_value('email_id', frappe.session.user);
 			d.set_value('lead_name', frappe.get_cookie('full_name'));
