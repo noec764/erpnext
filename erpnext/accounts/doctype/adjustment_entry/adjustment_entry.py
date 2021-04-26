@@ -2,6 +2,7 @@
 # Copyright (c) 2021, Dokos SAS and contributors
 # For license information, please see license.txt
 
+from collections import defaultdict
 import datetime
 import frappe
 from frappe.model.document import Document
@@ -58,23 +59,40 @@ def get_documents(entry_type, date, company):
 		AND account in ({account_list})
 	""", as_dict=True)
 
-	gl_by_document = {gl_entry.voucher_no: {} for gl_entry in gl_entries}
+	gl_by_document = {gl_entry.voucher_no: defaultdict(list) for gl_entry in gl_entries}
 	for gl_entry in gl_entries:
-		gl_by_document[gl_entry.voucher_no].update({
-			gl_entry.account: (gl_entry.debit, gl_entry.credit)
-		})
+		if gl_entry.account in gl_by_document[gl_entry.voucher_no]:
+			gl_by_document[gl_entry.voucher_no][gl_entry.account][0] += gl_entry.debit
+			gl_by_document[gl_entry.voucher_no][gl_entry.account][1] += gl_entry.credit
+		else:
+			gl_by_document[gl_entry.voucher_no][gl_entry.account] = [gl_entry.debit, gl_entry.credit]
 
+	total_credit = 0.0
+	total_debit = 0.0
+	total_posting_amount = 0.0
 	for document in documents:
 		debit = gl_by_document.get(document.document_name, {}).get(document.account, [0.0, 0.0])[0]
+		total_debit += debit
+
 		credit = gl_by_document.get(document.document_name, {}).get(document.account, [0.0, 0.0])[1]
+		total_credit += credit
+
 		net_amount = abs(debit - credit)
+		posting_amount = get_posting_amount(document.to_date, date, net_amount)
+		total_posting_amount += posting_amount
+
 		document.update({
 			"debit": debit,
 			"credit": credit,
-			"posting_amount": get_posting_amount(document.to_date, date, net_amount)
+			"posting_amount": posting_amount
 		})
 
-	return documents
+	return {
+		"documents": documents,
+		"total_debit": total_debit,
+		"total_credit": total_credit,
+		"total_posting_amount": total_posting_amount
+	}
 
 def get_posting_amount(to_date, date, net_amount):
 	no_of_days = 0.0

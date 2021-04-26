@@ -16,8 +16,17 @@
   "company",
   "accounting_journal",
   "section_break_8",
+  "adjustement_account",
+  "column_break_10",
+  "reversal_date",
+  "section_break_17",
   "get_documents",
   "details",
+  "section_break_12",
+  "total_credit",
+  "total_debit",
+  "column_break_15",
+  "total_posting_amount",
   "section_break_10",
   "auto_repeat",
   "amended_from"
@@ -104,12 +113,57 @@
    "fieldname": "get_documents",
    "fieldtype": "Button",
    "label": "Get documents"
+  },
+  {
+   "fieldname": "adjustement_account",
+   "fieldtype": "Link",
+   "label": "Adjustement Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reversal_date",
+   "fieldtype": "Date",
+   "label": "Reversal Date"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_credit",
+   "fieldtype": "Currency",
+   "label": "Total Credit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_debit",
+   "fieldtype": "Currency",
+   "label": "Total Debit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_posting_amount",
+   "fieldtype": "Currency",
+   "label": "Total posting amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-04-22 09:48:34.375243",
+ "modified": "2021-04-25 15:07:24.709761",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Adjustment Entry",

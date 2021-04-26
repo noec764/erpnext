@@ -11,11 +11,19 @@ frappe.ui.form.on('Adjustment Entry', {
 				company: frm.doc.company
 			}
 		}).then(r => {
+			console.log(r.message)
 			frm.clear_table('details')
-			r.message.forEach((d) => {
+			r.message.documents.forEach((d) => {
 				frm.add_child("details",d);
 			});
-			refresh_field("details");
+			frm.refresh_field("details");
+
+			frm.set_value("total_debit", r.message.total_debit);
+			frm.refresh_field("total_debit");;
+			frm.set_value("total_credit", r.message.total_credit);
+			frm.refresh_field("total_credit");
+			frm.set_value("total_posting_amount", r.message.total_posting_amount);
+			frm.refresh_field("total_posting_amount");
 		})
 	}
 });
