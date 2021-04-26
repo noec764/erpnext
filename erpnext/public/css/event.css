@@ -6,6 +6,7 @@
 }
 
 .custom .section-body {
+	display: flex !important;
 	padding: 0 !important;
 }
 
