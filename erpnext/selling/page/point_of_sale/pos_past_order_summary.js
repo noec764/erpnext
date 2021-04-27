@@ -100,7 +100,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 		function get_rate_discount_html() {
 			if (item_data.rate && item_data.price_list_rate && item_data.rate !== item_data.price_list_rate) {
-				return `<span class="item-disc">(${item_data.discount_percentage}% off)</span>
+				return `<span class="item-disc">(${item_data.discount_percentage}% ${_("off", null, "Point of sale")})</span>
 						<div class="item-rate">${format_currency(item_data.rate, doc.currency)}</div>`;
 			} else {
 				return `<div class="item-rate">${format_currency(item_data.price_list_rate || item_data.rate, doc.currency)}</div>`;
@@ -111,7 +111,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 	get_discount_html(doc) {
 		if (doc.discount_amount) {
 			return `<div class="summary-row-wrapper">
-						<div>Discount (${doc.additional_discount_percentage} %)</div>
+						<div>${__("Discount")} (${doc.additional_discount_percentage} %)</div>
 						<div>${format_currency(doc.discount_amount, doc.currency)}</div>
 					</div>`;
 		} else {
@@ -121,7 +121,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 	get_net_total_html(doc) {
 		return `<div class="summary-row-wrapper">
-					<div>Net Total</div>
+					<div>${__("Net Total")}</div>
 					<div>${format_currency(doc.net_total, doc.currency)}</div>
 				</div>`;
 	}
@@ -144,7 +144,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 	get_grand_total_html(doc) {
 		return `<div class="summary-row-wrapper grand-total">
-					<div>Grand Total</div>
+					<div>${(__("Grand Total")}</div>
 					<div>${format_currency(doc.grand_total, doc.currency)}</div>
 				</div>`;
 	}

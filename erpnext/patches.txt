@@ -715,6 +715,7 @@ erpnext.patches.v12_0.add_gst_category_in_delivery_note
 erpnext.patches.v12_0.purchase_receipt_status
 erpnext.patches.v13_0.fix_non_unique_represents_company
 erpnext.patches.v13_0.update_shipment_status
+erpnext.patches.v13_0.remove_attribute_field_from_item_variant_setting
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain

@@ -126,10 +126,10 @@ erpnext.PointOfSale.ItemCart = class {
 			},
 			cols: 5,
 			keys: [
-				[ 1, 2, 3, 'Quantity' ],
-				[ 4, 5, 6, 'Discount' ],
-				[ 7, 8, 9, 'Rate' ],
-				[ '.', 0, 'Delete', 'Remove' ]
+				[ 1, 2, 3, __('Quantity') ],
+				[ 4, 5, 6, __('Discount') ],
+				[ 7, 8, 9, __('Rate') ],
+				[ '.', 0, __('Delete'), __('Remove') ]
 			],
 			css_classes: [
 				[ '', '', '', 'col-span-2' ],
@@ -220,8 +220,8 @@ erpnext.PointOfSale.ItemCart = class {
 				if (typeof btn !== 'string') continue; // do not make shortcuts for numbers
 
 				let shortcut_key = `ctrl+${frappe.scrub(String(btn))[0]}`;
-				if (btn === 'Delete') shortcut_key = 'ctrl+backspace';
-				if (btn === 'Remove') shortcut_key = 'shift+ctrl+backspace'
+				if (btn === __('Delete')) shortcut_key = 'ctrl+backspace';
+				if (btn === __('Remove')) shortcut_key = 'shift+ctrl+backspace'
 				if (btn === '.') shortcut_key = 'ctrl+>';
 
 				// to account for fieldname map
@@ -387,7 +387,7 @@ erpnext.PointOfSale.ItemCart = class {
 							'border': '1px dashed var(--gray-500)',
 							'padding': 'var(--padding-sm) var(--padding-md)'
 						});
-						me.$add_discount_elem.html(`${me.get_discount_icon()} Add Discount`);
+						me.$add_discount_elem.html(`${me.get_discount_icon()} ${__("Add Discount")}`);
 						me.discount_field = undefined;
 					}
 				},
@@ -485,11 +485,11 @@ erpnext.PointOfSale.ItemCart = class {
 	render_net_total(value) {
 		const currency = this.events.get_frm().doc.currency;
 		this.$totals_section.find('.net-total-container').html(
-			`<div>Net Total</div><div>${format_currency(value, currency)}</div>`
+			`<div>${__("Net Total")}</div><div>${format_currency(value, currency)}</div>`
 		)
 
 		this.$numpad_section.find('.numpad-net-total').html(
-			`<div>Net Total: <span>${format_currency(value, currency)}</span></div>`
+			`<div>${(__("Net Total:")} <span>${format_currency(value, currency)}</span></div>`
 		);
 	}
 	
@@ -702,7 +702,7 @@ erpnext.PointOfSale.ItemCart = class {
 
 		if (action_is_field_edit) {
 			if (!action_is_allowed) {
-				const label = current_action == 'rate' ? 'Rate'.bold() : 'Discount'.bold();
+				const label = current_action == 'rate' ? __('Rate').bold() : __('Discount').bold();
 				const message = __('Editing {0} is not allowed as per POS Profile settings', [label]);
 				frappe.show_alert({
 					indicator: 'red',
