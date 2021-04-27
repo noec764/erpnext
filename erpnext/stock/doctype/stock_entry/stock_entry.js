@@ -29,7 +29,7 @@ frappe.ui.form.on('Stock Entry', {
 			return {
 				filters: [
 					['Stock Entry', 'docstatus', '=', 1],
-					['Stock Entry', 'per_transferred', '<','100']
+					['Stock Entry', 'per_transferred', '<','100'],
 				]
 			}
 		});
@@ -89,12 +89,14 @@ frappe.ui.form.on('Stock Entry', {
 				}
 
 				filters["warehouse"] = item.s_warehouse || item.t_warehouse;
+
 				return {
 					query : "erpnext.controllers.queries.get_batch_no",
 					filters: filters
 				}
 			}
 		});
+
 
 		frm.add_fetch("bom_no", "inspection_required", "inspection_required");
 		erpnext.accounts.dimensions.setup_dimension_filters(frm, frm.doctype);
@@ -233,7 +235,7 @@ frappe.ui.form.on('Stock Entry', {
 						docstatus: 1
 					}
 				})
-			}, __("Get items from"));
+			}, __("Get Items From"));
 
 			frm.add_custom_button(__('Material Request'), function() {
 				const allowed_request_types = ["Material Transfer", "Material Issue", "Customer Provided"];
@@ -270,7 +272,7 @@ frappe.ui.form.on('Stock Entry', {
 						status: ["not in", ["Transferred", "Issued"]]
 					}
 				})
-			}, __("Get items from"));
+			}, __("Get Items From"));
 		}
 		if (frm.doc.docstatus===0 && frm.doc.purpose == "Material Issue") {
 			frm.add_custom_button(__('Expired Batches'), function() {
@@ -293,7 +295,7 @@ frappe.ui.form.on('Stock Entry', {
 						}
 					}
 				});
-			}, __("Get items from"));
+			}, __("Get Items From"));
 		}
 
 		frm.events.show_bom_custom_button(frm);
@@ -312,7 +314,7 @@ frappe.ui.form.on('Stock Entry', {
 	},
 
 	stock_entry_type: function(frm){
-		frm.remove_custom_button('Bill of Materials', "Get items from");
+		frm.remove_custom_button('Bill of Materials', "Get Items From");
 		frm.events.show_bom_custom_button(frm);
 		frm.trigger('add_to_transit');
 	},
@@ -362,7 +364,6 @@ frappe.ui.form.on('Stock Entry', {
 				if (!r.exe && r.message){
 					frappe.model.set_value(cdt, cdn, "serial_no", r.message);
 				}
-
 				if (callback) {
 					callback();
 				}
@@ -458,9 +459,9 @@ frappe.ui.form.on('Stock Entry', {
 	show_bom_custom_button: function(frm){
 		if (frm.doc.docstatus === 0 &&
 			['Material Issue', 'Material Receipt', 'Material Transfer', 'Send to Subcontractor'].includes(frm.doc.purpose)) {
-				frm.add_custom_button(__('Bill of Materials'), function() {
-					frm.events.get_items_from_bom(frm);
-				}, __("Get items from"));
+			frm.add_custom_button(__('Bill of Materials'), function() {
+				frm.events.get_items_from_bom(frm);
+			}, __("Get Items From"));
 		}
 	},
 
@@ -544,13 +545,12 @@ frappe.ui.form.on('Stock Entry', {
 	calculate_amount: function(frm) {
 		frm.events.calculate_total_additional_costs(frm);
 		let total_basic_amount = 0;
-
 		if (in_list(["Repack", "Manufacture"], frm.doc.purpose)) {
 			total_basic_amount = frappe.utils.sum(
 				(frm.doc.items || []).map(function(i) {
 					return i.is_finished_item ? flt(i.basic_amount) : 0;
 				})
-			)
+			);
 		} else {
 			total_basic_amount = frappe.utils.sum(
 				(frm.doc.items || []).map(function(i) {
@@ -558,7 +558,6 @@ frappe.ui.form.on('Stock Entry', {
 				})
 			);
 		}
-
 		for (let i in frm.doc.items) {
 			let item = frm.doc.items[i];
 
@@ -571,8 +570,7 @@ frappe.ui.form.on('Stock Entry', {
 			item.amount = flt(item.basic_amount + flt(item.additional_cost), precision("amount", item));
 
 			if (flt(item.transfer_qty)) {
-				item.valuation_rate = flt(flt(item.basic_rate)
-					+ (flt(item.additional_cost) / flt(item.transfer_qty)),
+				item.valuation_rate = flt(flt(item.basic_rate) + (flt(item.additional_cost) / flt(item.transfer_qty)),
 					precision("valuation_rate", item));
 			}
 		}
@@ -629,7 +627,7 @@ frappe.ui.form.on('Stock Entry', {
 	apply_putaway_rule: function (frm) {
 		if (frm.doc.apply_putaway_rule) erpnext.apply_putaway_rule(frm, frm.doc.purpose);
 	}
-})
+});
 
 frappe.ui.form.on('Stock Entry Detail', {
 	qty: function(frm, cdt, cdn) {
@@ -1060,8 +1058,8 @@ erpnext.stock.select_batch_and_serial_no = (frm, item) => {
 		new erpnext.SerialNoBatchSelector({
 			frm: frm,
 			item: item,
-			warehouse_details: get_warehouse_type_and_name(item),
-		});
+			warehouse_details: get_warehouse_type_and_name(item)
+		}, true);
 	});
 
 }
