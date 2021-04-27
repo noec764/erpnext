@@ -98,6 +98,7 @@
      "rounding_adjustment",
      "rounded_total",
      "in_words",
+     "disable_rounded_total",
      "terms_section_break",
      "tc_name",
      "terms",
@@ -766,6 +767,7 @@
       "width": "150px"
      },
      {
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "base_rounding_adjustment",
       "fieldtype": "Currency",
       "label": "Rounding Adjustment (Company Currency)",
@@ -775,6 +777,7 @@
       "read_only": 1
      },
      {
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "base_rounded_total",
       "fieldtype": "Currency",
       "label": "Rounded Total (Company Currency)",
@@ -817,6 +820,7 @@
       "width": "150px"
      },
      {
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "rounding_adjustment",
       "fieldtype": "Currency",
       "label": "Rounding Adjustment",
@@ -827,6 +831,7 @@
      },
      {
       "bold": 1,
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "rounded_total",
       "fieldtype": "Currency",
       "label": "Rounded Total",
@@ -1269,12 +1274,19 @@
          "label": "Represents Company",
          "options": "Company",
          "read_only": 1
+        },
+        {
+         "default": "0",
+         "depends_on": "grand_total",
+         "fieldname": "disable_rounded_total",
+         "fieldtype": "Check",
+         "label": "Disable Rounded Total"
        }
     ],
     "icon": "fa fa-truck",
     "idx": 146,
     "is_submittable": 1,
-    "modified": "2020-12-26 17:07:59.194403",
+    "modified": "2021-04-15 23:55:49.620641",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Delivery Note",

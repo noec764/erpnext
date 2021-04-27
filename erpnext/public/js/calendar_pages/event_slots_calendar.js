@@ -101,7 +101,7 @@ class EventsCalendar {
 				dayGridPlugin
 			],
 			showNonCurrentDates: false,
-			locale: frappe.boot.lang || 'en',
+			locale: frappe.get_cookie('preferred_language') || 'en',
 			timeZone: frappe.boot.timeZone || 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			noEventsContent: __("No events to display"),
