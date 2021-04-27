@@ -193,13 +193,11 @@ erpnext.SerialNoBatchSelector = Class.extend({
 		if(this.has_batch && !this.has_serial_no) {
 			if(values.batches.length === 0 || !values.batches) {
 				frappe.throw(__("Please select batches for batched item {0}", [values.item_code]));
-				return false;
 			}
 			values.batches.map((batch, i) => {
 				if(!batch.selected_qty || batch.selected_qty === 0 ) {
 					if (!this.show_dialog) {
 						frappe.throw(__("Please select quantity on row {0}", [i+1]));
-						return false;
 					}
 				}
 			});
@@ -209,7 +207,6 @@ erpnext.SerialNoBatchSelector = Class.extend({
 			let serial_nos = values.serial_no || '';
 			if (!serial_nos || !serial_nos.replace(/\s/g, '').length) {
 				frappe.throw(__("Please enter serial numbers for serialized item {0}", [values.item_code]));
-				return false;
 			}
 			return true;
 		}
@@ -255,7 +252,7 @@ erpnext.SerialNoBatchSelector = Class.extend({
 				fields: ["batch_no", "name"]
 			}).then((data) => {
 				// data = [{batch_no: 'batch-1', name: "SR-001"},
-				// {batch_no: 'batch-2', name: "SR-003"}, {batch_no: 'batch-2', name: "SR-004"}]
+				// 	{batch_no: 'batch-2', name: "SR-003"}, {batch_no: 'batch-2', name: "SR-004"}]
 				const batch_serial_map = data.reduce((acc, d) => {
 					if (!acc[d['batch_no']]) acc[d['batch_no']] = [];
 					acc[d['batch_no']].push(d['name'])
@@ -359,7 +356,6 @@ erpnext.SerialNoBatchSelector = Class.extend({
 							if (selected_batches.includes(batch_no)) {
 								this.set_value("");
 								frappe.throw(__('Batch {0} already selected.', [batch_no]));
-								return;
 							}
 
 							if (me.warehouse_details.name) {
@@ -454,7 +450,7 @@ erpnext.SerialNoBatchSelector = Class.extend({
 				args: {
 					filters: {
 						item_code: me.item_code,
-						warehouse: typeof me.warehouse_details.name == "string" ? me.warehouse_details.name : ''
+						warehouse: typeof me.warehouse_details.name == "string" ? me.warehouse_details.name : '',
 					}
 				}
 			}).then((data) => {

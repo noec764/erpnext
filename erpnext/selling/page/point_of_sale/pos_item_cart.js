@@ -489,7 +489,7 @@ erpnext.PointOfSale.ItemCart = class {
 		)
 
 		this.$numpad_section.find('.numpad-net-total').html(
-			`<div>${(__("Net Total:")} <span>${format_currency(value, currency)}</span></div>`
+			`<div>${__("Net Total:")} <span>${format_currency(value, currency)}</span></div>`
 		);
 	}
 	
