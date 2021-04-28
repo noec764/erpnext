@@ -74,8 +74,8 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Accounting Dimension",
-   "link_to": "Accounting Dimension",
+   "label": "Finance Book",
+   "link_to": "Finance Book",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -84,8 +84,17 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Finance Book",
-   "link_to": "Finance Book",
+   "label": "Accounting Dimension",
+   "link_to": "Accounting Dimension",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounting Journal",
+   "link_to": "Accounting Journal",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -608,6 +617,15 @@
    "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Transaction",
+   "link_to": "Bank Transaction",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1112,7 +1130,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-04-20 08:47:54.783573",
+ "modified": "2021-04-28 18:15:10.726937",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
