@@ -1,4 +1,3 @@
-frappe
 gocardless-pro~=1.22.0
 googlemaps # used in ERPNext, but dependency is defined in Frappe
 ofxtools==0.8.16
