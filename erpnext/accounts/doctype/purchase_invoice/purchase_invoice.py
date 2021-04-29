@@ -240,7 +240,12 @@ class PurchaseInvoice(BuyingController):
 			if item.item_code:
 				asset_category = frappe.get_cached_value("Item", item.item_code, "asset_category")
 
-			if self.update_stock and (not item.from_warehouse):
+			if auto_accounting_for_stock and item.item_code in stock_items \
+				and self.is_opening == 'No' and not item.is_fixed_asset \
+				and (not item.po_detail or
+					not frappe.db.get_value("Purchase Order Item", item.po_detail, "delivered_by_supplier")):
+
+				if self.update_stock and (not item.from_warehouse):
 					if for_validate and item.expense_account and item.expense_account != warehouse_account[item.warehouse]["account"]:
 						msg = _("Row {}: Expense Head changed to {} ").format(item.idx, frappe.bold(warehouse_account[item.warehouse]["account"]))
 						msg += _("because account {} is not linked to warehouse {} ").format(frappe.bold(item.expense_account), frappe.bold(item.warehouse))
