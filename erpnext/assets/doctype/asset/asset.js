@@ -229,6 +229,7 @@ frappe.ui.form.on('Asset', {
 				labels: x_intervals,
 				datasets: [{
 					color: 'green',
+					name: frm.doc.asset_name,
 					values: asset_values
 				}]
 			},
