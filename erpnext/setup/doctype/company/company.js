@@ -141,11 +141,6 @@ frappe.ui.form.on("Company", {
 		})
 	},
 
-	onload_post_render: function(frm) {
-		if(frm.get_field("delete_company_transactions").$input)
-			frm.get_field("delete_company_transactions").$input.addClass("hidden");
-	},
-
 	country: function(frm) {
 		erpnext.company.set_chart_of_accounts_options(frm.doc);
 	},
