@@ -240,7 +240,8 @@ def book_new_slot(**kwargs):
 
 		return doc
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), _("New item booking error"))
+		if frappe.db.get_value('User', frappe.session.user, 'user_type') != 'System User':
+			frappe.log_error(frappe.get_traceback(), _("New item booking error"))
 
 @frappe.whitelist()
 def remove_booked_slot(name):
