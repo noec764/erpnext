@@ -314,7 +314,7 @@ def get_leave_allocations(date, leave_type):
 		from `tabLeave Allocation`
 		where
 			{frappe.db.escape(date)} between from_date and to_date and docstatus=1
-			and leave_type={frappe.db.escape(leave_type)}""", as_dict=1, debug=True)
+			and leave_type={frappe.db.escape(leave_type)}""", as_dict=1, debug=False)
 
 def get_earned_leaves():
 	return frappe.get_all("Leave Type",
