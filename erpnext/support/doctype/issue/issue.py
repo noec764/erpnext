@@ -161,8 +161,8 @@ class Issue(Document):
 			"reference_doctype": "Issue",
 			"reference_name": self.name
 		})
-		communication.ignore_permissions = True
-		communication.ignore_mandatory = True
+		communication.flags.ignore_permissions = True
+		communication.flags.ignore_mandatory = True
 		communication.save()
 
 	@frappe.whitelist()
