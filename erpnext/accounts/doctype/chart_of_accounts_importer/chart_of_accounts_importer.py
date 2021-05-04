@@ -292,7 +292,7 @@ def validate_accounts(file_name):
 
 	accounts_dict = {}
 	for account in accounts:
-		if not hasattr(account, "parent_account"):
+		if not "parent_account" in account:
 			msg = _("Please make sure the file you are using has 'Parent Account' column present in the header.")
 			msg += "<br><br>"
 			msg += _("Alternatively, you can download the template and fill your data in.")
@@ -360,7 +360,7 @@ def validate_account_types(accounts):
 
 	account_types_for_group = ["Bank", "Cash", "Stock"]
 	# fix logic bug
-	account_groups = [accounts[d]["account_type"] for d in accounts if accounts[d]['is_group'] == 1]
+	account_groups = [accounts[d]["account_type"] for d in accounts if cint(accounts[d]['is_group']) == 1]
 
 	missing = list(set(account_types_for_group) - set(account_groups))
 	if missing:
