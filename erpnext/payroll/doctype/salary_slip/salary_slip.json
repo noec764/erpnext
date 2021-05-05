@@ -423,7 +423,7 @@
      {
       "fieldname": "net_pay_info",
       "fieldtype": "Section Break",
-      "label": "net pay info"
+      "label": "Net Pay Info"
      },
      {
       "fieldname": "net_pay",
@@ -632,7 +632,7 @@
     "idx": 9,
     "is_submittable": 1,
     "links": [],
-    "modified": "2021-02-19 11:48:05.383945",
+    "modified": "2021-05-05 12:21:27.836273",
     "modified_by": "Administrator",
     "module": "Payroll",
     "name": "Salary Slip",
