@@ -7,12 +7,19 @@
  "engine": "InnoDB",
  "field_order": [
   "document_type",
+  "column_break_2",
   "document_name",
+  "section_break_4",
   "from_date",
+  "column_break_6",
   "to_date",
+  "section_break_8",
   "account",
+  "cost_center",
+  "column_break_11",
   "debit",
   "credit",
+  "section_break_14",
   "posting_amount"
  ],
  "fields": [
@@ -67,12 +74,43 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Credit"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-04-22 10:30:19.339875",
+ "modified": "2021-05-05 16:15:31.593313",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Adjustment Entry Detail",

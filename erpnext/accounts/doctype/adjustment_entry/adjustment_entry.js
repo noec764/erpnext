@@ -2,6 +2,20 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Adjustment Entry', {
+	refresh(frm) {
+		if(frm.doc.docstatus > 0) {
+			frm.add_custom_button(__('Ledger'), function() {
+				frappe.route_options = {
+					"voucher_no": frm.doc.name,
+					"from_date": frm.doc.posting_date,
+					"to_date": frappe.datetime.nowdate(),
+					"company": frm.doc.company,
+					"group_by": ""
+				};
+				frappe.set_route("query-report", "General Ledger");
+			}, "fas fa-table");
+		}
+	},
 	get_documents(frm) {
 		frappe.call({
 			method: "erpnext.accounts.doctype.adjustment_entry.adjustment_entry.get_documents",

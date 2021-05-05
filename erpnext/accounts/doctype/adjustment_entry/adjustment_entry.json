@@ -11,12 +11,13 @@
   "title",
   "naming_series",
   "entry_type",
+  "status",
   "column_break_4",
   "posting_date",
   "company",
   "accounting_journal",
   "section_break_8",
-  "adjustement_account",
+  "adjustment_account",
   "column_break_10",
   "reversal_date",
   "section_break_17",
@@ -115,19 +116,14 @@
    "label": "Get documents"
   },
   {
-   "fieldname": "adjustement_account",
-   "fieldtype": "Link",
-   "label": "Adjustement Account",
-   "options": "Account"
-  },
-  {
    "fieldname": "column_break_10",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "reversal_date",
    "fieldtype": "Date",
-   "label": "Reversal Date"
+   "label": "Reversal Date",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_12",
@@ -158,12 +154,27 @@
    "fieldtype": "Currency",
    "label": "Total posting amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "adjustment_account",
+   "fieldtype": "Link",
+   "label": "Adjustment Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nSubmitted\nReversed\nCancelled",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-04-25 15:07:24.709761",
+ "modified": "2021-05-05 16:43:59.983171",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Adjustment Entry",
