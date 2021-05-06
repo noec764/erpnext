@@ -126,10 +126,10 @@ erpnext.PointOfSale.ItemCart = class {
 			},
 			cols: 5,
 			keys: [
-				[ 1, 2, 3, __('Quantity') ],
-				[ 4, 5, 6, __('Discount') ],
-				[ 7, 8, 9, __('Rate') ],
-				[ '.', 0, __('Delete'), __('Remove') ]
+				[ 1, 2, 3, 'Quantity' ],
+				[ 4, 5, 6, 'Discount' ],
+				[ 7, 8, 9, 'Rate' ],
+				[ '.', 0, 'Delete', 'Remove' ]
 			],
 			css_classes: [
 				[ '', '', '', 'col-span-2' ],
@@ -220,8 +220,8 @@ erpnext.PointOfSale.ItemCart = class {
 				if (typeof btn !== 'string') continue; // do not make shortcuts for numbers
 
 				let shortcut_key = `ctrl+${frappe.scrub(String(btn))[0]}`;
-				if (btn === __('Delete')) shortcut_key = 'ctrl+backspace';
-				if (btn === __('Remove')) shortcut_key = 'shift+ctrl+backspace'
+				if (btn === 'Delete') shortcut_key = 'ctrl+backspace';
+				if (btn === 'Remove') shortcut_key = 'shift+ctrl+backspace'
 				if (btn === '.') shortcut_key = 'ctrl+>';
 
 				// to account for fieldname map

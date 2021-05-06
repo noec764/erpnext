@@ -184,7 +184,9 @@ class SubscriptionStateManager:
 		return getdate(self.subscription.cancellation_date) <= getdate(nowdate()) if self.subscription.cancellation_date else False
 
 	def is_billable(self):
-		if self.subscription.generate_invoice_at_period_start and getdate(nowdate()) >= getdate(self.subscription.current_invoice_start):
+		if getdate(self.subscription.cancellation_date) < getdate(nowdate()):
+			return False
+		elif self.subscription.generate_invoice_at_period_start and getdate(nowdate()) >= getdate(self.subscription.current_invoice_start):
 			return not(SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice"))
 		else:
 			previous_period = SubscriptionPeriod(self.subscription).get_previous_period()
