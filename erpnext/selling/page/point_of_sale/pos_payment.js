@@ -96,7 +96,7 @@ erpnext.PointOfSale.Payment = class {
 				[ 1, 2, 3 ],
 				[ 4, 5, 6 ],
 				[ 7, 8, 9 ],
-				[ '.', 0, __('Delete') ]
+				[ '.', 0, 'Delete' ]
 			],
 		});
 
@@ -159,19 +159,19 @@ erpnext.PointOfSale.Payment = class {
 			}
 		});
 
-		frappe.ui.form.on('POS Invoice', 'contact_mobile', (frm) => {
-			const contact = frm.doc.contact_mobile;
-			const request_button = $(this.request_for_payment_field.$input[0]);
-			if (contact) {
-				request_button.removeClass('btn-default').addClass('btn-primary');
-			} else {
-				request_button.removeClass('btn-primary').addClass('btn-default');
-      }
-    });
+	// 	frappe.ui.form.on('POS Invoice', 'contact_mobile', (frm) => {
+	// 		const contact = frm.doc.contact_mobile;
+	// 		const request_button = $(this.request_for_payment_field.$input[0]);
+	// 		if (contact) {
+	// 			request_button.removeClass('btn-default').addClass('btn-primary');
+	// 		} else {
+	// 			request_button.removeClass('btn-primary').addClass('btn-default');
+    //   }
+    // });
 
 		this.setup_listener_for_payments();
 
-		this.$payment_modes.on('click', '.shortcut', () => {
+		this.$payment_modes.on('click', '.shortcut', function() {
 			const value = $(this).attr('data-value');
 			me.selected_mode.set_value(value);
 		});
@@ -213,43 +213,6 @@ erpnext.PointOfSale.Payment = class {
 				this[`${mode}_control`].set_value(default_mop.amount);
 			}
 		});
-	}
-
-	setup_listener_for_payments() {
-		frappe.realtime.on("process_phone_payment", (data) => {
-			const doc = this.events.get_frm().doc;
-			const { response, amount, success, failure_message } = data;
-			let message, title;
-
-			if (success) {
-				title = __("Payment Received");
-				const grand_total = cint(frappe.sys_defaults.disable_rounded_total) ? doc.grand_total : doc.rounded_total;
-				if (amount >= grand_total) {
-					frappe.dom.unfreeze();
-					message = __("Payment of {0} received successfully.", [format_currency(amount, doc.currency, 0)]);
-					this.events.submit_invoice();
-					cur_frm.reload_doc();
-
-				} else {
-					message = __("Payment of {0} received successfully. Waiting for other requests to complete...", [format_currency(amount, doc.currency, 0)]);
-				}
-			} else if (failure_message) {
-				message = failure_message;
-				title = __("Payment Failed");
-			}
-
-			frappe.msgprint({ "message": message, "title": title });
-		});
-	}
-
-	auto_set_remaining_amount() {
-		const doc = this.events.get_frm().doc;
-		const grand_total = cint(frappe.sys_defaults.disable_rounded_total) ? doc.grand_total : doc.rounded_total;
-		const remaining_amount = grand_total - doc.paid_amount;
-		const current_value = this.selected_mode ? this.selected_mode.get_value() : undefined;
-		if (!current_value && remaining_amount > 0 && this.selected_mode) {
-			this.selected_mode.set_value(remaining_amount);
-		}
 	}
 
 	setup_listener_for_payments() {
@@ -540,7 +503,7 @@ erpnext.PointOfSale.Payment = class {
 		const remaining = grand_total - doc.paid_amount;
 		const change = doc.change_amount || remaining <= 0 ? -1 * remaining : undefined;
 		const currency = doc.currency;
-		const label = change ? __('Change') : __('To Be Paid');
+		const label = change ? __('Change', null, 'POS') : __('To Be Paid');
 
 		this.$totals.html(
 			`<div class="col">

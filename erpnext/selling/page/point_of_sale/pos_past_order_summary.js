@@ -17,16 +17,16 @@ erpnext.PointOfSale.PastOrderSummary = class {
 		this.wrapper.append(
 			`<section class="past-order-summary">
 				<div class="no-summary-placeholder">
-					Select an invoice to load summary data
+					${__("Select an invoice to load summary data")}
 				</div>
 				<div class="invoice-summary-wrapper">
 					<div class="abs-container">
 						<div class="upper-section"></div>
-						<div class="label">Items</div>
+						<div class="label">${__("Items")}</div>
 						<div class="items-container summary-container"></div>
-						<div class="label">Totals</div>
+						<div class="label">${__("Totals")}</div>
 						<div class="totals-container summary-container"></div>
-						<div class="label">Payments</div>
+						<div class="label">${__("Payments")}</div>
 						<div class="payments-container summary-container"></div>
 						<div class="summary-btns"></div>
 					</div>
@@ -46,7 +46,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 	init_email_print_dialog() {
 		const email_dialog = new frappe.ui.Dialog({
-			title: 'Email Receipt',
+			title: __('Email Receipt'),
 			fields: [
 				{fieldname: 'email_id', fieldtype: 'Data', options: 'Email', label: 'Email ID'},
 				// {fieldname:'remarks', fieldtype:'Text', label:'Remarks (if any)'}
@@ -61,7 +61,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 		const print_dialog = new frappe.ui.Dialog({
 			title: 'Print Receipt',
 			fields: [
-				{fieldname: 'print', fieldtype: 'Data', label: 'Print Preview'}
+				{fieldname: 'print', fieldtype: 'Data', label: __('Print Preview')}
 			],
 			primary_action: () => {
 				this.print_receipt();
@@ -82,7 +82,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 		return `<div class="left-section">
 					<div class="customer-name">${doc.customer}</div>
 					<div class="customer-email">${this.customer_email}</div>
-					<div class="cashier">Sold by: ${doc.owner}</div>
+					<div class="cashier">${__("Sold by:")} ${doc.owner}</div>
 				</div>
 				<div class="right-section">
 					<div class="paid-amount">${format_currency(doc.paid_amount, doc.currency)}</div>
@@ -283,7 +283,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 				m.visible_btns.forEach(b => {
 					const class_name = b.split(' ')[0].toLowerCase();
 					this.$summary_btns.append(
-						`<div class="summary-btn btn btn-default ${class_name}-btn">${b}</div>`
+						`<div class="summary-btn btn btn-default ${class_name}-btn">${__(b)}</div>`
 					);
 				});
 			}
@@ -302,6 +302,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 	}
 
 	get_condition_btn_map(after_submission) {
+		// __('Print Receipt'), __('Email Receipt'), __('New Order'), __('Edit Order'), __('Delete Order'), __('Return')
 		if (after_submission)
 			return [{ condition: true, visible_btns: ['Print Receipt', 'Email Receipt', 'New Order'] }];
 

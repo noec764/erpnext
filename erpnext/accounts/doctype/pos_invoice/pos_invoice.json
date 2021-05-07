@@ -1553,7 +1553,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-02-26 17:27:56.025429",
+ "modified": "2021-05-07 18:23:55.284523",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice",
@@ -1597,6 +1597,18 @@
    "permlevel": 1,
    "read": 1,
    "role": "All"
+  },
+  {
+   "amend": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales User",
+   "submit": 1,
+   "write": 1
   }
  ],
  "search_fields": "posting_date, due_date, customer, base_grand_total, outstanding_amount",
