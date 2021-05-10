@@ -20,10 +20,6 @@ class POSInvoice(SalesInvoice):
 	def __init__(self, *args, **kwargs):
 		super(POSInvoice, self).__init__(*args, **kwargs)
 
-	def onload(self):
-		super(POSInvoice, self).onload()
-		self.set_onload("dont_update_route_after_rename", 1)
-
 	def validate(self):
 		if not cint(self.is_pos):
 			frappe.throw(_("POS Invoice should have {} field checked.").format(frappe.bold("Include Payment")))

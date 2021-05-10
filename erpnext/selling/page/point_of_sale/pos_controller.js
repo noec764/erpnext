@@ -343,6 +343,7 @@ erpnext.PointOfSale.Controller = class {
 				},
 
 				submit_invoice: () => {
+					frappe.ui.form.dont_update_route_after_rename = true;
 					this.frm.savesubmit()
 						.then((r) => {
 							this.toggle_components(false);
