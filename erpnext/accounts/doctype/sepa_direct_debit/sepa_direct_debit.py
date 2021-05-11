@@ -18,6 +18,7 @@ class SepaDirectDebit(Document):
 	def on_submit(self):
 		self.generate_xml_file()
 
+	@frappe.whitelist()
 	def get_payment_entries(self):
 		if not (self.from_date and self.to_date):
 			frappe.throw(_("From Date and To Date are Mandatory"))
@@ -54,6 +55,7 @@ class SepaDirectDebit(Document):
 			row.update(d)
 			self.total_amount += flt(amount)
 
+	@frappe.whitelist()
 	def generate_xml_file(self):
 		from sepaxml import SepaDD
 
