@@ -1769,6 +1769,7 @@ Change booking,Modifier la réservation,
 Change the account type to Receivable or select a different account.,Modifiez le type de compte à Débiteur ou sélectionnez un compte différent,
 Change the starting / current sequence number of an existing series.,Changer le numéro initial/actuel d'une série existante.,
 Change this date manually to setup the next synchronization start date,Modifiez cette date manuellement pour paramétrer la prochaine date de début de la synchronisation,
+Change,Monnaie,POS
 Change,Changement,
 Changed customer name to '{}' as '{}' already exists.,Nom du client changé à '{}' car '{}' existe déjà,
 Changes in {0},Modifications dans {0},
@@ -10766,3 +10767,4 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {} to Bill,{} à facturer,
 {} {} should be between {} and {},{} {} doit être entre {} et {},
 ← Back to upload files,← Retour au téléchargement de fichiers,
+Edit Order,Modifier la commande,

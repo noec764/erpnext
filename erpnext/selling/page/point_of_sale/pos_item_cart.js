@@ -148,7 +148,7 @@ erpnext.PointOfSale.ItemCart = class {
 		)
 
 		this.$numpad_section.append(
-			`<div class="numpad-btn checkout-btn" data-button-value="checkout">Checkout</div>`
+			`<div class="numpad-btn checkout-btn" data-button-value="checkout">${__("Checkout")}</div>`
 		)
 	}
 	

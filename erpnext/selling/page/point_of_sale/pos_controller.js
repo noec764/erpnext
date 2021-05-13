@@ -32,7 +32,7 @@ erpnext.PointOfSale.Controller = class {
 			{
 				fieldname: "opening_amount", fieldtype: "Currency",
 				in_list_view: 1, label: "Opening Amount",
-				options: "company:company_currency", 
+				options: "company:company_currency",
 				change: function () {
 					dialog.fields_dict.balance_details.df.data.some(d => {
 						if (d.idx == this.doc.idx) {
@@ -77,7 +77,7 @@ erpnext.PointOfSale.Controller = class {
 				{
 					fieldname: "balance_details",
 					fieldtype: "Table",
-					label: "Opening Balance Details",
+					label: __("Opening Balance Details"),
 					cannot_add_rows: false,
 					in_place_edit: true,
 					reqd: 1,
@@ -124,6 +124,15 @@ erpnext.PointOfSale.Controller = class {
 			this.settings.customer_groups = profile.customer_groups.map(group => group.customer_group);
 			this.make_app();
 		});
+	}
+
+	set_opening_entry_status() {
+		this.page.set_title_sub(
+			`<span class="indicator orange">
+				<a class="text-muted" href="#Form/POS%20Opening%20Entry/${this.pos_opening}">
+					Opened at ${moment(this.pos_opening_time).format("Do MMMM, h:mma")}
+				</a>
+			</span>`);
 	}
 
 	make_app() {
@@ -177,8 +186,8 @@ erpnext.PointOfSale.Controller = class {
 
 		if (this.frm.doc.items.length == 0) {
 			frappe.show_alert({
-				message: __("You must add atleast one item to save it as draft."), 
-				indicator: 'red'
+				message: __("You must add atleast one item to save it as draft."),
+				indicator:'red'
 			});
 			frappe.utils.play_sound("error");
 			return;
@@ -186,7 +195,7 @@ erpnext.PointOfSale.Controller = class {
 
 		this.frm.save(undefined, undefined, undefined, () => {
 			frappe.show_alert({
-				message: __("There was an error saving the document."), 
+				message: __("There was an error saving the document."),
 				indicator: 'red'
 			});
 			frappe.utils.play_sound("error");
@@ -196,7 +205,7 @@ erpnext.PointOfSale.Controller = class {
 				() => this.make_new_invoice(),
 				() => frappe.dom.unfreeze(),
 			]);
-		})
+		});
 	}
 
 	close_pos() {
@@ -269,6 +278,7 @@ erpnext.PointOfSale.Controller = class {
 				form_updated: async (cdt, cdn, fieldname, value) => {
 					const item_row = frappe.model.get_doc(cdt, cdn);
 					if (item_row && item_row[fieldname] != value) {
+
 						const { item_code, batch_no, uom } = this.item_details.current_item;
 						const event = {
 							field: fieldname,
@@ -325,14 +335,15 @@ erpnext.PointOfSale.Controller = class {
 
 				toggle_other_sections: (show) => {
 					if (show) {
-						this.item_details.$component.hasClass('d-none') ? '' : this.item_details.$component.addClass('d-none');
-						this.item_selector.$component.addClass('d-none');
+						this.item_details.$component.is(':visible') ? this.item_details.$component.css('display', 'none') : '';
+						this.item_selector.$component.css('display', 'none');
 					} else {
-						this.item_selector.$component.removeClass('d-none');
+						this.item_selector.$component.css('display', 'flex');
 					}
 				},
 
 				submit_invoice: () => {
+					frappe.ui.form.dont_update_route_after_rename = true;
 					this.frm.savesubmit()
 						.then((r) => {
 							this.toggle_components(false);
@@ -505,7 +516,7 @@ erpnext.PointOfSale.Controller = class {
 					const qty_needed = field === 'qty' ? value * item_row.conversion_factor : item_row.qty * value;
 					await this.check_stock_availability(item_row, qty_needed, this.frm.doc.set_warehouse);
 				}
-				
+
 				if (this.is_current_item_being_edited(item_row) || item_selected_from_selector) {
 					await frappe.model.set_value(item_row.doctype, item_row.name, field, value);
 					this.update_cart_html(item_row);
@@ -556,7 +567,7 @@ erpnext.PointOfSale.Controller = class {
 	get_item_from_frm(item_code, batch_no, uom) {
 		const has_batch_no = batch_no;
 		return this.frm.doc.items.find(
-			i => i.item_code === item_code 
+			i => i.item_code === item_code
 				&& (!has_batch_no || (has_batch_no && i.batch_no === batch_no))
 				&& (i.uom === uom)
 		);
@@ -585,7 +596,7 @@ erpnext.PointOfSale.Controller = class {
 		const no_serial_selected = !item_row.serial_no;
 		const no_batch_selected = !item_row.batch_no;
 
-		if ((serialized && no_serial_selected) || (batched && no_batch_selected) || 
+		if ((serialized && no_serial_selected) || (batched && no_batch_selected) ||
 			(serialized && batched && (no_batch_selected || no_serial_selected))) {
 			return true;
 		}
