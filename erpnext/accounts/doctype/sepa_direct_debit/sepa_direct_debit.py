@@ -147,7 +147,7 @@ def create_sepa_payment_entries(from_date, to_date, mode_of_payment):
 
 				payment_entry = get_payment_entry("Sales Invoice", open_invoice.name)
 				payment_entry.mode_of_payment = mode_of_payment
-				payment_entry.reference_no = open_invoice.customer + "/" + open_invoice.name
+				payment_entry.reference_no = open_invoice.customer[:10] + "/" + open_invoice.name # Must be limited to 35 characters
 				payment_entry.reference_date = open_invoice.due_date
 				payment_entry.insert()
 				payment_entry.submit()
