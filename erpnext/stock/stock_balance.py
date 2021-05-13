@@ -194,9 +194,6 @@ def set_stock_balance_as_per_serial_no(item_code=None, posting_date=None, postin
 		serial_nos = frappe.db.sql("""select count(name) from `tabSerial No`
 			where item_code=%s and warehouse=%s and docstatus < 2""", (d[0], d[1]))
 
-		if serial_nos and flt(serial_nos[0][0]) != flt(d[2]):
-			print(d[0], d[1], d[2], serial_nos[0][0])
-
 		sle = frappe.db.sql("""select valuation_rate, company from `tabStock Ledger Entry`
 			where item_code = %s and warehouse = %s and is_cancelled = 0
 			order by posting_date desc limit 1""", (d[0], d[1]))
