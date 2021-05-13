@@ -251,6 +251,7 @@ def create_variant(wc_api, variant, template, attributes):
 			]
 		})
 		try:
+			print(item)
 			frappe.get_doc(item).insert(ignore_permissions=True)
 		except frappe.exceptions.DuplicateEntryError as e:
 			pass
@@ -374,11 +375,11 @@ def create_attributes(product):
 		else:
 			item_attr = frappe.get_doc("Item Attribute", attr.get("name"))
 			if not item_attr.numeric_values:
-					item_attr.woocommerce_id = attr.get("id")
-					old_len = len(item_attr.item_attribute_values)
-					item_attr = set_new_attribute_values(item_attr, attr.get("options"))
-					if len(item_attr.item_attribute_values) > old_len:
-						item_attr.save()
+				item_attr.woocommerce_id = attr.get("id")
+				old_len = len(item_attr.item_attribute_values)
+				item_attr = set_new_attribute_values(item_attr, attr.get("options"))
+				if len(item_attr.item_attribute_values) > old_len:
+					item_attr.save()
 		attributes.append({"attribute": attr.get("name")})
 
 	return attributes
