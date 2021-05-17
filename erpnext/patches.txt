@@ -250,6 +250,8 @@ erpnext.patches.v12_0.add_document_type_field_for_italy_einvoicing
 erpnext.patches.v13_0.make_non_standard_user_type
 erpnext.patches.v13_0.remove_attribute_field_from_item_variant_setting
 erpnext.patches.v13_0.set_pos_closing_as_failed
+erpnext.patches.v13_0.germany_make_custom_fields
+erpnext.patches.v13_0.germany_fill_debtor_creditor_number
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
