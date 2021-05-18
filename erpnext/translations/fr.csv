@@ -136,7 +136,7 @@ Modifiez la liste des séries dans le champ ci-dessous. Règles:
 <ul>
 <li>Chaque préfixe de série sur une ligne différente.</li>
 <li>Les caractères spéciaux autorisés sont ""/"" et ""-""</li>
-<li>En option, définissez le nombre de chiffres dans la série en utilisant un point (.) suivant de dièses (#). Par exemple, "".####"" veut dire que la série aura quatre chiffres. Par défaut il y en a cinq.</li>
+<li>En option, définissez le nombre de chiffres dans la série en utilisant un point (.) suivi de dièses (#). Par exemple, "".####"" veut dire que la série aura quatre chiffres. Par défaut il y en a cinq.</li>
 </ul>
 Exemples:<br>
 INV-<br>
