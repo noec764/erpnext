@@ -26,9 +26,8 @@ erpnext.booking_dialog = class BookingDialog {
 
 	show() {
 		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-			'/assets/js/control.min.js',
-			'/assets/frappe/js/frappe/utils/datetime.js'
+			'libs.bundle.js',
+			'controls.bundle.js'
 		], () => {
 			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 			this.get_selling_uoms()

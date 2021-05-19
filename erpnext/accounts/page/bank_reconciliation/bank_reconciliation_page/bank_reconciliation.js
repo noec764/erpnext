@@ -101,7 +101,7 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 
 	add_actions() {
 		const me = this;
-		frappe.require('assets/js/bank-transaction-importer.min.js', function() {
+		frappe.require('bank-transaction-importer.bundle.js', function() {
 			me.page.add_action_item(__("Go to Bank Reconciliation Statement"), function() {
 				frappe.set_route('query-report', "Bank Reconciliation Statement", {bank_account: me.bank_account, report_date: me.date_range ? me.date_range[1] : frappe.datetime.now_date()})
 			});

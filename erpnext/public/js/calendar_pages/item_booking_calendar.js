@@ -17,9 +17,8 @@ erpnext.itemBookingCalendar = class ItemBookingCalendar {
 
 	show() {
 		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-			'/assets/js/control.min.js',
-			'/assets/frappe/js/frappe/utils/datetime.js'
+			'libs.bundle.js',
+			'controls.bundle.js'
 		], () => {
 			this.build_calendar()
 		});
