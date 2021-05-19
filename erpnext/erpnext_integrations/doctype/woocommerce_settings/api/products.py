@@ -251,7 +251,6 @@ def create_variant(wc_api, variant, template, attributes):
 			]
 		})
 		try:
-			print(item)
 			frappe.get_doc(item).insert(ignore_permissions=True)
 		except frappe.exceptions.DuplicateEntryError as e:
 			pass
