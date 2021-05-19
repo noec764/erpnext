@@ -38,9 +38,7 @@ frappe.ui.form.on('Quotation', {
 
 erpnext.selling.QuotationController = class QuotationController extends erpnext.selling.SellingController {
 	onload(doc, dt, dn) {
-		var me = this;
-		super(doc, dt, dn);
-
+		super.onload(doc, dt, dn);
 	}
 
 	party_name() {
