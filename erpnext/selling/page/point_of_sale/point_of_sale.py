@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe, json
 from frappe.utils.nestedset import get_root_of
-from frappe.utils import cint
+from frappe.utils import cint, validate_email_address
 from erpnext.accounts.doctype.pos_profile.pos_profile import get_item_groups
 from erpnext.accounts.doctype.pos_invoice.pos_invoice import get_stock_availability
 
@@ -252,6 +252,7 @@ def set_customer_info(fieldname, customer, value=""):
 
 	contact_doc = frappe.get_doc('Contact', contact)
 	if fieldname == 'email_id':
+		validate_email_address(value, throw=True)
 		contact_doc.set('email_ids', [{ 'email_id': value, 'is_primary': 1}])
 		frappe.db.set_value('Customer', customer, 'email_id', value)
 	elif fieldname == 'mobile_no':
