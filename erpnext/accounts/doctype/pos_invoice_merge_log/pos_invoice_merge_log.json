@@ -64,6 +64,7 @@
    "fieldname": "consolidated_invoice",
    "fieldtype": "Link",
    "label": "Consolidated Sales Invoice",
+   "no_copy": 1,
    "options": "Sales Invoice",
    "read_only": 1
   },
@@ -76,24 +77,25 @@
    "fieldname": "consolidated_credit_note",
    "fieldtype": "Link",
    "label": "Consolidated Credit Note",
+   "no_copy": 1,
    "options": "Sales Invoice",
    "read_only": 1
-},
-{
- "fieldname": "column_break_3",
- "fieldtype": "Column Break"
-},
-{
- "fieldname": "pos_closing_entry",
- "fieldtype": "Link",
- "label": "POS Closing Entry",
- "options": "POS Closing Entry"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pos_closing_entry",
+   "fieldtype": "Link",
+   "label": "POS Closing Entry",
+   "options": "POS Closing Entry"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-12-01 11:53:57.267579",
+ "modified": "2021-05-12 18:54:19.097979",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice Merge Log",
