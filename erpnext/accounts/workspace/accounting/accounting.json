@@ -741,6 +741,7 @@
    "is_query_report": 0,
    "label": "Goods and Services Tax (GST India)",
    "onboard": 0,
+   "only_for": "India",
    "type": "Card Break"
   },
   {
@@ -1130,7 +1131,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-04-28 18:15:10.726937",
+ "modified": "2021-04-29 18:15:10.726937",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
