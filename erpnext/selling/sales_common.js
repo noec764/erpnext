@@ -92,6 +92,7 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 		if(this.frm.fields_dict.packed_items) {
 			var packing_list_exists = (this.frm.doc.packed_items || []).length;
 			this.frm.toggle_display("packing_list", packing_list_exists ? true : false);
+			this.frm.toggle_enable("packed_items", packing_list_exists ? true : false)
 		}
 		this.toggle_editable_price_list_rate();
 	},
