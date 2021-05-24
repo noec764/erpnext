@@ -202,7 +202,7 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 	}
 };
 
-$.extend(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
+extend_cscript(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
 
 cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 	get_item_details(doc, cdt, cdn)
