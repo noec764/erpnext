@@ -123,7 +123,7 @@ class TestTimesheet(unittest.TestCase):
 		timesheet.append(
 			'time_logs',
 			{
-				"billable": 1,
+				"is_billable": 1,
 				"activity_type": "_Test Activity Type",
 				"from_time": now_datetime(),
 				"to_time": now_datetime() + datetime.timedelta(hours=3),
@@ -133,7 +133,7 @@ class TestTimesheet(unittest.TestCase):
 		timesheet.append(
 			'time_logs',
 			{
-				"billable": 1,
+				"is_billable": 1,
 				"activity_type": "_Test Activity Type",
 				"from_time": now_datetime(),
 				"to_time": now_datetime() + datetime.timedelta(hours=3),

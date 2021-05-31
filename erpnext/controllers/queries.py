@@ -211,6 +211,18 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 		if not field in searchfields]
 	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
 
+	if filters.get('supplier'):
+		item_group_list = frappe.get_all('Supplier Item Group', filters = {'supplier': filters.get('supplier')}, fields = ['item_group'])
+
+		item_groups = []
+		for i in item_group_list:
+			item_groups.append(i.item_group)
+
+		del filters['supplier']
+
+		if item_groups:
+			filters['item_group'] = ['in', item_groups]
+
 	description_cond = ''
 	if frappe.db.count('Item', cache=True) < 50000:
 		# scan description only if items are less than 50000
