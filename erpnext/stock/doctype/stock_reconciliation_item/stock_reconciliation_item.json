@@ -112,7 +112,6 @@
   },
   {
    "default": "0",
-   "depends_on": "allow_zero_valuation_rate",
    "fieldname": "current_qty",
    "fieldtype": "Float",
    "label": "Current Qty",
