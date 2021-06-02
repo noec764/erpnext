@@ -121,6 +121,7 @@ def create_sales_order(settings, woocommerce_order, customer):
 		"order_type": "Shopping Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
+		"woocommerce_number": woocommerce_order.get("number"),
 		"transaction_date": woocommerce_order.get("date_created_gmt") or nowdate(),
 		"customer": customer.name,
 		"customer_group": customer.customer_group,

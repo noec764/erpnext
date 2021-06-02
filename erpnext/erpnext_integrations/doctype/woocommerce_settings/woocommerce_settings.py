@@ -6,9 +6,8 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import cint
-from frappe.utils.nestedset import get_root_of
 from frappe.model.document import Document
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import WooCommerceTaxes, WooCommerceShippingMethods, sync_orders
@@ -26,7 +25,6 @@ class WoocommerceSettings(Document):
 
 	def create_delete_custom_fields(self):
 		if self.enable_sync:
-			custom_fields = {}
 			# create
 			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute"]:
 				fields = [
@@ -57,6 +55,12 @@ class WoocommerceSettings(Document):
 				for df in fields:
 					create_custom_field(doctype, df)
 
+			for doctype in ["Sales Order"]:
+				fields = [
+					dict(fieldname='woocommerce_number', label='Woocommerce Number', fieldtype='Data', read_only=1, translatable=0),
+				]
+				for df in fields:
+					create_custom_field(doctype, df)
 
 	def validate_settings(self):
 		if self.enable_sync:
