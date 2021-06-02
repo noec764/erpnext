@@ -8,7 +8,6 @@ from erpnext.projects.doctype.timesheet.timesheet import make_salary_slip, make_
 from erpnext.projects.report.project_profitability.project_profitability import execute
 
 class TestProjectProfitability(unittest.TestCase):
-	@classmethod
 	def setUp(self):
 		emp = make_employee('test_employee_9@salary.com', company='_Test Company')
 		if not frappe.db.exists('Salary Component', 'Timesheet Component'):
