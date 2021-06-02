@@ -227,7 +227,7 @@ frappe.ui.form.on('Subscription', {
 		if (frm.doc.payment_gateway) {
 			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, ["gateway_controller", "gateway_settings"], pg => {
 				(pg.gateway_settings == "Stripe Settings")&&frappe.db.get_value(pg.gateway_settings, pg.gateway_controller, "subscription_cycle_on_stripe", res => {
-					frm.fields_dict["plans"].grid.set_column_disp('payment_plan_section', res.subscription_cycle_on_stripe);
+					frm.fields_dict.plans.grid.update_docfield_property('payment_plan_section', 'hidden', !res.subscription_cycle_on_stripe);
 				});
 			})
 		}
@@ -265,5 +265,8 @@ frappe.ui.form.on('Subscription Plan Detail', {
 		} else {
 			frappe.throw(__("This plan is already linked to an invoice item."))
 		}
+	},
+	form_render(frm, cdt, cdn) {
+		frm.trigger("show_stripe_section")
 	}
 })
