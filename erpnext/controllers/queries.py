@@ -211,8 +211,9 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 		if not field in searchfields]
 	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
 
-	if filters.get('supplier'):
-		item_group_list = frappe.get_all('Supplier Item Group', filters = {'supplier': filters.get('supplier')}, fields = ['item_group'])
+	if filters and isinstance(filters, dict) and filters.get('supplier'):
+		item_group_list = frappe.get_all('Supplier Item Group',
+			filters = {'supplier': filters.get('supplier')}, fields = ['item_group'])
 
 		item_groups = []
 		for i in item_group_list:
