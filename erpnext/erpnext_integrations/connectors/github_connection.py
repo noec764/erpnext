@@ -12,6 +12,7 @@ class GithubConnection(BaseConnection):
 		except frappe.AuthenticationError:
 			password = None
 
+		#TODO: Refactor since username/password connection is deprecated
 		if self.connector.username and password:
 			self.connection = Github(self.connector.username, self.get_password())
 		else:
