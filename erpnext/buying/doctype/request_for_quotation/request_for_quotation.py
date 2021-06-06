@@ -152,6 +152,7 @@ class RequestforQuotation(BuyingController):
 			'user_type': 'Website User',
 			'redirect_url': link
 		})
+		user.flags.create_contact_immediately = True
 		user.save(ignore_permissions=True)
 		update_password_link = user.reset_password()
 

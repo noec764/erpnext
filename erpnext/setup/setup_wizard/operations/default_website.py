@@ -6,7 +6,6 @@ import frappe
 
 from frappe import _
 from frappe.utils import nowdate
-from frappe.website.doctype.website_theme.website_theme import after_migrate
 
 class website_maker(object):
 	def __init__(self, args):
@@ -17,7 +16,6 @@ class website_maker(object):
 		self.make_web_page()
 		self.make_website_settings()
 		self.make_blog()
-		after_migrate()
 
 	def make_web_page(self):
 		# home page
