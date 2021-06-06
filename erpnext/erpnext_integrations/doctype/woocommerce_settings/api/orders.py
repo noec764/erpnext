@@ -1,4 +1,6 @@
 from collections import defaultdict
+
+from requests.exceptions import HTTPError
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.utils import nowdate, cint, flt, now_datetime, add_days
@@ -12,6 +14,7 @@ from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCom
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import sync_customer, sync_guest_customers
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import get_simple_item
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
+from erpnext.stock.stock_ledger import NegativeStockError
 
 class WooCommerceOrders(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -118,6 +121,7 @@ def create_sales_order(settings, woocommerce_order, customer):
 		"order_type": "Shopping Cart",
 		"naming_series": settings.sales_order_series,
 		"woocommerce_id": woocommerce_order.get("id"),
+		"woocommerce_number": woocommerce_order.get("number"),
 		"transaction_date": woocommerce_order.get("date_created_gmt") or nowdate(),
 		"customer": customer.name,
 		"customer_group": customer.customer_group,
@@ -456,7 +460,10 @@ def _make_delivery_note(woocommerce_order, sales_order):
 	dn.posting_date = woocommerce_order.get("date_completed")
 	dn.run_method('set_missing_values')
 	dn.insert(ignore_permissions=True)
-	dn.submit()
+	try:
+		dn.submit()
+	except NegativeStockError:
+		pass
 
 def refund_sales_order(settings, woocommerce_order, sales_order):
 	sales_invoices = frappe.get_all("Sales Invoice Item",

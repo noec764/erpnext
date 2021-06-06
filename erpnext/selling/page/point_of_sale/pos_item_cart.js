@@ -862,7 +862,6 @@ erpnext.PointOfSale.ItemCart = class {
 			fieldname: 'email_id',
 			label: __('Email'),
 			fieldtype: 'Data',
-			options: 'email',
 			placeholder: __("Enter customer's email")
 		},{
 			fieldname: 'mobile_no',
