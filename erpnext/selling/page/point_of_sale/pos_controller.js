@@ -193,6 +193,7 @@ erpnext.PointOfSale.Controller = class {
 			return;
 		}
 
+		frappe.ui.form.dont_update_route_after_rename = true;
 		this.frm.save(undefined, undefined, undefined, () => {
 			frappe.show_alert({
 				message: __("There was an error saving the document."),
