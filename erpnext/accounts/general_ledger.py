@@ -169,7 +169,7 @@ def get_accounting_journal(entry):
 		frappe.throw(_("Please configure an accounting journal for this transaction type and account: {0} - {1}").format(_(entry.voucher_type), entry.get("account")))
 
 def validate_cwip_accounts(gl_map):
-	cwip_enabled = any([cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category","enable_cwip_accounting")])
+	cwip_enabled = any(cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category","enable_cwip_accounting"))
 
 	if cwip_enabled and gl_map[0].voucher_type == "Journal Entry":
 		cwip_accounts = [d[0] for d in frappe.db.sql("""select name from tabAccount
