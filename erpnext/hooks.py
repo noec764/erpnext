@@ -225,6 +225,7 @@ standard_queries = {
 
 doc_events = {
 	"*": {
+		"validate": "erpnext.support.doctype.service_level_agreement.service_level_agreement.apply",
 		"after_insert": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		"on_change": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		"on_submit": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
@@ -239,6 +240,9 @@ doc_events = {
 		"validate": "erpnext.hr.doctype.employee.employee.validate_employee_role",
 		"on_update": ["erpnext.hr.doctype.employee.employee.update_user_permissions",
 			"erpnext.portal.utils.set_default_role"]
+	},
+	"Communication": {
+		"on_update": "erpnext.support.doctype.service_level_agreement.service_level_agreement.update_hold_time"
 	},
 	("Sales Taxes and Charges Template", 'Price List'): {
 		"on_update": "erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings.validate_cart_settings"
@@ -355,6 +359,7 @@ scheduler_events = {
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
 		"erpnext.erpnext_integrations.connectors.shopify_connection.sync_old_orders",
+		"erpnext.support.doctype.service_level_agreement.service_level_agreement.set_service_level_agreement_variance"
 		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce",
 		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries"
 	],
