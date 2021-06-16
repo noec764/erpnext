@@ -24,17 +24,7 @@ class TestVehicleLog(unittest.TestCase):
 		frappe.delete_doc("Employee", self.employee_id, force=1)
 
 	def test_make_vehicle_log_and_syncing_of_odometer_value(self):
-		vehicle_log = frappe.get_doc({
-			"doctype": "Vehicle Log",
-			"license_plate": cstr(self.license_plate),
-			"employee": self.employee_id,
-			"date":frappe.utils.nowdate(),
-			"odometer":5010,
-			"fuel_qty":frappe.utils.flt(50),
-			"price": frappe.utils.flt(500)
-		})
-		vehicle_log.save()
-		vehicle_log.submit()
+		vehicle_log = make_vehicle_log(self.license_plate, self.employee_id)
 
 		#checking value of vehicle odometer value on submit.
 		vehicle = frappe.get_doc("Vehicle", self.license_plate)
@@ -53,21 +43,22 @@ class TestVehicleLog(unittest.TestCase):
 		vehicle_log.delete()
 	
 	def test_vehicle_log_fuel_expense(self):
-		vehicle_log = frappe.get_doc({
-			"doctype": "Vehicle Log",
-			"license_plate": cstr(self.license_plate),
-			"employee": self.employee_id,
-			"date": frappe.utils.nowdate(),
-			"odometer":5010,
-			"fuel_qty":frappe.utils.flt(50),
-			"price": frappe.utils.flt(500)
-		})
-		vehicle_log.save()
-		vehicle_log.submit()
+		vehicle_log = make_vehicle_log(self.license_plate, self.employee_id)
 
 		expense_claim = make_expense_claim(vehicle_log.name)
 		fuel_expense = expense_claim.expenses[0].amount
 		self.assertEqual(fuel_expense, 50*500)
+
+		vehicle_log.cancel()
+		frappe.delete_doc("Expense Claim", expense_claim.name)
+		frappe.delete_doc("Vehicle Log", vehicle_log.name)
+
+	def test_vehicle_log_with_service_expenses(self):
+		vehicle_log = make_vehicle_log(self.license_plate, self.employee_id, with_services=True)
+
+		expense_claim = make_expense_claim(vehicle_log.name)
+		expenses = expense_claim.expenses[0].amount
+		self.assertEqual(expenses, 27000)
 
 		vehicle_log.cancel()
 		frappe.delete_doc("Expense Claim", expense_claim.name)
@@ -81,15 +72,45 @@ def get_vehicle(employee_id):
 			"make": "Maruti",
 			"model": "PCM",
 			"employee": employee_id,
-			"last_odometer":5000,
-			"acquisition_date":frappe.utils.nowdate(),
+			"last_odometer": 5000,
+			"acquisition_date": nowdate(),
 			"location": "Mumbai",
 			"chassis_no": "1234ABCD",
 			"uom": "Litre",
-			"vehicle_value":frappe.utils.flt(500000)
+			"vehicle_value": flt(500000)
 		})
 	try:
 		vehicle.insert()
 	except frappe.DuplicateEntryError:
 		pass
 	return license_plate
+
+def make_vehicle_log(license_plate, employee_id, with_services=False):
+	vehicle_log = frappe.get_doc({
+		"doctype": "Vehicle Log",
+		"license_plate": cstr(license_plate),
+		"employee": employee_id,
+		"date": nowdate(),
+		"odometer": 5010,
+		"fuel_qty": flt(50),
+		"price": flt(500)
+	})
+
+	if with_services:
+		vehicle_log.append("service_detail", {
+			"service_item": "Oil Change",
+			"type": "Inspection",
+			"frequency": "Mileage",
+			"expense_amount": flt(500)
+		})
+		vehicle_log.append("service_detail", {
+			"service_item": "Wheels",
+			"type": "Change",
+			"frequency": "Half Yearly",
+			"expense_amount": flt(1500)
+		})
+
+	vehicle_log.save()
+	vehicle_log.submit()
+
+	return vehicle_log

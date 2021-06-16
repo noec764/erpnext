@@ -11,6 +11,8 @@ from erpnext.erpnext_integrations.doctype.plaid_settings.plaid_connector import 
 from frappe.utils import getdate, formatdate, today, add_months, cint
 from frappe.desk.doctype.tag.tag import add_tag
 
+from plaid.errors import ItemError
+
 class PlaidSettings(Document):
 	@staticmethod
 	@frappe.whitelist()
@@ -47,7 +49,7 @@ def add_institution(token, response):
 			})
 			bank.insert()
 		except Exception:
-			frappe.throw(frappe.get_traceback())
+			frappe.log_error(frappe.get_traceback(), title=_('Plaid Link Error'))
 
 	else:
 		bank = frappe.get_doc("Bank", response["institution"]["name"])
@@ -75,7 +77,12 @@ def add_bank_accounts(response, bank, company):
 		if not acc_subtype:
 			add_account_subtype(account["subtype"])
 
-		if not account.get("id") or not frappe.db.exists("Bank Account", dict(integration_id=account.get("id"))):
+		existing_bank_account = frappe.db.exists("Bank Account", {
+			'account_name': account["name"],
+			'bank': bank["bank_name"]
+		})
+
+		if not existing_bank_account:
 			try:
 				new_account = frappe.get_doc({
 					"doctype": "Bank Account",
@@ -96,10 +103,27 @@ def add_bank_accounts(response, bank, company):
 			except frappe.UniqueValidationError:
 				frappe.msgprint(_("Bank account {0} already exists and could not be created again").format(account["name"]))
 			except Exception:
-				frappe.throw(frappe.get_traceback())
+				frappe.log_error(frappe.get_traceback(), title=_("Plaid Link Error"))
+				frappe.throw(_("There was an error creating Bank Account while linking with Plaid."), 
+					title=_("Plaid Link Failed"))
 
-		elif account.get("id"):
-			result.append(frappe.db.get_value("Bank Account", dict(integration_id=account.get("id")), "name"))
+		else:
+			try:
+				existing_account = frappe.get_doc('Bank Account', existing_bank_account)
+				existing_account.update({
+					"bank": bank["bank_name"],
+					"account_name": account["name"],
+					"account_type": account.get("type", ""),
+					"account_subtype": account.get("subtype", ""),
+					"mask": account.get("mask", ""),
+					"integration_id": account["id"]
+				})
+				existing_account.save()
+				result.append(existing_bank_account)
+			except Exception:
+				frappe.log_error(frappe.get_traceback(), title=_("Plaid Link Error"))
+				frappe.throw(_("There was an error updating Bank Account {} while linking with Plaid.").format(
+					existing_bank_account), title=_("Plaid Link Failed"))
 
 	return result
 
@@ -166,9 +190,15 @@ def get_transactions(bank, bank_account=None, start_date=None, end_date=None):
 		frappe.throw(_("Please link your bank with Plaid first."))
 
 	plaid = PlaidConnector(access_token)
-	transactions = plaid.get_transactions(start_date=start_date, end_date=end_date, account_id=account_id)
+	try:
+		transactions = plaid.get_transactions(start_date=start_date, end_date=end_date, account_id=account_id)
+	except ItemError as e:
+		if e.code == "ITEM_LOGIN_REQUIRED":
+			msg = _("There was an error syncing transactions.") + " "
+			msg += _("Please refresh or reset the Plaid linking of the Bank {}.").format(bank) + " "
+			frappe.log_error(msg, title=_("Plaid Link Refresh Required"))
 
-	return transactions
+	return transactions or []
 
 def new_bank_transaction(transaction):
 	result = []

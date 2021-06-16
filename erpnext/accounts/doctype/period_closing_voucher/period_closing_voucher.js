@@ -31,7 +31,7 @@ frappe.ui.form.on('Period Closing Voucher', {
 					"show_cancelled_entries": frm.doc.docstatus === 2
 				};
 				frappe.set_route("query-report", "General Ledger");
-			}, "fas fa-table");
+			}, "fa fa-table");
 		}
 	}
 

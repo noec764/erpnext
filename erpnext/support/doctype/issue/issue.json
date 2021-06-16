@@ -119,7 +119,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nReplied\nHold\nResolved\nClosed",
+   "options": "Open\nReplied\nOn Hold\nResolved\nClosed",
    "search_index": 1
   },
   {
@@ -409,7 +409,7 @@
  "icon": "fa fa-ticket",
  "idx": 7,
  "links": [],
- "modified": "2021-05-03 09:25:52.914313",
+ "modified": "2021-05-26 10:49:07.574769",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",
