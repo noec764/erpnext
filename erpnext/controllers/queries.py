@@ -86,7 +86,7 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 	fields = get_fields("Customer", fields)
 
 	searchfields = frappe.get_meta("Customer").get_search_fields()
-	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
+	searchfields = " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	return frappe.db.sql("""select {fields} from `tabCustomer`
 		where docstatus < 2
@@ -213,7 +213,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 
 	searchfields = searchfields + [field for field in[searchfield or "name", "item_code", "item_group", "item_name"]
 		if not field in searchfields]
-	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
+	searchfields = " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	if filters and isinstance(filters, dict) and filters.get('supplier'):
 		item_group_list = frappe.get_all('Supplier Item Group',
@@ -385,13 +385,13 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 
 	if searchfields:
 		search_columns = ", " + ", ".join(searchfields)
-		search_cond = " or " + " or ".join([field + " like %(txt)s" for field in searchfields])
+		search_cond = " or " + " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	if args.get('warehouse'):
 		searchfields = ['batch.' + field for field in searchfields]
 		if searchfields:
 			search_columns = ", " + ", ".join(searchfields)
-			search_cond = " or " + " or ".join([field + " like %(txt)s" for field in searchfields])
+			search_cond = " or " + " or ".join(field + " like %(txt)s" for field in searchfields)
 
 		batch_nos = frappe.db.sql("""select sle.batch_no, round(sum(sle.actual_qty),2), sle.stock_uom,
 				concat('MFG-',batch.manufacturing_date), concat('EXP-',batch.expiry_date)
