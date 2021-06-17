@@ -267,8 +267,7 @@ def set_customer_info(fieldname, customer, value=""):
 		frappe.db.set_value('Customer', customer, 'customer_primary_contact', contact)
 
 	contact_doc = frappe.get_doc('Contact', contact)
-	if fieldname == 'email_id':
-		validate_email_address(value, throw=True)
+	if fieldname == 'email_id' and validate_email_address(value, throw=False):
 		contact_doc.set('email_ids', [{ 'email_id': value, 'is_primary': 1}])
 		frappe.db.set_value('Customer', customer, 'email_id', value)
 	elif fieldname == 'mobile_no':

@@ -100,7 +100,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 		function get_rate_discount_html() {
 			if (item_data.rate && item_data.price_list_rate && item_data.rate !== item_data.price_list_rate) {
-				return `<span class="item-disc">(${item_data.discount_percentage}% ${_("off", null, "Point of sale")})</span>
+				return `<span class="item-disc">(${item_data.discount_percentage}% ${__("off", null, "Point of sale")})</span>
 						<div class="item-rate">${format_currency(item_data.rate, doc.currency)}</div>`;
 			} else {
 				return `<div class="item-rate">${format_currency(item_data.price_list_rate || item_data.rate, doc.currency)}</div>`;
