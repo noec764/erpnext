@@ -1987,7 +1987,7 @@
 			"taxes": [
 				{
 					"account_name": "VAT",
-					"rate": 14.0
+					"rate": 15.0
 				}
 			]
 		}
