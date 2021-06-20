@@ -601,6 +601,7 @@
    "label": "Raw Materials Supplied"
   },
   {
+    "depends_on": "update_stock",
    "fieldname": "supplied_items",
    "fieldtype": "Table",
    "label": "Supplied Items",
@@ -1418,7 +1419,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-06-09 12:30:25.632109",
+ "modified": "2021-06-15 18:20:56.806195",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
