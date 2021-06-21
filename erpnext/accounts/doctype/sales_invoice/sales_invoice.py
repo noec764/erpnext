@@ -983,7 +983,7 @@ class SalesInvoice(SellingController):
 			skip_change_gl_entries = not cint(frappe.db.get_single_value('Accounts Settings', 'post_change_gl_entries'))
 			for payment_mode in self.payments:
 				if skip_change_gl_entries and payment_mode.account == self.account_for_change_amount:
-					payment_mode.base_amount -= self.change_amount
+					payment_mode.base_amount -= flt(self.change_amount)
 
 				if payment_mode.amount:
 					# POS, make payment entries
