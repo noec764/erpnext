@@ -29,12 +29,14 @@ def get_context(context):
 
 	if not frappe.has_website_permission(context.doc):
 		frappe.throw(_("Not Permitted"), frappe.PermissionError)
+
+	customer_name = context.doc.party_name if context.doc.doctype == "Quotation" else context.doc.customer
 	
 	# check for the loyalty program of the customer
-	customer_loyalty_program = frappe.db.get_value("Customer", context.doc.customer, "loyalty_program")	
+	customer_loyalty_program = frappe.db.get_value("Customer", customer_name, "loyalty_program")
 	if customer_loyalty_program:
 		from erpnext.accounts.doctype.loyalty_program.loyalty_program import get_loyalty_program_details_with_points
-		loyalty_program_details = get_loyalty_program_details_with_points(context.doc.customer, customer_loyalty_program)
+		loyalty_program_details = get_loyalty_program_details_with_points(customer_name, customer_loyalty_program)
 		context.available_loyalty_points = int(loyalty_program_details.get("loyalty_points"))
 
 def get_attachments(dt, dn):
