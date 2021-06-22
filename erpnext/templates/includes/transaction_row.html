@@ -12,7 +12,9 @@
 			{{ doc.items_preview }}
 		</div>
 	</div>
-	<div class="col-sm-3 text-right bold">
-		{{ doc.get_formatted("grand_total") }}
-	</div>
+	{% if doc.get('grand_total') %}
+		<div class="col-sm-3 text-right bold">
+			{{ doc.get_formatted("grand_total") }}
+		</div>
+	{% endif %}
 </a>
