@@ -4,14 +4,13 @@
 from __future__ import unicode_literals
 import frappe
 
-from frappe.utils import getdate, validate_email_address, today, add_years, format_datetime, cstr
+from frappe.utils import getdate, validate_email_address, today, add_years, cstr
 from frappe.model.naming import set_name_by_naming_series
 from frappe import throw, _, scrub
 from frappe.permissions import add_user_permission, remove_user_permission, \
 	set_user_permission_if_allowed, has_permission, get_doc_permissions
 from frappe.model.document import Document
 from frappe.utils.nestedset import NestedSet
-from erpnext.hr.doctype.job_offer.job_offer import get_staffing_plan_detail
 
 class EmployeeUserDisabledError(frappe.ValidationError): pass
 class EmployeeLeftValidationError(frappe.ValidationError): pass
@@ -36,7 +35,7 @@ class Employee(NestedSet):
 
 	def validate(self):
 		from erpnext.controllers.status_updater import validate_status
-		validate_status(self.status, ["Active", "Inactive", "Left"])
+		validate_status(self.status, ["Active", "Inactive", "Suspended", "Left"])
 
 		self.employee = self.name
 		self.set_employee_name()
