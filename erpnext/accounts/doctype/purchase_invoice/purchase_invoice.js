@@ -27,10 +27,6 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 		});
 	}
 
-	company() {
-		erpnext.accounts.dimensions.update_dimension(this.frm, this.frm.doctype);
-	}
-
 	onload() {
 		super.onload();
 
@@ -571,5 +567,9 @@ frappe.ui.form.on("Purchase Invoice", {
 			frm: frm,
 			freeze_message: __("Creating Purchase Receipt ...")
 		})
+	},
+
+	company: function(frm) {
+		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
 	}
 })
