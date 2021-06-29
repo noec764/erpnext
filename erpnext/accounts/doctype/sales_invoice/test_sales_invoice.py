@@ -808,6 +808,7 @@ class TestSalesInvoice(unittest.TestCase):
 	def validate_pos_gl_entry(self, si, pos, cash_amount, validate_without_change_gle=False):
 		if validate_without_change_gle:
 			cash_amount -= pos.change_amount
+
 		# check stock ledger entries
 		sle = frappe.db.sql("""select * from `tabStock Ledger Entry`
 			where voucher_type = 'Sales Invoice' and voucher_no = %s""",
@@ -1198,7 +1199,6 @@ class TestSalesInvoice(unittest.TestCase):
 	def test_create_so_with_margin(self):
 		si = create_sales_invoice(item_code="_Test Item", qty=1, do_not_submit=True)
 		price_list_rate = flt(100) * flt(si.plc_conversion_rate)
-		price_list_rate = 100
 		si.items[0].price_list_rate = price_list_rate
 		si.items[0].margin_type = 'Percentage'
 		si.items[0].margin_rate_or_amount = 25
@@ -1908,7 +1908,7 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertEqual(data['billLists'][0]['sgstValue'], 5400)
 		self.assertEqual(data['billLists'][0]['vehicleNo'], 'KA12KA1234')
 		self.assertEqual(data['billLists'][0]['itemList'][0]['taxableAmount'], 60000)
-	
+
 	def test_einvoice_submission_without_irn(self):
 		# init
 		einvoice_settings = frappe.get_doc('E Invoice Settings')
@@ -1935,7 +1935,7 @@ class TestSalesInvoice(unittest.TestCase):
 		einvoice_settings = frappe.get_doc('E Invoice Settings')
 		einvoice_settings.enable = 0
 		frappe.flags.country = country
-	
+
 	def test_einvoice_json(self):
 		from erpnext.regional.india.e_invoice.utils import make_einvoice, validate_totals
 
