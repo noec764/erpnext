@@ -99,6 +99,7 @@ class TestWorkOrder(unittest.TestCase):
 		# reserved qty for production is updated
 		self.assertEqual(cint(bin1_at_start.reserved_qty_for_production) + 2, reserved_qty_on_submission)
 
+
 		test_stock_entry.make_stock_entry(item_code="_Test Item",
 			target=warehouse, qty=100, basic_rate=100)
 		test_stock_entry.make_stock_entry(item_code="_Test Item Home Desktop 100",
@@ -388,17 +389,12 @@ class TestWorkOrder(unittest.TestCase):
 		ste.submit()
 		stock_entries.append(ste)
 
-		job_cards = frappe.get_all('Job Card', filters = {'work_order': work_order.name})
+		job_cards = frappe.get_all('Job Card', filters = {'work_order': work_order.name}, order_by='creation asc')
 		self.assertEqual(len(job_cards), len(bom.operations))
 
 		for i, job_card in enumerate(job_cards):
 			doc = frappe.get_doc("Job Card", job_card)
-			doc.append("time_logs", {
-				"from_time": add_to_date(None, i),
-				"hours": 1,
-				"to_time": add_to_date(None, i + 1),
-				"completed_qty": doc.for_quantity
-			})
+			doc.time_logs[0].completed_qty = 1
 			doc.submit()
 
 		ste1 = frappe.get_doc(make_stock_entry(work_order.name, "Manufacture", 1))
@@ -543,7 +539,6 @@ class TestWorkOrder(unittest.TestCase):
 		expected_qty = {"_Test Item": 2, "_Test Item Home Desktop 100": 4}
 		for row in ste3.items:
 			self.assertEqual(row.qty, expected_qty.get(row.item_code))
-
 		ste_cancel_list.reverse()
 		for ste_doc in ste_cancel_list:
 			ste_doc.cancel()
@@ -586,7 +581,6 @@ class TestWorkOrder(unittest.TestCase):
 		for ste_row in ste2.items:
 			if itemwise_qty.get(ste_row.item_code) and ste_row.s_warehouse:
 				self.assertEqual(ste_row.qty, itemwise_qty.get(ste_row.item_code) / 2)
-
 		ste_cancel_list.reverse()
 		for ste_doc in ste_cancel_list:
 			ste_doc.cancel()

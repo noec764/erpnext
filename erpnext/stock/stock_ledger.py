@@ -22,6 +22,7 @@ _exceptions = frappe.local('stockledger_exceptions')
 # _exceptions = []
 
 def make_sl_entries(sl_entries, allow_negative_stock=False, via_landed_cost_voucher=False):
+	from erpnext.controllers.stock_controller import future_sle_exists
 	if sl_entries:
 		from erpnext.stock.utils import update_bin
 
@@ -29,6 +30,9 @@ def make_sl_entries(sl_entries, allow_negative_stock=False, via_landed_cost_vouc
 		if cancel:
 			validate_cancellation(sl_entries)
 			set_as_cancel(sl_entries[0].get('voucher_type'), sl_entries[0].get('voucher_no'))
+
+		args = get_args_for_future_sle(sl_entries[0])
+		future_sle_exists(args, sl_entries)
 
 		for sle in sl_entries:
 			if sle.serial_no:
@@ -52,6 +56,14 @@ def make_sl_entries(sl_entries, allow_negative_stock=False, via_landed_cost_vouc
 
 			args = sle_doc.as_dict()
 			update_bin(args, allow_negative_stock, via_landed_cost_voucher)
+
+def get_args_for_future_sle(row):
+	return frappe._dict({
+		'voucher_type': row.get('voucher_type'),
+		'voucher_no': row.get('voucher_no'),
+		'posting_date': row.get('posting_date'),
+		'posting_time': row.get('posting_time')
+	})
 
 def validate_serial_no(sle):
 	from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos

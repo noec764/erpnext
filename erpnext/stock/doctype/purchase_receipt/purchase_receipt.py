@@ -308,6 +308,23 @@ class PurchaseReceipt(BuyingController):
 							-1 * flt(d.base_net_amount, d.precision("base_net_amount")), 0.0, remarks, warehouse_account_name,
 							debit_in_account_currency=-1 * credit_amount, account_currency=credit_currency, item=d)
 
+						# check if the exchange rate has changed
+						if d.get('purchase_invoice'):
+							if exchange_rate_map[d.purchase_invoice] and \
+								self.conversion_rate != exchange_rate_map[d.purchase_invoice] and \
+								d.net_rate == net_rate_map[d.purchase_invoice_item]:
+
+								discrepancy_caused_by_exchange_rate_difference = (d.qty * d.net_rate) * \
+									(exchange_rate_map[d.purchase_invoice] - self.conversion_rate)
+
+								self.add_gl_entry(gl_entries, account, d.cost_center, 0.0, discrepancy_caused_by_exchange_rate_difference,
+									remarks, self.supplier, debit_in_account_currency=-1 * discrepancy_caused_by_exchange_rate_difference, 
+									account_currency=credit_currency, item=d)
+
+								self.add_gl_entry(gl_entries, self.get_company_default("exchange_gain_loss_account"), d.cost_center, discrepancy_caused_by_exchange_rate_difference, 0.0, 
+									remarks, self.supplier, debit_in_account_currency=-1 * discrepancy_caused_by_exchange_rate_difference, 
+									account_currency=credit_currency, item=d)
+
 					# Amount added through landed-cos-voucher
 					if d.landed_cost_voucher_amount and landed_cost_entries:
 						for account, amount in iteritems(landed_cost_entries[(d.item_code, d.name)]):

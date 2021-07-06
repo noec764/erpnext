@@ -556,7 +556,7 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends e
 			],
 			primary_action: function() {
 				var data = d.get_values();
-				let reason_for_hold = 'Reason for hold: ' + data.reason_for_hold;
+				let reason_for_hold = __('Reason for hold: ') + data.reason_for_hold;
 
 				frappe.call({
 					method: "frappe.desk.form.utils.add_comment",

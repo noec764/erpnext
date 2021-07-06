@@ -503,7 +503,8 @@ class BuyingController(StockController, Subcontracting):
 			self.process_fixed_asset()
 			self.update_fixed_asset(field)
 
-		update_last_purchase_rate(self, is_submit = 1)
+		if self.doctype in ['Purchase Order', 'Purchase Receipt']:
+			update_last_purchase_rate(self, is_submit = 1)
 
 	def on_cancel(self):
 		super(BuyingController, self).on_cancel()
@@ -511,7 +512,9 @@ class BuyingController(StockController, Subcontracting):
 		if self.get('is_return'):
 			return
 
-		update_last_purchase_rate(self, is_submit = 0)
+		if self.doctype in ['Purchase Order', 'Purchase Receipt']:
+			update_last_purchase_rate(self, is_submit = 0)
+
 		if self.doctype in ['Purchase Receipt', 'Purchase Invoice']:
 			field = 'purchase_invoice' if self.doctype == 'Purchase Invoice' else 'purchase_receipt'
 

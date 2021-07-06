@@ -80,7 +80,6 @@ def get_consumed_items(condition):
 		group by item_code""" % condition, as_dict=1)
 
 	consumed_items_map = {item.item_code : item.consumed_qty for item in consumed_items}
-
 	return consumed_items_map
 
 def get_delivered_items(condition):

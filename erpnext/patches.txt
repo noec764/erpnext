@@ -260,6 +260,8 @@ erpnext.patches.v13_0.germany_fill_debtor_creditor_number
 erpnext.patches.v13_0.set_training_event_attendance
 erpnext.patches.v13_0.bill_for_rejected_quantity_in_purchase_invoice
 erpnext.patches.v13_0.rename_issue_status_hold_to_on_hold
+erpnext.patches.v13_0.bill_for_rejected_quantity_in_purchase_invoice
+erpnext.patches.v13_0.update_job_card_details
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain

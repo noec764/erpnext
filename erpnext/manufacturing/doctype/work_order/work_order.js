@@ -141,8 +141,7 @@ frappe.ui.form.on("Work Order", {
 		}
 
 		if (frm.doc.docstatus === 1
-			&& frm.doc.operations && frm.doc.operations.length
-			&& frm.doc.qty != frm.doc.material_transferred_for_manufacturing) {
+			&& frm.doc.operations && frm.doc.operations.length) {
 
 			const not_completed = frm.doc.operations.filter(d => {
 				if(d.status != 'Completed') {
@@ -153,7 +152,7 @@ frappe.ui.form.on("Work Order", {
 			if(not_completed && not_completed.length) {
 				frm.add_custom_button(__('Create Job Card'), () => {
 					frm.trigger("make_job_card");
-				}).addClass('btn-primary').removeClass("btn-default");
+				}).addClass('btn-primary');
 			}
 		}
 
@@ -190,35 +189,41 @@ frappe.ui.form.on("Work Order", {
 		const dialog = frappe.prompt({fieldname: 'operations', fieldtype: 'Table', label: __('Operations'),
 			fields: [
 				{
-					fieldtype:'Link',
-					fieldname:'operation',
+					fieldtype: 'Link',
+					fieldname: 'operation',
 					label: __('Operation'),
-					read_only:1,
-					in_list_view:1
+					read_only: 1,
+					in_list_view: 1
 				},
 				{
-					fieldtype:'Link',
-					fieldname:'workstation',
+					fieldtype: 'Link',
+					fieldname: 'workstation',
 					label: __('Workstation'),
-					read_only:1,
-					in_list_view:1
+					read_only: 1,
+					in_list_view: 1
 				},
 				{
-					fieldtype:'Data',
-					fieldname:'name',
+					fieldtype: 'Data',
+					fieldname: 'name',
 					label: __('Operation Id')
 				},
 				{
-					fieldtype:'Float',
-					fieldname:'pending_qty',
+					fieldtype: 'Float',
+					fieldname: 'pending_qty',
 					label: __('Pending Qty'),
 				},
 				{
-					fieldtype:'Float',
-					fieldname:'qty',
+					fieldtype: 'Float',
+					fieldname: 'qty',
 					label: __('Quantity to Manufacture'),
-					read_only:0,
-					in_list_view:1,
+					read_only: 0,
+					in_list_view: 1,
+				},
+				{
+					fieldtype: 'Float',
+					fieldname: 'batch_size',
+					label: __('Batch Size'),
+					read_only: 1
 				},
 			],
 			data: operations_data,
@@ -229,9 +234,13 @@ frappe.ui.form.on("Work Order", {
 		}, function(data) {
 			frappe.call({
 				method: "erpnext.manufacturing.doctype.work_order.work_order.make_job_card",
+				freeze: true,
 				args: {
 					work_order: frm.doc.name,
 					operations: data.operations,
+				},
+				callback: function() {
+					frm.reload_doc();
 				}
 			});
 		}, __("Job Card"), __("Create"));
@@ -243,13 +252,16 @@ frappe.ui.form.on("Work Order", {
 			if(data.completed_qty != frm.doc.qty) {
 				pending_qty = frm.doc.qty - flt(data.completed_qty);
 
-				dialog.fields_dict.operations.df.data.push({
-					'name': data.name,
-					'operation': data.operation,
-					'workstation': data.workstation,
-					'qty': pending_qty,
-					'pending_qty': pending_qty,
-				});
+				if (pending_qty) {
+					dialog.fields_dict.operations.df.data.push({
+						'name': data.name,
+						'operation': data.operation,
+						'workstation': data.workstation,
+						'batch_size': data.batch_size,
+						'qty': pending_qty,
+						'pending_qty': pending_qty
+					});
+				}
 			}
 		});
 		dialog.fields_dict.operations.grid.refresh();
@@ -326,7 +338,7 @@ frappe.ui.form.on("Work Order", {
 			});
 
 			for (let key in status_wise_oprtation_data) {
-				title = __("{0} Operations: {1}", [__(key), status_wise_oprtation_data[key][1].bold()]);
+				title = __("{0} Operations: {1}", [key, status_wise_oprtation_data[key][1].bold()]);
 				bars.push({
 					'title': title,
 					'width': status_wise_oprtation_data[key][0] / total_completed_qty * 100  + '%',
@@ -529,7 +541,7 @@ erpnext.work_order = {
 					var start_btn = frm.add_custom_button(__('Start'), function() {
 						erpnext.work_order.make_se(frm, 'Material Transfer for Manufacture');
 					});
-					start_btn.addClass('btn-primary').removeClass("btn-default");
+					start_btn.addClass('btn-primary');
 				}
 			}
 
@@ -555,7 +567,7 @@ erpnext.work_order = {
 								const backflush_raw_materials_based_on = frm.doc.__onload.backflush_raw_materials_based_on;
 								erpnext.work_order.make_consumption_se(frm, backflush_raw_materials_based_on);
 							});
-							consumption_btn.addClass('btn-primary').removeClass("btn-default");
+							consumption_btn.addClass('btn-primary');
 						}
 					}
 
@@ -565,7 +577,7 @@ erpnext.work_order = {
 
 					if(doc.material_transferred_for_manufacturing>=doc.qty) {
 						// all materials transferred for manufacturing, make this primary
-						finish_btn.addClass('btn-primary').removeClass("btn-default");
+						finish_btn.addClass('btn-primary');
 					}
 				}
 			} else {
@@ -573,7 +585,7 @@ erpnext.work_order = {
 					var finish_btn = frm.add_custom_button(__('Finish'), function() {
 						erpnext.work_order.make_se(frm, 'Manufacture');
 					});
-					finish_btn.addClass('btn-primary').removeClass("btn-default");
+					finish_btn.addClass('btn-primary');
 				}
 			}
 		}
@@ -628,13 +640,11 @@ erpnext.work_order = {
 	},
 
 	show_prompt_for_qty_input: function(frm, purpose) {
-		// Keep for translations
-		// __('Manufacture'), __('Material Transfer for Manufacture')
 		let max = this.get_max_transferable_qty(frm, purpose);
 		return new Promise((resolve, reject) => {
 			frappe.prompt({
 				fieldtype: 'Float',
-				label: __('Qty for {0}', [__(purpose)]),
+				label: __('Qty for {0}', [purpose]),
 				fieldname: 'qty',
 				description: __('Max: {0}', [max]),
 				default: max
