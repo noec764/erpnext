@@ -253,6 +253,8 @@ class PurchaseReceipt(BuyingController):
 		return process_gl_map(gl_entries)
 
 	def make_item_gl_entries(self, gl_entries, warehouse_account=None):
+		from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import get_purchase_document_details
+
 		stock_rbnb = self.get_company_default("stock_received_but_not_billed")
 		landed_cost_entries = get_item_account_wise_additional_cost(self.name)
 		expenses_included_in_valuation = self.get_company_default("expenses_included_in_valuation")
@@ -260,6 +262,9 @@ class PurchaseReceipt(BuyingController):
 
 		warehouse_with_no_account = []
 		stock_items = self.get_stock_items()
+
+		exchange_rate_map, net_rate_map = get_purchase_document_details(self)
+
 		for d in self.get("items"):
 			if d.item_code in stock_items and flt(d.valuation_rate) and flt(d.qty):
 				if warehouse_account.get(d.warehouse):
