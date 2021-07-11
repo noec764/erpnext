@@ -396,5 +396,6 @@ def get_chart_data(filters, columns, data):
 				{'name': _('Budget'), 'chartType': 'bar', 'values': budget_values},
 				{'name': _('Actual Expense'), 'chartType': 'bar', 'values': actual_values}
 			]
-		}
+		},
+		'type' : 'bar'
 	}
