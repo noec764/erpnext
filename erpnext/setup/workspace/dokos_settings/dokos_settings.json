@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Dokos Settings",
  "links": [],
- "modified": "2021-04-19 10:56:26.251152",
+ "modified": "2021-06-12 01:58:11.399566",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
@@ -89,6 +89,13 @@
    "link_to": "Domain Settings",
    "type": "DocType"
   },
+  {
+    "doc_view": "",
+    "icon": "retail",
+    "label": "Products Settings",
+    "link_to": "Products Settings",
+    "type": "DocType"
+   },
   {
    "color": "Gray",
    "icon": "setting",
