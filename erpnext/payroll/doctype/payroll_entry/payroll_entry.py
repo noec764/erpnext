@@ -23,6 +23,9 @@ class PayrollEntry(Document):
 		if cint(entries) == len(self.employees):
 			self.set_onload("submitted_ss", True)
 
+	def validate(self):
+		self.number_of_employees = len(self.employees)
+
 	def on_submit(self):
 		self.create_salary_slips()
 
@@ -60,7 +63,6 @@ class PayrollEntry(Document):
 			condition = """and payroll_frequency = '%(payroll_frequency)s'"""% {"payroll_frequency": self.payroll_frequency}
 
 		sal_struct = get_sal_struct(self.company, self.currency, self.salary_slip_based_on_timesheet, condition)
-
 		if sal_struct:
 			cond += "and t2.salary_structure IN %(sal_struct)s "
 			cond += "and t2.payroll_payable_account = %(payroll_payable_account)s "
@@ -100,7 +102,7 @@ class PayrollEntry(Document):
 		for d in employees:
 			self.append('employees', d)
 
-		self.number_of_employees = len(employees)
+		self.number_of_employees = len(self.employees)
 		if self.validate_attendance:
 			return self.validate_employee_attendance()
 
@@ -114,10 +116,9 @@ class PayrollEntry(Document):
 		"""
 			Creates salary slip for selected employees if already not created
 		"""
-		self.check_permission("write")
-		self.created = 1
-		emp_list = [d.employee for d in self.get_emp_list()]
-		if emp_list:
+		self.check_permission('write')
+		employees = [emp.employee for emp in self.employees]
+		if employees:
 			args = frappe._dict({
 				"salary_slip_based_on_timesheet": self.salary_slip_based_on_timesheet,
 				"payroll_frequency": self.payroll_frequency,
@@ -131,10 +132,10 @@ class PayrollEntry(Document):
 				"exchange_rate": self.exchange_rate,
 				"currency": self.currency
 			})
-			if len(emp_list) > 30:
-				frappe.enqueue(create_salary_slips_for_employees, timeout=600, employees=emp_list, args=args)
+			if len(employees) > 30:
+				frappe.enqueue(create_salary_slips_for_employees, timeout=600, employees=employees, args=args)
 			else:
-				create_salary_slips_for_employees(emp_list, args, publish_progress=False)
+				create_salary_slips_for_employees(employees, args, publish_progress=False)
 				# since this method is called via frm.call this doc needs to be updated manually
 				self.reload()
 
@@ -142,7 +143,6 @@ class PayrollEntry(Document):
 		"""
 			Returns list of salary slips based on selected criteria
 		"""
-		cond = self.get_filter_condition()
 
 		ss_list = frappe.db.sql("""
 			select t1.name, t1.salary_structure, t1.payroll_cost_center from `tabSalary Slip` t1
@@ -153,7 +153,7 @@ class PayrollEntry(Document):
 
 	@frappe.whitelist()
 	def submit_salary_slips(self):
-		self.check_permission("write")
+		self.check_permission('write')
 		ss_list = self.get_sal_slip_list(ss_status=0)
 		if len(ss_list) > 30:
 			frappe.enqueue(submit_salary_slips_for_employees, timeout=600, payroll_entry=self, salary_slips=ss_list)
@@ -685,7 +685,7 @@ def employee_query(doctype, txt, searchfield, start, page_len, filters):
 
 	if filters.start_date and filters.end_date:
 		employee_list = get_employee_list(filters)
-		emp = filters.get('employees')
+		emp = filters.get('employees') or []
 		include_employees = [employee.employee for employee in employee_list if employee.employee not in emp]
 		filters.pop('start_date')
 		filters.pop('end_date')
