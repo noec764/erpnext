@@ -17,3 +17,4 @@ __pycache__
 .vscode/
 node_modules/
 erpnext/public/node_modules
+.backportrc.json
