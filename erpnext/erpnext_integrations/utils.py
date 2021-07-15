@@ -46,6 +46,31 @@ def get_webhook_address(connector_name, method, exclude_uri=False, force_https=F
 
 	return server_url
 
+
+def create_mode_of_payment(gateway, payment_type="General"):
+	payment_gateway_account = frappe.db.get_value("Payment Gateway Account", {
+			"payment_gateway": gateway
+		}, ['payment_account'])
+
+	mode_of_payment = frappe.db.exists("Mode of Payment", gateway) 
+	if not mode_of_payment and payment_gateway_account:
+		mode_of_payment = frappe.get_doc({
+			"doctype": "Mode of Payment",
+			"mode_of_payment": gateway,
+			"enabled": 1,
+			"type": payment_type,
+			"accounts": [{
+				"doctype": "Mode of Payment Account",
+				"company": get_default_company(),
+				"default_account": payment_gateway_account
+			}]
+		})
+		mode_of_payment.insert(ignore_permissions=True)
+
+		return mode_of_payment
+	elif mode_of_payment:
+		return frappe.get_doc("Mode of Payment", mode_of_payment)
+
 def get_tracking_url(carrier, tracking_number):
 	# Return the formatted Tracking URL.
 	tracking_url = ''
