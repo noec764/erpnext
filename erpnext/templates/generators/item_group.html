@@ -11,7 +11,7 @@
 {% block page_content %}
 
 {% set show_filters = frappe.form_dict.start or frappe.form_dict.field_filters or frappe.form_dict.attribute_filters or frappe.form_dict.search %}
-<div class="item-group-content" itemscope itemtype="http://schema.org/Product">
+<div class="item-group-content" itemscope itemtype="http://schema.org/Product" data-item-group="{{ name }}">
 	<div class="item-group-slideshow">
 		{% if slideshow %}<!-- slideshow -->
 			{{ web_block(
