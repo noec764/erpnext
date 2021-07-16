@@ -483,7 +483,7 @@ class WorkOrder(Document):
 
 
 		self.set('operations', [])
-		if not self.bom_no:
+		if not self.bom_no or not frappe.get_cached_value('BOM', self.bom_no, 'with_operations'):
 			return
 
 		operations = []

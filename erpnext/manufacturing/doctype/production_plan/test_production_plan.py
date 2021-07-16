@@ -169,7 +169,7 @@ class TestProductionPlan(unittest.TestCase):
 		pln.get_items()
 		pln.submit()
 
-		self.assertTrue(pln.po_items[0].planned_qty, 3)	
+		self.assertTrue(pln.po_items[0].planned_qty, 3)
 
 		pln.make_work_order()
 		work_order = frappe.db.get_value('Work Order', {
@@ -236,10 +236,10 @@ class TestProductionPlan(unittest.TestCase):
 		pln.append("po_items", {
 			"item_code": item_code,
 			"bom_no": frappe.db.get_value('BOM', {'item': "Test BOM 1"}),
-			"planned_qty": 3,
-			"make_work_order_for_sub_assembly_items": 1
+			"planned_qty": 3
 		})
 
+		pln.get_sub_assembly_items('In House')
 		pln.submit()
 		pln.make_work_order()
 
