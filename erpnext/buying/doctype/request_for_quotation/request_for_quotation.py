@@ -325,7 +325,6 @@ def create_rfq_items(sq_doc, supplier, data):
 
 	args.update({
 		"request_for_quotation_item": data.name,
-		"request_for_quotation": data.parent
 		"request_for_quotation": data.parent,
 		"supplier_part_no": frappe.db.get_value("Item Supplier",
 			{'parent': data.item_code, 'supplier': supplier}, "supplier_part_no")
