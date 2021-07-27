@@ -25,7 +25,8 @@ doctype_js = {
 	"Newsletter": "public/js/newsletter.js",
 	"Google Calendar": "public/js/google_calendar.js",
 	"Event": "public/js/event.js",
-	"Payment Gateway": "public/js/payment_gateway.js"
+	"Payment Gateway": "public/js/payment_gateway.js",
+	"Contact": "public/js/contact.js"
 }
 
 doctype_css = {
