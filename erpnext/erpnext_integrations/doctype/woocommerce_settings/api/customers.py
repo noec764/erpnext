@@ -34,9 +34,15 @@ def get_woocommerce_customers(wc_api):
 	return woocommerce_customers
 
 def sync_customer(settings, woocommerce_customer):
-	customer_name = (woocommerce_customer.get("first_name") + " " + (woocommerce_customer.get("last_name") \
-		if woocommerce_customer.get("last_name") else "")) if woocommerce_customer.get("first_name")\
-		else woocommerce_customer.get("email")
+	customer_name = woocommerce_customer.get("billing", {}).get("company")
+
+	if not customer_name:
+		customer_name = f'{woocommerce_customer.get("billing", {}).get("first_name")} {woocommerce_customer.get("billing", {}).get("last_name")}' if woocommerce_customer.get("billing", {}).get("last_name") else None
+
+	if not customer_name:
+		customer_name = (woocommerce_customer.get("first_name") + " " + (woocommerce_customer.get("last_name") \
+			if woocommerce_customer.get("last_name") else "")) if woocommerce_customer.get("first_name")\
+			else woocommerce_customer.get("email")
 
 	try:
 		if cint(woocommerce_customer.get("id")) and frappe.db.exists("Customer", dict(woocommerce_id=woocommerce_customer.get("id"))):
@@ -66,6 +72,16 @@ def sync_customer(settings, woocommerce_customer):
 			customer.insert(ignore_permissions=True)
 		
 		if customer:
+			customer.update({
+				"customer_name" : customer_name,
+				"woocommerce_email": woocommerce_customer.get("email"),
+			})
+			try:
+				customer.save()
+			except frappe.exceptions.TimestampMismatchError:
+				# Handle the update of two sales orders customers details concurrently
+				pass
+
 			billing_address = woocommerce_customer.get("billing")
 			if billing_address:
 				add_billing_address(settings, customer, woocommerce_customer)
