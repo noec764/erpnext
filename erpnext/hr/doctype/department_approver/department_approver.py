@@ -59,9 +59,9 @@ def get_approvers(doctype, txt, searchfield, start, page_len, filters):
 				and approver.approver=user.name""",(d, "%" + txt + "%", parentfield), as_list=True)
 
 	if len(approvers) == 0:
-		error_msg = _("Please set {0} for the Employee: {1}").format(field_name, frappe.bold(employee.employee_name))
+		error_msg = _("Please set {0} for the Employee: {1}").format(_(field_name), frappe.bold(employee.employee_name))
 		if department_list:
 			error_msg += _(" or for Department: {0}").format(frappe.bold(employee_department))
-		frappe.throw(error_msg, title=_(field_name + " Missing"))
+		frappe.throw(error_msg, title=_(field_name) + " " + _("Missing"))
 
 	return set(tuple(approver) for approver in approvers)
