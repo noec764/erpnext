@@ -876,7 +876,7 @@ frappe.ui.form.on('Sales Invoice', {
 
 			frappe.db.get_list("Item", {filters: {is_down_payment_item: 1}})
 			.then(r => {
-				if (r.length == 1) {
+				if (r.length) {
 					frm.doc.items.forEach(line => {
 						frappe.model.set_value(line.doctype, line.name, "item_code", r[0].name)
 					})
