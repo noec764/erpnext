@@ -35,6 +35,7 @@ def get_woocommerce_customers(wc_api):
 
 def sync_customer(settings, woocommerce_customer):
 	customer_name = woocommerce_customer.get("billing", {}).get("company")
+	customer_type = "Company" if woocommerce_customer.get("billing", {}).get("company") else "Individual"
 
 	if not customer_name:
 		customer_name = f'{woocommerce_customer.get("billing", {}).get("first_name")} {woocommerce_customer.get("billing", {}).get("last_name")}' if woocommerce_customer.get("billing", {}).get("last_name") else None
@@ -66,7 +67,7 @@ def sync_customer(settings, woocommerce_customer):
 				"woocommerce_email": woocommerce_customer.get("email"),
 				"customer_group": settings.customer_group,
 				"territory": territory,
-				"customer_type": "Individual"
+				"customer_type": customer_type
 			})
 			customer.flags.ignore_mandatory = True
 			customer.insert(ignore_permissions=True)
@@ -75,6 +76,7 @@ def sync_customer(settings, woocommerce_customer):
 			customer.update({
 				"customer_name" : customer_name,
 				"woocommerce_email": woocommerce_customer.get("email"),
+				"customer_type": customer_type
 			})
 			try:
 				customer.save()
