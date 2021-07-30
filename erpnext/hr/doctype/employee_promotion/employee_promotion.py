@@ -7,10 +7,11 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate
-from erpnext.hr.utils import update_employee
+from erpnext.hr.utils import update_employee, validate_active_employee
 
 class EmployeePromotion(Document):
 	def validate(self):
+		validate_active_employee(self.employee)
 		if frappe.get_value("Employee", self.employee, "status") != "Active":
 			frappe.throw(_("Cannot promote Employee with status Left or Inactive"))
 
