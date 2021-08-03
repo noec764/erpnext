@@ -363,7 +363,6 @@ scheduler_events = {
 		"erpnext.projects.doctype.project.project.collect_project_status",
 		"erpnext.hr.doctype.shift_type.shift_type.process_auto_attendance_for_all_shifts",
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
-		"erpnext.erpnext_integrations.connectors.shopify_connection.sync_old_orders",
 		"erpnext.support.doctype.service_level_agreement.service_level_agreement.set_service_level_agreement_variance"
 		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce",
 		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries"
