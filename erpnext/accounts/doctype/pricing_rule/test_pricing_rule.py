@@ -10,11 +10,11 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 from erpnext.stock.get_item_details import get_item_details
 from frappe import MandatoryError
 from erpnext.stock.doctype.item.test_item import make_item
-from erpnext.healthcare.doctype.lab_test_template.lab_test_template import make_item_price
 
 class TestPricingRule(unittest.TestCase):
 	def setUp(self):
 		delete_existing_pricing_rules()
+		setup_pricing_rule_data()
 
 	def tearDown(self):
 		delete_existing_pricing_rules()
@@ -554,6 +554,8 @@ class TestPricingRule(unittest.TestCase):
 		for doc in [si, si1]:
 			doc.delete()
 
+test_dependencies = ["Campaign"]
+
 def make_pricing_rule(**args):
 	args = frappe._dict(args)
 
@@ -600,9 +602,24 @@ def make_pricing_rule(**args):
 	if args.get(applicable_for):
 		doc.db_set(applicable_for, args.get(applicable_for))
 
+def setup_pricing_rule_data():
+	if not frappe.db.exists('Campaign', '_Test Campaign'):
+		frappe.get_doc({
+			'doctype': 'Campaign',
+			'campaign_name': '_Test Campaign',
+			'name': '_Test Campaign'
+		}).insert()
 
 def delete_existing_pricing_rules():
 	for doctype in ["Pricing Rule", "Pricing Rule Item Code",
 		"Pricing Rule Item Group", "Pricing Rule Brand"]:
 
 		frappe.db.sql("delete from `tab{0}`".format(doctype))
+
+def make_item_price(item, price_list_name, item_price):
+	frappe.get_doc({
+		'doctype': 'Item Price',
+		'price_list': price_list_name,
+		'item_code': item,
+		'price_list_rate': item_price
+	}).insert(ignore_permissions=True, ignore_mandatory=True)
