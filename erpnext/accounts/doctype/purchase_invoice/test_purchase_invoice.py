@@ -240,7 +240,7 @@ class TestPurchaseInvoice(unittest.TestCase):
 		pi.conversion_rate = 80
 
 		pi.insert()
-		pi.submit()		
+		pi.submit()
 
 		# Get exchnage gain and loss account
 		exchange_gain_loss_account = frappe.db.get_value('Company', pi.company, 'exchange_gain_loss_account')

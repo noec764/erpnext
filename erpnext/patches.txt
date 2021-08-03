@@ -265,6 +265,8 @@ erpnext.patches.v13_0.bill_for_rejected_quantity_in_purchase_invoice
 erpnext.patches.v13_0.update_job_card_details
 erpnext.patches.v13_0.update_level_in_bom
 erpnext.patches.v13_0.add_missing_fg_item_for_stock_entry
+erpnext.patches.v13_0.update_export_type_for_gst
+erpnext.patches.v13_0.update_tds_check_field
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
