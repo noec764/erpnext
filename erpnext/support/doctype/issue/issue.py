@@ -117,6 +117,10 @@ class Issue(Document):
 
 		return replicated_issue.name
 
+	def reset_issue_metrics(self):
+		self.db_set("resolution_time", None)
+		self.db_set("user_resolution_time", None)
+
 def get_list_context(context=None):
 	return {
 		"title": _("Issues"),
