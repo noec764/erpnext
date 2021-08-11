@@ -100,8 +100,8 @@ def merge_similar_entries(gl_map, precision=None):
 	return merged_gl_map
 
 def check_if_in_list(gle, gl_map, dimensions=None):
-	account_head_fieldnames = ['party_type', 'party', 'against_voucher', 'against_voucher_type',
-		'cost_center', 'project', 'voucher_detail_no']
+	account_head_fieldnames = ['voucher_detail_no', 'party', 'against_voucher',
+			'cost_center', 'against_voucher_type', 'party_type', 'project']
 
 	if dimensions:
 		account_head_fieldnames = account_head_fieldnames + dimensions
@@ -110,10 +110,12 @@ def check_if_in_list(gle, gl_map, dimensions=None):
 		same_head = True
 		if e.account != gle.account:
 			same_head = False
+			continue
 
 		for fieldname in account_head_fieldnames:
 			if cstr(e.get(fieldname)) != cstr(gle.get(fieldname)):
 				same_head = False
+				break
 
 		if same_head:
 			return e
@@ -169,9 +171,12 @@ def get_accounting_journal(entry):
 		frappe.throw(_("Please configure an accounting journal for this transaction type and account: {0} - {1}").format(_(entry.voucher_type), entry.get("account")))
 
 def validate_cwip_accounts(gl_map):
-	cwip_enabled = any(cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category","enable_cwip_accounting"))
+	"""Validate that CWIP account are not used in Journal Entry"""
+	if gl_map and gl_map[0].voucher_type != "Journal Entry":
+		return
 
-	if cwip_enabled and gl_map[0].voucher_type == "Journal Entry":
+	cwip_enabled = any(cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category", "enable_cwip_accounting"))
+	if cwip_enabled:
 		cwip_accounts = [d[0] for d in frappe.db.sql("""select name from tabAccount
 			where account_type = 'Capital Work in Progress' and is_group=0""")]
 
