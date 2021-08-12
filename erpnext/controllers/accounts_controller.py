@@ -686,14 +686,13 @@ class AccountsController(TransactionBase):
 		lst = []
 		for d in self.get('advances'):
 			if flt(d.allocated_amount) > 0:
-				down_payment = cint(frappe.db.get_value(d.reference_type, d.reference_name, "down_payment")) if d.reference_type == "Payment Entry" else 0
 				args = frappe._dict({
 					'voucher_type': d.reference_type,
 					'voucher_no': d.reference_name,
 					'voucher_detail_no': d.reference_row,
 					'against_voucher_type': self.doctype,
 					'against_voucher': self.name,
-					'account': get_party_account(party_type, party, self.company, True) if down_payment else party_account,
+					'account': party_account,
 					'party_type': party_type,
 					'party': party,
 					'is_advance': 'Yes',
@@ -707,6 +706,12 @@ class AccountsController(TransactionBase):
 						if self.party_account_currency == self.company_currency else self.grand_total),
 					'outstanding_amount': self.outstanding_amount
 				})
+
+				down_payment = cint(frappe.db.get_value(d.reference_type, d.reference_name, "down_payment")) if d.reference_type == "Payment Entry" else 0
+				if down_payment:
+					account_field = "paid_from" if party_type=="Customer" else "paid_to"
+					args["down_payment_account"] = frappe.db.get_value(d.reference_type, d.reference_name, account_field)
+
 				lst.append(args)
 
 		if lst:

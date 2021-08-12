@@ -371,6 +371,9 @@ def check_if_advance_entry_modified(args):
 		check if amount is same
 		check if jv is submitted
 	"""
+	if args.get("down_payment_account"):
+		args["account"] = args.get("down_payment_account")
+
 	ret = None
 	if args.voucher_type == "Journal Entry":
 		ret = frappe.db.sql("""
@@ -499,7 +502,7 @@ def update_reference_in_payment_entry(d, payment_entry, do_not_save=False):
 		new_row.update(reference_details)
 
 	payment_entry.flags.ignore_validate_update_after_submit = True
-	payment_entry.down_payment = 0
+	# payment_entry.down_payment = 0
 	payment_entry.setup_party_account_field()
 	payment_entry.set_missing_values()
 	payment_entry.set_amounts()

@@ -571,6 +571,14 @@ class PaymentEntry(AccountsController):
 					"against_voucher": d.reference_name
 				})
 
+				if self.down_payment:
+					account_field = "debit_to" if erpnext.get_party_account_type(self.party_type) == 'Receivable' else "credit_to"
+					final_account = frappe.db.get_value(d.reference_doctype, d.reference_name, account_field)
+					if final_account:
+						gle.update({
+							"account": final_account
+						})
+
 				allocated_amount_in_company_currency = flt(flt(d.allocated_amount) * flt(d.exchange_rate),
 					self.precision("paid_amount"))
 
