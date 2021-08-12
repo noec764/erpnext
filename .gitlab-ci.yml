@@ -1,0 +1,54 @@
+stages:
+  - Unit Tests
+
+unittests:
+  image: "python:3.7-buster"
+
+  stage: Unit Tests
+
+  services:
+    - name: mariadb
+      command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--character-set-client-handshake=FALSE']
+    - name: redis
+      alias: redis_queue
+    - name: redis
+      alias: redis_cache
+    - name: redis
+      alias: redis_socketio
+
+  variables:
+    MYSQL_DATABASE: "test_dodock"
+    MYSQL_ROOT_PASSWORD: "test_dodock"
+
+  script:
+    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-suggests --no-install-recommends mariadb-client
+    - wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_i386.deb
+    - dpkg -i wkhtmltox_0.12.5-1.buster_i386.deb && rm wkhtmltox_0.12.5-1.buster_i386.deb
+    - rm -rf /var/lib/apt/lists/*
+    - rm -rf /etc/apt/sources.list.d/*
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash
+    - apt-get install -y nodejs
+    - npm install --global yarn
+    - mkdir -p apps
+    - mkdir -p apps/frappe
+    - git clone -b $CI_COMMIT_REF_NAME https://gitlab.com/dokos/dodock apps/frappe
+    - mkdir -p apps/erpnext
+    - mv -f * apps/erpnext/ || true
+    - mkdir -p sites logs && echo "frappe/nerpnext" > sites/apps.txt
+    - mkdir -p ../logs
+    - mkdir sites/test_site
+    - cp -r apps/frappe/test_sites/test_site/site_config.json sites/test_site/
+    - mkdir -p test_site/logs
+    - mkdir -p sites/assets
+    - python -m venv env
+    - . env/bin/activate
+    - pip3 install --upgrade pip
+    - pip3 install --no-cache-dir -e apps/frappe/
+    - pip3 install --no-cache-dir -e apps/erpnext/
+    - cd apps/frappe
+    - yarn install
+    - cd ../erpnext
+    - yarn install
+    - cd ../../
+    - python apps/frappe/test_sites/test_installer.py || true
+    - python apps/frappe/test_sites/test_runner.py
