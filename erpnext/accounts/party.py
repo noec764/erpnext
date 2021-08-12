@@ -59,7 +59,7 @@ def _get_party_details(party=None, account=None, party_type="Customer", company=
 			customer_group=party_details.customer_group, supplier_group=party_details.supplier_group, tax_category=party_details.tax_category,
 			billing_address=party_address, shipping_address=shipping_address)
 
-	if fetch_payment_terms_template:
+	if cint(fetch_payment_terms_template):
 		party_details["payment_terms_template"] = get_payment_terms_template(party.name, party_type, company)
 
 	if not party_details.get("currency"):

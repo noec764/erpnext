@@ -129,6 +129,7 @@
   "get_advances",
   "advances",
   "payment_schedule_section",
+  "ignore_default_payment_terms_template",
   "payment_terms_template",
   "payment_schedule",
   "payments_section",
@@ -1675,6 +1676,14 @@
    "fieldname": "disable_rounded_total",
    "fieldtype": "Check",
    "label": "Disable Rounded Total"
+  },
+  {
+   "default": "0",
+   "fieldname": "ignore_default_payment_terms_template",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Ignore Default Payment Terms Template",
+   "read_only": 1
    }
  ],
  "icon": "fa fa-file-text",
@@ -1689,7 +1698,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2021-04-23 22:36:32.916354",
+ "modified": "2021-08-06 23:02:20.445127",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

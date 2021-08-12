@@ -285,7 +285,8 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 				party: this.frm.doc.supplier,
 				party_type: "Supplier",
 				account: this.frm.doc.credit_to,
-				price_list: this.frm.doc.buying_price_list
+				price_list: this.frm.doc.buying_price_list,
+				fetch_payment_terms_template: cint(!this.frm.doc.ignore_default_payment_terms_template)
 			}, function() {
 				me.apply_pricing_rule();
 				me.frm.doc.apply_tds = me.frm.supplier_tds ? 1 : 0;
