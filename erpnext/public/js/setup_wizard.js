@@ -11,7 +11,7 @@ frappe.setup.on("before_load", function () {
 	erpnext.setup.get_slides_settings().map(frappe.setup.add_slide);
 });
 
-erpnext.setup.get_slides_settings() = [
+erpnext.setup.get_slides_settings = () => [
 	{
 		// Domain
 		name: 'domain',
