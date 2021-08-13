@@ -59,12 +59,12 @@ class Asset(AccountsController):
 		if self.is_existing_asset and self.purchase_invoice:
 			frappe.throw(_("Purchase Invoice cannot be made against an existing asset {0}").format(self.name))
 
-	def prepare_depreciation_data(self):
+	def prepare_depreciation_data(self, date_of_sale=None):
 		if self.calculate_depreciation:
 			self.value_after_depreciation = 0
 			self.set_depreciation_rate()
-			self.make_depreciation_schedule()
-			self.set_accumulated_depreciation()
+			self.make_depreciation_schedule(date_of_sale)
+			self.set_accumulated_depreciation(date_of_sale)
 		else:
 			self.finance_books = []
 			self.value_after_depreciation = (flt(self.gross_purchase_amount) - flt(self.opening_accumulated_depreciation))
@@ -168,7 +168,8 @@ class Asset(AccountsController):
 		for d in self.get("finance_books"):
 			d.rate_of_depreciation = flt(self.get_depreciation_rate(d, on_validate=True), d.precision("rate_of_depreciation"))
 
-	def make_depreciation_schedule(self):
+	# TODO: Include date of sale in depreciation
+	def make_depreciation_schedule(self, date_of_sale):
 		if 'Manual' not in [d.depreciation_method for d in self.finance_books] and not self.schedules:
 			self.schedules = []
 
@@ -215,15 +216,14 @@ class Asset(AccountsController):
 			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date cannot be before Available-for-use Date")
 				.format(row.idx))
 
-	def set_accumulated_depreciation(self, ignore_booked_entry = False):
-		straight_line_idx = [d.idx for d in self.get("schedules") if d.depreciation_method == 'Straight Line']
+	def set_accumulated_depreciation(self, date_of_sale=None, ignore_booked_entry = False):
 		accumulated_depreciations_per_finance_book = defaultdict(dict)
 
 		for i, d in enumerate(self.get("schedules")):
 			if ignore_booked_entry and d.journal_entry:
 				continue
 
-			if d.finance_book_id not in accumulated_depreciations_per_finance_book:
+			if int(d.finance_book_id) not in accumulated_depreciations_per_finance_book:
 				accumulated_depreciations_per_finance_book[d.finance_book_id] = flt(self.opening_accumulated_depreciation)
 
 			accumulated_depreciations_per_finance_book[d.finance_book_id] += d.depreciation_amount
