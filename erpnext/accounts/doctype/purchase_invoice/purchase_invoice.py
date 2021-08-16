@@ -443,6 +443,7 @@ class PurchaseInvoice(BuyingController):
 
 		self.make_supplier_gl_entry(gl_entries)
 		self.make_item_gl_entries(gl_entries)
+		self.make_discount_gl_entries(gl_entries)
 
 		if self.check_asset_cwip_enabled():
 			self.get_asset_gl_entry(gl_entries)
@@ -607,7 +608,7 @@ class PurchaseInvoice(BuyingController):
 						if (not item.enable_deferred_expense or self.is_return) else item.deferred_expense_account)
 
 					if not item.is_fixed_asset:
-						amount = flt(item.base_net_amount, item.precision("base_net_amount"))
+						dummy, amount = self.get_amount_and_base_amount(item, self.enable_discount_accounting)
 					else:
 						amount = flt(item.base_net_amount + item.item_tax_amount, item.precision("base_net_amount"))
 						self.negative_expense_to_be_booked += flt(item.item_tax_amount, item.precision("item_tax_amount"))
@@ -850,8 +851,10 @@ class PurchaseInvoice(BuyingController):
 	def make_tax_gl_entries(self, gl_entries):
 		# tax table gl entries
 		valuation_tax = {}
+
 		for tax in self.get("taxes"):
-			if tax.category in ("Total", "Valuation and Total") and flt(tax.base_tax_amount_after_discount_amount):
+			amount, base_amount = self.get_tax_amounts(tax, self.enable_discount_accounting)
+			if tax.category in ("Total", "Valuation and Total") and flt(base_amount):
 				account_currency = get_account_currency(tax.account_head)
 
 				dr_or_cr = "debit" if tax.add_deduct_tax == "Add" else "credit"
@@ -860,21 +863,21 @@ class PurchaseInvoice(BuyingController):
 					self.get_gl_dict({
 						"account": tax.account_head,
 						"against": self.supplier,
-						dr_or_cr: tax.base_tax_amount_after_discount_amount,
-						dr_or_cr + "_in_account_currency": tax.base_tax_amount_after_discount_amount \
-							if account_currency==self.company_currency \
-							else tax.tax_amount_after_discount_amount,
+						dr_or_cr: base_amount,
+						dr_or_cr + "_in_account_currency": base_amount
+							if account_currency==self.company_currency
+							else amount,
 						"cost_center": tax.cost_center
 					}, account_currency, item=tax)
 				)
 			# accumulate valuation tax
-			if self.is_opening == "No" and tax.category in ("Valuation", "Valuation and Total") and flt(tax.base_tax_amount_after_discount_amount) \
+			if self.is_opening == "No" and tax.category in ("Valuation", "Valuation and Total") and flt(base_amount) \
 				and not self.is_internal_transfer():
 				if self.auto_accounting_for_stock and not tax.cost_center:
 					frappe.throw(_("Cost Center is required in row {0} in Taxes table for type {1}").format(tax.idx, _(tax.category)))
 				valuation_tax.setdefault(tax.name, 0)
 				valuation_tax[tax.name] += \
-					(tax.add_deduct_tax == "Add" and 1 or -1) * flt(tax.base_tax_amount_after_discount_amount)
+					(tax.add_deduct_tax == "Add" and 1 or -1) * flt(base_amount)
 
 		if self.is_opening == "No" and self.negative_expense_to_be_booked and valuation_tax:
 			# credit valuation tax amount in "Expenses Included In Valuation"
@@ -915,6 +918,13 @@ class PurchaseInvoice(BuyingController):
 							"remarks": self.remarks or "Accounting Entry for Stock"
 						}, item=tax)
 					)
+
+	@property
+	def enable_discount_accounting(self):
+		if not hasattr(self, "_enable_discount_accounting"):
+			self._enable_discount_accounting = cint(frappe.db.get_single_value('Accounts Settings', 'enable_discount_accounting'))
+
+		return self._enable_discount_accounting
 
 	def make_internal_transfer_gl_entries(self, gl_entries):
 		if self.is_internal_transfer() and flt(self.base_total_taxes_and_charges):

@@ -65,6 +65,7 @@
   "finance_book",
   "col_break4",
   "expense_account",
+  "discount_account",
   "deferred_revenue",
   "deferred_revenue_account",
   "service_stop_date",
@@ -836,6 +837,12 @@
     "no_copy": 1,
     "print_hide": 1,
     "read_only": 1
+  },
+  {
+   "fieldname": "discount_account",
+   "fieldtype": "Link",
+   "label": "Discount Account",
+   "options": "Account"
    }
  ],
  "idx": 1,
