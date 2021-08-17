@@ -47,21 +47,21 @@ class EmailDigest(Document):
 		# send email only to enabled users
 		valid_users = [p[0] for p in frappe.db.sql("""select name from `tabUser`
 			where enabled=1""")]
-		recipients = list(filter(lambda r: r in valid_users,
-			self.recipient_list.split("\n")))
 
-		if recipients:
-			for user_id in recipients:
-				frappe.set_user_lang(user_id)
+		if self.recipients:
+			for row in self.recipients:
 				msg_for_this_recipient = self.get_msg_html()
-				if msg_for_this_recipient:
+				if msg_for_this_recipient and row.recipient in valid_users:
 					frappe.sendmail(
-						recipients=user_id,
-						subject=_("{0} Digest").format(_(self.frequency)),
+						recipients=row.recipient,
+						subject=_("{0} Digest").format(self.frequency),
 						message=msg_for_this_recipient,
 						reference_doctype = self.doctype,
 						reference_name = self.name,
 						unsubscribe_message = _("Unsubscribe from this Email Digest"))
+
+		frappe.set_user(original_user)
+		frappe.set_user_lang(original_user)
 
 	def get_msg_html(self):
 		"""Build email digest content"""
@@ -147,6 +147,7 @@ class EmailDigest(Document):
 		"""Get calendar events for given user"""
 		from frappe.desk.doctype.event.event import get_events
 		from_date, to_date = get_future_date_for_calendaer_event(self.frequency)
+
 		events = get_events(from_date, to_date)
 
 		event_count = 0
@@ -293,7 +294,7 @@ class EmailDigest(Document):
 				"company": self.company
 			})
 
-		label = get_link_to_report("General Ledger", _(self.meta.get_label("income")),
+		label = get_link_to_report("General Ledger",self.meta.get_label("income"),
 			filters={
 				"from_date": self.future_from_date,
 				"to_date": self.future_to_date,
@@ -329,13 +330,13 @@ class EmailDigest(Document):
 			filters = {
 				"currency": self.currency
 			}
-			label = get_link_to_report('Profit and Loss Statement', label=_(self.meta.get_label(root_type + "_year_to_date")), filters=filters)
+			label = get_link_to_report('Profit and Loss Statement', label=self.meta.get_label(root_type + "_year_to_date"), filters=filters)
 
 		elif fieldname == 'expenses_booked':
 			filters = {
 				"currency": self.currency
 			}
-			label = get_link_to_report('Profit and Loss Statement', label=_(self.meta.get_label(root_type + "_year_to_date")), filters=filters)
+			label = get_link_to_report('Profit and Loss Statement', label=self.meta.get_label(root_type + "_year_to_date"), filters=filters)
 
 		return {
 			"label": label,
@@ -369,7 +370,7 @@ class EmailDigest(Document):
 				}
 			)
 
-		label = get_link_to_report("General Ledger", _(self.meta.get_label("expenses_booked")),
+		label = get_link_to_report("General Ledger",self.meta.get_label("expenses_booked"),
 			filters={
 				"company":self.company,
 				"from_date":self.future_from_date,
@@ -399,11 +400,11 @@ class EmailDigest(Document):
 		"""Get value not billed"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total)) - (sum(grand_total*per_billed/100)),0),
-					count(*) from `tabSales Order`
+                    count(*) from `tabSales Order`
 					where (transaction_date <= %(to_date)s) and billing_status != "Fully Billed" and company = %(company)s
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
-		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_bill")),
+		label = get_link_to_report('Sales Order', label=self.meta.get_label("sales_orders_to_bill"),
 			report_type="Report Builder",
 			doctype="Sales Order",
 			filters = {
@@ -428,7 +429,7 @@ class EmailDigest(Document):
 					where (transaction_date <= %(to_date)s) and delivery_status != "Fully Delivered" and company = %(company)s
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
-		label = get_link_to_report('Sales Order', label=_(self.meta.get_label("sales_orders_to_deliver")),
+		label = get_link_to_report('Sales Order', label=self.meta.get_label("sales_orders_to_deliver"),
 			report_type="Report Builder",
 			doctype="Sales Order",
 			filters = {
@@ -449,11 +450,11 @@ class EmailDigest(Document):
 		"""Get value not received"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total))-(sum(grand_total*per_received/100)),0),
-					count(*) from `tabPurchase Order`
+                    count(*) from `tabPurchase Order`
 					where (transaction_date <= %(to_date)s) and per_received < 100 and company = %(company)s
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
-		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_receive")),
+		label = get_link_to_report('Purchase Order', label=self.meta.get_label("purchase_orders_to_receive"),
 			report_type="Report Builder",
 			doctype="Purchase Order",
 			filters = {
@@ -474,11 +475,11 @@ class EmailDigest(Document):
 		"""Get purchase not billed"""
 
 		value, count = frappe.db.sql("""select ifnull((sum(grand_total)) - (sum(grand_total*per_billed/100)),0),
-					count(*) from `tabPurchase Order`
+                    count(*) from `tabPurchase Order`
 					where (transaction_date <= %(to_date)s) and per_billed < 100 and company = %(company)s
 					and status not in ('Closed','Cancelled', 'Completed') """, {"to_date": self.future_to_date, "company": self.company})[0]
 
-		label = get_link_to_report('Purchase Order', label=_(self.meta.get_label("purchase_orders_to_bill")),
+		label = get_link_to_report('Purchase Order', label=self.meta.get_label("purchase_orders_to_bill"),
 			report_type="Report Builder",
 			doctype="Purchase Order",
 			filters = {
@@ -522,7 +523,7 @@ class EmailDigest(Document):
 					"report_date": self.future_to_date,
 					"company": self.company
 				}
-				label = get_link_to_report('Account Balance', label=_(self.meta.get_label(fieldname)), filters=filters)
+				label = get_link_to_report('Account Balance', label=self.meta.get_label(fieldname), filters=filters)
 			else:
 				filters = {
 					"root_type": "Liability",
@@ -530,7 +531,7 @@ class EmailDigest(Document):
 					"report_date": self.future_to_date,
 					"company": self.company
 				}
-				label = get_link_to_report('Account Balance', label=_(self.meta.get_label(fieldname)), filters=filters)
+				label = get_link_to_report('Account Balance', label=self.meta.get_label(fieldname), filters=filters)
 
 			return {
 				'label': label,
@@ -539,13 +540,13 @@ class EmailDigest(Document):
 			}
 		else:
 			if account_type == 'Payable':
-				label = get_link_to_report('Accounts Payable', label=_(self.meta.get_label(fieldname)),
+				label = get_link_to_report('Accounts Payable', label=self.meta.get_label(fieldname),
 					filters={
 						"report_date": self.future_to_date,
 						"company": self.company
 					} )
 			elif account_type == 'Receivable':
-				label = get_link_to_report('Accounts Receivable', label=_(self.meta.get_label(fieldname)),
+				label = get_link_to_report('Accounts Receivable', label=self.meta.get_label(fieldname),
 					filters={
 						"report_date": self.future_to_date,
 						"company": self.company
@@ -633,7 +634,7 @@ class EmailDigest(Document):
 			and company = %(company)s
 			and status not in ('Ordered','Cancelled', 'Lost') """,{"to_date": self.past_to_date, "company": self.company})[0][0]
 
-		label = get_link_to_report('Quotation', label=_(self.meta.get_label(fieldname)),
+		label = get_link_to_report('Quotation', label=self.meta.get_label(fieldname),
 			report_type="Report Builder",
 			doctype="Quotation",
 			filters = {
@@ -667,7 +668,7 @@ class EmailDigest(Document):
 			"company": self.company
 		}
 
-		label = get_link_to_report(doc_type,label=_(self.meta.get_label(fieldname)),
+		label = get_link_to_report(doc_type,label=self.meta.get_label(fieldname),
 			report_type="Report Builder", filters=filters, doctype=doc_type)
 
 		return {
@@ -752,7 +753,7 @@ class EmailDigest(Document):
 	def get_purchase_orders_items_overdue_list(self):
 		fields_po = "distinct `tabPurchase Order Item`.parent as po"
 		fields_poi = "`tabPurchase Order Item`.parent, `tabPurchase Order Item`.schedule_date, item_code," \
-					 "received_qty, qty - received_qty as missing_qty, rate, amount"
+		             "received_qty, qty - received_qty as missing_qty, rate, amount"
 
 		sql_po = """select {fields} from `tabPurchase Order Item`
 			left join `tabPurchase Order` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent

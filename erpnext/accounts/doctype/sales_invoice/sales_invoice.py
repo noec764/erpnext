@@ -884,8 +884,10 @@ class SalesInvoice(SellingController):
 			)
 
 	def make_tax_gl_entries(self, gl_entries):
+		enable_discount_accounting = cint(frappe.db.get_single_value('Accounts Settings', 'enable_discount_accounting'))
+
 		for tax in self.get("taxes"):
-			amount, base_amount = self.get_tax_amounts(tax, self.enable_discount_accounting)
+			amount, base_amount = self.get_tax_amounts(tax, enable_discount_accounting)
 
 			if flt(tax.base_tax_amount_after_discount_amount):
 				account_currency = get_account_currency(tax.account_head)
@@ -917,6 +919,7 @@ class SalesInvoice(SellingController):
 
 	def make_item_gl_entries(self, gl_entries):
 		# income account gl entries
+		enable_discount_accounting = cint(frappe.db.get_single_value('Accounts Settings', 'enable_discount_accounting'))
 
 		for item in self.get("items"):
 			if flt(item.base_net_amount, item.precision("base_net_amount")):
@@ -949,7 +952,7 @@ class SalesInvoice(SellingController):
 					if not self.is_internal_transfer():
 						income_account = (item.income_account
 							if (not item.enable_deferred_revenue or self.is_return) else item.deferred_revenue_account)
-						amount, base_amount = self.get_amount_and_base_amount(item, self.enable_discount_accounting)
+						amount, base_amount = self.get_amount_and_base_amount(item, enable_discount_accounting)
 
 						account_currency = get_account_currency(income_account)
 						gl_entries.append(
@@ -974,7 +977,7 @@ class SalesInvoice(SellingController):
 			asset = frappe.get_doc("Asset", item.asset)
 		else:
 			frappe.throw(_(
-				"Row #{0}: You must select an Asset for Item {1}.").format(item.idx, item.item_name), 
+				"Row #{0}: You must select an Asset for Item {1}.").format(item.idx, item.item_name),
 				title=_("Missing Asset")
 			)
 
@@ -1041,7 +1044,7 @@ class SalesInvoice(SellingController):
 	def get_posting_date_of_sales_invoice(self):
 		return frappe.db.get_value('Sales Invoice', self.return_against, 'posting_date')
 
-	# if the invoice had been posted on the date the depreciation was initially supposed to happen, the depreciation shouldn't be undone 
+	# if the invoice had been posted on the date the depreciation was initially supposed to happen, the depreciation shouldn't be undone
 	def sale_was_made_on_original_schedule_date(self, asset, schedule, row, posting_date_of_original_invoice):
 		for finance_book in asset.get('finance_books'):
 			if schedule.finance_book == finance_book.finance_book:

@@ -133,6 +133,12 @@ def create_email_digest():
 	if not system_managers:
 		return
 
+	recipients = []
+	for d in system_managers:
+		recipients.append({
+			'recipient': d
+		})
+
 	companies = frappe.db.sql_list("select name FROM `tabCompany`")
 	for company in companies:
 		if not frappe.db.exists("Email Digest", "Default Weekly Digest - " + company):
@@ -141,7 +147,7 @@ def create_email_digest():
 				"name": "Default Weekly Digest - " + company,
 				"company": company,
 				"frequency": "Weekly",
-				"recipient_list": "\n".join(system_managers)
+				"recipients": recipients
 			})
 
 			for df in edigest.meta.get("fields", {"fieldtype": "Check"}):
@@ -157,7 +163,7 @@ def create_email_digest():
 			"name": "Scheduler Errors",
 			"company": companies[0],
 			"frequency": "Daily",
-			"recipient_list": "\n".join(system_managers),
+			"recipients": recipients,
 			"scheduler_errors": 1,
 			"enabled": 1
 		})

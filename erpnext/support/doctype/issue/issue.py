@@ -231,7 +231,7 @@ def set_first_response_time(communication, method):
 
 def is_first_response(issue):
 	responses = frappe.get_all('Communication', filters = {'reference_name': issue.name, 'sent_or_received': 'Sent'})
-	if len(responses) == 1: 
+	if len(responses) == 1:
 		return True
 	return False
 

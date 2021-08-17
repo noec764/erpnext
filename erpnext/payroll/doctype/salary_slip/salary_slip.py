@@ -7,7 +7,6 @@ import datetime, math
 
 from frappe.utils import add_days, cint, cstr, flt, getdate, rounded, date_diff, money_in_words, formatdate, get_first_day
 from frappe.model.naming import make_autoname
-from frappe.utils.background_jobs import enqueue
 
 from frappe import msgprint, _
 from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_start_end_dates
@@ -619,8 +618,7 @@ class SalarySlip(TransactionBase):
 				get_salary_component_data(additional_salary.component),
 				additional_salary.amount,
 				component_type,
-				additional_salary,
-				is_recurring = additional_salary.is_recurring
+				additional_salary
 			)
 
 	def add_tax_components(self, payroll_period):
@@ -641,7 +639,7 @@ class SalarySlip(TransactionBase):
 			tax_row = get_salary_component_data(d)
 			self.update_component_row(tax_row, tax_amount, "deductions")
 
-	def update_component_row(self, component_data, amount, component_type, additional_salary=None, is_recurring = 0):
+	def update_component_row(self, component_data, amount, component_type, additional_salary=None):
 		component_row = None
 		for d in self.get(component_type):
 			if d.salary_component != component_data.salary_component:
@@ -880,15 +878,8 @@ class SalarySlip(TransactionBase):
 
 			if earning.is_tax_applicable:
 				if additional_amount:
-					if not earning.is_recurring_additional_salary:
-						taxable_earnings += (amount - additional_amount)
-						additional_income += additional_amount
-					else:
-						to_date = frappe.db.get_value("Additional Salary", earning.additional_salary, 'to_date')
-						period = (getdate(to_date).month - getdate(self.start_date).month) + 1
-						if period > 0:
-							taxable_earnings += (amount - additional_amount) * period
-							additional_income += additional_amount * period
+					taxable_earnings += (amount - additional_amount)
+					additional_income += additional_amount
 
 					if earning.deduct_full_tax_on_selected_payroll_date:
 						additional_income_with_full_tax += additional_amount
