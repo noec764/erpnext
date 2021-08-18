@@ -10,6 +10,7 @@ from frappe.core.utils import get_parent_doc
 from frappe.utils import time_diff_in_seconds, getdate, get_weekdays, add_to_date, get_time, get_datetime, \
 	get_time_zone, to_timedelta, get_datetime_str, get_link_to_form, cint, nowdate
 from datetime import datetime
+from frappe.utils.safe_exec import get_safe_globals
 from erpnext.support.doctype.issue.issue import get_holidays
 from frappe.utils.safe_exec import get_safe_globals
 
@@ -99,7 +100,7 @@ class ServiceLevelAgreement(Document):
 				frappe.bold(self.document_type)))
 
 	def validate_condition(self):
-		temp_doc = frappe.new_doc('Issue')
+		temp_doc = frappe.new_doc(self.document_type)
 		if self.condition:
 			try:
 				frappe.safe_eval(self.condition, None, get_context(temp_doc))
@@ -227,24 +228,25 @@ def get_active_service_level_agreement_for(doc):
 	if doc.get('priority'):
 		filters.append(["Service Level Priority", "priority", "=", doc.get('priority')])
 
-	customer = doc.get('customer')
-	or_filters = [
-		["Service Level Agreement", "entity", "in", [customer, get_customer_group(customer), get_customer_territory(customer)]]
-	]
-
-	service_level_agreement = doc.get('service_level_agreement')
-	if service_level_agreement:
+	or_filters = []
+	if doc.get('service_level_agreement'):
 		or_filters = [
 			["Service Level Agreement", "name", "=", doc.get('service_level_agreement')],
 		]
 
+	customer = doc.get('customer')
+	if customer:
+		or_filters.append(
+			["Service Level Agreement", "entity", "in", [customer, get_customer_group(customer), get_customer_territory(customer)]]
+		)
+
 	default_sla_filter = filters + [["Service Level Agreement", "default_service_level_agreement", "=", 1]]
 	default_sla = frappe.get_all("Service Level Agreement", filters=default_sla_filter,
-		fields=["name", "default_priority", "condition"])
+		fields=["name", "default_priority", "apply_sla_for_resolution", "condition"])
 
 	filters += [["Service Level Agreement", "default_service_level_agreement", "=", 0]]
 	agreements = frappe.get_all("Service Level Agreement", filters=filters, or_filters=or_filters,
-		fields=["name", "default_priority", "condition"])
+		fields=["name", "default_priority", "apply_sla_for_resolution", "condition"])
 
 	# check if the current document on which SLA is to be applied fulfills all the conditions
 	filtered_agreements = []
@@ -264,10 +266,8 @@ def get_context(doc):
 def get_customer_group(customer):
 	return frappe.db.get_value("Customer", customer, "customer_group") if customer else None
 
-
 def get_customer_territory(customer):
 	return frappe.db.get_value("Customer", customer, "territory") if customer else None
-
 
 @frappe.whitelist()
 def get_service_level_agreement_filters(doctype, name, customer=None):
