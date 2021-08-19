@@ -452,6 +452,9 @@ def get_payment_terms_template(party_name, party_type, company=None):
 	return template
 
 def validate_party_frozen_disabled(party_type, party_name):
+	if frappe.flags.ignore_party_validation:
+		return
+
 	if party_type and party_name:
 		if party_type in ("Customer", "Supplier"):
 			party = frappe.get_cached_value(party_type, party_name, ["is_frozen", "disabled"], as_dict=True)
