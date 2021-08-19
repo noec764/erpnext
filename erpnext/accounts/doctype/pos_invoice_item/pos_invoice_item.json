@@ -412,6 +412,7 @@
    "fieldtype": "Currency",
    "label": "Net Rate",
    "options": "currency",
+   "precision": "9",
    "print_hide": 1,
    "read_only": 1
   },
@@ -420,6 +421,7 @@
    "fieldtype": "Currency",
    "label": "Net Amount",
    "options": "currency",
+   "precision": "4",
    "print_hide": 1,
    "read_only": 1
   },
@@ -791,20 +793,20 @@
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project"
-    },
-    {
-    "fieldname": "pos_invoice_item",
-    "fieldtype": "Data",
-    "ignore_user_permissions": 1,
-    "label": "POS Invoice Item",
-    "no_copy": 1,
-    "print_hide": 1,
-    "read_only": 1
+  },
+  {
+   "fieldname": "pos_invoice_item",
+   "fieldtype": "Data",
+   "ignore_user_permissions": 1,
+   "label": "POS Invoice Item",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2021-01-04 17:34:49.924531",
+ "modified": "2021-08-19 17:40:40.926968",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice Item",

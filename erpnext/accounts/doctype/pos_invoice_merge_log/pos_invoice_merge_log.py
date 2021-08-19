@@ -129,6 +129,7 @@ class POSInvoiceMergeLog(Document):
 					item.rate = item.net_rate
 					item.price_list_rate = 0
 					si_item = map_child_doc(item, invoice, {"doctype": "Sales Invoice Item"})
+					print(si_item)
 					items.append(si_item)
 
 			for tax in doc.get('taxes'):
@@ -276,7 +277,7 @@ def create_merge_logs(invoice_by_customer, closing_entry=None):
 
 	except Exception:
 		frappe.db.rollback()
-		message_log = frappe.message_log.pop()
+		message_log = frappe.message_log.pop() if frappe.message_log else "{}"
 		error_message = safe_load_json(message_log)
 
 		if closing_entry:
@@ -302,7 +303,7 @@ def cancel_merge_logs(merge_logs, closing_entry=None):
 
 	except Exception:
 		frappe.db.rollback()
-		message_log = frappe.message_log.pop()
+		message_log = frappe.message_log.pop() if frappe.message_log else "{}"
 		error_message = safe_load_json(message_log)
 
 		if closing_entry:
