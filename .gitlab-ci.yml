@@ -8,7 +8,7 @@ unittests:
 
   services:
     - name: mariadb
-      command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--character-set-client-handshake=FALSE']
+      command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--character-set-client-handshake=FALSE', '--innodb_read_only_compressed=OFF']
     - name: redis
       alias: redis_queue
     - name: redis
