@@ -34,7 +34,7 @@ unittests:
     - git clone -b $CI_COMMIT_REF_NAME https://gitlab.com/dokos/dodock apps/frappe
     - mkdir -p apps/erpnext
     - mv -f * apps/erpnext/ || true
-    - mkdir -p sites logs && echo "frappe/nerpnext" > sites/apps.txt
+    - mkdir -p sites logs && echo "frappe\nerpnext" > sites/apps.txt
     - mkdir -p ../logs
     - mkdir sites/test_site
     - cp -r apps/frappe/test_sites/test_site/site_config.json sites/test_site/
