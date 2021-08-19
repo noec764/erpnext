@@ -1641,6 +1641,7 @@
    "description": "Unrealized Profit / Loss account for intra-company transfers",
    "fieldname": "unrealized_profit_loss_account",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Unrealized Profit / Loss Account",
    "options": "Account"
   },
