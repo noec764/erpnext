@@ -595,7 +595,8 @@
   {
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
-   "label": "Scan Barcode"
+   "label": "Scan Barcode",
+   "options": "Barcode"
   },
   {
    "allow_bulk_edit": 1,
@@ -1554,7 +1555,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-08-19 17:18:58.672334",
+ "modified": "2021-08-19 17:19:58.672334",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice",

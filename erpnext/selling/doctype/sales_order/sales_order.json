@@ -488,7 +488,8 @@
   {
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
-   "label": "Scan Barcode"
+   "label": "Scan Barcode",
+   "options": "Barcode"
   },
   {
    "allow_bulk_edit": 1,
@@ -1245,7 +1246,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-04-15 23:55:13.439068",
+ "modified": "2021-08-17 20:13:44.255437",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
