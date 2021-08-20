@@ -129,7 +129,6 @@ class POSInvoiceMergeLog(Document):
 					item.rate = item.net_rate
 					item.price_list_rate = 0
 					si_item = map_child_doc(item, invoice, {"doctype": "Sales Invoice Item"})
-					print(si_item)
 					items.append(si_item)
 
 			for tax in doc.get('taxes'):
