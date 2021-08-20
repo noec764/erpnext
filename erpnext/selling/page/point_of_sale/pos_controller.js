@@ -26,12 +26,12 @@ erpnext.PointOfSale.Controller = class {
 		const table_fields = [
 			{
 				fieldname: "mode_of_payment", fieldtype: "Link",
-				in_list_view: 1, label: "Mode of Payment",
+				in_list_view: 1, label: __("Mode of Payment"),
 				options: "Mode of Payment", reqd: 1
 			},
 			{
 				fieldname: "opening_amount", fieldtype: "Currency",
-				in_list_view: 1, label: "Opening Amount",
+				in_list_view: 1, label: __("Opening Amount"),
 				options: "company:company_currency",
 				change: function () {
 					dialog.fields_dict.balance_details.df.data.some(d => {

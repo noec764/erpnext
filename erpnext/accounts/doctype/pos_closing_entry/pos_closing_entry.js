@@ -20,9 +20,9 @@ frappe.ui.form.on('POS Closing Entry', {
 		frm.set_query("pos_opening_entry", function(doc) {
 			return { filters: { 'status': 'Open', 'docstatus': 1 } };
 		});
-		
+
 		if (frm.doc.docstatus === 0 && !frm.doc.amended_from) frm.set_value("period_end_date", frappe.datetime.now_datetime());
-		
+
 		frappe.realtime.on('closing_process_complete', async function(data) {
 			await frm.reload_doc();
 			if (frm.doc.status == 'Failed' && frm.doc.error_message && data.user == frappe.session.user) {
@@ -43,7 +43,7 @@ frappe.ui.form.on('POS Closing Entry', {
 			const issue = '<a id="jump_to_error" style="text-decoration: underline;">issue</a>';
 			frm.dashboard.set_headline(
 				__('POS Closing failed while running in a background process. You can resolve the {0} and retry the process again.', [issue]));
-			
+
 			$('#jump_to_error').on('click', (e) => {
 				e.preventDefault();
 				frappe.utils.scroll_to(
@@ -101,25 +101,27 @@ frappe.ui.form.on('POS Closing Entry', {
 	},
 
 	before_save: function(frm) {
-		frm.set_value("grand_total", 0);
-		frm.set_value("net_total", 0);
-		frm.set_value("total_quantity", 0);
-		frm.set_value("taxes", []);
+		if (frm.doc.__unsaved) {
+			frm.set_value("grand_total", 0);
+			frm.set_value("net_total", 0);
+			frm.set_value("total_quantity", 0);
+			frm.set_value("taxes", []);
 
-		for (let row of frm.doc.payment_reconciliation) {
-			row.expected_amount = row.opening_amount;
-		}
+			for (let row of frm.doc.payment_reconciliation) {
+				row.expected_amount = row.opening_amount;
+			}
 
-		for (let row of frm.doc.pos_transactions) {
-			frappe.db.get_doc("POS Invoice", row.pos_invoice).then(doc => {
-				frm.doc.grand_total += flt(doc.grand_total);
-				frm.doc.net_total += flt(doc.net_total);
-				frm.doc.total_quantity += flt(doc.total_qty);
-				refresh_payments(doc, frm);
-				refresh_taxes(doc, frm);
-				refresh_fields(frm);
-				set_html_data(frm);
-			});
+			for (let row of frm.doc.pos_transactions) {
+				frappe.db.get_doc("POS Invoice", row.pos_invoice).then(doc => {
+					frm.doc.grand_total += flt(doc.grand_total);
+					frm.doc.net_total += flt(doc.net_total);
+					frm.doc.total_quantity += flt(doc.total_qty);
+					refresh_payments(doc, frm);
+					refresh_taxes(doc, frm);
+					refresh_fields(frm);
+					set_html_data(frm);
+				});
+			}
 		}
 	}
 });

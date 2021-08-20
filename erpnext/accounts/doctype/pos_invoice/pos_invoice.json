@@ -1554,7 +1554,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-07-29 13:37:20.636171",
+ "modified": "2021-08-19 17:18:58.672334",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice",
@@ -1601,7 +1601,6 @@
   },
   {
    "amend": 1,
-   "cancel": 1,
    "create": 1,
    "email": 1,
    "export": 1,
