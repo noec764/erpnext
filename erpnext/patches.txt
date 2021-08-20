@@ -196,7 +196,6 @@ erpnext.patches.v12_0.set_multi_uom_in_rfq
 erpnext.patches.v13_0.delete_old_sales_reports
 erpnext.patches.v13_0.move_doctype_reports_and_notification_from_hr_to_payroll
 erpnext.patches.v13_0.move_payroll_setting_separately_from_hr_settings
-execute:frappe.reload_doc("regional", "doctype", "e_invoice_settings")
 erpnext.patches.v13_0.check_is_income_tax_component
 erpnext.patches.v13_0.loyalty_points_entry_for_pos_invoice #22-07-2020
 erpnext.patches.v12_0.add_taxjar_integration_field
@@ -215,7 +214,6 @@ erpnext.patches.v13_0.change_default_pos_print_format
 erpnext.patches.v13_0.set_youtube_video_id
 erpnext.patches.v13_0.print_uom_after_quantity_patch
 erpnext.patches.v13_0.updates_for_multi_currency_payroll
-erpnext.patches.v12_0.setup_einvoice_fields #2020-12-02
 erpnext.patches.v13_0.update_reason_for_resignation_in_employee
 execute:frappe.delete_doc("Report", "Quoted Item Comparison")
 erpnext.patches.v13_0.create_leave_policy_assignment_based_on_employee_current_leave_policy
@@ -232,14 +230,11 @@ erpnext.patches.v12_0.add_state_code_for_ladakh
 erpnext.patches.v13_0.set_app_name
 erpnext.patches.v13_0.item_reposting_for_incorrect_sl_and_gl
 erpnext.patches.v13_0.update_vehicle_no_reqd_condition
-erpnext.patches.v12_0.add_einvoice_status_field #2021-03-17
-erpnext.patches.v12_0.add_einvoice_summary_report_permissions
 erpnext.patches.v13_0.setup_gratuity_rule_for_india_and_uae
 erpnext.patches.v13_0.setup_uae_vat_fields
 execute:frappe.db.set_value('System Settings', None, 'app_name', 'Dokos')
 erpnext.patches.v12_0.create_taxable_value_field
 erpnext.patches.v12_0.add_gst_category_in_delivery_note
-erpnext.patches.v12_0.add_company_link_to_einvoice_settings
 erpnext.patches.v12_0.purchase_receipt_status
 erpnext.patches.v12_0.create_itc_reversal_custom_fields
 erpnext.patches.v13_0.fix_non_unique_represents_company
@@ -262,12 +257,13 @@ erpnext.patches.v13_0.bill_for_rejected_quantity_in_purchase_invoice
 erpnext.patches.v13_0.update_job_card_details
 erpnext.patches.v13_0.update_level_in_bom
 erpnext.patches.v13_0.add_missing_fg_item_for_stock_entry
-erpnext.patches.v12_0.show_einvoice_irn_cancelled_field
 erpnext.patches.v13_0.update_export_type_for_gst #2021-08-16
 erpnext.patches.v13_0.update_tds_check_field
 erpnext.patches.v13_0.add_custom_field_for_south_africa
 erpnext.patches.v13_0.update_recipient_email_digest
 erpnext.patches.v13_0.shopify_deprecation_warning
+erpnext.patches.v13_0.einvoicing_deprecation_warning
+erpnext.patches.v14_0.delete_einvoicing_doctypes
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain

@@ -281,8 +281,6 @@ class SalesInvoice(SellingController):
 
 	def before_cancel(self):
 		self.check_if_consolidated_invoice()
-
-		super(SalesInvoice, self).before_cancel()
 		self.update_time_sheet(None)
 
 	def on_cancel(self):
@@ -621,7 +619,7 @@ class SalesInvoice(SellingController):
 	def add_remarks(self):
 		if not self.remarks:
 			if self.po_no and self.po_date:
-				self.remarks = _("Against Customer Order {0} dated {1}").format(self.po_no, 
+				self.remarks = _("Against Customer Order {0} dated {1}").format(self.po_no,
 					formatdate(self.po_date))
 			else:
 				self.remarks = _("No Remarks")

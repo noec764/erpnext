@@ -137,13 +137,8 @@ class AccountsController(TransactionBase):
 
 		validate_regional(self)
 
-		validate_einvoice_fields(self)
-
 		if self.doctype != 'Material Request':
 			apply_pricing_rule_on_transaction(self)
-
-	def before_cancel(self):
-		validate_einvoice_fields(self)
 
 	def validate_deferred_start_and_end_date(self):
 		for d in self.items:
@@ -875,11 +870,11 @@ class AccountsController(TransactionBase):
 					discount_amount = item.discount_amount * item.qty
 					if self.doctype == "Purchase Invoice":
 						income_or_expense_account = (item.expense_account
-							if (not item.enable_deferred_expense or self.is_return) 
+							if (not item.enable_deferred_expense or self.is_return)
 							else item.deferred_expense_account)
 					else:
 						income_or_expense_account = (item.income_account
-							if (not item.enable_deferred_revenue or self.is_return) 
+							if (not item.enable_deferred_revenue or self.is_return)
 							else item.deferred_revenue_account)
 
 					account_currency = get_account_currency(item.discount_account)
@@ -888,7 +883,7 @@ class AccountsController(TransactionBase):
 							"account": item.discount_account,
 							"against": supplier_or_customer,
 							dr_or_cr: flt(discount_amount, item.precision('discount_amount')),
-							dr_or_cr + "_in_account_currency": flt(discount_amount * self.get('conversion_rate'), 
+							dr_or_cr + "_in_account_currency": flt(discount_amount * self.get('conversion_rate'),
 								item.precision('discount_amount')),
 							"cost_center": item.cost_center,
 							"project": item.project
@@ -901,7 +896,7 @@ class AccountsController(TransactionBase):
 							"account": income_or_expense_account,
 							"against": supplier_or_customer,
 							rev_dr_cr: flt(discount_amount, item.precision('discount_amount')),
-							rev_dr_cr + "_in_account_currency": flt(discount_amount * self.get('conversion_rate'), 
+							rev_dr_cr + "_in_account_currency": flt(discount_amount * self.get('conversion_rate'),
 								item.precision('discount_amount')),
 							"cost_center": item.cost_center,
 							"project": item.project or self.project
@@ -2016,8 +2011,4 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 
 @erpnext.allow_regional
 def validate_regional(doc):
-	pass
-
-@erpnext.allow_regional
-def validate_einvoice_fields(doc):
 	pass
