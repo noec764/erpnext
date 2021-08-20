@@ -50,6 +50,8 @@ class website_maker(object):
 		})
 		website_settings.save()
 
+		frappe.get_doc("Website Theme", "Dokos").generate_bootstrap_theme()
+
 	def make_blog(self):
 		blog_category = frappe.get_doc({
 			"doctype": "Blog Category",
