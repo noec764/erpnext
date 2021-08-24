@@ -105,7 +105,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 						return item
 					}
 				}).map(f => f.item_booking )
-	
+
 				if (bookings.length) {
 					frappe.confirm(__("Do you also want to cancel the item bookings linked to this document ?"), () => {
 						frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.cancel_appointments", { ids: bookings, force: true })
@@ -405,6 +405,10 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	_set_batch_number(doc) {
+		if (doc.batch_no) {
+			return
+		}
+
 		let args = {'item_code': doc.item_code, 'warehouse': doc.warehouse, 'qty': flt(doc.qty) * flt(doc.conversion_factor)};
 		if (doc.has_serial_no && doc.serial_no) {
 			args['serial_no'] = doc.serial_no
