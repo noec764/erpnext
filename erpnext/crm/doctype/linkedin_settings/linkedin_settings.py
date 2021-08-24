@@ -44,6 +44,7 @@ class LinkedInSettings(Document):
 
 	def get_member_profile(self):
 		response = requests.get(url="https://api.linkedin.com/v2/me", headers=self.get_headers())
+		response = frappe.parse_json(response.content.decode())
 
 		frappe.db.set_value(self.doctype, self.name, {
 			"person_urn": response["id"],
