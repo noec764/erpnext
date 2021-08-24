@@ -244,6 +244,7 @@ erpnext.patches.v13_0.make_non_standard_user_type
 erpnext.patches.v13_0.remove_attribute_field_from_item_variant_setting
 erpnext.patches.v12_0.add_eway_bill_in_delivery_note
 erpnext.patches.v13_0.set_pos_closing_as_failed
+erpnext.patches.v13_0.rename_stop_to_send_birthday_reminders
 execute:frappe.rename_doc("Workspace", "Loan Management", "Loans", force=True)
 erpnext.patches.v13_0.update_timesheet_changes
 erpnext.patches.v13_0.add_doctype_to_sla
