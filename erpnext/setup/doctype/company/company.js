@@ -46,6 +46,43 @@ frappe.ui.form.on("Company", {
 		});
 	},
 
+	change_abbreviation(frm) {
+		var dialog = new frappe.ui.Dialog({
+			title: "Replace Abbr",
+			fields: [
+				{"fieldtype": "Data", "label": "New Abbreviation", "fieldname": "new_abbr",
+					"reqd": 1 },
+				{"fieldtype": "Button", "label": "Update", "fieldname": "update"},
+			]
+		});
+
+		dialog.fields_dict.update.$input.click(function() {
+			var args = dialog.get_values();
+			if (!args) return;
+			frappe.show_alert(__("Update in progress. It might take a while."));
+			return frappe.call({
+				method: "erpnext.setup.doctype.company.company.enqueue_replace_abbr",
+				args: {
+					"company": frm.doc.name,
+					"old": frm.doc.abbr,
+					"new": args.new_abbr
+				},
+				callback: function(r) {
+					if (r.exc) {
+						frappe.msgprint(__("There were errors."));
+						return;
+					} else {
+						frm.set_value("abbr", args.new_abbr);
+					}
+					dialog.hide();
+					frm.refresh();
+				},
+				btn: this
+			});
+		});
+		dialog.show();
+	},
+
 	company_name: function(frm) {
 		if(frm.doc.__islocal) {
 			let parts = frm.doc.company_name.split(" ");
@@ -88,36 +125,40 @@ frappe.ui.form.on("Company", {
 
 			frm.toggle_enable("default_currency", (frm.doc.__onload &&
 				!frm.doc.__onload.transactions_exist));
-	
+
 				if (frappe.perm.has_perm("Cost Center", 0, 'read')) {
 					frm.add_custom_button(__('Cost Centers'), function() {
 						frappe.set_route('Tree', 'Cost Center', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Account", 0, 'read')) {
 					frm.add_custom_button(__('Chart of Accounts'), function() {
 						frappe.set_route('Tree', 'Account', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Sales Taxes and Charges Template", 0, 'read')) {
 					frm.add_custom_button(__('Sales Tax Template'), function() {
 						frappe.set_route('List', 'Sales Taxes and Charges Template', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Purchase Taxes and Charges Template", 0, 'read')) {
 					frm.add_custom_button(__('Purchase Tax Template'), function() {
 						frappe.set_route('List', 'Purchase Taxes and Charges Template', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frm.has_perm('write')) {
 					frm.add_custom_button(__('Create Tax Template'), function() {
 						frm.trigger("make_default_tax_template");
 					}, __('Manage'));
 				}
+
+				frm.add_custom_button(__('Change Abbreviation'), () => {
+					frm.trigger('change_abbreviation');
+				}, __('Manage'));
 		}
 
 		erpnext.company.set_chart_of_accounts_options(frm.doc);
@@ -159,43 +200,6 @@ erpnext.company.set_chart_of_accounts_options = function(doc) {
 			}
 		})
 	}
-}
-
-cur_frm.cscript.change_abbr = function() {
-	var dialog = new frappe.ui.Dialog({
-		title: "Replace Abbr",
-		fields: [
-			{"fieldtype": "Data", "label": "New Abbreviation", "fieldname": "new_abbr",
-				"reqd": 1 },
-			{"fieldtype": "Button", "label": "Update", "fieldname": "update"},
-		]
-	});
-
-	dialog.fields_dict.update.$input.click(function() {
-		var args = dialog.get_values();
-		if(!args) return;
-		frappe.show_alert(__("Update in progress. It might take a while."));
-		return frappe.call({
-			method: "erpnext.setup.doctype.company.company.enqueue_replace_abbr",
-			args: {
-				"company": cur_frm.doc.name,
-				"old": cur_frm.doc.abbr,
-				"new": args.new_abbr
-			},
-			callback: function(r) {
-				if(r.exc) {
-					frappe.msgprint(__("There were errors."));
-					return;
-				} else {
-					cur_frm.set_value("abbr", args.new_abbr);
-				}
-				dialog.hide();
-				cur_frm.refresh();
-			},
-			btn: this
-		})
-	});
-	dialog.show();
 }
 
 erpnext.company.setup_queries = function(frm) {
