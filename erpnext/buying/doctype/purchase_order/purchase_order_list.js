@@ -18,7 +18,7 @@ frappe.listview_settings['Purchase Order'] = {
 			}
 		} else if (flt(doc.per_received, 2) >= 100 && flt(doc.per_billed, 2) < 100 && doc.status !== "Closed") {
 			return [__("To Bill"), "orange", "per_received,=,100|per_billed,<,100|status,!=,Closed"];
-		} else if (flt(doc.per_received, 2) >= 100 && flt(doc.per_billed, 2) < 100 && doc.status !== "Closed") {
+		} else if (flt(doc.per_received, 2) >= 100 && flt(doc.per_billed, 2) == 100 && doc.status !== "Closed") {
 			return [__("Completed"), "green", "per_received,=,100|per_billed,=,100|status,!=,Closed"];
 		}
 	},
