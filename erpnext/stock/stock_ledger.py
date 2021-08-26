@@ -253,7 +253,7 @@ class update_entries_after(object):
 		self.data = frappe._dict()
 		self.initialize_previous_data(self.args)
 		self.build()
-	
+
 	def get_precision(self):
 		company_base_currency = frappe.get_cached_value('Company',  self.company,  "default_currency")
 		self.precision = get_field_precision(frappe.get_meta("Stock Ledger Entry").get_field("stock_value"),
@@ -332,6 +332,7 @@ class update_entries_after(object):
 			where
 				item_code = %(item_code)s
 				and warehouse = %(warehouse)s
+				and is_cancelled = 0
 				and timestamp(posting_date, time_format(posting_time, %(time_format)s)) = timestamp(%(posting_date)s, time_format(%(posting_time)s, %(time_format)s))
 			order by
 				creation ASC
@@ -528,7 +529,7 @@ class update_entries_after(object):
 		stock_entry.db_update()
 		for d in stock_entry.items:
 			d.db_update()
-	
+
 	def update_rate_on_delivery_and_sales_return(self, sle, outgoing_rate):
 		# Update item's incoming rate on transaction
 		item_code = frappe.db.get_value(sle.voucher_type + " Item", sle.voucher_detail_no, "item_code")
