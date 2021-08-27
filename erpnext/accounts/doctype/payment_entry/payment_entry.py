@@ -828,7 +828,7 @@ class PaymentEntry(AccountsController):
 						"account": payment_or_advance_account,
 						"against": against,
 						dr_or_cr: -1 * tax_amount,
-						dr_or_cr + "_in_account_currency": -1 * base_tax_amount
+						dr_or_cr + "_in_account_currency": base_tax_amount
 						if account_currency==self.company_currency
 						else d.tax_amount,
 						"cost_center": self.cost_center,
