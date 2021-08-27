@@ -16,36 +16,23 @@
  "creation": "2020-06-01 12:44:42.589930",
  "docstatus": 0,
  "doctype": "Module Onboarding",
- "documentation_url": "https://doc.dokos.io/dokos/selling/",
+ "documentation_url": "https://docs.erpnext.com/docs/user/manual/en/selling",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-09-29 16:41:09.440378",
+ "modified": "2021-08-24 18:12:38.052434",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
  "owner": "Administrator",
  "steps": [
   {
-   "step": "Create a Customer"
-  },
-  {
-   "step": "Setup your Warehouse"
-  },
-  {
-   "step": "Create a Product"
-  },
-  {
-   "step": "Create a Quotation"
-  },
-  {
-   "step": "Create your first Sales Order"
-  },
-  {
    "step": "Selling Settings"
+  },
+  {
+   "step": "Sales Order"
   }
  ],
- "subtitle": "Products, Sales, Analysis and more.",
+ "subtitle": "Products, Sales, Analysis, and more.",
  "success_message": "The Selling Module is all set up!",
- "title": "Let's set up the Selling module.",
- "user_can_dismiss": 1
+ "title": "Let's Set Up the Selling Module."
 }
