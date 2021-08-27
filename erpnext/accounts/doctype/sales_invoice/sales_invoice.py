@@ -248,6 +248,8 @@ class SalesInvoice(SellingController):
 		if self.redeem_loyalty_points and not self.is_consolidated and self.loyalty_points:
 			self.apply_loyalty_points()
 
+		self.process_common_party_accounting()
+
 	def validate_pos_return(self):
 
 		if self.is_pos and self.is_return:
