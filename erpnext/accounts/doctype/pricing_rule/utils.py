@@ -465,9 +465,6 @@ def apply_pricing_rule_on_transaction(doc):
 			remove_free_item(doc)
 
 		for d in pricing_rules:
-			if d.coupon_code_based==1 and frappe.db.get_value("Coupon Code", doc.get("coupon_code"), "pricing_rule") != d.name:
-				continue
-
 			if d.price_or_product_discount == 'Price':
 				if d.apply_discount_on:
 					doc.set('apply_discount_on', d.apply_discount_on)
@@ -482,7 +479,20 @@ def apply_pricing_rule_on_transaction(doc):
 						frappe.msgprint(_("User has not applied rule on the invoice {0}")
 							.format(doc.name))
 					else:
-						doc.set(field, d.get(pr_field))
+						if not d.coupon_code_based:
+							doc.set(field, d.get(pr_field))
+						elif doc.get('coupon_code'):
+							# coupon code based pricing rule
+							coupon_code_pricing_rule = frappe.db.get_value('Coupon Code', doc.get('coupon_code'), 'pricing_rule')
+							if coupon_code_pricing_rule == d.name:
+								# if selected coupon code is linked with pricing rule
+								doc.set(field, d.get(pr_field))
+							else:
+								# reset discount if not linked
+								doc.set(field, 0)
+						else:
+							# if coupon code based but no coupon code selected
+							doc.set(field, 0)
 
 				doc.calculate_taxes_and_totals()
 			elif d.price_or_product_discount == 'Product':
