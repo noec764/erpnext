@@ -795,9 +795,11 @@ class PaymentEntry(AccountsController):
 
 			if self.payment_type in ('Pay', 'Internal Transfer'):
 				dr_or_cr = "debit" if d.add_deduct_tax == "Add" else "credit"
+				rev_dr_or_cr = "credit" if dr_or_cr == "debit" else "debit"
 				against = self.party or self.paid_from
 			elif self.payment_type == 'Receive':
 				dr_or_cr = "credit" if d.add_deduct_tax == "Add" else "debit"
+				rev_dr_or_cr = "credit" if dr_or_cr == "debit" else "debit"
 				against = self.party or self.paid_to
 
 			payment_or_advance_account = self.get_party_account_for_taxes()
@@ -812,8 +814,8 @@ class PaymentEntry(AccountsController):
 				self.get_gl_dict({
 					"account": d.account_head,
 					"against": against,
-					dr_or_cr: tax_amount,
-					dr_or_cr + "_in_account_currency": base_tax_amount
+					rev_dr_or_cr: tax_amount,
+					rev_dr_or_cr + "_in_account_currency": -1 * base_tax_amount
 					if account_currency==self.company_currency
 					else d.tax_amount,
 					"cost_center": d.cost_center
