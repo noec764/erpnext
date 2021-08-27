@@ -19,14 +19,14 @@
  "documentation_url": "https://doc.dokos.io/dokos/manufacturing/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-06-29 20:25:36.899106",
+ "modified": "2021-08-13 16:04:34.333812",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Manufacturing",
  "owner": "Administrator",
  "steps": [
   {
-   "step": "Warehouse"
+    "step": "Explore Manufacturing Settings"
   },
   {
    "step": "Workstation"
@@ -35,19 +35,19 @@
    "step": "Operation"
   },
   {
-   "step": "Create Product"
+    "step": "Routing"
   },
   {
-   "step": "Create Raw Materials"
+    "step": "Create Product"
   },
   {
    "step": "Create BOM"
   },
   {
-   "step": "Work Order"
+    "step": "Production Planning"
   },
   {
-   "step": "Explore Manufacturing Settings"
+    "step": "Work Order"
   }
  ],
  "subtitle": "Products, raw materials, BOM, work order and more.",
