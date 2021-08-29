@@ -18,7 +18,8 @@ def make_gl_entries(gl_map, cancel=False, adv_adj=False, merge_entries=True, upd
 			gl_map = process_gl_map(gl_map, merge_entries)
 			if gl_map and len(gl_map) > 1:
 				save_entries(gl_map, adv_adj, update_outstanding, from_repost)
-			else:
+			# Post GL Map proccess there may no be any GL Entries
+			elif gl_map:
 				frappe.throw(_("Incorrect number of General Ledger Entries found. You might have selected a wrong Account in the transaction."))
 		else:
 			make_reverse_gl_entries(gl_map, adv_adj=adv_adj, update_outstanding=update_outstanding)
@@ -168,7 +169,7 @@ def get_accounting_journal(entry):
 		frappe.throw(_("Please configure an accounting journal for this transaction type and account: {0} - {1}").format(_(entry.voucher_type), entry.get("account")))
 
 def validate_cwip_accounts(gl_map):
-	cwip_enabled = any([cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category","enable_cwip_accounting")])
+	cwip_enabled = any(cint(ac.enable_cwip_accounting) for ac in frappe.db.get_all("Asset Category","enable_cwip_accounting"))
 
 	if cwip_enabled and gl_map[0].voucher_type == "Journal Entry":
 		cwip_accounts = [d[0] for d in frappe.db.sql("""select name from tabAccount

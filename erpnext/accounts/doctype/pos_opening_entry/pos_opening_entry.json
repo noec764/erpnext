@@ -129,9 +129,10 @@
    "reqd": 1
   }
  ],
+ "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-05-07 16:26:08.180947",
+ "modified": "2021-08-19 19:41:33.903294",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Opening Entry",

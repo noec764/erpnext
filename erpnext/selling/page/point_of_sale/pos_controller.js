@@ -26,12 +26,12 @@ erpnext.PointOfSale.Controller = class {
 		const table_fields = [
 			{
 				fieldname: "mode_of_payment", fieldtype: "Link",
-				in_list_view: 1, label: "Mode of Payment",
+				in_list_view: 1, label: __("Mode of Payment"),
 				options: "Mode of Payment", reqd: 1
 			},
 			{
 				fieldname: "opening_amount", fieldtype: "Currency",
-				in_list_view: 1, label: "Opening Amount",
+				in_list_view: 1, label: __("Opening Amount"),
 				options: "company:company_currency",
 				change: function () {
 					dialog.fields_dict.balance_details.df.data.some(d => {
@@ -56,10 +56,7 @@ erpnext.PointOfSale.Controller = class {
 				dialog.fields_dict.balance_details.grid.refresh();
 			});
 		}
-		const pos_profile_query = {
-			query: 'erpnext.accounts.doctype.pos_profile.pos_profile.pos_profile_query',
-			filters: { company: frappe.defaults.get_default('company') }
-		}
+
 		const dialog = new frappe.ui.Dialog({
 			title: __('Create POS Opening Entry'),
 			static: true,
@@ -105,6 +102,10 @@ erpnext.PointOfSale.Controller = class {
 			primary_action_label: __('Submit')
 		});
 		dialog.show();
+		const pos_profile_query = {
+			query: 'erpnext.accounts.doctype.pos_profile.pos_profile.pos_profile_query',
+			filters: { company: dialog.fields_dict.company.get_value() }
+		};
 	}
 
 	async prepare_app_defaults(data) {

@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import erpnext
+import json
 from frappe.desk.reportview import get_match_cond, get_filters_cond
 from frappe.utils import nowdate, getdate
 from collections import defaultdict
@@ -85,7 +86,7 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 	fields = get_fields("Customer", fields)
 
 	searchfields = frappe.get_meta("Customer").get_search_fields()
-	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
+	searchfields = " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	return frappe.db.sql("""select {fields} from `tabCustomer`
 		where docstatus < 2
@@ -193,6 +194,9 @@ def tax_account_query(doctype, txt, searchfield, start, page_len, filters):
 def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=False):
 	conditions = []
 
+	if isinstance(filters, str):
+		filters = json.loads(filters)
+
 	#Get searchfields from meta and use in Item Link field query
 	meta = frappe.get_meta("Item", cached=True)
 	searchfields = meta.get_search_fields()
@@ -209,7 +213,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 
 	searchfields = searchfields + [field for field in[searchfield or "name", "item_code", "item_group", "item_name"]
 		if not field in searchfields]
-	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
+	searchfields = " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	description_cond = ''
 	if frappe.db.count('Item', cache=True) < 50000:
@@ -285,11 +289,14 @@ def get_project_name(doctype, txt, searchfield, start, page_len, filters):
 		cond = """(`tabProject`.customer = %s or
 			ifnull(`tabProject`.customer,"")="") and""" %(frappe.db.escape(filters.get("customer")))
 
-	fields = get_fields("Project", ["name"])
+	fields = get_fields("Project", ["name", "project_name"])
+	searchfields = frappe.get_meta("Project").get_search_fields()
+	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
 
 	return frappe.db.sql("""select {fields} from `tabProject`
-		where `tabProject`.status not in ("Completed", "Cancelled")
-			and {cond} `tabProject`.name like %(txt)s {match_cond}
+		where
+			`tabProject`.status not in ("Completed", "Cancelled")
+			and {cond} {match_cond} {scond}
 		order by
 			if(locate(%(_txt)s, name), locate(%(_txt)s, name), 99999),
 			idx desc,
@@ -297,6 +304,7 @@ def get_project_name(doctype, txt, searchfield, start, page_len, filters):
 		limit {start}, {page_len}""".format(
 			fields=", ".join(['`tabProject`.{0}'.format(f) for f in fields]),
 			cond=cond,
+			scond=searchfields,
 			match_cond=get_match_cond(doctype),
 			start=start,
 			page_len=page_len), {
@@ -317,7 +325,7 @@ def get_delivery_notes_to_be_billed(doctype, txt, searchfield, start, page_len, 
 			and status not in ("Stopped", "Closed") %(fcond)s
 			and (
 				(`tabDelivery Note`.is_return = 0 and `tabDelivery Note`.per_billed < 100)
-				or `tabDelivery Note`.grand_total = 0
+				or (`tabDelivery Note`.grand_total = 0 and `tabDelivery Note`.per_billed < 100)
 				or (
 					`tabDelivery Note`.is_return = 1
 					and return_against in (select name from `tabDelivery Note` where per_billed < 100)
@@ -364,13 +372,13 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 
 	if searchfields:
 		search_columns = ", " + ", ".join(searchfields)
-		search_cond = " or " + " or ".join([field + " like %(txt)s" for field in searchfields])
+		search_cond = " or " + " or ".join(field + " like %(txt)s" for field in searchfields)
 
 	if args.get('warehouse'):
 		searchfields = ['batch.' + field for field in searchfields]
 		if searchfields:
 			search_columns = ", " + ", ".join(searchfields)
-			search_cond = " or " + " or ".join([field + " like %(txt)s" for field in searchfields])
+			search_cond = " or " + " or ".join(field + " like %(txt)s" for field in searchfields)
 
 		batch_nos = frappe.db.sql("""select sle.batch_no, round(sum(sle.actual_qty),2), sle.stock_uom,
 				concat('MFG-',batch.manufacturing_date), concat('EXP-',batch.expiry_date)

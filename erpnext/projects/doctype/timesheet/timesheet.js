@@ -170,6 +170,15 @@ frappe.ui.form.on("Timesheet Detail", {
 		if(frm.doc.parent_project) {
 			frappe.model.set_value(cdt, cdn, 'project', frm.doc.parent_project);
 		}
+
+		var $trigger_again = $('.form-grid').find('.grid-row').find('.btn-open-row');
+		$trigger_again.on('click', () => {
+			let $timer = $('.form-grid').find('[data-fieldname="timer"]');
+			if ($timer.get(0)) {
+				$timer.append(frappe.render_template("timesheet"));
+			}
+			frm.trigger("control_timer");
+		});
 	},
 	hours: function(frm, cdt, cdn) {
 		calculate_end_time(frm, cdt, cdn);

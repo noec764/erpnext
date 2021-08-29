@@ -78,7 +78,7 @@ class TestAsset(unittest.TestCase):
 		})
 
 		doc.set_missing_values()
-		self.assertEquals(doc.items[0].is_fixed_asset, 1)
+		self.assertEqual(doc.items[0].is_fixed_asset, 1)
 
 	def test_schedule_for_straight_line_method(self):
 		pr = make_purchase_receipt(item_code="Macbook Pro",
@@ -470,7 +470,7 @@ class TestAsset(unittest.TestCase):
 		})
 		asset.insert()
 		accumulated_depreciation_after_full_schedule = \
-			max([d.accumulated_depreciation_amount for d in asset.get("schedules")])
+			max(d.accumulated_depreciation_amount for d in asset.get("schedules"))
 
 		asset_value_after_full_schedule = (flt(asset.gross_purchase_amount) -
 			flt(accumulated_depreciation_after_full_schedule))
@@ -565,7 +565,7 @@ class TestAsset(unittest.TestCase):
 
 		doc = make_invoice(pr.name)
 
-		self.assertEquals('Asset Received But Not Billed - _TC', doc.items[0].expense_account)
+		self.assertEqual('Asset Received But Not Billed - _TC', doc.items[0].expense_account)
 	
 	def test_asset_cwip_toggling_cases(self):
 		cwip = frappe.db.get_value("Asset Category", "Computers", "enable_cwip_accounting")

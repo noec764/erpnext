@@ -253,7 +253,7 @@ def get_order_taxes(order, settings):
 				"cost_center": settings.cost_center
 			})
 		else:
-			frappe.log_error(f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce tax: {name} @ {rate} %", "Woocommerce Order Error")
+			frappe.log_error(f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce tax: {tax.get('label')}", "Woocommerce Order Error")
 
 	taxes = update_taxes_with_shipping_lines(order, taxes, order.get("shipping_lines"), settings)
 	taxes = update_taxes_with_fee_lines(taxes, order.get("fee_lines"), settings)
