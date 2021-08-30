@@ -81,9 +81,9 @@ class PaymentEntry(AccountsController):
 		if self.difference_amount:
 			frappe.throw(_("Difference Amount must be zero"))
 		self.make_gl_entries()
+		self.update_expense_claim()
 		self.update_outstanding_amounts()
 		self.update_advance_paid()
-		self.update_expense_claim()
 		self.update_payment_schedule()
 		self.set_status()
 
@@ -92,9 +92,9 @@ class PaymentEntry(AccountsController):
 		self.ignore_linked_doctypes = ('GL Entry', 'Stock Ledger Entry', 'Sepa Direct Debit Details')
 		delete_linked_subscription_events(self)
 		self.make_gl_entries(cancel=1)
+		self.update_expense_claim()
 		self.update_outstanding_amounts()
 		self.update_advance_paid()
-		self.update_expense_claim()
 		self.delink_advance_entry_references()
 		self.update_payment_schedule(cancel=1)
 		self.set_status(update=True)
@@ -892,7 +892,10 @@ class PaymentEntry(AccountsController):
 			for d in self.get("references"):
 				if d.reference_doctype=="Expense Claim" and d.reference_name:
 					doc = frappe.get_doc("Expense Claim", d.reference_name)
-					update_reimbursed_amount(doc, self.name)
+					if self.docstatus == 2:
+						update_reimbursed_amount(doc, -1 * d.allocated_amount)
+					else:
+						update_reimbursed_amount(doc, d.allocated_amount)
 
 	def on_recurring(self, reference_doc, auto_repeat_doc):
 		self.reference_no = reference_doc.name
