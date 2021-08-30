@@ -41,11 +41,12 @@ class POSClosingEntry(StatusUpdater):
 		if not invalid_rows:
 			return
 
-		error_list = [_("Row #{}: {}").format(row.get('idx'), row.get('msg')) for row in invalid_rows]
 		error_list = []
 		for row in invalid_rows:
 			for msg in row.get('msg'):
 				error_list.append(_("Row #{}: {}").format(row.get('idx'), msg))
+
+		frappe.throw(error_list, title=_("Invalid POS Invoices"), as_list=True)
 
 	@frappe.whitelist()
 	def get_payment_reconciliation_details(self):
@@ -58,6 +59,10 @@ class POSClosingEntry(StatusUpdater):
 
 	def on_cancel(self):
 		unconsolidate_pos_invoices(closing_entry=self)
+
+	@frappe.whitelist()
+	def retry(self):
+		consolidate_pos_invoices(closing_entry=self)
 
 	def update_opening_entry(self, for_cancel=False):
 		opening_entry = frappe.get_doc("POS Opening Entry", self.pos_opening_entry)

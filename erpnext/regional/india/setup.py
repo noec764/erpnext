@@ -8,7 +8,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 from frappe.permissions import add_permission, update_permission_property
 from erpnext.regional.india import states
-from erpnext.accounts.utils import get_fiscal_year
+from erpnext.accounts.utils import get_fiscal_year, FiscalYearError
 from frappe.utils import today
 
 def setup(company=None, patch=True):
@@ -27,6 +27,8 @@ def setup_company_independent_fixtures(patch=False):
 	add_print_formats()
 
 def add_hsn_sac_codes():
+	if frappe.flags.in_test and frappe.flags.created_hsn_codes:
+		return
 	# HSN codes
 	with open(os.path.join(os.path.dirname(__file__), 'hsn_code_data.json'), 'r') as f:
 		hsn_codes = json.loads(f.read())
@@ -37,6 +39,9 @@ def add_hsn_sac_codes():
 	with open(os.path.join(os.path.dirname(__file__), 'sac_code_data.json'), 'r') as f:
 		sac_codes = json.loads(f.read())
 	create_hsn_codes(sac_codes, code_field="sac_code")
+
+	if frappe.flags.in_test:
+		frappe.flags.created_hsn_codes = True
 
 def create_hsn_codes(data, code_field):
 	for d in data:
@@ -51,7 +56,7 @@ def create_hsn_codes(data, code_field):
 
 def add_custom_roles_for_reports():
 	for report_name in ('GST Sales Register', 'GST Purchase Register',
-		'GST Itemised Sales Register', 'GST Itemised Purchase Register', 'Eway Bill'):
+		'GST Itemised Sales Register', 'GST Itemised Purchase Register', 'Eway Bill', 'E-Invoice Summary'):
 
 		if not frappe.db.get_value('Custom Role', dict(report=report_name)):
 			frappe.get_doc(dict(
@@ -267,6 +272,7 @@ def make_custom_fields(update=True):
 			'label': 'Mode of Transport',
 			'fieldtype': 'Select',
 			'options': '\nRoad\nAir\nRail\nShip',
+			'default': 'Road',
 			'insert_after': 'transporter_name',
 			'print_hide': 1,
 			'translatable': 0
@@ -286,32 +292,11 @@ def make_custom_fields(update=True):
 			'fieldname': 'ewaybill',
 			'label': 'E-Way Bill No.',
 			'fieldtype': 'Data',
-			'depends_on': 'eval:((doc.docstatus === 1 || doc.ewaybill) && doc.eway_bill_cancelled === 0)',
+			'depends_on': 'eval:(doc.docstatus === 1)',
 			'allow_on_submit': 1,
 			'insert_after': 'customer_name_in_arabic',
 			'translatable': 0,
 		}
-	]
-
-	si_einvoice_fields = [
-		dict(fieldname='irn', label='IRN', fieldtype='Data', read_only=1, insert_after='customer', no_copy=1, print_hide=1,
-			depends_on='eval:in_list(["Registered Regular", "SEZ", "Overseas", "Deemed Export"], doc.gst_category) && doc.irn_cancelled === 0'),
-
-		dict(fieldname='ack_no', label='Ack. No.', fieldtype='Data', read_only=1, hidden=1, insert_after='irn', no_copy=1, print_hide=1),
-
-		dict(fieldname='ack_date', label='Ack. Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_no', no_copy=1, print_hide=1),
-
-		dict(fieldname='irn_cancelled', label='IRN Cancelled', fieldtype='Check', no_copy=1, print_hide=1,
-			depends_on='eval:(doc.irn_cancelled === 1)', read_only=1, allow_on_submit=1, insert_after='customer'),
-
-		dict(fieldname='eway_bill_cancelled', label='E-Way Bill Cancelled', fieldtype='Check', no_copy=1, print_hide=1,
-			depends_on='eval:(doc.eway_bill_cancelled === 1)', read_only=1, allow_on_submit=1, insert_after='customer'),
-
-		dict(fieldname='signed_einvoice', fieldtype='Code', options='JSON', hidden=1, no_copy=1, print_hide=1, read_only=1),
-
-		dict(fieldname='signed_qr_code', fieldtype='Code', options='JSON', hidden=1, no_copy=1, print_hide=1, read_only=1),
-
-		dict(fieldname='qrcode_image', label='QRCode', fieldtype='Attach Image', hidden=1, no_copy=1, print_hide=1, read_only=1)
 	]
 
 	si_ewaybill_fields = [
@@ -392,7 +377,6 @@ def make_custom_fields(update=True):
 			'label': 'Mode of Transport',
 			'fieldtype': 'Select',
 			'options': '\nRoad\nAir\nRail\nShip',
-			'default': 'Road',
 			'insert_after': 'transporter_name',
 			'print_hide': 1,
 			'translatable': 0
@@ -429,11 +413,51 @@ def make_custom_fields(update=True):
 			'fieldname': 'ewaybill',
 			'label': 'E-Way Bill No.',
 			'fieldtype': 'Data',
-			'depends_on': 'eval:(doc.docstatus === 1)',
+			'depends_on': 'eval:((doc.docstatus === 1 || doc.ewaybill) && doc.eway_bill_cancelled === 0)',
 			'allow_on_submit': 1,
 			'insert_after': 'tax_id',
 			'translatable': 0
 		}
+	]
+
+	si_einvoice_fields = [
+		dict(fieldname='irn', label='IRN', fieldtype='Data', read_only=1, insert_after='customer', no_copy=1, print_hide=1,
+			depends_on='eval:in_list(["Registered Regular", "SEZ", "Overseas", "Deemed Export"], doc.gst_category) && doc.irn_cancelled === 0'),
+
+		dict(fieldname='irn_cancelled', label='IRN Cancelled', fieldtype='Check', no_copy=1, print_hide=1,
+			depends_on='eval:(doc.irn_cancelled === 1)', read_only=1, allow_on_submit=1, insert_after='customer'),
+
+		dict(fieldname='eway_bill_validity', label='E-Way Bill Validity', fieldtype='Data', no_copy=1, print_hide=1,
+			depends_on='ewaybill', read_only=1, allow_on_submit=1, insert_after='ewaybill'),
+
+		dict(fieldname='eway_bill_cancelled', label='E-Way Bill Cancelled', fieldtype='Check', no_copy=1, print_hide=1,
+			depends_on='eval:(doc.eway_bill_cancelled === 1)', read_only=1, allow_on_submit=1, insert_after='customer'),
+
+		dict(fieldname='einvoice_section', label='E-Invoice Fields', fieldtype='Section Break', insert_after='gst_vehicle_type',
+			print_hide=1, hidden=1),
+		
+		dict(fieldname='ack_no', label='Ack. No.', fieldtype='Data', read_only=1, hidden=1, insert_after='einvoice_section',
+			no_copy=1, print_hide=1),
+		
+		dict(fieldname='ack_date', label='Ack. Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_no', no_copy=1, print_hide=1),
+
+		dict(fieldname='irn_cancel_date', label='Cancel Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_date', 
+			no_copy=1, print_hide=1),
+
+		dict(fieldname='signed_einvoice', label='Signed E-Invoice', fieldtype='Code', options='JSON', hidden=1, insert_after='irn_cancel_date',
+			no_copy=1, print_hide=1, read_only=1),
+
+		dict(fieldname='signed_qr_code', label='Signed QRCode', fieldtype='Code', options='JSON', hidden=1, insert_after='signed_einvoice',
+			no_copy=1, print_hide=1, read_only=1),
+
+		dict(fieldname='qrcode_image', label='QRCode', fieldtype='Attach Image', hidden=1, insert_after='signed_qr_code',
+			no_copy=1, print_hide=1, read_only=1),
+
+		dict(fieldname='einvoice_status', label='E-Invoice Status', fieldtype='Select', insert_after='qrcode_image',
+			options='\nPending\nGenerated\nCancelled\nFailed', default=None, hidden=1, no_copy=1, print_hide=1, read_only=1),
+
+		dict(fieldname='failure_description', label='E-Invoice Failure Description', fieldtype='Code', options='JSON',
+			hidden=1, insert_after='einvoice_status', no_copy=1, print_hide=1, read_only=1)
 	]
 
 	custom_fields = {
@@ -518,6 +542,14 @@ def make_custom_fields(update=True):
 				fieldtype='Link', options='Salary Component', insert_after='basic_component'),
 			dict(fieldname='arrear_component', label='Arrear Component',
 				fieldtype='Link', options='Salary Component', insert_after='hra_component'),
+			dict(fieldname='non_profit_section', label='Non Profit Settings',
+				fieldtype='Section Break', insert_after='asset_received_but_not_billed', collapsible=1),
+			dict(fieldname='company_80g_number', label='80G Number',
+				fieldtype='Data', insert_after='non_profit_section'),
+			dict(fieldname='with_effect_from', label='80G With Effect From',
+				fieldtype='Date', insert_after='company_80g_number'),
+			dict(fieldname='pan_details', label='PAN Number',
+				fieldtype='Data', insert_after='with_effect_from')
 		],
 		'Employee Tax Exemption Declaration':[
 			dict(fieldname='hra_section', label='HRA Exemption',
@@ -599,6 +631,22 @@ def make_custom_fields(update=True):
 				'depends_on':'eval:in_list(["SEZ", "Overseas", "Deemed Export"], doc.gst_category)',
 				'options': '\nWith Payment of Tax\nWithout Payment of Tax'
 			}
+		],
+		'Member': [
+			{
+				'fieldname': 'pan_number',
+				'label': 'PAN Details',
+				'fieldtype': 'Data',
+				'insert_after': 'email_id'
+			}
+		],
+		'Donor': [
+			{
+				'fieldname': 'pan_number',
+				'label': 'PAN Details',
+				'fieldtype': 'Data',
+				'insert_after': 'email'
+			}
 		]
 	}
 	create_custom_fields(custom_fields, update=update)
@@ -641,13 +689,18 @@ def set_salary_components(docs):
 
 def set_tax_withholding_category(company):
 	accounts = []
+	fiscal_year = None
 	abbr = frappe.get_value("Company", company, "abbr")
 	tds_account = frappe.get_value("Account", 'TDS Payable - {0}'.format(abbr), 'name')
 
 	if company and tds_account:
 		accounts = [dict(company=company, account=tds_account)]
 
-	fiscal_year = get_fiscal_year(today(), company=company)[0]
+	try:
+		fiscal_year = get_fiscal_year(today(), verbose=0, company=company)[0]
+	except FiscalYearError:
+		pass
+
 	docs = get_tds_details(accounts, fiscal_year)
 
 	for d in docs:
@@ -662,11 +715,14 @@ def set_tax_withholding_category(company):
 			if accounts:
 				doc.append("accounts", accounts[0])
 
-			# if fiscal year don't match with any of the already entered data, append rate row
-			fy_exist = [k for k in doc.get('rates') if k.get('fiscal_year')==fiscal_year]
-			if not fy_exist:
-				doc.append("rates", d.get('rates')[0])
+			if fiscal_year:
+				# if fiscal year don't match with any of the already entered data, append rate row
+				fy_exist = [k for k in doc.get('rates') if k.get('fiscal_year')==fiscal_year]
+				if not fy_exist:
+					doc.append("rates", d.get('rates')[0])
 
+			doc.flags.ignore_permissions = True
+			doc.flags.ignore_mandatory = True
 			doc.save()
 
 def set_tds_account(docs, company):

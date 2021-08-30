@@ -79,14 +79,14 @@ def get_item_details(args, doc=None, for_validate=False, overwrite_warehouse=Tru
 		get_price_list_rate(args, item, out)
 
 	if args.customer and cint(args.is_pos):
-		out.update(get_pos_profile_item_details(args.company, args))
+		out.update(get_pos_profile_item_details(args.company, args, update_data=True))
 
 	if (args.get("doctype") == "Material Request" and
 		args.get("material_request_type") == "Material Transfer"):
 		out.update(get_bin_details(args.item_code, args.get("from_warehouse")))
 
 	elif out.get("warehouse"):
-		out.update(get_bin_details(args.item_code, out.warehouse))
+		out.update(get_bin_details(args.item_code, out.warehouse, args.company))
 
 	# update args with out, if key or value not exists
 	for key, value in iteritems(out):
@@ -921,10 +921,20 @@ def get_projected_qty(item_code, warehouse):
 		{"item_code": item_code, "warehouse": warehouse}, "projected_qty")}
 
 @frappe.whitelist()
-def get_bin_details(item_code, warehouse):
-	return frappe.db.get_value("Bin", {"item_code": item_code, "warehouse": warehouse},
+def get_bin_details(item_code, warehouse, company=None):
+	bin_details = frappe.db.get_value("Bin", {"item_code": item_code, "warehouse": warehouse},
 		["projected_qty", "actual_qty", "reserved_qty"], as_dict=True, cache=True) \
 			or {"projected_qty": 0, "actual_qty": 0, "reserved_qty": 0}
+
+	if company:
+		bin_details['company_total_stock'] = get_company_total_stock(item_code, company)
+	return bin_details
+
+def get_company_total_stock(item_code, company):
+	return frappe.db.sql("""SELECT sum(actual_qty) from
+		(`tabBin` INNER JOIN `tabWarehouse` ON `tabBin`.warehouse = `tabWarehouse`.name)
+		WHERE `tabWarehouse`.company = %s and `tabBin`.item_code = %s""",
+		(company, item_code))[0][0]
 
 @frappe.whitelist()
 def get_serial_no_details(item_code, warehouse, stock_qty, serial_no):

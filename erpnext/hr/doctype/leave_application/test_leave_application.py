@@ -11,40 +11,41 @@ from frappe.utils import add_days, nowdate, now_datetime, getdate, add_months
 from erpnext.hr.doctype.leave_type.test_leave_type import create_leave_type
 from erpnext.hr.doctype.leave_allocation.test_leave_allocation import create_leave_allocation
 from erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment import create_assignment_for_multiple_employees
+from erpnext.hr.doctype.employee.test_employee import make_employee
 
 test_dependencies = ["Leave Allocation", "Leave Block List", "Employee"]
 
 _test_records = [
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00001",
-  "from_date": "2013-05-01",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-05-05"
- },
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00002",
-  "from_date": "2013-05-01",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-05-05"
- },
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00001",
-  "from_date": "2013-01-15",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type LWP",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-01-15"
- }
+	{
+		"company": "_Test Company",
+		"doctype": "Leave Application",
+		"employee": "_T-Employee-00001",
+		"from_date": "2013-05-01",
+		"description": "_Test Reason",
+		"leave_type": "_Test Leave Type",
+		"posting_date": "2013-01-02",
+		"to_date": "2013-05-05"
+	},
+	{
+		"company": "_Test Company",
+		"doctype": "Leave Application",
+		"employee": "_T-Employee-00002",
+		"from_date": "2013-05-01",
+		"description": "_Test Reason",
+		"leave_type": "_Test Leave Type",
+		"posting_date": "2013-01-02",
+		"to_date": "2013-05-05"
+	},
+	{
+		"company": "_Test Company",
+		"doctype": "Leave Application",
+		"employee": "_T-Employee-00001",
+		"from_date": "2013-01-15",
+		"description": "_Test Reason",
+		"leave_type": "_Test Leave Type LWP",
+		"posting_date": "2013-01-02",
+		"to_date": "2013-01-15"
+	}
 ]
 
 
@@ -515,9 +516,9 @@ class TestLeaveApplication(unittest.TestCase):
 		leave_application.submit()
 		leave_ledger_entry = frappe.get_all('Leave Ledger Entry', fields='*', filters=dict(transaction_name=leave_application.name))
 
-		self.assertEquals(leave_ledger_entry[0].employee, leave_application.employee)
-		self.assertEquals(leave_ledger_entry[0].leave_type, leave_application.leave_type)
-		self.assertEquals(leave_ledger_entry[0].leaves, leave_application.total_leave_days * -1)
+		self.assertEqual(leave_ledger_entry[0].employee, leave_application.employee)
+		self.assertEqual(leave_ledger_entry[0].leave_type, leave_application.leave_type)
+		self.assertEqual(leave_ledger_entry[0].leaves, leave_application.total_leave_days * -1)
 
 		# check if leave ledger entry is deleted on cancellation
 		leave_application.cancel()
@@ -548,11 +549,11 @@ class TestLeaveApplication(unittest.TestCase):
 
 		leave_ledger_entry = frappe.get_all('Leave Ledger Entry', '*', filters=dict(transaction_name=leave_application.name))
 
-		self.assertEquals(len(leave_ledger_entry), 2)
-		self.assertEquals(leave_ledger_entry[0].employee, leave_application.employee)
-		self.assertEquals(leave_ledger_entry[0].leave_type, leave_application.leave_type)
-		self.assertEquals(leave_ledger_entry[0].leaves, -9)
-		self.assertEquals(leave_ledger_entry[1].leaves, -2)
+		self.assertEqual(len(leave_ledger_entry), 2)
+		self.assertEqual(leave_ledger_entry[0].employee, leave_application.employee)
+		self.assertEqual(leave_ledger_entry[0].leave_type, leave_application.leave_type)
+		self.assertEqual(leave_ledger_entry[0].leaves, -9)
+		self.assertEqual(leave_ledger_entry[1].leaves, -2)
 
 	def test_leave_application_creation_after_expiry(self):
 		# test leave balance for carry forwarded allocation
@@ -565,7 +566,48 @@ class TestLeaveApplication(unittest.TestCase):
 
 		create_carry_forwarded_allocation(employee, leave_type)
 
-		self.assertEquals(get_leave_balance_on(employee.name, leave_type.name, add_days(nowdate(), -85), add_days(nowdate(), -84)), 0)
+		self.assertEqual(get_leave_balance_on(employee.name, leave_type.name, add_days(nowdate(), -85), add_days(nowdate(), -84)), 0)
+
+	def test_leave_approver_perms(self):
+		employee = get_employee()
+		user = "test_approver_perm_emp@example.com"
+		make_employee(user, "_Test Company")
+
+		# set approver for employee
+		employee.reload()
+		employee.leave_approver = user
+		employee.save()
+		self.assertTrue("Leave Approver" in frappe.get_roles(user))
+
+		make_allocation_record(employee.name)
+
+		application = self.get_application(_test_records[0])
+		application.from_date = '2018-01-01'
+		application.to_date = '2018-01-03'
+		application.leave_approver = user
+		application.insert()
+		self.assertTrue(application.name in frappe.share.get_shared("Leave Application", user))
+
+		# check shared doc revoked
+		application.reload()
+		application.leave_approver = "test@example.com"
+		application.save()
+		self.assertTrue(application.name not in frappe.share.get_shared("Leave Application", user))
+
+		application.reload()
+		application.leave_approver = user
+		application.save()
+
+		frappe.set_user(user)
+		application.reload()
+		application.status = "Approved"
+		application.submit()
+
+		# unset leave approver
+		frappe.set_user("Administrator")
+		employee.reload()
+		employee.leave_approver = ""
+		employee.save()
 
 def create_carry_forwarded_allocation(employee, leave_type):
 		# initial leave allocation

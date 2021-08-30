@@ -313,14 +313,16 @@ class SellingController(StockController):
 
 		items = self.get("items") + (self.get("packed_items") or [])
 		for d in items:
-			if not cint(self.get("is_return")):
+			if not self.get("return_against"):
 				# Get incoming rate based on original item cost based on valuation method
+				qty = flt(d.get('stock_qty') or d.get('actual_qty'))
+
 				d.incoming_rate = get_incoming_rate({
 					"item_code": d.item_code,
 					"warehouse": d.warehouse,
 					"posting_date": self.get('posting_date') or self.get('transaction_date'),
 					"posting_time": self.get('posting_time') or nowtime(),
-					"qty": -1 * flt(d.get('stock_qty') or d.get('actual_qty')),
+					"qty": qty if cint(self.get("is_return")) else (-1 * qty),
 					"serial_no": d.get('serial_no'),
 					"company": self.company,
 					"voucher_type": self.doctype,
@@ -428,7 +430,7 @@ class SellingController(StockController):
 		self.po_no = ', '.join(list(set(x.strip() for x in ','.join(po_nos).split(','))))
 
 	def get_po_nos(self, ref_doctype, ref_fieldname, po_nos):
-		doc_list = list(set([d.get(ref_fieldname) for d in self.items if d.get(ref_fieldname)]))
+		doc_list = list(set(d.get(ref_fieldname) for d in self.items if d.get(ref_fieldname)))
 		if doc_list:
 			po_nos += [d.po_no for d in frappe.get_all(ref_doctype, 'po_no', filters = {'name': ('in', doc_list)}) if d.get('po_no')]
 

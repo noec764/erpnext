@@ -543,3 +543,25 @@ def get_attendance(employee, start_date, end_date):
 		"dates": [x.attendance_date for x in attendance if x.attendance_date not in holidays],
 		"weeks": len([x.attendance_date for x in attendance]) / 7
 	}
+
+def share_doc_with_approver(doc, user):
+	# if approver does not have permissions, share
+	if not frappe.has_permission(doc=doc, ptype="submit", user=user):
+		frappe.share.add(doc.doctype, doc.name, user, submit=1,
+			flags={"ignore_share_permission": True})
+
+		frappe.msgprint(_("Shared with the user {0} with {1} access").format(
+			user, frappe.bold("submit"), alert=True))
+
+	# remove shared doc if approver changes
+	doc_before_save = doc.get_doc_before_save()
+	if doc_before_save:
+		approvers = {
+			"Leave Application": "leave_approver",
+			"Expense Claim": "expense_approver",
+			"Shift Request": "approver"
+		}
+
+		approver = approvers.get(doc.doctype)
+		if doc_before_save.get(approver) != doc.get(approver):
+			frappe.share.remove(doc.doctype, doc.name, doc_before_save.get(approver))
