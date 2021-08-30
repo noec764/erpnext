@@ -81,7 +81,7 @@ def _sync_customer(wc_api, id):
 		woocommerce_customer = wc_api.get(f"customers/{id}").json()
 		return sync_customer(wc_api.settings, woocommerce_customer)
 	except Exception as e:
-		frappe.log_error(str(e), "Woocommerce Customer Error")
+		print("Woocommerce Customer Error", str(e))
 
 def get_woocommerce_orders(wc_api):
 	max_orders = wc_api.settings.max_orders
