@@ -67,7 +67,7 @@ def execute():
 				""", (income_tax_slab.name, company.name, period.start_date))
 
 	# move other incomes to separate document
-	if not frappe.db.table_exists("Employee Tax Exemption Proof Submission"):
+	if not frappe.db.table_exists("Employee Tax Exemption Proof Submission") or not frappe.db.has_column("Employee Tax Exemption Proof Submission", "income_from_other_sources"):
 		return
 
 	migrated = []
@@ -89,7 +89,7 @@ def execute():
 			except:
 				pass
 
-	if not frappe.db.table_exists("Employee Tax Exemption Declaration"):
+	if not frappe.db.table_exists("Employee Tax Exemption Declaration") or not frappe.db.has_column("Employee Tax Exemption Declaration", "income_from_other_sources"):
 		return
 
 	declerations = frappe.get_all("Employee Tax Exemption Declaration",
