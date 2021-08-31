@@ -19,10 +19,7 @@ class Gratuity(AccountsController):
 			self.status = "Unpaid"
 
 	def on_submit(self):
-		if self.pay_via_salary_slip:
-			self.create_additional_salary()
-		else:
-			self.create_gl_entries()
+		self.create_gl_entries()
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ['GL Entry']
@@ -65,19 +62,6 @@ class Gratuity(AccountsController):
 
 		return gl_entry
 
-	def create_additional_salary(self):
-		if self.pay_via_salary_slip:
-			additional_salary = frappe.new_doc('Additional Salary')
-			additional_salary.employee = self.employee
-			additional_salary.salary_component = self.salary_component
-			additional_salary.overwrite_salary_structure_amount = 0
-			additional_salary.amount = self.amount
-			additional_salary.payroll_date = self.payroll_date
-			additional_salary.company = self.company
-			additional_salary.ref_doctype = self.doctype
-			additional_salary.ref_docname = self.name
-			additional_salary.submit()
-
 	def set_total_advance_paid(self):
 		paid_amount = frappe.db.sql("""
 			select ifnull(sum(debit_in_account_currency), 0) as paid_amount
@@ -89,7 +73,7 @@ class Gratuity(AccountsController):
 		""", (self.name, self.employee), as_dict=1)[0].paid_amount
 
 		if flt(paid_amount) > self.amount:
-			frappe.throw(_("Row #{0} Paid Amount cannot be greater than Total amount"))
+			frappe.throw(_("Row {0}# Paid Amount cannot be greater than Total amount"))
 
 
 		self.db_set("paid_amount", paid_amount)
@@ -139,7 +123,7 @@ def get_work_experience_using_method(method, current_work_experience, minimum_ye
 		current_work_experience = floor(current_work_experience)
 
 	if current_work_experience < minimum_year_for_gratuity:
-		frappe.throw(_("Employee: {0} has to complete a minimum of {1} years for gratuity").format(bold(employee), minimum_year_for_gratuity))
+		frappe.throw(_("Employee: {0} have to complete minimum {1} years for gratuity").format(bold(employee), minimum_year_for_gratuity))
 	return current_work_experience
 
 def get_non_working_days(employee, relieving_date, status):
