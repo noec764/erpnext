@@ -67,7 +67,7 @@ class SocialMediaPost(Document):
 				self.db_set("linkedin_post_id", linkedin_post.headers['X-RestLi-Id'])
 			self.db_set("post_status", "Posted")
 
-		except:
+		except Exception:
 			self.db_set("post_status", "Error")
 			title = _("Error while POSTING {0}").format(self.name)
 			frappe.log_error(message=frappe.get_traceback(), title=title)

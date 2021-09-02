@@ -133,7 +133,7 @@ class AdjustmentEntry(Document):
 			try:
 				make_gl_entries(gl_entries, cancel=(self.docstatus == 2), merge_entries=True)
 				frappe.db.commit()
-			except:
+			except Exception:
 				frappe.db.rollback()
 				traceback = frappe.get_traceback()
 				frappe.throw(traceback)

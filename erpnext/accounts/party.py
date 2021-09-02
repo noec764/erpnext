@@ -652,7 +652,7 @@ def get_default_contact(doctype, name):
 	if out:
 		try:
 			return out[0][0]
-		except:
+		except Exception:
 			return None
 	else:
 		return None
