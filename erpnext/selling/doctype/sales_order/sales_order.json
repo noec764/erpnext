@@ -52,6 +52,8 @@
   "items_section",
   "scan_barcode",
   "items",
+  "packing_list",
+  "packed_items",
   "pricing_rule_details",
   "pricing_rules",
   "section_break_31",
@@ -98,8 +100,6 @@
   "in_words",
   "advance_paid",
   "disable_rounded_total",
-  "packing_list",
-  "packed_items",
   "payment_schedule_section",
   "payment_terms_template",
   "payment_schedule",
@@ -844,6 +844,7 @@
   {
    "collapsible": 1,
    "collapsible_depends_on": "packed_items",
+   "depends_on": "packed_items",
    "fieldname": "packing_list",
    "fieldtype": "Section Break",
    "label": "Packing List",
@@ -852,12 +853,12 @@
    "print_hide": 1
   },
   {
+    "depends_on": "packed_items",
    "fieldname": "packed_items",
    "fieldtype": "Table",
    "label": "Packed Items",
    "options": "Packed Item",
-   "print_hide": 1,
-   "read_only": 1
+   "print_hide": 1
   },
   {
    "fieldname": "payment_schedule_section",
@@ -1246,7 +1247,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-08-17 20:13:44.255437",
+ "modified": "2021-09-01 15:12:24.115483",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

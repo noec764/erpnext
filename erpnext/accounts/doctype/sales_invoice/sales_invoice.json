@@ -244,7 +244,7 @@
    "depends_on": "customer",
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_global_search": 1,
    "in_preview": 1,
    "label": "Customer Name",
@@ -606,7 +606,6 @@
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
    "label": "Scan Barcode",
-   "length": 1,
    "options": "Barcode"
   },
   {
@@ -632,6 +631,7 @@
    "read_only": 1
   },
   {
+    "depends_on": "packed_items",
    "fieldname": "packing_list",
    "fieldtype": "Section Break",
    "label": "Packing List",
@@ -639,6 +639,7 @@
    "print_hide": 1
   },
   {
+    "depends_on": "packed_items",
    "fieldname": "packed_items",
    "fieldtype": "Table",
    "label": "Packed Items",
@@ -892,7 +893,6 @@
    "fieldname": "apply_discount_on",
    "fieldtype": "Select",
    "label": "Apply Additional Discount On",
-   "length": 15,
    "options": "\nGrand Total\nNet Total",
    "print_hide": 1
   },
@@ -962,7 +962,7 @@
   {
    "description": "In Words will be visible once you save the Sales Invoice.",
    "fieldname": "base_in_words",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "label": "In Words (Company Currency)",
    "length": 240,
    "oldfieldname": "in_words",
@@ -1013,7 +1013,7 @@
   },
   {
    "fieldname": "in_words",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "label": "In Words",
    "length": 240,
    "oldfieldname": "in_words_export",
@@ -1294,7 +1294,6 @@
    "fieldname": "language",
    "fieldtype": "Data",
    "label": "Print Language",
-   "length": 6,
    "print_hide": 1,
    "read_only": 1
   },
@@ -1364,7 +1363,6 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "length": 30,
    "no_copy": 1,
    "options": "\nDraft\nReturn\nCredit Note Issued\nSubmitted\nPaid\nUnpaid\nUnpaid and Discounted\nOverdue and Discounted\nOverdue\nCancelled\nInternal Transfer",
    "print_hide": 1,
@@ -1414,7 +1412,6 @@
    "fieldname": "is_opening",
    "fieldtype": "Select",
    "label": "Is Opening Entry",
-   "length": 4,
    "no_copy": 1,
    "oldfieldname": "is_opening",
    "oldfieldtype": "Select",
@@ -1425,7 +1422,6 @@
    "fieldname": "c_form_applicable",
    "fieldtype": "Select",
    "label": "C-Form Applicable",
-   "length": 4,
    "no_copy": 1,
    "options": "No\nYes",
    "print_hide": 1
@@ -1715,7 +1711,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2021-08-25 14:46:05.279588",
+ "modified": "2021-08-27 20:13:40.456462",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

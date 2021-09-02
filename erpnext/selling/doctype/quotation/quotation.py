@@ -31,6 +31,9 @@ class Quotation(SellingController):
 		if self.items:
 			self.with_items = 1
 
+		from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
+		make_packing_list(self)
+
 	def validate_valid_till(self):
 		if self.valid_till and getdate(self.valid_till) < getdate(self.transaction_date):
 			frappe.throw(_("Valid till date cannot be before transaction date"))
@@ -140,7 +143,7 @@ class Quotation(SellingController):
 		self.set_status()
 		self.save()
 		self.flags.ignore_validate_update_after_submit = False
-		
+
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
