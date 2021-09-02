@@ -1195,10 +1195,10 @@ class StockEntry(StockController):
 
 			wo_item_qty = item.transferred_qty or item.required_qty
 
-			req_qty_each = (
-				(flt(wo_item_qty) - flt(item.consumed_qty)) /
-					(flt(work_order_qty) - flt(wo.produced_qty))
-			)
+			wo_qty_consumed = flt(wo_item_qty) - flt(item.consumed_qty)
+			wo_qty_to_produce = flt(work_order_qty) - flt(wo.produced_qty)
+
+			req_qty_each = (wo_qty_consumed) / (wo_qty_to_produce or 1)
 
 			qty = req_qty_each * flt(self.fg_completed_qty)
 
