@@ -513,13 +513,13 @@
          "no_copy": 1,
          "options": "Prospect",
          "print_hide": 1
-        },
+        }
     ],
     "icon": "fa fa-user",
     "idx": 363,
     "image_field": "image",
     "links": [],
-    "modified": "2021-08-26 18:56:09.929905",
+    "modified": "2021-09-03 12:56:09.929905",
     "modified_by": "Administrator",
     "module": "Selling",
     "name": "Customer",
