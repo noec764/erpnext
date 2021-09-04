@@ -284,6 +284,7 @@ doc_events = {
 
 	},
 	"Payment Entry": {
+		"validate": "erpnext.regional.india.utils.update_place_of_supply",
 		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning"
 	},
 	'Address': {
