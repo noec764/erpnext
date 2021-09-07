@@ -64,7 +64,7 @@ class StripeWebhooksController(WebhooksController):
 			if self.period_start and self.period_end:
 				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, add_days(self.period_end, -1))
 
-		elif self.metadata.get("payment_request"):
+		if self.metadata.get("payment_request"):
 			payment_request_id = self.metadata.get("payment_request")
 		elif self.metadata.get("reference_doctype") == "Payment Request":
 			payment_request_id = self.metadata.get("reference_name")

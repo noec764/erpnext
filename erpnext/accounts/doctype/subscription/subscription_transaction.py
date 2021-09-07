@@ -238,6 +238,7 @@ class SubscriptionPaymentEntryGenerator(SubscriptionTransactionBase):
 		bank_account = self.get_bank_account()
 
 		payment_entry.posting_date = nowdate()
+		payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.subscription.payment_gateway, "mode_of_payment")
 		payment_entry.company = self.subscription.company
 		payment_entry.paid_amount = self.subscription.grand_total
 		payment_entry.party = self.subscription.customer
