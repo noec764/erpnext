@@ -55,14 +55,14 @@ def validate_filters(filters, account_details):
 			if not account_details.get(account):
 				frappe.throw(_("Account {0} does not exists").format(account))
 
-	if (filters.get("account") and filters.get("group_by") == _('Group by Account')):
+	if (filters.get("account") and filters.get("group_by") == 'Group by Account'):
 		filters.account = frappe.parse_json(filters.get('account'))
 		for account in filters.account:
 			if account_details[account].is_group == 0:
 				frappe.throw(_("Can not filter based on Child Account, if grouped by Account"))
 
 	if (filters.get("voucher_no")
-		and filters.get("group_by") in [_('Group by Voucher')]):
+		and filters.get("group_by") in ['Group by Voucher']):
 		frappe.throw(_("Can not filter based on Voucher No, if grouped by Voucher"))
 
 	if getdate(filters.from_date) > getdate(filters.to_date):
@@ -146,10 +146,10 @@ def get_gl_entries(filters, accounting_dimensions):
 	if filters.get("include_dimensions"):
 		order_by_statement = "order by posting_date, creation"
 
-	if filters.get("group_by") == _("Group by Voucher"):
+	if filters.get("group_by") == "Group by Voucher":
 		order_by_statement = "order by posting_date, voucher_type, voucher_no"
 
-	if filters.get("group_by") == _("Group by Account"):
+	if filters.get("group_by") == "Group by Account":
 		order_by_statement = "order by account, posting_date, creation"
 
 	if filters.get("include_default_book_entries"):
@@ -316,16 +316,16 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 	# Opening for filtered account
 	data.append(totals.opening)
 
-	if filters.get("group_by") == _('Group by Account'):
+	if filters.get("group_by") == 'Group by Account':
 		gle_map = OrderedDict(sorted(gle_map.items()))
 
-	if filters.get("group_by") != _('Group by Voucher (Consolidated)'):
+	if filters.get("group_by") != 'Group by Voucher (Consolidated)':
 		for acc, acc_dict in iteritems(gle_map):
 			# acc
 			if acc_dict.entries:
 				# opening
 				data.append({})
-				if filters.get("group_by") != _("Group by Voucher"):
+				if filters.get("group_by") != "Group by Voucher":
 					data.append(acc_dict.totals.opening)
 
 				data += acc_dict.entries
@@ -334,7 +334,7 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 				data.append(acc_dict.totals.total)
 
 				# closing
-				if filters.get("group_by") != _("Group by Voucher"):
+				if filters.get("group_by") != "Group by Voucher":
 					data.append(acc_dict.totals.closing)
 		data.append({})
 	else:
@@ -364,9 +364,9 @@ def get_totals_dict():
 	)
 
 def group_by_field(group_by):
-	if group_by == _('Group by Party'):
+	if group_by == 'Group by Party':
 		return 'party'
-	elif group_by in [_('Group by Voucher (Consolidated)'), _('Group by Account')]:
+	elif group_by in ['Group by Voucher (Consolidated)', 'Group by Account']:
 		return 'account'
 	else:
 		return 'voucher_no'
@@ -431,9 +431,9 @@ def get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map):
 		elif gle.posting_date <= to_date:
 			update_value_in_dict(gle_map[gle.get(group_by)].totals, 'total', gle)
 			update_value_in_dict(totals, 'total', gle)
-			if filters.get("group_by") != _('Group by Voucher (Consolidated)'):
+			if filters.get("group_by") != 'Group by Voucher (Consolidated)':
 				gle_map[gle.get(group_by)].entries.append(gle)
-			elif filters.get("group_by") == _('Group by Voucher (Consolidated)'):
+			elif filters.get("group_by") == 'Group by Voucher (Consolidated)':
 				keylist = [gle.get("voucher_type"), gle.get("voucher_no"), gle.get("account")]
 				for dim in accounting_dimensions:
 					keylist.append(gle.get(dim))
