@@ -11,7 +11,7 @@ from erpnext.hr.utils import get_holidays_for_employee
 # HOLIDAY REMINDERS
 # -----------------
 def send_reminders_in_advance_weekly():
-	to_send_in_advance = int(frappe.db.get_single_value("HR Settings", "send_holiday_reminders") or 1)
+	to_send_in_advance = int(frappe.db.get_single_value("HR Settings", "send_holiday_reminders"))
 	frequency = frappe.db.get_single_value("HR Settings", "frequency")
 	if not (to_send_in_advance and frequency == "Weekly"):
 		return
@@ -19,7 +19,7 @@ def send_reminders_in_advance_weekly():
 	send_advance_holiday_reminders("Weekly")
 
 def send_reminders_in_advance_monthly():
-	to_send_in_advance = int(frappe.db.get_single_value("HR Settings", "send_holiday_reminders") or 1)
+	to_send_in_advance = int(frappe.db.get_single_value("HR Settings", "send_holiday_reminders"))
 	frequency = frappe.db.get_single_value("HR Settings", "frequency")
 	if not (to_send_in_advance and frequency == "Monthly"):
 		return
@@ -77,7 +77,7 @@ def send_holidays_reminder_in_advance(employee, holidays):
 # ------------------
 def send_birthday_reminders():
 	"""Send Employee birthday reminders if no 'Stop Birthday Reminders' is not set."""
-	to_send = int(frappe.db.get_single_value("HR Settings", "send_birthday_reminders") or 1)
+	to_send = int(frappe.db.get_single_value("HR Settings", "send_birthday_reminders"))
 	if not to_send:
 		return
 
