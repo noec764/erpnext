@@ -513,12 +513,18 @@
          "no_copy": 1,
          "options": "Prospect",
          "print_hide": 1
-        },
+        }
     ],
     "icon": "fa fa-user",
     "idx": 363,
     "image_field": "image",
-    "links": [],
+    "links": [
+      {
+        "group": "Allowed Items",
+        "link_doctype": "Party Specific Item",
+        "link_fieldname": "party"
+       }
+    ],
     "modified": "2021-08-26 18:56:09.929905",
     "modified_by": "Administrator",
     "module": "Selling",
