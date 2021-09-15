@@ -302,7 +302,7 @@
    "options": "\nAdd X days\nAdd X months\nAdd X years\nNext first day of the week\nNext first day of the month"
   },
   {
-   "depends_on": "eval:![\"Next first day of the week\", \"Next first day of the month\"].includes(doc.posting_date_rule)",
+   "depends_on": "eval:[\"Add X days\", \"Add X months\", \"Add X years\"].includes(doc.posting_date_rule)",
    "fieldname": "posting_date_delay",
    "fieldtype": "Int",
    "label": "Posting Date Delay"
@@ -342,6 +342,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.recurrence_interval",
    "fieldname": "recurrence_end",
    "fieldtype": "Select",
    "label": "Recurrence End Field"

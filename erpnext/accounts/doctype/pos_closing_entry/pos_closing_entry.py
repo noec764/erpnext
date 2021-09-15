@@ -25,13 +25,13 @@ class POSClosingEntry(StatusUpdater):
 			pos_invoice = frappe.db.get_values("POS Invoice", d.pos_invoice,
 				["consolidated_invoice", "pos_profile", "docstatus", "owner"], as_dict=1)[0]
 			if pos_invoice.consolidated_invoice:
-				invalid_row.setdefault('msg', []).append(_('POS Invoice is {}').format(frappe.bold("already consolidated")))
+				invalid_row.setdefault('msg', []).append(_('POS Invoice is {}').format(frappe.bold(_("already consolidated"))))
 				invalid_rows.append(invalid_row)
 				continue
 			if pos_invoice.pos_profile != self.pos_profile:
 				invalid_row.setdefault('msg', []).append(_("POS Profile doesn't matches {}").format(frappe.bold(self.pos_profile)))
 			if pos_invoice.docstatus != 1:
-				invalid_row.setdefault('msg', []).append(_('POS Invoice is not {}').format(frappe.bold("submitted")))
+				invalid_row.setdefault('msg', []).append(_('POS Invoice is not {}').format(frappe.bold(_("submitted"))))
 			if pos_invoice.owner != self.user:
 				invalid_row.setdefault('msg', []).append(_("POS Invoice isn't created by user {}").format(frappe.bold(self.owner)))
 
