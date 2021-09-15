@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.model.naming import set_name_by_naming_series
+from frappe.model.naming import set_name_by_naming_series, set_name_from_naming_options
 from frappe import _, msgprint
 import frappe.defaults
 from frappe.utils import flt, cint, cstr, today, get_formatted_email
@@ -33,8 +33,10 @@ class Customer(TransactionBase):
 		cust_master_name = frappe.defaults.get_global_default('cust_master_name')
 		if cust_master_name == 'Customer Name':
 			self.name = self.get_customer_name()
-		else:
+		elif cust_master_name == 'Naming Series':
 			set_name_by_naming_series(self)
+		else:
+			self.name = set_name_from_naming_options(frappe.get_meta(self.doctype).autoname, self)
 
 	def get_customer_name(self):
 		if frappe.db.get_value("Customer", self.customer_name) and not frappe.flags.in_import:
