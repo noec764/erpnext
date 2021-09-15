@@ -64,6 +64,7 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]
+webform_list_context = "erpnext.controllers.website_list_for_contact.get_webform_list_context"
 
 calendars = ["Task", "Work Order", "Leave Application", "Sales Order", "Holiday List", "Item Booking", "Event Slot", "Event Slot Booking"]
 gcalendar_integrations = {
