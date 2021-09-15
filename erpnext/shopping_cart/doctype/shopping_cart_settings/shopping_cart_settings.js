@@ -24,7 +24,7 @@ frappe.ui.form.on("Shopping Cart Settings", {
 	enable_checkout: function(frm){
 		toggle_mandatory(frm)
 	},
-	enabled: function() {
+	enabled: function(frm) {
 		if (frm.doc.enabled === 1) {
 			frm.set_value('enable_variants', 1);
 		} else {
