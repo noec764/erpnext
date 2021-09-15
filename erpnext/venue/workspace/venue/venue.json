@@ -267,7 +267,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Item Booking Rate",
    "link_to": "Item Booking Rate",
    "link_type": "Report",
@@ -275,7 +275,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-04-20 17:32:58.199177",
+ "modified": "2021-09-15 10:59:02.840345",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
