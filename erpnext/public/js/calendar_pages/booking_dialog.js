@@ -144,7 +144,7 @@ class BookingSidebar {
 		this.selector = parent.uoms.length > 1;
 		this.bookings = []
 		this.render();
-		this.lang = frappe.get_cookie('preferred_language') || 'en'
+		this.lang = frappe.get_cookie('preferred_language') || frappe.boot.lang || 'en'
 	}
 
 	render() {
@@ -350,7 +350,7 @@ class BookingCalendar {
 				dayGridPlugin
 			],
 			showNonCurrentDates: false,
-			locale: frappe.get_cookie('preferred_language') || 'en',
+			locale: frappe.get_cookie('preferred_language') || frappe.boot.lang || 'en',
 			timeZone: frappe.boot.timeZone || 'UTC',
 			initialDate: moment().add(1,'d').format("YYYY-MM-DD"),
 			noEventsContent: __("No slot available"),

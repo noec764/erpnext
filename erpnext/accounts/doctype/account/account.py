@@ -25,15 +25,15 @@ class Account(NestedSet):
 			self.set_onload("can_freeze_account", True)
 
 	def autoname(self):
-		from erpnext.accounts.utils import get_autoname_with_number
-		suffix = None
-		if self.account_number and frappe.db.exists("Account", {"account_number": self.account_number, "company": self.company}):
-			suffix = _(self.root_type)
-		self.name = get_autoname_with_number(self.account_number, self.account_name, None, self.company, suffix)
+		self.name = get_account_autoname(self.account_number, self.account_name, self.company, self.root_type)
+		# from erpnext.accounts.utils import get_autoname_with_number
+		# suffix = None
+		# if self.account_number and frappe.db.exists("Account", {"account_number": self.account_number, "company": self.company}):
+		# 	suffix = _(self.root_type)
+		# self.name = get_autoname_with_number(self.account_number, self.account_name, None, self.company, suffix)
 
 	def validate(self):
 		from erpnext.accounts.utils import validate_field_number
-		from erpnext.accounts.utils import get_autoname_with_number
 		if frappe.local.flags.allow_unverified_charts:
 			return
 		self.title = get_title(self.account_name, self.account_number)
@@ -306,23 +306,38 @@ def on_doctype_update():
 	frappe.db.add_index("Account", ["lft", "rgt"])
 
 def get_account_autoname(account_number, account_name, company, root_type):
+	account_name = account_name.strip()
+	account_number = cstr(account_number).strip()
+
 	# first validate if company exists
 	company = frappe.get_cached_value('Company',  company,  ["abbr", "name"], as_dict=True)
 	if not company:
 		frappe.throw(_('Company {0} does not exist').format(company))
 
 	suffix = None
-	if frappe.db.exists("Account", {"account_number": account_number}):
+	if account_number and root_type and frappe.db.exists("Account", {"account_number": account_number, "company": company}):
 		suffix = _(root_type)
 
-	parts = [account_name.strip()[:100], company.abbr]
+	# make parts of name
+	before = [
+		account_number,
+	]
+	after = [
+		suffix,
+		company.abbr,
+	]
 
-	if suffix:
-		parts.insert(-1, suffix)
+	separator = ' - '
 
-	if cstr(account_number).strip():
-		parts.insert(0, cstr(account_number).strip())
-	return ' - '.join(parts)
+	name = separator.join(filter(None, [*before, account_name, *after]))
+	max_len = 140
+	if len(name) > max_len:
+		excess = len(name) - max_len
+		trunc = account_name[:-excess].strip()
+		name = separator.join(filter(None, [*before, trunc, *after]))
+		assert len(name) <= max_len
+
+	return name
 
 def validate_account_number(name, account_number, company):
 	if account_number:

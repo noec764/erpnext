@@ -83,7 +83,7 @@ class PaymentRequest(Document):
 						except Exception as e:
 							if frappe.flags.mute_gateways_validation:
 								self.payment_gateways = [x for x in self.payment_gateways if x.payment_gateway!=gateway.name]
-	
+
 	def set_gateway_account(self):
 		accounts = frappe.get_all("Payment Gateway Account",\
 			filters={"payment_gateway": self.payment_gateway, "currency": self.currency},\
