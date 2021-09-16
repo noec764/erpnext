@@ -31,7 +31,7 @@ unittests:
     - npm install --global yarn
     - mkdir -p apps
     - mkdir -p apps/frappe
-    - git clone -b $CI_COMMIT_REF_NAME https://gitlab.com/dokos/dodock apps/frappe
+    - git clone -b $CI_COMMIT_REF_NAME --depth 1 https://gitlab.com/dokos/dodock apps/frappe || git clone -b ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master} --depth 1 https://gitlab.com/dokos/dodock apps/frappe
     - mkdir -p apps/erpnext
     - mv -f * apps/erpnext/ || true
     - mkdir -p sites logs && echo "frappe" > sites/apps.txt && echo "erpnext" >> sites/apps.txt
