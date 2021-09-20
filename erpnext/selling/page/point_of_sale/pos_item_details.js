@@ -75,9 +75,9 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.name = item.name;
 			this.item_row = item;
 			this.currency = this.events.get_frm().doc.currency;
-			
+
 			this.current_item = item
-			
+
 			this.render_dom(item);
 			this.render_discount_dom(item);
 			this.render_form(item);
@@ -87,7 +87,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.current_item = {};
 		}
 	}
-	
+
 	validate_serial_batch_item() {
 		const doc = this.events.get_frm().doc;
 		const item_row = doc.items.find(item => item.name === this.name);
@@ -99,7 +99,7 @@ erpnext.PointOfSale.ItemDetails = class {
 		const no_serial_selected = !item_row.serial_no;
 		const no_batch_selected = !item_row.batch_no;
 
-		if ((serialized && no_serial_selected) || (batched && no_batch_selected) || 
+		if ((serialized && no_serial_selected) || (batched && no_batch_selected) ||
 			(serialized && batched && (no_batch_selected || no_serial_selected))) {
 
 			frappe.show_alert({
@@ -110,7 +110,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.events.remove_item_from_cart();
 		}
 	}
-	
+
 	render_dom(item) {
 		let { item_name, description, image, price_list_rate } = item;
 
@@ -121,13 +121,13 @@ erpnext.PointOfSale.ItemDetails = class {
 			}
 			return ``;
 		}
-		
+
 		this.$item_name.html(item_name);
 		this.$item_description.html(get_description_html());
 		this.$item_price.html(format_currency(price_list_rate, this.currency));
 		if (!this.hide_images && image) {
 			this.$item_image.html(
-				`<img 
+				`<img
 					onerror="cur_pos.item_details.handle_broken_image(this)"
 					class="h-full" src="${image}"
 					alt="${frappe.get_abbr(item_name)}"
@@ -143,7 +143,7 @@ erpnext.PointOfSale.ItemDetails = class {
 		const item_abbr = $($img).attr('alt');
 		$($img).replaceWith(`<div class="item-abbr">${item_abbr}</div>`);
 	}
-	
+
 	render_discount_dom(item) {
 		if (item.discount_percentage) {
 			this.$dicount_section.html(
@@ -168,10 +168,10 @@ erpnext.PointOfSale.ItemDetails = class {
 			const field_meta = this.item_meta.fields.find(df => df.fieldname === fieldname);
 			fieldname === 'discount_percentage' ? (field_meta.label = __('Discount (%)')) : '';
 			const me = this;
-			
+
 			this[`${fieldname}_control`] = frappe.ui.form.make_control({
-				df: { 
-					...field_meta, 
+				df: {
+					...field_meta,
 					onchange: function() {
 						me.events.form_updated(me.current_item, fieldname, this.value);
 					}
@@ -207,7 +207,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.$form_container.find('.serial_no-control').find('textarea').css('height', '6rem');
 		}
 	}
-	
+
 	bind_custom_control_change_event() {
 		const me = this;
 		if (this.rate_control) {
@@ -236,7 +236,7 @@ erpnext.PointOfSale.ItemDetails = class {
 				if (this.value) {
 					me.events.form_updated(me.current_item, 'warehouse', this.value).then(() => {
 						me.item_stock_map = me.events.get_item_stock_map();
-						const available_qty = me.item_stock_map[me.item_row.item_code][this.value];
+						const available_qty = me.item_stock_map[me.item_row.item_code] && me.item_stock_map[me.item_row.item_code][this.value];
 						if (available_qty === undefined) {
 							me.events.get_available_stock(me.item_row.item_code, this.value).then(() => {
 								// item stock map is updated now reset warehouse
@@ -289,7 +289,7 @@ erpnext.PointOfSale.ItemDetails = class {
 		if (this.uom_control) {
 			this.uom_control.df.onchange = function() {
 				me.events.form_updated(me.current_item, 'uom', this.value);
-				
+
 				const item_row = frappe.get_doc(me.doctype, me.name);
 				me.conversion_factor_control.df.read_only = (item_row.stock_uom == this.value);
 				me.conversion_factor_control.refresh();
@@ -306,13 +306,13 @@ erpnext.PointOfSale.ItemDetails = class {
 			}
 		});
 	}
-	
+
 	async auto_update_batch_no() {
 		if (this.serial_no_control && this.batch_no_control) {
 			const selected_serial_nos = this.serial_no_control.get_value().split(`\n`).filter(s => s);
 			if (!selected_serial_nos.length) return;
 
-			// find batch nos of the selected serial no 
+			// find batch nos of the selected serial no
 			const serials_with_batch_no = await frappe.db.get_list("Serial No", {
 				filters: { 'name': ["in", selected_serial_nos]},
 				fields: ["batch_no", "name"]
@@ -329,7 +329,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			const batch_serial_nos = batch_serial_map[batch_no].join(`\n`);
 			// eg. 10 selected serial no. -> 5 belongs to first batch other 5 belongs to second batch
 			const serial_nos_belongs_to_other_batch = selected_serial_nos.length !== batch_serial_map[batch_no].length;
-			
+
 			const current_batch_no = this.batch_no_control.get_value();
 			current_batch_no != batch_no && await this.batch_no_control.set_value(batch_no);
 
@@ -342,7 +342,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.events.clone_new_batch_item_in_frm(batch_serial_map, this.current_item);
 		}
 	}
-	
+
 	bind_events() {
 		this.bind_auto_serial_fetch_event();
 		this.bind_fields_to_numpad_fields();
@@ -372,7 +372,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			}
 		});
 	}
-	
+
 	bind_auto_serial_fetch_event() {
 		this.$form_container.on('click', '.auto-fetch-btn', () => {
 			this.batch_no_control && this.batch_no_control.set_value('');
