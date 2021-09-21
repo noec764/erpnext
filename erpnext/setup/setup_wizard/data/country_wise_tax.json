@@ -1829,12 +1829,12 @@
 		}
 	},
 	"Saudi Arabia": {
-		"KSA VAT 5%": {
+		"KSA VAT 15%": {
 			"default": 0,
 			"taxes": [
 				{
-					"account_name": "VAT 5%",
-					"rate": 5.0
+					"account_name": "VAT 15%",
+					"rate": 15.0
 				}
 			]
 		},
