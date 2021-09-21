@@ -21,7 +21,7 @@
 {% if doc.items %}
 <div class="cart-container">
 	<div class="row m-0">
-		<div class="col-md-8 frappe-card p-5">
+		<div class="col-md-8 frappe-card p-5 mb-5">
 			<div>
 				<div id="cart-error" class="alert alert-danger" style="display: none;"></div>
 				<div class="cart-items-header">
@@ -61,7 +61,7 @@
 				</div>
 				<div class="col-8">
 					{% if doc.items %}
-					<div class="place-order-container">
+					<div class="place-order-container flex justify-content-end flex-wrap">
 						<a class="btn btn-primary-light mr-2" href="/all-products">
 							{{ _("Continue Shopping") }}
 						</a>

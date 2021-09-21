@@ -355,6 +355,7 @@ body.product-page {
 
 	.cart-container {
 		color: var(--text-color);
+		margin: 10px 0;
 
 		.frappe-card {
 			display: flex;
@@ -444,8 +445,8 @@ body.product-page {
 		}
 
 		.place-order-container {
-			.btn-place-order {
-				width: 62%;
+			.btn {
+				margin: 5px 0;
 			}
 		}
 	}
@@ -501,3 +502,6 @@ body.product-page {
 	}
 }
 
+.btn-next {
+	margin: 10px 0;
+}
