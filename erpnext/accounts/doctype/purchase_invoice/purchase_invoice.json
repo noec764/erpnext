@@ -1249,7 +1249,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "\nDraft\nReturn\nDebit Note Issued\nSubmitted\nPaid\nUnpaid\nOverdue\nCancelled\nInternal Transfer"
+   "options": "\nDraft\nReturn\nDebit Note Issued\nSubmitted\nPaid\nPartly Paid\nUnpaid\nOverdue\nCancelled\nInternal Transfer",
   },
   {
    "fieldname": "inter_company_invoice_reference",
@@ -1436,12 +1436,13 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-08-17 20:13:44.255437",
+ "modified": "2021-09-21 09:27:39.967811",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
  "name_after_submit": 1,
  "name_case": "Title Case",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
