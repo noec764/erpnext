@@ -19,7 +19,7 @@
 				{% if d.title or d.print_title %}
 				<tr>
 					<td class="table-sr"></td>
-					<td class="bold" {{ fieldmeta(df) }}>{{ d.title or d.print_title or "" }}</td>
+					<td class="bold print-title" colspan="{{ data|length }}" {{ fieldmeta(df) }}>{{ d.title or d.print_title or "" }}</td>
 				</tr>
 				{% endif %}
 				<tr>
