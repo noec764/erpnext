@@ -7,7 +7,7 @@ from past.builtins import cmp
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cstr, cint
+from frappe.utils import cstr, cint, getdate
 from frappe.contacts.doctype.address.address import get_default_address
 from frappe.utils.nestedset import get_root_of
 from erpnext.setup.doctype.customer_group.customer_group import get_parent_customer_groups
@@ -143,7 +143,7 @@ def get_tax_template(posting_date, args):
 	"""Get matching tax rule"""
 	args = frappe._dict(args)
 	conditions = ["""(from_date is null or from_date <= '{0}')
-		and (to_date is null or to_date >= '{0}')""".format(posting_date)]
+		and (to_date is null or to_date >= '{0}')""".format(getdate(posting_date))]
 
 	conditions.append("ifnull(tax_category, '') = {0}".format(frappe.db.escape(cstr(args.get("tax_category")))))
 	if 'tax_category' in args.keys():
