@@ -26,6 +26,7 @@
   "quotation_series",
   "section_break_8",
   "enable_checkout",
+  "no_payment_gateway",
   "column_break_11",
   "payment_gateway_account",
   "payment_success_url"
@@ -161,11 +162,11 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "enable_checkout",
+   "depends_on": "eval:doc.enable_checkout && !doc.no_payment_gateway",
    "fieldname": "payment_gateway_account",
    "fieldtype": "Link",
    "label": "Payment Gateway Account",
-   "mandatory_depends_on": "enable_checkout",
+   "mandatory_depends_on": "eval:doc.enable_checkout && !doc.no_payment_gateway",
    "options": "Payment Gateway Account"
   },
   {
@@ -173,11 +174,18 @@
    "fieldname": "show_item_code",
    "fieldtype": "Check",
    "label": "Show Item Code"
-},
-{
- "depends_on": "doc.enabled",
- "fieldname": "store_page_docs",
- "fieldtype": "HTML"
+  },
+  {
+   "depends_on": "doc.enabled",
+   "fieldname": "store_page_docs",
+   "fieldtype": "HTML"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_checkout",
+   "fieldname": "no_payment_gateway",
+   "fieldtype": "Check",
+   "label": "Do not use a payment gateway"
   }
  ],
  "icon": "fa fa-shopping-cart",
@@ -185,7 +193,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-03-02 17:34:57.642565",
+ "modified": "2021-09-25 15:23:10.139460",
  "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",

@@ -22,7 +22,9 @@ def get_context(context):
 	context.title = frappe.form_dict.name
 	context.payment_ref = frappe.db.get_value("Payment Request", {"reference_name": frappe.form_dict.name}, "name")
 
-	context.enabled_checkout = frappe.get_doc("Shopping Cart Settings").enable_checkout
+	settings = frappe.get_single("Shopping Cart Settings")
+	context.enabled_checkout = settings.enable_checkout
+	context.no_payment_gateway = settings.enable_checkout and settings.no_payment_gateway
 
 	default_print_format = frappe.db.get_value('Property Setter', dict(property='default_print_format', doc_type=frappe.form_dict.doctype), "value")
 	context.print_format = default_print_format if default_print_format else "Standard"
@@ -31,7 +33,7 @@ def get_context(context):
 		frappe.throw(_("Not Permitted"), frappe.PermissionError)
 
 	customer_name = context.doc.party_name if context.doc.doctype == "Quotation" else context.doc.customer
-	
+
 	# check for the loyalty program of the customer
 	customer_loyalty_program = frappe.db.get_value("Customer", customer_name, "loyalty_program")
 	if customer_loyalty_program:
