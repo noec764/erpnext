@@ -1,7 +1,7 @@
 {% extends "templates/web.html" %}
-{% block title %}{{ _('Products') }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 {% block header %}
-<div class="mb-6">{{ _('Products') }}</div>
+<div class="mb-6">{{ title }}</div>
 {% endblock header %}
 
 {% block page_content %}
@@ -29,7 +29,7 @@
 	</div>
 </div>
 
-{% set show_filters = frappe.form_dict.start or frappe.form_dict.field_filters or frappe.form_dict.attribute_filters or frappe.form_dict.search %}
+{% set show_filters = allow_field_filters or allow_attribute_filters %}
 
 <div class="row">
 	<div class="col-12 order-2 {% if show_filters %} col-md-9 order-md-2 {% endif %} item-card-group-section">
@@ -54,7 +54,7 @@
 				{%- set item_field =  field_filter[0] %}
 				{%- set values =  field_filter[1] %}
 				<div class="mb-4 filter-block pb-5">
-					<div class="filter-label mb-3">{{ item_field.label }}</div>
+					<div class="filter-label mb-3">{{ _(item_field.label) }}</div>
 
 					{% if values | len > 20 %}
 					<!-- show inline filter if values more than 20 -->
@@ -85,7 +85,7 @@
 
 			{% for attribute in attribute_filters %}
 				<div class="mb-4 filter-block pb-5">
-					<div class="filter-label mb-3">{{ attribute.name}}</div>
+					<div class="filter-label mb-3">{{ _(attribute.name) }}</div>
 					{% if values | len > 20 %}
 					<!-- show inline filter if values more than 20 -->
 					<input type="text" class="form-control form-control-sm mb-2 product-filter-filter"/>
@@ -136,31 +136,15 @@
 	{% endif %}
 </div>
 <div class="row product-paging-area mt-5">
-	<div class="col-3">
-	</div>
-	<div class="col-9 text-right">
+	<div class="{% if show_filters %} col-9 offset-3 {% else %} col-12 {% endif %}">
 		{% if frappe.form_dict.start|int > 0 %}
 		<button class="btn btn-default btn-prev" data-start="{{ frappe.form_dict.start|int - page_length }}">{{ _("Prev") }}</button>
 		{% endif %}
-		{% if items|length > page_length %}
-		<button class="btn btn-default btn-next" data-start="{{ frappe.form_dict.start|int + page_length }}">{{ _("Next") }}</button>
+		{% if items|length >= page_length %}
+		<button class="btn btn-default btn-next" data-start="{{ frappe.form_dict.start|int + page_length }}" style="float: right;">{{ _("Next") }}</button>
 		{% endif %}
 	</div>
 </div>
-
-<script>
-	frappe.ready(() => {
-		$('.btn-prev, .btn-next').click((e) => {
-			const $btn = $(e.target);
-			$btn.prop('disabled', true);
-			const start = $btn.data('start');
-			let query_params = frappe.utils.get_query_params();
-			query_params.start = start;
-			let path = window.location.pathname + '?' + frappe.utils.get_url_from_dict(query_params);
-			window.location.href = path;
-		});
-	});
-</script>
 
 {% endblock %}
 
