@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from erpnext.portal.product_configurator.utils import (get_products_for_website, get_product_settings,
 	get_field_filter_data, get_attribute_filter_data)
 from erpnext.shopping_cart.product_query import ProductQuery
@@ -33,3 +34,5 @@ def get_context(context):
 	context.page_length = product_settings.products_per_page or 20
 
 	context.no_cache = 1
+
+	context.title = _(context.title)
