@@ -124,6 +124,10 @@ $(() => {
 				attribute_filters: if_key_exists(attribute_filters)
 			};
 
+			const item_group = $(".item-group-content").data('item-group');
+			if (item_group) {
+				Object.assign(field_filters, { item_group });
+			}
 			return new Promise((resolve, reject) => {
 				frappe.call('erpnext.portal.product_configurator.utils.get_products_html_for_website', args)
 					.then(r => {
@@ -158,4 +162,14 @@ $(() => {
 		}
 		return exists ? obj : undefined;
 	}
+
+	$('.btn-prev, .btn-next').click((e) => {
+		const $btn = $(e.target);
+		$btn.prop('disabled', true);
+		const start = $btn.data('start');
+		let query_params = frappe.utils.get_query_params();
+		query_params.start = start;
+		let path = window.location.pathname + '?' + frappe.utils.get_url_from_dict(query_params);
+		window.location.href = path;
+	});
 });
