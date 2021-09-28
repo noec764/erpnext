@@ -105,7 +105,7 @@
 	</div>
 </div>
 
-{% if enabled_checkout and ((doc.doctype=="Sales Order" and doc.per_billed <= 0)
+{% if not no_payment_gateway and enabled_checkout and ((doc.doctype=="Sales Order" and doc.per_billed <= 0)
 	or (doc.doctype=="Sales Invoice" and doc.outstanding_amount > 0)) %}
 
 	{% if available_loyalty_points %}

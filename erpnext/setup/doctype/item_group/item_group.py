@@ -15,6 +15,7 @@ from erpnext.utilities.product import get_qty_in_stock
 from urllib.parse import quote
 from erpnext.shopping_cart.product_query import ProductQuery
 from erpnext.shopping_cart.filters import ProductFiltersBuilder
+from erpnext.portal.product_configurator.utils import get_product_settings
 
 class ItemGroup(NestedSet, WebsiteGenerator):
 	nsm_parent_field = 'parent_item_group'
@@ -97,6 +98,10 @@ class ItemGroup(NestedSet, WebsiteGenerator):
 
 		context.field_filters = filter_engine.get_field_filters()
 		context.attribute_filters = filter_engine.get_attribute_filters()
+
+		product_settings = get_product_settings()
+		context.allow_field_filters = product_settings.enable_field_filters
+		context.allow_attribute_filters = product_settings.enable_attribute_filters
 
 		context.update({
 			"parents": get_parent_item_groups(self.parent_item_group),
