@@ -9,6 +9,7 @@
   "naming_series",
   "customer",
   "subscription_template",
+  "sales_order",
   "cb_1",
   "company",
   "currency",
@@ -372,11 +373,19 @@
    "fieldname": "modify_current_invoicing_end_date",
    "fieldtype": "Button",
    "label": "Modify Current Invoicing End Date"
+  },
+  {
+   "depends_on": "eval:doc.sales_order",
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "label": "From Sales Order",
+   "options": "Sales Order",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-02-11 16:35:16.946675",
+ "modified": "2021-09-29 11:57:26.044528",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
@@ -419,7 +428,7 @@
    "write": 1
   }
  ],
- "route": "/app/Form/DocType/Subscription",
+ "route": "app/Form/DocType/Subscription",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "customer",

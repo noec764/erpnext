@@ -269,7 +269,7 @@ doc_events = {
 			"erpnext.regional.united_arab_emirates.utils.update_grand_total_for_rcm",
 			"erpnext.regional.united_arab_emirates.utils.validate_returns"
 		]
-		
+
 	},
 	"Payment Entry": {
 		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning"
@@ -311,6 +311,9 @@ doc_events = {
 	},
 	"Event": {
 		"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event"
+	},
+	"Sales Order": {
+		"after_insert": "erpnext.accounts.doctype.subscription_template.subscription_template.make_subscription_from_sales_order"
 	}
 }
 
