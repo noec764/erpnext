@@ -1249,7 +1249,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "\nDraft\nReturn\nDebit Note Issued\nSubmitted\nPaid\nPartly Paid\nUnpaid\nOverdue\nCancelled\nInternal Transfer",
+   "options": "\nDraft\nReturn\nDebit Note Issued\nSubmitted\nPaid\nPartly Paid\nUnpaid\nOverdue\nCancelled\nInternal Transfer"
   },
   {
    "fieldname": "inter_company_invoice_reference",
@@ -1329,6 +1329,7 @@
    "fetch_from": "supplier.is_internal_supplier",
    "fieldname": "is_internal_supplier",
    "fieldtype": "Check",
+   "ignore_user_permissions": 1,
    "label": "Is Internal Supplier",
    "read_only": 1
   },
@@ -1436,7 +1437,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-09-21 09:27:39.967811",
+ "modified": "2021-09-28 13:10:28.351810",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",

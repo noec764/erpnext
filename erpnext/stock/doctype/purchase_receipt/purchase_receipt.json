@@ -1139,6 +1139,7 @@
        "fetch_from": "supplier.represents_company",
        "fieldname": "represents_company",
        "fieldtype": "Link",
+       "ignore_user_permissions": 1,
        "label": "Represents Company",
        "options": "Company",
        "read_only": 1
@@ -1148,7 +1149,7 @@
     "idx": 261,
     "is_submittable": 1,
     "links": [],
-    "modified": "2021-08-17 20:13:44.255437",
+    "modified": "2021-09-28 13:11:10.181328",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Purchase Receipt",
