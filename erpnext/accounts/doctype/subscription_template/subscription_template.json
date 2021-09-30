@@ -12,6 +12,7 @@
   "days_until_due",
   "settings_section",
   "create_sales_order",
+  "skip_delivery_note",
   "generate_invoice_at_period_start",
   "submit_invoice",
   "generate_payment_request",
@@ -188,12 +189,18 @@
    "fieldtype": "Table MultiSelect",
    "label": "Autorized payment gateways",
    "options": "Portal Payment Gateways"
+  },
+  {
+   "default": "0",
+   "fieldname": "skip_delivery_note",
+   "fieldtype": "Check",
+   "label": "Skip delivery note"
   }
  ],
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-08-28 17:46:23.090182",
+ "modified": "2021-09-30 16:50:29.173128",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

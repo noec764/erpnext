@@ -1,11 +1,10 @@
-<table class="table">
+<table class="table text-right">
 	<thead>
 		<tr>
-			<th scope="col">{{ _("Plan") }}</th>
-			<th scope="col">{{ _("Quantity") }}</th>
-			<th scope="col">{{ _("Rate") }}</th>
-			<th scope="col">{{ _("Amount") }}</th>
-			<th></th>
+			<th scope="col" width="60%" class="text-left">{{ _("Plan") }}</th>
+			<th scope="col" width="8%">{{ _("Quantity") }}</th>
+			<th scope="col" width="15%">{{ _("Rate") }}</th>
+			<th scope="col" width="17%">{{ _("Amount") }}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -13,38 +12,33 @@
 			{% if frappe.utils.getdate(plan.to_date) >= frappe.utils.getdate(frappe.utils.nowdate()) %}
 				{% set item_name = frappe.db.get_value("Item", plan.item, "item_name") %}
 				<tr>
-					<th><h6>{{ item_name }}</h6><span>{{ plan.description or "" }}</span></th>
+					<td class="text-left">
+						<h6>{{ item_name }}</h6>
+						<span>{{ plan.description or "" }}</span>
+						{% if plan.edit_on_portal and not plan.to_date %}
+							<span><i class="uil uil-trash-alt btn" id="{{ plan.name }}_trash">{{ _("Unsubscribe from this line") }}</i></span>
+						{% elif plan.to_date %}
+							<span class="small border p-1 text-warning">{{ _("Ends on") }} {{ frappe.utils.global_date_format(plan.to_date) }}</span>
+						{% endif %}
+					</td>
 					<td>{{ plan.qty }}</td>
 					<td>{{ frappe.utils.fmt_money(plan.rate, currency=subscription.currency) }}</td>
 					<td>{{ frappe.utils.fmt_money(frappe.utils.flt(plan.rate) * frappe.utils.flt(plan.qty), currency=subscription.currency) }}</td>
-					{% if plan.edit_on_portal and not plan.to_date %}
-						<td><i class="uil uil-trash-alt" id="{{ plan.name }}_trash"></i></td>
-					{% elif plan.to_date %}
-						<td><span class="small">{{ _("Ends on") }} {{ frappe.utils.global_date_format(plan.to_date) }}</span></td>
-					{% else %}
-						<td></td>
-					{% endif %}
 				</tr>
 			{% endif %}
 		{% endfor %}
 		<tr>
-			<th></th>
-			<td></td>
-			<td><strong>{{ _("Net Total") }}</strong></td>
-			<td>{{ frappe.utils.fmt_money(subscription.total, currency=subscription.currency) }}</td>
+			<td colspan="3"><strong>{{ _("Net Total") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(subscription.total, currency=subscription.currency) }}</td>
 		</tr>
 		{% if frappe.utils.flt(subscription.total) != frappe.utils.flt(subscription.grand_total) %}
 		<tr class="total-row">
-			<th></th>
-			<td></td>
-			<td><strong>{{ _("Projected Taxes") }}</strong></td>
-			<td>{{ frappe.utils.fmt_money(frappe.utils.flt(subscription.grand_total) - frappe.utils.flt(subscription.total), currency=subscription.currency) }}</td>
+			<td colspan="3"><strong>{{ _("Projected Taxes") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(frappe.utils.flt(subscription.grand_total) - frappe.utils.flt(subscription.total), currency=subscription.currency) }}</td>
 		</tr>
 		<tr class="total-row">
-			<th></th>
-			<td></td>
-			<td><strong>{{ _("Grand Total") }}</strong></td>
-			<td>{{ frappe.utils.fmt_money(subscription.grand_total, currency=subscription.currency) }}</td>
+			<td colspan="3"><strong>{{ _("Grand Total") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(subscription.grand_total, currency=subscription.currency) }}</td>
 		</tr>
 		{% endif %}
 	</tbody>

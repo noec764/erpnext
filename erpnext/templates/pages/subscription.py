@@ -29,8 +29,8 @@ def get_subscription_context():
 	if customers:
 		customer_groups.append(frappe.db.get_value("Customer", customers[0], "customer_group"))
 		subscription_list = frappe.get_all("Subscription", filters={"customer": customers[0], "cancellation_date": ("is", "not set")})
-		if subscription_list:
-			subscription = frappe.get_doc("Subscription", subscription_list[0].name)
+		for subscription in subscription_list:
+			subscription["next_invoice_date"] = frappe.get_doc("Subscription", subscription.name).get_next_invoice_date()
 
 	plans = frappe.get_all("Subscription Plan", filters={"enable_on_portal": 1, "customer_group": ("in", customer_groups)})
 	for plan in plans:
@@ -39,10 +39,10 @@ def get_subscription_context():
 		)
 
 	return {
+		"subscriptions": subscription_list,
 		"subscription": subscription,
 		"subscription_plans": subscription_plans,
-		"available_subscriptions": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"]),
-		"next_invoice_date": subscription.get_next_invoice_date() if subscription else ""
+		"available_templates": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"])
 	}
 
 @frappe.whitelist()
@@ -72,7 +72,7 @@ def new_subscription(template):
 
 	subscription = make_subscription(template=template, company=company, customer=customer, start_date=nowdate(), ignore_permissions=True)
 	payment_key = frappe.db.get_value("Payment Request", {"reference_doctype": "Subscription", "reference_name": subscription.name, "status": "Initiated"}, "payment_key")
-	
+
 	return {
 		"subscription": subscription,
 		"payment_link": get_url("/payments?link={0}".format(payment_key)) if payment_key else None

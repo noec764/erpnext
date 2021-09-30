@@ -8097,7 +8097,7 @@ Sales Order required for Item {0},Commande Client requise pour l'Article {0},
 		only deliver reserved {1} against {0}. Serial No {2} cannot
 		be delivered","La commande client {0} a une réservation pour l'article {1}, vous ne pouvez livrer que {1} réservé contre {0}. Le numéro de série {2} ne peut pas être délivré",
 "Sales Order {0} has reservation for the item {1}, you can only deliver reserved {1} against {0}.","La commande client {0} a réservé l'article {1}, vous ne pouvez donc livrer que l'article {1} pour la commande client {0}.",
-Sales Order {0} is not submitted,Commande Client {0} n'a pas été transmise,
+Sales Order {0} is not submitted,La commande client {0} n'est pas validée,
 Sales Order {0} is not valid,Commande Client {0} invalide,
 Sales Order {0} is {1},Commande client {0} est {1},
 Sales Order,Commande client,

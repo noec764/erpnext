@@ -14,14 +14,14 @@ class subscriptionPortal {
 		Object.assign(this, opts)
 		this.subscription = null;
 		this.subscription_plans = [];
-		this.available_subscriptions = [];
+		this.available_templates = [];
 		this.payment_link = null;
 		this.$wrapper = document.getElementsByClassName("subscriptions-section")
 		this.$current_subscription = this.$wrapper[0].getElementsByClassName("current-subscription")
 		this.$available_plans = this.$wrapper[0].getElementsByClassName("available-plans")
 		this.$payment_section = this.$wrapper[0].getElementsByClassName("invoicing-status")
 		this.$cancellation_section = this.$wrapper[0].getElementsByClassName("cancellation-options")
-		this.$available_subscriptions = this.$wrapper[0].getElementsByClassName("available-subscriptions")
+		this.$available_templates = this.$wrapper[0].getElementsByClassName("available-subscriptions")
 		this.build()
 	}
 
@@ -29,7 +29,7 @@ class subscriptionPortal {
 		this.get_data()
 		.then(() => {
 			this.build_current_section();
-			!this.subscription&&this.build_available_subscriptions()
+			!this.subscription&&this.build_available_templates()
 		})
 	}
 
@@ -142,8 +142,8 @@ class subscriptionPortal {
 		})
 	}
 
-	build_available_subscriptions() {
-		const subscriptions = this.available_subscriptions.map(sub => {
+	build_available_templates() {
+		const subscriptions = this.available_templates.map(sub => {
 			const image = sub.portal_image ? `<img class="card-img-top" src="${sub.portal_image}" alt="${sub.name}">` : ''
 			return `<div class="card" style="width: 18rem;">
 				${image}
@@ -156,14 +156,14 @@ class subscriptionPortal {
 			`
 		}).join("")
 
-		this.$available_subscriptions[0].innerHTML = `<div class="card-columns">${subscriptions}</div>`
-		this.bind_available_subscriptions()
-		this.$available_subscriptions[0].classList.remove("hide")
+		this.$available_templates[0].innerHTML = `<div class="card-columns">${subscriptions}</div>`
+		this.bind_available_templates()
+		this.$available_templates[0].classList.remove("hide")
 	}
 
-	bind_available_subscriptions() {
+	bind_available_templates() {
 		const me = this;
-		this.available_subscriptions.map(sub => {
+		this.available_templates.map(sub => {
 			document.getElementById(`${frappe.scrub(sub.name)}_subscription`).addEventListener("click", function(e) {
 				new frappe.confirm(__('Subscribe to {0} ?', [sub.name]), function() {
 					me.new_subscription(sub);
@@ -185,19 +185,19 @@ class subscriptionPortal {
 					window.location = me.payment_link;
 				} else {
 					me.build_current_section();
-					me.remove_available_subscriptions();
+					me.remove_available_templates;
 				}
 			}
 		})
 	}
 
-	remove_available_subscriptions() {
-		this.$available_subscriptions[0].classList.add("hide");
+	remove_available_templates() {
+		this.$available_templates[0].classList.add("hide");
 	}
 
 	build_cancellation_section() {
 		const me = this;
-		this.$cancellation_section[0].innerHTML = 
+		this.$cancellation_section[0].innerHTML =
 			`<h5 class="subscriptions-section-title">${ __("Cancellation options") }</h5>
 			<div><button class="btn btn-danger" id="subscription-cancellation-btn">${ __("Cancel my subscription") }</button></div>
 			`
