@@ -340,7 +340,8 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		this.setup_quality_inspection();
 	}
 
-	let me = this;
+	scan_barcode() {
+		let me = this;
 
 		if(this.frm.doc.scan_barcode) {
 			frappe.call({
@@ -351,7 +352,10 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			}).then(r => {
 				const data = r && r.message;
 				if (!data || Object.keys(data).length === 0) {
-@@ -375,47 +363,94 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
+					frappe.show_alert({
+						message: __('Cannot find Item with this Barcode'),
+						indicator: 'red'
+					});
 					return;
 				}
 
