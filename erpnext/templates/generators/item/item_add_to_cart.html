@@ -60,9 +60,9 @@
 			{% endif %}
 			{% endif %}
 			{% if enable_item_booking %}
-			<button
-				data-item-code="{{item_code}}"
-				class="btn btn-primary item-booking-btn"
+			<a
+				class="btn btn-primary btn-item-calendar"
+				href="?calendar=1"
 			>
 				<span class="mr-2">
 					<svg class="icon icon-md">
@@ -70,7 +70,7 @@
 					</svg>
 				</span>
 				{{ _("Select a slot") }}
-			</button>
+			</a>
 			{% endif %}
 			{% if cart_settings.show_contact_us_button %}
 				<div class="text-center mt-1">{% include "templates/generators/item/item_inquiry.html" %}</div>
@@ -95,14 +95,6 @@
 					$('.btn-add-to-cart, .btn-view-in-cart').toggleClass('hidden');
 				}
 			});
-		});
-
-		$('.page_content').on('click', '.item-booking-btn', function() {
-			const item_code = $(this).attr("data-item-code");
-			new erpnext.booking_dialog({
-				parentId: 'item-booking',
-				item: item_code
-			})
 		});
 	});
 </script>
