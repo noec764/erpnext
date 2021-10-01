@@ -44,6 +44,7 @@
    "label": "Edit on portal"
   },
   {
+   "depends_on": "eval:doc.enable_on_portal",
    "fieldname": "portal_image",
    "fieldtype": "Attach Image",
    "label": "Portal Image"
@@ -59,12 +60,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.enable_on_portal",
    "fieldname": "customer_group",
    "fieldtype": "Link",
    "label": "Limit to Customer Group",
    "options": "Customer Group"
   },
   {
+   "depends_on": "eval:doc.enable_on_portal",
    "fieldname": "section_break_8",
    "fieldtype": "Section Break",
    "hide_border": 1
@@ -72,7 +75,7 @@
  ],
  "image_field": "portal_image",
  "links": [],
- "modified": "2020-08-17 18:53:54.336637",
+ "modified": "2021-10-01 10:46:39.855479",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan",

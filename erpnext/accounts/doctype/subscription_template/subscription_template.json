@@ -163,11 +163,13 @@
    "label": "Enable on portal"
   },
   {
+   "depends_on": "eval:doc.enable_on_portal",
    "fieldname": "portal_image",
    "fieldtype": "Attach Image",
    "label": "Portal image"
   },
   {
+   "depends_on": "eval:doc.enable_on_portal",
    "fieldname": "portal_description",
    "fieldtype": "Text Editor",
    "label": "Portal description",
@@ -200,7 +202,7 @@
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-30 16:50:29.173128",
+ "modified": "2021-10-01 10:45:06.100133",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

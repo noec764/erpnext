@@ -162,7 +162,14 @@ website_route_rules = [
 			"parents": [{"label": _("Material Request"), "route": "material-requests"}]
 		}
 	},
-	{"from_route": "/bookings", "to_route": "Item Booking"}
+	{"from_route": "/bookings", "to_route": "Item Booking"},
+	{"from_route": "/subscriptions", "to_route": "Subscription"},
+	{"from_route": "/subscriptions/<path:name>", "to_route": "subscription",
+		"defaults": {
+			"doctype": "Subscription",
+			"parents": [{"label": _("Subscriptions"), "route": "subscription"}]
+		}
+	},
 ]
 
 standard_portal_menu_items = [
@@ -183,7 +190,7 @@ standard_portal_menu_items = [
 	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"},
 	{"title": _("Event Slot Bookings"), "route": "/event-slots", "reference_doctype": "Event Slot Booking", "role": "Volunteer"},
 	{"title": _("Appointment Booking"), "route": "/book_appointment"},
-	{"title": _("Subscription"), "route": "/subscription", "reference_doctype": "Subscription Template", "role": "Customer"}
+	{"title": _("Subscriptions"), "route": "/subscriptions", "reference_doctype": "Subscription", "role": "Customer"}
 ]
 
 default_roles = [
