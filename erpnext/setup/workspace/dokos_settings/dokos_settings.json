@@ -1,6 +1,7 @@
 {
- "category": "Modules",
+ "category": "",
  "charts": [],
+ "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Your Shortcuts\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Projects Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Accounts Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"HR Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Selling Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Buying Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Support Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shopping Cart Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Portal Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Manufacturing Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Domain Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Products Settings\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Global Defaults\", \"col\": 4}}]",
  "creation": "2020-03-12 14:47:51.166455",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -14,13 +15,17 @@
  "is_standard": 1,
  "label": "Dokos Settings",
  "links": [],
- "modified": "2021-06-12 01:58:11.399566",
+ "modified": "2021-10-01 17:30:35.669421",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
+ "onboarding": "",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
+ "public": 1,
+ "roles": [],
+ "sequence_id": 11,
  "shortcuts": [
   {
    "icon": "project",
@@ -90,12 +95,12 @@
    "type": "DocType"
   },
   {
-    "doc_view": "",
-    "icon": "retail",
-    "label": "Products Settings",
-    "link_to": "Products Settings",
-    "type": "DocType"
-   },
+   "doc_view": "",
+   "icon": "retail",
+   "label": "Products Settings",
+   "link_to": "Products Settings",
+   "type": "DocType"
+  },
   {
    "color": "Gray",
    "icon": "setting",
@@ -103,5 +108,6 @@
    "link_to": "Global Defaults",
    "type": "DocType"
   }
- ]
+ ],
+ "title": "Settings"
 }

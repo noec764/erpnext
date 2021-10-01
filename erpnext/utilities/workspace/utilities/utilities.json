@@ -1,6 +1,7 @@
 {
- "category": "Modules",
+ "category": "",
  "charts": [],
+ "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Video\", \"col\": 4}}]",
  "creation": "2020-09-10 12:21:22.335307",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -19,6 +20,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Video",
+   "link_count": 0,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -27,6 +29,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Video",
+   "link_count": 0,
    "link_to": "Video",
    "link_type": "DocType",
    "onboard": 0,
@@ -37,18 +40,24 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Video Settings",
+   "link_count": 0,
    "link_to": "Video Settings",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2021-02-02 09:55:44.836197",
+ "modified": "2021-10-01 17:33:51.249380",
  "modified_by": "Administrator",
  "module": "Utilities",
  "name": "Utilities",
+ "onboarding": "",
  "owner": "user@erpnext.com",
- "pin_to_bottom": 1,
+ "pin_to_bottom": 0,
  "pin_to_top": 0,
- "shortcuts": []
+ "public": 1,
+ "roles": [],
+ "sequence_id": 29,
+ "shortcuts": [],
+ "title": "Tools"
 }
