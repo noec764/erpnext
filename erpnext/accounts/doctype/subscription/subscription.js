@@ -275,7 +275,7 @@ frappe.tour["Subscription"] = [
     {
 		fieldname: "customer",
 		title: __("Customer"),
-		description: __("Select the client that will be assigned to this subscription."),
+		description: __("Select the customer that will be associated with this subscription."),
 	},
 	{
 		fieldname: "company",
