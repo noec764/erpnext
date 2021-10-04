@@ -13,8 +13,16 @@ from erpnext.accounts.doctype.account.chart_of_accounts.chart_of_accounts import
 from frappe.utils.xlsxutils import read_xlsx_file_from_attached_file, read_xls_file_from_attached_file
 
 class ChartofAccountsImporter(Document):
-	def validate(self):
-		validate_accounts(self.import_file)
+	pass
+
+def validate_columns(data):
+	if not data:
+		frappe.throw(_('No data found. Seems like you uploaded a blank file'))
+
+	no_of_columns = max([len(d) for d in data])
+
+	if no_of_columns > 7:
+		frappe.throw(_('More columns found than expected. Please compare the uploaded file with standard template'))
 
 @frappe.whitelist()
 def validate_company(company):
@@ -44,6 +52,7 @@ def import_coa(file_name, company):
 	else:
 		data = generate_data_from_excel(file_doc, extension)
 
+	frappe.local.flags.ignore_root_company_validation = True
 	forest = build_forest(data)
 	create_charts(company, custom_chart=forest)
 
@@ -108,7 +117,7 @@ def generate_data_from_excel(file_doc, extension, as_dict=False):
 	return data
 
 @frappe.whitelist()
-def get_coa(doctype, parent, is_root=False, file_name=None):
+def get_coa(doctype, parent, is_root=False, file_name=None, for_validate=0):
 	''' called by tree view (to fetch node's children) '''
 
 	file_doc, extension = get_file(file_name)
@@ -119,13 +128,21 @@ def get_coa(doctype, parent, is_root=False, file_name=None):
 	else:
 		data = generate_data_from_excel(file_doc, extension)
 
-	forest = build_forest(data)
-	accounts = build_tree_from_json("", chart_data=forest) # returns alist of dict in a tree render-able form
+	validate_columns(data)
+	validate_accounts(file_doc, extension)
 
-	# filter out to show data for the selected node only
-	accounts = [d for d in accounts if d['parent_account']==parent]
+	if not for_validate:
+		forest = build_forest(data)
+		accounts = build_tree_from_json("", chart_data=forest) # returns a list of dict in a tree render-able form
 
-	return accounts
+		# filter out to show data for the selected node only
+		accounts = [d for d in accounts if d['parent_account']==parent]
+
+		return accounts
+	else:
+		return {
+			'show_import_button': 1
+		}
 
 def build_forest(data):
 	'''
@@ -282,9 +299,7 @@ def get_sample_template(writer):
 
 
 @frappe.whitelist()
-def validate_accounts(file_name):
-
-	file_doc, extension = get_file(file_name)
+def validate_accounts(file_doc, extension):
 
 	if extension  == 'csv':
 		accounts = generate_data_from_csv(file_doc, as_dict=True)
@@ -304,8 +319,6 @@ def validate_accounts(file_name):
 
 	validate_root(accounts_dict)
 
-	validate_account_types(accounts_dict)
-
 	return [True, len(accounts)]
 
 def validate_root(accounts):
@@ -323,6 +336,14 @@ def validate_root(accounts):
 
 	if error_messages:
 		frappe.throw("<br>".join(error_messages))
+
+def validate_missing_roots(roots):
+	root_types_added = set(d.get('root_type') for d in roots)
+
+	missing = list(set(get_root_types()) - root_types_added)
+
+	if missing:
+		frappe.throw(_("Please add Root Account for - {0}").format(' , '.join(missing)))
 
 def get_root_types():
 	return ('Asset', 'Liability', 'Expense', 'Income', 'Equity')
@@ -348,23 +369,6 @@ def get_mandatory_account_types():
 		{'account_type': 'Cash', 'root_type': 'Asset'},
 		{'account_type': 'Stock', 'root_type': 'Asset'}
 	]
-
-
-def validate_account_types(accounts):
-	account_types_for_ledger = ["Cost of Goods Sold", "Depreciation", "Fixed Asset", "Payable", "Receivable", "Stock Adjustment"]
-	account_types = [accounts[d]["account_type"] for d in accounts if not accounts[d]['is_group'] == 1]
-
-	missing = list(set(account_types_for_ledger) - set(account_types))
-	if missing:
-		frappe.throw(_("Please identify/create Account (Ledger) for type - {0}").format(' , '.join(missing)))
-
-	account_types_for_group = ["Bank", "Cash", "Stock"]
-	# fix logic bug
-	account_groups = [accounts[d]["account_type"] for d in accounts if cint(accounts[d]['is_group']) == 1]
-
-	missing = list(set(account_types_for_group) - set(account_groups))
-	if missing:
-		frappe.throw(_("Please identify/create Account (Group) for type - {0}").format(' , '.join(missing)))
 
 def unset_existing_data(company):
 	linked = frappe.db.sql('''select fieldname from tabDocField
