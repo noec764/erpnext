@@ -1,7 +1,7 @@
 {
  "category": "",
  "charts": [],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Vos raccourcis\",\"level\":4,\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leaderboard\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"Rapports et donn\u00e9es de base\",\"level\":4,\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Stock\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Human Resources\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"CRM\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounting\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Data Import and Settings\",\"col\":4}}]",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Vos raccourcis\",\"level\":4,\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leaderboard\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"Rapports et donn\u00e9es de base\",\"level\":4,\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Stock\",\"col\":3}},{\"type\":\"card\",\"data\":{\"card_name\":\"Human Resources\",\"col\":3}},{\"type\":\"card\",\"data\":{\"card_name\":\"CRM\",\"col\":3}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounting\",\"col\":3}},{\"type\":\"card\",\"data\":{\"card_name\":\"Data Import and Settings\",\"col\":3}}]",
  "creation": "2020-01-23 13:46:38.833076",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -277,7 +277,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 17:52:19.993228",
+ "modified": "2021-10-02 07:18:32.932828",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Home",

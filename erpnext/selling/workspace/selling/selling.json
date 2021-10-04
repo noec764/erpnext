@@ -589,7 +589,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 17:52:22.887737",
+ "modified": "2021-10-02 07:14:32.573569",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
@@ -600,7 +600,7 @@
  "pin_to_top": 0,
  "public": 1,
  "roles": [],
- "sequence_id": 15,
+ "sequence_id": 14,
  "shortcuts": [
   {
    "color": "Grey",

@@ -1,7 +1,7 @@
 {
  "category": "",
  "charts": [],
- "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Integrations Settings\", \"col\": 4}}]",
+ "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Rapports et donn\\u00e9es de base\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Integrations Settings\", \"col\": 4}}]",
  "creation": "2020-07-31 10:38:54.021237",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -68,17 +68,18 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 15:56:41.425935",
+ "modified": "2021-10-02 07:14:33.111616",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Dokos Integrations Settings",
  "onboarding": "",
  "owner": "Administrator",
+ "parent_page": "",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
  "public": 1,
  "roles": [],
- "sequence_id": 10,
+ "sequence_id": 20,
  "shortcuts": [],
  "title": "Settings"
 }

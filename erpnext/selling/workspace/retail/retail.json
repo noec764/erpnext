@@ -107,7 +107,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 17:52:23.015790",
+ "modified": "2021-10-02 07:14:32.735851",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Retail",
@@ -119,7 +119,7 @@
  "public": 1,
  "restrict_to_domain": "Retail",
  "roles": [],
- "sequence_id": 16,
+ "sequence_id": 15,
  "shortcuts": [
   {
    "doc_view": "",
