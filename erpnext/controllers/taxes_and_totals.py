@@ -227,6 +227,9 @@ class calculate_taxes_and_totals(object):
 
 	def _get_tax_rate(self, tax, item_tax_map):
 		for tax_map in item_tax_map:
+			if isinstance(tax_map, str):
+				return item_tax_map.get(tax_map)
+
 			if tax_map.get("account") == tax.account_head:
 				return flt(tax_map.get("rate"), self.doc.precision("rate", tax))
 		else:
