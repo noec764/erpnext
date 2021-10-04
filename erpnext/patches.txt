@@ -278,6 +278,7 @@ erpnext.patches.v13_0.create_accounting_dimensions_in_pos_doctypes
 erpnext.patches.v13_0.modify_invalid_gain_loss_gl_entries
 erpnext.patches.v13_0.fix_additional_cost_in_mfg_stock_entry
 erpnext.patches.v13_0.set_status_in_maintenance_schedule_table
+erpnext.patches.v13_0.add_default_interview_notification_templates
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain

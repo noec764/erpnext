@@ -3,16 +3,19 @@
 # See license.txt
 from __future__ import unicode_literals
 
-import frappe
 import unittest
 
-# test_records = frappe.get_test_records('Job Applicant')
+import frappe
+
+from erpnext.hr.doctype.designation.test_designation import create_designation
+
 
 class TestJobApplicant(unittest.TestCase):
 	pass
 
 def create_job_applicant(**args):
 	args = frappe._dict(args)
+
 	filters = {
 		"applicant_name": args.applicant_name or "_Test Applicant",
 		"email_id": args.email_id or "test_applicant@example.com",
@@ -23,7 +26,8 @@ def create_job_applicant(**args):
 
 	job_applicant = frappe.get_doc({
 		"doctype": "Job Applicant",
-		"status": args.status or "Open"
+		"status": args.status or "Open",
+		"designation":  create_designation().name
 	})
 
 	job_applicant.update(filters)
