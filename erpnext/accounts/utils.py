@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 
+from json import loads
+
 import frappe, erpnext
 import frappe.defaults
 from frappe.utils import nowdate, cstr, flt, cint, now, getdate
@@ -797,15 +799,27 @@ def get_children(doctype, parent, company, is_root=False):
 
 	if doctype == 'Account':
 		sort_accounts(acc, is_root, key="value")
-		company_currency = frappe.get_cached_value('Company',  company,  "default_currency")
-		for each in acc:
-			each["company_currency"] = company_currency
-			each["balance"] = flt(get_balance_on(each.get("value"), in_account_currency=False, company=company))
-
-			if each.account_currency != company_currency:
-				each["balance_in_account_currency"] = flt(get_balance_on(each.get("value"), company=company))
 
 	return acc
+
+@frappe.whitelist()
+def get_account_balances(accounts, company):
+
+	if isinstance(accounts, str):
+		accounts = loads(accounts)
+
+	if not accounts:
+		return []
+
+	company_currency = frappe.get_cached_value("Company",  company,  "default_currency")
+
+	for account in accounts:
+		account["company_currency"] = company_currency
+		account["balance"] = flt(get_balance_on(account["value"], in_account_currency=False, company=company))
+		if account["account_currency"] and account["account_currency"] != company_currency:
+			account["balance_in_account_currency"] = flt(get_balance_on(account["value"], company=company))
+
+	return accounts
 
 def create_payment_gateway_account(gateway):
 	from erpnext.setup.setup_wizard.operations.install_fixtures import create_bank_account
