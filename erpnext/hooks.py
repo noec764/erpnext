@@ -166,7 +166,14 @@ website_route_rules = [
 		}
 	},
 	{"from_route": "/project", "to_route": "Project"},
-	{"from_route": "/bookings", "to_route": "Item Booking"}
+	{"from_route": "/bookings", "to_route": "Item Booking"},
+	{"from_route": "/subscriptions", "to_route": "Subscription"},
+	{"from_route": "/subscriptions/<path:name>", "to_route": "subscription",
+		"defaults": {
+			"doctype": "Subscription",
+			"parents": [{"label": _("Subscriptions"), "route": "subscription"}]
+		}
+	},
 ]
 
 standard_portal_menu_items = [
@@ -187,7 +194,7 @@ standard_portal_menu_items = [
 	{"title": _("Bookings"), "route": "/bookings", "reference_doctype": "Item Booking", "role": "Customer"},
 	{"title": _("Event Slot Bookings"), "route": "/event-slots", "reference_doctype": "Event Slot Booking", "role": "Volunteer"},
 	{"title": _("Appointment Booking"), "route": "/book_appointment"},
-	{"title": _("Subscription"), "route": "/subscription", "reference_doctype": "Subscription Template", "role": "Customer"}
+	{"title": _("Subscriptions"), "route": "/subscriptions", "reference_doctype": "Subscription", "role": "Customer"}
 ]
 
 default_roles = [
@@ -328,6 +335,9 @@ doc_events = {
 	},
 	"Event": {
 		"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event"
+	},
+	"Sales Order": {
+		"on_submit": "erpnext.accounts.doctype.subscription_template.subscription_template.make_subscription_from_sales_order_item"
 	}
 }
 

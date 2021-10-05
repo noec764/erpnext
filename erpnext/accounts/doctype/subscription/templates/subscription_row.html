@@ -1,0 +1,23 @@
+<a href = "{{ route }}/" class="web-list-item transaction-list-item justify-content-between">
+		<div class="text-left">
+			<div class="bold">
+				<span class="indicator-pill small {{ "grey" if doc.status=="Cancelled" else ("orange" if doc.status in ("Unpaid", "Payable") else "green") }}">{{ doc.name }}</span>
+			</div>
+			{% if doc.current_invoice_start and doc.current_invoice_end %}
+			<div class="text-muted small">{{ frappe.utils.format_date(doc.current_invoice_start) }}-{{ frappe.utils.format_date(doc.current_invoice_end) }}</div>
+			{% elif doc.current_invoice_end %}
+			<div class="text-muted small">{{ _("End:")}} {{ frappe.utils.format_date(doc.current_invoice_end) }}</div>
+			{% endif %}
+		</div>
+		{% if doc.status != "Cancelled" %}
+		<div>
+			<div>{{ _("Is renewed every") }} {{ _("{0} {1}", context="Subscription renewal in portal list").format(doc.billing_interval_count, _(doc.billing_interval)) }}</div>
+		</div>
+		{% endif %}
+		<div>
+			<div class="text-muted text-right"
+				title="{{ frappe.utils.format_date(doc.start, "medium") }}">
+				{{ _("Created") }} {{ frappe.utils.pretty_date(frappe.utils.get_datetime(doc.start)) }}
+			</div>
+		</div>
+</a>

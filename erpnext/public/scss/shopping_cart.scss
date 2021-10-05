@@ -199,7 +199,15 @@ body.product-page {
 	.product-details {
 		max-width: 40%;
 
-		.btn-add-to-cart {
+		.btn-view-in-cart,
+		.btn-item-calendar {
+			align-items: center;
+			display: inline-flex;
+		}
+
+		.btn-add-to-cart,
+		.btn-view-in-cart,
+		.btn-item-calendar {
 			font-size: var(--text-base);
 		}
 	}

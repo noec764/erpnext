@@ -1,0 +1,31 @@
+<div class="card-columns">
+	{% for plan in subscription_plans %}
+	<div class="card" style="width: 18rem;">
+		{% if plan.portal_image %}
+		<img class="card-img-top" src="{{ plan.portal_image }}" alt="{{ plan.name }}">
+		{% endif %}
+		<div class="card-body">
+			<h5 class="card-title">{{ plan.name }}</h5>
+			<p class="card-text">{{ plan.portal_description or "" }}</p>
+			<button class="btn btn-primary" id='{{ scrub(plan.name) }}_plan'>{{ _("Add") }}</button>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<script>
+	{% for plan in subscription_plans %}
+	document.getElementById("{{ scrub(plan.name) }}_plan").addEventListener("click", function(e) {
+		new frappe.confirm(__('Subscribe to {0} ?', ["{{ plan.name }}"]), function() {
+			return frappe.call("erpnext.templates.pages.subscription.add_plan", {subscription: "{{ doc.name }}", plan: "{{ plan.name }}"})
+			.then(r => {
+				console.log(r)
+				if (r && r.message) {
+					frappe.show_alert({message: __("Plan added to your subscription"), indicator: "green"});
+					location.reload();
+				}
+			})
+		})
+	})
+	{% endfor %}
+</script>

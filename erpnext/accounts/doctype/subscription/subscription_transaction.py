@@ -32,8 +32,10 @@ class SubscriptionTransactionBase:
 		document.subscription = self.subscription.name
 		document.ignore_pricing_rule = 1 if self.get_plans_pricing_rules() and "Fixed rate" in list(self.get_plans_pricing_rules()) else 0
 
-		items_list = self.get_items_from_plans([p for p in self.subscription.plans if p.status == "Active"],\
-			document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date)
+		items_list = self.get_items_from_plans(
+			[p for p in self.subscription.plans if p.status == "Active"],
+			document
+		)
 		if not items_list:
 			frappe.throw(_("Please configure at least one active item for your subscription."))
 
@@ -122,16 +124,25 @@ class SubscriptionTransactionBase:
 		document.from_date =  start_date
 		document.to_date =  end_date
 
-	def get_items_from_plans(self, plans, date):
+	def get_items_from_plans(self, plans, document):
 		prorata_factor = self.get_prorata_factor()
+		date = document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date
 		items = []
 		for plan in plans:
-			items.append({
+			item = {
 				'item_code': plan.item,
 				'qty': plan.qty,
 				'rate': SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor,
-				'description': plan.description
-			})
+				'description': plan.description,
+			}
+
+			if document.doctype == "Sales Invoice" and not frappe.db.get_value("Sales Invoice Item", dict(so_detail=self.subscription.sales_order_item)):
+				item.update({
+					'sales_order': frappe.db.get_value("Sales Order Item", self.subscription.sales_order_item, 'parent'),
+					'so_detail': self.subscription.sales_order_item
+				})
+
+			items.append(item)
 
 		return items
 
@@ -152,6 +163,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			invoice = make_sales_invoice(current_sales_orders[0], ignore_permissions=True)
 			self.add_due_date(invoice)
 			self.add_subscription_dates(invoice)
+			invoice.skip_delivery_note = self.subscription.skip_delivery_note
 
 		else:
 			invoice = frappe.new_doc('Sales Invoice')

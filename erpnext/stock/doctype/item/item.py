@@ -320,6 +320,8 @@ class Item(WebsiteGenerator):
 		context.parents = get_parent_item_groups(self.item_group)
 		context.body_class = "product-page"
 
+		context.show_calendar = 'calendar' in frappe.form_dict and frappe.form_dict.calendar
+
 		self.set_variant_context(context)
 		self.set_attribute_context(context)
 		self.set_disabled_attributes(context)

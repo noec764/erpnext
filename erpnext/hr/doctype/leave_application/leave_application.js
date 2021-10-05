@@ -109,6 +109,7 @@ frappe.ui.form.on("Leave Application", {
 				frm.set_value('employee', perm['Employee'].map(perm_doc => perm_doc.doc)[0]);
 			}
 		}
+		frm.trigger("make_dashboard");
 	},
 
 	employee: function(frm) {

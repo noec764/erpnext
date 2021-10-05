@@ -373,3 +373,42 @@ def new_invoice_end(subscription, end_date):
 	doc.add_subscription_event("New period")
 	doc.save()
 
+def get_list_context(context=None):
+	context.update({
+		'show_sidebar': True,
+		'show_search': True,
+		'no_breadcrumbs': True,
+		'title': _('Subscriptions'),
+		"get_list": get_subscriptions_list,
+		"row_template": "accounts/doctype/subscription/templates/subscription_row.html",
+		"list_template": "accounts/doctype/subscription/templates/subscription_list.html",
+		"subscription_templates": frappe.get_all("Subscription Template", filters={"enable_on_portal": 1}, fields=["*"])
+	})
+
+
+def get_subscriptions_list(doctype, txt, filters, limit_start, limit_page_length = 20, order_by = None, ignore_permissions = False):
+	from erpnext.controllers.website_list_for_contact import get_customers_suppliers
+	from frappe.www.list import get_list
+
+	customers, _ = get_customers_suppliers(doctype, frappe.session.user)
+
+	if customers and not ignore_permissions:
+		ignore_permissions = True
+
+	if not filters: filters = []
+
+	filters.extend([('customer', 'in', customers)])
+
+	return get_list(
+		doctype,
+		txt,
+		filters=filters,
+		fields=["name", "status", "start", "cancellation_date",
+			"current_invoice_start", "current_invoice_end",
+			"billing_interval", "billing_interval_count", "grand_total"],
+		limit_start=limit_start,
+		limit_page_length=limit_page_length,
+		ignore_permissions=ignore_permissions,
+		order_by="modified desc"
+	)
+

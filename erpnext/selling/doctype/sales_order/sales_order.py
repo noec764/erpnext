@@ -35,6 +35,7 @@ class SalesOrder(SellingController):
 	def validate(self):
 		super(SalesOrder, self).validate()
 		self.set_delivery_date_for_item_bookings()
+		self.set_skip_delivery_note()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
@@ -371,20 +372,22 @@ class SalesOrder(SellingController):
 			self.db_set("per_delivered", flt(delivered_qty/tot_qty) * 100,
 				update_modified=False)
 
-
 	def set_indicator(self):
 		"""Set indicator for portal"""
-		if self.per_billed < 100 and self.per_delivered < 100:
+		if self.per_billed < 100 and self.status != 'Closed':
 			self.indicator_color = "orange"
-			self.indicator_title = _("Not Paid and Not Delivered")
+			if self.per_delivered < 100 and not self.skip_delivery_note:
+				self.indicator_title = _("Not Invoiced and Not Delivered")
+			else:
+				self.indicator_title = _("Not Invoiced")
 
-		elif self.per_billed == 100 and self.per_delivered < 100:
+		elif self.per_billed == 100 and (self.per_delivered < 100 and not self.skip_delivery_note) and self.status != 'Closed':
 			self.indicator_color = "orange"
-			self.indicator_title = _("Paid and Not Delivered")
+			self.indicator_title = _("Invoiced and Not Delivered")
 
 		else:
 			self.indicator_color = "green"
-			self.indicator_title = _("Paid")
+			self.indicator_title = _("Completed")
 
 	@frappe.whitelist()
 	def get_work_order_items(self, for_raw_material_request=0):
@@ -472,26 +475,42 @@ class SalesOrder(SellingController):
 
 	def update_item_bookings(self):
 		booking_credit_pricing_rules = frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}, pluck="name")
+		confirm_after_payment = cint(frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment"))
+
 		for d in self.get("items"):
 			if d.get("item_booking"):
-				confirm_after_payment = cint(frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment"))
-				status = "Not confirmed"
-				if confirm_after_payment:
-					if self.advance_paid == self.grand_total:
+				# Check if the confirmation should be set before the payment or if the advance paid is equal to the due amount
+				if not confirm_after_payment or self.grand_total == frappe.db.get_value(self.doctype, self.name, "advance_paid"):
+					status = "Confirmed"
+				else:
+					linked_si = frappe.db.sql("""select t1.status
+						from `tabSales Invoice` t1,`tabSales Invoice Item` t2
+						where t1.name = t2.parent and t2.so_detail = %s and t1.docstatus = 1""",
+						d.name)
+					# Check if there is any unpaid sales invoice for this sales order
+					if linked_si and not any([x for x in linked_si if x[0] != "Paid"]):
 						status = "Confirmed"
 					else:
-						linked_si = frappe.db.sql("""select t1.status
-							from `tabSales Invoice` t1,`tabSales Invoice Item` t2
-							where t1.name = t2.parent and t2.so_detail = %s and t1.docstatus = 1""",
-							d.name)
-						if linked_si and not [x for x in linked_si if x[0] != "Paid"]:
-							status = "Confirmed"
+						status = "Not confirmed"
+
+				# Check if the line item is associated to any booking credit pricing rule
+				if any([True for x in frappe.parse_json(d.pricing_rules or []) if x in booking_credit_pricing_rules]):
+					frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
+				elif frappe.db.get_value("Item Booking", d.item_booking, "deduct_booking_credits"):
+					# Check directly in booking in case the pricing rule is only associated with the quotation
+					status = "Confirmed"
 
 				frappe.db.set_value("Item Booking", d.item_booking, "status", status)
 
-				res = [True for x in frappe.parse_json(d.pricing_rules or []) if x in booking_credit_pricing_rules]
-				if True in res:
-					frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
+	def set_skip_delivery_note(self):
+		if self.order_type == "Shopping Cart" and not self.skip_delivery_note:
+			for d in self.get("items"):
+				if not d.get("item_booking") and not frappe.get_cached_value("Item", d.item_code, "enable_item_booking"):
+					template = frappe.get_cached_value("Item", d.item_code, "subscription_template")
+					if not template or not frappe.get_cached_value("Subscription Template", template, "skip_delivery_note"):
+						return
+
+			self.skip_delivery_note = 1
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context

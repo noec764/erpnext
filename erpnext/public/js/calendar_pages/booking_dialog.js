@@ -32,7 +32,9 @@ erpnext.booking_dialog = class BookingDialog {
 			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
 			this.get_selling_uoms()
 			.then(() => {
-				this.toggle_item_descriptions(false)
+				this.build_sidebar();
+				this.build_calendar();
+				document.getElementById('item-booking').classList.add('fade');
 				this.refresh_bookings();
 			})
 		});
@@ -51,25 +53,6 @@ erpnext.booking_dialog = class BookingDialog {
 				this.sales_uom = r.message.sales_uom
 			}
 		})
-	}
-
-	toggle_item_descriptions(display) {
-		['item-website-description', 'item-website-specification', 'item-website-content'].forEach(el => {
-			const toggledItem = document.getElementsByClassName(el)[0]
-			if (toggledItem!==undefined) {
-				toggledItem.style.display = display ? "flex" : "none";
-			}
-		})
-		const calendarElem = document.getElementById('item-booking')
-		if (display) {
-			calendarElem.classList.remove('fade');
-			this.destroy_sidebar();
-			this.destroy_calendar();
-		} else {
-			this.build_sidebar();
-			this.build_calendar();
-			calendarElem.classList.add('fade');
-		}
 	}
 
 	build_calendar() {
@@ -331,7 +314,7 @@ class BookingCalendar {
 				closeButton: {
 					text: __("Close"),
 					click: function() {
-						me.parent.toggle_item_descriptions(true)
+						window.location = window.location.pathname
 					}
 				}
 			},

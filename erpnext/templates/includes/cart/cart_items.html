@@ -37,7 +37,7 @@
 		</div>
 		{% if items_params["enable_item_booking"] and d.item_booking %}
 			<div class="text-center mt-2">
-				<button class="btn btn-default btn-xs item-booking-btn" data-item-code="{{d.item_code}}" data-item-route="{{d.route}}">{{ _("Change booking") }}</button>
+				<button class="btn btn-default btn-xs item-booking-btn" data-item-code="{{d.item_code}}" data-item-route="{{d.route}}?calendar=1">{{ _("Change booking") }}</button>
 			</div>
 		{% else %}
 			<div class="text-center">

@@ -394,7 +394,7 @@ def _get_availability_from_schedule(item, schedules, date, quotation=None):
 
 		slots = _find_available_slot(date, duration, line, scheduled_items, item, quotation)
 		available_slots_ids = [s.get("id") for s in available_slots]
-		
+
 		for slot in slots:
 			if slot.get("id") not in available_slots_ids:
 				available_slots.append(slot)
@@ -630,11 +630,12 @@ def delete_linked_item_bookings(doc, method):
 			frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True, force=True)
 
 def confirm_linked_item_bookings(doc, method):
+	confirm_after_payment = cint(frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment"))
 	for item in doc.items:
 		if item.item_booking:
 			slot = frappe.get_doc("Item Booking", item.item_booking)
 			slot.flags.ignore_permissions = True
-			slot.set_status("Confirmed")
+			slot.set_status("Not confirmed" if confirm_after_payment else "Confirmed")
 
 def clear_draft_bookings():
 	drafts = frappe.get_all("Item Booking", filters={"status": "In cart"}, fields=["name", "modified"])
