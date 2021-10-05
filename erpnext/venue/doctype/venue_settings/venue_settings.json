@@ -84,7 +84,7 @@
    "label": "Allow cancellation of item bookings on the portal"
   },
   {
-   "default": "1440",
+   "default": "86400",
    "depends_on": "eval:doc.allow_event_cancellation",
    "description": "Users will not be able to cancel later than this delay before the appointment",
    "fieldname": "cancellation_delay",
@@ -101,7 +101,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-02-26 11:21:39.708670",
+ "modified": "2021-09-30 17:07:55.586709",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

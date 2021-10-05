@@ -31,6 +31,7 @@ class SubscriptionTemplate(Document):
 		subscription = frappe.get_doc(dict({
 			"doctype": "Subscription",
 			"subscription_template": self.name,
+			"sales_order_item": kwargs.sales_order_item,
 			"company": kwargs.company,
 			"customer": kwargs.customer,
 			"start": start_date,
@@ -95,3 +96,19 @@ def make_subscription(template, company, customer, start_date, ignore_permission
 		"start_date": start_date,
 		"ignore_permissions": ignore_permissions
 	})
+
+
+def make_subscription_from_sales_order_item(doc, method):
+	if doc.order_type != "Shopping Cart":
+		return
+
+	for item in doc.get("items"):
+		subscription_template = frappe.get_cached_value("Item", item.get("item_code"), "subscription_template")
+		if subscription_template:
+			frappe.get_doc("Subscription Template", subscription_template).make_subscription(**{
+				"company": doc.company,
+				"customer": doc.customer,
+				"sales_order_item": item.name,
+				"start_date": item.delivery_date,
+				"ignore_permissions": True
+			})

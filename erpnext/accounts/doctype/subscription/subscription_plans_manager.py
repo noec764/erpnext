@@ -25,6 +25,8 @@ class SubscriptionPlansManager:
 		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:
 			previous_rate = plan.rate
 			date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
+			if not plan.uom:
+				plan.uom = frappe.get_cached_value("Item", plan.item, "sales_uom") or frappe.get_cached_value("Item", plan.item, "stock_uom")
 			plan.rate = self.get_plan_rate(plan, date)
 
 			if flt(previous_rate) != flt(plan.rate):

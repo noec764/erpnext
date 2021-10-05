@@ -1,0 +1,63 @@
+<table class="table text-right">
+	<thead>
+		<tr>
+			<th scope="col" width="60%" class="text-left">{{ _("Plan") }}</th>
+			<th scope="col" width="8%">{{ _("Quantity") }}</th>
+			<th scope="col" width="15%">{{ _("Rate") }}</th>
+			<th scope="col" width="17%">{{ _("Amount") }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for plan in doc.plans %}
+			{% if frappe.utils.getdate(plan.to_date) >= frappe.utils.getdate(frappe.utils.nowdate()) %}
+				{% set item_name = frappe.db.get_value("Item", plan.item, "item_name") %}
+				<tr>
+					<td class="text-left">
+						<h6>{{ item_name }}</h6>
+						<span class="hidden-xs">{{ plan.description or "" }}</span>
+						{% if plan.edit_on_portal and not plan.to_date %}
+							<span><i class="uil uil-trash-alt btn-xs btn-warning" id="{{ plan.name }}_trash">{{ _("Unsubscribe from this line") }}</i></span>
+						{% elif plan.to_date %}
+							<span class="small border p-1 text-warning">{{ _("Ends on") }} {{ frappe.utils.global_date_format(plan.to_date) }}</span>
+						{% endif %}
+					</td>
+					<td>{{ plan.qty }}</td>
+					<td>{{ frappe.utils.fmt_money(plan.rate, currency=doc.currency) }}</td>
+					<td>{{ frappe.utils.fmt_money(frappe.utils.flt(plan.rate) * frappe.utils.flt(plan.qty), currency=doc.currency) }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+		<tr>
+			<td colspan="3"><strong>{{ _("Net Total") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(doc.total, currency=doc.currency) }}</td>
+		</tr>
+		{% if frappe.utils.flt(doc.total) != frappe.utils.flt(doc.grand_total) %}
+		<tr class="total-row">
+			<td colspan="3"><strong>{{ _("Projected Taxes") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(frappe.utils.flt(doc.grand_total) - frappe.utils.flt(doc.total), currency=doc.currency) }}</td>
+		</tr>
+		<tr class="total-row">
+			<td colspan="3"><strong>{{ _("Grand Total") }}</strong></td>
+			<td colspan="1">{{ frappe.utils.fmt_money(doc.grand_total, currency=doc.currency) }}</td>
+		</tr>
+		{% endif %}
+	</tbody>
+</table>
+
+<script>
+	{% for plan in doc.plans %}
+		{% if plan.edit_on_portal and not plan.to_date %}
+			document.getElementById("{{ scrub(plan.name) }}_trash").addEventListener("click", function(e) {
+				new frappe.confirm(__('Remove {0} ?', ["{{ plan.item }}"]), function() {
+					return frappe.call("erpnext.templates.pages.subscription.remove_subscription_line", {subscription: "{{ doc.name }}", line: "{{ plan.name }}"})
+					.then(r => {
+						if (r && r.message) {
+							frappe.show_alert({message: __("Line removed from your subscription"), indicator: "green"});
+							location.reload();
+						}
+					})
+				})
+			})
+		{% endif %}
+	{% endfor %}
+</script>

@@ -130,6 +130,7 @@
   "website_image_alt",
   "thumbnail",
   "cb72",
+  "subscription_template",
   "website_warehouse",
   "website_item_groups",
   "set_meta_tags",
@@ -914,6 +915,7 @@
    "label": "Website Image"
   },
   {
+   "depends_on": "eval: doc.show_in_website || doc.show_variant_in_website",
    "fieldname": "thumbnail",
    "fieldtype": "Data",
    "label": "Thumbnail",
@@ -1083,6 +1085,13 @@
    "fieldname": "calendar_section",
    "fieldtype": "Section Break",
    "label": "Calendar Section"
+  },
+  {
+   "depends_on": "eval: doc.show_in_website || doc.show_variant_in_website",
+   "fieldname": "subscription_template",
+   "fieldtype": "Link",
+   "label": "Create a subscription based on",
+   "options": "Subscription Template"
   }
  ],
  "has_web_view": 1,
@@ -1092,7 +1101,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 1,
- "modified": "2021-03-18 14:04:38.575519",
+ "modified": "2021-09-29 11:20:59.186621",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1151,15 +1160,15 @@
    "read": 1,
    "report": 1,
    "role": "Venue Manager"
-},
-{
- "email": 1,
- "export": 1,
- "print": 1,
- "report": 1,
- "role": "Supplier",
- "select": 1,
- "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1,
+   "role": "Supplier",
+   "select": 1,
+   "share": 1
   }
  ],
  "quick_entry": 1,

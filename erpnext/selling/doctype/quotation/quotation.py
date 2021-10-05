@@ -50,8 +50,7 @@ class Quotation(SellingController):
 				booking.party_type = self.quotation_to
 				booking.party_name = self.party_name
 
-				res = [True for x in frappe.parse_json(item.pricing_rules or []) if x in booking_credit_pricing_rules]
-				if True in res:
+				if any([True for x in frappe.parse_json(item.pricing_rules or []) if x in booking_credit_pricing_rules]):
 					booking.deduct_booking_credits = True
 
 				booking.save(ignore_permissions=True)
@@ -140,7 +139,7 @@ class Quotation(SellingController):
 		self.set_status()
 		self.save()
 		self.flags.ignore_validate_update_after_submit = False
-		
+
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context

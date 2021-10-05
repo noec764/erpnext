@@ -6,11 +6,50 @@
 
 {% block page_content %}
 <div class="subscriptions-section">
-	<div class="current-subscription frappe-card hide"></div>
-	<div class="available-plans frappe-card hide"></div>
-	<div class="invoicing-status frappe-card hide"></div>
-	<div class="cancellation-options frappe-card hide"></div>
-	<div class="available-subscriptions hide"></div>
+	<div class="current-subscription frappe-card">
+		<div class="subscription-subtitle">
+			{% if doc.cancellation_date %}
+				<h6 class="small muted">
+					{{ _("This subscription will end on") }} {{ frappe.utils.global_date_format(doc.cancellation_date) }}
+				</h6>
+			{% elif next_invoice_date %}
+				<h6 class="small muted">
+					{{ _("The next invoice will be generated on") }} {{ frappe.utils.global_date_format(next_invoice_date) }}
+				</h6>
+			{% endif %}
+		</div>
+		<h5 class="subscriptions-section-title">{{ _("Your subscription") }}</h5>
+		<div class="current-subscription-table">
+			{% include "templates/includes/subscriptions/subscription_table.html" %}
+		</div>
+	</div>
+	{% if payment_requests %}
+	<div class="invoicing-status frappe-card">
+		<h5 class="subscriptions-section-title">${ __("Outstanding amounts") }</h5>
+		{% for payment_request in payment_requests %}
+		<div>
+			<div>{{ _("Total:") }}
+				<span> ${{ frappe.utils.format_currency(doc.outstanding_amount, doc.currency) }}</span>
+			<div>
+			<div><a class="btn btn-warning" href="{{ payment_request.payment_link }}">{{ _("Pay immediately") }}</a></div>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+	{% if not doc.cancellation_date %}
+		{% if subscription_plans %}
+		<div class="available-plans frappe-card">
+			<h5 class="subscriptions-section-title">{{ _("Your options") }}</h5>
+			{% include "templates/includes/subscriptions/subscription_plans.html" %}
+		</div>
+		{% endif %}
+	<div class="cancellation-options frappe-card">
+		<h5 class="subscriptions-section-title">{{ _("Cancellation options") }}</h5>
+		<div>
+			<button class="btn btn-danger" id="subscription-cancellation-btn">{{ _("Cancel my subscription") }}</button>
+		</div>
+	</div>
+	{% endif %}
 </div>
 {% endblock %}
 
@@ -55,5 +94,18 @@ frappe.boot = {
 	}
 };
 </script>
-<script> {% include "templates/pages/subscription.js" %} </script>
+<script>
+	document.getElementById('subscription-cancellation-btn').addEventListener("click", function(e) {
+		new frappe.confirm(__('Cancel this subscription at the end of the current billing period ?'), function() {
+			return frappe.call("erpnext.templates.pages.subscription.cancel_subscription", {subscription: "{{ doc.name }}" })
+			.then(r => {
+				console.log(r)
+				if (r && r.message) {
+					frappe.show_alert({message: __("Subscription cancelled"), indicator: "green"})
+					location.reload()
+				}
+			})
+		})
+	})
+</script>
 {% endblock %}

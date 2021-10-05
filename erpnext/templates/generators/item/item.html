@@ -17,14 +17,15 @@
 	{% from "erpnext/templates/includes/macros.html" import product_image %}
 	<div class="item-content">
 		<div class="product-page-content mb-5" itemscope itemtype="http://schema.org/Product">
-			<div class="row mb-5 item-website-description">
-				{% include "templates/generators/item/item_image.html" %}
-				{% include "templates/generators/item/item_details.html" %}
-			</div>
-
+			{% if show_calendar %}
 			<div id="item-booking">
 				<div class="calendar-card"></div>
 				<div class="calendar-sidebar"></div>
+			</div>
+			{% else %}
+			<div class="row mb-5 item-website-description">
+				{% include "templates/generators/item/item_image.html" %}
+				{% include "templates/generators/item/item_details.html" %}
 			</div>
 
 			{% include "templates/generators/item/item_specifications.html" %}
@@ -32,6 +33,7 @@
 			<div class="row item-website-content mt-5">
 				{{ doc.website_content or '' }}
 			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>
@@ -130,6 +132,19 @@
 		}
 	}
 </style>
+{% endblock %}
+
+{% block script %}
+<script>
+{% if show_calendar %}
+frappe.ready(() => {
+	new erpnext.booking_dialog({
+		parentId: 'item-booking',
+		item: "{{ doc.name }}"
+	})
+})
+{% endif %}
+</script>
 {% endblock %}
 
 {% block base_scripts %}

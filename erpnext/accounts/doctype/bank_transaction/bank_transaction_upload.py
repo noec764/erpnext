@@ -90,11 +90,11 @@ def upload_ofx_bank_statement():
 				txs = stmt.transactions or []
 				for transaction in txs:
 					data.append(make_transaction_row(stmt, transaction, stmt.curdef))
-	
+
 		return {"columns": columns, "data": data}
 	except Exception as e:
 		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
-		frappe.throw(_("OFX Parser Error. Please contact the support."))
+		frappe.throw(_("OFX Parser Error. Please check your error logs."))
 
 def make_transaction_row(stmt, transaction, currency=None):
 	return {
@@ -148,9 +148,9 @@ def create_bank_entries(columns, data, bank_account, upload_type=None):
 		except Exception:
 			errors += 1
 			frappe.log_error(frappe.get_traceback(), _("Bank transaction creation error"))
-			
 
-	return {"success": success, "errors": errors, "duplicates": duplicates, "status": "Complete"}		
+
+	return {"success": success, "errors": errors, "duplicates": duplicates, "status": "Complete"}
 
 def get_header_mapping(columns, bank_account, upload_type):
 	if upload_type == "csv":
