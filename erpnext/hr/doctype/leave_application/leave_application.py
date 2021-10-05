@@ -492,7 +492,7 @@ def get_leave_details(employee, date):
 	return ret
 
 @frappe.whitelist()
-def get_leave_balance_on(employee, leave_type, date, to_date=None, consider_all_leaves_in_the_allocation_period=False):
+def get_leave_balance_on(employee, leave_type, date, to_date=None, consider_all_leaves_in_the_allocation_period=False, end_of_day_balance=False):
 	'''
 		Returns leave balance till date
 		:param employee: employee name
@@ -513,7 +513,7 @@ def get_leave_balance_on(employee, leave_type, date, to_date=None, consider_all_
 
 	leaves_taken = get_leaves_for_period(employee, leave_type, allocation.from_date, end_date)
 
-	return get_remaining_leaves(allocation, leaves_taken, date, expiry)
+	return get_remaining_leaves(allocation, leaves_taken, date, expiry, end_of_day_balance)
 
 def get_leave_allocation_records(employee, date, leave_type=None):
 	''' returns the total allocated leaves and carry forwarded leaves based on ledger entries '''
@@ -565,12 +565,12 @@ def get_pending_leaves_for_period(employee, leave_type, from_date, to_date):
 		}, fields=['SUM(total_leave_days) as leaves'])[0]
 	return leaves['leaves'] if leaves['leaves'] else 0.0
 
-def get_remaining_leaves(allocation, leaves_taken, date, expiry):
+def get_remaining_leaves(allocation, leaves_taken, date, expiry, end_of_day_balance=False):
 	''' Returns minimum leaves remaining after comparing with remaining days for allocation expiry '''
 	def _get_remaining_leaves(remaining_leaves, end_date):
 
 		if remaining_leaves > 0:
-			remaining_days = date_diff(end_date, date) + 1
+			remaining_days = date_diff(end_date, date) + (0 if end_of_day_balance else 1)
 			remaining_leaves = min(remaining_days, remaining_leaves)
 
 		return remaining_leaves
