@@ -374,9 +374,12 @@ class SalesOrder(SellingController):
 
 	def set_indicator(self):
 		"""Set indicator for portal"""
-		if self.per_billed < 100 and (self.per_delivered < 100 and not self.skip_delivery_note) and self.status != 'Closed':
+		if self.per_billed < 100 and self.status != 'Closed':
 			self.indicator_color = "orange"
-			self.indicator_title = _("Not Invoiced and Not Delivered")
+			if self.per_delivered < 100 and not self.skip_delivery_note:
+				self.indicator_title = _("Not Invoiced and Not Delivered")
+			else:
+				self.indicator_title = _("Not Invoiced")
 
 		elif self.per_billed == 100 and (self.per_delivered < 100 and not self.skip_delivery_note) and self.status != 'Closed':
 			self.indicator_color = "orange"
@@ -477,7 +480,7 @@ class SalesOrder(SellingController):
 		for d in self.get("items"):
 			if d.get("item_booking"):
 				# Check if the confirmation should be set before the payment or if the advance paid is equal to the due amount
-				if not confirm_after_payment or self.advance_paid == self.grand_total:
+				if not confirm_after_payment or self.grand_total == frappe.db.get_value(self.doctype, self.name, "advance_paid"):
 					status = "Confirmed"
 				else:
 					linked_si = frappe.db.sql("""select t1.status
