@@ -87,7 +87,7 @@ website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
 	"Job Opening"]
 
 website_context = {
-	"favicon": 	"/assets/erpnext/images/favicon.ico",
+	"favicon": "/assets/erpnext/images/favicon.ico",
 	"splash_image": "/assets/erpnext/images/dokos_logo.svg"
 }
 
