@@ -587,7 +587,7 @@ class PurchaseReceipt(BuyingController):
 			against_account=cwip_account,
 			credit_in_account_currency=credit_in_account_currency,
 			item=item)
-	
+
 	def add_lcv_gl_entries(self, item, gl_entries):
 		expenses_included_in_asset_valuation = self.get_company_default("expenses_included_in_asset_valuation")
 		if not is_cwip_accounting_enabled(item.asset_category):
@@ -596,7 +596,7 @@ class PurchaseReceipt(BuyingController):
 		else:
 			# This returns company's default cwip account
 			asset_account = get_asset_account("capital_work_in_progress_account", company=self.company)
-		
+
 		remarks = self.get("remarks") or _("Accounting Entry for Stock")
 
 		self.add_gl_entry(
@@ -844,7 +844,8 @@ def make_stock_entry(source_name,target_doc=None):
 			"doctype": "Stock Entry Detail",
 			"field_map": {
 				"warehouse": "s_warehouse",
-				"parent": "reference_purchase_receipt"
+				"parent": "reference_purchase_receipt",
+				"batch_no": "batch_no"
 			},
 		},
 	}, target_doc, set_missing_values)
