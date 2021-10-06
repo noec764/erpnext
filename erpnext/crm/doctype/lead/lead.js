@@ -51,7 +51,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		}
 	}
 
-	add_lead_to_prospect (frm) {
+	add_lead_to_prospect () {
 		frappe.prompt([
 			{
 				fieldname: 'prospect',
@@ -65,12 +65,12 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 			frappe.call({
 				method: 'erpnext.crm.doctype.lead.lead.add_lead_to_prospect',
 				args: {
-					'lead': frm.doc.name,
+					'lead': this.frm.doc.name,
 					'prospect': data.prospect
 				},
 				callback: function(r) {
 					if (!r.exc) {
-						frm.reload_doc();
+						this.frm.reload_doc();
 					}
 				},
 				freeze: true,
@@ -79,41 +79,41 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		}, __('Add Lead to Prospect'), __('Add'));
 	}
 
-	make_customer (frm) {
+	make_customer () {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_customer",
-			frm: frm
+			frm: this.frm
 		})
 	}
 
-	make_opportunity(frm) {
+	make_opportunity() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_opportunity",
-			frm: frm
+			frm: this.frm
 		})
 	}
 
-	make_quotation(frm) {
+	make_quotation() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_quotation",
-			frm: frm
+			frm: this.frm
 		})
 	}
 
-	make_prospect (frm) {
+	make_prospect () {
 		frappe.model.with_doctype("Prospect", function() {
 			let prospect = frappe.model.get_new_doc("Prospect");
-			prospect.company_name = frm.doc.company_name;
-			prospect.no_of_employees = frm.doc.no_of_employees;
-			prospect.industry = frm.doc.industry;
-			prospect.market_segment = frm.doc.market_segment;
-			prospect.territory = frm.doc.territory;
-			prospect.fax = frm.doc.fax;
-			prospect.website = frm.doc.website;
-			prospect.prospect_owner = frm.doc.lead_owner;
+			prospect.company_name = this.frm.doc.company_name;
+			prospect.no_of_employees = this.frm.doc.no_of_employees;
+			prospect.industry = this.frm.doc.industry;
+			prospect.market_segment = this.frm.doc.market_segment;
+			prospect.territory = this.frm.doc.territory;
+			prospect.fax = this.frm.doc.fax;
+			prospect.website = this.frm.doc.website;
+			prospect.prospect_owner = this.frm.doc.lead_owner;
 
 			let lead_prospect_row = frappe.model.add_child(prospect, 'prospect_lead');
-			lead_prospect_row.lead = frm.doc.name;
+			lead_prospect_row.lead = this.frm.doc.name;
 
 			frappe.set_route("Form", "Prospect", prospect.name);
 		});
