@@ -31,7 +31,7 @@ def get_subscription_plans(customer):
 
 	customer_group = frappe.db.get_value("Customer", customer, "customer_group")
 	root_customer_group = get_root_of("Customer Group")
-	plans = frappe.get_all("Subscription Plan", filters={"enable_on_portal": 1, "customer_group": ("in", [customer_group, root_customer_group])})
+	plans = frappe.get_all("Subscription Plan", filters={"enable_on_portal": 1, "customer_group": ("in", [customer_group, root_customer_group, None])})
 
 	return [frappe.get_doc("Subscription Plan", plan.name) for plan in plans]
 
