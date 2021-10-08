@@ -295,7 +295,7 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 
 		return d.ordered_qty < d.stock_qty and child_filter
 
-	doclist = get_mapped_doc("Material Request", source_name, 	{
+	doclist = get_mapped_doc("Material Request", source_name, {
 		"Material Request": {
 			"doctype": "Purchase Order",
 			"validation": {
@@ -322,7 +322,7 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 
 @frappe.whitelist()
 def make_request_for_quotation(source_name, target_doc=None):
-	doclist = get_mapped_doc("Material Request", source_name, 	{
+	doclist = get_mapped_doc("Material Request", source_name, {
 		"Material Request": {
 			"doctype": "Request for Quotation",
 			"validation": {
