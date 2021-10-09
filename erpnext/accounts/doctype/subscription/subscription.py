@@ -113,7 +113,7 @@ class Subscription(Document):
 			frappe.throw(_("Invoicing error for subscription {0}").format(self.name))
 
 	def cancel_subscription(self, **kwargs):
-		self.cancellation_date = kwargs.get("cancellation_date")
+		self.cancellation_date = kwargs.get("cancellation_date") or self.current_invoice_end
 		self.prorate_last_invoice = kwargs.get("prorate_last_invoice")
 		self.save()
 		self.cancel_gateway_subscription()
