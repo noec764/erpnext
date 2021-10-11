@@ -3,12 +3,14 @@
 
 
 from collections import deque
+from functools import partial
+
 import unittest
 import frappe
 from frappe.utils import cstr, flt
 from frappe.test_runner import make_test_records
 from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import create_stock_reconciliation
-from erpnext.manufacturing.doctype.bom.bom import make_variant_bom
+from erpnext.manufacturing.doctype.bom.bom import item_query, make_variant_bom
 from erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool import update_cost
 from erpnext.stock.doctype.item.test_item import make_item
 from erpnext.buying.doctype.purchase_order.test_purchase_order import create_purchase_order
@@ -339,7 +341,7 @@ class TestBOM(unittest.TestCase):
 		frappe.delete_doc("BOM", bom2.name, ignore_missing=True, force=True)
 
 
-def test_bom_with_process_loss_item(self):
+	def test_bom_with_process_loss_item(self):
 		fg_item_non_whole, fg_item_whole, bom_item = create_process_loss_bom_items()
 
 		if not frappe.db.exists("BOM", f"BOM-{fg_item_non_whole.item_code}-001"):
@@ -371,6 +373,15 @@ def test_bom_with_process_loss_item(self):
 		)
 		# FG Items in Scrap/Loss Table should have Is Process Loss set
 		self.assertRaises(frappe.ValidationError, bom_doc.submit)
+
+	def test_bom_item_query(self):
+		query = partial(item_query, doctype="Item", txt="", searchfield="name", start=0, page_len=20, filters={"is_stock_item": 1})
+
+		test_items = query(txt="_Test")
+		filtered = query(txt="_Test Item 2")
+
+		self.assertNotEqual(len(test_items), len(filtered), msg="Item filtering showing excessive results")
+		self.assertTrue(0 < len(filtered) <= 3, msg="Item filtering showing excessive results")
 
 def get_default_bom(item_code="_Test FG Item 2"):
 	return frappe.db.get_value("BOM", {"item": item_code, "is_active": 1, "is_default": 1})
