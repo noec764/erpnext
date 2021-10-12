@@ -11,7 +11,7 @@ erpnext.PointOfSale.ItemSelector = class {
 
 		this.inti_component();
 	}
-	
+
 	inti_component() {
 		this.prepare_dom();
 		this.make_search_bar();
@@ -31,7 +31,7 @@ erpnext.PointOfSale.ItemSelector = class {
 				<div class="items-container"></div>
 			</section>`
 		);
-		
+
 		this.$component = this.wrapper.find('.items-selector');
 		this.$items_container = this.$component.find('.items-container');
 	}
@@ -95,7 +95,7 @@ erpnext.PointOfSale.ItemSelector = class {
 							<span class="indicator-pill whitespace-nowrap ${indicator_color}">${qty_to_display}</span>
 						</div>
 						<div class="flex items-center justify-center h-32 border-b-grey text-6xl text-grey-100">
-							<img 
+							<img
 								onerror="cur_pos.item_selector.handle_broken_image(this)"
 								class="h-full" src="${item_image}"
 								alt="${frappe.get_abbr(item.item_name)}"
@@ -225,7 +225,7 @@ erpnext.PointOfSale.ItemSelector = class {
 			let serial_no = unescape($item.attr('data-serial-no'));
 			let uom = unescape($item.attr('data-uom'));
 			let rate = unescape($item.attr('data-rate'));
-			
+
 			// escape(undefined) returns "undefined" then unescape returns "undefined"
 			batch_no = batch_no === "undefined" ? undefined : batch_no;
 			serial_no = serial_no === "undefined" ? undefined : serial_no;
@@ -291,7 +291,7 @@ erpnext.PointOfSale.ItemSelector = class {
 			}
 		});
 	}
-	
+
 	filter_items({ search_term='' }={}) {
 		if (search_term) {
 			search_term = search_term.toLowerCase();
@@ -324,11 +324,11 @@ erpnext.PointOfSale.ItemSelector = class {
 	}
 
 	resize_selector(minimize) {
-		minimize ? 
+		minimize ?
 			this.$component.find('.filter-section').css('grid-template-columns', 'repeat(1, minmax(0, 1fr))') :
 			this.$component.find('.filter-section').css('grid-template-columns', 'repeat(12, minmax(0, 1fr))');
 
-		minimize ? 
+		minimize ?
 			this.$component.find('.search-field').css('margin', 'var(--margin-sm) 0px') :
 			this.$component.find('.search-field').css('margin', '0px var(--margin-sm)');
 

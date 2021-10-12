@@ -220,9 +220,9 @@ class Asset(AccountsController):
 				continue
 
 			if int(d.finance_book_id) not in accumulated_depreciations_per_finance_book:
-				accumulated_depreciations_per_finance_book[d.finance_book_id] = flt(self.opening_accumulated_depreciation)
+				accumulated_depreciations_per_finance_book[d.finance_book_id] = flt(self.opening_accumulated_depreciation, d.precision("accumulated_depreciation_amount"))
 
-			accumulated_depreciations_per_finance_book[d.finance_book_id] += d.depreciation_amount
+			accumulated_depreciations_per_finance_book[d.finance_book_id] += flt(d.depreciation_amount, d.precision("accumulated_depreciation_amount"))
 			d.accumulated_depreciation_amount = flt(accumulated_depreciations_per_finance_book[d.finance_book_id],
 				d.precision("accumulated_depreciation_amount"))
 
@@ -762,11 +762,11 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
-		self.depreciation_amount = (flt(self.total_value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
+		self.depreciation_amount = (flt(self.total_value_to_depreciate, precision=precision) / flt(self.depreciations_basis, precision=precision)) * flt(self.coefficient)
 		if self.remaining_number_of_depreciations == 1:
 			self.depreciation_amount = self.remaining_value_to_depreciate
 
-		self.remaining_value_to_depreciate -= self.depreciation_amount
+		self.remaining_value_to_depreciate -= flt(self.depreciation_amount, precision=precision)
 
 	def get_coefficient(self):
 		months = abs(month_diff(self.booking_end_date, self.booking_start_date))
@@ -794,7 +794,7 @@ class StraightLineDepreciationSchedule(DepreciationSchedule):
 
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
-		self.depreciation_amount = (flt(self.total_value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
+		self.depreciation_amount = (flt(self.total_value_to_depreciate, precision=precision) / flt(self.depreciations_basis, precision=precision)) * flt(self.coefficient)
 
 class ManualDepreciationSchedule(DepreciationSchedule):
 	def __init__(self, asset, finance_book):
@@ -803,7 +803,7 @@ class ManualDepreciationSchedule(DepreciationSchedule):
 
 	def get_depreciation_amount(self):
 		precision = self.asset.precision("gross_purchase_amount")
-		self.depreciation_amount = (flt(self.value_to_depreciate) / flt(self.depreciations_basis)) * flt(self.coefficient)
+		self.depreciation_amount = (flt(self.value_to_depreciate, precision=precision) / flt(self.depreciations_basis, precision=precision)) * flt(self.coefficient)
 
 class DoubleDecliningBalanceSchedule(DepreciationSchedule):
 	def __init__(self, asset, finance_book):
@@ -817,7 +817,7 @@ class DoubleDecliningBalanceSchedule(DepreciationSchedule):
 		else:
 			self.depreciation_amount = flt(self.value_to_depreciate * (flt(self.coefficient) / 100), precision)
 
-		self.value_to_depreciate -= self.depreciation_amount
+		self.value_to_depreciate -= flt(self.depreciation_amount, precision=precision)
 
 	def get_coefficient(self):
 		self.coefficient = 200.0 / self.depreciations_basis
