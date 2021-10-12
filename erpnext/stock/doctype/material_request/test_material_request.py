@@ -4,13 +4,15 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe, unittest, erpnext
+import frappe
 from frappe.utils import flt, today
 from erpnext.stock.doctype.material_request.material_request \
 	import raise_work_orders, make_stock_entry, make_purchase_order, make_supplier_quotation
 from erpnext.stock.doctype.item.test_item import create_item
 
-class TestMaterialRequest(unittest.TestCase):
+from erpnext.tests.utils import ERPNextTestCase
+
+class TestMaterialRequest(ERPNextTestCase):
 	def test_make_purchase_order(self):
 		mr = frappe.copy_doc(test_records[0]).insert()
 

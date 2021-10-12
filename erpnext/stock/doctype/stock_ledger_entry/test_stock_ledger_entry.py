@@ -4,7 +4,6 @@
 from __future__ import unicode_literals
 
 import frappe
-import unittest
 from frappe.utils import today, add_days
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
 from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation \
@@ -16,8 +15,9 @@ from erpnext.stock.doctype.landed_cost_voucher.test_landed_cost_voucher import c
 from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
 from erpnext.stock.doctype.stock_ledger_entry.stock_ledger_entry import BackDatedStockTransaction
 from frappe.core.page.permission_manager.permission_manager import reset
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestStockLedgerEntry(unittest.TestCase):
+class TestStockLedgerEntry(ERPNextTestCase):
 	def setUp(self):
 		items = create_items()
 		reset('Stock Entry')

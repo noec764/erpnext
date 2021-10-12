@@ -1,9 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-
-
 from __future__ import unicode_literals
-import unittest
+
 import frappe
 import json
 import frappe.defaults
@@ -23,8 +21,9 @@ from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.stock.doctype.warehouse.test_warehouse import get_warehouse
 from erpnext.stock.doctype.item.test_item import make_item
 from erpnext.selling.doctype.product_bundle.test_product_bundle import make_product_bundle
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestDeliveryNote(unittest.TestCase):
+class TestDeliveryNote(ERPNextTestCase):
 	def test_over_billing_against_dn(self):
 		frappe.db.set_value("Stock Settings", None, "allow_negative_stock", 1)
 

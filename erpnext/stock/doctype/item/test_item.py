@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import unittest
 import frappe
 import json
 
@@ -14,7 +13,7 @@ from erpnext.stock.doctype.item.item import (get_uom_conv_factor, get_item_attri
 	validate_is_stock_item, get_timeline_data)
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
 from erpnext.stock.get_item_details import get_item_details
-from erpnext.tests.utils import change_settings
+from erpnext.tests.utils import ERPNextTestCase, change_settings
 
 
 test_ignore = ["BOM"]
@@ -43,8 +42,9 @@ def make_item(item_code, properties=None):
 
 	return item
 
-class TestItem(unittest.TestCase):
+class TestItem(ERPNextTestCase):
 	def setUp(self):
+		super().setUp()
 		frappe.flags.attribute_values = None
 
 	def get_item(self, idx):

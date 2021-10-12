@@ -7,6 +7,7 @@ import frappe
 import unittest
 
 # test_records = frappe.get_test_records('Packing Slip')
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestPackingSlip(unittest.TestCase):
+class TestPackingSlip(ERPNextTestCase):
 	pass

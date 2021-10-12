@@ -1,9 +1,8 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
 from __future__ import unicode_literals
-import unittest
+
 import frappe
 from frappe.utils import flt
 from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt \
@@ -12,8 +11,9 @@ from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make
 from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.accounts.doctype.account.test_account import create_account
 from erpnext.assets.doctype.asset.test_asset import create_asset_category, create_fixed_asset_item
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestLandedCostVoucher(unittest.TestCase):
+class TestLandedCostVoucher(ERPNextTestCase):
 	def test_landed_cost_voucher(self):
 		frappe.db.set_value("Buying Settings", None, "allow_multiple_items", 1)
 
