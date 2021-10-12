@@ -446,7 +446,7 @@ default_mail_footer = f"""
 	<span>
 		{_("Sent via")}
 		<a class="text-muted" href="https://dokos.io?source=via_email_footer" target="_blank">
-			dokos
+			Dokos
 		</a>
 	</span>
 """
