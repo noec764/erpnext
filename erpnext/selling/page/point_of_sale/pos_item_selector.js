@@ -11,7 +11,7 @@ erpnext.PointOfSale.ItemSelector = class {
 
 		this.inti_component();
 	}
-	
+
 	inti_component() {
 		this.prepare_dom();
 		this.make_search_bar();
@@ -31,7 +31,7 @@ erpnext.PointOfSale.ItemSelector = class {
 				<div class="items-container"></div>
 			</section>`
 		);
-		
+
 		this.$component = this.wrapper.find('.items-selector');
 		this.$items_container = this.$component.find('.items-container');
 	}
@@ -116,7 +116,7 @@ erpnext.PointOfSale.ItemSelector = class {
 					<div class="item-name">
 						${frappe.ellipsis(item.item_name, 18)}
 					</div>
-					<div class="item-rate">${format_currency(item.price_list_rate, item.currency, 0) || 0}</div>
+					<div class="item-rate">${format_currency(item.price_list_rate, item.currency) || 0}</div>
 				</div>
 			</div>`
 		);
@@ -213,7 +213,7 @@ erpnext.PointOfSale.ItemSelector = class {
 			let batch_no = unescape($item.attr('data-batch-no'));
 			let serial_no = unescape($item.attr('data-serial-no'));
 			let uom = unescape($item.attr('data-uom'));
-			
+
 			// escape(undefined) returns "undefined" then unescape returns "undefined"
 			batch_no = batch_no === "undefined" ? undefined : batch_no;
 			serial_no = serial_no === "undefined" ? undefined : serial_no;
@@ -274,7 +274,7 @@ erpnext.PointOfSale.ItemSelector = class {
 			}
 		});
 	}
-	
+
 	filter_items({ search_term='' }={}) {
 		if (search_term) {
 			search_term = search_term.toLowerCase();
@@ -307,11 +307,11 @@ erpnext.PointOfSale.ItemSelector = class {
 	}
 
 	resize_selector(minimize) {
-		minimize ? 
+		minimize ?
 			this.$component.find('.filter-section').css('grid-template-columns', 'repeat(1, minmax(0, 1fr))') :
 			this.$component.find('.filter-section').css('grid-template-columns', 'repeat(12, minmax(0, 1fr))');
 
-		minimize ? 
+		minimize ?
 			this.$component.find('.search-field').css('margin', 'var(--margin-sm) 0px') :
 			this.$component.find('.search-field').css('margin', '0px var(--margin-sm)');
 
