@@ -1,10 +1,12 @@
 import traceback
+
 import frappe
 import taxjar
-from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
-from frappe.utils import cint
+from frappe.utils import cint, flt
+
+from erpnext import get_default_company
 
 TAX_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "tax_account_head")
 SHIP_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "shipping_account_head")
@@ -15,7 +17,7 @@ SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK",
 	"SE", "SI", "SK", "US"]
 SUPPORTED_STATE_CODES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL',
 	'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE',
-	'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 
+	'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
 	'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
 
 
@@ -66,7 +68,7 @@ def create_transaction(doc, method):
 	try:
 		if doc.is_return:
 			client.create_refund(tax_dict)
-		else:	
+		else:
 			client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
 		frappe.throw(_(sanitize_error_response(err)))
@@ -101,14 +103,14 @@ def get_tax_data(doc):
 
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
-	line_items = [get_line_item_dict(item) for item in doc.items]
+	line_items = [get_line_item_dict(item, doc.docstatus) for item in doc.items]
 
 	if from_shipping_state not in SUPPORTED_STATE_CODES:
 		from_shipping_state = get_state_code(from_address, 'Company')
 
 	if to_shipping_state not in SUPPORTED_STATE_CODES:
 		to_shipping_state = get_state_code(to_address, 'Shipping')
-	
+
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -125,7 +127,7 @@ def get_tax_data(doc):
 		'plugin': 'erpnext',
 		'line_items': line_items
 	}
-	return tax_dict	
+	return tax_dict
 
 def get_state_code(address, location):
 	if address is not None:
@@ -134,16 +136,23 @@ def get_state_code(address, location):
 			frappe.throw(_("Please enter a valid State in the {0} Address").format(location))
 	else:
 		frappe.throw(_("Please enter a valid State in the {0} Address").format(location))
-	
+
 	return state_code
 
-def get_line_item_dict(item):
-	return dict( 
+def get_line_item_dict(item, docstatus):
+	tax_dict = dict(
 		id = item.get('idx'),
 		quantity = item.get('qty'),
 		unit_price = item.get('rate'),
 		product_tax_code = item.get('product_tax_category')
-	)  	
+	)
+
+	if docstatus == 1:
+		tax_dict.update({
+			'sales_tax':item.get('tax_collectable')
+		})
+
+	return tax_dict
 
 def set_sales_tax(doc, method):
 	if not TAXJAR_CALCULATE_TAX:
@@ -161,6 +170,9 @@ def set_sales_tax(doc, method):
 		# Remove existing tax rows if address is changed from a taxable state/country
 		setattr(doc, "taxes", [tax for tax in doc.taxes if tax.account_head != TAX_ACCOUNT_HEAD])
 		return
+
+	# check if delivering within a nexus
+	check_for_nexus(doc, tax_dict)
 
 	tax_data = validate_tax_request(tax_dict)
 	if tax_data is not None:
@@ -189,6 +201,17 @@ def set_sales_tax(doc, method):
 
 			doc.run_method("calculate_taxes_and_totals")
 
+def check_for_nexus(doc, tax_dict):
+	if not frappe.db.get_value('TaxJar Nexus', {'region_code': tax_dict["to_state"]}):
+		for item in doc.get("items"):
+			item.tax_collectable = flt(0)
+			item.taxable_amount = flt(0)
+
+		for tax in doc.taxes:
+			if tax.account_head == TAX_ACCOUNT_HEAD:
+				doc.taxes.remove(tax)
+		return
+
 def check_sales_tax_exemption(doc):
 	# if the party is exempt from sales tax, then set all tax account heads to zero
 	sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
@@ -202,7 +225,7 @@ def check_sales_tax_exemption(doc):
 				break
 		doc.run_method("calculate_taxes_and_totals")
 		return True
-	else: 
+	else:
 		return False
 
 def validate_tax_request(tax_dict):
