@@ -26,7 +26,7 @@ context('Organizational Chart', () => {
 
 				cy.get('@input')
 					.clear({ force: true })
-					.type('Test Org Chart{enter}', { force: true })
+					.type('Test Org Chart{downarrow}{enter}', { force: true })
 					.blur({ force: true });
 			});
 		});
