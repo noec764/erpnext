@@ -26,6 +26,7 @@ from erpnext.accounts.doctype.sales_invoice.sales_invoice import (
 	update_linked_doc,
 	unlink_inter_company_doc,
 	check_if_return_invoice_linked_with_payment_entry,
+	get_total_in_party_account_currency,
 	is_overdue
 )
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import get_party_tax_withholding_details
@@ -1171,6 +1172,7 @@ class PurchaseInvoice(BuyingController):
 			return
 
 		outstanding_amount = flt(self.outstanding_amount, self.precision("outstanding_amount"))
+		total = get_total_in_party_account_currency(self)
 
 		if not status:
 			if self.docstatus == 2:
@@ -1178,9 +1180,9 @@ class PurchaseInvoice(BuyingController):
 			elif self.docstatus == 1:
 				if self.is_internal_transfer():
 					self.status = 'Internal Transfer'
-				elif is_overdue(self):
+				elif is_overdue(self, total):
 					self.status = "Overdue"
-				elif 0 < outstanding_amount < flt(self.grand_total, self.precision("grand_total")):
+				elif 0 < outstanding_amount < total:
 					self.status = "Partly Paid"
 				elif outstanding_amount > 0 and getdate(self.due_date) >= getdate():
 					self.status = "Unpaid"

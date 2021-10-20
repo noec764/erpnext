@@ -1417,10 +1417,7 @@ class SalesInvoice(SellingController):
 			return
 
 		outstanding_amount = flt(self.outstanding_amount, self.precision("outstanding_amount"))
-
-		discounting_status = None
-		if self.is_discounted:
-			discounting_status = get_discounting_status(self.name)
+		total = get_total_in_party_account_currency(self)
 
 		if not status:
 			if self.docstatus == 2:
@@ -1428,9 +1425,9 @@ class SalesInvoice(SellingController):
 			elif self.docstatus == 1:
 				if self.is_internal_transfer():
 					self.status = 'Internal Transfer'
-				elif is_overdue(self):
+				elif is_overdue(self, total):
 					self.status = "Overdue"
-				elif 0 < outstanding_amount < flt(self.grand_total, self.precision("grand_total")):
+				elif 0 < outstanding_amount < total:
 					self.status = "Partly Paid"
 				elif outstanding_amount > 0 and getdate(self.due_date) >= getdate():
 					self.status = "Unpaid"
@@ -1459,27 +1456,40 @@ class SalesInvoice(SellingController):
 			if self.subscription:
 				frappe.get_doc("Subscription", self.subscription).update_outstanding()
 
-def is_overdue(doc):
-	outstanding_amount = flt(doc.outstanding_amount, doc.precision("outstanding_amount"))
+def get_total_in_party_account_currency(doc):
+	total_fieldname = (
+		"grand_total"
+		if doc.disable_rounded_total
+		else "rounded_total"
+	)
+	if doc.party_account_currency != doc.currency:
+		total_fieldname = "base_" + total_fieldname
 
+	return flt(doc.get(total_fieldname), doc.precision(total_fieldname))
+
+def is_overdue(doc, total):
+	outstanding_amount = flt(doc.outstanding_amount, doc.precision("outstanding_amount"))
 	if outstanding_amount <= 0:
 		return
 
-	grand_total = flt(doc.grand_total, doc.precision("grand_total"))
-	nowdate = getdate()
-	if doc.payment_schedule:
-		# calculate payable amount till date
-		payable_amount = sum(
-			payment.payment_amount
-			for payment in doc.payment_schedule
-			if getdate(payment.due_date) < nowdate
-		)
+	today = getdate()
+	if doc.get('is_pos') or not doc.get('payment_schedule'):
+		return getdate(doc.due_date) < today
 
-		if (grand_total - outstanding_amount) < payable_amount:
-			return True
+	# calculate payable amount till date
+	payment_amount_field = (
+		"base_payment_amount"
+		if doc.party_account_currency != doc.currency
+		else "payment_amount"
+	)
 
-	elif getdate(doc.due_date) < nowdate:
-		return True
+	payable_amount = sum(
+		payment.get(payment_amount_field)
+		for payment in doc.payment_schedule
+		if getdate(payment.due_date) < today
+	)
+
+	return (total - outstanding_amount) < payable_amount
 
 def get_discounting_status(sales_invoice):
 	status = None
