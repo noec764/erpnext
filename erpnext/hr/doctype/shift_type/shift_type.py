@@ -26,8 +26,8 @@ class ShiftType(Document):
 			'shift_actual_end': ('<', self.last_sync_of_checkin),
 			'shift': self.name
 		}
-		logs = frappe.db.get_list('Employee Checkin', fields="*", filters=filters, order_by="employee,time", debug=True)
-		print(logs)
+		logs = frappe.db.get_list('Employee Checkin', fields="*", filters=filters, order_by="employee,time")
+
 		for key, group in itertools.groupby(logs, key=lambda x: (x['employee'], x['shift_actual_start'])):
 			single_shift_logs = list(group)
 			attendance_status, working_hours, late_entry, early_exit, in_time, out_time = self.get_attendance(single_shift_logs)
