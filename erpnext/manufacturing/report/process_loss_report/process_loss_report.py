@@ -1,9 +1,10 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+from typing import Dict, List, Tuple
+
 import frappe
 from frappe import _
-from typing import Dict, List, Tuple
 
 Filters = frappe._dict
 Row = frappe._dict
@@ -110,7 +111,7 @@ def run_query(query_args: QueryArgs) -> Data:
 			{work_order_filter}
 		GROUP BY
 			se.work_order
-	""".format(**query_args), query_args, as_dict=1, debug=1)
+	""".format(**query_args), query_args, as_dict=1)
 
 def update_data_with_total_pl_value(data: Data) -> None:
 	for row in data:
@@ -130,4 +131,3 @@ def get_filter_conditions(filters: Filters) -> QueryArgs:
 			{"work_order_filter": f"AND wo.name='{work_order_name}'"}
 		)
 	return filter_conditions
-
