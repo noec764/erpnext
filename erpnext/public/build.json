@@ -2,7 +2,8 @@
 	"css/erpnext.css": [
 		"public/less/erpnext.less",
 		"public/scss/call_popup.scss",
-		"public/scss/point-of-sale.scss"
+		"public/scss/point-of-sale.scss",
+		"public/scss/calendar_timeline.scss"
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",
@@ -64,5 +65,8 @@
 	],
 	"js/bank-reconciliation.min.js": [
 		"accounts/page/bank_reconciliation/bank_reconciliation_page/bank_reconciliation.js"
+	],
+	"js/resource-calendar.min.js": [
+		"hr/page/resource_planning_view/resource_calendar.js"
 	]
 }

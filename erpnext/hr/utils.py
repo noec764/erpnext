@@ -565,3 +565,25 @@ def share_doc_with_approver(doc, user):
 		approver = approvers.get(doc.doctype)
 		if doc_before_save.get(approver) != doc.get(approver):
 			frappe.share.remove(doc.doctype, doc.name, doc_before_save.get(approver))
+
+class EmployeeActivityController(Document):
+	def validate_availabilty(self):
+		if (self.get_training_for_period()
+			or self.get_shift_assignments_for_period()
+			or self.get_leaves_for_period()
+		):
+			return False
+
+		return True
+
+	def get_training_for_period(self):
+		if self.doctype == "Training Event":
+			return False
+
+	def get_shift_assignments_for_period(self):
+		if self.doctype == "Shift Assignment":
+			return False
+
+	def get_leaves_for_period(self):
+		if self.doctype == "Leave Application":
+			return False

@@ -1,0 +1,26 @@
+@import '~@fullcalendar/resource-timeline/main.css';
+@import '~@fullcalendar/timeline/main.css';
+@import '~@fullcalendar/scrollgrid/main.css';
+
+.fc.resource-calendar {
+	.fc-scrollgrid-section-header th {
+		border-right: None;
+	}
+
+	.fc-event {
+		&:not(.fc-bg-event) {
+			box-shadow: var(--shadow-base);
+			transition: 0.3s;
+			border-radius: 5px;
+		}
+	}
+
+	.fc-bg-event {
+		opacity: 1;
+
+		.fc-event-title {
+			overflow: hidden;
+		}
+	}
+
+}
