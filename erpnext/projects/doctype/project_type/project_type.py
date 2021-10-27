@@ -8,6 +8,7 @@ import frappe
 from frappe import _
 
 class ProjectType(Document):
-	def on_trash(self):
-		if self.name == "External":
-			frappe.throw(_("You cannot delete Project Type 'External'"))
+	def validate(self):
+		if self.is_default:
+			for project_type in frappe.get_all("Project Type", filters={"is_default": 1, "name": ("!=", self.name)}):
+				frappe.db.set_value("Project Type", project_type.name, "is_default", 0)
