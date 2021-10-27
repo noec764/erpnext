@@ -250,6 +250,10 @@ class Subscription(Document):
 	def create_payment(self):
 		return SubscriptionPaymentEntryGenerator(self).create_payment()
 
+	def create_payment_request(self):
+		return SubscriptionPaymentRequestGenerator(self).create_payment_request()
+
+
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
 		fields=["name", "grand_total"])
