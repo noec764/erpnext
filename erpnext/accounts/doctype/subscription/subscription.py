@@ -119,6 +119,7 @@ class Subscription(Document):
 		self.cancel_gateway_subscription()
 
 	def restart_subscription(self):
+		self.current_invoice_start = add_days(self.cancellation_date, 1) or nowdate()
 		self.cancellation_date = None
 		self.prorate_last_invoice = 0
 		self.save()
