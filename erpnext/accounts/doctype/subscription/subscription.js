@@ -72,6 +72,7 @@ frappe.ui.form.on('Subscription', {
 				"fieldtype": "Date",
 				"label": __("Cancellation date"),
 				"fieldname": "cancellation_date",
+				"default": frm.doc.current_invoice_end
 			},
 			{
 				"fieldtype": "Check",
@@ -105,10 +106,8 @@ frappe.ui.form.on('Subscription', {
 	abort_cancel_this_subscription: function(frm) {
 		frappe.call({
 			method:
-			"erpnext.accounts.doctype.subscription.subscription.cancel_subscription",
+			"erpnext.accounts.doctype.subscription.subscription.restart_subscription",
 			args: {
-				cancellation_date: null,
-				prorate_invoice: 0,
 				name: frm.doc.name
 			},
 			callback: function(data){

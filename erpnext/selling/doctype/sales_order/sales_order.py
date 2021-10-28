@@ -594,7 +594,7 @@ def make_material_request(source_name, target_doc=None):
 @frappe.whitelist()
 def make_project(source_name, target_doc=None):
 	def postprocess(source, doc):
-		doc.project_type = "External"
+		doc.project_type = frappe.db.get_value("Project Type", dict(is_default=1))
 		doc.project_name = source.name
 
 	doc = get_mapped_doc("Sales Order", source_name, {
@@ -606,6 +606,8 @@ def make_project(source_name, target_doc=None):
 			"field_map":{
 				"name" : "sales_order",
 				"base_grand_total" : "estimated_costing",
+				"transaction_date": "expected_start_date",
+				"delivery_date": "expected_end_date"
 			}
 		},
 	}, target_doc, postprocess)

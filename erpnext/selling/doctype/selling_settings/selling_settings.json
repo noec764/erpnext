@@ -32,6 +32,7 @@
     "column_break_5",
     "allow_multiple_items",
     "allow_against_multiple_purchase_orders",
+    "create_tasks_from_sales_order",
     "hide_tax_id"
    ],
    "fields": [
@@ -197,14 +198,20 @@
     "fieldname": "editable_bundle_item_rates",
     "fieldtype": "Check",
     "label": "Calculate Product Bundle Price based on Child Items' Rates"
-    }
+    },
+    {
+      "default": "1",
+      "fieldname": "create_tasks_from_sales_order",
+      "fieldtype": "Check",
+      "label": "Create a new task for each item line in a sales order"
+     }
    ],
    "icon": "fa fa-cog",
    "idx": 1,
    "index_web_pages_for_search": 1,
    "issingle": 1,
    "links": [],
-   "modified": "2021-09-08 19:38:10.175989",
+   "modified": "2021-09-09 19:38:10.175989",
    "modified_by": "Administrator",
    "module": "Selling",
    "name": "Selling Settings",

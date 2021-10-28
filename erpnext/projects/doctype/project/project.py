@@ -141,6 +141,18 @@ class Project(Document):
 		self.copy_from_template()
 		if self.sales_order:
 			frappe.db.set_value("Sales Order", self.sales_order, "project", self.name)
+			if frappe.db.get_single_value("Selling Settings", "create_tasks_from_sales_order"):
+				so = frappe.get_doc("Sales Order", self.sales_order)
+				for item in so.items:
+					frappe.get_doc({
+						"doctype": "Task",
+						"project": self.name,
+						"priority": self.priority,
+						"subject": item.item_name,
+						"description": item.description,
+						"exp_start_date": self.expected_start_date,
+						"exp_end_date": item.delivery_date
+					}).insert()
 
 	def on_trash(self):
 		frappe.db.set_value("Sales Order", {"project": self.name}, "project", "")
