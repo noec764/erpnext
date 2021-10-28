@@ -1,7 +1,7 @@
 {
  "category": "",
  "charts": [],
- "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Marketplace\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Payments\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}]",
+ "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Payments\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}]",
  "creation": "2020-08-20 19:30:48.138801",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -15,15 +15,6 @@
  "is_standard": 1,
  "label": "Dokos Integrations",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Marketplace",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -93,7 +84,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 17:33:16.030763",
+ "modified": "2021-10-02 17:33:16.030763",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Dokos Integrations",
