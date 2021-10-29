@@ -762,7 +762,7 @@ def check_packing_list(price_list_rate_name, desired_qty, item_code):
 	flag = True
 	item_price = frappe.get_doc("Item Price", price_list_rate_name)
 	if item_price.packing_unit:
-		packing_increment = desired_qty % item_price.packing_unit
+		packing_increment = flt(desired_qty) % flt(item_price.packing_unit)
 
 		if packing_increment != 0:
 			flag = False
