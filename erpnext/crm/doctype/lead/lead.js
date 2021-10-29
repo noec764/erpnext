@@ -11,8 +11,6 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 			'Quotation': this.make_quotation,
 			'Opportunity': this.make_opportunity
 		};
-
-		this.frm.toggle_reqd("lead_name", !this.frm.doc.organization_lead);
 	},
 
 	onload: function () {
@@ -66,11 +64,6 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 			method: "erpnext.crm.doctype.lead.lead.make_quotation",
 			frm: cur_frm
 		})
-	},
-
-	organization_lead: function () {
-		this.frm.toggle_reqd("lead_name", !this.frm.doc.organization_lead);
-		this.frm.toggle_reqd("company_name", this.frm.doc.organization_lead);
 	},
 
 	company_name: function () {
