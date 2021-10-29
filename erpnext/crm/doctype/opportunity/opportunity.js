@@ -221,19 +221,20 @@ const get_item_details = (doc, cdt, cdn) => {
 				"item_code":d.item_code,
 				"qty": d.qty,
 				"customer": doc.opportunity_from=="Customer" ? doc.party_name : null
-			},
-			callback: function(r, rt) {
-				if(r.message) {
-					$.each(r.message, function(k, v) {
-						frappe.model.set_value(cdt, cdn, k, v);
-					});
+			}
+		}).then((r, rt) => {
+			if(r.message) {
+				$.each(r.message, function(k, v) {
+					frappe.model.set_value(cdt, cdn, k, v);
+				});
 
-					if (r.message.price) {
-						frappe.model.set_value(doc.doctype, doc.name, "opportunity_amount", (doc.opportunity_amount || 0.0) + (d.qty * r.message.price));
-					}
-
-					refresh_field('image_view', d.name, 'items');
+				if (r.message.price) {
+					frappe.model.set_value(cdt, cdn, "basic_rate", r.message.price);
+					const total = doc.items.reduce((acc, i) => acc + (i.qty * i.basic_rate), 0)
+					frappe.model.set_value(doc.doctype, doc.name, "opportunity_amount", total);
 				}
+
+				refresh_field('image_view', d.name, 'items');
 			}
 		})
 	}
