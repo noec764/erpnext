@@ -131,6 +131,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	get_resource(info, callback) {
 		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_resources", {
 			company: this.company,
+			department: this.department,
 			start: moment(info.start).format("YYYY-MM-DD"),
 			end: moment(info.end).format("YYYY-MM-DD"),
 			group_by: this.view.toLowerCase()
@@ -180,8 +181,8 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	add_shift_buttons() {
 		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_shift_types")
 		.then(res => {
+			const shifts_btn = this.add_button_group(__("New Shift"))
 			res.map(r => {
-				const shift_btn = this.page.add_inner_button(r.name, null, __("Add a shift"), "primary")
 				const eventData = {
 					title: r.name,
 					duration: r.duration,
@@ -190,7 +191,17 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 					reference_name: r.name,
 					target: "Shift Assignment"
 				}
-				this.build_draggable($(shift_btn)[0], eventData)
+
+				const btn = this.page.add_custom_menu_item(
+					shifts_btn,
+					r.name,
+					null,
+					false,
+					null,
+					null
+				);
+				$(btn).addClass("shift-draggable");
+				this.build_draggable($(btn)[0], eventData);
 			})
 		})
 	}
@@ -221,6 +232,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.view = view;
 		this.page.standard_actions.empty();
 		this.add_view_selector();
+		this.toggle_department_filter();
 		this.calendar.setOption("resourceAreaColumns", this.get_resource_area_columns())
 		this.calendar.refetchResources();
 	}
@@ -232,6 +244,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	add_filters() {
 		this.page.clear_fields();
 		this.add_company_filter();
+		this.toggle_department_filter();
 	}
 
 	add_company_filter() {
@@ -246,6 +259,57 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 				this.company = this.company_filter.get_value()
 			}
 		})
+	}
+
+	add_department_filter() {
+		this.department_filter = this.page.add_field({
+			fieldname: "department",
+			label: __("Department"),
+			fieldtype: "Link",
+			options: "Department",
+			hidden: 1,
+			change: () => {
+				this.department = this.department_filter.get_value()
+			}
+		})
+	}
+
+	toggle_department_filter() {
+		if (!this.department_filter) {$
+			this.add_department_filter()
+		}
+		this.department_filter.toggle(this.view=="Department")
+	}
+
+	add_button_group(label, icon) {
+		let dropdown_label = `<span class="hidden-xs">
+			<span class="custom-btn-group-label">${__(label)}</span>
+			${frappe.utils.icon('select', 'xs')}
+		</span>`;
+
+		if (icon) {
+			dropdown_label = `<span class="hidden-xs">
+				${frappe.utils.icon(icon)}
+				<span class="custom-btn-group-label">${__(label)}</span>
+				${frappe.utils.icon('select', 'xs')}
+			</span>
+			<span class="visible-xs">
+				${frappe.utils.icon(icon)}
+			</span>`;
+		}
+
+		let custom_btn_group = $(`
+			<div class="custom-btn-group ml-auto">
+				<button type="button" class="btn btn-default btn-sm ellipsis" data-toggle="dropdown" aria-expanded="false">
+					${dropdown_label}
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" role="menu"></ul>
+			</div>
+		`);
+
+		this.page.page_form.append(custom_btn_group);
+
+		return custom_btn_group.find('.dropdown-menu');
 	}
 }
 

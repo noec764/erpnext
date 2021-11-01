@@ -10,7 +10,9 @@ frappe.pages['resource-planning-view'].on_page_load = function(wrapper) {
 
 	erpnext.resource_plan = new ResourcePlan(wrapper);
 	$(wrapper).bind('show', function() {
-		erpnext.resource_plan.show();
+		if (!erpnext.resource_plan.calendar) {
+			erpnext.resource_plan.show();
+		}
 	});
 }
 
@@ -18,8 +20,8 @@ frappe.pages['resource-planning-view'].on_page_load = function(wrapper) {
 class ResourcePlan {
 	constructor(wrapper) {
 		this.wrapper = $(wrapper);
-		// $(`<div class="frappe-card"></div>`).appendTo(this.wrapper.find(".page-content"));
 		this.page = wrapper.page;
+		this.calendar = null;
 	}
 
 	show() {
@@ -32,6 +34,6 @@ class ResourcePlan {
 	}
 
 	build_calendar() {
-		new erpnext.resource_calendar.resourceCalendar(this.wrapper, this.page)
+		this.calendar = new erpnext.resource_calendar.resourceCalendar(this.wrapper, this.page)
 	}
 }
