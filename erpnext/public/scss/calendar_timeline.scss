@@ -45,11 +45,16 @@
 
 	.fc-yellow-stripped {
 		background: repeating-linear-gradient( 45deg, var(--yellow-200), var(--yellow-200) 10px, var(--yellow-400) 10px, var(--yellow-400) 20px );
-		color: white;
+		color: #ffff;
 	}
 
 	.fc-orange-stripped {
 		background: repeating-linear-gradient( 45deg, var(--orange-200), var(--orange-200) 10px, var(--orange-400) 10px, var(--orange-400) 20px );
+	}
+
+	.fc-green-stripped {
+		background: repeating-linear-gradient( 45deg, var(--green-200), var(--green-200) 10px, var(--green-400) 10px, var(--green-400) 20px );
+		color: #ffff;
 	}
 
 	.fc-red-stripped {
@@ -58,7 +63,7 @@
 
 	.fc-pacific-blue-stripped {
 		background: repeating-linear-gradient( 45deg, var(--pacific-blue-200), var(--pacific-blue-200) 10px, var(--pacific-blue-400) 10px, var(--pacific-blue-400) 20px );
-		color: white;
+		color: #ffff;
 	}
 
 	.fc-green-bg {

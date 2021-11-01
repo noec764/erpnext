@@ -373,7 +373,6 @@ class EventPreview {
 	}
 
 	init_preview(preview_data) {
-		console.log(this.info)
 		this.dialog = new frappe.ui.Dialog({
 			fields: [
 				{

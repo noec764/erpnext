@@ -162,28 +162,34 @@ def get_holidays_for_employee(employee, start_date, end_date):
 	return holidays
 
 def get_leave_applications(start, end, filters=None):
-	query_filters = {"status": "Approved"}
-	if filters:
-		query_filters.update(filters)
+	output = []
+	for l in frappe.get_all("Leave Application",
+			filters=filters if filters else {},
+			fields=["name", "leave_type", "employee", "from_date", "to_date", "docstatus", "status"]
+		):
+		css_class = "fc-gray-stripped"
+		if l.docstatus != 0:
+			if l.status == "Approved" and l.docstatus == 1:
+				css_class = "fc-green-stripped"
+			else:
+				css_class = "fc-gray-stripped"
 
-	return [
-		{
-			"id": l.name,
-			"resourceId": l.employee,
-			"start": l.from_date,
-			"end": l.to_date,
-			"title": l.leave_type,
-			"editable": 0,
-			"display": "background",
-			"classNames": ["fc-green-bg"],
-			"doctype": "Leave Application",
-			"docstatus": l.docstatus,
-		}
-		for l in frappe.get_all("Leave Application",
-			filters=query_filters,
-			fields=["name", "leave_type", "employee", "from_date", "to_date", "docstatus"]
+		output.append(
+			{
+				"id": l.name,
+				"resourceId": l.employee,
+				"start": l.from_date,
+				"end": l.to_date,
+				"title": l.leave_type,
+				"editable": 0,
+				"display": "background",
+				"classNames": ["fc-background-event", css_class],
+				"doctype": "Leave Application",
+				"docstatus": l.docstatus
+			}
 		)
-	]
+
+	return output
 
 def get_assignments(start, end, filters=None, conditions=None, return_records=False):
 	from frappe.desk.reportview import get_filters_cond
@@ -199,7 +205,6 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 		query += conditions
 
 	if filters:
-		print(filters)
 		query += get_filters_cond("Shift Assignment", filters, [])
 
 	records = frappe.db.sql(query, {"start_date":start, "end_date":end}, as_dict=True)
