@@ -3,12 +3,20 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt
+from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff
 
 @frappe.whitelist()
-def get_resources(company, start, end, group_by=None):
+def get_resources(company, start, end, department=None, employee=None, group_by=None):
+	query_filters = {"status": "Active", "company": company}
+
+	if not group_by and department:
+		query_filters.update({"department": department})
+
+	if employee:
+		query_filters.update({"name": employee})
+
 	employees = frappe.get_all("Employee",
-			filters={"status": "Active", "company": company},
+			filters=query_filters,
 			fields=["name", "employee_name", "department", "company", "user_id"])
 
 	employee_list = [x.name for x in employees]
@@ -24,7 +32,7 @@ def get_resources(company, start, end, group_by=None):
 	}
 
 	groups = defaultdict(set)
-	if group_by == "department":
+	if group_by == "department" and frappe.get_meta("Shift Type").has_field("department"):
 		shift_group_by = {x.name: x[group_by] for x in frappe.get_all("Shift Type", fields=["name", group_by], distinct=True)}
 
 		for ass in get_assignments(start, end, return_records=True):
@@ -63,7 +71,13 @@ def get_resources_total(start, end):
 
 	total = defaultdict(float)
 	for a in assignments:
-		total[a.get("resourceId")] += flt(a.get("duration"))
+		if not a.get("docstatus") == 1 or a.get("start") > getdate(end):
+			continue
+
+		start = a.get("start") if getdate(end) >= a.get("start") >= getdate(start) else getdate(start)
+		end = a.get("end") if a.get("end") <= getdate(end) else getdate(end)
+		number_of_days = date_diff(start, end) or 1
+		total[a.get("resourceId")] += flt(a.get("duration")) * flt(number_of_days)
 
 	return total
 
@@ -113,8 +127,9 @@ def get_holidays(start_date, end_date, filters=None):
 				"title": hle.description,
 				"editable": 0,
 				"display": "background",
-				"backgroundColor": "var(--green-300)",
-				"doctype": "Holiday List"
+				"classNames": ["fc-background-event", "fc-yellow-stripped"],
+				"doctype": "Holiday List",
+				"docstatus": 0
 			})
 
 	return holidays
@@ -160,12 +175,13 @@ def get_leave_applications(start, end, filters=None):
 			"title": l.leave_type,
 			"editable": 0,
 			"display": "background",
-			"backgroundColor": "var(--green-300)",
-			"doctype": "Leave Application"
+			"classNames": ["fc-green-bg"],
+			"doctype": "Leave Application",
+			"docstatus": l.docstatus,
 		}
 		for l in frappe.get_all("Leave Application",
 			filters=query_filters,
-			fields=["name", "leave_type", "employee", "from_date", "to_date"]
+			fields=["name", "leave_type", "employee", "from_date", "to_date", "docstatus"]
 		)
 	]
 
@@ -183,6 +199,7 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 		query += conditions
 
 	if filters:
+		print(filters)
 		query += get_filters_cond("Shift Assignment", filters, [])
 
 	records = frappe.db.sql(query, {"start_date":start, "end_date":end}, as_dict=True)
@@ -203,11 +220,15 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 				"id": d.name,
 				"resourceId": d.employee,
 				"doctype": "Shift Assignment",
+				"docstatus": d.docstatus,
 				"start": daily_event_start,
 				"end": daily_event_end,
 				"title": cstr(d.shift_type),
+				"html_title": f'<div>{cstr(d.shift_type)}</div><div class="small"><span>{format_time(shift_type_data.get(d.shift_type)[0])}</span>-<span>{format_time(shift_type_data.get(d.shift_type)[1])}</span></div>',
+				"start_time": shift_type_data.get(d.shift_type)[0],
+				"end_time": shift_type_data.get(d.shift_type)[1],
 				"editable": d.docstatus == 0,
-				"color": "var(--gray-500)" if d.docstatus == 0 else "var(--blue-500)",
+				"classNames": ["fc-gray-bg"] if d.docstatus == 0 else (["fc-red-stripped"] if d.docstatus == 2 else ["fc-blue-bg"]),
 				"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0])
 			}
 			if e not in events:
@@ -221,6 +242,7 @@ def get_trainings(start, end, filters=None):
 	query_filters = {
 		"start_time": (">=", getdate(start)),
 		"end_time": ("<=", getdate(end)),
+		"docstatus": 1
 	}
 	if filters:
 		query_filters.update(filters)
@@ -234,12 +256,13 @@ def get_trainings(start, end, filters=None):
 			"title": e.event_name,
 			"editable": 0,
 			"display": "background",
-			"backgroundColor": "var(--red-300)",
-			"doctype": "Training Event"
+			"classNames": ["fc-background-event", "fc-pacific-blue-stripped"],
+			"doctype": "Training Event",
+			"docstatus": e.docstatus
 		}
 		for e in frappe.get_all(
 			"Training Event",
 			filters=query_filters,
-			fields=["name", "`tabTraining Event Employee`.employee", "start_time", "end_time", "event_name"]
+			fields=["name", "`tabTraining Event Employee`.employee", "start_time", "end_time", "event_name", "docstatus"]
 		)
 	]
