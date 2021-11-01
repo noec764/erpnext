@@ -103,7 +103,8 @@
 	}
 }
 
-.shift-btn {
+.shift-btn,
+.task-btn {
 	.btn {
 		background-color: var(--blue-400);
 		color: white;
@@ -111,7 +112,7 @@
 		--icon-stroke: white;
 	}
 
-	.shift-draggable {
+	.btn-draggable {
 		cursor: grab !important;
 	}
 }

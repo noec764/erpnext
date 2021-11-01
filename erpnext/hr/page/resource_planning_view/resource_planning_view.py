@@ -95,6 +95,21 @@ def get_shift_types():
 	]
 
 @frappe.whitelist()
+def get_tasks(projects=None):
+	if not projects:
+		projects = []
+	else:
+		projects = frappe.parse_json(projects)
+
+	query_filters = {"status": ("in", ("Open", "Working", "Pending Review", "Overdue"))}
+	if projects:
+		query_filters.update({"project": ("in", projects)})
+
+	return frappe.get_all("Task",
+		filters=query_filters,
+		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign"], debug=True)
+
+@frappe.whitelist()
 def get_events(start, end, filters=None):
 	if filters:
 		filters = frappe.parse_json(filters)

@@ -17,6 +17,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.calendar_wrapper = this.wrapper.find(".resource-calendar")[0]
 
 		this.company = frappe.defaults.get_default("company")
+		this.projects = []
 		this.view = "Employee"
 		this.calendar = new Calendar(this.calendar_wrapper, this.get_options());
 		this.calendar.render();
@@ -205,9 +206,9 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	add_shift_buttons() {
 		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_shift_types")
 		.then(res => {
-			const shifts_btn = this.add_button_group(__("New Shift"), null, "ml-auto shift-btn")
+			this.shifts_btn = this.add_button_group(__("Assign Shift"), null, "ml-auto shift-btn")
 			if (!res.length) {
-				$(shifts_btn).disable()
+				$(this.shifts_btn).disable()
 			} else {
 				res.map(r => {
 					const eventData = {
@@ -216,23 +217,81 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 						startTime: r.startTime,
 						reference_type: "Shift Type",
 						reference_name: r.name,
-						target: "Shift Assignment",
-						classNames: ["fc-red-bg"]
+						target: "Shift Assignment"
 					}
 
 					const btn = this.page.add_custom_menu_item(
-						shifts_btn,
+						this.shifts_btn,
 						r.name,
 						null,
 						false,
 						null,
 						null
 					);
-					$(btn).addClass("shift-draggable");
+					$(btn).addClass("btn-draggable");
 					this.build_draggable($(btn)[0], eventData);
 				})
 			}
 		})
+	}
+
+	add_tasks_buttons() {
+		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_tasks", {projects: this.projects})
+		.then(res => {
+			this.tasks_btn = this.add_button_group(__("Assign Task"), null, "ml-auto task-btn")
+			if (!res.length) {
+				$(this.tasks_btn).disable()
+			} else {
+				res.map(r => {
+					const eventData = {
+						title: r.name,
+						duration: r.duration,
+						startTime: r.startTime,
+						reference_type: "Task",
+						reference_name: r.name,
+						target: "ToDo"
+					}
+
+					const btn = this.page.add_custom_menu_item(
+						this.tasks_btn,
+						`
+							<div>${r.subject}</div>
+							<div class="small">${r.project}</div>
+							<div class="small text-muted">${r.name}</div>
+						`,
+						null,
+						false,
+						null,
+						null
+					);
+					$(btn).addClass("btn-draggable");
+					this.build_draggable($(btn)[0], eventData);
+				})
+			}
+		})
+	}
+
+	remove_tasks_buttons() {
+		$(".task-btn").remove()
+	}
+
+	toggle_shifts_button() {
+		if (!this.shifts_btn) {
+			this.add_shift_buttons()
+		}
+		this.view!="Project" ? $(".shift-btn").show() : $(".shift-btn").hide();
+	}
+
+	toggle_tasks_button() {
+		if (!this.tasks_btn) {
+			this.add_tasks_buttons()
+		}
+		this.view=="Project" ? $(".task-btn").show() : $(".task-btn").hide();
+	}
+
+	toggle_toolbar_buttons() {
+		this.toggle_shifts_button()
+		this.toggle_tasks_button()
 	}
 
 	add_view_selector() {
@@ -262,7 +321,8 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.view = view;
 		this.page.standard_actions.empty();
 		this.add_view_selector();
-		this.toggle_department_filter();
+		this.toggle_filters();
+		this.toggle_toolbar_buttons();
 		this.calendar.setOption("resourceAreaColumns", this.get_resource_area_columns())
 		this.calendar.refetchResources();
 	}
@@ -274,8 +334,9 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	add_filters() {
 		this.page.clear_fields();
 		this.add_company_filter();
-		this.toggle_department_filter();
+		this.add_department_filter();
 		this.add_employee_filter();
+		this.add_project_filter();
 	}
 
 	add_company_filter() {
@@ -318,11 +379,41 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		})
 	}
 
+	add_project_filter() {
+		this.project_filter = this.page.add_field({
+			fieldname: "project",
+			label: __("Projects"),
+			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Project', txt);
+			},
+			hidden: 1,
+			change: () => {
+				this.projects = this.project_filter.get_value()
+				this.remove_tasks_buttons()
+				this.add_tasks_buttons()
+				// this.refetch_all()
+			}
+		})
+	}
+
 	toggle_department_filter() {
-		if (!this.department_filter) {$
+		if (!this.department_filter) {
 			this.add_department_filter()
 		}
 		this.department_filter.toggle(this.view=="Department")
+	}
+
+	toggle_project_filter() {
+		if (!this.project_filter) {
+			this.add_project_filter()
+		}
+		this.project_filter.toggle(this.view=="Project")
+	}
+
+	toggle_filters() {
+		this.toggle_department_filter()
+		this.toggle_project_filter()
 	}
 
 	add_button_group(label, icon, custom_cls) {
