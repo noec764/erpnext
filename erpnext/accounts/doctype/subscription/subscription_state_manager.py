@@ -33,7 +33,7 @@ class SubscriptionPeriod:
 		elif self.subscription.get_doc_before_save() \
 			and getdate(self.subscription.get_doc_before_save().trial_period_end) != getdate(self.subscription.trial_period_end):
 			return max(getdate(self.subscription.start), add_days(getdate(self.subscription.trial_period_end), 1)) if self.subscription.trial_period_end else self.subscription.start
-		elif not self.subscription.current_invoice_start and getdate(self.subscription.current_invoice_end) < getdate(nowdate()):
+		elif getdate(self.subscription.current_invoice_end) < getdate(nowdate()):
 			return self.get_next_period_start()
 		else:
 			return max(getdate(self.subscription.current_invoice_start), add_days(getdate(self.subscription.trial_period_end), 1)) if self.subscription.trial_period_end else self.subscription.current_invoice_start
