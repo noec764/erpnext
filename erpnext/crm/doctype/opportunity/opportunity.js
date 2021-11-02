@@ -315,38 +315,3 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 };
 
 extend_cscript(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
-
-cur_frm.cscript.item_code = function(doc, cdt, cdn) {
-	get_item_details(doc, cdt, cdn)
-}
-
-cur_frm.cscript.qty = function(doc, cdt, cdn) {
-	get_item_details(doc, cdt, cdn)
-}
-
-const get_item_details = (doc, cdt, cdn) => {
-	var d = locals[cdt][cdn];
-	if (d.item_code) {
-		return frappe.call({
-			method: "erpnext.crm.doctype.opportunity.opportunity.get_item_details",
-			args: {
-				"item_code":d.item_code,
-				"qty": d.qty,
-				"customer": doc.opportunity_from=="Customer" ? doc.party_name : null
-			},
-			callback: function(r, rt) {
-				if(r.message) {
-					$.each(r.message, function(k, v) {
-						frappe.model.set_value(cdt, cdn, k, v);
-					});
-
-					if (r.message.price) {
-						frappe.model.set_value(doc.doctype, doc.name, "opportunity_amount", (doc.opportunity_amount || 0.0) + (d.qty * r.message.price));
-					}
-
-					refresh_field('image_view', d.name, 'items');
-				}
-			}
-		})
-	}
-}

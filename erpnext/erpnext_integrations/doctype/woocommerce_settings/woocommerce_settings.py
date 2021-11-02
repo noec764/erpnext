@@ -48,13 +48,6 @@ class WoocommerceSettings(Document):
 				for df in fields:
 					create_custom_field(doctype, df)
 
-			for doctype in ["Sales Order", "Sales Invoice"]:
-				fields = [
-					dict(fieldname='disable_rounded_total', label='Disable Rounded Total', fieldtype='Check', hidden=1, print_hide=1)
-				]
-				for df in fields:
-					create_custom_field(doctype, df)
-
 			for doctype in ["Sales Order"]:
 				fields = [
 					dict(fieldname='woocommerce_number', label='Woocommerce Number', fieldtype='Data', read_only=1, translatable=0),
