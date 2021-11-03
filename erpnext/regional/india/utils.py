@@ -853,7 +853,7 @@ def get_depreciation_amount(asset, depreciable_value, row):
 	depreciation_left = flt(row.total_number_of_depreciations) - flt(asset.number_of_depreciations_booked)
 
 	if row.depreciation_method in ("Straight Line", "Manual"):
-		depreciation_amount = (flt(row.value_after_depreciation) -
+		depreciation_amount = (flt(asset.gross_purchase_amount) - flt(asset.opening_accumulated_depreciation) -
 			flt(row.expected_value_after_useful_life)) / depreciation_left
 	else:
 		rate_of_depreciation = row.rate_of_depreciation

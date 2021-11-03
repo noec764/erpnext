@@ -59,12 +59,12 @@ class Asset(AccountsController):
 		if self.is_existing_asset and self.purchase_invoice:
 			frappe.throw(_("Purchase Invoice cannot be made against an existing asset {0}").format(self.name))
 
-	def prepare_depreciation_data(self, date_of_sale=None):
+	def prepare_depreciation_data(self, date_of_sale=None, date_of_return=None):
 		if self.calculate_depreciation:
 			self.value_after_depreciation = 0
 			self.set_depreciation_rate()
 			self.make_depreciation_schedule(date_of_sale)
-			self.set_accumulated_depreciation(date_of_sale)
+			self.set_accumulated_depreciation(date_of_sale, date_of_return)
 		else:
 			self.finance_books = []
 			self.value_after_depreciation = (flt(self.gross_purchase_amount) - flt(self.opening_accumulated_depreciation))
@@ -166,7 +166,7 @@ class Asset(AccountsController):
 
 	# TODO: Include date of sale in depreciation
 	def make_depreciation_schedule(self, date_of_sale):
-		if 'Manual' not in [d.depreciation_method for d in self.finance_books] and not self.schedules:
+		if 'Manual' not in [d.depreciation_method for d in self.finance_books] and not self.get('schedules'):
 			self.schedules = []
 
 		if not self.available_for_use_date:
@@ -212,7 +212,28 @@ class Asset(AccountsController):
 			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date cannot be before Available-for-use Date")
 				.format(row.idx))
 
-	def set_accumulated_depreciation(self, date_of_sale=None, ignore_booked_entry = False):
+	# to ensure that final accumulated depreciation amount is accurate
+	def get_adjusted_depreciation_amount(self, depreciation_amount_without_pro_rata, depreciation_amount_for_last_row, finance_book):
+		depreciation_amount_for_first_row = self.get_depreciation_amount_for_first_row(finance_book)
+
+		if depreciation_amount_for_first_row + depreciation_amount_for_last_row != depreciation_amount_without_pro_rata:
+			depreciation_amount_for_last_row = depreciation_amount_without_pro_rata - depreciation_amount_for_first_row
+
+		return depreciation_amount_for_last_row
+
+	def get_depreciation_amount_for_first_row(self, finance_book):
+		if self.has_only_one_finance_book():
+			return self.schedules[0].depreciation_amount
+		else:
+			for schedule in self.schedules:
+				if schedule.finance_book == finance_book:
+					return schedule.depreciation_amount
+
+	def has_only_one_finance_book(self):
+		if len(self.finance_books) == 1:
+			return True
+
+	def set_accumulated_depreciation(self, date_of_sale=None, date_of_return=None, ignore_booked_entry = False):
 		accumulated_depreciations_per_finance_book = defaultdict(dict)
 
 		for i, d in enumerate(self.get("schedules")):
