@@ -39,6 +39,17 @@
 		font-weight: 600;
 	}
 
+	.fc-stripped-event {
+		margin: 2px;
+		border-radius: 5px;
+		font-weight: 600;
+		background-color: #fff;
+		border: 1px dashed var(--blue-800);
+		.fc-event-main {
+			color: var(--blue-800);
+		}
+	}
+
 	.fc-gray-stripped {
 		background: repeating-linear-gradient( 45deg, var(--gray-200), var(--gray-200) 10px, var(--gray-400) 10px, var(--gray-400) 20px );
 	}
@@ -103,16 +114,32 @@
 	}
 }
 
-.shift-btn,
-.task-btn {
-	.btn {
-		background-color: var(--blue-400);
-		color: white;
-		--icon-fill: white;
-		--icon-stroke: white;
+[data-route="resource-planning-view"] {
+	.shift-btn,
+	.task-btn {
+		.btn {
+			background-color: var(--blue-400);
+			color: white;
+			--icon-fill: white;
+			--icon-stroke: white;
+		}
+
+		.user-action {
+			margin: 4px 0;
+
+			.btn-draggable {
+				cursor: grab !important;
+				background-color: #fff;
+				border-radius: var(--border-radius-md);
+				border: 1px dashed var(--gray-500);
+			}
+		}
 	}
 
-	.btn-draggable {
-		cursor: grab !important;
+	.fc-event-dragging:not(.fc-event) {
+		cursor: grabbing !important;
+		background-color: #fff;
+		border-radius: var(--border-radius-md);
+		border: 1px dashed var(--gray-500);
 	}
 }

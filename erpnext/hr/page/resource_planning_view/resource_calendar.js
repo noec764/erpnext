@@ -65,18 +65,20 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			},
 			eventReceive: function(info) {
 				let target = info.event.extendedProps.target
-				frappe.model.with_doctype(target, () => {
-					let new_doc = frappe.model.get_new_doc(target);
-					new_doc.employee = info.event.getResources().map((resource) => { return resource.id })[0]
-					new_doc.shift_type = info.event.extendedProps.reference_name
-					new_doc.start_date = moment(info.event.start).format("YYYY-MM-DD")
-					new_doc.end_date = moment(info.event.end).format("YYYY-MM-DD")
-					frappe.ui.form.make_quick_entry(target, (doc) => {
-						// info.event.setProp("id", doc.name)
-						frappe.set_route(frappe.get_route_str())
-						me.refetch_all();
-					}, null, new_doc, true);
-				});
+				if (target == "AssignTo") {
+					frappe.xcall('erpnext.hr.page.resource_planning_view.resource_planning_view.add_to_doc', {
+						doctype: info.event.extendedProps.reference_type,
+						name: info.event.extendedProps.reference_name,
+						assign_to: info.event.getResources().map((resource) => { return resource.id }),
+					}).then(r => {
+						if (!r) {
+							info.revert()
+						}
+					})
+					me.refetch_all();
+				} else {
+					me.show_quick_entry_form(info, target)
+				}
 			},
 			eventClick: function(info) {
 				if(info.event.extendedProps.doctype && info.event.id) {
@@ -90,6 +92,9 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 					trigger: 'hover',
 					container: 'body'
 				})
+			},
+			eventWillUnmount: function(info) {
+				$(info.el).tooltip('dispose');
 			},
 			eventContent: function(args) {
 				if (args.event.extendedProps.html_title) {
@@ -191,6 +196,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 
 	build_draggable(element, eventData) {
 		new Draggable(element, {
+			itemSelector: '.btn-draggable',
 			eventData: function() {
 				return eventData;
 			}
@@ -201,6 +207,12 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.page.clear_inner_toolbar();
 		this.add_shift_buttons();
 		this.add_view_selector();
+	}
+
+	bind_draggable_event(dropdown) {
+		$(".btn-draggable").off("mousedown").on("mousedown", function(){
+			dropdown.dropdown('toggle');
+		})
 	}
 
 	add_shift_buttons() {
@@ -230,6 +242,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 					);
 					$(btn).addClass("btn-draggable");
 					this.build_draggable($(btn)[0], eventData);
+					this.bind_draggable_event(this.shifts_btn);
 				})
 			}
 		})
@@ -249,7 +262,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 						startTime: r.startTime,
 						reference_type: "Task",
 						reference_name: r.name,
-						target: "ToDo"
+						target: "AssignTo"
 					}
 
 					const btn = this.page.add_custom_menu_item(
@@ -266,6 +279,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 					);
 					$(btn).addClass("btn-draggable");
 					this.build_draggable($(btn)[0], eventData);
+					this.bind_draggable_event(this.tasks_btn);
 				})
 			}
 		})
@@ -445,6 +459,27 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.page.page_form.append(custom_btn_group);
 
 		return custom_btn_group.find('.dropdown-menu');
+	}
+
+	show_quick_entry_form(info, target) {
+		frappe.model.with_doctype(target, () => {
+			let new_doc = frappe.model.get_new_doc(target);
+			new_doc.employee = info.event.getResources().map((resource) => { return resource.id })[0]
+			new_doc.shift_type = info.event.extendedProps.reference_name
+			new_doc.start_date = moment(info.event.start).format("YYYY-MM-DD")
+			new_doc.end_date = moment(info.event.end).format("YYYY-MM-DD")
+
+			frappe.ui.form.make_quick_entry(target, (doc) => {
+				// info.event.setProp("id", doc.name)
+				frappe.set_route(frappe.get_route_str())
+				me.refetch_all();
+			}, null, new_doc, true);
+
+			frappe.quick_entry.dialog.get_close_btn().on('click', () => {
+				info.revert();
+				frappe.quick_entry.dialog.hide();
+			});
+		});
 	}
 }
 

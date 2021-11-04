@@ -3,7 +3,8 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff
+from frappe.desk.form.assign_to import add
+from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days
 
 @frappe.whitelist()
 def get_resources(company, start, end, department=None, employee=None, group_by=None):
@@ -107,7 +108,27 @@ def get_tasks(projects=None):
 
 	return frappe.get_all("Task",
 		filters=query_filters,
-		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign"], debug=True)
+		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign"], debug=False)
+
+@frappe.whitelist()
+def add_to_doc(doctype, name, assign_to=None):
+	if not assign_to:
+		assign_to = []
+	else:
+		assign_to = frappe.parse_json(assign_to)
+
+	users = [emp for emp in (frappe.db.get_value("Employee", employee, "user_id") for employee in assign_to) if emp is not None]
+	if users:
+		try:
+			return add({
+				"assign_to": users,
+				"doctype": doctype,
+				"name": name
+			})
+		except Exception:
+			pass
+	else:
+		frappe.msgprint(_("No user found for this employee"))
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):
@@ -118,6 +139,7 @@ def get_events(start, end, filters=None):
 	out.extend(get_leave_applications(start, end, filters))
 	out.extend(get_trainings(start, end, filters))
 	out.extend(get_assignments(start, end, filters))
+	out.extend(get_assigned_tasks(start=start, end=end, filters=filters))
 	return out
 
 def get_holidays(start_date, end_date, filters=None):
@@ -141,7 +163,6 @@ def get_holidays(start_date, end_date, filters=None):
 				"end": hle.holiday_date,
 				"title": hle.description,
 				"editable": 0,
-				"display": "background",
 				"classNames": ["fc-background-event", "fc-yellow-stripped"],
 				"doctype": "Holiday List",
 				"docstatus": 0
@@ -197,7 +218,6 @@ def get_leave_applications(start, end, filters=None):
 				"end": l.to_date,
 				"title": l.leave_type,
 				"editable": 0,
-				"display": "background",
 				"classNames": ["fc-background-event", css_class],
 				"doctype": "Leave Application",
 				"docstatus": l.docstatus
@@ -205,6 +225,34 @@ def get_leave_applications(start, end, filters=None):
 		)
 
 	return output
+
+def get_trainings(start, end, filters=None):
+	query_filters = {
+		"start_time": (">=", getdate(start)),
+		"end_time": ("<=", getdate(end)),
+		"docstatus": 1
+	}
+	if filters:
+		query_filters.update(filters)
+
+	return [
+		{
+			"id": e.name,
+			"resourceId": e.employee,
+			"start": e.start_time,
+			"end": e.end_time,
+			"title": e.event_name,
+			"editable": 0,
+			"classNames": ["fc-background-event", "fc-pacific-blue-stripped"],
+			"doctype": "Training Event",
+			"docstatus": e.docstatus
+		}
+		for e in frappe.get_all(
+			"Training Event",
+			filters=query_filters,
+			fields=["name", "`tabTraining Event Employee`.employee", "start_time", "end_time", "event_name", "docstatus"]
+		)
+	]
 
 def get_assignments(start, end, filters=None, conditions=None, return_records=False):
 	from frappe.desk.reportview import get_filters_cond
@@ -258,31 +306,36 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 
 	return events
 
-def get_trainings(start, end, filters=None):
-	query_filters = {
-		"start_time": (">=", getdate(start)),
-		"end_time": ("<=", getdate(end)),
-		"docstatus": 1
-	}
-	if filters:
-		query_filters.update(filters)
+def get_assigned_tasks(start, end, filters=None):
+	query_filters = {"status": ("in", ("Open", "Working", "Pending Review", "Overdue"))}
 
-	return [
-		{
-			"id": e.name,
-			"resourceId": e.employee,
-			"start": e.start_time,
-			"end": e.end_time,
-			"title": e.event_name,
-			"editable": 0,
-			"display": "background",
-			"classNames": ["fc-background-event", "fc-pacific-blue-stripped"],
-			"doctype": "Training Event",
-			"docstatus": e.docstatus
-		}
-		for e in frappe.get_all(
-			"Training Event",
-			filters=query_filters,
-			fields=["name", "`tabTraining Event Employee`.employee", "start_time", "end_time", "event_name", "docstatus"]
-		)
-	]
+	if start and end:
+		start_date = add_days(getdate(start), -1)
+		end_date = add_days(getdate(end), 1)
+		query_filters.update({f"ifnull(exp_start_date, {frappe.db.escape(start)})": (">=", start_date), f"ifnull(exp_end_date, {frappe.db.escape(end)})": (">=", end_date)})
+
+	tasks = []
+	user_map = defaultdict(str)
+	for task in frappe.get_all("Task",
+		filters=query_filters,
+		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign", "docstatus", "color"]):
+		for assigned in frappe.parse_json(task._assign or []):
+			if not user_map.get(assigned):
+				user_map[assigned] = frappe.db.get_value("Employee", dict(user_id=assigned))
+
+			tasks.append({
+				"id": task.name + assigned,
+				"resourceId": user_map.get(assigned),
+				"start": task.exp_start_date or start,
+				"end": task.exp_end_date or end,
+				"title": task.subject,
+				"editable": 1,
+				"borderColor": task.color,
+				"textColor": task.color,
+				"classNames": ["fc-stripped-event"],
+				"doctype": "Task",
+				"docstatus": task.docstatus
+			})
+
+	return tasks
+
