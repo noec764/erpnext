@@ -4,7 +4,7 @@ from collections import defaultdict
 import frappe
 from frappe import _
 from frappe.desk.form.assign_to import add
-from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days
+from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days, format_date
 
 @frappe.whitelist()
 def get_resources(company, start, end, department=None, employee=None, group_by=None):
@@ -323,12 +323,15 @@ def get_assigned_tasks(start, end, filters=None):
 			if not user_map.get(assigned):
 				user_map[assigned] = frappe.db.get_value("Employee", dict(user_id=assigned))
 
+			formatted_start_date = format_date(task.exp_start_date) if task.exp_start_date else _("No start date")
+			formatted_end_date = format_date(task.exp_end_date) if task.exp_end_date else _("No end date")
 			tasks.append({
 				"id": task.name + assigned,
 				"resourceId": user_map.get(assigned),
 				"start": task.exp_start_date or start,
 				"end": task.exp_end_date or end,
 				"title": task.subject,
+				"html_title": f'<div>{cstr(task.subject)}</div><div class="small"><span>{(task.project + " | ") if task.project else ""}</span><span>{formatted_start_date}</span>-<span>{formatted_end_date}</span></div>',
 				"editable": 1,
 				"borderColor": task.color,
 				"textColor": task.color,

@@ -34,8 +34,8 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			plugins: [ resourceTimelinePlugin, interactionPlugin ],
 			initialView: 'resourceTimelineWeek',
 			headerToolbar: {
-				left: 'prev,today,next',
-				center: 'title',
+				left: 'title',
+				center: 'prev,today,next',
 				right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth'
 			},
 			editable: false,
