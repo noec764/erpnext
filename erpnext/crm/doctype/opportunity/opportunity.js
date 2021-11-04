@@ -204,13 +204,19 @@ erpnext.crm.Opportunity = frappe.ui.form.Controller.extend({
 
 $.extend(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
 
-cur_frm.cscript.item_code = function(doc, cdt, cdn) {
-	get_item_details(doc, cdt, cdn)
-}
+frappe.ui.form.on("Opportunity Item", {
+	item_code: function(frm, cdt, cdn) {
+		get_item_details(frm.doc, cdt, cdn)
+	},
 
-cur_frm.cscript.qty = function(doc, cdt, cdn) {
-	get_item_details(doc, cdt, cdn)
-}
+	qty: function(frm, cdt, cdn) {
+		get_item_details(frm.doc, cdt, cdn)
+	},
+
+	uom: function(frm, cdt, cdn) {
+		get_item_details(frm.doc, cdt, cdn)
+	}
+})
 
 const get_item_details = (doc, cdt, cdn) => {
 	var d = locals[cdt][cdn];
@@ -220,6 +226,7 @@ const get_item_details = (doc, cdt, cdn) => {
 			args: {
 				"item_code":d.item_code,
 				"qty": d.qty,
+				"uom": d.uom,
 				"customer": doc.opportunity_from=="Customer" ? doc.party_name : null
 			}
 		}).then((r, rt) => {
@@ -230,7 +237,7 @@ const get_item_details = (doc, cdt, cdn) => {
 
 				if (r.message.price) {
 					frappe.model.set_value(cdt, cdn, "basic_rate", r.message.price);
-					const total = doc.items.reduce((acc, i) => acc + (i.qty * i.basic_rate), 0)
+					const total = doc.items.reduce((acc, i) => acc + ((i.qty || 0.0) * (i.basic_rate || 0.0)), 0)
 					frappe.model.set_value(doc.doctype, doc.name, "opportunity_amount", total);
 				}
 
