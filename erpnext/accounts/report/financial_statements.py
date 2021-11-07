@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 import re
-from past.builtins import cmp
 import functools
 
 import frappe
@@ -338,7 +337,7 @@ def sort_accounts(accounts, is_root=False, key="name"):
 	def compare_accounts(a, b):
 		if re.split(r'\W+', a[key])[0].isdigit() and re.split(r'\W+', b[key])[0].isdigit():
 			# if chart of accounts is numbered, then sort by number
-			return cmp(int(re.split(r'\W+', a[key])[0]), int(re.split(r'\W+', b[key])[0]))
+			return int(re.split(r'\W+', a[key])[0]) - int(re.split(r'\W+', b[key])[0])
 		elif is_root:
 			if a.report_type != b.report_type and a.report_type == "Balance Sheet":
 				return -1
@@ -350,7 +349,7 @@ def sort_accounts(accounts, is_root=False, key="name"):
 				return -1
 		else:
 			# sort by key (number) or name
-			return cmp(a[key], b[key])
+			return int(a[key] > b[key]) - int(a[key] < b[key])
 		return 1
 
 	accounts.sort(key = functools.cmp_to_key(compare_accounts))
