@@ -1,7 +1,7 @@
 # Copyright (c) 2019, Dokos SAS and Contributors
 # License: See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, unittest
 from frappe.model.naming import parse_naming_series
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry

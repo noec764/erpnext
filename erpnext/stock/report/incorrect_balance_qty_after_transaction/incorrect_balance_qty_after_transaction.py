@@ -3,7 +3,6 @@
 
 import frappe
 from frappe import _
-from six import iteritems
 from frappe.utils import flt
 
 def execute(filters=None):
@@ -25,7 +24,7 @@ def get_data(filters):
 
 def validate_data(itewise_balance_qty):
 	res = []
-	for key, data in iteritems(itewise_balance_qty):
+	for key, data in itewise_balance_qty.items():
 		row = get_incorrect_data(data)
 		if row:
 			res.append(row)

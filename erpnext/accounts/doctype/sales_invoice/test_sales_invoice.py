@@ -1,10 +1,10 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-from __future__ import unicode_literals
+
 
 import frappe, erpnext
 
-import unittest, copy, time
+import unittest, copy
 from frappe.utils import nowdate, flt, getdate, cint, add_days, add_months
 from frappe.model.dynamic_links import get_dynamic_link_map
 from erpnext.stock.doctype.stock_entry.test_stock_entry import make_stock_entry, get_qty_after_transaction
@@ -19,7 +19,6 @@ from frappe.model.naming import make_autoname
 from erpnext.accounts.doctype.account.test_account import get_inventory_account, create_account
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
 from erpnext.stock.doctype.item.test_item import create_item
-from six import iteritems
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_inter_company_transaction
 from erpnext.regional.india.utils import get_ewb_data
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
@@ -336,7 +335,7 @@ class TestSalesInvoice(unittest.TestCase):
 
 		# check if item values are calculated
 		for i, d in enumerate(si.get("items")):
-			for k, v in iteritems(expected_values[i]):
+			for k, v in expected_values[i].items():
 				self.assertEqual(d.get(k), v)
 
 		# check net total
@@ -639,7 +638,7 @@ class TestSalesInvoice(unittest.TestCase):
 
 		# check if item values are calculated
 		for i, d in enumerate(si.get("items")):
-			for key, val in iteritems(expected_values[i]):
+			for key, val in expected_values[i].items():
 				self.assertEqual(d.get(key), val)
 
 		# check net total

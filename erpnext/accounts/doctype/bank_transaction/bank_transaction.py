@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from erpnext.controllers.status_updater import StatusUpdater
 from frappe.utils import flt, getdate, fmt_money, formatdate
@@ -119,7 +119,7 @@ class BankTransaction(StatusUpdater):
 	def set_allocation_in_bank_transaction(self):
 		allocated_amount = sum([flt(x.get("allocated_amount", 0)) * (1 if x.get("payment_type") == "Debit" else -1) for x in self.payment_entries])\
 			if self.payment_entries else 0
-		
+
 		transaction_amount = flt(self.credit) - flt(self.debit)
 
 		self.db_set("allocated_amount", flt(allocated_amount) if allocated_amount else 0)
@@ -203,7 +203,7 @@ def get_bank_transaction_balance_on(bank_account, date):
 
 	balance = balance_query[0].get("balance") if balance_query[0].get("balance") else 0
 	currency = balance_query[0].get("currency") if balance_query[0].get("currency") else None
-	
+
 	return {
 		"balance": balance,
 		"currency": currency,

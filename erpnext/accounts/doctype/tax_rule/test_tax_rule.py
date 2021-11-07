@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
 
 import frappe
 import unittest
@@ -10,8 +10,6 @@ from erpnext.crm.doctype.opportunity.test_opportunity import make_opportunity
 from erpnext.crm.doctype.opportunity.opportunity import make_quotation
 
 test_records = frappe.get_test_records('Tax Rule')
-
-from six import iteritems
 
 class TestTaxRule(unittest.TestCase):
 	@classmethod
@@ -173,7 +171,7 @@ def make_tax_rule(**args):
 
 	tax_rule = frappe.new_doc("Tax Rule")
 
-	for key, val in iteritems(args):
+	for key, val in args.items():
 		if key != "save":
 			tax_rule.set(key, val)
 

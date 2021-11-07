@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import json
 
@@ -12,7 +12,7 @@ from erpnext.stock.get_item_details import get_reserved_qty_for_so
 from frappe import _, ValidationError
 
 from erpnext.controllers.stock_controller import StockController
-from six import string_types
+
 from six.moves import map
 class SerialNoCannotCreateDirectError(ValidationError): pass
 class SerialNoCannotCannotChangeError(ValidationError): pass
@@ -590,7 +590,7 @@ def auto_fetch_serial_number(qty, item_code, warehouse, posting_date=None, batch
 
 @frappe.whitelist()
 def get_pos_reserved_serial_nos(filters):
-	if isinstance(filters, string_types):
+	if isinstance(filters, str):
 		filters = json.loads(filters)
 
 	pos_transacted_sr_nos = frappe.db.sql("""select item.serial_no as serial_no

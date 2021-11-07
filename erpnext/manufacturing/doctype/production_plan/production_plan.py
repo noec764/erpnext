@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe, json, copy
 from frappe import msgprint, _
-from six import iteritems
 
 from frappe.model.document import Document
 from frappe.utils import (flt, cint, nowdate, add_days, comma_and, now_datetime,
@@ -890,7 +889,7 @@ def get_items_for_material_requests(doc, warehouses=None, get_parent_warehouse_d
 
 		sales_order = doc.get("sales_order")
 
-		for item_code, details in iteritems(item_details):
+		for item_code, details in item_details.items():
 			so_item_details.setdefault(sales_order, frappe._dict())
 			if item_code in so_item_details.get(sales_order, {}):
 				so_item_details[sales_order][item_code]['qty'] = so_item_details[sales_order][item_code].get("qty", 0) + flt(details.qty)
@@ -898,7 +897,7 @@ def get_items_for_material_requests(doc, warehouses=None, get_parent_warehouse_d
 				so_item_details[sales_order][item_code] = details
 
 	mr_items = []
-	for sales_order, item_code in iteritems(so_item_details):
+	for sales_order, item_code in so_item_details.items():
 		item_dict = so_item_details[sales_order]
 		for details in item_dict.values():
 			bin_dict = get_bin_details(details, doc.company, warehouse)

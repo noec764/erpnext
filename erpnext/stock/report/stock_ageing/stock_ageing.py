@@ -1,12 +1,10 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _
 from operator import itemgetter
 from frappe.utils import date_diff, flt, cint
-from six import iteritems
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 
 def execute(filters=None):
@@ -16,7 +14,7 @@ def execute(filters=None):
 	_func = itemgetter(1)
 
 	data = []
-	for item, item_dict in iteritems(item_details):
+	for item, item_dict in item_details.items():
 		earliest_age, latest_age = 0, 0
 
 		fifo_queue = sorted(filter(_func, item_dict["fifo_queue"]), key=_func)

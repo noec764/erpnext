@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
 
 import frappe
 import unittest
@@ -18,7 +18,7 @@ class TestVehicleLog(unittest.TestCase):
 			self.employee_id = make_employee("testdriver@example.com", company="_Test Company")
 
 		self.license_plate = get_vehicle(self.employee_id)
-	
+
 	def tearDown(self):
 		frappe.delete_doc("Vehicle", self.license_plate, force=1)
 		frappe.delete_doc("Employee", self.employee_id, force=1)
@@ -41,7 +41,7 @@ class TestVehicleLog(unittest.TestCase):
 		self.assertEqual(vehicle.last_odometer, current_odometer - distance_travelled)
 
 		vehicle_log.delete()
-	
+
 	def test_vehicle_log_fuel_expense(self):
 		vehicle_log = make_vehicle_log(self.license_plate, self.employee_id)
 

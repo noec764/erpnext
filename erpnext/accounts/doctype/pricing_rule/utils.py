@@ -2,13 +2,8 @@
 # MIT License. See license.txt
 
 # For license information, please see license.txt
-
-from __future__ import unicode_literals
-
 import copy
 import json
-
-from six import string_types
 
 import frappe
 from erpnext.setup.doctype.item_group.item_group import get_child_item_groups

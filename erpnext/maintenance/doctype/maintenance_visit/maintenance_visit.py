@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.utils import get_datetime
@@ -28,11 +28,11 @@ class MaintenanceVisit(TransactionBase):
 	def validate(self):
 		self.validate_serial_no()
 		self.validate_maintenance_date()
-	
+
 	def update_completion_status(self):
 		if self.maintenance_schedule_detail:
 			frappe.db.set_value('Maintenance Schedule Detail', self.maintenance_schedule_detail, 'completion_status', self.completion_status)
-	
+
 	def update_actual_date(self):
 		if self.maintenance_schedule_detail:
 			frappe.db.set_value('Maintenance Schedule Detail', self.maintenance_schedule_detail, 'actual_date', self.mntc_date)

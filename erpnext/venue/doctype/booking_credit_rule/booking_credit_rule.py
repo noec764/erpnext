@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
@@ -90,7 +90,7 @@ def trigger_credit_rules(doc, method):
 	}
 
 	if doc.doctype in get_trigger_docs() and frappe.db.get_value("Booking Credit Rule", filters):
-		rules = frappe.get_all("Booking Credit Rule", 
+		rules = frappe.get_all("Booking Credit Rule",
 			filters=filters)
 
 		for rule in rules:
@@ -106,7 +106,7 @@ def _get_booking_credit_documents():
 	return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
 
 def trigger_after_specific_time():
-	rules = frappe.get_all("Booking Credit Rule", 
+	rules = frappe.get_all("Booking Credit Rule",
 		filters={
 			"disabled": 0,
 			"trigger_action": ("in", ("After Document Start Datetime", "After Document End Datetime"))

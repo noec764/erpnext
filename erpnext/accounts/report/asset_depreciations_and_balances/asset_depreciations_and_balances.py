@@ -1,7 +1,7 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.utils import formatdate, flt, add_days
@@ -117,7 +117,7 @@ def get_assets(filters):
 			union
 			SELECT a.asset_category,
 				   ifnull(sum(case when ifnull(a.disposal_date, 0) != 0
-										and (a.disposal_date < %(from_date)s or a.disposal_date > %(to_date)s) 
+										and (a.disposal_date < %(from_date)s or a.disposal_date > %(to_date)s)
 										then
 									0
 							   else

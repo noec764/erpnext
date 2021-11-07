@@ -1,7 +1,7 @@
 # Copyright (c) 2019, Dokos SAS and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import erpnext
 from frappe.utils import flt, fmt_money

@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
 import frappe
 
 from frappe.utils import flt, cint, nowdate
@@ -16,7 +15,6 @@ from frappe.model.mapper import get_mapped_doc
 from erpnext.buying.utils import check_on_hold_or_closed_status
 from erpnext.assets.doctype.asset.asset import get_asset_account, is_cwip_accounting_enabled
 from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
-from six import iteritems
 from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_transaction
 
 form_grid_templates = {
@@ -359,7 +357,7 @@ class PurchaseReceipt(BuyingController):
 
 					# Amount added through landed-cos-voucher
 					if d.landed_cost_voucher_amount and landed_cost_entries:
-						for account, amount in iteritems(landed_cost_entries[(d.item_code, d.name)]):
+						for account, amount in landed_cost_entries[(d.item_code, d.name)].items():
 							account_currency = get_account_currency(account)
 							credit_amount = (flt(amount["base_amount"]) if (amount["base_amount"] or
 								account_currency!=self.company_currency) else flt(amount["amount"]))

@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, unittest
 import frappe.defaults
 from frappe.utils import flt, nowdate, nowtime
@@ -15,11 +15,10 @@ from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
 from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.stock.doctype.stock_entry.stock_entry import move_sample_to_retention_warehouse, make_stock_in_entry
 from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import OpeningEntryAccountError
-from six import iteritems
 
 def get_sle(**args):
 	condition, values = "", []
-	for key, value in iteritems(args):
+	for key, value in args.items():
 		condition += " and " if condition else " where "
 		condition += "`{0}`=%s".format(key)
 		values.append(value)

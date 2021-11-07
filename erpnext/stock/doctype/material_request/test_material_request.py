@@ -3,7 +3,7 @@
 
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe.utils import flt, today
 from erpnext.stock.doctype.material_request.material_request \

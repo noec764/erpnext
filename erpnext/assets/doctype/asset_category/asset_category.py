@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.utils import cint, get_link_to_form
@@ -63,7 +63,7 @@ class AssetCategory(Document):
 		if self.enable_cwip_accounting:
 			missing_cwip_accounts_for_company = []
 			for d in self.accounts:
-				if (not d.capital_work_in_progress_account and 
+				if (not d.capital_work_in_progress_account and
 					not frappe.db.get_value("Company", d.company_name, "capital_work_in_progress_account")):
 					missing_cwip_accounts_for_company.append(get_link_to_form("Company", d.company_name))
 

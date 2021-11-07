@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, erpnext
 import frappe.defaults
 from frappe.utils import cint, flt, getdate, add_days, add_months, cstr, nowdate, get_link_to_form, formatdate
@@ -20,14 +20,12 @@ from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos, get_delive
 from erpnext.setup.doctype.company.company import update_company_current_month_sales
 from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
 from erpnext.accounts.doctype.loyalty_program.loyalty_program import (get_loyalty_program_details_with_points,
-	get_loyalty_details, validate_loyalty_points)
+	validate_loyalty_points)
 from erpnext.accounts.deferred_revenue import validate_service_stop_date
 from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import get_party_tax_withholding_details
 from frappe.model.utils import get_fetch_values
 from frappe.contacts.doctype.address.address import get_address_display
-
-from six import iteritems
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -530,7 +528,7 @@ class SalesInvoice(SellingController):
 			for item in self.get("items"):
 				if item.get('item_code'):
 					profile_details = get_pos_profile_item_details(pos, frappe._dict(item.as_dict()), pos, update_data=True)
-					for fname, val in iteritems(profile_details):
+					for fname, val in profile_details.items():
 						if (not for_validate) or (for_validate and not item.get(fname)):
 							item.set(fname, val)
 
@@ -635,7 +633,7 @@ class SalesInvoice(SellingController):
 		if self.is_return:
 			return
 		prev_doc_field_map = {'Sales Order': ['so_required', 'is_pos'],'Delivery Note': ['dn_required', 'update_stock']}
-		for key, value in iteritems(prev_doc_field_map):
+		for key, value in prev_doc_field_map.items():
 			if frappe.db.get_single_value('Selling Settings', value[0]) == 'Yes':
 
 				if frappe.get_value('Customer', self.customer, value[0]):

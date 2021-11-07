@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe, json
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
@@ -16,7 +16,7 @@ from erpnext.stock.doctype.material_request.material_request import set_missing_
 from erpnext.controllers.buying_controller import BuyingController
 from erpnext.buying.utils import validate_for_items
 
-from six import string_types
+
 
 STANDARD_USERS = ("Guest", "Administrator")
 
@@ -288,7 +288,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 # This method is used to make supplier quotation from supplier's portal.
 @frappe.whitelist()
 def create_supplier_quotation(doc):
-	if isinstance(doc, string_types):
+	if isinstance(doc, str):
 		doc = json.loads(doc)
 
 	try:

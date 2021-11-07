@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe, math
 from frappe import _
 from frappe.utils import flt, rounded, cint
@@ -12,7 +12,7 @@ from erpnext.loan_management.doctype.loan.loan import (get_monthly_repayment_amo
 		get_total_loan_amount, get_sanctioned_amount_limit)
 from erpnext.loan_management.doctype.loan_security_price.loan_security_price import get_loan_security_price
 import json
-from six import string_types
+
 
 class LoanApplication(Document):
 	def validate(self):
@@ -182,7 +182,7 @@ def create_pledge(loan_application, loan=None):
 #This is a sandbox method to get the proposed pledges
 @frappe.whitelist()
 def get_proposed_pledge(securities):
-	if isinstance(securities, string_types):
+	if isinstance(securities, str):
 		securities = json.loads(securities)
 
 	proposed_pledges = {

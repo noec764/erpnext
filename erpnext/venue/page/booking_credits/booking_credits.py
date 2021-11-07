@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
@@ -81,15 +81,15 @@ def reconcile_credits(customer, target_uom, source_item, target_item, date=None)
 		"message": _("The amount could not be converted. Please check if the customer has enough credits and that at least one unit of credit can be converted.")
 	}
 
-def closestInteger(n, m) : 
-	q = int(n / m) 
-	n1 = m * q 
-	if((n * m) > 0) : 
-		n2 = (m * (q + 1))  
-	else : 
-		n2 = (m * (q - 1)) 
+def closestInteger(n, m) :
+	q = int(n / m)
+	n1 = m * q
+	if((n * m) > 0) :
+		n2 = (m * (q + 1))
+	else :
+		n2 = (m * (q - 1))
 
-	if (abs(n - n1) < abs(n - n2)) : 
-		return n1 
+	if (abs(n - n1) < abs(n - n2)) :
+		return n1
 
-	return n2 
+	return n2

@@ -1,12 +1,11 @@
 # coding: utf-8
-from __future__ import unicode_literals
+
 
 import datetime
 import zipfile
 from csv import QUOTE_NONNUMERIC
-from six import BytesIO
+from io import BytesIO
 
-import six
 import frappe
 import pandas as pd
 from frappe import _

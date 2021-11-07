@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -13,8 +13,6 @@ from erpnext.accounts.doctype.payment_request.payment_request import make_paymen
 from erpnext.accounts.doctype.loyalty_program.loyalty_program import validate_loyalty_points
 from erpnext.stock.doctype.serial_no.serial_no import get_pos_reserved_serial_nos, get_serial_nos
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice, get_bank_cash_account, update_multi_mode_option, get_mode_of_payment_info
-
-from six import iteritems
 
 class POSInvoice(SalesInvoice):
 	def __init__(self, *args, **kwargs):
@@ -362,7 +360,7 @@ class POSInvoice(SalesInvoice):
 			for item in self.get("items"):
 				if item.get('item_code'):
 					profile_details = get_pos_profile_item_details(profile.get("company"), frappe._dict(item.as_dict()), profile)
-					for fname, val in iteritems(profile_details):
+					for fname, val in profile_details.items():
 						if (not for_validate) or (for_validate and not item.get(fname)):
 							item.set(fname, val)
 
@@ -522,9 +520,8 @@ def make_sales_return(source_name, target_doc=None):
 @frappe.whitelist()
 def make_merge_log(invoices):
 	import json
-	from six import string_types
 
-	if isinstance(invoices, string_types):
+	if isinstance(invoices, str):
 		invoices = json.loads(invoices)
 
 	if len(invoices) == 0:

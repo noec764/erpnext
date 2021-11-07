@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2019, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import warnings
 import frappe
 from frappe import _
 from urllib.parse import urlencode
 from frappe.utils import get_url, call_hook_method, cint, flt, getdate, nowdate
 from frappe.integrations.utils import PaymentGatewayController, create_request_log, create_payment_gateway
-from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import (StripeChargeWebhookHandler, 
+from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import (StripeChargeWebhookHandler,
 	StripePaymentIntentWebhookHandler, StripeInvoiceWebhookHandler)
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice, StripeCustomer, StripePaymentIntent, StripeWebhookEndpoint
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod

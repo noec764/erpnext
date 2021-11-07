@@ -1,11 +1,10 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import msgprint, _
-from frappe.utils import cint, now, get_link_to_form
-from six import iteritems
+from frappe.utils import now, get_link_to_form
 from frappe.model.document import Document
 
 class POSProfile(Document):
@@ -36,7 +35,7 @@ class POSProfile(Document):
 			self.expense_account], "Cost Center": [self.cost_center],
 			"Warehouse": [self.warehouse]}
 
-		for link_dt, dn_list in iteritems(accounts):
+		for link_dt, dn_list in accounts.items():
 			for link_dn in dn_list:
 				if link_dn and not frappe.db.exists({"doctype": link_dt,
 						"company": self.company, "name": link_dn}):

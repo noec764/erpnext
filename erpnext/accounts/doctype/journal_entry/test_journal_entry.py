@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import unittest, frappe
 from frappe.utils import flt, nowdate
 from erpnext.accounts.doctype.account.test_account import get_inventory_account
@@ -100,7 +100,7 @@ class TestJournalEntry(unittest.TestCase):
 			"debit_in_account_currency": 0 if diff > 0 else abs(diff),
 			"credit_in_account_currency": diff if diff > 0 else 0
 		})
-		
+
 		jv.append("accounts", {
 			"account": "Stock Adjustment - TCP1",
 			"cost_center": "Main - TCP1",

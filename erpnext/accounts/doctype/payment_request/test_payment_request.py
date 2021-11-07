@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
 
 import frappe
 import unittest
@@ -37,7 +37,7 @@ class TestPaymentRequest(unittest.TestCase):
 	def setUp(self):
 		if not frappe.db.get_value("Payment Gateway", payment_gateway["gateway"], "name"):
 			frappe.get_doc(payment_gateway).insert(ignore_permissions=True)
-			
+
 		for method in payment_method:
 			if not frappe.db.get_value("Payment Gateway Account", {"payment_gateway": method["payment_gateway"],
 				"currency": method["currency"]}, "name"):

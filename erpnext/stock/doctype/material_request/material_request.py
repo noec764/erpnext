@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 
 import json
@@ -15,7 +15,7 @@ from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.buying.utils import check_on_hold_or_closed_status, validate_for_items
 from erpnext.stock.doctype.item.item import get_item_defaults
 
-from six import string_types
+
 
 form_grid_templates = {
 	"items": "templates/form_grid/material_request_grid.html"

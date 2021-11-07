@@ -17,7 +17,7 @@ from frappe.model.mapper import get_mapped_doc
 
 import functools
 
-from six import string_types
+
 
 from operator import itemgetter
 

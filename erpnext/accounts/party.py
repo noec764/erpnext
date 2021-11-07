@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 
 import frappe, erpnext
 from frappe import _, msgprint, scrub
@@ -15,8 +15,6 @@ from frappe.contacts.doctype.contact.contact import get_contact_details
 from erpnext.exceptions import PartyFrozen, PartyDisabled, InvalidAccountCurrency
 from erpnext.accounts.utils import get_fiscal_year
 from erpnext import get_company_currency
-
-from six import iteritems, string_types
 
 class DuplicatePartyAccountError(frappe.ValidationError): pass
 
@@ -496,7 +494,7 @@ def get_timeline_data(doctype, name):
 
 	timeline_items = dict(data)
 
-	for date, count in iteritems(timeline_items):
+	for date, count in timeline_items.items():
 		timestamp = get_timestamp(date)
 		out.update({ timestamp: count })
 

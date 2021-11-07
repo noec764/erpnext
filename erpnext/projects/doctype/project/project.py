@@ -1,10 +1,9 @@
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
-from six import iteritems
 from email_reply_parser import EmailReplyParser
 from frappe.utils import (flt, getdate, get_url, now,
 	nowtime, get_time, today, get_datetime, add_days)

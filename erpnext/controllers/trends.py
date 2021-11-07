@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe.utils import getdate
 from frappe import _
@@ -39,7 +39,7 @@ def validate_filters(filters):
 		frappe.throw(_("'Based On' and 'Group By' can not be same"))
 
 def get_data(filters, conditions):
-	
+
 	data = []
 	inc, cond= '',''
 	query_details =  conditions["based_on_select"] + conditions["period_wise_select"]
@@ -52,7 +52,7 @@ def get_data(filters, conditions):
 
 	if conditions["based_on_select"] in ["t1.project,", "t2.project,"]:
 		cond = ' and '+ conditions["based_on_select"][:-1] +' IS Not NULL'
-	
+
 	if conditions.get('trans') in ['Sales Order', 'Purchase Order']:
 		cond += " and t1.status != 'Closed'"
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2019, Dokos SAS and contributors
 # For license information, please see license.txt
 
@@ -41,7 +41,7 @@ STATUS_MAP = {
 class GoCardlessMandateWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessMandateWebhookHandler, self).__init__(**kwargs)
-		
+
 		self.event_map = EVENT_MAP
 		self.action_type = self.data.get("action")
 		self.mandate = self.data.get("links", {}).get("mandate")

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from collections import Counter 
+from collections import Counter
 
 import frappe
 from frappe import _

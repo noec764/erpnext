@@ -1,17 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
+
 # Basic interface to Amazon MWS
 # Based on http://code.google.com/p/amazon-mws-python
 # Extended to include finances object
-from __future__ import unicode_literals
 
-import urllib
 from urllib.parse import quote
 import hashlib
 import hmac
 import base64
-import six
 from erpnext.erpnext_integrations.doctype.amazon_mws_settings import xml_utils
 import re
 try:

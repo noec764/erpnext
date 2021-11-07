@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 from past.builtins import cmp
 import frappe
 from frappe import _
@@ -13,8 +13,6 @@ from frappe.utils.nestedset import get_root_of
 from erpnext.setup.doctype.customer_group.customer_group import get_parent_customer_groups
 
 import functools
-
-from six import iteritems
 
 class IncorrectCustomerGroup(frappe.ValidationError): pass
 class IncorrectSupplierType(frappe.ValidationError): pass
@@ -149,7 +147,7 @@ def get_tax_template(posting_date, args):
 	if 'tax_category' in args.keys():
 		del args['tax_category']
 
-	for key, value in iteritems(args):
+	for key, value in args.items():
 		if key=="use_for_shopping_cart":
 			conditions.append("use_for_shopping_cart = {0}".format(1 if value else 0))
 		elif key == 'customer_group':

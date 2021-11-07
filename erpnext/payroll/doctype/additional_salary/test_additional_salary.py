@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
 import unittest
 import frappe, erpnext
 from frappe.utils import nowdate, add_days
@@ -27,7 +27,7 @@ class TestAdditionalSalary(unittest.TestCase):
 		frappe.db.set_value("Employee", emp_id, "relieving_date", add_days(nowdate(), 1800))
 		salary_structure = make_salary_structure("Test Salary Structure Additional Salary", "Monthly", employee=emp_id)
 		add_sal = get_additional_salary(emp_id)
-		
+
 		ss = make_employee_salary_slip("test_additional@salary.com", "Monthly", salary_structure=salary_structure.name)
 		for earning in ss.earnings:
 			if earning.salary_component == "Recurring Salary Component":

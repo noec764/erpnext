@@ -1,11 +1,9 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import print_function, unicode_literals
 import frappe
 from frappe.utils import flt, cstr, nowdate, nowtime
 from erpnext.stock.utils import update_bin
-from erpnext.stock.stock_ledger import update_entries_after
 from erpnext.controllers.stock_controller import create_repost_item_valuation_entry
 
 def repost(only_actual=False, allow_negative_stock=False, allow_zero_rate=False, only_bin=False):

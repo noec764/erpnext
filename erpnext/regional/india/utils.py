@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import frappe, re, json
 from frappe import _
 import erpnext
@@ -9,7 +9,7 @@ from erpnext.controllers.accounts_controller import get_taxes_and_charges
 from erpnext.hr.utils import get_salary_assignment
 from erpnext.payroll.doctype.salary_structure.salary_structure import make_salary_slip
 from erpnext.regional.india import number_state_mapping
-from six import string_types
+
 from erpnext.accounts.general_ledger import make_gl_entries
 from erpnext.accounts.utils import get_account_currency
 from frappe.model.utils import get_fetch_values
@@ -194,7 +194,7 @@ def get_place_of_supply(party_details, doctype):
 
 @frappe.whitelist()
 def get_regional_address_details(party_details, doctype, company):
-	if isinstance(party_details, string_types):
+	if isinstance(party_details, str):
 		party_details = json.loads(party_details)
 		party_details = frappe._dict(party_details)
 
@@ -791,7 +791,7 @@ def get_regional_round_off_accounts(company, account_list):
 	if country != 'India':
 		return
 
-	if isinstance(account_list, string_types):
+	if isinstance(account_list, str):
 		account_list = json.loads(account_list)
 
 	if not frappe.db.get_single_value('GST Settings', 'round_off_gst_values'):

@@ -1,14 +1,11 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _
 import json
 from frappe.utils import getdate, flt, formatdate
 from frappe.utils.dateutils import parse_date
-from six import iteritems
 from ofxtools.Parser import OFXTree
 from ofxtools.models.bank import STMTRS, CCSTMTRS
 
@@ -124,7 +121,7 @@ def create_bank_entries(columns, data, bank_account, upload_type=None):
 		if all(item is None for item in d) is True:
 			continue
 		fields = {}
-		for key, dummy in iteritems(header_map):
+		for key, dummy in header_map.items():
 			fields.update({header_map.get(key): d.get(key)})
 
 		try:

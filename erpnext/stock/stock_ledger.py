@@ -1,6 +1,5 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-from __future__ import unicode_literals
 
 import copy
 import json
@@ -9,7 +8,6 @@ import frappe
 from frappe import _
 from frappe.model.meta import get_field_precision
 from frappe.utils import cint, cstr, flt, get_link_to_form, getdate, now
-from six import iteritems
 
 import erpnext
 from erpnext.stock.utils import (
@@ -152,7 +150,7 @@ def repost_future_sle(args=None, voucher_type=None, voucher_no=None, allow_negat
 		distinct_item_warehouses[(args[i].get('item_code'), args[i].get('warehouse'))].reposting_status = True
 
 		if obj.new_items_found:
-			for item_wh, data in iteritems(distinct_item_warehouses):
+			for item_wh, data in distinct_item_warehouses.items():
 				if ('args_idx' not in data and not data.reposting_status) or (data.sle_changed and data.reposting_status):
 					data.args_idx = len(args)
 					args.append(data.sle)
@@ -778,7 +776,7 @@ class update_entries_after(object):
 
 	def raise_exceptions(self):
 		msg_list = []
-		for warehouse, exceptions in iteritems(self.exceptions):
+		for warehouse, exceptions in self.exceptions.items():
 			deficiency = min(e["diff"] for e in exceptions)
 
 			if ((exceptions[0]["voucher_type"], exceptions[0]["voucher_no"]) in
@@ -806,7 +804,7 @@ class update_entries_after(object):
 
 	def update_bin(self):
 		# update bin for each warehouse
-		for warehouse, data in iteritems(self.data):
+		for warehouse, data in self.data.items():
 			bin_record = get_or_make_bin(self.item_code, warehouse)
 
 			frappe.db.set_value('Bin', bin_record, {

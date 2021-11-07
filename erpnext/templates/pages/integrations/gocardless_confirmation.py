@@ -1,6 +1,6 @@
 # Copyright (c) 2020, Dokos SAS and Contributors
 # License: See license.txt
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.integrations.utils import get_gateway_controller

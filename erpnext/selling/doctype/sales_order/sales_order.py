@@ -1,13 +1,13 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import json
 import frappe.utils
 from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, strip_html
 from frappe import _
-from six import string_types
+
 from frappe.model.utils import get_fetch_values
 from frappe.model.mapper import get_mapped_doc
 from erpnext.stock.stock_balance import update_bin_qty, get_reserved_qty
@@ -844,7 +844,7 @@ def make_purchase_order_for_default_supplier(source_name, selected_items=None, t
 	"""Creates Purchase Order for each Supplier. Returns a list of doc objects."""
 	if not selected_items: return
 
-	if isinstance(selected_items, string_types):
+	if isinstance(selected_items, str):
 		selected_items = json.loads(selected_items)
 
 	def set_missing_values(source, target):
@@ -945,7 +945,7 @@ def make_purchase_order_for_default_supplier(source_name, selected_items=None, t
 def make_purchase_order(source_name, selected_items=None, target_doc=None):
 	if not selected_items: return
 
-	if isinstance(selected_items, string_types):
+	if isinstance(selected_items, str):
 		selected_items = json.loads(selected_items)
 
 	items_to_map = [item.get('item_code') for item in selected_items if item.get('item_code') and item.get('item_code')]
@@ -1099,7 +1099,7 @@ def make_raw_material_request(items, company, sales_order, project=None):
 	if not frappe.has_permission("Sales Order", "write"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 
-	if isinstance(items, string_types):
+	if isinstance(items, str):
 		items = frappe._dict(json.loads(items))
 
 	for item in items.get('items'):

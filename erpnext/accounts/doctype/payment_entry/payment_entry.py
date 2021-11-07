@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe, erpnext, json
 from frappe import _, scrub, ValidationError, throw
 from frappe.utils import flt, comma_or, nowdate, getdate, cint
@@ -17,7 +17,6 @@ from erpnext.controllers.accounts_controller import AccountsController, get_supp
 from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import get_party_account_based_on_invoice_discounting
 from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import get_party_tax_withholding_details
-from six import string_types, iteritems
 
 from erpnext.controllers.accounts_controller import validate_taxes_and_charges
 
@@ -202,7 +201,7 @@ class PaymentEntry(AccountsController):
 				ref_details = get_reference_details(d.reference_doctype,
 					d.reference_name, self.party_account_currency)
 
-				for field, value in iteritems(ref_details):
+				for field, value in ref_details.items():
 					if d.exchange_gain_loss:
 						# for cases where gain/loss is booked into invoice
 						# exchange_gain_loss is calculated from invoice & populated
@@ -380,7 +379,7 @@ class PaymentEntry(AccountsController):
 						invoice_paid_amount_map[invoice_key]['outstanding'] = term.outstanding
 						invoice_paid_amount_map[invoice_key]['discounted_amt'] = ref.total_amount * (term.discount / 100)
 
-		for idx, (key, allocated_amount) in enumerate(iteritems(invoice_payment_amount_map), 1):
+		for idx, (key, allocated_amount) in enumerate(invoice_payment_amount_map.items(), 1):
 			if not invoice_paid_amount_map.get(key):
 				frappe.throw(_('Payment term {0} not used in {1}').format(key[0], key[1]))
 
@@ -1078,7 +1077,7 @@ def validate_inclusive_tax(tax, doc):
 @frappe.whitelist()
 def get_outstanding_reference_documents(args):
 
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	if args.get('party_type') == 'Member':

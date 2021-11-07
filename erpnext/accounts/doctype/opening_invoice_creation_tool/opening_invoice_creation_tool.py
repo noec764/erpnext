@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import traceback
 from json import dumps
@@ -64,11 +64,11 @@ class OpeningInvoiceCreationTool(Document):
 			prepare_invoice_summary(doctype, invoices)
 
 		return invoices_summary, max_count
-	
+
 	def validate_company(self):
 		if not self.company:
 			frappe.throw(_("Please select the Company"))
-	
+
 	def set_missing_values(self, row):
 		row.qty = row.qty or 1.0
 		row.temporary_opening_account = row.temporary_opening_account or get_temporary_opening_account(self.company)

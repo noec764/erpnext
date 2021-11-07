@@ -1,17 +1,13 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _, msgprint
 from frappe.utils import flt,cint, cstr, getdate
-from six import iteritems
-from collections import OrderedDict
 from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.buying.utils import validate_for_items, update_last_purchase_rate
-from erpnext.stock.stock_ledger import get_valuation_rate
-from erpnext.stock.doctype.serial_no.serial_no import get_auto_serial_nos, auto_make_serial_nos, get_serial_nos
 from frappe.contacts.doctype.address.address import get_address_display
 
 from erpnext.accounts.doctype.budget.budget import validate_expense_against_budget

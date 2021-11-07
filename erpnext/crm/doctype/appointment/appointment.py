@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 
 import urllib
 from collections import Counter
@@ -179,7 +179,7 @@ class Appointment(Document):
 		appointment_event.insert(ignore_permissions=True)
 		self.calendar_event = appointment_event.name
 		self.save(ignore_permissions=True)
-	
+
 	def _get_verify_url(self):
 		verify_route = '/book_appointment/verify'
 		params = {

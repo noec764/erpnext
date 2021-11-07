@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 import difflib
@@ -63,7 +63,7 @@ class BankTransactionMatch:
 
 		# Get similar bank transactions from history
 		similar_transactions_matches = self.get_similar_transactions_references()
-		
+
 		result = amount_matches + similar_transactions_matches
 		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
 			key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)

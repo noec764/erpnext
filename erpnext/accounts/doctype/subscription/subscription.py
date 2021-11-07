@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2021, Dokos SAS and Contributors
 # For license information, please see license.txt
 

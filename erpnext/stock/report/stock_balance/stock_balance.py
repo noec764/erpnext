@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
 from operator import itemgetter
 import frappe, erpnext
 from frappe import _
@@ -11,7 +10,6 @@ from erpnext.stock.report.stock_ledger.stock_ledger import get_item_group_condit
 from erpnext.stock.utils import is_reposting_item_valuation_in_progress
 from erpnext.stock.report.stock_ageing.stock_ageing import get_fifo_queue, get_average_age
 
-from six import iteritems
 
 def execute(filters=None):
 	is_reposting_item_valuation_in_progress()
@@ -226,7 +224,7 @@ def filter_items_with_no_transactions(iwb_map, float_precision):
 		qty_dict = iwb_map[(company, item, warehouse)]
 
 		no_transactions = True
-		for key, val in iteritems(qty_dict):
+		for key, val in qty_dict.items():
 			val = flt(val, float_precision)
 			qty_dict[key] = val
 			if key != "val_rate" and val:
@@ -283,7 +281,7 @@ def get_item_details(items, sle, filters):
 
 	if filters.get('show_variant_attributes', 0) == 1:
 		variant_values = get_variant_values_for(list(item_details))
-		item_details = {k: v.update(variant_values.get(k, {})) for k, v in iteritems(item_details)}
+		item_details = {k: v.update(variant_values.get(k, {})) for k, v in item_details.items()}
 
 	return item_details
 

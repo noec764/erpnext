@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe.model.document import Document
 
@@ -16,6 +16,6 @@ def get_convertible_items(doctype, txt, searchfield, start, page_len, filters):
 	query_filters={}
 	if txt:
 		query_filters={"booking_credits_item": ("like", txt)}
-	
+
 	items = frappe.get_all("Booking Credit Conversion", filters=query_filters, pluck="booking_credits_item")
 	return [[x] for x in items] if items else []

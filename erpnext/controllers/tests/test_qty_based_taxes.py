@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function
+, print_function
 import unittest
 import frappe
 from uuid import uuid4 as _uuid4

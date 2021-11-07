@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import unittest
 import json
 import frappe, erpnext
@@ -12,7 +12,6 @@ from erpnext.stock.doctype.item.test_item import create_item
 from erpnext.stock.doctype.serial_no.serial_no import SerialNoDuplicateError
 from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.stock.doctype.item.test_item import make_item
-from six import iteritems
 from erpnext.stock.stock_ledger import SerialNoExistsInFutureTransaction
 from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
@@ -487,7 +486,7 @@ class TestPurchaseReceipt(ERPNextTestCase):
 	def test_purchase_return_for_serialized_items(self):
 		def _check_serial_no_values(serial_no, field_values):
 			serial_no = frappe.get_doc("Serial No", serial_no)
-			for field, value in iteritems(field_values):
+			for field, value in field_values.items():
 				self.assertEqual(cstr(serial_no.get(field)), value)
 
 		from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos

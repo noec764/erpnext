@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.utils import cint, get_link_to_form
@@ -29,7 +29,7 @@ class POSOpeningEntry(StatusUpdater):
 					{"parent": d.mode_of_payment, "company": self.company}, "default_account")
 				if not account:
 					invalid_modes.append(get_link_to_form("Mode of Payment", d.mode_of_payment))
-		
+
 		if invalid_modes:
 			if invalid_modes == 1:
 				msg = _("Please set default Cash or Bank account in Mode of Payment {}")

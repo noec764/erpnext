@@ -1,7 +1,7 @@
 # Copyright (c) 2019, Dokos SAS and Contributors
 # License: See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, erpnext
 from frappe import _
 from frappe.utils import flt, fmt_money, getdate, formatdate, cint
@@ -14,7 +14,6 @@ from erpnext.accounts.utils import get_fiscal_year
 from erpnext.exceptions import InvalidAccountCurrency, InvalidAccountDimensionError, MandatoryAccountDimensionError
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_checks_for_pl_and_bs_accounts
 from erpnext.accounts.doctype.accounting_dimension_filter.accounting_dimension_filter import get_dimension_filter_map
-from six import iteritems
 
 exclude_from_linked_with = True
 class GLEntry(Document):
@@ -100,7 +99,7 @@ class GLEntry(Document):
 
 	def validate_allowed_dimensions(self):
 		dimension_filter_map = get_dimension_filter_map()
-		for key, value in iteritems(dimension_filter_map):
+		for key, value in dimension_filter_map.items():
 			dimension = key[0]
 			account = key[1]
 

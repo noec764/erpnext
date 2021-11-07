@@ -1,9 +1,9 @@
 # coding=utf-8
-from __future__ import unicode_literals
+
 
 import zipfile
 import frappe
-from six import BytesIO
+from io import BytesIO
 from unittest import TestCase
 from frappe.utils import today, now_datetime, cstr
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice

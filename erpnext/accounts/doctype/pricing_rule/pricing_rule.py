@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import json
 import copy
@@ -11,7 +11,6 @@ from frappe import throw, _
 from frappe.utils import flt, cint, getdate
 from frappe.model.document import Document
 
-from six import string_types
 from collections import defaultdict
 
 apply_on_dict = {"Item Code": "items",
@@ -179,7 +178,7 @@ def apply_pricing_rule(args, doc=None):
 		}
 	"""
 
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
@@ -231,7 +230,7 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 	from erpnext.accounts.doctype.pricing_rule.utils import (get_pricing_rules,
 			get_applied_pricing_rules, get_pricing_rule_items, get_product_discount_rule)
 
-	if isinstance(doc, string_types):
+	if isinstance(doc, str):
 		doc = json.loads(doc)
 
 	if doc:
@@ -266,7 +265,7 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 		for pricing_rule in pricing_rules:
 			if not pricing_rule: continue
 
-			if isinstance(pricing_rule, string_types):
+			if isinstance(pricing_rule, str):
 				pricing_rule = frappe.get_cached_doc("Pricing Rule", pricing_rule)
 				pricing_rule.apply_rule_on_other_items = get_pricing_rule_items(pricing_rule)
 
@@ -426,7 +425,7 @@ def remove_pricing_rule_for_item(pricing_rules, item_details, item_code=None):
 
 @frappe.whitelist()
 def remove_pricing_rules(item_list):
-	if isinstance(item_list, string_types):
+	if isinstance(item_list, str):
 		item_list = json.loads(item_list)
 
 	out = []

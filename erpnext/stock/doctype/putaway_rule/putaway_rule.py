@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 import copy
 import json
 from collections import defaultdict
-from six import string_types
+
 from frappe import _
 from frappe.utils import flt, floor, nowdate, cint
 from frappe.model.document import Document
@@ -73,7 +73,7 @@ def apply_putaway_rule(doctype, items, company, sync=None, purpose=None):
 		purpose: Purpose of Stock Entry
 		sync (optional): Sync with client side only for client side calls
 	"""
-	if isinstance(items, string_types):
+	if isinstance(items, str):
 		items = json.loads(items)
 
 	items_not_accomodated, updated_table = [], []

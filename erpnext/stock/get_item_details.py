@@ -1,11 +1,10 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _, throw
 from frappe.utils import flt, cint, add_days, cstr, add_months, getdate
-import json, copy
+import json
 from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item, set_transaction_type
 from erpnext.setup.utils import get_exchange_rate
 from frappe.model.meta import get_field_precision
@@ -17,7 +16,7 @@ from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.setup.doctype.brand.brand import get_brand_defaults
 from erpnext.stock.doctype.item_manufacturer.item_manufacturer import get_item_manufacturer_part_no
 
-from six import string_types, iteritems
+
 
 sales_doctypes = ['Quotation', 'Sales Order', 'Delivery Note', 'Sales Invoice', 'POS Invoice']
 purchase_doctypes = ['Material Request', 'Supplier Quotation', 'Purchase Order', 'Purchase Receipt', 'Purchase Invoice']
@@ -54,7 +53,7 @@ def get_item_details(args, doc=None, for_validate=False, overwrite_warehouse=Tru
 
 	out = get_basic_details(args, item, overwrite_warehouse)
 
-	if isinstance(doc, string_types):
+	if isinstance(doc, str):
 		doc = json.loads(doc)
 
 	if doc and doc.get('doctype') == 'Purchase Invoice':
@@ -93,7 +92,7 @@ def get_item_details(args, doc=None, for_validate=False, overwrite_warehouse=Tru
 		out.update(bin_details)
 
 	# update args with out, if key or value not exists
-	for key, value in iteritems(out):
+	for key, value in out.items():
 		if args.get(key) is None:
 			args[key] = value
 
@@ -157,7 +156,7 @@ def set_valuation_rate(out, args):
 
 
 def process_args(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
@@ -174,7 +173,7 @@ def process_args(args):
 	return args
 
 def process_string_args(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 	return args
 
@@ -1167,7 +1166,7 @@ def get_gross_profit(out):
 @frappe.whitelist()
 def get_serial_no(args, serial_nos=None, sales_order=None):
 	serial_no = None
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 		args = frappe._dict(args)
 	if args.get('doctype') == 'Sales Invoice' and not args.get('update_stock'):
@@ -1196,7 +1195,7 @@ def update_party_blanket_order(args, out):
 
 @frappe.whitelist()
 def get_blanket_order_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = frappe._dict(json.loads(args))
 
 	blanket_order_details = None

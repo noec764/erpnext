@@ -1,8 +1,8 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-# -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
+
+
 import frappe, erpnext
 from frappe.utils import cint, cstr, formatdate, flt, getdate, nowdate, get_link_to_form
 from frappe import _, throw
@@ -20,7 +20,6 @@ from erpnext.buying.utils import check_on_hold_or_closed_status
 from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
 from erpnext.assets.doctype.asset.asset import get_asset_account, is_cwip_accounting_enabled
 from frappe.model.mapper import get_mapped_doc
-from six import iteritems
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import (
 	validate_inter_company_party,
 	update_linked_doc,
@@ -588,7 +587,7 @@ class PurchaseInvoice(BuyingController):
 
 					# Amount added through landed-cost-voucher
 					if landed_cost_entries:
-						for account, amount in iteritems(landed_cost_entries[(item.item_code, item.name)]):
+						for account, amount in landed_cost_entries[(item.item_code, item.name)].items():
 							gl_entries.append(self.get_gl_dict({
 								"account": account,
 								"against": item.expense_account,

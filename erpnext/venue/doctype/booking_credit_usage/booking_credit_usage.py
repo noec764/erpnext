@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe.model.document import Document
 from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
@@ -37,4 +37,4 @@ class BookingCreditUsage(Document):
 	def delete_references(self):
 		for doc in frappe.get_all("Booking Credit Usage Reference", filters={"booking_credit_usage": self.name}, fields=["name"], pluck="name"):
 			frappe.delete_doc("Booking Credit Usage Reference", doc)
-		
+

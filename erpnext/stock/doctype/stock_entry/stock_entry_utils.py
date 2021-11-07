@@ -1,11 +1,11 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, erpnext
 from frappe.utils import cint, flt
 
-from six import string_types
+
 
 @frappe.whitelist()
 def make_stock_entry(**args):
@@ -58,7 +58,7 @@ def make_stock_entry(**args):
 	if args.apply_putaway_rule:
 		s.apply_putaway_rule = args.apply_putaway_rule
 
-	if isinstance(args.qty, string_types):
+	if isinstance(args.qty, str):
 		if '.' in args.qty:
 			args.qty = flt(args.qty)
 		else:

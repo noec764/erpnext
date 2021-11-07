@@ -1,5 +1,5 @@
 
-from __future__ import unicode_literals
+
 import frappe, base64, hashlib, hmac, json
 from frappe import _
 

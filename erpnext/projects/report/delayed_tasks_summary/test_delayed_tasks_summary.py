@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import unittest
 import frappe
 from frappe.utils import nowdate, add_days, add_months

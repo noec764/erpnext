@@ -1,8 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
-
 import frappe
 import unittest
 
@@ -16,8 +14,6 @@ from erpnext.tests.utils import create_test_contact_and_address
 test_ignore = ["Price List"]
 test_dependencies = ['Payment Term', 'Payment Terms Template']
 test_records = frappe.get_test_records('Customer')
-
-from six import iteritems
 
 class TestCustomer(unittest.TestCase):
 	def setUp(self):
@@ -89,7 +85,7 @@ class TestCustomer(unittest.TestCase):
 
 		details = get_party_details("_Test Customer")
 
-		for key, value in iteritems(to_check):
+		for key, value in to_check.items():
 			val = details.get(key)
 			if not val and not isinstance(val, list):
 				val = None

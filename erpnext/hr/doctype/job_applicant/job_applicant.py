@@ -3,7 +3,7 @@
 
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 from frappe.model.document import Document
 import frappe
 from frappe import _
@@ -47,9 +47,9 @@ class JobApplicant(Document):
 def create_interview(doc, interview_round):
 	import json
 
-	from six import string_types
+	
 
-	if isinstance(doc, string_types):
+	if isinstance(doc, str):
 		doc = json.loads(doc)
 		doc = frappe.get_doc(doc)
 

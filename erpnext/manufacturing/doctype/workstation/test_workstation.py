@@ -1,6 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
 from erpnext.manufacturing.doctype.operation.test_operation import make_operation
 
 import frappe

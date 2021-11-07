@@ -1,5 +1,5 @@
 
-from __future__ import unicode_literals, print_function
+, print_function
 import frappe
 from frappe import _
 from frappe.utils import cint

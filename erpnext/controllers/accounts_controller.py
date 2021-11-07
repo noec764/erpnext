@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 import frappe, erpnext
 import json
 
@@ -20,7 +20,6 @@ from erpnext.accounts.party import get_party_account_currency, validate_party_fr
 from erpnext.accounts.doctype.pricing_rule.utils import (apply_pricing_rule_on_transaction,
 	apply_pricing_rule_for_free_items, get_applied_pricing_rules)
 from erpnext.exceptions import InvalidCurrency
-from six import text_type
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 from erpnext.stock.get_item_details import get_item_warehouse, _get_item_tax_template, get_item_tax_map
 from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
@@ -1070,7 +1069,7 @@ class AccountsController(TransactionBase):
 			stock_items = [r[0] for r in frappe.db.sql("""
 				select name from `tabItem`
 				where name in (%s) and is_stock_item=1
-			""" % (", ".join((["%s"] * len(item_codes))),), item_codes)]
+			""" % (", ".join(["%s"] * len(item_codes)),), item_codes)]
 
 		return stock_items
 
@@ -1800,7 +1799,7 @@ def get_payment_terms(terms_template, posting_date=None, grand_total=None, base_
 @frappe.whitelist()
 def get_payment_term_details(term, posting_date=None, grand_total=None, base_grand_total=None, bill_date=None):
 	term_details = frappe._dict()
-	if isinstance(term, text_type):
+	if isinstance(term, str):
 		term = frappe.get_doc("Payment Term", term)
 	else:
 		term_details.payment_term = term.payment_term

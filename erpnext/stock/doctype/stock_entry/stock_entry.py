@@ -1,7 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+
 
 import json
 from collections import defaultdict
@@ -25,7 +25,7 @@ from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import Open
 from erpnext.accounts.general_ledger import process_gl_map
 from erpnext.controllers.taxes_and_totals import init_landed_taxes_and_totals
 
-from six import string_types, itervalues, iteritems
+, itervalues
 
 class IncorrectValuationRateError(frappe.ValidationError): pass
 class DuplicateEntryForWorkOrderError(frappe.ValidationError): pass
@@ -278,7 +278,7 @@ class StockEntry(StockController):
 				if d.is_finished_item or d.is_process_loss:
 					item_wise_qty.setdefault(d.item_code, []).append(d.qty)
 
-		for item_code, qty_list in iteritems(item_wise_qty):
+		for item_code, qty_list in item_wise_qty.items():
 			total = flt(sum(qty_list), frappe.get_precision("Stock Entry Detail", "qty"))
 			if self.fg_completed_qty != total:
 				frappe.throw(_("The finished product {0} quantity {1} and For Quantity {2} cannot be different")
@@ -834,7 +834,7 @@ class StockEntry(StockController):
 
 		if item_account_wise_additional_cost:
 			for d in self.get("items"):
-				for account, amount in iteritems(item_account_wise_additional_cost.get((d.item_code, d.name), {})):
+				for account, amount in item_account_wise_additional_cost.get((d.item_code, d.name), {}).items():
 					if not amount: continue
 
 					gl_entries.append(self.get_gl_dict({
@@ -1425,7 +1425,7 @@ class StockEntry(StockController):
 		if transfer_limit_qty >= to_transfer_qty:
 			allow_overproduction = True
 
-		for item, item_details in iteritems(item_dict):
+		for item, item_details in item_dict.items():
 			pending_to_issue = flt(item_details.required_qty) - flt(item_details.transferred_qty)
 			desire_to_transfer = flt(self.fg_completed_qty) * flt(item_details.required_qty) / max_qty
 
@@ -1733,7 +1733,7 @@ class StockEntry(StockController):
 
 @frappe.whitelist()
 def move_sample_to_retention_warehouse(company, items):
-	if isinstance(items, string_types):
+	if isinstance(items, str):
 		items = json.loads(items)
 	retention_warehouse = frappe.db.get_single_value('Stock Settings', 'sample_retention_warehouse')
 	stock_entry = frappe.new_doc("Stock Entry")
@@ -1919,7 +1919,7 @@ def get_expired_batch_items():
 
 @frappe.whitelist()
 def get_warehouse_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)

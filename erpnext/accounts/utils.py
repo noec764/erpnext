@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-
-from __future__ import unicode_literals
-
 from json import loads
 
 import frappe, erpnext
@@ -11,7 +8,6 @@ import frappe.defaults
 from frappe.utils import nowdate, cstr, flt, cint, now, getdate
 from frappe import throw, _
 from frappe.utils import formatdate, get_number_format_info
-from six import iteritems
 # imported to enable erpnext.accounts.utils.get_account_currency
 from erpnext.accounts.doctype.account.account import get_account_currency
 from frappe.model.meta import get_field_precision
