@@ -284,6 +284,7 @@ erpnext.patches.v13_0.requeue_failed_reposts
 erpnext.patches.v12_0.update_production_plan_status
 erpnext.patches.v13_0.update_category_in_ltds_certificate
 erpnext.patches.v13_0.create_pan_field_for_india
+erpnext.patches.v13_0.create_ksa_vat_custom_fields
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
