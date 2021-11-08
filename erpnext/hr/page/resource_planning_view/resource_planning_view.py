@@ -7,10 +7,10 @@ from frappe.desk.form.assign_to import add
 from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days, format_date
 
 @frappe.whitelist()
-def get_resources(company, start, end, department=None, employee=None, group_by=None):
+def get_resources(company, start, end, employee=None, department=None, group_by=None, with_tasks=False):
 	query_filters = {"status": "Active", "company": company}
 
-	if not group_by and department:
+	if department:
 		query_filters.update({"department": department})
 
 	if employee:
@@ -20,49 +20,58 @@ def get_resources(company, start, end, department=None, employee=None, group_by=
 			filters=query_filters,
 			fields=["name", "employee_name", "department", "company", "user_id"])
 
-	employee_list = [x.name for x in employees]
+	employee_list = {x.name: [x.company, x.user_id] for x in employees}
 	working_time = {
 		x.employee: x.weekly_working_hours for x in
 		frappe.get_all("Employment Contract",
 			filters={
-				"employee": ("in", employee_list),
+				"employee": ("in", employee_list.keys()),
 				"start_date": ("<=", nowdate()),
 				"ifnull(end_date, '3999-12-31')": (">=", nowdate())
 			},
 			fields=["employee", "weekly_working_hours"])
 	}
 
-	groups = defaultdict(set)
-	if group_by == "department" and frappe.get_meta("Shift Type").has_field("department"):
-		shift_group_by = {x.name: x[group_by] for x in frappe.get_all("Shift Type", fields=["name", group_by], distinct=True)}
+	if group_by:
+		query_filters = {"projects": []}
+		if employee:
+			query_filters.update({"employee": employee})
+		if department:
+			query_filters.update({"department": department})
 
-		for ass in get_assignments(start, end, return_records=True):
-			group_by_data = shift_group_by.get(ass.get("shift_type"))
-			groups[group_by_data].add(ass.get("employee"))
+		events = get_events(start, end, query_filters, with_tasks=with_tasks)
+
+		groups = defaultdict(set)
+		for event in events:
+			emp = event.get("employee") or event.get("resourceId")
+			group_by_data = event.get(group_by.lower())
+			if group_by_data:
+				groups[group_by_data].add(emp)
 
 	resources = []
-	for e in employees:
-		resource = {
-			"id": e.name,
-			"title": e.employee_name,
-			"department": e.department,
-			"company": e.company,
-			"user_id": e.user_id,
-			"working_time": working_time.get(e.name),
-			"total": None
-		}
-
-		if group_by and groups:
-			for group in groups:
-				if e.name in groups[group]:
-					new_resource = resource.copy()
-					# new_resource.update({"id": f"{e.name}_{group}"})
-					new_resource.update({group_by: group})
-					resources.append(new_resource)
-				else:
-					resources.append(resource)
-		else:
-			resources.append(resource)
+	if group_by and groups:
+		for group in groups:
+			for employee in groups[group]:
+				resources.append({
+					"id": f"{employee}_{group}",
+					"title": employee,
+					group_by.lower(): group,
+					"company": employee_list.get(employee)[0],
+					"user_id": employee_list.get(employee)[1],
+					"working_time": working_time.get(employee),
+					"total": None
+				})
+	else:
+		for e in employees:
+			resources.append({
+				"id": e.name,
+				"title": e.employee_name,
+				"department": e.department,
+				"company": e.company,
+				"user_id": e.user_id,
+				"working_time": working_time.get(e.name),
+				"total": None
+			})
 
 	return resources
 
@@ -117,11 +126,10 @@ def add_to_doc(doctype, name, assign_to=None):
 	else:
 		assign_to = frappe.parse_json(assign_to)
 
-	users = [emp for emp in (frappe.db.get_value("Employee", employee, "user_id") for employee in assign_to) if emp is not None]
-	if users:
+	if assign_to:
 		try:
 			return add({
-				"assign_to": users,
+				"assign_to": assign_to,
 				"doctype": doctype,
 				"name": name
 			})
@@ -131,15 +139,21 @@ def add_to_doc(doctype, name, assign_to=None):
 		frappe.msgprint(_("No user found for this employee"))
 
 @frappe.whitelist()
-def get_events(start, end, filters=None):
+def get_events(start, end, filters=None, group_by=None, with_tasks=False):
 	if filters:
 		filters = frappe.parse_json(filters)
 
-	out = get_holidays(start, end, filters)
+	with_tasks = frappe.parse_json(with_tasks)
+
+	out = get_assigned_tasks(start=start, end=end, filters=filters, group_by=group_by) if bool(with_tasks) else []
+
+	if filters:
+		filters.pop("projects")
+
+	out.extend(get_holidays(start, end, filters))
 	out.extend(get_leave_applications(start, end, filters))
 	out.extend(get_trainings(start, end, filters))
 	out.extend(get_assignments(start, end, filters))
-	out.extend(get_assigned_tasks(start=start, end=end, filters=filters))
 	return out
 
 def get_holidays(start_date, end_date, filters=None):
@@ -254,23 +268,28 @@ def get_trainings(start, end, filters=None):
 		)
 	]
 
-def get_assignments(start, end, filters=None, conditions=None, return_records=False):
+def get_assignments(start, end, filters=None, return_records=False):
 	from frappe.desk.reportview import get_filters_cond
 	events = []
-	query = """select name, start_date, end_date, employee_name,
-		employee, docstatus, shift_type
-		from `tabShift Assignment` where
-		(start_date >= %(start_date)s
-		or (end_date <=  %(end_date)s and end_date >=  %(end_date)s)
-		or (%(start_date)s between start_date and end_date and %(end_date)s between start_date and end_date))
+	query = "select name, start_date, end_date, employee_name, employee, docstatus, shift_type "
+
+	meta = frappe.get_meta("Shift Type")
+	if meta.has_field("department"):
+		query += ", department "
+
+	if meta.has_field("project"):
+		query += ", project "
+
+	query += f"""from `tabShift Assignment` where
+		(start_date >= {frappe.db.escape(start)}
+		or (end_date <= {frappe.db.escape(end)} and end_date >= {frappe.db.escape(end)})
+		or ({frappe.db.escape(start)} between start_date and end_date and {frappe.db.escape(end)} between start_date and end_date))
 		"""
-	if conditions:
-		query += conditions
 
 	if filters:
 		query += get_filters_cond("Shift Assignment", filters, [])
 
-	records = frappe.db.sql(query, {"start_date":start, "end_date":end}, as_dict=True)
+	records = frappe.db.sql(query, as_dict=True, debug=False)
 
 	if return_records:
 		return records
@@ -297,7 +316,9 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 				"end_time": shift_type_data.get(d.shift_type)[1],
 				"editable": d.docstatus == 0,
 				"classNames": ["fc-gray-bg"] if d.docstatus == 0 else (["fc-red-stripped"] if d.docstatus == 2 else ["fc-blue-bg"]),
-				"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0])
+				"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
+				"project": d.get("project"),
+				"department": d.get("department")
 			}
 			if e not in events:
 				events.append(e)
@@ -306,7 +327,7 @@ def get_assignments(start, end, filters=None, conditions=None, return_records=Fa
 
 	return events
 
-def get_assigned_tasks(start, end, filters=None):
+def get_assigned_tasks(start, end, filters=None, group_by=None):
 	query_filters = {"status": ("in", ("Open", "Working", "Pending Review", "Overdue"))}
 
 	if start and end:
@@ -314,20 +335,34 @@ def get_assigned_tasks(start, end, filters=None):
 		end_date = add_days(getdate(end), 1)
 		query_filters.update({f"ifnull(exp_start_date, {frappe.db.escape(start)})": (">=", start_date), f"ifnull(exp_end_date, {frappe.db.escape(end)})": (">=", end_date)})
 
+	if filters.get("projects"):
+		query_filters.update({"project": ("in", filters.get("projects"))})
+
+	fields = ["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign", "docstatus", "color"]
+
+	if group_by:
+		has_group_by_field = frappe.get_meta("Task").has_field(group_by.lower())
+		fields.append(group_by.lower())
+
 	tasks = []
 	user_map = defaultdict(str)
 	for task in frappe.get_all("Task",
 		filters=query_filters,
-		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign", "docstatus", "color"]):
+		fields=fields):
 		for assigned in frappe.parse_json(task._assign or []):
 			if not user_map.get(assigned):
 				user_map[assigned] = frappe.db.get_value("Employee", dict(user_id=assigned))
 
 			formatted_start_date = format_date(task.exp_start_date) if task.exp_start_date else _("No start date")
 			formatted_end_date = format_date(task.exp_end_date) if task.exp_end_date else _("No end date")
+
+			resourceId = user_map.get(assigned)
+			if group_by and has_group_by_field:
+				resourceId += f"_{task.get(group_by.lower())}"
+
 			tasks.append({
-				"id": task.name + assigned,
-				"resourceId": user_map.get(assigned),
+				"id": f"{task.name}{assigned}",
+				"resourceId": resourceId,
 				"start": task.exp_start_date or start,
 				"end": task.exp_end_date or end,
 				"title": task.subject,
@@ -337,7 +372,8 @@ def get_assigned_tasks(start, end, filters=None):
 				"textColor": task.color,
 				"classNames": ["fc-stripped-event"],
 				"doctype": "Task",
-				"docstatus": task.docstatus
+				"docstatus": task.docstatus,
+				"project": task.get("project")
 			})
 
 	return tasks

@@ -3,6 +3,7 @@
 @import '~@fullcalendar/scrollgrid/main.css';
 
 .fc.resource-calendar {
+	min-height: 500px;
 	.fc-scrollgrid-section-header th {
 		border-right: None;
 	}
@@ -18,6 +19,10 @@
 		.fc-event-title {
 			padding: 0px;
 		}
+
+		.fc-event-main:first-child {
+			line-height: 1em;
+		}
 	}
 
 	.fc-bg-event {
@@ -26,6 +31,10 @@
 		.fc-event-title {
 			overflow: hidden;
 		}
+	}
+
+	.fc-timeline-event {
+		overflow: hidden;
 	}
 
 	.fc-timeline-event-harness {
