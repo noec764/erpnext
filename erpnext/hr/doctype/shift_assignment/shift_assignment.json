@@ -17,6 +17,7 @@
   "end_date",
   "shift_request",
   "department",
+  "attendance",
   "amended_from"
  ],
  "fields": [
@@ -97,12 +98,19 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "attendance",
+   "fieldtype": "Link",
+   "label": "Attendance",
+   "options": "Attendance",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-11-09 22:30:15.707104",
+ "modified": "2021-11-10 17:20:53.221890",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Shift Assignment",
