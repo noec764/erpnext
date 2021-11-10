@@ -229,6 +229,9 @@ def create_lead_for_item_inquiry(lead, subject, message):
 	lead = frappe.parse_json(lead)
 	lead_doc = frappe.new_doc('Lead')
 	lead_doc.update(lead)
+	for fieldname in ("lead_name", "company_name", "email_id", "phone"):
+		lead_doc.set(fieldname, lead.get(fieldname))
+
 	lead_doc.set('lead_owner', '')
 
 	if not frappe.db.exists('Lead Source', _('Product Inquiry')):
