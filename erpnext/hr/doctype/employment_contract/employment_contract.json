@@ -13,9 +13,9 @@
   "contract_type",
   "designation",
   "employment_period_section",
-  "start_date",
+  "date_of_joining",
   "column_break_8",
-  "end_date",
+  "relieving_date",
   "working_time_section",
   "weekly_working_hours",
   "daily_working_tome_section",
@@ -57,8 +57,9 @@
   },
   {
    "fieldname": "designation",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Designation",
+   "options": "Designation",
    "reqd": 1
   },
   {
@@ -67,19 +68,8 @@
    "label": "Employment Period"
   },
   {
-   "fieldname": "start_date",
-   "fieldtype": "Date",
-   "label": "Start Date",
-   "reqd": 1
-  },
-  {
    "fieldname": "column_break_8",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "end_date",
-   "fieldtype": "Date",
-   "label": "End Date"
   },
   {
    "fieldname": "working_time_section",
@@ -134,11 +124,22 @@
    "fieldname": "monday",
    "fieldtype": "Float",
    "label": "Monday"
+  },
+  {
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relieving_date",
+   "fieldtype": "Date",
+   "label": "End Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-10-19 21:35:20.229940",
+ "modified": "2021-11-09 14:41:44.318999",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employment Contract",

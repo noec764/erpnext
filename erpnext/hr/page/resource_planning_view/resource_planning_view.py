@@ -20,14 +20,15 @@ def get_resources(company, start, end, employee=None, department=None, group_by=
 			filters=query_filters,
 			fields=["name", "employee_name", "department", "company", "user_id"])
 
-	employee_list = {x.name: [x.company, x.user_id] for x in employees}
+	employee_list = {x.name: [x.company, x.user_id, x.employee_name] for x in employees}
+	number_of_weeks = (getdate(end).isocalendar()[1] - getdate(start).isocalendar()[1]) + 1
 	working_time = {
 		x.employee: x.weekly_working_hours for x in
 		frappe.get_all("Employment Contract",
 			filters={
 				"employee": ("in", employee_list.keys()),
-				"start_date": ("<=", nowdate()),
-				"ifnull(end_date, '3999-12-31')": (">=", nowdate())
+				"date_of_joining": ("<=", nowdate()),
+				"ifnull(relieving_date, '3999-12-31')": (">=", nowdate())
 			},
 			fields=["employee", "weekly_working_hours"])
 	}
@@ -54,11 +55,12 @@ def get_resources(company, start, end, employee=None, department=None, group_by=
 			for employee in groups[group]:
 				resources.append({
 					"id": f"{employee}_{group}",
-					"title": employee,
+					"title": employee_list.get(employee)[2],
 					group_by.lower(): group,
 					"company": employee_list.get(employee)[0],
 					"user_id": employee_list.get(employee)[1],
-					"working_time": working_time.get(employee),
+					"working_time": flt(working_time.get(employee)) * flt(number_of_weeks),
+					"employee_id": employee,
 					"total": None
 				})
 	else:
@@ -69,24 +71,25 @@ def get_resources(company, start, end, employee=None, department=None, group_by=
 				"department": e.department,
 				"company": e.company,
 				"user_id": e.user_id,
-				"working_time": working_time.get(e.name),
+				"working_time": flt(working_time.get(e.name)) * flt(number_of_weeks),
+				"employee_id": e.name,
 				"total": None
 			})
 
 	return resources
 
 @frappe.whitelist()
-def get_resources_total(start, end):
-	assignments = get_assignments(start, end)
+def get_resources_total(start, end, group_by=None):
+	assignments = get_assignments(start, end, group_by=group_by)
 
 	total = defaultdict(float)
 	for a in assignments:
 		if not a.get("docstatus") == 1 or a.get("start") > getdate(end):
 			continue
 
-		start = a.get("start") if getdate(end) >= a.get("start") >= getdate(start) else getdate(start)
-		end = a.get("end") if a.get("end") <= getdate(end) else getdate(end)
-		number_of_days = date_diff(start, end) or 1
+		calc_start = a.get("start") if getdate(end) >= a.get("start") >= getdate(start) else getdate(start)
+		calc_end = a.get("end") if a.get("end") <= getdate(end) else getdate(end)
+		number_of_days = date_diff(calc_end, calc_start) or 1
 		total[a.get("resourceId")] += flt(a.get("duration")) * flt(number_of_days)
 
 	return total
@@ -139,6 +142,19 @@ def add_to_doc(doctype, name, assign_to=None):
 		frappe.msgprint(_("No user found for this employee"))
 
 @frappe.whitelist()
+def approve_shift_request(doctype, name):
+	set_shift_request_status(doctype, name, "Approved")
+
+@frappe.whitelist()
+def reject_shift_request(doctype, name):
+	set_shift_request_status(doctype, name, "Rejected")
+
+def set_shift_request_status(doctype, name, status):
+	doc = frappe.get_doc(doctype, name)
+	doc.status = status
+	doc.submit()
+
+@frappe.whitelist()
 def get_events(start, end, filters=None, group_by=None, with_tasks=False):
 	if filters:
 		filters = frappe.parse_json(filters)
@@ -153,7 +169,8 @@ def get_events(start, end, filters=None, group_by=None, with_tasks=False):
 	out.extend(get_holidays(start, end, filters))
 	out.extend(get_leave_applications(start, end, filters))
 	out.extend(get_trainings(start, end, filters))
-	out.extend(get_assignments(start, end, filters))
+	out.extend(get_assignment_requests(start, end, filters, group_by=group_by))
+	out.extend(get_assignments(start, end, filters, group_by=group_by))
 	return out
 
 def get_holidays(start_date, end_date, filters=None):
@@ -268,14 +285,17 @@ def get_trainings(start, end, filters=None):
 		)
 	]
 
-def get_assignments(start, end, filters=None, return_records=False):
+def get_assignments(start, end, filters=None, group_by=None):
 	from frappe.desk.reportview import get_filters_cond
 	events = []
 	query = "select name, start_date, end_date, employee_name, employee, docstatus, shift_type "
 
-	meta = frappe.get_meta("Shift Type")
+	meta = frappe.get_meta("Shift Assignment")
 	if meta.has_field("department"):
 		query += ", department "
+
+	if meta.has_field("designation"):
+		query += ", designation "
 
 	if meta.has_field("project"):
 		query += ", project "
@@ -291,39 +311,123 @@ def get_assignments(start, end, filters=None, return_records=False):
 
 	records = frappe.db.sql(query, as_dict=True, debug=False)
 
-	if return_records:
-		return records
+	has_group_by_field = False
+	if group_by:
+		has_group_by_field = meta.has_field(group_by.lower())
 
 	shift_type_data = {}
 	for d in records:
 		if d.shift_type not in shift_type_data:
 			shift_type_data[d.shift_type] = frappe.db.get_value("Shift Type", d.shift_type, ["start_time", "end_time"])
 
+		resourceId = d.employee
+		if group_by and has_group_by_field and d.get(group_by.lower()):
+			resourceId += f"_{d.get(group_by.lower())}"
+
 		daily_event_start = d.start_date
 		daily_event_end = d.end_date if d.end_date else getdate()
-		delta = timedelta(days=1)
-		while daily_event_start <= daily_event_end:
-			e = {
-				"id": d.name,
-				"resourceId": d.employee,
-				"doctype": "Shift Assignment",
-				"docstatus": d.docstatus,
-				"start": daily_event_start,
-				"end": daily_event_end,
-				"title": cstr(d.shift_type),
-				"html_title": f'<div>{cstr(d.shift_type)}</div><div class="small"><span>{format_time(shift_type_data.get(d.shift_type)[0])}</span>-<span>{format_time(shift_type_data.get(d.shift_type)[1])}</span></div>',
-				"start_time": shift_type_data.get(d.shift_type)[0],
-				"end_time": shift_type_data.get(d.shift_type)[1],
-				"editable": d.docstatus == 0,
-				"classNames": ["fc-gray-bg"] if d.docstatus == 0 else (["fc-red-stripped"] if d.docstatus == 2 else ["fc-blue-bg"]),
-				"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
-				"project": d.get("project"),
-				"department": d.get("department")
-			}
-			if e not in events:
-				events.append(e)
 
-			daily_event_start += delta
+		html_title = f'''
+			<div>{cstr(d.shift_type)}</div>
+			<div class="small">{d.get("department") or ""}{" | " if d.get("department") and d.get("designation") else ""}{d.get("designation") or ""}</div>
+			<div class="small">
+				<span>{format_time(shift_type_data.get(d.shift_type)[0])}</span>
+					-
+				<span>{format_time(shift_type_data.get(d.shift_type)[1])}</span>
+			</div>
+		'''
+		e = {
+			"id": d.name,
+			"resourceId": resourceId,
+			"doctype": "Shift Assignment",
+			"docstatus": d.docstatus,
+			"start": daily_event_start,
+			"end": daily_event_end,
+			"title": cstr(d.shift_type),
+			"html_title": html_title,
+			"start_time": shift_type_data.get(d.shift_type)[0],
+			"end_time": shift_type_data.get(d.shift_type)[1],
+			"editable": d.docstatus == 0,
+			"classNames": ["fc-gray-bg"] if d.docstatus == 0 else (["fc-red-stripped"] if d.docstatus == 2 else ["fc-blue-bg"]),
+			"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
+			"project": d.get("project"),
+			"department": d.get("department"),
+			"designation": d.get("designation"),
+			"secondary_action": "frappe.client.cancel",
+			"secondary_action_label": _("Cancel")
+		}
+		if e not in events:
+			events.append(e)
+
+	return events
+
+def get_assignment_requests(start, end, filters=None, group_by=None):
+	query_filters = frappe.parse_json(filters) if filters else {}
+	query_filters.update({"docstatus": 0, "from_date": ("<=", getdate(end)), "to_date": (">=", getdate(start))})
+	fields = ["name", "employee", "shift_type", "department", "status", "approver", "company", "from_date", "to_date"]
+
+	meta = frappe.get_meta("Shift Request")
+	if meta.has_field("designation"):
+		fields.append("designation")
+
+	if meta.has_field("project"):
+		fields.append("project")
+
+	has_group_by_field = False
+	if group_by:
+		has_group_by_field = meta.has_field(group_by.lower())
+
+	requests = frappe.get_list("Shift Request",
+		filters=query_filters,
+		fields=fields
+	)
+
+	shift_type_data = {}
+	events = []
+	for d in requests:
+		if d.shift_type not in shift_type_data:
+			shift_type_data[d.shift_type] = frappe.db.get_value("Shift Type", d.shift_type, ["start_time", "end_time"])
+
+		resourceId = d.employee
+		if group_by and has_group_by_field and d.get(group_by.lower()):
+			resourceId += f"_{d.get(group_by.lower())}"
+
+		daily_event_start = d.from_date
+		daily_event_end = d.to_date if d.to_date else getdate()
+
+		html_title = f'''
+			<div>{cstr(d.shift_type)}</div>
+			<div class="small">{d.get("department") or ""}{" | " if d.get("department") and d.get("designation") else ""}{d.get("designation") or ""}</div>
+			<div class="small">
+				<span>{format_time(shift_type_data.get(d.shift_type)[0])}</span>
+					-
+				<span>{format_time(shift_type_data.get(d.shift_type)[1])}</span>
+			</div>
+		'''
+		e = {
+			"id": d.name,
+			"resourceId": resourceId,
+			"doctype": "Shift Request",
+			"docstatus": d.docstatus,
+			"start": daily_event_start,
+			"end": daily_event_end,
+			"title": cstr(d.shift_type),
+			"html_title": html_title,
+			"start_time": shift_type_data.get(d.shift_type)[0],
+			"end_time": shift_type_data.get(d.shift_type)[1],
+			"editable": d.docstatus == 0,
+			"classNames": ["fc-green-bg"],
+			"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
+			"project": d.get("project"),
+			"department": d.get("department"),
+			"designation": d.get("designation"),
+			"primary_action": "erpnext.hr.page.resource_planning_view.resource_planning_view.approve_shift_request",
+			"primary_action_label": _("Approve"),
+			"secondary_action": "erpnext.hr.page.resource_planning_view.resource_planning_view.reject_shift_request",
+			"secondary_action_label": _("Reject"),
+		}
+		if e not in events:
+			events.append(e)
 
 	return events
 
@@ -342,7 +446,8 @@ def get_assigned_tasks(start, end, filters=None, group_by=None):
 
 	if group_by:
 		has_group_by_field = frappe.get_meta("Task").has_field(group_by.lower())
-		fields.append(group_by.lower())
+		if has_group_by_field:
+			fields.append(group_by.lower())
 
 	tasks = []
 	user_map = defaultdict(str)
@@ -357,7 +462,7 @@ def get_assigned_tasks(start, end, filters=None, group_by=None):
 			formatted_end_date = format_date(task.exp_end_date) if task.exp_end_date else _("No end date")
 
 			resourceId = user_map.get(assigned)
-			if group_by and has_group_by_field:
+			if group_by and has_group_by_field and task.get(group_by.lower()):
 				resourceId += f"_{task.get(group_by.lower())}"
 
 			tasks.append({
