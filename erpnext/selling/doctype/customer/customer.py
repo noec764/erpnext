@@ -604,8 +604,10 @@ def make_contact(args, is_primary_contact=1):
 	else:
 		first_name, last_name = args.get('customer_name'), None
 
+	parent = None
 	if args.get('email_id'):
 		parent = frappe.db.get_value("Contact Email", {"email_id": args.get('email_id')}, "parent")
+
 	if not parent and args.get('mobile_no'):
 		parent = frappe.db.get_value("Contact Phone", {"phone": args.get('mobile_no')}, "parent")
 
