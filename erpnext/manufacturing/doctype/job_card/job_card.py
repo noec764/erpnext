@@ -1,16 +1,30 @@
-
 # Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
-import frappe
 import datetime
 import json
-from frappe import _, bold
-from frappe.model.mapper import get_mapped_doc
-from frappe.model.document import Document
-from frappe.utils import (flt, cint, time_diff_in_hours, get_datetime, getdate,
-	get_time, add_to_date, time_diff, add_days, get_datetime_str, get_link_to_form, time_diff_in_seconds)
 
-from erpnext.manufacturing.doctype.manufacturing_settings.manufacturing_settings import get_mins_between_operations
+import frappe
+from frappe import _, bold
+from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import (
+	add_days,
+	add_to_date,
+	cint,
+	flt,
+	get_datetime,
+	get_link_to_form,
+	get_time,
+	getdate,
+	time_diff,
+	time_diff_in_hours,
+	time_diff_in_seconds,
+)
+
+from erpnext.manufacturing.doctype.manufacturing_settings.manufacturing_settings import (
+	get_mins_between_operations,
+)
+
 
 class OverlapError(frappe.ValidationError): pass
 
@@ -22,6 +36,7 @@ class JobCard(Document):
 	def onload(self):
 		excess_transfer = frappe.db.get_single_value("Manufacturing Settings", "job_card_excess_transfer")
 		self.set_onload("job_card_excess_transfer", excess_transfer)
+		self.set_onload("work_order_stopped", self.is_work_order_stopped())
 
 	def validate(self):
 		self.validate_time_logs()
@@ -30,6 +45,7 @@ class JobCard(Document):
 		self.validate_sequence_id()
 		self.set_sub_operations()
 		self.update_sub_operation_status()
+		self.validate_work_order()
 
 	def set_sub_operations(self):
 		if self.operation:
@@ -534,6 +550,18 @@ class JobCard(Document):
 				frappe.throw(_("{0}, complete the operation {1} before the operation {2}.")
 					.format(message, bold(row.operation), bold(self.operation)), OperationSequenceError)
 
+	def validate_work_order(self):
+		if self.is_work_order_stopped():
+			frappe.throw(_("You can't make any changes to Job Card since Work Order is stopped."))
+
+	def is_work_order_stopped(self):
+		if self.work_order:
+			status = frappe.get_value('Work Order', self.work_order)
+
+			if status == "Closed":
+				return True
+
+		return False
 
 @frappe.whitelist()
 def make_time_log(args):
