@@ -143,16 +143,20 @@ def add_to_doc(doctype, name, assign_to=None):
 
 @frappe.whitelist()
 def approve_shift_request(doctype, name):
-	set_shift_request_status(doctype, name, "Approved")
+	return set_shift_request_status(doctype, name, "Approved")
 
 @frappe.whitelist()
 def reject_shift_request(doctype, name):
-	set_shift_request_status(doctype, name, "Rejected")
+	return set_shift_request_status(doctype, name, "Rejected")
 
 def set_shift_request_status(doctype, name, status):
 	doc = frappe.get_doc(doctype, name)
 	doc.status = status
-	doc.submit()
+	return doc.submit()
+
+@frappe.whitelist()
+def submit_shift_assignment(doctype, name):
+	return frappe.get_doc(doctype, name).submit()
 
 @frappe.whitelist()
 def get_events(start, end, filters=None, group_by=None, with_tasks=False):
@@ -353,9 +357,23 @@ def get_assignments(start, end, filters=None, group_by=None):
 			"project": d.get("project"),
 			"department": d.get("department"),
 			"designation": d.get("designation"),
-			"secondary_action": "frappe.client.cancel",
-			"secondary_action_label": _("Cancel")
 		}
+
+		if d.docstatus == 0:
+			e.update({
+				"primary_action": "erpnext.hr.page.resource_planning_view.resource_planning_view.submit_shift_assignment",
+				"primary_action_label": _("Submit"),
+				"secondary_action": "frappe.client.delete",
+				"secondary_action_label": _("Delete")
+			})
+		elif d.docstatus == 1:
+			e.update({
+				"secondary_action": "frappe.client.cancel",
+				"secondary_action_label": _("Cancel")
+			})
+
+
+
 		if e not in events:
 			events.append(e)
 

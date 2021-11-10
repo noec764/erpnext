@@ -9,6 +9,7 @@
  "field_order": [
   "naming_series",
   "employee",
+  "employee_name",
   "column_break_3",
   "contract_type",
   "designation",
@@ -32,7 +33,6 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Series",
    "options": "HR-EMP-CONT-",
    "reqd": 1
@@ -40,6 +40,8 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -47,6 +49,7 @@
   {
    "fieldname": "contract_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Contract Type",
    "options": "Employment Contract Type",
    "reqd": 1
@@ -58,6 +61,7 @@
   {
    "fieldname": "designation",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Designation",
    "options": "Designation",
    "reqd": 1
@@ -128,6 +132,7 @@
   {
    "fieldname": "date_of_joining",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Start Date",
    "reqd": 1
   },
@@ -135,11 +140,19 @@
    "fieldname": "relieving_date",
    "fieldtype": "Date",
    "label": "End Date"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-11-09 14:41:44.318999",
+ "modified": "2021-11-10 16:05:26.157935",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employment Contract",

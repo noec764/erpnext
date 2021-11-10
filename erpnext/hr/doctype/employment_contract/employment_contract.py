@@ -7,12 +7,12 @@ from frappe.model.document import Document
 
 class EmploymentContract(Document):
 	def validate(self):
-		self.weekly_working_hours = sum([
+		self.weekly_working_hours = self.weekly_working_hours or sum([
 			flt(self.monday),
 			flt(self.tuesday),
 			flt(self.wednesday),
 			flt(self.thursday),
 			flt(self.friday),
-			flt(self.satuday),
+			flt(self.saturday),
 			flt(self.sunday)
 		])
