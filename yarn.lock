@@ -2,7 +2,89 @@
 # yarn lockfile v1
 
 
+"@fullcalendar/common@~5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.10.0.tgz#8b30f3e77691eb70befb25a0edf3d9abec3a853e"
+  integrity sha512-se2N8QlV07igYrJpzn4sB1C53U2NkVwdbrZ9gca15iZWjq5EyKMryghxxfLIIt6nDuKEnL5IN/EN8JX5aU45VA==
+  dependencies:
+    tslib "^2.1.0"
+
+"@fullcalendar/core@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-5.10.0.tgz#5e8f46618bf45ddfb16827e68fe11dbd655d529f"
+  integrity sha512-9KFdWgLJ2+HWH0mq6whGv6oRCVNiBSkOxLiW9qiTZzhcYbJx2+PRT7DORTui/nYgBAo1KZ6Jd+qslJ6C1ZwExw==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    preact "^10.0.5"
+    tslib "^2.1.0"
+
+"@fullcalendar/interaction@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-5.10.0.tgz#047622f903f13a89fd146878137d66eecf1acc62"
+  integrity sha512-zTNaly+4VkcrxxQy5oY0D8hGH+3Dkfm/0GB1dHi/NkP/z/JTACw6CUkFYbM5tynkaDkVIoU2cUXPMFf25sjU8w==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/premium-common@~5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/premium-common/-/premium-common-5.10.0.tgz#1abd26483243482eda26ffcf3d65e63d9e1cc64f"
+  integrity sha512-RLZsmKW7l22i2mxFDDoPoxFvvIL11eQm0bNLkXl9QAifUU2ZEm2QByOu0pkcqQhj+oPtyZDklTZh0dlecHpuHA==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/resource-common@^5.10.0", "@fullcalendar/resource-common@~5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/resource-common/-/resource-common-5.10.0.tgz#fd40974d1b8540673617c6ac4a0df56eea17a6b6"
+  integrity sha512-N/Z3n0rdGpWNsO665VZ8eaiZLVnv/LoVoZWUHZabQ8QAdJ6s/bPxUSwA4LKTvnYCdLp1lGEkp61dB252896s6g==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    "@fullcalendar/premium-common" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/resource-timeline@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/resource-timeline/-/resource-timeline-5.10.0.tgz#e608ae586fe14ef63ec0601b442a97aa7b9db8fe"
+  integrity sha512-kqtjw1aqfxtJr6VVrncrrnKxeBzsMo44Rypj4fqiyOE8JyhFS9/KV1Ged/nLDgxutwy5yeT+YO2crUkzvPURlQ==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    "@fullcalendar/premium-common" "~5.10.0"
+    "@fullcalendar/resource-common" "~5.10.0"
+    "@fullcalendar/scrollgrid" "~5.10.0"
+    "@fullcalendar/timeline" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/scrollgrid@~5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/scrollgrid/-/scrollgrid-5.10.0.tgz#fab52837d36304571a0d8e66799008f1e9e59227"
+  integrity sha512-k8RofRk+P3x0nGr4YAe2qB3fL+6ydRSCK8Zc0pdYXll0sf2Bfoho7keeWJG1KKkpoGEv8iSAEGDEIuZ4vz6ajA==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    "@fullcalendar/premium-common" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/timeline@~5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/timeline/-/timeline-5.10.0.tgz#bd8607e4a262ba806158292bca8185300a7abfcf"
+  integrity sha512-13o0wgcCOnlUbnZ2IwDHMjqUsWYp1yR64m2i3ya76pmpwiYdm2SFt3qVmy8basevYfkHLkK62wNngUYTVm1LQw==
+  dependencies:
+    "@fullcalendar/common" "~5.10.0"
+    "@fullcalendar/premium-common" "~5.10.0"
+    "@fullcalendar/scrollgrid" "~5.10.0"
+    tslib "^2.1.0"
+
 onscan.js@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/onscan.js/-/onscan.js-1.5.2.tgz#14ed636e5f4c3f0a78bacbf9a505dad3140ee341"
   integrity sha512-9oGYy2gXYRjvXO9GYqqVca0VuCTAmWhbmX3egBSBP13rXiMNb+dKPJzKFEeECGqPBpf0m40Zoo+GUQ7eCackdw==
+
+preact@^10.0.5:
+  version "10.5.15"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.15.tgz#6df94d8afecf3f9e10a742fd8c362ddab464225f"
+  integrity sha512-5chK29n6QcJc3m1lVrKQSQ+V7K1Gb8HeQY6FViQ5AxCAEGu3DaHffWNDkC9+miZgsLvbvU9rxbV1qinGHMHzqA==
+
+tslib@^2.1.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==

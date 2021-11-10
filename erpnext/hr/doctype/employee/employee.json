@@ -108,7 +108,6 @@
   "encashment_date",
   "exit_interview_details",
   "held_on",
-  "reason_for_resignation",
   "new_workplace",
   "feedback",
   "lft",
@@ -777,44 +776,51 @@
    "fieldtype": "Column Break"
   },
   {
-    "fetch_from": "department.payroll_cost_center",
-    "fetch_if_empty": 1,
-    "fieldname": "payroll_cost_center",
-    "fieldtype": "Link",
-    "label": "Payroll Cost Center",
-    "options": "Cost Center"
-   },
-   {
-    "fieldname": "column_break_52",
-    "fieldtype": "Column Break"
-   },
-   {
-    "fieldname": "expense_approver",
-    "fieldtype": "Link",
-    "label": "Expense Approver",
-    "options": "User"
-   },
-   {
-	"fieldname": "approvers_section",
-	"fieldtype": "Section Break",
-	"label": "Approvers"
-   },
-   {
-	"fieldname": "column_break_45",
-	"fieldtype": "Column Break"
-   },
-   {
-	"fieldname": "shift_request_approver",
-	"fieldtype": "Link",
-	"label": "Shift Request Approver",
-	"options": "User"
-   }
+   "fetch_from": "department.payroll_cost_center",
+   "fetch_if_empty": 1,
+   "fieldname": "payroll_cost_center",
+   "fieldtype": "Link",
+   "label": "Payroll Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "column_break_52",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expense_approver",
+   "fieldtype": "Link",
+   "label": "Expense Approver",
+   "options": "User"
+  },
+  {
+   "fieldname": "approvers_section",
+   "fieldtype": "Section Break",
+   "label": "Approvers"
+  },
+  {
+   "fieldname": "column_break_45",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_request_approver",
+   "fieldtype": "Link",
+   "label": "Shift Request Approver",
+   "options": "User"
+  }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "links": [],
- "modified": "2021-01-02 16:54:33.477439",
+ "links": [
+  {
+   "custom": 1,
+   "group": "Contracts",
+   "link_doctype": "Employment Contract",
+   "link_fieldname": "employee"
+  }
+ ],
+ "modified": "2021-10-19 21:34:15.300102",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

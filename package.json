@@ -13,6 +13,10 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "@fullcalendar/core": "^5.10.0",
+    "@fullcalendar/interaction": "^5.10.0",
+    "@fullcalendar/resource-common": "^5.10.0",
+    "@fullcalendar/resource-timeline": "^5.10.0",
     "onscan.js": "^1.5.2"
   },
   "scripts": {}
