@@ -203,7 +203,7 @@ def set_account_and_due_date(party, account, party_type, company, posting_date, 
 	return out
 
 @frappe.whitelist()
-def get_party_account(party_type, party, company=None, down_payment=None):
+def get_party_account(party_type, party=None, company=None, down_payment=None):
 	"""Returns the account for the given `party`.
 		Will first search in party (Customer / Supplier) record, if not found,
 		will search in group (Customer Group / Supplier Group),
@@ -211,8 +211,11 @@ def get_party_account(party_type, party, company=None, down_payment=None):
 	if not company:
 		frappe.throw(_("Please select a Company"))
 
-	if not party:
-		return
+	if not party and party_type in ['Customer', 'Supplier']:
+		default_account_name = "default_receivable_account" \
+			if party_type=="Customer" else "default_payable_account"
+
+		return frappe.get_cached_value('Company',  company,  default_account_name)
 
 	if cint(down_payment) and party_type in ['Customer', 'Supplier']:
 		query_field = "default_down_payment_receivable_account" if party_type == "Customer" else "default_down_payment_payable_account"
