@@ -13,7 +13,6 @@ from frappe import _, ValidationError
 
 from erpnext.controllers.stock_controller import StockController
 
-from six.moves import map
 class SerialNoCannotCreateDirectError(ValidationError): pass
 class SerialNoCannotCannotChangeError(ValidationError): pass
 class SerialNoNotRequiredError(ValidationError): pass
