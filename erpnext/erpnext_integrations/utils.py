@@ -2,7 +2,7 @@
 import frappe
 from frappe import _
 import base64, hashlib, hmac
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 def validate_webhooks_request(doctype,  hmac_key, secret_key='secret'):
 	def innerfn(fn):
@@ -18,7 +18,6 @@ def validate_webhooks_request(doctype,  hmac_key, secret_key='secret'):
 			)
 
 			if frappe.request.data and \
-				frappe.get_request_header(hmac_key) and \
 				not sig == bytes(frappe.get_request_header(hmac_key).encode()):
 					frappe.throw(_("Unverified Webhook Data"))
 			frappe.set_user(settings.modified_by)
@@ -52,7 +51,7 @@ def create_mode_of_payment(gateway, payment_type="General"):
 			"payment_gateway": gateway
 		}, ['payment_account'])
 
-	mode_of_payment = frappe.db.exists("Mode of Payment", gateway) 
+	mode_of_payment = frappe.db.exists("Mode of Payment", gateway)
 	if not mode_of_payment and payment_gateway_account:
 		mode_of_payment = frappe.get_doc({
 			"doctype": "Mode of Payment",
