@@ -26,8 +26,8 @@ def woocommerce_webhook(f):
 			).digest()
 		)
 
-		if frappe.request.data and frappe.get_request_header("X-Wc-Webhook-Signature") and \
-			not sig == bytes(frappe.get_request_header("X-Wc-Webhook-Signature").encode()):
+		if frappe.request.data and \
+			not sig == frappe.get_request_header("X-Wc-Webhook-Signature", "").encode():
 				frappe.throw(_("Unverified Webhook Data"))
 
 		return f(*args, **kwargs)
