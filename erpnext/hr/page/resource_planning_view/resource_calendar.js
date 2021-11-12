@@ -36,8 +36,8 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			plugins: [resourceTimelinePlugin, interactionPlugin],
 			initialView: 'resourceTimelineWeek',
 			headerToolbar: {
-				left: 'prev,today,next',
-				center: 'title',
+				left: 'today',
+				center: 'prev,title,next',
 				right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth'
 			},
 			editable: false,
@@ -378,7 +378,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			default: frappe.defaults.get_default("company"),
 			reqd: 1,
 			change: () => {
-				this.company = this.company_filter.get_value()
+				this.company = this.company_filter.get_value() || frappe.defaults.get_default("company")
 			}
 		})
 	}
@@ -392,6 +392,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			hidden: 1,
 			change: () => {
 				this.department = this.department_filter.get_value();
+				this.refetch_all()
 			}
 		})
 	}
@@ -506,13 +507,13 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	show_quick_entry_form(info, target) {
 		frappe.model.with_doctype(target, () => {
 			let new_doc = frappe.model.get_new_doc(target);
-			new_doc.employee = info.event.getResources().map((resource) => { return resource.id })[0]
+			console.log(info.event.getResources())
+			new_doc.employee = info.event.getResources().map((resource) => { return resource.extendedProps.employee_id })[0]
 			new_doc.shift_type = info.event.extendedProps.reference_name
 			new_doc.start_date = moment(info.event.start).format("YYYY-MM-DD")
 			new_doc.end_date = moment(info.event.end).format("YYYY-MM-DD")
 
 			frappe.ui.form.make_quick_entry(target, (doc) => {
-				info.event.setProp("id", doc.name)
 				frappe.set_route(frappe.get_route_str())
 				this.refetch_all();
 			}, null, new_doc, true);

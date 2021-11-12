@@ -5,13 +5,14 @@ import frappe
 from frappe import _
 from frappe.desk.form.assign_to import add
 from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days, format_date
+from frappe.utils.nestedset import get_descendants_of
 
 @frappe.whitelist()
 def get_resources(company, start, end, employee=None, department=None, group_by=None, with_tasks=False):
 	query_filters = {"status": "Active", "company": company}
 
-	if department:
-		query_filters.update({"department": department})
+	if department and not group_by == "Department":
+		query_filters.update({"department": ("in", [department] + get_descendants_of("Department", department))})
 
 	if employee:
 		query_filters.update({"name": employee})
@@ -38,7 +39,7 @@ def get_resources(company, start, end, employee=None, department=None, group_by=
 		if employee:
 			query_filters.update({"employee": employee})
 		if department:
-			query_filters.update({"department": department})
+			query_filters.update({"department": ("in", [department] + get_descendants_of("Department", department))})
 
 		events = get_events(start, end, query_filters, with_tasks=with_tasks)
 
@@ -52,18 +53,18 @@ def get_resources(company, start, end, employee=None, department=None, group_by=
 	resources = []
 	if group_by and groups:
 		for group in groups:
-			for employee in groups[group]:
+			for emp in groups[group]:
 				resources.append({
-					"id": f"{employee}_{group}",
-					"title": employee_list.get(employee)[2],
+					"id": f"{emp}_{group}",
+					"title": employee_list.get(emp)[2],
 					group_by.lower(): group,
-					"company": employee_list.get(employee)[0],
-					"user_id": employee_list.get(employee)[1],
-					"working_time": flt(working_time.get(employee)) * flt(number_of_weeks),
-					"employee_id": employee,
+					"company": employee_list.get(emp)[0],
+					"user_id": employee_list.get(emp)[1],
+					"working_time": flt(working_time.get(emp)) * flt(number_of_weeks),
+					"employee_id": emp,
 					"total": None
 				})
-	else:
+	elif not group_by:
 		for e in employees:
 			resources.append({
 				"id": e.name,
