@@ -35,7 +35,7 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 	refresh() {
 		var help_content =
 			`<br><br>
-			<table class="table table-bordered" style="background-color: #f9f9f9;">
+			<table class="table table-bordered" style="background-color: var(--scrollbar-track-color);">
 				<tr><td>
 					<h4 style="padding-inline-start: 20px;">
 						<i class="far fa-sticky-note"></i>
