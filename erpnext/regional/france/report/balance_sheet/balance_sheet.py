@@ -108,11 +108,12 @@ def get_data(
 			gl_entries_by_account, ignore_closing_entries=ignore_closing_entries
 		)
 
+	if root_type in ("Asset", "Liability"):
+		accounts = filter_accounts_by_root_type(accounts, accounts_by_name, parent_children_map, root_type, balance_must_be, period_list)
+
 	calculate_values(
 		accounts_by_name, gl_entries_by_account, period_list, accumulated_values, ignore_accumulated_values_for_fy)
 
-	if root_type in ("Asset", "Liability"):
-		accounts = filter_accounts_by_root_type(accounts, accounts_by_name, parent_children_map, root_type, balance_must_be, period_list)
 	accounts = sorted([x for x in accounts if x.root_type == root_type], key=lambda x:x["lft"])
 
 	accumulate_values_into_parents(accounts, accounts_by_name, period_list)
