@@ -4,6 +4,7 @@
 import { Calendar } from '@fullcalendar/core';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+import adaptivePlugin from '@fullcalendar/adaptive'
 import _default from '@fullcalendar/premium-common';
 
 frappe.provide("erpnext.resource_calendar")
@@ -33,7 +34,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 			timeZone: 'UTC',
 			locale: frappe.boot.lang || 'en',
-			plugins: [resourceTimelinePlugin, interactionPlugin],
+			plugins: [resourceTimelinePlugin, interactionPlugin, adaptivePlugin],
 			initialView: 'resourceTimelineWeek',
 			headerToolbar: {
 				left: 'today',
@@ -47,7 +48,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			weekNumbers: true,
 			resourceAreaWidth: "30%",
 			droppable: true,
-			weekends: false,
+			weekends: true,
 			weekText: __("Week"),
 			slotMinWidth: 50,
 			contentHeight: "auto",

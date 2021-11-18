@@ -2,10 +2,26 @@
 # yarn lockfile v1
 
 
+"@fullcalendar/adaptive@^5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/adaptive/-/adaptive-5.10.1.tgz#4bfe50da38dfa7ef50f4af73fa6a983202d11165"
+  integrity sha512-Dg+v+nYZKqQ9vhn+z46VhIZ5+OujHBj7ufkZv2Tj0Q1DIdt2sMxMvF/u9WKBru1GCqXuTtGtjiMXLMpL/ZpSRA==
+  dependencies:
+    "@fullcalendar/common" "~5.10.1"
+    "@fullcalendar/premium-common" "~5.10.1"
+    tslib "^2.1.0"
+
 "@fullcalendar/common@~5.10.0":
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.10.0.tgz#8b30f3e77691eb70befb25a0edf3d9abec3a853e"
   integrity sha512-se2N8QlV07igYrJpzn4sB1C53U2NkVwdbrZ9gca15iZWjq5EyKMryghxxfLIIt6nDuKEnL5IN/EN8JX5aU45VA==
+  dependencies:
+    tslib "^2.1.0"
+
+"@fullcalendar/common@~5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.10.1.tgz#a019951743852277a4095e536fd7716f6f85b9aa"
+  integrity sha512-EumKIJcQTvQdTs75/9dmeREFgjcRVWzqHJS1Xvlz5mNsmB+w9EINCHETRjChtAQg1WD/lTQyVj4sHsKO7vCMSw==
   dependencies:
     tslib "^2.1.0"
 
@@ -32,6 +48,14 @@
   integrity sha512-RLZsmKW7l22i2mxFDDoPoxFvvIL11eQm0bNLkXl9QAifUU2ZEm2QByOu0pkcqQhj+oPtyZDklTZh0dlecHpuHA==
   dependencies:
     "@fullcalendar/common" "~5.10.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/premium-common@~5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/premium-common/-/premium-common-5.10.1.tgz#47d26406e926317fd45919c0f52ce6cc02a17baf"
+  integrity sha512-yOZgtVI/7tt1oeQABLQqTNLEv2YpxbE0ywvQ+VwtrKc5LksmUA2czO4peom1KIAwH6JsZnytpvwQ4k4cP8Ivaw==
+  dependencies:
+    "@fullcalendar/common" "~5.10.1"
     tslib "^2.1.0"
 
 "@fullcalendar/resource-common@^5.10.0", "@fullcalendar/resource-common@~5.10.0":
