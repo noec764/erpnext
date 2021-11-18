@@ -1,9 +1,9 @@
-# Copyright (c) 2020, Dokos SAS and Contributors
+# Copyright (c) 2021, Dokos SAS and Contributors
 # License: See license.txt
 
 import frappe
 from frappe import _
-from frappe.utils import flt, cint
+from frappe.utils import flt
 from erpnext.accounts.report.financial_statements import (get_period_list, filter_accounts, sort_accounts,
 	get_appropriate_currency, set_gl_entries_by_account, filter_out_zero_value_rows, add_total_row, accumulate_values_into_parents)
 from erpnext.accounts.report.balance_sheet.balance_sheet import check_opening_balance
@@ -108,11 +108,12 @@ def get_data(
 			gl_entries_by_account, ignore_closing_entries=ignore_closing_entries
 		)
 
+	calculate_values(
+		accounts_by_name, gl_entries_by_account, period_list, accumulated_values, ignore_accumulated_values_for_fy
+	)
+
 	if root_type in ("Asset", "Liability"):
 		accounts = filter_accounts_by_root_type(accounts, accounts_by_name, parent_children_map, root_type, balance_must_be, period_list)
-
-	calculate_values(
-		accounts_by_name, gl_entries_by_account, period_list, accumulated_values, ignore_accumulated_values_for_fy)
 
 	accounts = sorted([x for x in accounts if x.root_type == root_type], key=lambda x:x["lft"])
 
@@ -131,19 +132,20 @@ def filter_accounts_by_root_type(accounts, accounts_by_name, parent_children_map
 			if account.account_type in DEPRECIATION_ACCOUNT_TYPES or account.negative_in_balance_sheet:
 				continue
 
-			if account.root_type == root_type and account.get(period.key):
+			if account.root_type == root_type and account.get(period.key) and account.balance_sheet_alternative_category:
 				if (flt(account.get(period.key, 0)) > 0 if balance_must_be == "Credit" else flt(account.get(period.key, 0)) < 0):
 					account[period.key] = 0
+					account["opening_balance"] = 0
 			elif account.root_type != root_type and account.get(period.key) and account.balance_sheet_alternative_category:
 				if (flt(account.get(period.key, 0)) < 0 if balance_must_be == "Credit" else flt(account.get(period.key, 0)) > 0):
 					parent_children_map[account.balance_sheet_alternative_category].append(account)
 					account["root_type"] = root_type
 					account["parent_account"] = account.balance_sheet_alternative_category
-					account["opening_balance"] = flt(account.get("opening_balance")) - flt(account.get(period.key, 0))
 					account["lft"] = flt(accounts_by_name.get(account.balance_sheet_alternative_category).get("lft")) + 1.0
 					account["indent"] = flt(accounts_by_name.get(account.balance_sheet_alternative_category).get("indent")) + 1.0
 				else:
 					account[period.key] = 0
+					account["opening_balance"] = 0
 
 	return accounts
 
