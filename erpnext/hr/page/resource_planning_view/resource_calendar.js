@@ -4,8 +4,7 @@
 import { Calendar } from '@fullcalendar/core';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
-import adaptivePlugin from '@fullcalendar/adaptive'
-import _default from '@fullcalendar/premium-common';
+import adaptivePlugin from '@fullcalendar/adaptive';
 
 frappe.provide("erpnext.resource_calendar")
 
@@ -332,7 +331,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	}
 
 	remove_tasks_buttons() {
-		$(".task-btn").remove();
+		$(".task-btn").parent().remove();
 		this.tasks_btn = null;
 	}
 

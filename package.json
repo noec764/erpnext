@@ -14,10 +14,9 @@
   "devDependencies": {},
   "dependencies": {
     "@fullcalendar/adaptive": "^5.10.1",
-    "@fullcalendar/core": "^5.10.0",
-    "@fullcalendar/interaction": "^5.10.0",
-    "@fullcalendar/resource-common": "^5.10.0",
-    "@fullcalendar/resource-timeline": "^5.10.0",
+    "@fullcalendar/core": "^5.10.1",
+    "@fullcalendar/resource-common": "^5.10.1",
+    "@fullcalendar/resource-timeline": "^5.10.1",
     "onscan.js": "^1.5.2"
   },
   "scripts": {}
