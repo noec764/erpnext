@@ -1,5 +1,5 @@
-from datetime import timedelta
 from collections import defaultdict
+import pandas as pd
 
 import frappe
 from frappe import _
@@ -7,77 +7,159 @@ from frappe.desk.form.assign_to import add
 from frappe.utils import cstr, getdate, nowdate, time_diff_in_hours, flt, format_time, date_diff, add_days, format_date
 from frappe.utils.nestedset import get_descendants_of
 
+CALENDAR_MAP = {
+	0: "monday",
+	1: "tuesday",
+	2: "wednesday",
+	3: "thursday",
+	4: "friday",
+	5: "saturday",
+	6: "sunday"
+}
+
 @frappe.whitelist()
 def get_resources(company, start, end, employee=None, department=None, group_by=None, with_tasks=False):
-	query_filters = {"status": "Active", "company": company}
+	return ResourceQuery(
+		company=company,
+		start=start,
+		end=end,
+		employee=employee,
+		department=department,
+		group_by=group_by,
+		with_tasks=with_tasks
+	).get_resources()
 
-	if department and not group_by == "Department":
-		query_filters.update({"department": ("in", [department] + get_descendants_of("Department", department))})
+class ResourceQuery:
+	def __init__(self, **kwargs):
+		for (k, v) in kwargs.items():
+			setattr(self, k, v)
 
-	if employee:
-		query_filters.update({"name": employee})
+		self.start = getdate(self.start)
+		self.end = getdate(self.end)
+		self.resources = []
 
-	employees = frappe.get_all("Employee",
-			filters=query_filters,
-			fields=["name", "employee_name", "department", "company", "user_id"])
+	def get_resources(self):
+		self.get_query_filters()
+		self.get_employees()
+		self.get_working_time()
+		if self.group_by:
+			self.get_group_by_data()
 
-	employee_list = {x.name: [x.company, x.user_id, x.employee_name] for x in employees}
-	number_of_weeks = (getdate(end).isocalendar()[1] - getdate(start).isocalendar()[1]) + 1
-	working_time = {
-		x.employee: x.weekly_working_hours for x in
-		frappe.get_all("Employment Contract",
-			filters={
-				"employee": ("in", employee_list.keys()),
-				"date_of_joining": ("<=", nowdate()),
-				"ifnull(relieving_date, '3999-12-31')": (">=", nowdate())
-			},
-			fields=["employee", "weekly_working_hours"])
-	}
+		if self.group_by and self.groups:
+			self.get_group_by_resources()
 
-	if group_by:
-		query_filters = {"projects": []}
-		if employee:
-			query_filters.update({"employee": employee})
-		if department:
-			query_filters.update({"department": ("in", [department] + get_descendants_of("Department", department))})
+		if not self.resources:
+			self.get_individual_resources()
 
-		events = get_events(start, end, query_filters, with_tasks=with_tasks)
+		return self.resources
 
-		groups = defaultdict(set)
+	def get_query_filters(self):
+		self.query_filters = {"status": "Active", "company": self.company}
+
+		if self.department and not self.group_by == "Department":
+			self.query_filters.update({
+				"department": ("in", [self.department] + get_descendants_of("Department", self.department))
+			})
+
+		if self.employee:
+			self.query_filters.update({"name": self.employee})
+
+	def get_employees(self):
+		self.employees = frappe.get_all("Employee",
+			filters=self.query_filters,
+			fields=["name", "employee_name", "department", "company", "user_id", "designation"])
+
+		self.employee_list = {x.name: [x.company, x.user_id, x.employee_name] for x in self.employees}
+
+	def get_working_time(self):
+		self.working_time = {
+			x.employee: {
+				"weekly_working_hours": x.weekly_working_hours,
+				"monday": x.monday,
+				"tuesday": x.tuesday,
+				"wednesday": x.wednesday,
+				"thursday": x.thursday,
+				"friday": x.friday,
+				"saturday": x.saturday,
+				"sunday": x.sunday
+			} for x in
+			frappe.get_all("Employment Contract",
+				filters={
+					"employee": ("in", self.employee_list.keys()),
+					"date_of_joining": ("<=", nowdate()),
+					"ifnull(relieving_date, '3999-12-31')": (">=", nowdate())
+				},
+				fields=["employee", "weekly_working_hours", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"])
+		}
+
+	def calculate_working_time(self, employee):
+		# FullCalendar returns the next day in its API
+		end = add_days(self.end, -1)
+		holidays_for_employee = [h.holiday_date for h in get_holidays_for_employee(employee, self.start, end)]
+
+		total = 0.0
+		for date in pd.date_range(self.start, end):
+			if date not in holidays_for_employee:
+				total += self.working_time.get(employee, {}).get(CALENDAR_MAP.get(date.dayofweek), 0.0)
+		return total
+
+	def get_group_by_data(self):
+		event_query_filters = {"projects": []}
+		if self.employee:
+			event_query_filters.update({"employee": self.employee})
+		if self.department:
+			event_query_filters.update({"department": ("in", [self.department] + get_descendants_of("Department", self.department))})
+
+		events = get_events(self.start, self.end, event_query_filters, with_tasks=self.with_tasks)
+
+		self.groups = defaultdict(set)
 		for event in events:
 			emp = event.get("employee") or event.get("resourceId")
-			group_by_data = event.get(group_by.lower())
-			if group_by_data:
-				groups[group_by_data].add(emp)
+			self.group_by_data = event.get(self.group_by.lower())
+			if self.group_by_data:
+				self.groups[self.group_by_data].add(emp)
 
-	resources = []
-	if group_by and groups:
-		for group in groups:
-			for emp in groups[group]:
-				resources.append({
-					"id": f"{emp}_{group}",
-					"title": employee_list.get(emp)[2],
-					group_by.lower(): group,
-					"company": employee_list.get(emp)[0],
-					"user_id": employee_list.get(emp)[1],
-					"working_time": flt(working_time.get(emp)) * flt(number_of_weeks),
-					"employee_id": emp,
-					"total": None
-				})
-	elif not group_by:
-		for e in employees:
-			resources.append({
+	def get_group_by_resources(self):
+		for group in self.groups:
+			for emp in self.groups[group]:
+				if self.employee_list.get(emp):
+					self.resources.append({
+						"id": f"{emp}_{group}",
+						"title": self.employee_list.get(emp)[2],
+						self.group_by.lower(): group or "N/A",
+						"company": self.employee_list.get(emp)[0],
+						"user_id": self.employee_list.get(emp)[1],
+						"working_time": self.calculate_working_time(emp),
+						"employee_id": emp,
+						"total": None
+					})
+
+	def get_individual_resources(self):
+		for e in self.employees:
+			self.resources.append({
 				"id": e.name,
 				"title": e.employee_name,
 				"department": e.department,
+				"designation": e.designation,
 				"company": e.company,
 				"user_id": e.user_id,
-				"working_time": flt(working_time.get(e.name)) * flt(number_of_weeks),
+				"working_time": self.calculate_working_time(e.name),
 				"employee_id": e.name,
 				"total": None
 			})
 
-	return resources
+	def get_shift_resources(self):
+		for st in get_shift_types():
+			self.resources.append({
+				"id": st.name,
+				"title": st.name,
+				"department": st.get("department"),
+				"company": st.get("company"),
+				"user_id": None,
+				"working_time": 0,
+				"employee_id": None,
+				"total": None
+			})
 
 @frappe.whitelist()
 def get_resources_total(start, end, group_by=None):
@@ -96,32 +178,49 @@ def get_resources_total(start, end, group_by=None):
 	return total
 
 @frappe.whitelist()
-def get_shift_types():
+def get_shift_types(query_filters=None):
+	if not query_filters:
+		query_filters = {}
+
+	query_fields = ["name", "start_time", "end_time"]
+	meta = frappe.get_meta("Shift Type")
+	if meta.has_field("company"):
+		query_fields.append("company")
+
+	if meta.has_field("department"):
+		query_fields.append("department")
+
 	return [
-		{
+		frappe._dict({
 			"name": st.name,
 			"startTime": st.start_time,
 			"duration": time_diff_in_hours(st.end_time, st.start_time)
-		}
+		}, **st)
 		for st in frappe.get_all("Shift Type",
-			fields=["name", "start_time", "end_time"]
+			filters=query_filters,
+			fields=query_fields
 		)
 	]
 
 @frappe.whitelist()
-def get_tasks(projects=None):
+def get_tasks(start, end, projects=None):
 	if not projects:
 		projects = []
 	else:
 		projects = frappe.parse_json(projects)
 
-	query_filters = {"status": ("in", ("Open", "Working", "Pending Review", "Overdue"))}
+	query_filters = {
+		"status": ("in", ("Open", "Working", "Pending Review", "Overdue")),
+		"ifnull(exp_end_date, '2999-12-31')": (">=", start),
+		"ifnull(exp_start_date, '1900-01-01')":  ("<=", end)
+	}
 	if projects:
 		query_filters.update({"project": ("in", projects)})
 
 	return frappe.get_all("Task",
 		filters=query_filters,
-		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign"], debug=False)
+		fields=["name", "subject", "project", "exp_start_date", "exp_end_date", "_assign"]
+	)
 
 @frappe.whitelist()
 def add_to_doc(doctype, name, assign_to=None):
@@ -178,6 +277,10 @@ def get_events(start, end, filters=None, group_by=None, with_tasks=False):
 	out.extend(get_assignments(start, end, filters, group_by=group_by))
 	return out
 
+@frappe.whitelist()
+def get_total_by_date(start, end, events):
+	print(start, end, events)
+
 def get_holidays(start_date, end_date, filters=None):
 	query_filters = {"status": "Active"}
 	if filters:
@@ -201,6 +304,7 @@ def get_holidays(start_date, end_date, filters=None):
 				"editable": 0,
 				"classNames": ["fc-background-event", "fc-yellow-stripped"],
 				"doctype": "Holiday List",
+				"docname": hle.name,
 				"docstatus": 0
 			})
 
@@ -256,6 +360,7 @@ def get_leave_applications(start, end, filters=None):
 				"editable": 0,
 				"classNames": ["fc-background-event", css_class],
 				"doctype": "Leave Application",
+				"docname": l.name,
 				"docstatus": l.docstatus
 			}
 		)
@@ -281,6 +386,7 @@ def get_trainings(start, end, filters=None):
 			"editable": 0,
 			"classNames": ["fc-background-event", "fc-pacific-blue-stripped"],
 			"doctype": "Training Event",
+			"docname": e.name,
 			"docstatus": e.docstatus
 		}
 		for e in frappe.get_all(
@@ -345,6 +451,7 @@ def get_assignments(start, end, filters=None, group_by=None):
 			"id": d.name,
 			"resourceId": resourceId,
 			"doctype": "Shift Assignment",
+			"docname": d.name,
 			"docstatus": d.docstatus,
 			"start": daily_event_start,
 			"end": daily_event_end,
@@ -427,6 +534,7 @@ def get_assignment_requests(start, end, filters=None, group_by=None):
 			"id": d.name,
 			"resourceId": resourceId,
 			"doctype": "Shift Request",
+			"docname": d.name,
 			"docstatus": d.docstatus,
 			"start": daily_event_start,
 			"end": daily_event_end,
@@ -480,7 +588,7 @@ def get_assigned_tasks(start, end, filters=None, group_by=None):
 			formatted_start_date = format_date(task.exp_start_date) if task.exp_start_date else _("No start date")
 			formatted_end_date = format_date(task.exp_end_date) if task.exp_end_date else _("No end date")
 
-			resourceId = user_map.get(assigned)
+			resourceId = user_map.get(assigned) or ""
 			if group_by and has_group_by_field and task.get(group_by.lower()):
 				resourceId += f"_{task.get(group_by.lower())}"
 
@@ -496,6 +604,7 @@ def get_assigned_tasks(start, end, filters=None, group_by=None):
 				"textColor": task.color,
 				"classNames": ["fc-stripped-event"],
 				"doctype": "Task",
+				"docname": task.name,
 				"docstatus": task.docstatus,
 				"project": task.get("project")
 			})

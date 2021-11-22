@@ -121,6 +121,10 @@
 	.fc-red {
 		color: var(--red-400);
 	}
+
+	.fc-resource-group.fc-cell-shaded > div {
+		background-color: var(--gray-100);
+	}
 }
 
 [data-route="resource-planning-view"] {
