@@ -151,7 +151,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 	get_payment_html(doc, payment) {
 		return `<div class="summary-row-wrapper payments">
-					<div>${payment.mode_of_payment}</div>
+					<div>${__("payment.mode_of_payment")}</div>
 					<div>${format_currency(payment.amount, doc.currency)}</div>
 				</div>`;
 	}
@@ -282,8 +282,9 @@ erpnext.PointOfSale.PastOrderSummary = class {
 			if (m.condition) {
 				m.visible_btns.forEach(b => {
 					const class_name = b.split(' ')[0].toLowerCase();
+					const btn = __(b);
 					this.$summary_btns.append(
-						`<div class="summary-btn btn btn-default ${class_name}-btn">${__(b)}</div>`
+						`<div class="summary-btn btn btn-default ${class_name}-btn">${btn}</div>`
 					);
 				});
 			}
