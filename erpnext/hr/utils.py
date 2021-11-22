@@ -311,6 +311,21 @@ def allocate_earned_leaves():
 	'''Allocate earned leaves to Employees'''
 	EarnedLeaveAllocator(EarnedLeaveCalculator).allocate()
 
+def get_monthly_earned_leave(annual_leaves, frequency, rounding):
+	earned_leaves = 0.0
+	divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
+	if annual_leaves:
+		earned_leaves = flt(annual_leaves) / divide_by_frequency[frequency]
+		if rounding:
+			if rounding == "0.25":
+				earned_leaves = round(earned_leaves * 4) / 4
+			elif rounding == "0.5":
+				earned_leaves = round(earned_leaves * 2) / 2
+			else:
+				earned_leaves = round(earned_leaves)
+
+	return earned_leaves
+
 def get_leave_allocations(date, leave_type):
 	return frappe.db.sql(f"""select name, employee, from_date, to_date, leave_policy_assignment, leave_policy
 		from `tabLeave Allocation`
