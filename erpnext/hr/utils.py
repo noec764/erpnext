@@ -506,7 +506,7 @@ class EarnedLeaveCalculator():
 			return
 
 		self.leave_policy = self.allocation.leave_policy if self.allocation.leave_policy else frappe.db.get_value(
-			"Leave Policy Assignment", allocation.leave_policy_assignment, ["leave_policy"])
+			"Leave Policy Assignment", self.allocation.leave_policy_assignment, ["leave_policy"])
 
 		self.annual_allocation = frappe.db.get_value("Leave Policy Detail", filters={
 			'parent': self.leave_policy,
@@ -520,7 +520,7 @@ class EarnedLeaveCalculator():
 			if self.leave_type.earned_leave_frequency == "Custom Formula" and self.formula_map.get(self.leave_type.earned_leave_frequency_formula):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
 			elif self.leave_type.earned_leave_frequency != "Custom Formula":
-				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
+				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency]
 				if self.leave_type.rounding == "None":
 					pass
 				elif self.leave_type.rounding == "0.5":
