@@ -117,9 +117,6 @@ class EventsCalendar {
 			eventClick: function(event) {
 				me.eventClick(event)
 			},
-			datesSet: function(event) {
-				return me.datesSet(event);
-			},
 			displayEventTime: this.get_time_display(),
 			height: "auto"
 		}
@@ -173,12 +170,6 @@ class EventsCalendar {
 			dialog.disable_primary_action();
 		}
 		dialog.show()
-	}
-
-	datesSet(event) {
-		if (event.view.activeStart && this.parent.calendar_type !== "Monthly") {
-			this.fullCalendar.gotoDate(event.view.activeStart)
-		}
 	}
 
 	getSelectAllow(selectInfo) {
