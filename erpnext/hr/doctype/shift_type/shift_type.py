@@ -11,14 +11,24 @@ from frappe.model.document import Document
 from frappe.utils import cint, getdate, get_datetime
 from erpnext.hr.doctype.shift_assignment.shift_assignment import get_actual_start_end_datetime_of_shift, get_employee_shift
 from erpnext.hr.doctype.employee_checkin.employee_checkin import mark_attendance_and_link_log, calculate_working_hours
-from erpnext.hr.doctype.attendance.attendance import mark_attendance
+from erpnext.hr.doctype.attendance.attendance import mark_attendance, DuplicateAttendanceError
 from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
 
 class ShiftType(Document):
 	@frappe.whitelist()
 	def process_auto_attendance(self):
-		if not cint(self.enable_auto_attendance) or not self.process_attendance_after or not self.last_sync_of_checkin:
+		if not cint(self.enable_auto_attendance):
 			return
+
+		if cint(self.shift_assignments_based_attendance):
+			self.process_auto_attendance_based_on_shift_assignments()
+		else:
+			self.process_auto_attendance_based_on_employee_checkin()
+
+	def process_auto_attendance_based_on_employee_checkin(self):
+		if not self.process_attendance_after or not self.last_sync_of_checkin:
+			return
+
 		filters = {
 			'skip_auto_attendance':'0',
 			'attendance':('is', 'not set'),
@@ -26,14 +36,46 @@ class ShiftType(Document):
 			'shift_actual_end': ('<', self.last_sync_of_checkin),
 			'shift': self.name
 		}
-		logs = frappe.db.get_list('Employee Checkin', fields="*", filters=filters, order_by="employee,time", debug=True)
-		print(logs)
+		logs = frappe.db.get_list('Employee Checkin', fields="*", filters=filters, order_by="employee,time", debug=False)
 		for key, group in itertools.groupby(logs, key=lambda x: (x['employee'], x['shift_actual_start'])):
 			single_shift_logs = list(group)
 			attendance_status, working_hours, late_entry, early_exit, in_time, out_time = self.get_attendance(single_shift_logs)
 			mark_attendance_and_link_log(single_shift_logs, attendance_status, key[1].date(), working_hours, late_entry, early_exit, in_time, out_time, self.name)
 		for employee in self.get_assigned_employee(self.process_attendance_after, True):
 			self.mark_absent_for_dates_with_no_attendance(employee)
+
+	def process_auto_attendance_based_on_shift_assignments(self):
+		shift_type_data = {}
+		for doc in frappe.get_all("Shift Assignment",
+			filters={"docstatus": 1, "attendance": ("is", "not set")},
+			fields=["name", "employee", "company", "shift_type", "start_date", "end_date"]):
+
+			if doc.shift_type not in shift_type_data:
+				shift_type_data[doc.shift_type] = frappe.db.get_value("Shift Type", doc.shift_type, ["start_time", "end_time"])
+
+			daily_event_start = doc.start_date
+			daily_event_end = doc.end_date if doc.end_date else getdate()
+			delta = timedelta(days=1)
+
+			while daily_event_start <= daily_event_end:
+				attendance= frappe.get_doc({
+					'doctype': 'Attendance',
+					'employee': doc.employee,
+					'attendance_date': daily_event_start,
+					'status': "Present",
+					'working_hours': shift_type_data.get(doc.shift_type),
+					'company': doc.company,
+					'shift': doc.shift_type
+				})
+				daily_event_start += delta
+				try:
+					attendance.insert()
+					attendance.submit()
+					frappe.db.set_value("Shift Assignment", doc.name, "attendance", attendance.name)
+				except DuplicateAttendanceError:
+					frappe.db.set_value("Shift Assignment", doc.name, "attendance", attendance.name)
+				except Exception:
+					continue
 
 	def get_attendance(self, logs):
 		"""Return attendance_status, working_hours, late_entry, early_exit, in_time, out_time

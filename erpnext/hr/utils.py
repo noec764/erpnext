@@ -311,6 +311,21 @@ def allocate_earned_leaves():
 	'''Allocate earned leaves to Employees'''
 	EarnedLeaveAllocator(EarnedLeaveCalculator).allocate()
 
+def get_monthly_earned_leave(annual_leaves, frequency, rounding):
+	earned_leaves = 0.0
+	divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
+	if annual_leaves and frequency != "Custom Formula":
+		earned_leaves = flt(annual_leaves) / divide_by_frequency[frequency]
+		if rounding:
+			if rounding == "0.25":
+				earned_leaves = round(earned_leaves * 4) / 4
+			elif rounding == "0.5":
+				earned_leaves = round(earned_leaves * 2) / 2
+			else:
+				earned_leaves = round(earned_leaves)
+
+	return earned_leaves
+
 def get_leave_allocations(date, leave_type):
 	return frappe.db.sql(f"""select name, employee, from_date, to_date, leave_policy_assignment, leave_policy
 		from `tabLeave Allocation`
@@ -491,7 +506,7 @@ class EarnedLeaveCalculator():
 			return
 
 		self.leave_policy = self.allocation.leave_policy if self.allocation.leave_policy else frappe.db.get_value(
-			"Leave Policy Assignment", allocation.leave_policy_assignment, ["leave_policy"])
+			"Leave Policy Assignment", self.allocation.leave_policy_assignment, ["leave_policy"])
 
 		self.annual_allocation = frappe.db.get_value("Leave Policy Detail", filters={
 			'parent': self.leave_policy,
@@ -505,7 +520,7 @@ class EarnedLeaveCalculator():
 			if self.leave_type.earned_leave_frequency == "Custom Formula" and self.formula_map.get(self.leave_type.earned_leave_frequency_formula):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
 			elif self.leave_type.earned_leave_frequency != "Custom Formula":
-				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency] * frequency
+				self.earned_leaves = flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency]
 				if self.leave_type.rounding == "None":
 					pass
 				elif self.leave_type.rounding == "0.5":
@@ -565,3 +580,25 @@ def share_doc_with_approver(doc, user):
 		approver = approvers.get(doc.doctype)
 		if doc_before_save.get(approver) != doc.get(approver):
 			frappe.share.remove(doc.doctype, doc.name, doc_before_save.get(approver))
+
+class EmployeeActivityController(Document):
+	def validate_availabilty(self):
+		if (self.get_training_for_period()
+			or self.get_shift_assignments_for_period()
+			or self.get_leaves_for_period()
+		):
+			return False
+
+		return True
+
+	def get_training_for_period(self):
+		if self.doctype == "Training Event":
+			return False
+
+	def get_shift_assignments_for_period(self):
+		if self.doctype == "Shift Assignment":
+			return False
+
+	def get_leaves_for_period(self):
+		if self.doctype == "Leave Application":
+			return False

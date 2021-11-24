@@ -9,6 +9,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cstr, get_datetime, formatdate
 
+class DuplicateAttendanceError(frappe.ValidationError): pass
+
 class Attendance(Document):
 	def validate(self):
 		from erpnext.controllers.status_updater import validate_status
@@ -36,7 +38,7 @@ class Attendance(Document):
 		""", (self.employee, getdate(self.attendance_date), self.name))
 		if res:
 			frappe.throw(_("Attendance for employee {0} is already marked for the date {1}").format(
-				frappe.bold(self.employee), frappe.bold(self.attendance_date)))
+				frappe.bold(self.employee), frappe.bold(self.attendance_date)), DuplicateAttendanceError)
 
 	def check_leave_record(self):
 		leave_record = frappe.db.sql("""
@@ -77,10 +79,10 @@ class Attendance(Document):
 def get_events(start, end, filters=None):
 	events = []
 
-	employee = frappe.db.get_value("Employee", {"user_id": frappe.session.user})
-
-	if not employee:
-		return events
+	filters = frappe.parse_json(filters)
+	filters.append({
+		"employee": ("in", frappe.db.get_list("Employee", pluck="name"))
+	})
 
 	from frappe.desk.reportview import get_filters_cond
 	conditions = get_filters_cond("Attendance", filters, [])
@@ -88,7 +90,7 @@ def get_events(start, end, filters=None):
 	return events
 
 def add_attendance(events, start, end, conditions=None):
-	query = """select name, attendance_date, status
+	query = """select name, attendance_date, status, employee_name
 		from `tabAttendance` where
 		attendance_date between %(from_date)s and %(to_date)s
 		and docstatus < 2"""
@@ -101,7 +103,7 @@ def add_attendance(events, start, end, conditions=None):
 			"doctype": "Attendance",
 			"start": d.attendance_date,
 			"end": d.attendance_date,
-			"title": cstr(d.status),
+			"title": f"{cstr(d.employee_name)}: {cstr(d.status)}",
 			"docstatus": d.docstatus
 		}
 		if e not in events:

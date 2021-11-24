@@ -311,6 +311,7 @@ class BookingCalendar {
 		return {
 			eventClassNames: 'booking-calendar',
 			initialView: me.get_initial_display_view(),
+			contentHeight: 'auto',
 			customButtons: {
 				closeButton: {
 					text: __("Close"),
@@ -347,9 +348,6 @@ class BookingCalendar {
 			eventClick: function(event) {
 				me.eventClick(event)
 			},
-			datesSet: function(event) {
-				return me.datesSet(event);
-			},
 			displayEventTime: this.get_time_display(),
 			slotMinTime: this.start_time.format("HH:mm:ss"),
 			slotMaxTime: this.end_time.format("HH:mm:ss"),
@@ -373,7 +371,7 @@ class BookingCalendar {
 				this.slots = result.message || []
 
 				callback(this.slots);
-				this.fullCalendar.setOption('contentHeight', 'auto');
+
 				if (!this.slots.length && this.parent.calendar_type !== "Monthly") {
 					this.getAvailableItems(parameters)
 				} else {
@@ -494,12 +492,6 @@ class BookingCalendar {
 			this.parent.refresh_bookings()
 			this.triggered = false;
 		})
-	}
-
-	datesSet(event) {
-		if (event.view.activeStart && this.parent.calendar_type !== "Monthly") {
-			this.fullCalendar.gotoDate(event.view.activeStart)
-		}
 	}
 
 	getSelectAllow(selectInfo) {
