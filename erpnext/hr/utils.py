@@ -314,7 +314,7 @@ def allocate_earned_leaves():
 def get_monthly_earned_leave(annual_leaves, frequency, rounding):
 	earned_leaves = 0.0
 	divide_by_frequency = {"Yearly": 1, "Half-Yearly": 6, "Quarterly": 4, "Monthly": 12}
-	if annual_leaves:
+	if annual_leaves and frequency != "Custom Formula":
 		earned_leaves = flt(annual_leaves) / divide_by_frequency[frequency]
 		if rounding:
 			if rounding == "0.25":
