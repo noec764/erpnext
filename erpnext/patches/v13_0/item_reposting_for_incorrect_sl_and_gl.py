@@ -5,9 +5,19 @@ from erpnext.stock.stock_ledger import update_entries_after
 from erpnext.accounts.utils import update_gl_entries_after
 
 def execute():
-	for doctype in ('repost_item_valuation', 'stock_entry_detail', 'purchase_receipt_item',
-			'delivery_note_item', 'packed_item', 'landed_cost_taxes_and_charges'):
-		frappe.reload_doc('stock', 'doctype', doctype)
+	doctypes_to_reload = [
+			("stock", "repost_item_valuation"),
+			("stock", "stock_entry_detail"),
+			("stock", "purchase_receipt_item"),
+			("stock", "delivery_note_item"),
+			("stock", "packed_item"),
+			("accounts", "sales_invoice_item"),
+			("accounts", "purchase_invoice_item"),
+			("buying", "purchase_receipt_item_supplied")
+		]
+
+	for module, doctype in doctypes_to_reload:
+		frappe.reload_doc(module, 'doctype', doctype)
 
 	for doctype in ('purchase_invoice_item', 'sales_invoice_item'):
 		frappe.reload_doc('accounts', 'doctype', doctype, force=True)
