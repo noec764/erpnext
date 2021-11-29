@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import frappe
 import json
 from frappe import _
-from frappe import utils
 from frappe.model.document import Document
 from frappe.utils import cint, now_datetime, getdate, get_weekdays, add_to_date, get_time, get_datetime, time_diff_in_seconds
 from datetime import datetime, timedelta

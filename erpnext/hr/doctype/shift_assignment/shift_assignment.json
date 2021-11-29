@@ -17,6 +17,7 @@
   "end_date",
   "shift_request",
   "department",
+  "attendance",
   "amended_from"
  ],
  "fields": [
@@ -36,11 +37,11 @@
   },
   {
    "fetch_from": "employee.department",
+   "fetch_if_empty": 1,
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
-   "options": "Department",
-   "read_only": 1
+   "options": "Department"
   },
   {
    "fieldname": "shift_type",
@@ -78,30 +79,38 @@
    "read_only": 1
   },
   {
-	"fieldname": "start_date",
-	"fieldtype": "Date",
-	"in_list_view": 1,
-	"label": "Start Date",
-	"reqd": 1
-   },
-   {
-	"allow_on_submit": 1,
-	"fieldname": "end_date",
-	"fieldtype": "Date",
-	"label": "End Date"
-   },
-   {
-	"allow_on_submit": 1,
-	"default": "Active",
-	"fieldname": "status",
-	"fieldtype": "Select",
-	"label": "Status",
-	"options": "Active\nInactive"
-   }
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "attendance",
+   "fieldtype": "Link",
+   "label": "Attendance",
+   "options": "Attendance",
+   "read_only": 1
+  }
  ],
+ "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-06-15 14:27:54.310773",
+ "modified": "2021-11-10 17:20:53.221890",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Shift Assignment",

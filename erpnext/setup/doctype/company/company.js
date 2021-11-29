@@ -94,31 +94,31 @@ frappe.ui.form.on("Company", {
 						frm.trigger("make_default_tax_template");
 					});
 				}
-	
+
 				if (frappe.perm.has_perm("Cost Center", 0, 'read')) {
 					frm.add_custom_button(__('Cost Centers'), function() {
 						frappe.set_route('Tree', 'Cost Center', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Account", 0, 'read')) {
 					frm.add_custom_button(__('Chart of Accounts'), function() {
 						frappe.set_route('Tree', 'Account', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Sales Taxes and Charges Template", 0, 'read')) {
 					frm.add_custom_button(__('Sales Tax Template'), function() {
 						frappe.set_route('List', 'Sales Taxes and Charges Template', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frappe.perm.has_perm("Purchase Taxes and Charges Template", 0, 'read')) {
 					frm.add_custom_button(__('Purchase Tax Template'), function() {
 						frappe.set_route('List', 'Purchase Taxes and Charges Template', {'company': frm.doc.name});
 					}, __("View"));
 				}
-	
+
 				if (frm.has_perm('write')) {
 					frm.add_custom_button(__('Default Tax Template'), function() {
 						frm.trigger("make_default_tax_template");
@@ -183,6 +183,11 @@ frappe.ui.form.on("Company", {
 
 // __("Standard") __("Standard with Numbers")
 erpnext.company.set_chart_of_accounts_options = function(doc) {
+	// Avoid error when creating a linked document from the Company doctype
+	if (!cur_frm.fields.map(f => f.df.fieldname).includes("chart_of_accounts")) {
+		return
+	}
+
 	var selected_value = doc.chart_of_accounts;
 	if(doc.country) {
 		return frappe.call({
