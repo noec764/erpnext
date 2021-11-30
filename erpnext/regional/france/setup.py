@@ -96,12 +96,10 @@ def default_accounts_mapping(accounts, company):
 
 def setup_default_leaves():
 	leave_types = [
-		{'doctype': 'Leave Type', 'leave_type_name': _('Casual Leave'), 'name': _('Casual Leave'),
-			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 1},
-		{'doctype': 'Leave Type', 'leave_type_name': _('Compensatory Off'), 'name': _('Compensatory Off'),
-			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 1, 'is_compensatory':0, 'max_leaves_allowed': 10 },
-		{'doctype': 'Leave Type', 'leave_type_name': _('Privilege Leave'), 'name': _('Privilege Leave'),
-			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 1, 'is_compensatory':0,
+		{'doctype': 'Leave Type', 'leave_type_name': _('RTT'), 'name': _('RTT'),
+			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 0, 'is_compensatory':0, 'max_leaves_allowed': 0 },
+		{'doctype': 'Leave Type', 'leave_type_name': _('Congés Payés'), 'name': _('Congés Payés'),
+			'allow_encashment': 0, 'is_carry_forward': 0, 'include_holiday': 0, 'is_compensatory':0,
 			'max_leaves_allowed': 25, 'allow_negative': 1, 'is_earned_leave': 1, 'earned_leave_frequency': 'Custom Formula',
 			'earned_leave_frequency_formula': 'Congés payés sur jours ouvrables'}
 	]
@@ -115,15 +113,11 @@ def setup_default_leaves():
 
 	policy = {
 		"doctype": "Leave Policy",
-		"policy_title": _("Example"),
+		"policy_title": _("Congés Payés"),
 		"leave_policy_details": [
 			{
-				"leave_type": _('Privilege Leave'),
+				"leave_type": _('Congés Payés'),
 				"annual_allocation": 25
-			},
-			{
-				"leave_type": _('Compensatory Off'),
-				"annual_allocation": 10
 			}
 		]
 	}
