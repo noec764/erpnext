@@ -327,6 +327,7 @@ def get_holidays(start_date, end_date, filters=None):
 				"end": hle.holiday_date,
 				"title": hle.description,
 				"editable": 0,
+				"borderColor": "var(--yellow-200)",
 				"classNames": ["fc-background-event", "fc-yellow-stripped"],
 				"doctype": "Holiday List",
 				"docname": hle.name,
@@ -369,11 +370,11 @@ def get_leave_applications(start, end, filters=None):
 			fields=["name", "leave_type", "employee", "from_date", "to_date", "docstatus", "status"]
 		):
 		css_class = "fc-gray-stripped"
+		border_color = "var(--gray-200)"
 		if l.docstatus != 0:
 			if l.status == "Approved" and l.docstatus == 1:
 				css_class = "fc-green-stripped"
-			else:
-				css_class = "fc-gray-stripped"
+				border_color = "var(--green-200)"
 
 		output.append(
 			{
@@ -383,6 +384,7 @@ def get_leave_applications(start, end, filters=None):
 				"end": l.to_date,
 				"title": l.leave_type,
 				"editable": 0,
+				"borderColor": border_color,
 				"classNames": ["fc-background-event", css_class],
 				"doctype": "Leave Application",
 				"docname": l.name,
@@ -409,6 +411,7 @@ def get_trainings(start, end, filters=None):
 			"end": e.end_time,
 			"title": e.event_name,
 			"editable": 0,
+			"borderColor": "var(--pacific-blue-200)",
 			"classNames": ["fc-background-event", "fc-pacific-blue-stripped"],
 			"doctype": "Training Event",
 			"docname": e.name,
@@ -487,6 +490,7 @@ def get_assignments(start, end, filters=None, group_by=None, return_records=Fals
 			"start_time": shift_type_data.get(d.shift_type)[0],
 			"end_time": shift_type_data.get(d.shift_type)[1],
 			"editable": d.docstatus == 0,
+			"borderColor": "var(--gray-200)" if d.docstatus == 0 else ("var(--red-200)" if d.docstatus == 2 else "var(--blue-400)"),
 			"classNames": ["fc-gray-bg"] if d.docstatus == 0 else (["fc-red-stripped"] if d.docstatus == 2 else ["fc-blue-bg"]),
 			"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
 			"project": d.get("project"),
@@ -571,6 +575,7 @@ def get_assignment_requests(start, end, filters=None, group_by=None):
 			"start_time": shift_type_data.get(d.shift_type)[0],
 			"end_time": shift_type_data.get(d.shift_type)[1],
 			"editable": d.docstatus == 0,
+			"borderColor": "var(--green-300)",
 			"classNames": ["fc-green-bg"],
 			"duration": time_diff_in_hours(shift_type_data.get(d.shift_type)[1], shift_type_data.get(d.shift_type)[0]),
 			"project": d.get("project"),
