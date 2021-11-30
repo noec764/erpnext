@@ -28,12 +28,21 @@ const group_by_filters = {
 		get_data: function (txt) {
 			return frappe.db.get_link_options('Project', txt);
 		}
+	},
+	"Shift Type": {
+		fieldname: "shift_type",
+		label: __("Shift Type"),
+		fieldtype: "Link",
+		options: "Shift Type"
 	}
 }
 
 erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	constructor(wrapper, page) {
 		this.wrapper = wrapper;
+
+		this.get_resource_area_columns = this.get_resource_area_columns.bind(this)
+
 		this.page = page;
 		$(`<div class="frappe-card resource-calendar mt-4"></div>`).appendTo(this.wrapper.find(".layout-main-section"))
 
@@ -42,6 +51,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.company = frappe.defaults.get_default("company")
 		this.projects = []
 		this.view = "Employee"
+		this.resources_view = "Employee"
 		this.group = null
 		this.task_enabled = 0
 		this.calendar = new Calendar(this.calendar_wrapper, this.get_options());
@@ -59,11 +69,12 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			plugins: [resourceTimelinePlugin, interactionPlugin, adaptivePlugin],
 			initialView: 'resourceTimelineWeek',
 			headerToolbar: {
-				left: 'today',
+				left: 'groupByShiftButton',
 				center: 'prev,title,next',
-				right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth'
+				right: 'today,resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth'
 			},
 			editable: false,
+			selectable: false,
 			resourceAreaColumns: this.get_resource_area_columns(),
 			resourceGroupField: null,
 			slotDuration: { days: 1 },
@@ -82,6 +93,17 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 				month: __("Month"),
 				week: __("Week"),
 				day: __("Day")
+			},
+			customButtons: {
+				groupByShiftButton: {
+					text: me.resources_view == "Shift Type" ? __("Group by employee") : __("Group by shift type"),
+						click: function() {
+							me.resources_view = me.resources_view == "Shift Type" ? "Employee" : "Shift Type"
+							me.set_resource_view_options();
+							me.refetch_all();
+							me.render_custom_button();
+						}
+				}
 			},
 			resources: function (info, callback) {
 				return me.get_resource(info, callback)
@@ -115,6 +137,9 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 					me.showPreview(info)
 				}
 			},
+			dateClick: function(info) {
+				me.show_quick_entry_form(info, "Shift Assignment")
+			},
 			eventDidMount: function (info) {
 				$(info.el).tooltip({
 					title: info.event.title,
@@ -130,23 +155,31 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 				if (args.event.extendedProps.html_title) {
 					return { html: args.event.extendedProps.html_title }
 				}
-			},
-			datesSet: function() {
-				me.remove_tasks_buttons()
-				me.add_tasks_buttons()
 			}
 		}
 	}
 
+	render_custom_button() {
+		const customButtonsOption = this.calendar.getOption('customButtons');
+		this.calendar.setOption("customButtons", {
+			...customButtonsOption,
+			groupByShiftButton: {
+				...customButtonsOption.groupByShiftButton,
+				text: this.resources_view == "Shift Type" ? __("Group by employee") : __("Group by shift type")
+			}
+		});
+	}
+
 	get_resource_area_columns() {
+		const me = this;
 		return [
 			{
-				headerContent: __('Employee'),
+				headerContent: me.resources_view != "Shift Type" ? __('Employee') : "Shift Type",
 				field: 'title',
 				width: '100%',
 				cellContent: function (arg) {
 					const green = (arg.resource.extendedProps.working_time || 0) >= (arg.resource.extendedProps.total || 0);
-					const html = `
+					const html = me.resources_view != "Shift Type" ? `
 						<div class="flex align-items-start">
 							<div>${frappe.avatar(arg.resource.extendedProps.user_id || arg.fieldValue)}</div>
 							<div class="ml-2">
@@ -156,8 +189,8 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 									${arg.resource.extendedProps.working_time || 0} ${__("Hours")}
 								</div>
 							</div>
-						</div>
-					`
+						</div
+					` : `<div>${arg.fieldValue}</div>`
 					return { html: html }
 				}
 			}
@@ -172,11 +205,13 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 	get_resource(info, callback) {
 		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_resources", {
 			company: this.company,
-			department: this.department,
 			employee: this.employee,
+			department: this.department,
 			start: moment(info.start).format("YYYY-MM-DD"),
 			end: moment(info.end).format("YYYY-MM-DD"),
 			group_by: this.group,
+			group_by_value: this.group_by_value,
+			resources_view: this.resources_view,
 			with_tasks: this.task_enabled
 		}).then(r => {
 			callback(r)
@@ -199,14 +234,10 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			end: moment(info.end).format("YYYY-MM-DD"),
 			filters: filters,
 			group_by: this.group,
+			resources_view: this.resources_view,
 			with_tasks: this.task_enabled
 		}).then(r => {
 			callback(r);
-			// this.get_total_by_date(
-			// 	moment(info.start).format("YYYY-MM-DD"),
-			// 	moment(info.end).format("YYYY-MM-DD"),
-			// 	r
-			// )
 		})
 	}
 
@@ -221,16 +252,6 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			})
 		})
 	}
-
-	// get_total_by_date(start, end, events) {
-	// 	frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_total_by_date", {
-	// 		start: start,
-	// 		end: end,
-	// 		events: events,
-	// 	}).then(r => {
-	// 		console.log(r)
-	// 	})
-	// }
 
 	build_draggable(element, eventData) {
 		new Draggable(element, {
@@ -286,61 +307,11 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			})
 	}
 
-	add_tasks_buttons() {
-		if (!this.task_enabled || this.tasks_btn) {
-			return
-		}
-		frappe.xcall("erpnext.hr.page.resource_planning_view.resource_planning_view.get_tasks", {
-			projects: this.projects,
-			start: moment(this.calendar.view.currentStart).format("YYYY-MM-DD"),
-			end: moment(this.calendar.view.currentEnd).format("YYYY-MM-DD")
-		}).then(res => {
-			this.tasks_btn = this.page.add_custom_button_group(__("Assign Task"), null);
-			this.tasks_btn.addClass("task-btn")
-			if (!res.length) {
-				$(".task-btn > button").prop('disabled', true);
-			} else {
-				res.map(r => {
-					const eventData = {
-						title: r.name,
-						duration: r.duration,
-						startTime: r.startTime,
-						reference_type: "Task",
-						reference_name: r.name,
-						target: "AssignTo"
-					}
-
-					const btn = this.page.add_custom_menu_item(
-						this.tasks_btn,
-						`
-						<div>${r.subject}</div>
-						<div class="small">${r.project}</div>
-						<div class="small text-muted">${r.name}</div>
-					`,
-						null,
-						false,
-						null,
-						null
-					);
-					$(btn).addClass("btn-draggable");
-					this.build_draggable($(btn)[0], eventData);
-					this.bind_draggable_event(this.tasks_btn);
-				})
-			}
-		})
-	}
-
-	remove_tasks_buttons() {
-		$(".task-btn").parent().remove();
-		this.tasks_btn = null;
-	}
-
 	add_view_selector() {
 		const view_selectors = {
 			"Employee": "users",
 			"Designation": "review",
-			"Department": "oranisation",
-			"Project": "project"
+			"Department": "oranisation"
 		}
 		this.views_menu = this.page.add_custom_button_group(__('{0} View', [__(this.view)]), view_selectors[this.view]);
 		Object.keys(view_selectors).forEach(v => {
@@ -359,12 +330,18 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		})
 	}
 
+	set_resource_view_options() {
+		this.calendar.setOption("resourceAreaColumns", this.get_resource_area_columns());
+		this.calendar.setOption("displayEventTime", this.resources_view != "Shift Type")
+	}
+
 	change_view(view) {
 		this.view = view;
 		this.group = view != "Employee" ? view : null;
 		this.task_enabled = this.view == "Project" ? 1: 0;
-		this.calendar.setOption("resourceAreaColumns", this.get_resource_area_columns());
+
 		this.calendar.setOption("resourceGroupField", this.group ? this.group.toLowerCase() : null);
+
 		this.page.standard_actions.empty();
 		this.add_view_selector();
 		this.add_filters_and_dropdowns()
@@ -381,13 +358,10 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		this.add_company_filter();
 		this.add_employee_filter();
 		this.add_group_by_filter();
-		if (this.view != "Project") {
-			this.add_shift_buttons();
-		} else {
-			this.remove_tasks_buttons()
-			this.add_tasks_buttons()
+		if (this.view == "Employee") {
+			this.add_department_filter();
 		}
-
+		this.add_shift_buttons();
 	}
 
 	add_company_filter() {
@@ -400,21 +374,9 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 			reqd: 1,
 			change: () => {
 				this.company = this.company_filter.get_value() || frappe.defaults.get_default("company")
+				this.refetch_all()
 			}
 		})
-	}
-
-	add_group_by_filter() {
-		if (this.group && !this.group_by_filter) {
-			const options = {
-				...group_by_filters[this.group],
-				change: () => {
-					this.group_by_value = this.group_by_filter.get_value();
-					this.refetch_all()
-				}
-			}
-			this.group_by_filter = this.page.add_field(options)
-		}
 	}
 
 	add_employee_filter() {
@@ -430,22 +392,50 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		})
 	}
 
+	add_department_filter() {
+		const options = {
+			...group_by_filters["Department"],
+			change: () => {
+				this.department = this.department_filter.get_value();
+				this.refetch_all()
+			}
+		}
+		this.department_filter = this.page.add_field(options)
+	}
+
+	add_group_by_filter() {
+		if (this.group && !this.group_by_filter) {
+			const options = {
+				...group_by_filters[this.group],
+				change: () => {
+					this.group_by_value = this.group_by_filter.get_value();
+					this.refetch_all()
+				}
+			}
+			this.group_by_filter = this.page.add_field(options)
+		}
+	}
+
 	show_quick_entry_form(info, target) {
 		frappe.model.with_doctype(target, () => {
 			let new_doc = frappe.model.get_new_doc(target);
-			new_doc.employee = info.event.getResources().map((resource) => { return resource.extendedProps.employee_id })[0]
-			new_doc.shift_type = info.event.extendedProps.reference_name
-			new_doc.start_date = moment(info.event.start).format("YYYY-MM-DD")
-			new_doc.end_date = moment(info.event.end).format("YYYY-MM-DD")
+			new_doc.employee = info.event ? info.event.getResources().map((resource) => { return resource.extendedProps.employee_id })[0]:
+				info.resource && info.resource.extendedProps.employee_id
+			new_doc.company = this.company
+			new_doc.department = info.resource && info.resource.extendedProps.department
+			new_doc.designation = info.resource && info.resource.extendedProps.designation
+			new_doc.shift_type = info.event&&info.event.extendedProps.reference_name
+			new_doc.start_date = moment(info.event ? info.event.start : info.date).format("YYYY-MM-DD")
+			new_doc.end_date = moment(info.event ? info.event.end : info.date).format("YYYY-MM-DD")
 
 			frappe.ui.form.make_quick_entry(target, (doc) => {
 				frappe.set_route(frappe.get_route_str())
-				info.revert();
+				info.revert&&info.revert();
 				this.refetch_all();
 			}, null, new_doc, true);
 
 			frappe.quick_entry.dialog.get_close_btn().on('click', () => {
-				info.revert();
+				info.revert&&info.revert();
 				frappe.quick_entry.dialog.hide();
 			});
 		});

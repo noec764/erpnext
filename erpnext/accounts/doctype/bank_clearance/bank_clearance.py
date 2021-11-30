@@ -26,7 +26,7 @@ class BankClearance(Document):
 
 		account_cond = ""
 		if self.bank_account_no:
-			account_cond = " and t2.bank_account_no = {0}".format(frappe.db.escape(self.bank_account_no))
+			account_cond = " and t2.bank_account = {0}".format(frappe.db.escape(self.bank_account_no))
 
 		journal_entries = frappe.db.sql("""
 			select
@@ -45,7 +45,7 @@ class BankClearance(Document):
 		""".format(condition, account_cond), (self.bank_account, self.from_date, self.to_date), as_dict=1)
 
 		if self.bank_account_no:
-			condition = " and bank_account = %(bank_account_no)s"
+			condition += " and bank_account = %(bank_account_no)s"
 
 		payment_entries = frappe.db.sql("""
 			select
