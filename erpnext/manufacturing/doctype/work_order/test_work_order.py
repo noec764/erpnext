@@ -21,9 +21,10 @@ from erpnext.stock.doctype.item.test_item import create_item, make_item
 from erpnext.stock.doctype.stock_entry import test_stock_entry
 from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 from erpnext.stock.utils import get_bin
+from erpnext.tests.utils import ERPNextTestCase, timeout
 
 
-class TestWorkOrder(unittest.TestCase):
+class TestWorkOrder(ERPNextTestCase):
 	def setUp(self):
 		self.warehouse = '_Test Warehouse 2 - _TC'
 		self.item = '_Test Item'
