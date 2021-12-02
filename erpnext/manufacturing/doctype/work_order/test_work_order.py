@@ -377,6 +377,7 @@ class TestWorkOrder(ERPNextTestCase):
 		self.assertEqual(len(ste.additional_costs), 1)
 		self.assertEqual(ste.total_additional_costs, 1000)
 
+	@timeout(seconds=60)
 	def test_job_card(self):
 		stock_entries = []
 		bom = frappe.get_doc('BOM', {
@@ -770,6 +771,7 @@ class TestWorkOrder(ERPNextTestCase):
 			total_pl_qty
 		)
 
+	@timeout(seconds=60)
 	def test_job_card_scrap_item(self):
 		items = ['Test FG Item for Scrap Item Test', 'Test RM Item 1 for Scrap Item Test',
 			'Test RM Item 2 for Scrap Item Test']
