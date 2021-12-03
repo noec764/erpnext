@@ -1,19 +1,16 @@
+import json
+import re
 
-import frappe, re, json
+import frappe
 from frappe import _
-import erpnext
-from frappe.utils import cstr, flt, cint, date_diff, nowdate, round_based_on_smallest_currency_fraction, money_in_words, getdate
-from erpnext.regional.india import states, state_numbers
-from erpnext.controllers.taxes_and_totals import get_itemised_tax, get_itemised_taxable_amount
+from frappe.model.utils import get_fetch_values
+from frappe.utils import cint, cstr, date_diff, flt, getdate, nowdate
+
 from erpnext.controllers.accounts_controller import get_taxes_and_charges
+from erpnext.controllers.taxes_and_totals import get_itemised_tax, get_itemised_taxable_amount
 from erpnext.hr.utils import get_salary_assignment
 from erpnext.payroll.doctype.salary_structure.salary_structure import make_salary_slip
-from erpnext.regional.india import number_state_mapping
-
-from erpnext.accounts.general_ledger import make_gl_entries
-from erpnext.accounts.utils import get_account_currency
-from frappe.model.utils import get_fetch_values
-
+from erpnext.regional.india import number_state_mapping, state_numbers, states
 
 GST_INVOICE_NUMBER_FORMAT = re.compile(r"^[a-zA-Z0-9\-/]+$")   #alphanumeric and - /
 GSTIN_FORMAT = re.compile("^[0-9]{2}[A-Z]{4}[0-9A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[1-9A-Z]{1}[0-9A-Z]{1}$")
@@ -209,27 +206,17 @@ def get_regional_address_details(party_details, doctype, company):
 
 	if doctype in ("Sales Invoice", "Delivery Note", "Sales Order"):
 		master_doctype = "Sales Taxes and Charges Template"
-		get_tax_template_based_on_category(master_doctype, company, party_details)
-
-		if party_details.get('taxes_and_charges'):
-			return party_details
-
-		if not party_details.company_gstin:
-			return party_details
+		tax_template_by_category = get_tax_template_based_on_category(master_doctype, company, party_details)
 
 	elif doctype in ("Purchase Invoice", "Purchase Order", "Purchase Receipt"):
 		master_doctype = "Purchase Taxes and Charges Template"
-		get_tax_template_based_on_category(master_doctype, company, party_details)
+		tax_template_by_category = get_tax_template_based_on_category(master_doctype, company, party_details)
 
-		if party_details.get('taxes_and_charges'):
-			return party_details
-
-		if not party_details.supplier_gstin:
-			return party_details
+	if tax_template_by_category:
+		party_details.get['taxes_and_charges'] = tax_template_by_category
+		return
 
 	if not party_details.place_of_supply: return party_details
-
-	if not party_details.company_gstin: return party_details
 
 	if ((doctype in ("Sales Invoice", "Delivery Note", "Sales Order") and party_details.company_gstin
 		and party_details.company_gstin[:2] != party_details.place_of_supply[:2]) or (doctype in ("Purchase Invoice",
@@ -240,6 +227,7 @@ def get_regional_address_details(party_details, doctype, company):
 
 	if not default_tax:
 		return party_details
+
 	party_details["taxes_and_charges"] = default_tax
 	party_details.taxes = get_taxes_and_charges(master_doctype, default_tax)
 
@@ -271,9 +259,7 @@ def get_tax_template_based_on_category(master_doctype, company, party_details):
 	default_tax = frappe.db.get_value(master_doctype, {'company': company, 'tax_category': party_details.get('tax_category')},
 		'name')
 
-	if default_tax:
-		party_details["taxes_and_charges"] = default_tax
-		party_details.taxes = get_taxes_and_charges(master_doctype, default_tax)
+	return default_tax
 
 def get_tax_template(master_doctype, company, is_inter_state, state_code):
 	tax_categories = frappe.get_all('Tax Category', fields = ['name', 'is_inter_state', 'gst_state'],
@@ -440,7 +426,7 @@ def get_ewb_data(dt, dn):
 		billing_address = frappe.get_doc('Address', doc.customer_address)
 
 		#added dispatch address
-		dispatch_address = frappe.get_doc('Address', doc.dispatch_address_name) if doc.get("dispatch_address_name") else company_address
+		dispatch_address = frappe.get_doc('Address', doc.dispatch_address_name) if doc.dispatch_address_name else company_address
 		shipping_address = frappe.get_doc('Address', doc.shipping_address_name)
 
 		data = get_address_details(data, doc, company_address, billing_address, dispatch_address)
@@ -855,6 +841,12 @@ def get_depreciation_amount(asset, depreciable_value, row):
 		if not asset.flags.increase_in_asset_life:
 			depreciation_amount = (flt(asset.gross_purchase_amount) -
 				flt(row.expected_value_after_useful_life)) / flt(row.total_number_of_depreciations)
+
+		# if the Depreciation Schedule is being modified after Asset Repair
+		else:
+			depreciation_amount = (flt(row.value_after_depreciation) -
+				flt(row.expected_value_after_useful_life)) / (date_diff(asset.to_date, asset.available_for_use_date) / 365)
+
 	else:
 		rate_of_depreciation = row.rate_of_depreciation
 		# if its the first depreciation
