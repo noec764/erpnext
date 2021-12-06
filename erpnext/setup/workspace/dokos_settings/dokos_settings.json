@@ -15,7 +15,7 @@
  "is_standard": 1,
  "label": "Dokos Settings",
  "links": [],
- "modified": "2021-10-26 21:32:55.323591",
+ "modified": "2021-11-05 21:32:55.323591",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
@@ -114,6 +114,13 @@
    "icon": "setting",
    "label": "Global Defaults",
    "link_to": "Global Defaults",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "icon": "crm",
+   "label": "CRM Settings",
+   "link_to": "CRM Settings",
    "type": "DocType"
   }
  ],
