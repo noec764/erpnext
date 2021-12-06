@@ -131,7 +131,8 @@
 	}
 
 	.fc-resource-group.fc-cell-shaded > div {
-		background-color: var(--gray-100);
+		background-color: var(--bg-color);
+		color: var(--text-color);
 	}
 }
 
@@ -140,9 +141,9 @@
 	.task-btn {
 		.btn {
 			background-color: var(--blue-400);
-			color: white;
-			--icon-fill: white;
-			--icon-stroke: white;
+			color: var(--fg-color);
+			--icon-fill: var(--fg-color);
+			--icon-stroke: var(--fg-color);
 		}
 
 		.user-action {
@@ -150,7 +151,7 @@
 
 			.btn-draggable {
 				cursor: grab !important;
-				background-color: #fff;
+				background-color: var(--fg-color);
 				border-radius: var(--border-radius-md);
 				border: 1px dashed var(--gray-500);
 			}
@@ -159,7 +160,7 @@
 
 	.fc-event-dragging:not(.fc-event) {
 		cursor: grabbing !important;
-		background-color: #fff;
+		background-color: var(--fg-color);
 		border-radius: var(--border-radius-md);
 		border: 1px dashed var(--gray-500);
 	}
