@@ -163,41 +163,42 @@ class Lead(SellingController):
 		self.title = self.company_name or self.lead_name
 
 	def create_contact(self):
-		if not self.lead_name:
-			self.set_full_name()
-			self.set_lead_name()
+		if frappe.db.get_single_value('CRM Settings', 'auto_creation_of_contact'):
+			if not self.lead_name:
+				self.set_full_name()
+				self.set_lead_name()
 
-		contact = frappe.new_doc("Contact")
-		contact.update({
-			"first_name": self.first_name or self.lead_name,
-			"last_name": self.last_name,
-			"salutation": self.salutation,
-			"gender": self.gender,
-			"designation": self.designation,
-			"company_name": self.company_name,
-		})
-
-		if self.email_id:
-			contact.append("email_ids", {
-				"email_id": self.email_id,
-				"is_primary": 1
+			contact = frappe.new_doc("Contact")
+			contact.update({
+				"first_name": self.first_name or self.lead_name,
+				"last_name": self.last_name,
+				"salutation": self.salutation,
+				"gender": self.gender,
+				"designation": self.designation,
+				"company_name": self.company_name,
 			})
 
-		if self.phone:
-			contact.append("phone_nos", {
-				"phone": self.phone,
-				"is_primary_phone": 1
-			})
+			if self.email_id:
+				contact.append("email_ids", {
+					"email_id": self.email_id,
+					"is_primary": 1
+				})
 
-		if self.mobile_no:
-			contact.append("phone_nos", {
-				"phone": self.mobile_no,
-				"is_primary_mobile_no":1
-			})
+			if self.phone:
+				contact.append("phone_nos", {
+					"phone": self.phone,
+					"is_primary_phone": 1
+				})
 
-		contact.insert(ignore_permissions=True)
+			if self.mobile_no:
+				contact.append("phone_nos", {
+					"phone": self.mobile_no,
+					"is_primary_mobile_no":1
+				})
 
-		return contact
+			contact.insert(ignore_permissions=True)
+
+			return contact
 
 
 @frappe.whitelist()
