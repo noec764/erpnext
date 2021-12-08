@@ -1,6 +1,7 @@
 {
- "allow_import": 1,
+ "actions": [],
  "allow_auto_repeat": 1,
+ "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-06-18 12:39:59",
  "doctype": "DocType",
@@ -287,7 +288,7 @@
    "width": "100px"
   },
   {
-    "fetch_from": "customer.tax_id",
+   "fetch_from": "customer.tax_id",
    "fieldname": "tax_id",
    "fieldtype": "Data",
    "label": "Tax Id",
@@ -747,7 +748,7 @@
    "width": "150px"
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment (Company Currency)",
@@ -757,7 +758,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounded_total",
    "fieldtype": "Currency",
    "label": "Rounded Total (Company Currency)",
@@ -799,7 +800,7 @@
    "width": "150px"
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment",
@@ -1047,7 +1048,7 @@
    "print_hide": 1
   },
   {
-    "depends_on": "eval:!doc.__islocal && !doc.skip_delivery_note_creation",
+   "depends_on": "eval:!doc.__islocal && !doc.skip_delivery_note_creation",
    "description": "% of materials delivered against this Sales Order",
    "fieldname": "per_delivered",
    "fieldtype": "Percent",
@@ -1204,11 +1205,11 @@
    "read_only": 1
   },
   {
-    "default": "0",
-    "fieldname": "skip_delivery_note",
-    "fieldtype": "Check",
-    "label": "Skip Delivery Note",
-    "print_hide": 1
+   "default": "0",
+   "fieldname": "skip_delivery_note",
+   "fieldtype": "Check",
+   "label": "Skip Delivery Note",
+   "print_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -1245,7 +1246,8 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-04-15 23:55:13.439068",
+ "links": [],
+ "modified": "2021-12-07 18:39:14.800684",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

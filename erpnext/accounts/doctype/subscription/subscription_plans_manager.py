@@ -3,17 +3,19 @@ from frappe.utils import nowdate, getdate, add_days, flt
 from erpnext.accounts.party import get_default_price_list
 from erpnext.stock.get_item_details import get_price_list_rate_for
 from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
+from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 
 class SubscriptionPlansManager:
 	def __init__(self, subscription):
 		self.subscription = subscription
 
 	def set_plans_status(self):
+		current_date = self.subscription.current_invoice_start or SubscriptionPeriod(self.subscription).get_current_invoice_start()
 		for plan in self.subscription.plans:
 			previous_status = plan.status
-			if getdate(plan.from_date or "1900-01-01") <= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
+			if getdate(plan.from_date or "1900-01-01") <= getdate(current_date) and getdate(plan.to_date or "3000-12-31") >= getdate(current_date):
 				plan.status = "Active"
-			elif getdate(plan.from_date or "1900-01-01") >= getdate(nowdate()) and getdate(plan.to_date or "3000-12-31") >= getdate(nowdate()):
+			elif getdate(plan.from_date or "1900-01-01") >= getdate(current_date) and getdate(plan.to_date or "3000-12-31") >= getdate(current_date):
 				plan.status = "Upcoming"
 			else:
 				plan.status = "Inactive"
