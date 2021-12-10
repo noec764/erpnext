@@ -120,6 +120,10 @@ class PurchaseReceipt(BuyingController):
 		if getdate(self.posting_date) > getdate(nowdate()):
 			throw(_("Posting Date cannot be future date"))
 
+		self.reset_default_field_value("set_warehouse", "items", "warehouse")
+		self.reset_default_field_value("rejected_warehouse", "items", "rejected_warehouse")
+		self.reset_default_field_value("set_from_warehouse", "items", "from_warehouse")
+
 	def validate_cwip_accounts(self):
 		for item in self.get('items'):
 			if item.is_fixed_asset and is_cwip_accounting_enabled(item.asset_category):
