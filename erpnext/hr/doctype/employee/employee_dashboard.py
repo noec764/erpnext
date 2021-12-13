@@ -21,8 +21,11 @@ def get_data():
 			},
 			{
 				'label': _('Lifecycle'),
-				'items': ['Employee Transfer', 'Employee Promotion', 'Employee Separation', 'Employee Grievance']
+				'items': ['Employee Transfer', 'Employee Promotion', 'Employee Grievance']
 			},
+			{
+				'label': _('Exit'),
+				'items': ['Employee Separation', 'Exit Interview', 'Full and Final Statement']
 			{
 				'label': _('Shift'),
 				'items': ['Shift Request', 'Shift Assignment']
