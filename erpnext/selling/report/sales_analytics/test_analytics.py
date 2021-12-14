@@ -4,11 +4,12 @@
 
 import frappe
 import frappe.defaults
-import unittest
+
 from erpnext.selling.report.sales_analytics.sales_analytics import execute
 from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_order
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestAnalytics(unittest.TestCase):
+class TestAnalytics(ERPNextTestCase):
 	def test_sales_analytics(self):
 		frappe.db.sql("delete from `tabSales Order` where company='_Test Company 2'")
 

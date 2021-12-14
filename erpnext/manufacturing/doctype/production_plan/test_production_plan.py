@@ -2,9 +2,8 @@
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-
 import frappe
-import unittest
+
 from frappe.utils import nowdate, now_datetime, flt, add_to_date
 from erpnext.stock.doctype.item.test_item import create_item
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_sales_orders
@@ -13,7 +12,9 @@ from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_orde
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests, get_warehouse_list
 from erpnext.controllers.item_variant import create_variant
 
-class TestProductionPlan(unittest.TestCase):
+from erpnext.tests.utils import ERPNextTestCase
+
+class TestProductionPlan(ERPNextTestCase):
 	def setUp(self):
 		for item in ['Test Production Item 1', 'Subassembly Item 1',
 			'Raw Material Item 1', 'Raw Material Item 2']:

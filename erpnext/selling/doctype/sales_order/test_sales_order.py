@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 import json
-import unittest
 import frappe
 import frappe.permissions
 from frappe.utils import flt, add_days, nowdate, getdate
@@ -22,11 +21,13 @@ from erpnext.maintenance.doctype.maintenance_schedule.test_maintenance_schedule 
 from erpnext.maintenance.doctype.maintenance_visit.test_maintenance_visit import (
 	make_maintenance_visit,
 )
+from erpnext.tests.utils import ERPNextTestCase
 
-class TestSalesOrder(unittest.TestCase):
+class TestSalesOrder(ERPNextTestCase):
 
 	@classmethod
 	def setUpClass(cls):
+		super().setUpClass()
 		cls.unlink_setting = int(frappe.db.get_value("Accounts Settings", "Accounts Settings",
 			"unlink_advance_payment_on_cancelation_of_order"))
 
@@ -35,6 +36,8 @@ class TestSalesOrder(unittest.TestCase):
 		# reset config to previous state
 		frappe.db.set_value("Accounts Settings", "Accounts Settings",
 			"unlink_advance_payment_on_cancelation_of_order", cls.unlink_setting)
+
+		super().tearDownClass()
 
 	def tearDown(self):
 		frappe.set_user("Administrator")

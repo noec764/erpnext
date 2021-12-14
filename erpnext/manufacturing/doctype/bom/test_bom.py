@@ -5,7 +5,6 @@
 from collections import deque
 from functools import partial
 
-import unittest
 import frappe
 from frappe.utils import cstr, flt
 from frappe.test_runner import make_test_records
@@ -15,10 +14,11 @@ from erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool import update
 from erpnext.stock.doctype.item.test_item import make_item
 from erpnext.buying.doctype.purchase_order.test_purchase_order import create_purchase_order
 from erpnext.tests.test_subcontracting import set_backflush_based_on
+from erpnext.tests.utils import ERPNextTestCase
 
 test_records = frappe.get_test_records('BOM')
 
-class TestBOM(unittest.TestCase):
+class TestBOM(ERPNextTestCase):
 	def setUp(self):
 		if not frappe.get_value('Item', '_Test Item'):
 			make_test_records('Item')
