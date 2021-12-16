@@ -73,7 +73,7 @@ class ResourceQuery:
 		if self.employee:
 			query_filters.update({"name": self.employee})
 
-		self.resource_list = frappe.get_all("Employee",
+		self.resource_list = frappe.get_list("Employee",
 			filters=query_filters,
 			fields=["name", "employee_name", "department", "company", "user_id", "designation"])
 
