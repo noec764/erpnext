@@ -11,7 +11,7 @@
   "title",
   "company",
   "column_break_3",
-  "restrict_to_transactions",
+  "applicable_for",
   "section_break_5",
   "taxes"
  ],
@@ -49,14 +49,14 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "restrict_to_transactions",
+   "fieldname": "applicable_for",
    "fieldtype": "Select",
-   "label": "Restrict to",
+   "label": "Applicable for",
    "options": "\nSales\nPurchases"
   }
  ],
  "links": [],
- "modified": "2021-12-16 16:24:56.355525",
+ "modified": "2021-12-16 16:52:32.378745",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Item Tax Template",

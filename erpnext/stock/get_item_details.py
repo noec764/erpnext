@@ -470,9 +470,9 @@ def _get_item_tax_template(args, taxes, out={}, for_validate=False):
 	taxes_with_no_validity = []
 
 	for tax in taxes:
-		tax_company, restrict_to_transactions = frappe.get_value("Item Tax Template", tax.item_tax_template, ['company', 'restrict_to_transactions'])
+		tax_company, applicable_for = frappe.get_value("Item Tax Template", tax.item_tax_template, ['company', 'applicable_for'])
 		transaction_type = "Sales" if args.get("doctype") in sales_doctypes else ("Purchases" if args.get("doctype") in purchase_doctypes else None)
-		if transaction_type and restrict_to_transactions not in (None, transaction_type):
+		if transaction_type and applicable_for not in (None, transaction_type):
 			continue
 
 		if tax.valid_from and tax_company == args['company']:
