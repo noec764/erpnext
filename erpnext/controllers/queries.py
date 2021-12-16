@@ -671,7 +671,8 @@ def get_tax_template(doctype, txt, searchfield, start, page_len, filters):
 			'item_code': filters.get('item_code'),
 			'posting_date': valid_from,
 			'tax_category': filters.get('tax_category'),
-			'company': filters.get('company')
+			'company': filters.get('company'),
+			'doctype': filters.get('doctype')
 		}
 
 		taxes = _get_item_tax_template(args, taxes, for_validate=True)

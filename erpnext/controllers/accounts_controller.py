@@ -1381,7 +1381,8 @@ def set_child_tax_template_and_map(item, child_item, parent_doc):
 			'item_code': item.item_code,
 			'posting_date': parent_doc.transaction_date,
 			'tax_category': parent_doc.get('tax_category'),
-			'company': parent_doc.get('company')
+			'company': parent_doc.get('company'),
+			'doctype': parent_doc.get('doctype')
 		}
 
 	child_item.item_tax_template = _get_item_tax_template(args, item.taxes)
