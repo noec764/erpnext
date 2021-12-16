@@ -4,10 +4,9 @@
 
 import copy
 import frappe
-import erpnext
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils.data import nowdate, getdate, cint, add_days, get_last_day, add_to_date, flt, global_date_format
+from frappe.utils.data import nowdate, getdate, cint, add_days, flt, global_date_format
 import numpy as np
 
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
