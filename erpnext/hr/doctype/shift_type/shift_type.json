@@ -164,6 +164,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.enable_auto_attendance",
    "fieldname": "shift_assignments_based_attendance",
    "fieldtype": "Check",
    "label": "Create attendance based on shift assignments only"
@@ -171,7 +172,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-11-10 16:55:52.362071",
+ "modified": "2021-12-16 09:18:07.268258",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Shift Type",
