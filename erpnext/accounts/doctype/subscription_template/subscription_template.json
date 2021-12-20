@@ -194,6 +194,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.create_sales_order",
    "fieldname": "skip_delivery_note",
    "fieldtype": "Check",
    "label": "Skip delivery note"
@@ -202,7 +203,7 @@
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-10-01 10:45:06.100133",
+ "modified": "2021-12-20 16:38:19.006600",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

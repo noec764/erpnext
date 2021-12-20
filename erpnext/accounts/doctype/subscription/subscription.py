@@ -4,10 +4,9 @@
 
 import copy
 import frappe
-import erpnext
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils.data import nowdate, getdate, cint, add_days, get_last_day, add_to_date, flt, global_date_format
+from frappe.utils.data import nowdate, getdate, cint, add_days, flt, global_date_format
 import numpy as np
 
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
@@ -28,10 +27,10 @@ class Subscription(Document):
 		SubscriptionPlansManager(self).set_plans_rates()
 		self.calculate_total()
 		self.calculate_grand_total()
+		self.calculate_discounts()
 		self.validate_payment_request_generation()
 
 	def on_update(self):
-		self.process()
 		self.update_payment_gateway_subscription()
 
 	def on_trash(self):
@@ -61,14 +60,18 @@ class Subscription(Document):
 			self.generate_payment_request = 1
 
 	def calculate_total(self):
-		if getdate(self.start) > getdate(nowdate()):
-			return
 		self.total = SubscriptionPlansManager(self).get_plans_total()
 
 	def calculate_grand_total(self):
-		if getdate(self.start) > getdate(nowdate()):
-			return
 		self.grand_total = SubscriptionInvoiceGenerator(self).get_simulation()
+
+	def calculate_discounts(self):
+		if self.apply_additional_discount:
+			total = self.total if self.apply_additional_discount == "Net Total" else self.grand_total
+			if self.additional_discount_percentage:
+				self.additional_discount_amount = flt(total) * flt(self.additional_discount_percentage) / 100.0
+			elif self.additional_discount_amount:
+				self.additional_discount_percentage = flt(self.additional_discount_amount) / flt(total) * 100.0
 
 	def process(self):
 		SubscriptionPeriod(self).validate()
@@ -263,6 +266,7 @@ def update_grand_total():
 		previous_grand_total = sub.grand_total
 		sub.run_method("calculate_total")
 		sub.run_method("calculate_grand_total")
+		sub.run_method("calculate_discounts")
 		if previous_total != sub.total or previous_grand_total != sub.grand_total:
 			sub.save()
 
@@ -365,6 +369,8 @@ def subscription_headline(name):
 		return _("This subscription will be cancelled on {0}").format(global_date_format(subscription.cancellation_date))
 	elif subscription.cancellation_date and subscription.cancellation_date <= getdate(nowdate()):
 		return _("This subscription has been cancelled on {0}").format(global_date_format(subscription.cancellation_date))
+	elif not subscription.status:
+		return _("This subscription is not active yet.<br>You can activate it by clicking on 'Fetch Subscription Updates' or wait until the next automatic update (once an hour).")
 
 	next_invoice_date = SubscriptionPeriod(subscription).get_next_invoice_date()
 	return _("The next invoice will be generated on {0}").format(global_date_format(next_invoice_date)) if next_invoice_date else ''

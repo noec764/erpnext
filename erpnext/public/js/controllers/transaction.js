@@ -216,7 +216,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				return {
 					filters: {
 						'company': me.frm.doc.company,
-						'disabled': 0
+						'disabled': 0,
+						'tax_category': me.frm.doc.company
 					}
 				}
 			});
@@ -1217,7 +1218,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	calculate_stock_uom_rate: function(doc, cdt, cdn) {
 		let item = frappe.get_doc(cdt, cdn);
-		item.stock_uom_rate = flt(item.rate)/flt(item.conversion_factor);	
+		item.stock_uom_rate = flt(item.rate)/flt(item.conversion_factor);
 		refresh_field("stock_uom_rate", item.name, item.parentfield);
 	},
 
@@ -1368,7 +1369,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 		this.update_payment_schedule_grid_labels(company_currency);
 
 	},
-	
+
 	update_item_grid_labels: function(company_currency) {
 		this.frm.set_currency_labels([
 			"base_rate", "base_net_rate", "base_price_list_rate",
@@ -1847,7 +1848,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				args: {
 					company: me.frm.doc.company,
 					tax_category: cstr(me.frm.doc.tax_category),
-					item_codes: item_codes
+					item_codes: item_codes,
+					doctype: me.frm.doc.doctype
 				},
 				callback: function(r) {
 					if(!r.exc) {
@@ -2011,6 +2013,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				'item_code': item.item_code,
 				'valid_from': ["<=", doc.transaction_date || doc.bill_date || doc.posting_date],
 				'item_group': item.item_group,
+				'doctype': doc.doctype
 			}
 
 			if (doc.tax_category)

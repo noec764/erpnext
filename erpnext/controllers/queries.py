@@ -480,7 +480,7 @@ def get_income_account(doctype, txt, searchfield, start, page_len, filters):
 
 	return frappe.db.sql("""select tabAccount.name from `tabAccount`
 			where (tabAccount.report_type = "Profit and Loss"
-					or tabAccount.account_type in ("Income Account", "Temporary"))
+					and tabAccount.account_type in ("Income Account", "Temporary"))
 				and tabAccount.is_group=0
 				and tabAccount.`{key}` LIKE %(txt)s
 				{condition} {match_condition}
@@ -504,7 +504,7 @@ def get_expense_account(doctype, txt, searchfield, start, page_len, filters):
 
 	return frappe.db.sql("""select tabAccount.name from `tabAccount`
 		where (tabAccount.report_type = "Profit and Loss"
-				or tabAccount.account_type in ("Expense Account", "Fixed Asset", "Temporary", "Asset Received But Not Billed", "Capital Work in Progress"))
+				and tabAccount.account_type in ("Expense Account", "Fixed Asset", "Temporary", "Asset Received But Not Billed", "Capital Work in Progress"))
 			and tabAccount.is_group=0
 			and tabAccount.docstatus!=2
 			and tabAccount.{key} LIKE %(txt)s
@@ -671,7 +671,8 @@ def get_tax_template(doctype, txt, searchfield, start, page_len, filters):
 			'item_code': filters.get('item_code'),
 			'posting_date': valid_from,
 			'tax_category': filters.get('tax_category'),
-			'company': filters.get('company')
+			'company': filters.get('company'),
+			'doctype': filters.get('doctype')
 		}
 
 		taxes = _get_item_tax_template(args, taxes, for_validate=True)
