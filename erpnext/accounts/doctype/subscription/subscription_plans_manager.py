@@ -64,6 +64,13 @@ class SubscriptionPlansManager:
 				"transaction_date": date,
 				"qty": plan.qty
 			}
+
+			if frappe.db.get_value("Item", plan.item, "stock_uom") != plan.uom:
+				item = frappe.get_doc("Item", plan.item)
+				conversion_factors = [cf.conversion_factor for cf in item.uoms if cf.uom == plan.uom]
+				if conversion_factors:
+					args.update({"conversion_factor": conversion_factors[0]})
+
 			if hasattr(self.subscription, "customer"):
 				args.update({"customer": self.subscription.customer})
 

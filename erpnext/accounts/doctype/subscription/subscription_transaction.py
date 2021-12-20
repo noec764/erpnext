@@ -200,9 +200,9 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 					"doctype": "Sales Invoice Advance",
 					"reference_type": "Payment Entry",
 					"reference_name": payment_entry,
-					"remarks": pe.get("remarks"),
-					"advance_amount": flt(pe.get("unallocated_amount")),
-					"allocated_amount": min(flt(invoice.outstanding_amount), flt(pe.get("unallocated_amount")))
+					"remarks": payment_entry.get("remarks"),
+					"advance_amount": flt(payment_entry.get("unallocated_amount")),
+					"allocated_amount": min(flt(invoice.outstanding_amount), flt(payment_entry.get("unallocated_amount")))
 				})
 
 				return invoice
