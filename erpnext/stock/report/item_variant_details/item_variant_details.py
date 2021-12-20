@@ -72,11 +72,50 @@ def get_columns(item):
 	item_doc = frappe.get_doc("Item", item)
 
 	for d in item_doc.attributes:
-		columns.append(d.attribute + ":Data:100")
+		columns.append({
+			"fieldname": d.attribute,
+			"label": d.attribute,
+			"fieldtype": "Data",
+			"width": 200
+		})
 
-	columns += [_("Avg. Buying Price List Rate") + ":Currency:110", _("Avg. Selling Price List Rate") + ":Currency:110",
-		_("Inventory") + ":Float:100", _("In Production") + ":Float:100",
-		_("Open Orders") + ":Float:100", _("Available Selling") + ":Float:100"
+	columns += [
+		{
+			"fieldname": "Avg. Buying Price List Rate",
+			"label": _("Avg. Buying Price List Rate"),
+			"fieldtype": "Currency",
+			"width": 210
+		},
+		{
+			"fieldname": "Avg. Selling Price List Rate",
+			"label": _("Avg. Selling Price List Rate"),
+			"fieldtype": "Currency",
+			"width": 210
+		},
+		{
+			"fieldname": "Inventory",
+			"label": _("Inventory"),
+			"fieldtype": "Float",
+			"width": 200
+		},
+		{
+			"fieldname": "In Production",
+			"label": _("In Production"),
+			"fieldtype": "Float",
+			"width": 200
+		},
+		{
+			"fieldname": "Open Orders",
+			"label": _("Open Orders"),
+			"fieldtype": "Float",
+			"width": 200
+		},
+		{
+			"fieldname": "Available Selling",
+			"label": _("Available Selling"),
+			"fieldtype": "Float",
+			"width": 200
+		}
 	]
 
 	return columns
