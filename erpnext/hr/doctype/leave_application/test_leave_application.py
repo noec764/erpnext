@@ -1,17 +1,24 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-from __future__ import unicode_literals
 
-import frappe
 import unittest
 
-from erpnext.hr.doctype.leave_application.leave_application import LeaveDayBlockedError, OverlapError, NotAnOptionalHoliday, get_leave_balance_on
+import frappe
 from frappe.permissions import clear_user_permissions_for_doctype
-from frappe.utils import add_days, nowdate, now_datetime, getdate, add_months
-from erpnext.hr.doctype.leave_type.test_leave_type import create_leave_type
-from erpnext.hr.doctype.leave_allocation.test_leave_allocation import create_leave_allocation
-from erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment import create_assignment_for_multiple_employees
+from frappe.utils import add_days, add_months, getdate, nowdate
+
 from erpnext.hr.doctype.employee.test_employee import make_employee
+from erpnext.hr.doctype.leave_allocation.test_leave_allocation import create_leave_allocation
+from erpnext.hr.doctype.leave_application.leave_application import (
+	LeaveDayBlockedError,
+	NotAnOptionalHoliday,
+	OverlapError,
+	get_leave_balance_on,
+)
+from erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment import (
+	create_assignment_for_multiple_employees,
+)
+from erpnext.hr.doctype.leave_type.test_leave_type import create_leave_type
 
 test_dependencies = ["Leave Allocation", "Leave Block List", "Employee"]
 
@@ -113,6 +120,7 @@ class TestLeaveApplication(unittest.TestCase):
 
 		application = self.get_application(_test_records[0])
 		application.insert()
+		application.reload()
 		application.status = "Approved"
 		self.assertRaises(LeaveDayBlockedError, application.submit)
 
@@ -424,7 +432,6 @@ class TestLeaveApplication(unittest.TestCase):
 		employee = get_employee()
 		leave_type = 'Test Earned Leave Type'
 		frappe.delete_doc_if_exists("Leave Type", 'Test Earned Leave Type', force=1)
-		if not frappe.db.exists('Leave Type', leave_type):
 		frappe.get_doc(dict(
 			leave_type_name = leave_type,
 			doctype = 'Leave Type',
@@ -438,6 +445,7 @@ class TestLeaveApplication(unittest.TestCase):
 			"doctype": "Leave Policy",
 			"leave_policy_details": [{"leave_type": leave_type, "annual_allocation": 6}]
 		}).insert()
+
 		data = {
 			"assignment_based_on": "Leave Period",
 			"leave_policy": leave_policy.name,
@@ -445,8 +453,6 @@ class TestLeaveApplication(unittest.TestCase):
 		}
 
 		leave_policy_assignments = create_assignment_for_multiple_employees([employee.name], frappe._dict(data))
-
-		frappe.get_doc("Leave Policy Assignment", leave_policy_assignments[0]).grant_leave_alloc_for_employee()
 
 		from erpnext.hr.utils import allocate_earned_leaves
 		i = 0
@@ -608,6 +614,7 @@ class TestLeaveApplication(unittest.TestCase):
 		employee.reload()
 		employee.leave_approver = ""
 		employee.save()
+
 
 def create_carry_forwarded_allocation(employee, leave_type):
 		# initial leave allocation
