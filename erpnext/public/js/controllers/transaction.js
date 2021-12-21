@@ -214,7 +214,8 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				return {
 					filters: {
 						'company': me.frm.doc.company,
-						'disabled': 0
+						'disabled': 0,
+						'tax_category': me.frm.doc.tax_category
 					}
 				}
 			});
@@ -1858,8 +1859,9 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				method: "erpnext.stock.get_item_details.get_item_tax_map",
 				args: {
 					company: me.frm.doc.company,
-					item_tax_template: item.item_tax_template,
-					as_json: true
+					tax_category: cstr(me.frm.doc.tax_category),
+					item_codes: item_codes,
+					doctype: me.frm.doc.doctype
 				},
 				callback: function(r) {
 					if(!r.exc) {
@@ -2140,6 +2142,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				'item_code': item.item_code,
 				'valid_from': ["<=", doc.transaction_date || doc.bill_date || doc.posting_date],
 				'item_group': item.item_group,
+				'doctype': doc.doctype
 			}
 
 			if (doc.tax_category)

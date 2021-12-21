@@ -60,7 +60,8 @@ class calculate_taxes_and_totals(object):
 					'posting_date': self.doc.get('posting_date'),
 					'bill_date': self.doc.get('bill_date'),
 					'transaction_date': self.doc.get('transaction_date'),
-					'company': self.doc.get('company')
+					'company': self.doc.get('company'),
+					'doctype': self.doc.get('doctype')
 				}
 
 				item_group = item_doc.item_group

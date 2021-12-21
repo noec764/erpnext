@@ -25,6 +25,7 @@
   "is_stock_item",
   "include_item_in_manufacturing",
   "enable_item_booking",
+  "simultaneous_bookings_allowed",
   "opening_stock",
   "valuation_rate",
   "standard_rate",
@@ -124,7 +125,6 @@
   "show_in_website",
   "show_variant_in_website",
   "disable_unit_purchasing",
-  "simultaneous_bookings_allowed",
   "route",
   "weightage",
   "slideshow",
@@ -1026,10 +1026,9 @@
   },
   {
    "default": "1",
-   "depends_on": "eval:doc.enable_item_booking && doc.show_in_website",
+   "depends_on": "eval:doc.enable_item_booking",
    "fieldname": "simultaneous_bookings_allowed",
    "fieldtype": "Int",
-   "hidden": 1,
    "label": "Simultaneous bookings allowed",
    "print_hide": 1
   },

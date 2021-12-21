@@ -441,7 +441,7 @@ def get_barcode_data(items_list):
 	return itemwise_barcode
 
 @frappe.whitelist()
-def get_item_tax_info(company, tax_category, item_codes, item_rates=None, item_tax_templates=None):
+def get_item_tax_info(company, tax_category, item_codes, item_rates=None, item_tax_templates=None, doctype=None):
 	out = {}
 
 	if item_tax_templates is None:
@@ -465,7 +465,7 @@ def get_item_tax_info(company, tax_category, item_codes, item_rates=None, item_t
 
 		out[item_code[1]] = {}
 		item = frappe.get_cached_doc("Item", item_code[0])
-		args = {"company": company, "tax_category": tax_category, "net_rate": item_rates.get(item_code[1])}
+		args = {"company": company, "tax_category": tax_category, "net_rate": item_rates.get(item_code[1]), "doctype": doctype}
 
 		if item_tax_templates:
 			args.update({"item_tax_template": item_tax_templates.get(item_code[1])})
@@ -500,7 +500,11 @@ def _get_item_tax_template(args, taxes, out=None, for_validate=False):
 	taxes_with_no_validity = []
 
 	for tax in taxes:
-		tax_company = frappe.get_cached_value("Item Tax Template", tax.item_tax_template, 'company')
+		tax_company, applicable_for = frappe.get_value("Item Tax Template", tax.item_tax_template, ['company', 'applicable_for'])
+		transaction_type = "Sales" if args.get("doctype") in sales_doctypes else ("Purchases" if args.get("doctype") in purchase_doctypes else None)
+		if transaction_type and applicable_for not in (None, transaction_type):
+			continue
+
 		if tax_company == args['company']:
 			if (tax.valid_from or tax.maximum_net_rate):
 				# In purchase Invoice first preference will be given to supplier invoice date

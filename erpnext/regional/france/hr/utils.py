@@ -4,7 +4,7 @@
 import frappe
 import math
 from frappe.utils import getdate, flt, today
-from erpnext.hr.utils import get_holidays_for_employee, create_additional_leave_ledger_entry, EarnedLeaveAllocator, EarnedLeaveCalculator
+from erpnext.hr.utils import create_additional_leave_ledger_entry, EarnedLeaveAllocator, EarnedLeaveCalculator
 
 
 def allocate_earned_leaves():

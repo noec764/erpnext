@@ -83,6 +83,7 @@ class ItemCalendar {
 			eventClassNames: 'item-booking-calendar',
 			initialView: me.get_initial_display_view(),
 			headerToolbar: me.get_header_toolbar(),
+			contentHeight: "auto",
 			weekends: true,
 			buttonText: {
 				today: __("Today"),
@@ -108,9 +109,6 @@ class ItemCalendar {
 			defaultDate: this.getDefaultDate,
 			eventClick: function(event) {
 				me.eventClick(event)
-			},
-			datesSet: function(event) {
-				return me.datesSet(event);
 			},
 			displayEventTime: this.get_time_display(),
 			allDayContent: function() {
@@ -145,11 +143,5 @@ class ItemCalendar {
 				this.refresh();
 			})
 		});
-	}
-
-	datesSet(event) {
-		if (event.view.activeStart && this.parent.calendar_type !== "Monthly") {
-			this.fullCalendar.gotoDate(event.view.activeStart)
-		}
 	}
 }

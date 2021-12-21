@@ -26,7 +26,7 @@ class SubscriptionTemplate(Document):
 			frappe.throw(_("Please provide the company and the customer"))
 
 		values = {x: getattr(self, x) for x in self.as_dict() if x not in self.get_excluded_fields()}
-		start_date = self.get_start_date(kwargs.start)
+		start_date = self.get_start_date(kwargs.start_date)
 
 		subscription = frappe.get_doc(dict({
 			"doctype": "Subscription",

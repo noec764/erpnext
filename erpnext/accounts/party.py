@@ -396,6 +396,8 @@ def get_address_tax_category(tax_category=None, billing_address=None, shipping_a
 def set_taxes(party, party_type, posting_date, company, customer_group=None, supplier_group=None, tax_category=None,
 	billing_address=None, shipping_address=None, use_for_shopping_cart=None):
 	from erpnext.accounts.doctype.tax_rule.tax_rule import get_tax_template, get_party_details
+	from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
+
 	args = {
 		party_type.lower(): party,
 		"company": company
@@ -428,7 +430,22 @@ def set_taxes(party, party_type, posting_date, company, customer_group=None, sup
 	if use_for_shopping_cart:
 		args.update({"use_for_shopping_cart": use_for_shopping_cart})
 
-	return get_tax_template(posting_date, args)
+	# 1. Check if a tax rule exists
+	tax_template = get_tax_template(posting_date, args)
+
+	# 2. Retrieve default taxes and charges for this party
+	if not tax_template and frappe.form_dict.get("doctype"):
+		taxes_and_charges_field = frappe.get_meta(frappe.form_dict.get("doctype")).get_field("taxes_and_charges")
+		if taxes_and_charges_field:
+			tax_template_details = get_default_taxes_and_charges(
+				master_doctype=taxes_and_charges_field.options,
+				company=company,
+				tax_category=tax_category
+			)
+			if tax_template_details:
+				tax_template = tax_template_details.get("taxes_and_charges")
+
+	return tax_template
 
 
 @frappe.whitelist()

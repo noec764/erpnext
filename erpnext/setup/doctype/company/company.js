@@ -143,6 +143,11 @@ frappe.ui.form.on("Company", {
 
 // __("Standard") __("Standard with Numbers")
 erpnext.company.set_chart_of_accounts_options = function(doc) {
+	// Avoid error when creating a linked document from the Company doctype
+	if (!cur_frm.fields.map(f => f.df.fieldname).includes("chart_of_accounts")) {
+		return
+	}
+
 	var selected_value = doc.chart_of_accounts;
 	if(doc.country) {
 		return frappe.call({

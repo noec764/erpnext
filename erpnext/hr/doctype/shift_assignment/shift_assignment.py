@@ -56,7 +56,11 @@ class ShiftAssignment(Document):
 		}, as_dict = 1)
 
 		if len(assigned_shifts):
-			self.throw_overlap_error(assigned_shifts[0])
+			start_time, end_time = frappe.db.get_value("Shift Type", self.shift_type, ["start_time", "end_time"])
+			for assigned_shift in assigned_shifts:
+				shift_starts, shift_ends = frappe.db.get_value("Shift Type", assigned_shift.get("shift_type"), ["start_time", "end_time"])
+				if end_time >= shift_starts >= start_time or end_time >= shift_ends >= start_time:
+					self.throw_overlap_error(assigned_shifts[0])
 
 	def throw_overlap_error(self, shift_details):
 		shift_details = frappe._dict(shift_details)
@@ -92,9 +96,9 @@ def add_assignments(events, start, end, conditions=None):
 	query = """select name, start_date, end_date, employee_name,
 		employee, docstatus, shift_type
 		from `tabShift Assignment` where
-		start_date >= %(start_date)s
+		(start_date >= %(start_date)s
 		or end_date <=  %(end_date)s
-		or (%(start_date)s between start_date and end_date and %(end_date)s between start_date and end_date)
+		or (%(start_date)s between start_date and end_date and %(end_date)s between start_date and end_date))
 		and docstatus = 1"""
 	if conditions:
 		query += conditions

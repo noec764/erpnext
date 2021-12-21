@@ -3,7 +3,8 @@
 		"public/less/erpnext.less",
 		"public/scss/call_popup.scss",
 		"public/scss/point-of-sale.scss",
-		"public/scss/hierarchy_chart.scss"
+		"public/scss/hierarchy_chart.scss",
+		"public/scss/calendar_timeline.scss"
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",
@@ -35,7 +36,8 @@
 		"public/js/utils/dimension_tree_filter.js",
 		"public/js/telephony.js",
 		"public/js/templates/call_link.html",
-		"public/js/templates/node_card.html"
+		"public/js/templates/node_card.html",
+		"public/js/utils/shift_assignment_quick_entry.js"
 	],
 	"js/item-dashboard.min.js": [
 		"stock/dashboard/item_dashboard.html",
@@ -71,5 +73,8 @@
 	],
 	"js/bank-reconciliation.min.js": [
 		"accounts/page/bank_reconciliation/bank_reconciliation_page/bank_reconciliation.js"
+	],
+	"js/resource-calendar.min.js": [
+		"hr/page/resource_planning_view/resource_calendar.js"
 	]
 }

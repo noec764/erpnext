@@ -14,7 +14,6 @@ from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import 
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice, StripeCustomer, StripePaymentIntent, StripeWebhookEndpoint
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 import stripe
-import json
 
 class StripeSettings(PaymentGatewayController):
 	currency_wise_minimum_charge_amount = {
