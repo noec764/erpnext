@@ -217,7 +217,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 					filters: {
 						'company': me.frm.doc.company,
 						'disabled': 0,
-						'tax_category': me.frm.doc.company
+						'tax_category': me.frm.doc.tax_category
 					}
 				}
 			});
