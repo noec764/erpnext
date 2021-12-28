@@ -2,18 +2,35 @@
 # License: GNU General Public License v3. See license.txt
 
 import unittest
-import erpnext
+
 import frappe
 from dateutil.relativedelta import relativedelta
-from erpnext.accounts.utils import get_fiscal_year, getdate, nowdate
 from frappe.utils import add_months
-from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_start_end_dates, get_end_date
+
+import erpnext
+from erpnext.accounts.utils import get_fiscal_year, getdate, nowdate
 from erpnext.hr.doctype.employee.test_employee import make_employee
-from erpnext.payroll.doctype.salary_slip.test_salary_slip import get_salary_component_account, \
-		make_earning_salary_component, make_deduction_salary_component, create_account, make_employee_salary_slip
-from erpnext.payroll.doctype.salary_structure.test_salary_structure import make_salary_structure, create_salary_structure_assignment
-from erpnext.loan_management.doctype.loan.test_loan import create_loan, make_loan_disbursement_entry, create_loan_type, create_loan_accounts
-from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import process_loan_interest_accrual_for_term_loans
+from erpnext.loan_management.doctype.loan.test_loan import (
+	create_loan,
+	create_loan_accounts,
+	create_loan_type,
+	make_loan_disbursement_entry,
+)
+from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import (
+	process_loan_interest_accrual_for_term_loans,
+)
+from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_end_date, get_start_end_dates
+from erpnext.payroll.doctype.salary_slip.test_salary_slip import (
+	create_account,
+	get_salary_component_account,
+	make_deduction_salary_component,
+	make_earning_salary_component,
+	make_employee_salary_slip,
+)
+from erpnext.payroll.doctype.salary_structure.test_salary_structure import (
+	create_salary_structure_assignment,
+	make_salary_structure,
+)
 
 test_dependencies = ['Holiday List']
 
@@ -103,8 +120,7 @@ class TestPayrollEntry(unittest.TestCase):
 
 		employee1 = make_employee("test_employee1@example.com", payroll_cost_center="_Test Cost Center - _TC",
 			department="cc - _TC", company="_Test Company")
-		employee2 = make_employee("test_employee2@example.com", payroll_cost_center="_Test Cost Center 2 - _TC",
-			department="cc - _TC", company="_Test Company")
+		employee2 = make_employee("test_employee2@example.com", department="cc - _TC", company="_Test Company")
 
 		if not frappe.db.exists("Account", "_Test Payroll Payable - _TC"):
 				create_account(account_name="_Test Payroll Payable",
@@ -115,8 +131,26 @@ class TestPayrollEntry(unittest.TestCase):
 				frappe.db.set_value("Company", "_Test Company", "default_payroll_payable_account",
 					"_Test Payroll Payable - _TC")
 		currency=frappe.db.get_value("Company", "_Test Company", "default_currency")
+
 		make_salary_structure("_Test Salary Structure 1", "Monthly", employee1, company="_Test Company", currency=currency, test_tax=False)
-		make_salary_structure("_Test Salary Structure 2", "Monthly", employee2, company="_Test Company", currency=currency, test_tax=False)
+		ss = make_salary_structure("_Test Salary Structure 2", "Monthly", employee2, company="_Test Company", currency=currency, test_tax=False)
+
+		# update cost centers in salary structure assignment for employee2
+		ssa = frappe.db.get_value("Salary Structure Assignment",
+			{"employee": employee2, "salary_structure": ss.name, "docstatus": 1}, 'name')
+
+		ssa_doc = frappe.get_doc("Salary Structure Assignment", ssa)
+		ssa_doc.payroll_cost_centers = []
+		ssa_doc.append("payroll_cost_centers", {
+			"cost_center": "_Test Cost Center - _TC",
+			"percentage": 60
+		})
+		ssa_doc.append("payroll_cost_centers", {
+			"cost_center": "_Test Cost Center 2 - _TC",
+			"percentage": 40
+		})
+
+		ssa_doc.save()
 
 		dates = get_start_end_dates('Monthly', nowdate())
 		if not frappe.db.get_value("Salary Slip", {"start_date": dates.start_date, "end_date": dates.end_date}):
@@ -131,10 +165,10 @@ class TestPayrollEntry(unittest.TestCase):
 			""", je)
 			expected_je = (
 				('_Test Payroll Payable - _TC', 'Main - _TC', 0.0, 155600.0),
-				('Salary - _TC', '_Test Cost Center - _TC', 78000.0, 0.0),
-				('Salary - _TC', '_Test Cost Center 2 - _TC', 78000.0, 0.0),
-				('Salary Deductions - _TC', '_Test Cost Center - _TC', 0.0, 200.0),
-				('Salary Deductions - _TC', '_Test Cost Center 2 - _TC', 0.0, 200.0)
+				('Salary - _TC', '_Test Cost Center - _TC', 124800.0, 0.0),
+				('Salary - _TC', '_Test Cost Center 2 - _TC', 31200.0, 0.0),
+				('Salary Deductions - _TC', '_Test Cost Center - _TC', 0.0, 320.0),
+				('Salary Deductions - _TC', '_Test Cost Center 2 - _TC', 0.0, 80.0)
 			)
 
 			self.assertEqual(je_entries, expected_je)
