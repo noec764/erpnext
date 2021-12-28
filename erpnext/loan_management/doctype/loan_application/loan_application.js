@@ -119,6 +119,7 @@ frappe.ui.form.on('Loan Application', {
 frappe.ui.form.on("Proposed Pledge", {
 	loan_security: function(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
+
 		if (row.loan_security) {
 			frappe.call({
 				method: "erpnext.loan_management.doctype.loan_security_price.loan_security_price.get_loan_security_price",

@@ -1,12 +1,15 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
 import frappe
-from frappe.utils import get_datetime, flt
 from frappe.model.document import Document
-from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import get_pledged_security_qty
+from frappe.utils import flt, get_datetime
+
+from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import (
+	get_pledged_security_qty,
+)
+
 
 class LoanSecurityShortfall(Document):
 	pass
@@ -84,7 +87,6 @@ def check_for_ltv_shortfall(process_loan_security_shortfall):
 			shortfall_amount = outstanding_amount - ((security_value * ltv_ratio) / 100)
 			create_loan_security_shortfall(loan.name, outstanding_amount, security_value, shortfall_amount,
 				current_ratio, process_loan_security_shortfall)
-
 		elif loan_shortfall_map.get(loan.name):
 			shortfall_amount = outstanding_amount - ((security_value * ltv_ratio) / 100)
 			if shortfall_amount <= 0:

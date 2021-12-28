@@ -1,17 +1,25 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
-import frappe, math
-from frappe import _
-from frappe.utils import flt, rounded, cint
-from frappe.model.mapper import get_mapped_doc
-from frappe.model.document import Document
-from erpnext.loan_management.doctype.loan.loan import (get_monthly_repayment_amount, validate_repayment_method,
-		get_total_loan_amount, get_sanctioned_amount_limit)
-from erpnext.loan_management.doctype.loan_security_price.loan_security_price import get_loan_security_price
 import json
+import math
+
+import frappe
+from frappe import _
+from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import cint, flt, rounded
+
+from erpnext.loan_management.doctype.loan.loan import (
+	get_monthly_repayment_amount,
+	get_sanctioned_amount_limit,
+	get_total_loan_amount,
+	validate_repayment_method,
+)
+from erpnext.loan_management.doctype.loan_security_price.loan_security_price import (
+	get_loan_security_price,
+)
 
 
 class LoanApplication(Document):
@@ -58,7 +66,7 @@ class LoanApplication(Document):
 		for proposed_pledge in self.proposed_pledges:
 
 			if not proposed_pledge.qty and not proposed_pledge.amount:
-				frappe.throw(_("Qty or Amount is mandatory for loan security"))
+				frappe.throw(_("Qty or Amount is mandatroy for loan security"))
 
 			proposed_pledge.loan_security_price = get_loan_security_price(proposed_pledge.loan_security)
 
@@ -72,7 +80,7 @@ class LoanApplication(Document):
 
 		if self.is_term_loan:
 			if self.repayment_method == "Repay Over Number of Periods":
-				self.repayment_amount = get_monthly_repayment_amount(self.repayment_method, self.loan_amount, self.rate_of_interest, self.repayment_periods)
+				self.repayment_amount = get_monthly_repayment_amount(self.loan_amount, self.rate_of_interest, self.repayment_periods)
 
 			if self.repayment_method == "Repay Fixed Amount per Period":
 				monthly_interest_rate = flt(self.rate_of_interest) / (12 *100)
@@ -124,7 +132,6 @@ def create_loan(source_name, target_doc=None, submit=0):
 
 		if source_doc.is_secured_loan:
 			target_doc.maximum_loan_amount = 0
-
 
 		target_doc.mode_of_payment = account_details.mode_of_payment
 		target_doc.payment_account = account_details.payment_account
@@ -193,7 +200,7 @@ def get_proposed_pledge(securities):
 	for security in securities:
 		security = frappe._dict(security)
 		if not security.qty and not security.amount:
-			frappe.throw(_("Qty or Amount is mandatory for loan security"))
+			frappe.throw(_("Qty or Amount is mandatroy for loan security"))
 
 		security.loan_security_price = get_loan_security_price(security.loan_security)
 

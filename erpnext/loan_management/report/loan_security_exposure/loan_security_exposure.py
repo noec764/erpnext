@@ -2,11 +2,15 @@
 # For license information, please see license.txt
 
 
-import erpnext
 from frappe import _
 from frappe.utils import flt
-from erpnext.loan_management.report.applicant_wise_loan_security_exposure.applicant_wise_loan_security_exposure \
-	 import get_loan_security_details, get_applicant_wise_total_loan_security_qty
+
+import erpnext
+from erpnext.loan_management.report.applicant_wise_loan_security_exposure.applicant_wise_loan_security_exposure import (
+	get_applicant_wise_total_loan_security_qty,
+	get_loan_security_details,
+)
+
 
 def execute(filters=None):
 	columns = get_columns(filters)

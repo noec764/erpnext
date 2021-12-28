@@ -1,14 +1,19 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
 import frappe
 from frappe import _
-from frappe.utils import now_datetime, cint
 from frappe.model.document import Document
-from erpnext.loan_management.doctype.loan_security_shortfall.loan_security_shortfall import update_shortfall_status
-from erpnext.loan_management.doctype.loan_security_price.loan_security_price import get_loan_security_price
+from frappe.utils import cint, now_datetime
+
+from erpnext.loan_management.doctype.loan_security_price.loan_security_price import (
+	get_loan_security_price,
+)
+from erpnext.loan_management.doctype.loan_security_shortfall.loan_security_shortfall import (
+	update_shortfall_status,
+)
+
 
 class LoanSecurityPledge(Document):
 	def validate(self):
@@ -58,6 +63,7 @@ class LoanSecurityPledge(Document):
 			if ltv_ratio_map.get(security.loan_security_type) != ltv_ratio:
 				frappe.throw(_("Loan Securities with different LTV ratio cannot be pledged against one loan"))
 
+
 	def set_pledge_amount(self):
 		total_security_value = 0
 		maximum_loan_value = 0
@@ -65,7 +71,7 @@ class LoanSecurityPledge(Document):
 		for pledge in self.securities:
 
 			if not pledge.qty and not pledge.amount:
-				frappe.throw(_("Qty or Amount is mandatory for loan security"))
+				frappe.throw(_("Qty or Amount is mandatory for loan security!"))
 
 			if not (self.loan_application and pledge.loan_security_price):
 				pledge.loan_security_price = get_loan_security_price(pledge.loan_security)

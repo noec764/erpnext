@@ -1,25 +1,40 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
+import unittest
 
 import frappe
-import erpnext
-import unittest
-from frappe.utils import (nowdate, add_days, getdate, now_datetime, add_to_date, get_datetime,
-	add_months, get_first_day, get_last_day, flt, date_diff)
-from erpnext.selling.doctype.customer.test_customer import get_customer_dict
-from erpnext.payroll.doctype.salary_structure.test_salary_structure import make_employee
-from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import (process_loan_interest_accrual_for_demand_loans,
-	process_loan_interest_accrual_for_term_loans)
-from erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual import days_in_year
-from erpnext.loan_management.doctype.process_loan_security_shortfall.process_loan_security_shortfall import create_process_loan_security_shortfall
-from erpnext.loan_management.doctype.loan.loan import unpledge_security, request_loan_closure, make_loan_write_off
-from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import get_pledged_security_qty
+from frappe.utils import add_days, add_months, add_to_date, date_diff, flt, get_datetime, nowdate
+
+from erpnext.loan_management.doctype.loan.loan import (
+	make_loan_write_off,
+	request_loan_closure,
+	unpledge_security,
+)
 from erpnext.loan_management.doctype.loan_application.loan_application import create_pledge
-from erpnext.loan_management.doctype.loan_disbursement.loan_disbursement import get_disbursal_amount
+from erpnext.loan_management.doctype.loan_disbursement.loan_disbursement import (
+	get_disbursal_amount,
+)
+from erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual import (
+	days_in_year,
+)
 from erpnext.loan_management.doctype.loan_repayment.loan_repayment import calculate_amounts
-from erpnext.payroll.doctype.salary_structure.test_salary_structure import make_salary_structure
+from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import (
+	get_pledged_security_qty,
+)
+from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import (
+	process_loan_interest_accrual_for_demand_loans,
+	process_loan_interest_accrual_for_term_loans,
+)
+from erpnext.loan_management.doctype.process_loan_security_shortfall.process_loan_security_shortfall import (
+	create_process_loan_security_shortfall,
+)
+from erpnext.payroll.doctype.salary_structure.test_salary_structure import (
+	make_employee,
+	make_salary_structure,
+)
+from erpnext.selling.doctype.customer.test_customer import get_customer_dict
+
 
 class TestLoan(unittest.TestCase):
 	def setUp(self):
@@ -60,25 +75,25 @@ class TestLoan(unittest.TestCase):
 	def test_loan(self):
 		loan = frappe.get_doc("Loan", {"applicant":self.applicant1})
 		self.assertEqual(loan.monthly_repayment_amount, 15052)
-		self.assertEqual(loan.total_interest_payable, 21034)
-		self.assertEqual(loan.total_payment, 301034)
+		self.assertEqual(flt(loan.total_interest_payable, 0), 21034)
+		self.assertEqual(flt(loan.total_payment, 0), 301034)
 
 		schedule = loan.repayment_schedule
 
 		self.assertEqual(len(schedule), 20)
 
-		for idx, principal_amount, interest_amount, balance_loan_amount in [[3, 13369, 1683, 227079], [19, 14941, 105, 0], [17, 14740, 312, 29785]]:
-			self.assertEqual(schedule[idx].principal_amount, principal_amount)
-			self.assertEqual(schedule[idx].interest_amount, interest_amount)
-			self.assertEqual(schedule[idx].balance_loan_amount, balance_loan_amount)
+		for idx, principal_amount, interest_amount, balance_loan_amount in [[3, 13369, 1683, 227080], [19, 14941, 105, 0], [17, 14740, 312, 29785]]:
+			self.assertEqual(flt(schedule[idx].principal_amount, 0), principal_amount)
+			self.assertEqual(flt(schedule[idx].interest_amount, 0), interest_amount)
+			self.assertEqual(flt(schedule[idx].balance_loan_amount, 0), balance_loan_amount)
 
 		loan.repayment_method = "Repay Fixed Amount per Period"
 		loan.monthly_repayment_amount = 14000
 		loan.save()
 
 		self.assertEqual(len(loan.repayment_schedule), 22)
-		self.assertEqual(loan.total_interest_payable, 22712)
-		self.assertEqual(loan.total_payment, 302712)
+		self.assertEqual(flt(loan.total_interest_payable, 0), 22712)
+		self.assertEqual(flt(loan.total_payment, 0), 302712)
 
 	def test_loan_with_security(self):
 
@@ -203,6 +218,14 @@ class TestLoan(unittest.TestCase):
 		self.assertEqual(flt(loan.total_principal_paid, 0), flt(repayment_entry.amount_paid -
 			 penalty_amount - total_interest_paid, 0))
 
+		# Check Repayment Entry cancel
+		repayment_entry.load_from_db()
+		repayment_entry.cancel()
+
+		loan.load_from_db()
+		self.assertEqual(loan.total_principal_paid, 0)
+		self.assertEqual(loan.total_principal_paid, 0)
+
 	def test_loan_closure(self):
 		pledge = [{
 			"loan_security": "Test Security 1",
@@ -279,6 +302,27 @@ class TestLoan(unittest.TestCase):
 
 		self.assertEqual(amounts[0], 11250.00)
 		self.assertEqual(amounts[1], 78303.00)
+
+	def test_repayment_schedule_update(self):
+		loan = create_loan(self.applicant2, "Personal Loan", 200000, "Repay Over Number of Periods", 4,
+			applicant_type='Customer', repayment_start_date='2021-04-30', posting_date='2021-04-01')
+
+		loan.submit()
+
+		make_loan_disbursement_entry(loan.name, loan.loan_amount, disbursement_date='2021-04-01')
+
+		process_loan_interest_accrual_for_term_loans(posting_date='2021-05-01')
+		process_loan_interest_accrual_for_term_loans(posting_date='2021-06-01')
+
+		repayment_entry = create_repayment_entry(loan.name, self.applicant2, '2021-06-05', 120000)
+		repayment_entry.submit()
+
+		loan.load_from_db()
+
+		self.assertEqual(flt(loan.get('repayment_schedule')[3].principal_amount, 2), 41369.83)
+		self.assertEqual(flt(loan.get('repayment_schedule')[3].interest_amount, 2), 289.59)
+		self.assertEqual(flt(loan.get('repayment_schedule')[3].total_payment, 2), 41659.41)
+		self.assertEqual(flt(loan.get('repayment_schedule')[3].balance_loan_amount, 2), 0)
 
 	def test_security_shortfall(self):
 		pledges = [{
@@ -923,18 +967,18 @@ def create_loan_application(company, applicant, loan_type, proposed_pledges, rep
 
 
 def create_loan(applicant, loan_type, loan_amount, repayment_method, repayment_periods,
-	repayment_start_date=None, posting_date=None):
+	applicant_type=None, repayment_start_date=None, posting_date=None):
 
 	loan = frappe.get_doc({
 		"doctype": "Loan",
-		"applicant_type": "Employee",
+		"applicant_type": applicant_type or "Employee",
 		"company": "_Test Company",
 		"applicant": applicant,
 		"loan_type": loan_type,
 		"loan_amount": loan_amount,
 		"repayment_method": repayment_method,
 		"repayment_periods": repayment_periods,
-		"repayment_start_date": nowdate(),
+		"repayment_start_date": repayment_start_date or nowdate(),
 		"is_term_loan": 1,
 		"posting_date": posting_date or nowdate()
 	})

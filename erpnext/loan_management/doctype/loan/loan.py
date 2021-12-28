@@ -1,16 +1,21 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
-import frappe, math, json
-import erpnext
-from frappe import _
+import json
+import math
 
-from frappe.utils import flt, rounded, add_months, nowdate, getdate, now_datetime
-from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import get_pledged_security_qty
+import frappe
+from frappe import _
+from frappe.utils import add_months, flt, get_last_day, getdate, now_datetime, nowdate
+
+import erpnext
 from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.loan_management.doctype.loan_repayment.loan_repayment import calculate_amounts
+from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import (
+	get_pledged_security_qty,
+)
+
 
 class Loan(AccountsController):
 	def validate(self):
@@ -57,11 +62,10 @@ class Loan(AccountsController):
 			self.rate_of_interest = frappe.db.get_value("Loan Type", self.loan_type, "rate_of_interest")
 
 		if self.repayment_method == "Repay Over Number of Periods":
-			self.monthly_repayment_amount = get_monthly_repayment_amount(self.repayment_method, self.loan_amount, self.rate_of_interest, self.repayment_periods)
+			self.monthly_repayment_amount = get_monthly_repayment_amount(self.loan_amount, self.rate_of_interest, self.repayment_periods)
 
 	def check_sanctioned_amount_limit(self):
 		sanctioned_amount_limit = get_sanctioned_amount_limit(self.applicant_type, self.applicant, self.company)
-
 		if sanctioned_amount_limit:
 			total_loan_amount = get_total_loan_amount(self.applicant_type, self.applicant, self.company)
 
@@ -95,7 +99,7 @@ class Loan(AccountsController):
 				"total_payment": total_payment,
 				"balance_loan_amount": balance_amount
 			})
-			next_payment_date = add_months(payment_date, 1)
+			next_payment_date = add_single_month(payment_date)
 			payment_date = next_payment_date
 
 	def set_repayment_period(self):
@@ -207,7 +211,7 @@ def validate_repayment_method(repayment_method, loan_amount, monthly_repayment_a
 		if monthly_repayment_amount > loan_amount:
 			frappe.throw(_("Monthly Repayment Amount cannot be greater than Loan Amount"))
 
-def get_monthly_repayment_amount(repayment_method, loan_amount, rate_of_interest, repayment_periods):
+def get_monthly_repayment_amount(loan_amount, rate_of_interest, repayment_periods):
 	if rate_of_interest:
 		monthly_interest_rate = flt(rate_of_interest) / (12 *100)
 		monthly_repayment_amount = math.ceil((loan_amount * monthly_interest_rate *
@@ -369,7 +373,9 @@ def create_loan_security_unpledge(unpledge_map, loan, company, applicant_type, a
 	return unpledge_request
 
 def validate_employee_currency_with_company_currency(applicant, company):
-	from erpnext.payroll.doctype.salary_structure_assignment.salary_structure_assignment import get_employee_currency
+	from erpnext.payroll.doctype.salary_structure_assignment.salary_structure_assignment import (
+		get_employee_currency,
+	)
 	if not applicant:
 		frappe.throw(_("Please select Applicant"))
 	if not company:
@@ -389,3 +395,9 @@ def get_shortfall_applicants():
 		"value": len(applicants),
 		"fieldtype": "Int"
 	}
+
+def add_single_month(date):
+	if getdate(date) == get_last_day(date):
+		return get_last_day(add_months(date, 1))
+	else:
+		return add_months(date, 1)

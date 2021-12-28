@@ -5,6 +5,7 @@
 import frappe
 from frappe import _
 
+
 def execute(filters=None):
 	columns = get_columns(filters)
 	data = get_data(filters)
@@ -84,6 +85,7 @@ def get_columns(filters):
 	return columns
 
 def get_data(filters):
+
 	data = []
 	conditions = get_conditions(filters)
 
