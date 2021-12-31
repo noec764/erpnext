@@ -71,7 +71,7 @@ def sync_customer(settings, woocommerce_customer):
 			})
 			customer.flags.ignore_mandatory = True
 			customer.insert(ignore_permissions=True)
-		
+
 		if customer:
 			customer.update({
 				"customer_name" : customer_name,
@@ -79,6 +79,7 @@ def sync_customer(settings, woocommerce_customer):
 				"customer_type": customer_type
 			})
 			try:
+				customer.flags.ignore_mandatory = True
 				customer.save()
 			except frappe.exceptions.TimestampMismatchError:
 				# Handle the update of two sales orders customers details concurrently

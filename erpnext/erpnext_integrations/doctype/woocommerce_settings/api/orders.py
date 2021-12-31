@@ -248,7 +248,7 @@ def get_order_taxes(order, settings):
 				"account_head": account_head,
 				"description": tax.get("label"),
 				"rate": 0,
-				"tax_amount": flt(tax.get("tax_total") or 0) + flt(tax.get("shipping_tax_total") or 0), 
+				"tax_amount": flt(tax.get("tax_total") or 0) + flt(tax.get("shipping_tax_total") or 0),
 				"included_in_print_rate": 0,
 				"cost_center": settings.cost_center
 			})
@@ -329,7 +329,7 @@ def _update_sales_order(settings, woocommerce_order, customer):
 		if woocommerce_order.get("status") == "refunded":
 			refund_sales_order(settings, woocommerce_order, sales_order)
 		else:
-			register_payment_and_invoice(settings, woocommerce_order, sales_order)
+			register_payment_and_invoice(woocommerce_order, sales_order)
 
 	if sales_order and woocommerce_order.get("status") == "completed":
 		register_delivery(settings, woocommerce_order, sales_order)
@@ -369,7 +369,7 @@ def get_qty_per_item(items):
 
 	return qty_per_item
 
-def register_payment_and_invoice(settings, woocommerce_order, sales_order):
+def register_payment_and_invoice(woocommerce_order, sales_order):
 	if sales_order.per_billed < 100 and sales_order.docstatus == 1:
 		try:
 
