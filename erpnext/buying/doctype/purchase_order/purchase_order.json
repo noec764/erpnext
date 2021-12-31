@@ -244,7 +244,8 @@
    "depends_on": "eval:doc.order_confirmation_no",
    "fieldname": "order_confirmation_date",
    "fieldtype": "Date",
-   "label": "Order Confirmation Date"
+   "label": "Order Confirmation Date",
+   "no_copy": 1
   },
   {
    "fieldname": "amended_from",
@@ -1124,7 +1125,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-01-20 22:07:23.487138",
+ "modified": "2021-12-27 11:25:09.869909",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
