@@ -6,6 +6,8 @@ from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.contacts.address_and_contact import load_address_and_contact
 
+from erpnext.crm.utils import add_link_in_communication, copy_comments
+
 class Prospect(Document):
 	def onload(self):
 		load_address_and_contact(self)
@@ -15,9 +17,15 @@ class Prospect(Document):
 
 	def on_update(self):
 		self.link_with_lead_contact_and_address()
-	
+
 	def on_trash(self):
 		self.unlink_dynamic_links()
+
+	def after_insert(self):
+		if frappe.db.get_single_value("CRM Settings", "carry_forward_communication_and_comments"):
+			for row in self.get('prospect_lead'):
+				copy_comments("Lead", row.lead, self)
+				add_link_in_communication("Lead", row.lead, self)
 
 	def update_lead_details(self):
 		for row in self.get('prospect_lead'):

@@ -7,15 +7,20 @@ from frappe import _
 from frappe.utils import cint, cstr, flt, get_fullname
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder import DocType
+from erpnext.crm.utils import add_link_in_communication, copy_comments
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.transaction_base import TransactionBase
-from erpnext.accounts.party import get_party_account_currency
 from frappe.email.inbox import link_communication_to_document
 
 class Opportunity(TransactionBase):
 	def after_insert(self):
 		if self.opportunity_from == "Lead":
 			frappe.get_doc("Lead", self.party_name).set_status(update=True)
+
+		if self.opportunity_from in ["Lead", "Prospect"]:
+			if frappe.db.get_single_value("CRM Settings", "carry_forward_communication_and_comments"):
+				copy_comments(self.opportunity_from, self.party_name, self)
+				add_link_in_communication(self.opportunity_from, self.party_name, self)
 
 	def validate(self):
 		self._prev = frappe._dict({
