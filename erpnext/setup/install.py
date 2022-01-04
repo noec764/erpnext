@@ -28,7 +28,6 @@ def after_install():
 	for role in ["Customer", "Supplier"]:
 		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
-	create_default_energy_point_rules()
 	add_company_to_session_defaults()
 	add_standard_navbar_items()
 	add_app_name()
