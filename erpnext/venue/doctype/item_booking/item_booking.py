@@ -25,6 +25,10 @@ from frappe.desk.calendar import process_recurring_events
 from erpnext.venue.utils import get_linked_customers
 
 class ItemBooking(Document):
+	def before_insert(self):
+		if self.parent_item_booking:
+			self.google_calendar = self.google_calendar_id = None
+
 	def validate(self):
 		self.set_title()
 
@@ -90,6 +94,8 @@ class ItemBooking(Document):
 
 	def set_status(self, status):
 		self.db_set("status", status, update_modified=True, notify=True)
+		for child in frappe.get_all("Item Booking", filters=dict(parent_item_booking=self.name), pluck="name"):
+			frappe.get_doc("Item Booking", child).set_status(status)
 
 	def on_update(self):
 		self.synchronize_child_bookings()
