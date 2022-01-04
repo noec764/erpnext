@@ -78,14 +78,11 @@ frappe.ui.form.on("Company", {
 	},
 
 	refresh: function(frm) {
-		if(!frm.doc.__islocal) {
-			frm.doc.abbr && frm.set_df_property("abbr", "read_only", 1);
-			frm.set_df_property("parent_company", "read_only", 1);
-			disbale_coa_fields(frm);
-		}
+		frm.toggle_display('address_html', !frm.is_new());
 
-		frm.toggle_display('address_html', !frm.doc.__islocal);
-		if(!frm.doc.__islocal) {
+		if (!frm.is_new()) {
+			frm.doc.abbr && frm.set_df_property("abbr", "read_only", 1);
+			disable_coa_fields(frm);
 			frappe.contacts.render_address_and_contact(frm);
 
 			frappe.dynamic_link = {doc: frm.doc, fieldname: 'name', doctype: 'Company'}
@@ -233,7 +230,7 @@ erpnext.company.set_custom_query = function(frm, v) {
 	});
 }
 
-var disbale_coa_fields = function(frm, bool=true) {
+var disable_coa_fields = function(frm, bool=true) {
 	frm.set_df_property("create_chart_of_accounts_based_on", "read_only", bool);
 	frm.set_df_property("chart_of_accounts", "read_only", bool);
 	frm.set_df_property("existing_company", "read_only", bool);
