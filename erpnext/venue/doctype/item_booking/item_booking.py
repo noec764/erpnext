@@ -92,6 +92,8 @@ class ItemBooking(Document):
 		self.db_set("status", status, update_modified=True, notify=True)
 
 	def on_update(self):
+		self.synchronize_child_bookings()
+
 		doc_before_save = self.get_doc_before_save()
 		if doc_before_save:
 			for field in ("status", "starts_on", "ends_on", "party_name"):
@@ -108,6 +110,29 @@ class ItemBooking(Document):
 			doc.flags.ignore_permissions = True
 			doc.cancel()
 			doc.delete()
+
+	def synchronize_child_bookings(self):
+		def update_child(item, childname=None):
+			child = frappe.get_doc("Item Booking", childname) if childname else frappe.new_doc("Item Booking")
+			child.update({key: value for key, value in frappe.copy_doc(self).as_dict().items() if (value is not None and not key.startswith("__"))})
+			child.item = item
+			child.parent_item_booking = self.name
+			child.save()
+
+		if frappe.db.exists("Product Bundle", dict(new_item_code=self.item)):
+			doc = frappe.get_doc("Product Bundle", dict(new_item_code=self.item))
+			for item in doc.items:
+				childnames = frappe.db.get_all("Item Booking", dict(item=item.item_code, parent_item_booking=self.name), pluck="name")
+				for childname in childnames:
+					update_child(item.item_code, childname)
+
+				if not childnames:
+					for _ in range(int(item.qty)):
+						update_child(item.item_code)
+
+		elif frappe.db.exists("Item Booking", dict(parent_item_booking=self.name)):
+			for child in frappe.get_all("Item Booking", filters=dict(parent_item_booking=self.name), fields=["name", "item"]):
+				update_child(child.item, child.name)
 
 def get_list_context(context=None):
 	allow_event_cancellation = frappe.db.get_single_value("Venue Settings", "allow_event_cancellation")
