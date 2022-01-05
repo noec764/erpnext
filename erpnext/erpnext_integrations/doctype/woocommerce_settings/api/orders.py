@@ -370,9 +370,9 @@ def get_qty_per_item(items):
 	return qty_per_item
 
 def register_payment_and_invoice(woocommerce_order, sales_order):
-	if sales_order.per_billed < 100 and sales_order.docstatus == 1:
+	if sales_order.per_billed < 100 and sales_order.docstatus == 1 and not sales_order.flags.payment_creation_in_progress:
+		sales_order.flags.payment_creation_in_progress = True
 		try:
-
 			if sales_order.status in ("On Hold", "Closed"):
 				frappe.db.set_value("Sales Order", sales_order.name, "status", "To Bill")
 
@@ -380,6 +380,8 @@ def register_payment_and_invoice(woocommerce_order, sales_order):
 			make_sales_invoice_from_sales_order(woocommerce_order, sales_order)
 		except Exception:
 			frappe.log_error(f"WooCommerce Order: {woocommerce_order.get('id')}\nSales Order: {sales_order.name}\n\n{frappe.get_traceback()}", "Woocommerce Payment and Invoice Error")
+
+		sales_order.flags.payment_creation_in_progress = False
 
 def make_payment(woocommerce_order, sales_order):
 	if sales_order.advance_paid < sales_order.grand_total and woocommerce_order.get("transaction_id") and not frappe.get_all("Payment Entry", dict(reference_no=woocommerce_order.get("transaction_id"))):

@@ -12,6 +12,7 @@
   "item_name",
   "user",
   "color",
+  "parent_item_booking",
   "column_break_2",
   "status",
   "starts_on",
@@ -37,6 +38,7 @@
   "party_name",
   "event_section",
   "event",
+  "section_break_31",
   "amended_from",
   "naming_series"
  ],
@@ -241,14 +243,30 @@
    "options": "UOM"
   },
   {
-    "default": "0",
-    "fieldname": "deduct_booking_credits",
-    "fieldtype": "Check",
-    "label": "Deduct booking credits"
-   } 
+   "default": "0",
+   "fieldname": "deduct_booking_credits",
+   "fieldtype": "Check",
+   "label": "Deduct booking credits"
+  },
+  {
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "parent_item_booking",
+   "fieldtype": "Link",
+   "label": "Parent Item Booking",
+   "options": "Item Booking"
+  }
  ],
- "links": [],
- "modified": "2021-02-25 16:23:41.765730",
+ "links": [
+  {
+   "group": "Child Bookings",
+   "link_doctype": "Item Booking",
+   "link_fieldname": "parent_item_booking"
+  }
+ ],
+ "modified": "2022-01-04 12:03:49.368968",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",
