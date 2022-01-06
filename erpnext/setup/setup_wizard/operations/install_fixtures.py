@@ -12,6 +12,7 @@ from frappe.desk.doctype.global_search_settings.global_search_settings import up
 
 from erpnext.accounts.doctype.account.account import RootNotEditable
 from erpnext.regional.address_template.setup import set_up_address_templates
+from erpnext.setup.install import create_default_success_action, create_default_energy_point_rules
 from frappe.utils.nestedset import rebuild_tree
 
 default_lead_sources = ["Existing Customer", "Reference", "Advertisement",
@@ -469,6 +470,8 @@ def install_defaults(args=None):
 
 	args.update({"set_default": 1})
 	create_bank_account(args)
+	create_default_success_action()
+	create_default_energy_point_rules()
 
 def set_global_defaults(args):
 	global_defaults = frappe.get_doc("Global Defaults", "Global Defaults")

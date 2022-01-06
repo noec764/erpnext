@@ -26,13 +26,17 @@ frappe.ui.form.on('Item Booking', {
 		}
 	},
 	refresh(frm) {
-		frm.page.clear_actions_menu();
-		frm.page.add_action_item(__("Create a quotation"), () => {
-			make_quotation(frm)
-		})
+		if (frm.doc.parent_item_booking) {
+			frm.trigger("disable_form");
+		} else {
+			frm.page.clear_actions_menu();
+			frm.page.add_action_item(__("Create a quotation"), () => {
+				make_quotation(frm)
+			})
 
-		frm.trigger('add_to_quotation');
-		frm.trigger('add_to_sales_order');
+			frm.trigger('add_to_quotation');
+			frm.trigger('add_to_sales_order');
+		}
 
 		frm.set_query('party_type', () => {
 			return {
@@ -138,6 +142,15 @@ frappe.ui.form.on('Item Booking', {
 				}
 			})
 		}
+	},
+	disable_form: function(frm) {
+		frm.set_read_only();
+		frm.fields
+			.filter((field) => field.has_input)
+			.forEach((field) => {
+				frm.set_df_property(field.df.fieldname, "read_only", "1");
+			});
+		frm.disable_save();
 	}
 });
 
