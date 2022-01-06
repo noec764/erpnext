@@ -3,6 +3,9 @@ from erpnext.controllers.sales_and_purchase_return import make_return_doc
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 
 def execute():
+	if not frappe.get_meta("Sales Order").has_field("woocommerce_id"):
+		return
+
 	for sales_order in frappe.get_all("Sales Order", filters={"woocommerce_id": ("is", "set"), "docstatus": 1}):
 		sales_invoices = list(set(x[0] for x in frappe.db.sql(f"""
 			select
