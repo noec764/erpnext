@@ -370,7 +370,8 @@ def get_qty_per_item(items):
 	return qty_per_item
 
 def register_payment_and_invoice(woocommerce_order, sales_order):
-	if sales_order.per_billed < 100 and sales_order.docstatus == 1 and not sales_order.flags.payment_creation_in_progress:
+	# Keep 99.99 because of rounding issues
+	if sales_order.per_billed < 99.99 and sales_order.docstatus == 1 and not sales_order.flags.payment_creation_in_progress:
 		sales_order.flags.payment_creation_in_progress = True
 		try:
 			if sales_order.status in ("On Hold", "Closed"):
