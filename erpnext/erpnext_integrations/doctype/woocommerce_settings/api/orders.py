@@ -90,10 +90,10 @@ def get_woocommerce_orders(wc_api):
 	response = wc_api.get_orders(params={
 		"per_page": documents_fetched
 	})
-	woocommerce_orders =response.json()
+	woocommerce_orders = response.json()
 
 	if not max_orders or len(woocommerce_orders) < max_orders:
-		for page_idx in range(1, cint(response.headers.get('X-WP-TotalPages')) + 1):
+		for page_idx in range(2, cint(response.headers.get('X-WP-TotalPages')) + 1):
 			if not max_orders or documents_fetched < cint(max_orders):
 				response = wc_api.get_orders(params={
 					"per_page": per_page,
@@ -371,8 +371,7 @@ def get_qty_per_item(items):
 
 def register_payment_and_invoice(woocommerce_order, sales_order):
 	# Keep 99.99 because of rounding issues
-	if sales_order.per_billed < 99.99 and sales_order.docstatus == 1 and not sales_order.flags.payment_creation_in_progress:
-		sales_order.flags.payment_creation_in_progress = True
+	if sales_order.per_billed < 99.99 and sales_order.docstatus == 1:
 		try:
 			if sales_order.status in ("On Hold", "Closed"):
 				frappe.db.set_value("Sales Order", sales_order.name, "status", "To Bill")
@@ -381,8 +380,6 @@ def register_payment_and_invoice(woocommerce_order, sales_order):
 			make_sales_invoice_from_sales_order(woocommerce_order, sales_order)
 		except Exception:
 			frappe.log_error(f"WooCommerce Order: {woocommerce_order.get('id')}\nSales Order: {sales_order.name}\n\n{frappe.get_traceback()}", "Woocommerce Payment and Invoice Error")
-
-		sales_order.flags.payment_creation_in_progress = False
 
 def make_payment(woocommerce_order, sales_order):
 	if sales_order.advance_paid < sales_order.grand_total and woocommerce_order.get("transaction_id") and not frappe.get_all("Payment Entry", dict(reference_no=woocommerce_order.get("transaction_id"))):
