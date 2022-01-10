@@ -4,7 +4,7 @@
 			<div class="col-xs-5 {%- if doc.align_labels_right %} text-right{%- endif -%}">
 				<label>{{ _(doc.meta.get_label('discount_amount')) }}</label></div>
 			<div class="col-xs-7 text-right">
-				- {{ doc.get_formatted("discount_amount", doc) }}
+				{{ doc.get_formatted("discount_amount", doc) }}
 			</div>
 		</div>
 	{%- endif -%}
