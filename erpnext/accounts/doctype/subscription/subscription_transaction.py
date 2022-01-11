@@ -292,17 +292,17 @@ class SubscriptionPaymentRequestGenerator:
 			frappe.flags.mute_gateways_validation = True
 			if flt(self.subscription.grand_total) > 0:
 				payment_request = self.create_payment_request(submit=True, mute_email=True)
+				payment_request_document = frappe.get_doc("Payment Request", payment_request.get("name"))
 				frappe.flags.mute_gateways_validation = False
 
-				if self.subscription.payment_gateway in self.get_immediate_payment_gateways() and \
-					not frappe.conf.mute_payment_gateways and \
-					payment_request.get("payment_gateway_account") and float(payment_request.get("grand_total")) > 0:
-					doc = frappe.get_doc("Payment Request", payment_request.get("name"))
-					doc.run_method("process_payment_immediately")
-
-	@staticmethod
-	def get_immediate_payment_gateways():
-		return [x.name for x in frappe.get_all("Payment Gateway", filters={"gateway_settings": "GoCardless Settings"})]
+				if (
+					not not frappe.conf.mute_payment_gateways
+					and self.subscription.payment_gateway
+					and payment_request.get("payment_gateway_account")
+					and float(payment_request.get("grand_total")) > 0
+					and payment_request_document.check_if_immediate_payment_is_autorized()
+				):
+					payment_request_document.run_method("process_payment_immediately")
 
 	def get_payment_gateways(self):
 		gateways = []
