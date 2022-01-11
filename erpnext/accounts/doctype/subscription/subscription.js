@@ -35,6 +35,10 @@ frappe.ui.form.on('Subscription', {
 						__('Stop Subscription'),
 						() => frm.events.cancel_this_subscription(frm)
 					);
+					frm.page.add_action_item(
+						__('Link a sales invoice'),
+						() => frm.events.link_sales_invoice(frm)
+					);
 				} else {
 					frm.page.add_action_item(
 						__('Do not cancel this subscription'),
@@ -101,6 +105,36 @@ frappe.ui.form.on('Subscription', {
 			}
 		})
 		dialog.show()
+	},
+
+	link_sales_invoice: function(frm) {
+		frappe.prompt({
+			fieldtype: 'Link',
+			label: __('Select a sales invoice'),
+			fieldname: 'sales_invoice',
+			reqd: 1,
+			options: 'Sales Invoice',
+			get_query: function() {
+				return {
+					"filters": {
+						"subscription": ["is", "not set"],
+						"docstatus": 1
+					}
+				}
+			}
+		}, data => {
+			frappe.call({
+				method: "link_sales_invoice",
+				doc: frm.doc,
+				args: data
+			}).then(r => {
+				console.log(r)
+				frappe.show_alert({
+					message: __("The selected sales invoice has been linked to this subscription"),
+					indicator: "green"
+				})
+			})
+		}, __("Select a sales invoice to link to this subscription"), __("Confirm"));
 	},
 
 	abort_cancel_this_subscription: function(frm) {

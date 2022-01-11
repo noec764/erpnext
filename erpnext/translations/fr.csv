@@ -11009,3 +11009,7 @@ Create attendance based on shift assignments only,Créer les présences sur la b
 Applicable for,Applicable aux transactions de,
 This subscription is not active yet.You can activate it by clicking on 'Fetch Subscription Updates' or wait until the next automatic update (once an hour).,Cet abonnement n'est pas encore actif.<br>Vous pouvez l'activer en cliquant sur 'Vérifier si l'abonnement est à jour' ou en attendant la prochaine mise à jour automatique (une fois par heure).,
 Recent Orders,Commandes récentes,
+Link a sales invoice,Lier une facture de vente,
+Select a sales invoice,Sélectionnez une facture de vente,
+Select a sales invoice to link to this subscription,Sélectionnez une facture de vente à lier avec cet abonnement,
+Confirm,Confirmer,

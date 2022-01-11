@@ -256,6 +256,11 @@ class Subscription(Document):
 	def create_payment_request(self):
 		return SubscriptionPaymentRequestGenerator(self).create_payment_request()
 
+	@frappe.whitelist()
+	def link_sales_invoice(self, sales_invoice):
+		print(sales_invoice)
+		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
+
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
