@@ -158,8 +158,6 @@ class TransactionBase(StatusUpdater):
 
 		if len(child_table_values) > 1:
 			self.set(default_field, None)
-		else:
-			self.set(default_field, list(child_table_values)[0])
 
 	def add_subscription_event(self):
 		if getattr(self, "subscription", None) and self.doctype in ("Sales Order", "Sales Invoice", "Payment Entry"):
