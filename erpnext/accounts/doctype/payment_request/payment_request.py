@@ -153,6 +153,9 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist()
 	def process_payment_immediately(self):
+		if frappe.conf.mute_payment_gateways:
+			return
+
 		if not self.payment_gateway:
 			self.payment_gateway = self.payment_gateways[0].payment_gateway
 
