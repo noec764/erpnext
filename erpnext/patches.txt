@@ -297,6 +297,7 @@ erpnext.patches.v13_0.update_tax_category_for_rcm
 execute:frappe.delete_doc_if_exists('Workspace', 'ERPNext Integrations Settings')
 erpnext.patches.v14_0.set_payroll_cost_centers
 erpnext.patches.v13_0.update_exchange_rate_settings
+erpnext.patches.v14_0.rearrange_company_fields
 
 # Dokos
 erpnext.patches.dokos.v1_0.remove_hospitality_domain
