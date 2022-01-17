@@ -177,7 +177,7 @@ class AccountsController(TransactionBase):
 				self.group_similar_items()
 
 			df = self.meta.get_field("discount_amount")
-			if self.get("discount_amount") and hasattr(self, "taxes"):
+			if self.get("discount_amount") and hasattr(self, "taxes") and not df.print_hide:
 				df.set("print_hide", 0)
 				self.discount_amount = -self.discount_amount
 			else:
