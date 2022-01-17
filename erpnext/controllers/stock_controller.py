@@ -14,8 +14,6 @@ from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_ent
 from erpnext.accounts.utils import get_fiscal_year
 from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.stock import get_warehouse_account_map
-from erpnext.stock.stock_ledger import get_valuation_rate
-from erpnext.stock.stock_ledger import get_items_to_be_repost, get_valuation_rate
 from erpnext.stock.stock_ledger import get_items_to_be_repost
 
 class QualityInspectionRequiredError(frappe.ValidationError): pass
