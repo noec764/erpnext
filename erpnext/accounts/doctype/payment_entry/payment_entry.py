@@ -4,6 +4,7 @@
 
 
 import frappe, erpnext, json
+from functools import reduce
 from frappe import _, scrub, ValidationError, throw
 from frappe.utils import flt, comma_or, nowdate, getdate, cint
 from erpnext.accounts.utils import get_outstanding_invoices, get_account_currency, get_balance_on
@@ -1566,6 +1567,10 @@ def get_payment_entry(dt, dn, party_amount=None, bank_account=None, bank_amount=
 	pe.paid_amount = paid_amount
 	pe.received_amount = received_amount
 	pe.letter_head = doc.get("letter_head")
+
+	if dt in ['Purchase Order', 'Sales Order', 'Sales Invoice', 'Purchase Invoice']:
+		pe.project = (doc.get('project') or
+			reduce(lambda prev,cur: prev or cur, [x.get('project') for x in doc.get('items')], None)) # get first non-empty project from items
 
 	if pe.party_type in ["Customer", "Supplier"]:
 		bank_account = get_party_bank_account(pe.party_type, pe.party)
