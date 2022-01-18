@@ -170,7 +170,7 @@ class PaymentRequest(Document):
 			return result
 
 	def generate_payment_key(self):
-		self.db_set('payment_key', frappe.generate_hash(json.dumps(self.as_dict())))
+		self.db_set('payment_key', frappe.generate_hash(self.as_json()))
 
 	def get_customer(self):
 		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
@@ -450,7 +450,9 @@ def make_payment_request(**args):
 			"email_to": args.recipient_id or ref_doc.get("contact_email") or ref_doc.owner,
 			"subject": _("Payment Request for {0}").format(args.dn),
 			"reference_doctype": args.dt,
-			"reference_name": args.dn
+			"reference_name": args.dn,
+			"payment_gateways_template": args.payment_gateways_template,
+			"email_template": args.email_template,
 		})
 
 		if args.order_type == "Shopping Cart" or args.mute_email:
@@ -462,6 +464,10 @@ def make_payment_request(**args):
 				"payment_gateway_account": gateway_account.get("name"),
 				"payment_gateway": gateway_account.get("payment_gateway")
 			})
+
+		if args.email_template:
+			template = get_message(pr, args.email_template)
+			pr.update(template)
 
 		if args.submit_doc:
 			pr.insert(ignore_permissions=True)

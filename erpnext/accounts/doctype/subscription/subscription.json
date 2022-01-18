@@ -8,6 +8,8 @@
  "field_order": [
   "naming_series",
   "customer",
+  "contact_person",
+  "contact_email",
   "subscription_template",
   "sales_order_item",
   "cb_1",
@@ -30,6 +32,8 @@
   "generate_invoice_at_period_start",
   "submit_invoice",
   "generate_payment_request",
+  "payment_gateways_template",
+  "email_template",
   "column_break_18",
   "billing_interval",
   "billing_interval_count",
@@ -389,11 +393,39 @@
    "fieldname": "skip_delivery_note",
    "fieldtype": "Check",
    "label": "Skip delivery note"
+  },
+  {
+   "depends_on": "eval:doc.generate_payment_request&&!doc.subscription_template",
+   "fieldname": "payment_gateways_template",
+   "fieldtype": "Link",
+   "label": "Payment Gateways Template",
+   "options": "Portal Payment Gateways Template"
+  },
+  {
+   "depends_on": "eval:doc.generate_payment_request",
+   "fetch_from": "payment_gateways_template.email_template",
+   "fieldname": "email_template",
+   "fieldtype": "Link",
+   "label": "Email Template",
+   "options": "Email Template"
+  },
+  {
+   "fetch_from": "contact_person.email_id",
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Link",
+   "label": "Billing Contact",
+   "options": "Contact"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-30 16:51:31.602930",
+ "modified": "2022-01-18 17:30:41.824607",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

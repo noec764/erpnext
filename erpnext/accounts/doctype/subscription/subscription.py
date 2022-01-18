@@ -253,7 +253,6 @@ class Subscription(Document):
 
 	@frappe.whitelist()
 	def link_sales_invoice(self, sales_invoice):
-		print(sales_invoice)
 		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
 

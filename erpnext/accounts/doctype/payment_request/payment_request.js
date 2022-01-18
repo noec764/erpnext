@@ -118,7 +118,7 @@ frappe.ui.form.on("Payment Request", {
 				if(r.message && signature && r.message.includes(signature)) {
 					signature = "";
 				}
-		
+
 				const content = (r.message || "") + (signature ? ("<br>" + signature) : "");
 
 				frm.set_value("subject", r.subject);
@@ -129,8 +129,14 @@ frappe.ui.form.on("Payment Request", {
 	payment_gateways_template(frm) {
 		if(frm.doc.payment_gateways_template) {
 			frappe.model.with_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template, function() {
+				frm.doc.payment_gateways = []
 				const template = frappe.get_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template)
-				frm.set_value('payment_gateways', template.payment_gateways.slice());
+				template.payment_gateways.slice().forEach(child => {
+					frm.add_child('payment_gateways', {
+						payment_gateway: child.payment_gateway
+					});
+					frm.refresh_fields("payment_gateways");
+				})
 			});
 		}
 	},

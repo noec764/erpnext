@@ -25,6 +25,8 @@ frappe.ui.form.on('Subscription', {
 				filters: {value: row.item, apply_on: 'Item Code'}
 			}
 		});
+
+		frm.set_query('contact_person', erpnext.queries.contact_query)
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
@@ -68,6 +70,17 @@ frappe.ui.form.on('Subscription', {
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
 		frm.trigger("show_stripe_section");
+	},
+
+	customer: function(frm) {
+		if (frm.doc.customer) {
+			frappe.xcall("erpnext.accounts.party.get_default_contact", {
+				doctype: "Customer",
+				name: frm.doc.customer
+			}).then(r => {
+				frm.set_value("contact_person", r)
+			})
+		}
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -378,7 +391,7 @@ frappe.tour["Subscription"] = [
 	{
 		fieldname: "shipping_rule",
 		title: "Shipping Rule",
-		description: "Choose a shipping rule template. It allows you to define the cost of delivering the product to the customerYou can define different shipping rules or a fixed shipping amount for the same item in different territories.",
+		description: "Choose a shipping rule template. It allows you to define the cost of delivering the product to the customer.You can define different shipping rules or a fixed shipping amount for the same item in different territories.",
 	},
 	{
 		fieldname: "apply_additional_discount",
