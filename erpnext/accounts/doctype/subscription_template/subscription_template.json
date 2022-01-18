@@ -16,6 +16,8 @@
   "generate_invoice_at_period_start",
   "submit_invoice",
   "generate_payment_request",
+  "payment_gateways_template",
+  "email_template",
   "column_break_8",
   "billing_interval",
   "billing_interval_count",
@@ -182,6 +184,7 @@
    "label": "Generate a payment request automatically"
   },
   {
+   "depends_on": "eval:!doc.payment_gateways_template",
    "fieldname": "payment_gateways_section",
    "fieldtype": "Section Break",
    "label": "Payment Gateways"
@@ -198,12 +201,26 @@
    "fieldname": "skip_delivery_note",
    "fieldtype": "Check",
    "label": "Skip delivery note"
+  },
+  {
+   "depends_on": "eval:doc.generate_payment_request",
+   "fieldname": "payment_gateways_template",
+   "fieldtype": "Link",
+   "label": "Payment Gateways Template",
+   "options": "Portal Payment Gateways Template"
+  },
+  {
+   "depends_on": "eval:doc.generate_payment_request",
+   "fieldname": "email_template",
+   "fieldtype": "Link",
+   "label": "Email Template",
+   "options": "Email Template"
   }
  ],
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-12-20 16:38:19.006600",
+ "modified": "2022-01-18 18:27:58.364033",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

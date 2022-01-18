@@ -291,7 +291,7 @@ class SubscriptionPaymentRequestGenerator:
 		if self.subscription.generate_payment_request and self.subscription.status == "Payable":
 			frappe.flags.mute_gateways_validation = True
 			if flt(self.subscription.grand_total) > 0:
-				payment_request = self.create_payment_request(submit=True, mute_email=True)
+				payment_request = self.create_payment_request(submit=True)
 				payment_request_document = frappe.get_doc("Payment Request", payment_request.get("name"))
 				frappe.flags.mute_gateways_validation = False
 
@@ -306,7 +306,11 @@ class SubscriptionPaymentRequestGenerator:
 
 	def get_payment_gateways(self):
 		gateways = []
-		if self.subscription.subscription_template:
+		if self.subscription.payment_gateways_template:
+			gateways = [{"payment_gateway": x.payment_gateway} for x in
+				frappe.get_doc("Portal Payment Gateways Template", self.subscription.payment_gateways_template).payment_gateways]
+
+		elif self.subscription.subscription_template:
 			template = frappe.get_doc("Subscription Template", self.subscription.subscription_template)
 			gateways = [{"payment_gateway": x.payment_gateway} for x in template.payment_gateways]
 
@@ -315,7 +319,7 @@ class SubscriptionPaymentRequestGenerator:
 
 		return gateways
 
-	def create_payment_request(self, submit=False, mute_email=True):
+	def create_payment_request(self, submit=False):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
 		pr = frappe.get_doc(
 			make_payment_request(**{
@@ -324,14 +328,17 @@ class SubscriptionPaymentRequestGenerator:
 				"party_type": "Customer",
 				"party": self.subscription.customer,
 				"submit_doc": False,
-				"mute_email": mute_email,
+				"mute_email": self.subscription.email_template,
 				"currency": self.subscription.currency,
+				"email_template": self.subscription.email_template,
+				"payment_gateways_template": self.subscription.payment_gateways_template,
 			})
 		)
 
 		if not self.subscription.payment_gateway:
 			for gateway in self.get_payment_gateways():
 				pr.append('payment_gateways', gateway)
+
 		pr.payment_gateway = self.subscription.payment_gateway if self.subscription.payment_gateway else None
 		pr.payment_gateway_account = get_payment_gateway_account({
 			"currency": self.subscription.currency,

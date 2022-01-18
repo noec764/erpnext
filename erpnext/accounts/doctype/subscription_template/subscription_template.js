@@ -57,5 +57,20 @@ frappe.ui.form.on('Subscription Template', {
 			}
 		})
 		dialog.show()
-	}
+	},
+
+	payment_gateways_template(frm) {
+		if(frm.doc.payment_gateways_template) {
+			frappe.model.with_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template, function() {
+				const template = frappe.get_doc("Portal Payment Gateways Template", frm.doc.payment_gateways_template)
+				frm.doc.payment_gateways = []
+				template.payment_gateways.slice().forEach(child => {
+					frm.add_child('payment_gateways', {
+						payment_gateway: child.payment_gateway
+					});
+					frm.refresh_fields("payment_gateways");
+				})
+			});
+		}
+	},
 });
