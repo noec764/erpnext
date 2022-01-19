@@ -287,6 +287,7 @@ erpnext.patches.v12_0.update_production_plan_status
 erpnext.patches.v13_0.item_naming_series_not_mandatory
 erpnext.patches.v13_0.update_category_in_ltds_certificate
 erpnext.patches.v13_0.create_pan_field_for_india
+erpnext.patches.v13_0.update_maintenance_schedule_field_in_visit
 erpnext.patches.v13_0.create_ksa_vat_custom_fields
 erpnext.patches.v14_0.rename_ongoing_status_in_sla_documents
 erpnext.patches.v14_0.migrate_crm_settings

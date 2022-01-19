@@ -301,13 +301,18 @@ class MaintenanceSchedule(TransactionBase):
 					return schedule.name
 
 @frappe.whitelist()
-def update_serial_nos(s_id):
-	serial_nos = frappe.db.get_value('Maintenance Schedule Detail', s_id, 'serial_no')
+def get_serial_nos_from_schedule(item_code, schedule=None):
+	serial_nos = []
+	if schedule:
+		serial_nos = frappe.db.get_value('Maintenance Schedule Item', {
+			'parent': schedule,
+			'item_code': item_code
+		}, 'serial_no')
+
 	if serial_nos:
 		serial_nos = get_serial_nos(serial_nos)
-		return serial_nos
-	else:
-		return False
+
+	return serial_nos
 
 @frappe.whitelist()
 def make_maintenance_visit(source_name, target_doc=None, item_name=None, s_id=None):
@@ -315,10 +320,9 @@ def make_maintenance_visit(source_name, target_doc=None, item_name=None, s_id=No
 
 	def update_status_and_detail(source, target, parent):
 		target.maintenance_type = "Scheduled"
-		target.maintenance_schedule = source.name
 		target.maintenance_schedule_detail = s_id
 
-	def update_sales_and_serial(source, target, parent):
+	def update_serial(source, target, parent):
 		sales_person = frappe.db.get_value('Maintenance Schedule Detail', s_id, 'sales_person')
 		target.service_person = sales_person
 		serial_nos = get_serial_nos(target.serial_no)
@@ -341,7 +345,10 @@ def make_maintenance_visit(source_name, target_doc=None, item_name=None, s_id=No
 		"Maintenance Schedule Item": {
 			"doctype": "Maintenance Visit Purpose",
 			"condition": lambda doc: doc.item_name == item_name,
-			"postprocess": update_sales_and_serial
+			"field_map": {
+				"sales_person": "service_person"
+			},
+			"postprocess": update_serial
 		}
 	}, target_doc)
 
