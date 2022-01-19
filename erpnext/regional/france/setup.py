@@ -113,7 +113,7 @@ def setup_default_leaves():
 
 	policy = {
 		"doctype": "Leave Policy",
-		"policy_title": _("Congés Payés"),
+		"title": _("Congés Payés"),
 		"leave_policy_details": [
 			{
 				"leave_type": _('Congés Payés'),

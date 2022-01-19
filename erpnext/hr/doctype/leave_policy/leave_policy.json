@@ -6,7 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "policy_title",
+  "title",
   "leave_allocations_section",
   "leave_policy_details",
   "amended_from"
@@ -35,7 +35,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "policy_title",
+   "fieldname": "title",
    "fieldtype": "Data",
    "label": "Policy Title"
   }
@@ -96,6 +96,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "policy_title",
+ "title_field": "title",
  "track_changes": 1
 }
