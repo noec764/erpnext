@@ -139,7 +139,7 @@ class PaymentRequest(Document):
 	@frappe.whitelist()
 	def check_if_immediate_payment_is_autorized(self):
 		if not self.payment_gateway:
-			self.payment_gateway = self.payment_gateways[0].payment_gateway
+			return False
 
 		return self.check_immediate_payment_for_gateway(self.payment_gateway)
 
@@ -596,7 +596,8 @@ def get_message(doc, template):
 	context = {
 		"doc": doc,
 		"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
-		"payment_link": get_payment_link(doc.get("payment_key"))
+		"payment_link": get_payment_link(doc.get("payment_key")),
+		"payment_can_be_processed_immediately": doc.check_if_immediate_payment_is_autorized()
 	}
 
 	email_template = frappe.get_doc("Email Template", template)
