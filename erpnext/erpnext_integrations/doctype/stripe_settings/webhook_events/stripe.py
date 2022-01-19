@@ -108,7 +108,7 @@ class StripeWebhooksController(WebhooksController):
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
 				payment_entry.update({
 					"paid_amount": flt(paid_amount or payment_entry.paid_amount) - fee_amount,
-					"received_amount": flt(received_amount or payment_entry.received_amount) - fee_amount
+					"received_amount": flt(received_amount or payment_entry.received_amount) - flt(stripe_charge.balance_transaction.get("fee")) / 100
 				})
 
 				payment_entry.append("deductions", {
@@ -116,6 +116,11 @@ class StripeWebhooksController(WebhooksController):
 					"cost_center": self.payment_gateway.cost_center,
 					"amount": fee_amount
 				})
+
+				payment_entry.set_amounts()
+
+				if payment_entry.unallocated_amount:
+					payment_entry.deductions[0].amount -= flt(payment_entry.unallocated_amount)
 
 		self.integration_request.db_set("output", json.dumps(output, indent=4))
 

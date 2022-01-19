@@ -5,8 +5,11 @@ frappe.listview_settings['Payment Entry'] = {
 	get_indicator: function(doc) {
 		if (doc.docstatus == 1) {
 			return [__(doc.status, null, "Payment Entry"), doc.status === "Reconciled" ? "green": "orange", `status,==,${doc.status}`];
+		} else if (doc.docstatus == 0) {
+			return [__(doc.status, null, "Payment Entry"), doc.status === "Draft" ? "red": "blue", `status,==,${doc.status}`];
 		}
 	},
+	has_indicator_for_draft: true,
 	onload: function(list_view) {
 		if (list_view.page.fields_dict.party_type) {
 			list_view.page.fields_dict.party_type.get_query = function() {

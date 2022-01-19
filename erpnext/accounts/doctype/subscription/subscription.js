@@ -26,6 +26,7 @@ frappe.ui.form.on('Subscription', {
 			}
 		});
 
+		frappe.dynamic_link = {doc: frm.doc, fieldname: 'customer', doctype: 'Customer'}
 		frm.set_query('contact_person', erpnext.queries.contact_query)
 	},
 	refresh: function(frm) {
