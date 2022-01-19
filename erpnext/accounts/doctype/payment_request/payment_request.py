@@ -593,12 +593,12 @@ def get_message(doc, template):
 	if isinstance(doc, str):
 		doc = json.loads(doc)
 
-	context = {
+	context = dict(doc, **{
 		"doc": doc,
 		"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
 		"payment_link": get_payment_link(doc.get("payment_key")),
-		"payment_can_be_processed_immediately": doc.check_if_immediate_payment_is_autorized()
-	}
+		"payment_can_be_processed_immediately": check_if_immediate_payment_is_autorized(doc.get("name"))
+	})
 
 	email_template = frappe.get_doc("Email Template", template)
 
