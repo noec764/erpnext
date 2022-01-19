@@ -100,6 +100,9 @@ class WebhooksController():
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
+				if self.payment_request and self.payment_request.payment_gateway != self.payment_request.payment_gateway:
+					self.subscription.db_set("payment_gateway", self.payment_request.payment_gateway)
+
 			else:
 				self.set_as_failed(_("The reference doctype should be a Payment Request, a Sales Invoice, a Sales Order or a Subscription"))
 		else:

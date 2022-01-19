@@ -8,9 +8,8 @@ import gocardless_pro
 from gocardless_pro import errors
 from frappe import _
 from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint, nowdate, get_last_day, add_days
-from frappe.integrations.utils import PaymentGatewayController,\
-	create_request_log, create_payment_gateway
+from frappe.utils import get_url, call_hook_method, flt, cint
+from frappe.integrations.utils import PaymentGatewayController, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events import (GoCardlessMandateWebhookHandler,
 	GoCardlessPaymentWebhookHandler)
 from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (GoCardlessPayments, GoCardlessMandates, GoCardlessCustomers)
@@ -132,13 +131,6 @@ class GoCardlessSettings(PaymentGatewayController):
 				"payment_request": payment_request.name
 			}
 		)
-
-	def update_subscription_gateway(self):
-		if hasattr(self._payment_request, 'is_linked_to_a_subscription') and self._payment_request.is_linked_to_a_subscription():
-			subscription = self._payment_request.is_linked_to_a_subscription()
-			if frappe.db.exists("Subscription", subscription) \
-				and (frappe.db.get_value("Subscription", subscription, "payment_gateway") != self._payment_request.payment_gateway):
-				frappe.db.set_value("Subscription", subscription, "payment_gateway", self._payment_request.payment_gateway)
 
 def handle_webhooks(**kwargs):
 	from erpnext.erpnext_integrations.webhooks_controller import handle_webhooks as _handle_webhooks
