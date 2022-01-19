@@ -33,6 +33,7 @@ frappe.listview_settings['Attendance'] = {
 					onchange: function() {
 						dialog.set_df_property("unmarked_days", "hidden", 1);
 						dialog.set_df_property("status", "hidden", 1);
+						dialog.set_df_property("exclude_holidays", "hidden", 1);
 						dialog.set_df_property("month", "value", '');
 						dialog.set_df_property("unmarked_days", "options", []);
 						dialog.no_unmarked_days_left = false;
@@ -47,9 +48,14 @@ frappe.listview_settings['Attendance'] = {
 					onchange: function() {
 						if (dialog.fields_dict.employee.value && dialog.fields_dict.month.value) {
 							dialog.set_df_property("status", "hidden", 0);
+							dialog.set_df_property("exclude_holidays", "hidden", 0);
 							dialog.set_df_property("unmarked_days", "options", []);
 							dialog.no_unmarked_days_left = false;
-							me.get_multi_select_options(dialog.fields_dict.employee.value, dialog.fields_dict.month.value).then(options => {
+							me.get_multi_select_options(
+								dialog.fields_dict.employee.value,
+								dialog.fields_dict.month.value,
+								dialog.fields_dict.exclude_holidays.get_value()
+							).then(options => {
 								if (options.length > 0) {
 									dialog.set_df_property("unmarked_days", "hidden", 0);
 									dialog.set_df_property("unmarked_days", "options", options);
@@ -68,6 +74,31 @@ frappe.listview_settings['Attendance'] = {
 					hidden: 1,
 					reqd: 1,
 
+				},
+				{
+					label: __("Exclude Holidays"),
+					fieldtype: "Check",
+					fieldname: "exclude_holidays",
+					hidden: 1,
+					onchange: function() {
+						if (dialog.fields_dict.employee.value && dialog.fields_dict.month.value) {
+							dialog.set_df_property("status", "hidden", 0);
+							dialog.set_df_property("unmarked_days", "options", []);
+							dialog.no_unmarked_days_left = false;
+							me.get_multi_select_options(
+								dialog.fields_dict.employee.value,
+								dialog.fields_dict.month.value,
+								dialog.fields_dict.exclude_holidays.get_value()
+							).then(options => {
+								if (options.length > 0) {
+									dialog.set_df_property("unmarked_days", "hidden", 0);
+									dialog.set_df_property("unmarked_days", "options", options);
+								} else {
+									dialog.no_unmarked_days_left = true;
+								}
+							});
+						}
+					}
 				},
 				{
 					label: __("Unmarked Attendance for days"),
@@ -109,7 +140,7 @@ frappe.listview_settings['Attendance'] = {
 			dialog.show();
 		});
 	},
-	get_multi_select_options: function(employee, month) {
+	get_multi_select_options: function(employee, month, exclude_holidays) {
 		return new Promise(resolve => {
 			frappe.call({
 				method: 'erpnext.hr.doctype.attendance.attendance.get_unmarked_days',
@@ -117,6 +148,7 @@ frappe.listview_settings['Attendance'] = {
 				args: {
 					employee: employee,
 					month: month,
+					exclude_holidays: exclude_holidays
 				}
 			}).then(r => {
 				var options = [];
