@@ -28,6 +28,15 @@ frappe.ui.form.on('Subscription', {
 
 		frappe.dynamic_link = {doc: frm.doc, fieldname: 'customer', doctype: 'Customer'}
 		frm.set_query('contact_person', erpnext.queries.contact_query)
+
+		frm.set_query('print_format', function() {
+			return {
+				filters: {
+					"doc_type": "Sales Invoice",
+					"disabled": 0
+				}
+			}
+		});
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
@@ -71,6 +80,12 @@ frappe.ui.form.on('Subscription', {
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
 		frm.trigger("show_stripe_section");
+
+		if (!frm.doc.print_format) {
+			frappe.model.with_doctype("Sales Invoice", function() {
+				frm.set_value("print_format", frappe.get_meta("Sales Invoice").default_print_format)
+			});
+		}
 	},
 
 	customer: function(frm) {

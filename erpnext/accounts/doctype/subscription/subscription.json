@@ -34,6 +34,7 @@
   "generate_payment_request",
   "payment_gateways_template",
   "email_template",
+  "print_format",
   "column_break_18",
   "billing_interval",
   "billing_interval_count",
@@ -404,6 +405,7 @@
   {
    "depends_on": "eval:doc.generate_payment_request",
    "fetch_from": "payment_gateways_template.email_template",
+   "fetch_if_empty": 1,
    "fieldname": "email_template",
    "fieldtype": "Link",
    "label": "Email Template",
@@ -421,11 +423,18 @@
    "fieldtype": "Link",
    "label": "Billing Contact",
    "options": "Contact"
+  },
+  {
+   "depends_on": "eval:doc.generate_payment_request",
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Invoice Print Format",
+   "options": "Print Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-01-18 17:30:41.824607",
+ "modified": "2022-01-19 18:46:02.555311",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

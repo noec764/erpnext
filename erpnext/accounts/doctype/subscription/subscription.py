@@ -83,9 +83,9 @@ class Subscription(Document):
 	def process_active_subscription(self):
 		try:
 			self.generate_sales_order()
-			self.generate_invoice()
+			invoice = self.generate_invoice()
 			SubscriptionStateManager(self).set_status()
-			SubscriptionPaymentRequestGenerator(self).make_payment_request()
+			SubscriptionPaymentRequestGenerator(self, invoice.name).make_payment_request()
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), _("Subscription update error for subscription {0}").format(self.name))
 
