@@ -333,7 +333,7 @@ class PaymentEntry(AccountsController):
 					if not valid:
 						frappe.throw(_("Against Journal Entry {0} does not have any unmatched {1} entry")
 							.format(d.reference_name, dr_or_cr))
-	
+
 	def update_payment_schedule(self, cancel=0):
 		invoice_payment_amount_map = {}
 		invoice_paid_amount_map = {}
@@ -382,12 +382,14 @@ class PaymentEntry(AccountsController):
 							outstanding = `outstanding` - %s
 						WHERE parent = %s and payment_term = %s""",
 					(allocated_amount - discounted_amt, discounted_amt, allocated_amount, key[1], key[0]))
-	
+
 	def set_status(self, update=False):
 		if self.docstatus == 2:
 			status = 'Cancelled'
 		elif self.docstatus == 1:
 			status = 'Reconciled' if self.unreconciled_amount <= 0 else 'Unreconciled'
+		elif self.payment_request:
+			status = 'Pending'
 		else:
 			status = 'Draft'
 

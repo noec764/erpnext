@@ -91,9 +91,10 @@ class WebhooksController():
 				payment_entry = self.subscription.run_method("create_payment")
 				payment_entry.reference_no = reference
 				payment_entry.subscription = self.subscription.name
-				payment_entry.insert(ignore_permissions=True)
+				payment_entry.insert(ignore_permissions=True, ignore_mandatory=True)
 				if self.payment_request:
 					payment_entry.payment_request = self.payment_request.name
+					payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment")
 					payment_entry.references = []
 					self.add_subscription_references(payment_entry)
 				self.set_references(payment_entry.doctype, payment_entry.name)

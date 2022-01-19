@@ -589,7 +589,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nDraft\nCancelled\nUnreconciled\nReconciled",
+   "options": "\nDraft\nCancelled\nUnreconciled\nReconciled\nPending",
    "read_only": 1
   },
   {
@@ -638,17 +638,23 @@
    "options": "Payment Request"
   },
   {
-    "default": "0",
-    "fieldname": "custom_remarks",
-    "fieldtype": "Check",
-    "label": "Custom Remarks"
+   "default": "0",
+   "fieldname": "custom_remarks",
+   "fieldtype": "Check",
+   "label": "Custom Remarks"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_sealed": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2021-03-08 13:05:16.958866",
+ "links": [
+  {
+   "group": "Integration Request",
+   "link_doctype": "Integration Request",
+   "link_fieldname": "reference_docname"
+  }
+ ],
+ "modified": "2022-01-19 16:31:12.312397",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
