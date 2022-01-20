@@ -415,6 +415,8 @@ class PaymentEntry(AccountsController):
 			status = 'Cancelled'
 		elif self.docstatus == 1:
 			status = 'Reconciled' if self.unreconciled_amount <= 0 else 'Unreconciled'
+		elif self.payment_request:
+			status = 'Pending'
 		else:
 			status = 'Draft'
 

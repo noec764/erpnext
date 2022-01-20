@@ -25,6 +25,9 @@ frappe.ui.form.on('Subscription', {
 				filters: {value: row.item, apply_on: 'Item Code'}
 			}
 		});
+
+		frappe.dynamic_link = {doc: frm.doc, fieldname: 'customer', doctype: 'Customer'}
+		frm.set_query('contact_person', erpnext.queries.contact_query)
 	},
 	refresh: function(frm) {
 		frm.page.clear_actions_menu();
@@ -34,6 +37,10 @@ frappe.ui.form.on('Subscription', {
 					frm.page.add_action_item(
 						__('Stop Subscription'),
 						() => frm.events.cancel_this_subscription(frm)
+					);
+					frm.page.add_action_item(
+						__('Link a sales invoice'),
+						() => frm.events.link_sales_invoice(frm)
 					);
 				} else {
 					frm.page.add_action_item(
@@ -64,6 +71,17 @@ frappe.ui.form.on('Subscription', {
 		}
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
 		frm.trigger("show_stripe_section");
+	},
+
+	customer: function(frm) {
+		if (frm.doc.customer) {
+			frappe.xcall("erpnext.accounts.party.get_default_contact", {
+				doctype: "Customer",
+				name: frm.doc.customer
+			}).then(r => {
+				frm.set_value("contact_person", r)
+			})
+		}
 	},
 
 	cancel_this_subscription: function(frm) {
@@ -101,6 +119,36 @@ frappe.ui.form.on('Subscription', {
 			}
 		})
 		dialog.show()
+	},
+
+	link_sales_invoice: function(frm) {
+		frappe.prompt({
+			fieldtype: 'Link',
+			label: __('Select a sales invoice'),
+			fieldname: 'sales_invoice',
+			reqd: 1,
+			options: 'Sales Invoice',
+			get_query: function() {
+				return {
+					"filters": {
+						"subscription": ["is", "not set"],
+						"docstatus": 1
+					}
+				}
+			}
+		}, data => {
+			frappe.call({
+				method: "link_sales_invoice",
+				doc: frm.doc,
+				args: data
+			}).then(r => {
+				console.log(r)
+				frappe.show_alert({
+					message: __("The selected sales invoice has been linked to this subscription"),
+					indicator: "green"
+				})
+			})
+		}, __("Select a sales invoice to link to this subscription"), __("Confirm"));
 	},
 
 	abort_cancel_this_subscription: function(frm) {
@@ -344,7 +392,7 @@ frappe.tour["Subscription"] = [
 	{
 		fieldname: "shipping_rule",
 		title: "Shipping Rule",
-		description: "Choose a shipping rule template. It allows you to define the cost of delivering the product to the customerYou can define different shipping rules or a fixed shipping amount for the same item in different territories.",
+		description: "Choose a shipping rule template. It allows you to define the cost of delivering the product to the customer.You can define different shipping rules or a fixed shipping amount for the same item in different territories.",
 	},
 	{
 		fieldname: "apply_additional_discount",

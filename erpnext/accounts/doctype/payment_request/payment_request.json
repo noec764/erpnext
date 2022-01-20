@@ -195,6 +195,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:doc.docstatus==1",
    "fieldname": "payment_key",
    "fieldtype": "Data",
    "label": "Payment Key",
@@ -288,7 +289,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-09-24 15:22:45.055942",
+ "modified": "2022-01-19 17:50:24.383054",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

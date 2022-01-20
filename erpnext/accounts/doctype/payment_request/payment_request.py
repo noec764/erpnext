@@ -139,7 +139,7 @@ class PaymentRequest(Document):
 	@frappe.whitelist()
 	def check_if_immediate_payment_is_autorized(self):
 		if not self.payment_gateway:
-			self.payment_gateway = self.payment_gateways[0].payment_gateway
+			return False
 
 		return self.check_immediate_payment_for_gateway(self.payment_gateway)
 
@@ -153,6 +153,9 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist()
 	def process_payment_immediately(self):
+		if frappe.conf.mute_payment_gateways:
+			return
+
 		if not self.payment_gateway:
 			self.payment_gateway = self.payment_gateways[0].payment_gateway
 
@@ -167,7 +170,7 @@ class PaymentRequest(Document):
 			return result
 
 	def generate_payment_key(self):
-		self.db_set('payment_key', frappe.generate_hash(json.dumps(self.as_dict())))
+		self.db_set('payment_key', frappe.generate_hash(self.as_json()))
 
 	def get_customer(self):
 		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
@@ -447,7 +450,9 @@ def make_payment_request(**args):
 			"email_to": args.recipient_id or ref_doc.get("contact_email") or ref_doc.owner,
 			"subject": _("Payment Request for {0}").format(args.dn),
 			"reference_doctype": args.dt,
-			"reference_name": args.dn
+			"reference_name": args.dn,
+			"payment_gateways_template": args.payment_gateways_template,
+			"email_template": args.email_template,
 		})
 
 		if args.order_type == "Shopping Cart" or args.mute_email:
@@ -459,6 +464,10 @@ def make_payment_request(**args):
 				"payment_gateway_account": gateway_account.get("name"),
 				"payment_gateway": gateway_account.get("payment_gateway")
 			})
+
+		if args.email_template:
+			template = get_message(pr, args.email_template)
+			pr.update(template)
 
 		if args.submit_doc:
 			pr.insert(ignore_permissions=True)
@@ -584,11 +593,12 @@ def get_message(doc, template):
 	if isinstance(doc, str):
 		doc = json.loads(doc)
 
-	context = {
+	context = dict(doc, **{
 		"doc": doc,
 		"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
-		"payment_link": get_payment_link(doc.get("payment_key"))
-	}
+		"payment_link": get_payment_link(doc.get("payment_key")),
+		"payment_can_be_processed_immediately": check_if_immediate_payment_is_autorized(doc.get("name"))
+	})
 
 	email_template = frappe.get_doc("Email Template", template)
 

@@ -80,6 +80,7 @@ def sync_customer(settings, woocommerce_customer):
 			})
 			try:
 				customer.flags.ignore_mandatory = True
+				customer.flags.ignore_permissions = True
 				customer.save()
 			except frappe.exceptions.TimestampMismatchError:
 				# Handle the update of two sales orders customers details concurrently

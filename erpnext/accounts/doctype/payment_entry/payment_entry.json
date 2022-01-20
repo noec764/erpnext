@@ -608,7 +608,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nDraft\nCancelled\nUnreconciled\nReconciled",
+   "options": "\nDraft\nCancelled\nUnreconciled\nReconciled\nPending",
    "read_only": 1
   },
   {
@@ -778,8 +778,14 @@
  "index_web_pages_for_search": 1,
  "is_sealed": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2021-11-24 18:58:24.919764",
+ "links": [
+  {
+   "group": "Integration Request",
+   "link_doctype": "Integration Request",
+   "link_fieldname": "reference_docname"
+  }
+ ],
+ "modified": "2022-01-19 16:31:12.312397",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",

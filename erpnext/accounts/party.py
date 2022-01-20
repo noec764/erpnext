@@ -655,6 +655,7 @@ def get_partywise_advanced_payment_amount(party_type, posting_date = None, futur
 	if data:
 		return frappe._dict(data)
 
+@frappe.whitelist()
 def get_default_contact(doctype, name):
 	"""
 		Returns default contact for the given doctype and name.

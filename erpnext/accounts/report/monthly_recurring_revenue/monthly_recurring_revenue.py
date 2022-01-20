@@ -96,7 +96,7 @@ def get_invoices_mrr(invoices, period):
 		if getdate(period.from_date).replace(day=1) >= getdate(invoice.from_date).replace(day=1) and getdate(period.to_date).replace(day=1) <= getdate(invoice.to_date).replace(day=1) and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1:
 			return flt(invoice.total) / (monthdelta(invoice.from_date, invoice.to_date) + 1)
 
-		elif period.to_date >= getdate(invoice.posting_date) >= period.from_date:
+		elif period.to_date >= getdate(invoice.posting_date) >= period.from_date and getdate(period.to_date) >= getdate(invoice.from_date):
 			total += flt(invoice.total)
 
 	return total

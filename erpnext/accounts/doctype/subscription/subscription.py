@@ -28,7 +28,6 @@ class Subscription(Document):
 		self.calculate_total()
 		self.calculate_grand_total()
 		self.calculate_discounts()
-		self.validate_payment_request_generation()
 
 	def on_update(self):
 		self.update_payment_gateway_subscription()
@@ -54,10 +53,6 @@ class Subscription(Document):
 
 		elif self.trial_period_start and not self.trial_period_end:
 			frappe.throw(_('Both Trial Period Start Date and Trial Period End Date must be set'))
-
-	def validate_payment_request_generation(self):
-		if self.payment_gateway:
-			self.generate_payment_request = 1
 
 	def calculate_total(self):
 		self.total = SubscriptionPlansManager(self).get_plans_total()
@@ -255,6 +250,10 @@ class Subscription(Document):
 
 	def create_payment_request(self):
 		return SubscriptionPaymentRequestGenerator(self).create_payment_request()
+
+	@frappe.whitelist()
+	def link_sales_invoice(self, sales_invoice):
+		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
 
 def update_grand_total():
