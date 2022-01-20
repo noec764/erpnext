@@ -35,7 +35,7 @@ def get_tasks(project, start=0, search=None, item_status=None):
 	# if item_status:
 # 		filters["status"] = item_status
 	tasks = frappe.get_all("Task", filters=filters,
-		fields=["name", "subject", "status", "_seen", "_comments", "modified", "description"],
+		fields=["name", "subject", "status", "_seen", "_comments", "modified", "description", "progress"],
 		limit_start=start, limit_page_length=10)
 
 	for task in tasks:
@@ -71,7 +71,7 @@ def get_timesheets(project, start=0, search=None):
 		filters["activity_type"] = ("like", "%{0}%".format(search))
 
 	timesheets = frappe.get_all('Timesheet Detail', filters=filters,
-	fields=['project','activity_type','from_time','to_time','parent'],
+	fields=['project','activity_type','from_time','to_time','parent', 'hours'],
 	limit_start=start, limit_page_length=10)
 	for timesheet in timesheets:
 		timesheet.infos = frappe.get_all('Timesheet', filters={"name": timesheet.parent},
