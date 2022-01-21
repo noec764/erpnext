@@ -9443,7 +9443,7 @@ The coupon code validity has not started,La période de validité de ce code pro
 The coupon code's validity has expired,La période de validité de ce code de réduction a expiré,
 The coupon code's validity has not started,La période de validité de ce code de réduction n'a pas démarrée,
 The day(s) on which you are applying for leave are holidays. You need not apply for leave.,Le(s) jour(s) pour le(s)quel(s) vous demandez un congé sont des jour(s) férié(s). Vous n'avez pas besoin d'effectuer de demande.,
-The days between {0} to {1} are not valid holidays.,Les jours entre {0} et {1} ne sont pas de jours fériés valides.,
+The days between {0} to {1} are not valid holidays.,Les jours entre {0} et {1} ne sont pas des jours fériés valides.,
 The difference between from time and To Time must be a multiple of Appointment,La différence entre la date de début et la date fin doit être un multiple de la durée standard d'un rendez-vous,
 The end time cannot be after {0},L'heure de fin ne peut pas être après {0},
 The end time must be greater than the start time,L'heure de fin doit être après l'heure de début,
