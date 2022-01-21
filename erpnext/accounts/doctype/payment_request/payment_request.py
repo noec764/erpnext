@@ -21,7 +21,7 @@ from erpnext.accounts.doctype.subscription.subscription_transaction import Subsc
 
 class PaymentRequest(Document):
 	def before_insert(self):
-		if not self.no_payment_link:
+		if not self.no_payment_link and not self.payment_key:
 			self.generate_payment_key()
 
 	def validate(self):
@@ -35,6 +35,9 @@ class PaymentRequest(Document):
 			self.payment_gateways_validation()
 			self.validate_existing_gateway()
 			self.validate_currency()
+
+		if self.email_template and not self.message:
+			self.set_message_from_template()
 
 	def validate_reference_document(self):
 		if not self.reference_doctype or not self.reference_name:
@@ -138,7 +141,7 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist()
 	def check_if_immediate_payment_is_autorized(self):
-		if not self.payment_gateway:
+		if not self.get("payment_gateway"):
 			return False
 
 		return self.check_immediate_payment_for_gateway(self.payment_gateway)
@@ -153,11 +156,8 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist()
 	def process_payment_immediately(self):
-		if frappe.conf.mute_payment_gateways:
+		if frappe.conf.mute_payment_gateways or not self.get("payment_gateway"):
 			return
-
-		if not self.payment_gateway:
-			self.payment_gateway = self.payment_gateways[0].payment_gateway
 
 		return self.get_immediate_payment_for_gateway(self.payment_gateway)
 
@@ -170,7 +170,8 @@ class PaymentRequest(Document):
 			return result
 
 	def generate_payment_key(self):
-		self.db_set('payment_key', frappe.generate_hash(self.as_json()))
+		self.payment_key = frappe.generate_hash(self.as_json())
+		self.db_set('payment_key', self.payment_key)
 
 	def get_customer(self):
 		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
@@ -295,8 +296,11 @@ class PaymentRequest(Document):
 			"message": self.message,
 			"now": True,
 			"communication": communication.name if communication else None,
-			"attachments": [frappe.attach_print(self.reference_doctype, self.reference_name,
-				file_name=self.reference_name, print_format=self.print_format)] if self.print_format else []}
+			"attachments": [
+				frappe.attach_print(self.reference_doctype, self.reference_name,
+				file_name=self.reference_name, print_format=self.print_format)
+			] if self.print_format else []
+		}
 
 		enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
 
@@ -408,6 +412,9 @@ class PaymentRequest(Document):
 			"period_end": end
 		})
 
+	def set_message_from_template(self):
+		data = frappe._dict(get_message(self, self.email_template))
+		self.subject, self.message = data.subject, data.message
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
@@ -453,6 +460,8 @@ def make_payment_request(**args):
 			"reference_name": args.dn,
 			"payment_gateways_template": args.payment_gateways_template,
 			"email_template": args.email_template,
+			"print_format": args.print_format,
+			"subscription": args.subscription,
 		})
 
 		if args.order_type == "Shopping Cart" or args.mute_email:
@@ -464,10 +473,6 @@ def make_payment_request(**args):
 				"payment_gateway_account": gateway_account.get("name"),
 				"payment_gateway": gateway_account.get("payment_gateway")
 			})
-
-		if args.email_template:
-			template = get_message(pr, args.email_template)
-			pr.update(template)
 
 		if args.submit_doc:
 			pr.insert(ignore_permissions=True)
@@ -589,15 +594,19 @@ def make_status_as_completed(name):
 @frappe.whitelist()
 def get_message(doc, template):
 	"""return message with payment gateway link"""
+	payment_can_be_processed_immediately = None
 
 	if isinstance(doc, str):
 		doc = json.loads(doc)
+	elif isinstance(doc, Document):
+		payment_can_be_processed_immediately = doc.check_if_immediate_payment_is_autorized()
+		doc = doc.as_dict()
 
 	context = dict(doc, **{
 		"doc": doc,
 		"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
 		"payment_link": get_payment_link(doc.get("payment_key")),
-		"payment_can_be_processed_immediately": check_if_immediate_payment_is_autorized(doc.get("name"))
+		"payment_can_be_processed_immediately": payment_can_be_processed_immediately if payment_can_be_processed_immediately is not None else check_if_immediate_payment_is_autorized(doc.get("name"))
 	})
 
 	email_template = frappe.get_doc("Email Template", template)

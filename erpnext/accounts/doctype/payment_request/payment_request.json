@@ -13,6 +13,7 @@
   "naming_series",
   "reference_doctype",
   "reference_name",
+  "subscription",
   "transaction_details",
   "grand_total",
   "base_amount",
@@ -284,12 +285,19 @@
    "fieldtype": "Data",
    "label": "Transaction Reference",
    "read_only": 1
+  },
+  {
+   "fieldname": "subscription",
+   "fieldtype": "Link",
+   "label": "Subscription",
+   "options": "Subscription",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-19 17:50:24.383054",
+ "modified": "2022-01-19 18:04:58.315260",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",
