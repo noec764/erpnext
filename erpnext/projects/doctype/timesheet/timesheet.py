@@ -1,21 +1,18 @@
-
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
+import json
+
 import frappe
 from frappe import _
-
-import json
-from datetime import timedelta
-from erpnext.controllers.queries import get_match_cond
-from frappe.utils import flt, time_diff_in_hours, get_datetime, getdate, cint, date_diff, add_to_date
 from frappe.model.document import Document
-from erpnext.manufacturing.doctype.workstation.workstation import (check_if_within_operating_hours,
-	WorkstationHolidayError)
-from erpnext.manufacturing.doctype.manufacturing_settings.manufacturing_settings import get_mins_between_operations
-from erpnext.setup.utils import get_exchange_rate
+from frappe.utils import add_to_date, flt, getdate, time_diff_in_hours
+
+from erpnext.controllers.queries import get_match_cond
 from erpnext.hr.utils import validate_active_employee
+from erpnext.setup.utils import get_exchange_rate
+
 
 class OverlapError(frappe.ValidationError): pass
 class OverWorkLoggedError(frappe.ValidationError): pass
@@ -139,9 +136,18 @@ class Timesheet(Document):
 
 	def validate_time_logs(self):
 		for data in self.get('time_logs'):
+			self.set_to_time(data)
 			self.validate_overlap(data)
 			self.set_project(data)
 			self.validate_project(data)
+
+	def set_to_time(self, data):
+		if not (data.from_time and data.hours):
+			return
+
+		_to_time = add_to_date(data.from_time, hours=data.hours, as_datetime=True)
+		if data.to_time != _to_time:
+			data.to_time = _to_time
 
 	def validate_overlap(self, data):
 		settings = frappe.get_single('Projects Settings')
@@ -256,6 +262,7 @@ def get_projectwise_timesheet_data(project=None, parent=None, from_time=None, to
 	}
 
 	return frappe.db.sql(query, filters, as_dict=1)
+
 
 @frappe.whitelist()
 def get_timesheet_detail_rate(timelog, currency):
