@@ -626,6 +626,15 @@ class TestAsset(unittest.TestCase):
 		frappe.db.set_value("Asset Category Account", name, "capital_work_in_progress_account", cwip_acc)
 		frappe.db.get_value("Company", "_Test Company", "capital_work_in_progress_account", cwip_acc)
 
+	def test_asset_cost_center(self):
+		asset = create_asset(is_existing_asset = 1, do_not_save=1)
+		asset.cost_center = "Main - WP"
+
+		self.assertRaises(frappe.ValidationError, asset.submit)
+
+		asset.cost_center = "Main - _TC"
+		asset.submit()
+
 def create_asset_data():
 	if not frappe.db.exists("Asset Category", "Computers"):
 		create_asset_category()
