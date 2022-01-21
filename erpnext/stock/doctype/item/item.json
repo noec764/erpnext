@@ -31,6 +31,7 @@
   "standard_rate",
   "is_fixed_asset",
   "auto_create_assets",
+  "is_grouped_asset",
   "asset_category",
   "asset_naming_series",
   "over_delivery_receipt_allowance",
@@ -1104,6 +1105,13 @@
  "fieldname": "grant_commission",
  "fieldtype": "Check",
  "label": "Grant Commission"
+},
+{
+ "default": "0",
+ "depends_on": "auto_create_assets",
+ "fieldname": "is_grouped_asset",
+ "fieldtype": "Check",
+ "label": "Create Grouped Asset"
   }
  ],
  "has_web_view": 1,
@@ -1113,7 +1121,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 0,
- "modified": "2022-01-05 17:24:59.857817",
+ "modified": "2022-01-18 12:57:54.273202",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1189,6 +1197,7 @@
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "item_name",
  "track_changes": 1
 }

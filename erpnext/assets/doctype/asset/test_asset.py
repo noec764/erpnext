@@ -157,6 +157,29 @@ class TestAsset(AssetSetup):
 		})
 		asset.submit()
 
+	def test_purchase_of_grouped_asset(self):
+		create_fixed_asset_item("Rack", is_grouped_asset=1)
+		pr = make_purchase_receipt(item_code="Rack", qty=3, rate=100000.0, location="Test Location")
+
+		asset_name = frappe.db.get_value("Asset", {"purchase_receipt": pr.name}, 'name')
+		asset = frappe.get_doc('Asset', asset_name)
+		self.assertEqual(asset.asset_quantity, 3)
+		asset.calculate_depreciation = 1
+
+		month_end_date = get_last_day(nowdate())
+		purchase_date = nowdate() if nowdate() != month_end_date else add_days(nowdate(), -15)
+
+		asset.available_for_use_date = purchase_date
+		asset.purchase_date = purchase_date
+		asset.append("finance_books", {
+			"expected_value_after_useful_life": 10000,
+			"depreciation_method": "Straight Line",
+			"total_number_of_depreciations": 3,
+			"frequency_of_depreciation": 10,
+			"depreciation_start_date": month_end_date
+		})
+		asset.submit()
+
 	def test_is_fixed_asset_set(self):
 		asset = create_asset(is_existing_asset = 1)
 		doc = frappe.new_doc('Purchase Invoice')
