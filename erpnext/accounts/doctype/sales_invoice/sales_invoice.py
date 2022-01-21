@@ -26,6 +26,7 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import delet
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import get_party_tax_withholding_details
 from frappe.model.utils import get_fetch_values
 from frappe.contacts.doctype.address.address import get_address_display
+from erpnext.stock.utils import calculate_mapped_packed_items_return
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -721,8 +722,11 @@ class SalesInvoice(SellingController):
 
 	def update_packing_list(self):
 		if cint(self.update_stock) == 1:
-			from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
-			make_packing_list(self)
+			if cint(self.is_return) and self.return_against:
+				calculate_mapped_packed_items_return(self)
+			else:
+				from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
+				make_packing_list(self)
 		else:
 			self.set('packed_items', [])
 
