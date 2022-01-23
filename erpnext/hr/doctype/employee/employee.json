@@ -814,13 +814,12 @@
  "image_field": "image",
  "links": [
   {
-   "custom": 1,
    "group": "Contracts",
    "link_doctype": "Employment Contract",
    "link_fieldname": "employee"
   }
  ],
- "modified": "2021-10-19 21:34:15.300102",
+ "modified": "2022-01-19 21:34:15.300102",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
