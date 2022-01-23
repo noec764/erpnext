@@ -81,7 +81,7 @@ frappe.ui.form.on('Subscription', {
 		frm.set_value("company", frappe.defaults.get_user_default("Company"));
 		frm.trigger("show_stripe_section");
 
-		if (!frm.doc.print_format) {
+		if (frm.is_new() && !frm.doc.print_format) {
 			frappe.model.with_doctype("Sales Invoice", function() {
 				frm.set_value("print_format", frappe.get_meta("Sales Invoice").default_print_format)
 			});
