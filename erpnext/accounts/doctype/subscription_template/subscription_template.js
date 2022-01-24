@@ -11,6 +11,12 @@ frappe.ui.form.on('Subscription Template', {
 				}
 			}
 		});
+
+		frm.make_methods = {
+			'Subscription': () => {
+				frm.events.make_new_subscription(frm);
+			}
+		}
 	},
 	refresh(frm) {
 		frm.page.clear_actions_menu();
