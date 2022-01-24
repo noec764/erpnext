@@ -132,6 +132,7 @@ class SubscriptionTransactionBase:
 			item = {
 				'item_code': plan.item,
 				'qty': plan.qty,
+				'uom': plan.uom,
 				'rate': SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor,
 				'description': plan.description,
 			}
