@@ -134,7 +134,7 @@
       "options": "Role"
      },
      {
-        "default": "0",
+        "default": "1",
         "fieldname": "automatically_allocate_leaves_based_on_leave_policy",
         "fieldtype": "Check",
         "label": "Automatically Allocate Leaves Based On Leave Policy"
@@ -155,7 +155,7 @@
     "idx": 1,
     "issingle": 1,
     "links": [],
-    "modified": "2021-04-26 10:52:56.192773",
+    "modified": "2022-01-25 10:52:56.192773",
     "modified_by": "Administrator",
     "module": "HR",
     "name": "HR Settings",

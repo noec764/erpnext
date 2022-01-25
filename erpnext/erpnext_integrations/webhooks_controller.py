@@ -135,7 +135,7 @@ class WebhooksController():
 					if self.sales_order:
 						self.make_sales_invoice = True
 
-			if flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
+			if payment_entry.references and flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
 				payment_entry.submit()
 				self.set_as_completed()
 			else:
