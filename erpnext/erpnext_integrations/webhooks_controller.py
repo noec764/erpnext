@@ -100,7 +100,7 @@ class WebhooksController():
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
-				if self.payment_request and self.payment_request.payment_gateway != self.payment_request.payment_gateway:
+				if self.payment_request and self.payment_request.payment_gateway != self.subscription.payment_gateway:
 					self.subscription.db_set("payment_gateway", self.payment_request.payment_gateway)
 
 			else:
