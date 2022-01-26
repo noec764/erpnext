@@ -1498,15 +1498,15 @@ def make_payment_order(source_name, target_doc=None):
 	def set_missing_values(source, target):
 		target.payment_order_type = "Payment Entry"
 
-	target.append('references', dict(
-		reference_doctype="Payment Entry",
-		reference_name=source.name,
-		bank_account=source.party_bank_account,
-		amount=source.paid_amount,
-		account=source.paid_to,
-		supplier=source.party,
-		mode_of_payment=source.mode_of_payment,
-	))
+		target.append('references', dict(
+			reference_doctype="Payment Entry",
+			reference_name=source.name,
+			bank_account=source.party_bank_account,
+			amount=source.paid_amount,
+			account=source.paid_to,
+			supplier=source.party,
+			mode_of_payment=source.mode_of_payment,
+		))
 
 	doclist = get_mapped_doc("Payment Entry", source_name, {
 		"Payment Entry": {

@@ -421,4 +421,3 @@ def get_subscriptions_list(doctype, txt, filters, limit_start, limit_page_length
 		ignore_permissions=ignore_permissions,
 		order_by="modified desc"
 	)
-

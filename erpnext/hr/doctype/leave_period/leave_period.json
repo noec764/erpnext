@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "title",
   "from_date",
   "to_date",
   "leave_types",
@@ -61,10 +62,16 @@
    "label": "Leave Types",
    "options": "Leave Period Types",
    "reqd": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title"
   }
  ],
  "links": [],
- "modified": "2020-06-30 07:30:43.409891",
+ "modified": "2022-01-25 15:21:48.952797",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Period",
@@ -109,5 +116,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }
