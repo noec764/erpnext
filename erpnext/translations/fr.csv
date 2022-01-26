@@ -9674,7 +9674,7 @@ Time logs are required for job card {0},Des feuilles de temps sont nécessaires 
 Time logs are required for {0} {1},Des feuilles de temps sont nécessaires pour {0} {1},
 Time to send,Heure d'envoi,
 Time(in mins),Temps (en min),
-Time,Heure,
+Time,Temps,
 Timeline,Chronologie,
 Timer exceeded the given hours.,La minuterie a dépassé les heures configurées.,
 Timer,Minuteur,
