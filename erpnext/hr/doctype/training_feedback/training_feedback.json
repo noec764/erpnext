@@ -44,14 +44,6 @@
       "read_only": 1
      },
      {
-      "fetch_from": "training_event.course",
-      "fieldname": "course",
-      "fieldtype": "Link",
-      "label": "Course",
-      "options": "Course",
-      "read_only": 1
-     },
-     {
       "fieldname": "column_break_3",
       "fieldtype": "Column Break"
      },
