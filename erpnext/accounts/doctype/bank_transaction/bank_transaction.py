@@ -2,11 +2,9 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
 import frappe
 from erpnext.controllers.status_updater import StatusUpdater
 from frappe.utils import flt, getdate, fmt_money, formatdate
-from functools import reduce
 from frappe import _
 from itertools import zip_longest
 
