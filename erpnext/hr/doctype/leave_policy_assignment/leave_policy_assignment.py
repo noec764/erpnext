@@ -29,6 +29,7 @@ class LeavePolicyAssignment(Document):
 	def validate_policy_assignment_overlap(self):
 		leave_policy_assignments = frappe.get_all("Leave Policy Assignment", filters = {
 			"employee": self.employee,
+			"leave_policy": self.leave_policy,
 			"name": ("!=", self.name),
 			"docstatus": 1,
 			"effective_to": (">=", self.effective_from),
@@ -99,6 +100,7 @@ class LeavePolicyAssignment(Document):
 				new_leaves_allocated = self.get_leaves_for_passed_months(leave_type, new_leaves_allocated, leave_type_details, date_of_joining)
 			else:
 				new_leaves_allocated = 0
+
 		# Calculate leaves at pro-rata basis for employees joining after the beginning of the given leave period
 		elif getdate(date_of_joining) > getdate(self.effective_from):
 			remaining_period = ((date_diff(self.effective_to, date_of_joining) + 1) / (date_diff(self.effective_to, self.effective_from) + 1))
@@ -113,6 +115,7 @@ class LeavePolicyAssignment(Document):
 		current_year = get_datetime().year
 
 		from_date = frappe.db.get_value("Leave Period", self.leave_period, "from_date")
+
 		if getdate(date_of_joining) > getdate(from_date):
 			from_date = date_of_joining
 
@@ -125,12 +128,9 @@ class LeavePolicyAssignment(Document):
 		elif current_year > from_date_year:
 			months_passed = (12 - from_date_month) + current_month
 
-		if months_passed > 0:
-			monthly_earned_leave = get_monthly_earned_leave(new_leaves_allocated,
-				leave_type_details.get(leave_type).earned_leave_frequency, leave_type_details.get(leave_type).rounding)
-			new_leaves_allocated = monthly_earned_leave * months_passed
-		else:
-			new_leaves_allocated = 0
+		monthly_earned_leave = get_monthly_earned_leave(new_leaves_allocated,
+			leave_type_details.get(leave_type).earned_leave_frequency, leave_type_details.get(leave_type).rounding)
+		new_leaves_allocated = monthly_earned_leave * months_passed
 
 		return new_leaves_allocated
 

@@ -61,7 +61,7 @@ def get_timesheets(project, start=0, search=None):
 		filters["activity_type"] = ("like", "%{0}%".format(search))
 
 	timesheets = frappe.get_all('Timesheet Detail', filters=filters,
-	fields=['project','activity_type','from_time','to_time','parent'],
+	fields=['project','activity_type','from_time','to_time','parent', 'hours'],
 	limit_start=start, limit_page_length=10)
 	for timesheet in timesheets:
 		info = frappe.get_all('Timesheet', filters={"name": timesheet.parent},

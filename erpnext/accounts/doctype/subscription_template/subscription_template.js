@@ -2,11 +2,33 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Subscription Template', {
+	setup(frm) {
+		frm.set_query('print_format', function() {
+			return {
+				filters: {
+					"doc_type": "Sales Invoice",
+					"disabled": 0
+				}
+			}
+		});
+
+		frm.make_methods = {
+			'Subscription': () => {
+				frm.events.make_new_subscription(frm);
+			}
+		}
+	},
 	refresh(frm) {
 		frm.page.clear_actions_menu();
 		if (!frm.is_new()) {
 			frm.page.add_action_item(__('Make a subscription'), function() {
 				frm.trigger('make_new_subscription');
+			});
+		}
+
+		if (frm.is_new() && !frm.doc.print_format) {
+			frappe.model.with_doctype("Sales Invoice", function() {
+				frm.set_value("print_format", frappe.get_meta("Sales Invoice").default_print_format)
 			});
 		}
 	},

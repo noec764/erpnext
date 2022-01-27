@@ -8,13 +8,13 @@ from frappe import msgprint, _
 from calendar import monthrange
 
 status_map = {
-	"Absent": "A",
-	"Half Day": "HD",
-	"Holiday": "<b>H</b>",
-	"Weekly Off": "<b>WO</b>",
-	"On Leave": "L",
-	"Present": "P",
-	"Work From Home": "WFH"
+	"Absent": _("A"),
+	"Half Day": _("HD"),
+	"Holiday": _("<b>H</b>"),
+	"Weekly Off": _("<b>WO</b>"),
+	"On Leave": _("L"),
+	"Present": _("P"),
+	"Work From Home": _("WFH")
 	}
 
 day_abbr = [

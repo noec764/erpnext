@@ -15,7 +15,14 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 					fieldtype: 'Link',
 					options: 'Leave Policy',
 					label: __('Leave Policy'),
-					reqd: 1
+					reqd: 1,
+					get_query() {
+						return {
+							filters: {
+								docstatus: ['=', 1]
+							}
+						};
+					},
 				},
 				{
 					fieldname: 'assignment_based_on',

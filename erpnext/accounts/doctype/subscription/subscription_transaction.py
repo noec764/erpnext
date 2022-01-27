@@ -132,6 +132,7 @@ class SubscriptionTransactionBase:
 			item = {
 				'item_code': plan.item,
 				'qty': plan.qty,
+				'uom': plan.uom,
 				'rate': SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor,
 				'description': plan.description,
 			}
@@ -284,8 +285,9 @@ class SubscriptionPaymentEntryGenerator(SubscriptionTransactionBase):
 		return frappe.get_doc("Bank Account", bank_account_name)
 
 class SubscriptionPaymentRequestGenerator:
-	def __init__(self, subscription):
+	def __init__(self, subscription, invoice=None):
 		self.subscription = subscription
+		self.invoice = invoice
 
 	def make_payment_request(self):
 		if self.subscription.generate_payment_request and self.subscription.status == "Payable":
@@ -321,16 +323,24 @@ class SubscriptionPaymentRequestGenerator:
 
 	def create_payment_request(self, submit=False):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
+		sales_invoice = self.invoice
+		if not sales_invoice:
+			current_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
+			if current_invoices:
+				sales_invoice = current_invoices[0].get("name")
+
 		pr = frappe.get_doc(
 			make_payment_request(**{
-				"dt": self.subscription.doctype,
-				"dn": self.subscription.name,
+				"dt": "Sales Invoice",
+				"dn": sales_invoice,
+				"subscription": self.subscription.name,
 				"party_type": "Customer",
 				"party": self.subscription.customer,
 				"submit_doc": False,
 				"mute_email": self.subscription.email_template,
 				"currency": self.subscription.currency,
 				"email_template": self.subscription.email_template,
+				"print_format": self.subscription.print_format,
 				"payment_gateways_template": self.subscription.payment_gateways_template,
 			})
 		)

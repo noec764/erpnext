@@ -5,15 +5,13 @@
 
 import frappe
 from frappe import _
-from frappe.utils import getdate, cstr, add_days, date_diff, ceil
+from frappe.utils import getdate, getdate, format_date
 from frappe.model.document import Document
-from erpnext.hr.utils import validate_overlap
-from frappe.utils.background_jobs import enqueue
 
 class LeavePeriod(Document):
 	def validate(self):
 		self.validate_dates()
-		#validate_overlap(self, self.from_date, self.to_date, self.company)
+		self.title = f'{format_date(self.from_date)}-{format_date(self.to_date)}'
 
 	def validate_dates(self):
 		if getdate(self.from_date) >= getdate(self.to_date):
