@@ -324,11 +324,15 @@ def _get_cart_quotation(party=None):
 			"status": "Draft",
 			"docstatus": 0,
 			"__islocal": 1,
-			"party_name": party.name
+			"party_name": party.name,
+			"tc_name": frappe.db.get_value("Company", company, "default_selling_terms")
 		})
 
 		qdoc.contact_person = frappe.db.get_value("Contact", {"email_id": frappe.session.user})
 		qdoc.contact_email = frappe.session.user
+
+		if qdoc.tc_name:
+			qdoc.terms = frappe.db.get_value("Terms and Conditions", qdoc.tc_name, "terms")
 
 		qdoc.flags.ignore_permissions = True
 		qdoc.run_method("set_missing_values")
