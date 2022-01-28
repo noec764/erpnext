@@ -428,6 +428,7 @@ class TestBOM(ERPNextTestCase):
 		bom.with_operations = 0
 		bom.save()
 		self.assertEqual(bom.transfer_material_against, "Work Order")
+		bom.delete()
 
 def get_default_bom(item_code="_Test FG Item 2"):
 	return frappe.db.get_value("BOM", {"item": item_code, "is_active": 1, "is_default": 1})
