@@ -47,6 +47,7 @@ class WorkOrder(Document):
 		self.validate_warehouse_belongs_to_company()
 		self.calculate_operating_cost()
 		self.validate_qty()
+		self.validate_transfer_against()
 		self.validate_operation_time()
 		self.status = self.get_status()
 
@@ -612,6 +613,15 @@ class WorkOrder(Document):
 		for d in self.operations:
 			if not d.time_in_mins > 0:
 				frappe.throw(_("Operation Time must be greater than 0 for Operation {0}").format(d.operation))
+
+	def validate_transfer_against(self):
+		if not self.docstatus == 1:
+			# let user configure operations until they're ready to submit
+			return
+		if not self.operations:
+			self.transfer_material_against = "Work Order"
+		if not self.transfer_material_against:
+			frappe.throw(_("Setting {} is required").format(self.meta.get_label("transfer_material_against")), title=_("Missing value"))
 
 	def update_required_items(self):
 		'''
