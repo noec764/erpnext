@@ -988,15 +988,17 @@ class AccountsController(TransactionBase):
 				data = get_payment_terms(self.payment_terms_template, posting_date, grand_total, base_grand_total)
 				for item in data:
 					self.append("payment_schedule", item)
-			else:
+			elif self.doctype not in ["Purchase Receipt"]:
 				data = dict(due_date=due_date, invoice_portion=100, payment_amount=grand_total, base_payment_amount=base_grand_total)
 				self.append("payment_schedule", data)
-		else:
-			for d in self.get("payment_schedule"):
-				if d.invoice_portion:
-					d.payment_amount = flt(grand_total * flt(d.invoice_portion / 100), d.precision('payment_amount'))
-					d.base_payment_amount = flt(base_grand_total * flt(d.invoice_portion / 100), d.precision('payment_amount'))
-					d.outstanding = d.payment_amount
+
+		for d in self.get("payment_schedule"):
+			if d.invoice_portion:
+				d.payment_amount = flt(grand_total * flt(d.invoice_portion / 100), d.precision('payment_amount'))
+				d.base_payment_amount = flt(base_grand_total * flt(d.invoice_portion / 100), d.precision('base_payment_amount'))
+				d.outstanding = d.payment_amount
+			elif not d.invoice_portion:
+				d.base_payment_amount = flt(d.payment_amount * self.get("conversion_rate"), d.precision('base_payment_amount'))
 
 	def set_due_date(self):
 		due_dates = [d.due_date for d in self.get("payment_schedule") if d.due_date]
@@ -1034,8 +1036,8 @@ class AccountsController(TransactionBase):
 			total = 0
 			base_total = 0
 			for d in self.get("payment_schedule"):
-				total += flt(d.payment_amount)
-				base_total += flt(d.base_payment_amount)
+				total += flt(d.payment_amount, d.precision("payment_amount"))
+				base_total += flt(d.base_payment_amount, d.precision("base_payment_amount"))
 
 			base_grand_total = self.get("base_rounded_total") or self.base_grand_total
 			grand_total = self.get("rounded_total") or self.grand_total
@@ -1052,8 +1054,8 @@ class AccountsController(TransactionBase):
 					grand_total -= self.get("total_advance")
 					base_grand_total = flt(grand_total * self.get("conversion_rate"), self.precision("base_grand_total"))
 
-			if total != flt(grand_total, self.precision("grand_total")) or \
-				base_total != flt(base_grand_total, self.precision("base_grand_total")):
+			if flt(total, self.precision("grand_total")) - flt(grand_total, self.precision("grand_total")) > 0.1 or \
+				flt(base_total, self.precision("base_grand_total")) - flt(base_grand_total, self.precision("base_grand_total")) > 0.1:
 				frappe.throw(_("Total Payment Amount in Payment Schedule must be equal to Grand / Rounded Total"))
 
 	def is_rounded_total_disabled(self):
