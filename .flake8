@@ -28,5 +28,6 @@ ignore =
     B007,
     B950,
     W191,
+    E124, # closing bracket, irritating while writing QB code
 
 max-line-length = 200
