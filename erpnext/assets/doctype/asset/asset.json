@@ -140,6 +140,7 @@
   },
   {
    "allow_on_submit": 1,
+   "fetch_from": "item_code.image",
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "hidden": 1,
@@ -489,7 +490,7 @@
      "link_fieldname": "asset"
     }
    ],
- "modified": "2022-01-18 12:57:36.741192",
+ "modified": "2022-01-30 20:19:24.680027",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset",
