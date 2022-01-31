@@ -1,5 +1,5 @@
-
 from frappe import _
+
 
 def get_data():
 	return {
@@ -21,11 +21,12 @@ def get_data():
 			},
 			{
 				'label': _('Lifecycle'),
-				'items': ['Employee Transfer', 'Employee Promotion', 'Employee Grievance']
+				'items': ['Employee Onboarding', 'Employee Transfer', 'Employee Promotion', 'Employee Grievance']
 			},
 			{
 				'label': _('Exit'),
 				'items': ['Employee Separation', 'Exit Interview', 'Full and Final Statement']
+			},
 			{
 				'label': _('Shift'),
 				'items': ['Shift Request', 'Shift Assignment']
