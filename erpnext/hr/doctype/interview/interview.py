@@ -9,7 +9,7 @@ import datetime
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cstr, get_datetime, get_link_to_form
+from frappe.utils import cstr, flt, get_datetime, get_link_to_form
 
 
 class DuplicateInterviewRoundError(frappe.ValidationError):
@@ -20,6 +20,7 @@ class Interview(Document):
 		self.validate_duplicate_interview()
 		self.validate_designation()
 		self.validate_overlap()
+		self.set_average_rating()
 
 	def on_submit(self):
 		if self.status not in ['Cleared', 'Rejected']:
@@ -69,6 +70,13 @@ class Interview(Document):
 			overlapping_details = _('Interview overlaps with {0}').format(get_link_to_form('Interview', overlaps[0][0]))
 			frappe.throw(overlapping_details, title=_('Overlap'))
 
+	def set_average_rating(self):
+		total_rating = 0
+		for entry in self.interview_details:
+			if entry.average_rating:
+				total_rating += entry.average_rating
+
+		self.average_rating = flt(total_rating / len(self.interview_details) if len(self.interview_details) else 0)
 
 	@frappe.whitelist()
 	def reschedule_interview(self, scheduled_on, from_time, to_time):
@@ -192,7 +200,7 @@ def get_expected_skill_set(interview_round):
 def create_interview_feedback(data, interview_name, interviewer, job_applicant):
 	import json
 
-	
+
 
 	if isinstance(data, str):
 		data = frappe._dict(json.loads(data))
