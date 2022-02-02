@@ -193,8 +193,8 @@ class TestEmployeeReminders(unittest.TestCase):
 
 		# disable emp 2, set same holiday list
 		frappe.db.set_value('Employee', self.test_employee_2.name, {
-			'status': 'Left',
-			'holiday_list': self.test_employee.holiday_list
+			'status': 'Active',
+			'holiday_list': self.holiday_list_2.name
 		})
 
 		send_reminders_in_advance_monthly()
@@ -207,8 +207,8 @@ class TestEmployeeReminders(unittest.TestCase):
 
 		# teardown: enable emp 2
 		frappe.db.set_value('Employee', self.test_employee_2.name, {
-			'status': 'Left',
-			'holiday_list': self.holiday_list_2
+			'status': 'Active',
+			'holiday_list': self.holiday_list_2.name
 		})
 
 	def test_advance_holiday_reminders_weekly(self):
