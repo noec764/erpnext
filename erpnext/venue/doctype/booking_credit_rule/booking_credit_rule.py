@@ -90,7 +90,7 @@ def trigger_credit_rules(doc, method):
 	}
 
 	if doc.doctype in get_trigger_docs() and frappe.db.get_value("Booking Credit Rule", filters):
-		rules = frappe.get_all("Booking Credit Rule", 
+		rules = frappe.get_all("Booking Credit Rule",
 			filters=filters)
 
 		for rule in rules:
@@ -106,7 +106,7 @@ def _get_booking_credit_documents():
 	return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
 
 def trigger_after_specific_time():
-	rules = frappe.get_all("Booking Credit Rule", 
+	rules = frappe.get_all("Booking Credit Rule",
 		filters={
 			"disabled": 0,
 			"trigger_action": ("in", ("After Document Start Datetime", "After Document End Datetime"))
@@ -328,7 +328,7 @@ class RuleProcessor:
 	def apply_custom_rules(self):
 		booking_calendar = None
 		if self.days > 1:
-			calendar_uom = (getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None) or frappe.db.get_single_value("Venue Settings", "minute_uom")
+			calendar_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 			booking_calendar = get_item_calendar(self.item, calendar_uom)
 			if booking_calendar:
 				for d in range(self.days):

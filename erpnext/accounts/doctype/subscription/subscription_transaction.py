@@ -298,7 +298,7 @@ class SubscriptionPaymentRequestGenerator:
 				frappe.flags.mute_gateways_validation = False
 
 				if (
-					not not frappe.conf.mute_payment_gateways
+					not frappe.conf.mute_payment_gateways
 					and self.subscription.payment_gateway
 					and payment_request.get("payment_gateway_account")
 					and float(payment_request.get("grand_total")) > 0
