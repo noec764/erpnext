@@ -250,7 +250,7 @@ erpnext.PointOfSale.Controller = class {
 
 				numpad_event: (value, action) => this.update_item_field(value, action),
 
-				checkout: () => this.payment.checkout(),
+				checkout: () => this.save_and_checkout(),
 
 				edit_cart: () => this.payment.edit_cart(),
 
@@ -716,5 +716,10 @@ erpnext.PointOfSale.Controller = class {
 				frappe.dom.unfreeze();
 			})
 			.catch(e => console.log(e));
+	}
+
+	async save_and_checkout() {
+		this.frm.is_dirty() && await this.frm.save();
+		this.payment.checkout();
 	}
 };
