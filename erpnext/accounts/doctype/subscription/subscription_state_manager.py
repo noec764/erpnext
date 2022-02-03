@@ -84,11 +84,21 @@ class SubscriptionPeriod:
 		return data
 
 	def get_current_documents(self, doctype):
-		events = [x.document_name for x in frappe.get_all("Subscription Event",
+		events = frappe.get_all("Subscription Event",
 			filters={"subscription": self.subscription.name, "document_type": doctype,
 				"period_start": self.start, "period_end": self.end,
 				"event_type": f"{doctype.capitalize()} created"},
-			fields=["document_name"])]
+			pluck="document_name")
+
+		# Handle multiple subscriptions created with the sames sales order
+		if self.subscription.sales_order_item and len(events) == 1:
+			subscriptions = frappe.get_all("Subscription Event",
+				filters={"document_type": doctype, "document_name": events[0],
+					"period_start": self.start, "period_end": self.end,
+					"event_type": f"{doctype.capitalize()} created"},
+				pluck="subscription")
+		else:
+			subscriptions = [self.subscription.name]
 
 		transaction_date = "posting_date" if doctype == "Sales Invoice" else "transaction_date"
 		fields = ["name", "docstatus"]
@@ -97,7 +107,7 @@ class SubscriptionPeriod:
 
 		documents = frappe.get_all(doctype,
 			filters={
-				"subscription": self.subscription.name,
+				"subscription": ("in", subscriptions),
 				"docstatus": ["!=", 2]
 			},
 			or_filters={
