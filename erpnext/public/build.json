@@ -8,7 +8,8 @@
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",
-		"public/js/shopping_cart.js"
+		"public/js/shopping_cart.js",
+		"public/js/wishlist.js"
 	],
 	"css/erpnext-web.css": [
 		"public/scss/website.scss",
@@ -76,5 +77,11 @@
 	],
 	"js/resource-calendar.min.js": [
 		"hr/page/resource_planning_view/resource_calendar.js"
+	],
+	"js/e-commerce.min.js": [
+		"e_commerce/product_ui/views.js",
+		"e_commerce/product_ui/grid.js",
+		"e_commerce/product_ui/list.js",
+		"e_commerce/product_ui/search.js"
 	]
 }

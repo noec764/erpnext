@@ -359,7 +359,7 @@ class PaymentRequest(Document):
 		redirect_to = "no-redirection"
 
 		# if shopping cart enabled and in session
-		shopping_cart_settings = frappe.db.get_value("Shopping Cart Settings",\
+		shopping_cart_settings = frappe.db.get_value("E Commerce Settings",\
 			None, ["enabled", "payment_success_url"], as_dict=1)
 
 		if (shopping_cart_settings.get("enabled") and hasattr(frappe.local, "session")\
@@ -529,7 +529,7 @@ def get_existing_payment_request_amount(ref_dt, ref_dn):
 	""", (ref_dt, ref_dn))
 	return flt(existing_payment_request_amount[0][0]) if existing_payment_request_amount else 0
 
-def get_gateway_details(args):
+def get_gateway_details(args): # nosemgrep
 	"""return gateway and payment account of default payment gateway"""
 	filters = {}
 	if args.get("currency"):
@@ -540,7 +540,7 @@ def get_gateway_details(args):
 		return get_payment_gateway_account(filters)
 
 	if args.order_type == "Shopping Cart":
-		payment_gateway_account = frappe.get_doc("Shopping Cart Settings").payment_gateway_account
+		payment_gateway_account = frappe.get_doc("E Commerce Settings").payment_gateway_account
 		return get_payment_gateway_account(payment_gateway_account)
 
 	filters.update({"is_default": 1})
