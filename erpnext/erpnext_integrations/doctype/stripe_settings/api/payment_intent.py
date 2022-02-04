@@ -1,4 +1,3 @@
-import frappe
 from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
 from erpnext.erpnext_integrations.doctype.stripe_settings.api.errors import handle_stripe_errors
 
@@ -10,7 +9,6 @@ class StripePaymentIntent:
 	@handle_idempotency
 	@handle_stripe_errors
 	def create(self, amount, currency, **kwargs):
-		from hashlib import sha224
 		return self.gateway.stripe.PaymentIntent.create(
 			amount=amount,
 			currency=currency,
