@@ -14,9 +14,6 @@ class StripePaymentIntent:
 			currency=currency,
 			setup_future_usage='off_session',
 			idempotency_key=IdempotencyKey("payment_intent", "create", self.payment_request.name).get(),
-			automatic_payment_methods={
-				'enabled': True,
-			},
 			**kwargs
 		)
 

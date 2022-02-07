@@ -163,7 +163,8 @@ class StripeSettings(PaymentGatewayController):
 					"reference_doctype": payment_request.reference_doctype,
 					"reference_name": payment_request.reference_name,
 					"payment_request": payment_request.name
-				}
+				},
+				payment_method=StripeCustomer(self).get(stripe_customer_id).get("invoice_settings", {}).get("default_payment_method")
 			) or {}
 
 			return payment_intent.get("id")
