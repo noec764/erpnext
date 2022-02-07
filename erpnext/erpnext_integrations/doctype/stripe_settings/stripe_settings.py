@@ -140,7 +140,7 @@ class StripeSettings(PaymentGatewayController):
 
 		if stripe_customer_id:
 			stripe_customer = StripeCustomer(self).get(stripe_customer_id)
-			return True if stripe_customer.get("default_source") else False
+			return bool(stripe_customer.get("default_source")) or bool(stripe_customer.get("invoice_settings", {}).get("default_payment_method"))
 
 		return False
 
