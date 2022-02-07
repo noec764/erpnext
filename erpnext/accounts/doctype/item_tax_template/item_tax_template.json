@@ -12,6 +12,7 @@
   "company",
   "column_break_3",
   "applicable_for",
+  "disabled",
   "section_break_5",
   "taxes"
  ],
@@ -53,10 +54,16 @@
    "fieldtype": "Select",
    "label": "Applicable for",
    "options": "\nSales\nPurchases"
-  }
+},
+{
+ "default": "0",
+ "fieldname": "disabled",
+ "fieldtype": "Check",
+ "label": "Disabled"
+}
  ],
  "links": [],
- "modified": "2021-12-16 16:52:32.378745",
+ "modified": "2022-01-18 21:11:23.105589",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Item Tax Template",
