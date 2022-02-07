@@ -32,6 +32,7 @@ class StripeCheckout {
 		this.handlePaymentThatRequiresCustomerAction = this.handlePaymentThatRequiresCustomerAction.bind(this);
 		this.handleRequiresPaymentMethod = this.handleRequiresPaymentMethod.bind(this);
 		this.orderComplete = this.orderComplete.bind(this);
+		this.attachPaymentCard = this.attachPaymentCard.bind(this);
 	}
 
 	create_payment_intent() {
@@ -72,7 +73,7 @@ class StripeCheckout {
 			document.querySelector("button").disabled = event.empty;
 			document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
 		});
-	
+
 		this.cardButton.addEventListener('click', function(ev) {
 			ev.preventDefault();
 			me.is_subscription ? me.checkPaymentMethod() : me.payWithCard();
@@ -91,6 +92,7 @@ class StripeCheckout {
 				me.showCardError(result);
 			} else {
 				me.orderComplete(result);
+				me.attachPaymentCard(result)
 			}
 		});
 	}
@@ -286,6 +288,17 @@ class StripeCheckout {
 		setTimeout(() => {
 			window.location.href = this.payment_success;
 		}, 2000);
+	}
+
+	attachPaymentCard(result) {
+		frappe.call({
+			method:"erpnext.templates.pages.integrations.stripe_checkout.update_payment_method",
+			args: {
+				payment_key: this.payment_key,
+				customerId: this.customer,
+				paymentMethodId: result.paymentIntent.payment_method,
+			}
+		})
 	}
 
 	showCardError(event) {

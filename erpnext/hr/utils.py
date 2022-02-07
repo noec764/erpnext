@@ -546,7 +546,7 @@ class EarnedLeaveCalculator():
 		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
 
 def get_attendance(employee, start_date, end_date):
-	holidays = get_holidays_for_employee(employee, start_date, end_date)
+	holidays = [getdate(h) for h in get_holidays_for_employee(employee, start_date, end_date)]
 	excluded_leave_types = [x.name for x in frappe.get_all("Leave Type", filters={"exclude_from_leave_acquisition": 1})]
 
 	attendance = frappe.get_all("Attendance",
