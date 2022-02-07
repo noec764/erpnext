@@ -299,8 +299,6 @@ class SubscriptionPaymentRequestGenerator:
 
 				if (
 					not frappe.conf.mute_payment_gateways
-					and self.subscription.payment_gateway
-					and payment_request.get("payment_gateway_account")
 					and float(payment_request.get("grand_total")) > 0
 					and payment_request_document.check_if_immediate_payment_is_autorized()
 				):
