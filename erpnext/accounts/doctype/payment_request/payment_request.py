@@ -67,13 +67,12 @@ class PaymentRequest(Document):
 	def validate_payment_gateways(self):
 		if self.payment_gateways_template and not self.payment_gateways:
 			template = frappe.get_doc("Portal Payment Gateways Template", self.payment_gateways_template)
-			self.append("payment_gateways",
-				[
-					{
+
+			for x in template.payment_gateways:
+				self.append("payment_gateways", {
 						"payment_gateway": x.payment_gateway
-					} for x in template.payment_gateways
-				]
-			)
+					}
+				)
 
 		if len(self.payment_gateways) == 1:
 			self.payment_gateway = self.payment_gateways[0].get("payment_gateway")
