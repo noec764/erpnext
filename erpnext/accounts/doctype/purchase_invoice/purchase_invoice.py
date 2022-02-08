@@ -167,8 +167,10 @@ class PurchaseInvoice(BuyingController):
 				.format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
 
 		if self.supplier and account.account_type != "Payable":
-			frappe.throw(_("Please ensure {} account is a Payable account. Change the account type to Payable or select a different account.")
-				.format(frappe.bold(_("Credit To"))), title=_("Invalid Account"))
+			frappe.throw(
+				_("Please ensure {} account {} is a Payable account. Change the account type to Payable or select a different account.")
+				.format(frappe.bold("Credit To"), frappe.bold(self.credit_to)), title=_("Invalid Account")
+			)
 
 		self.party_account_currency = account.account_currency
 
