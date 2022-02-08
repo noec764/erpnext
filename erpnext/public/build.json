@@ -38,7 +38,8 @@
 		"public/js/telephony.js",
 		"public/js/templates/call_link.html",
 		"public/js/templates/node_card.html",
-		"public/js/utils/shift_assignment_quick_entry.js"
+		"public/js/utils/shift_assignment_quick_entry.js",
+		"public/js/bulk_transaction_processing.js"
 	],
 	"js/item-dashboard.min.js": [
 		"stock/dashboard/item_dashboard.html",

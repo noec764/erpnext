@@ -54,7 +54,17 @@ frappe.listview_settings['Delivery Note'] = {
 			};
 		};
 
-		doclist.page.add_actions_menu_item(__('Create Delivery Trip'), action, true);
+		// doclist.page.add_actions_menu_item(__('Create Delivery Trip'), action, true);
+
+		listview.page.add_action_item(__('Create Delivery Trip'), action);
+
+		listview.page.add_action_item(__("Sales Invoice"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Delivery Note", "Sales Invoice");
+		});
+
+		listview.page.add_action_item(__("Packaging Slip From Delivery Note"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Delivery Note", "Packing Slip");
+		});
 
 		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
 			doclist.page.add_actions_menu_item(

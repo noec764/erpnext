@@ -48,5 +48,17 @@ frappe.listview_settings['Sales Order'] = {
 			listview.call_for_selected_items(method, {"status": "Submitted"});
 		});
 
+		listview.page.add_action_item(__("Sales Invoice"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Sales Invoice");
+		});
+
+		listview.page.add_action_item(__("Delivery Note"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Delivery Note");
+		});
+
+		listview.page.add_action_item(__("Advance Payment"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Advance Payment");
+		});
+
 	}
 };

@@ -142,6 +142,25 @@ def make_purchase_order(source_name, target_doc=None):
 	return doclist
 
 @frappe.whitelist()
+def make_purchase_invoice(source_name, target_doc=None):
+	doc = get_mapped_doc("Supplier Quotation", source_name, {
+		"Supplier Quotation": {
+			"doctype": "Purchase Invoice",
+			"validation": {
+				"docstatus": ["=", 1],
+			}
+		},
+		"Supplier Quotation Item": {
+			"doctype": "Purchase Invoice Item"
+		},
+		"Purchase Taxes and Charges": {
+			"doctype": "Purchase Taxes and Charges"
+		}
+	}, target_doc)
+
+	return doc
+
+@frappe.whitelist()
 def make_quotation(source_name, target_doc=None):
 	doclist = get_mapped_doc("Supplier Quotation", source_name, {
 		"Supplier Quotation": {
@@ -165,4 +184,4 @@ def set_expired_status():
 			`tabSupplier Quotation` SET `status` = 'Expired'
 		WHERE
 			`status` not in ('Cancelled', 'Stopped') AND `valid_till` < %s
-		""", (nowdate())) 
+		""", (nowdate()))

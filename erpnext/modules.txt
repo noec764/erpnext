@@ -20,4 +20,5 @@ Loan Management
 Payroll
 Venue
 Telephony
+Bulk Transaction
 E-commerce
