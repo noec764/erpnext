@@ -150,7 +150,7 @@ class SubscriptionTransactionBase:
 	def get_prorata_factor(self):
 		prorate = cint(self.subscription.prorate_last_invoice) and (self.end_date == self.subscription.cancellation_date)
 		consumed = flt(date_diff(self.subscription.cancellation_date, self.start_date) + 1)
-		plan_days = flt(date_diff(self.end_date, self.start_date) + 1)
+		plan_days = flt(date_diff(self.end_date, self.start_date) + 1) or 1
 		prorata_factor = consumed / plan_days
 
 		return prorata_factor if prorate else 1
@@ -321,16 +321,22 @@ class SubscriptionPaymentRequestGenerator:
 
 	def create_payment_request(self, submit=False):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
-		sales_invoice = self.invoice
-		if not sales_invoice:
-			current_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
-			if current_invoices:
-				sales_invoice = current_invoices[0].get("name")
+		link_dt = "Sales Invoice"
+		link_dn = self.invoice
+		if not link_dn:
+			current_orders = SubscriptionPeriod(self.subscription).get_current_documents("Sales Order")
+			if current_orders:
+				link_dt = "Sales Order"
+				link_dn = current_orders[0].get("name")
+			else:
+				current_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
+				if current_invoices:
+					link_dn = current_invoices[0].get("name")
 
 		pr = frappe.get_doc(
 			make_payment_request(**{
-				"dt": "Sales Invoice",
-				"dn": sales_invoice,
+				"dt": link_dt,
+				"dn": link_dn,
 				"subscription": self.subscription.name,
 				"party_type": "Customer",
 				"party": self.subscription.customer,

@@ -73,6 +73,7 @@ class Subscription(Document):
 		SubscriptionPlansManager(self).set_plans_status()
 		SubscriptionPlansManager(self).set_plans_rates()
 		SubscriptionStateManager(self).set_status()
+
 		if self.status in BILLING_STATUS:
 			self.process_active_subscription()
 			SubscriptionStateManager(self).set_status()
@@ -118,7 +119,7 @@ class Subscription(Document):
 
 	def restart_subscription(self):
 		self.status = "Active"
-		self.current_invoice_start = add_days(self.cancellation_date, 1) or nowdate()
+		self.current_invoice_start = add_days(self.cancellation_date, 1) if self.cancellation_date else nowdate()
 		self.cancellation_date = None
 		self.prorate_last_invoice = 0
 		self.save()
