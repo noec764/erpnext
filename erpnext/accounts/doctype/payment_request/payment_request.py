@@ -67,17 +67,22 @@ class PaymentRequest(Document):
 	def validate_payment_gateways(self):
 		if self.payment_gateways_template and not self.payment_gateways:
 			template = frappe.get_doc("Portal Payment Gateways Template", self.payment_gateways_template)
-			self.payment_gateways = template.payment_gateways
+
+			for x in template.payment_gateways:
+				self.append("payment_gateways", {
+						"payment_gateway": x.payment_gateway
+					}
+				)
 
 		if len(self.payment_gateways) == 1:
-			self.payment_gateway = self.payment_gateways[0].payment_gateway
+			self.payment_gateway = self.payment_gateways[0].get("payment_gateway")
 
 	def validate_existing_gateway(self):
 		if not self.payment_gateways and not self.payment_gateway:
 			frappe.throw(_("Please add at least one payment gateway"))
 
 	def payment_gateways_validation(self):
-		selected_gateways = set([x.payment_gateway for x in self.payment_gateways])
+		selected_gateways = set([x.get("payment_gateway") for x in self.payment_gateways])
 		if selected_gateways:
 			gateways = frappe.get_all("Payment Gateway", filters={"name": ["in", selected_gateways]}, fields=["name", "gateway_settings", "gateway_controller"])
 			for gateway in gateways:
