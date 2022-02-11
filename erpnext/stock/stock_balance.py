@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.utils import flt, cstr, nowdate, nowtime
-from erpnext.stock.utils import update_bin
+
 from erpnext.controllers.stock_controller import create_repost_item_valuation_entry
 
 def repost(only_actual=False, allow_negative_stock=False, allow_zero_rate=False, only_bin=False):
@@ -223,8 +223,6 @@ def set_stock_balance_as_per_serial_no(item_code=None, posting_date=None, postin
 		args.update({
 			"sle_id": sle_doc.name
 		})
-
-		update_bin(args)
 
 		create_repost_item_valuation_entry({
 			"item_code": d[0],
