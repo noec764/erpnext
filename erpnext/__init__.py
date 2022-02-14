@@ -1,7 +1,5 @@
 import inspect
 import frappe
-from erpnext.hooks import regional_overrides
-from frappe.utils import getdate
 
 __version__ = '2.8.3'
 
@@ -121,11 +119,13 @@ def allow_regional(fn):
 	def myfunction():
 	  pass'''
 	def caller(*args, **kwargs):
-		region = get_region()
-		fn_name = inspect.getmodule(fn).__name__ + '.' + fn.__name__
-		if region in regional_overrides and fn_name in regional_overrides[region]:
-			return frappe.get_attr(regional_overrides[region][fn_name])(*args, **kwargs)
-		else:
+		overrides = frappe.get_hooks("regional_overrides", {}).get(get_region())
+		function_path = f"{inspect.getmodule(fn).__name__}.{fn.__name__}"
+
+		if not overrides or function_path not in overrides:
 			return fn(*args, **kwargs)
+
+		# Priority given to last installed app
+		return frappe.get_attr(overrides[function_path][-1])(*args, **kwargs)
 
 	return caller
