@@ -382,7 +382,7 @@ def get_previous_claimed_amount(employee, payroll_period, non_pro_rata=False, co
 		total_claimed_amount = sum_of_claimed_amount[0].total_amount
 	return total_claimed_amount
 
-def check_effective_date(from_date, to_date, frequency, based_on_date_of_joining_date):
+def check_effective_date(from_date, to_date, frequency, based_on_date_of_joining):
 	import calendar
 	from dateutil import relativedelta
 
@@ -392,7 +392,7 @@ def check_effective_date(from_date, to_date, frequency, based_on_date_of_joining
 	#last day of month
 	last_day =  calendar.monthrange(to_date.year, to_date.month)[1]
 
-	if (from_date.day == to_date.day and based_on_date_of_joining_date) or (not based_on_date_of_joining_date and to_date.day == last_day):
+	if (from_date.day == to_date.day and based_on_date_of_joining) or (not based_on_date_of_joining and to_date.day == last_day):
 		if frequency == "Monthly":
 			return True
 		elif frequency == "Quarterly" and rd.months % 3:
