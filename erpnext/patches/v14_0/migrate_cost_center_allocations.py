@@ -27,7 +27,7 @@ def create_new_cost_center_allocation_records(cc_allocations):
 		cca.submit()
 
 def get_existing_cost_center_allocations():
-	if not frappe.db.exists("DocType", "Distributed Cost Center")
+	if not frappe.db.exists("DocType", "Distributed Cost Center"):
 		return
 
 	par = frappe.qb.DocType("Cost Center")

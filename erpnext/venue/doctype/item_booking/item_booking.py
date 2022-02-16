@@ -11,10 +11,10 @@ import datetime
 from datetime import timedelta, date
 import calendar
 import json
-from erpnext.shopping_cart.cart import has_cart_quotation
+from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation
 from erpnext.utilities.product import get_price
-from erpnext.shopping_cart.product_info import get_product_info_for_website
-from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
+from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
+from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import get_shopping_cart_settings
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.party import get_party_account_currency
 from frappe.utils.user import is_website_user, is_system_user
@@ -233,7 +233,7 @@ def get_item_price(item_code, uom):
 
 	cart_quotation = None
 	if contact:
-		dummy, quotation = has_cart_quotation()
+		dummy, quotation = get_cart_quotation()
 		if quotation:
 			cart_quotation = frappe.db.get_value("Quotation", quotation[0].name, ["selling_price_list", "grand_total", "currency"], as_dict=True)
 
