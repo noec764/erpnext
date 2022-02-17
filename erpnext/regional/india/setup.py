@@ -435,13 +435,13 @@ def make_custom_fields(update=True):
 
 		dict(fieldname='einvoice_section', label='E-Invoice Fields', fieldtype='Section Break', insert_after='gst_vehicle_type',
 			print_hide=1, hidden=1),
-		
+
 		dict(fieldname='ack_no', label='Ack. No.', fieldtype='Data', read_only=1, hidden=1, insert_after='einvoice_section',
 			no_copy=1, print_hide=1),
-		
+
 		dict(fieldname='ack_date', label='Ack. Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_no', no_copy=1, print_hide=1),
 
-		dict(fieldname='irn_cancel_date', label='Cancel Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_date', 
+		dict(fieldname='irn_cancel_date', label='Cancel Date', fieldtype='Data', read_only=1, hidden=1, insert_after='ack_date',
 			no_copy=1, print_hide=1),
 
 		dict(fieldname='signed_einvoice', label='Signed E-Invoice', fieldtype='Code', options='JSON', hidden=1, insert_after='irn_cancel_date',
@@ -630,22 +630,6 @@ def make_custom_fields(update=True):
 				'default': 'Without Payment of Tax',
 				'depends_on':'eval:in_list(["SEZ", "Overseas", "Deemed Export"], doc.gst_category)',
 				'options': '\nWith Payment of Tax\nWithout Payment of Tax'
-			}
-		],
-		'Member': [
-			{
-				'fieldname': 'pan_number',
-				'label': 'PAN Details',
-				'fieldtype': 'Data',
-				'insert_after': 'email_id'
-			}
-		],
-		'Donor': [
-			{
-				'fieldname': 'pan_number',
-				'label': 'PAN Details',
-				'fieldtype': 'Data',
-				'insert_after': 'email'
 			}
 		]
 	}
