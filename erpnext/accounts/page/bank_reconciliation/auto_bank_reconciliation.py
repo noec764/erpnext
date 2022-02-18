@@ -8,6 +8,7 @@ import frappe
 import erpnext
 from frappe import _
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
+from erpnext.accounts.page.bank_reconciliation.stripe_reconciliation import reconcile_stripe_payouts
 
 @frappe.whitelist()
 def auto_bank_reconciliation(bank_transactions):
@@ -28,6 +29,8 @@ def _reconcile_transactions(bank_transactions):
 		else:
 			bank_reconciliation = AutoBankReconciliation(bank_transaction)
 			bank_reconciliation.reconcile()
+
+	reconcile_stripe_payouts(bank_transactions)
 
 class AutoBankReconciliation:
 	def __init__(self, bank_transaction):
