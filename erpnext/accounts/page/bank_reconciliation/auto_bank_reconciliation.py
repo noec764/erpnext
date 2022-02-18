@@ -12,7 +12,7 @@ from erpnext.accounts.page.bank_reconciliation.stripe_reconciliation import reco
 
 @frappe.whitelist()
 def auto_bank_reconciliation(bank_transactions):
-	frappe.enqueue("erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation._reconcile_transactions", bank_transactions=bank_transactions)
+	_reconcile_transactions(bank_transactions)
 
 def _reconcile_transactions(bank_transactions):
 	bank_transactions = frappe.parse_json(bank_transactions) or []
@@ -52,8 +52,7 @@ class AutoBankReconciliation:
 		regional_reconciliation(self)
 
 		if self.documents:
-			return
-			BankReconciliation([self.bank_transaction], set(self.documents)).reconcile()
+			BankReconciliation([self.bank_transaction], list({d['name']:d for d in self.documents}.values())).reconcile()
 
 	def get_naming_series(self):
 		self.reconciliation_by_id["prefixes"] = [x.get("name") for x in frappe.db.sql("""SELECT name FROM `tabSeries`""", as_dict=True) if x.get("name")]
@@ -62,6 +61,7 @@ class AutoBankReconciliation:
 		for prefix in self.reconciliation_by_id.get("prefixes", []):
 			for reference in [self.bank_transaction.get("reference_number"), self.bank_transaction.get("description")]:
 				if reference:
+					# TODO: get multiple references separated by a comma or a space
 					search_regex = r"{0}.*".format(prefix)
 					match = re.findall(search_regex, reference)
 					if match:
@@ -70,10 +70,32 @@ class AutoBankReconciliation:
 
 	def get_corresponding_documents(self):
 		for matching_name in self.reconciliation_by_id["matching_names"]:
-			for doctype in ["Payment Entry", "Sales Invoice", "Purchase Invoice", "Expense Claim"]:
-				if frappe.db.exists(doctype, matching_name):
-					self.documents.append(frappe.get_doc(doctype, matching_name).as_dict())
-					break
+			corresponding_payment_entry = self.get_corresponding_payment_entries(matching_name)
+			if corresponding_payment_entry:
+				self.documents.append(corresponding_payment_entry.as_dict())
+				break
+			else:
+				for dt in ["Sales Invoice", "Purchase Invoice"]:
+					if frappe.db.exists(dt, matching_name):
+						doc = frappe.get_doc(dt, matching_name)
+						if doc.outstanding_amount == 0:
+							for payment_entry in frappe.get_all("Payment Entry Reference", filters={
+								"reference_doctype": doc.doctype,
+								"reference_name": doc.name
+							}, pluck="parent"):
+								corresponding_payment_entry = self.get_corresponding_payment_entries(payment_entry)
+								if corresponding_payment_entry:
+									self.documents.append(corresponding_payment_entry.as_dict())
+									break
+						else:
+							self.documents.append(doc.as_dict())
+							break
+
+	def get_corresponding_payment_entries(self, matching_name):
+		if frappe.db.exists("Payment Entry", matching_name):
+			doc = frappe.get_doc("Payment Entry", matching_name)
+			if doc.docstatus == 1 and doc.status == "Unreconciled":
+				return doc
 
 # Used for regional overrides
 @erpnext.allow_regional
