@@ -7,6 +7,7 @@ import erpnext
 from frappe import _
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, flt
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
+from erpnext.controllers.accounts_controller import add_taxes_from_tax_template
 
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
@@ -47,23 +48,6 @@ class SubscriptionTransactionBase:
 			document.shipping_rule = self.subscription.shipping_rule
 			document.apply_shipping_rule()
 
-		# Taxes
-		if self.subscription.tax_template:
-			document.taxes_and_charges = self.subscription.tax_template
-		else:
-			from erpnext.accounts.party import set_taxes
-			document.taxes_and_charges = set_taxes(
-				party=self.subscription.customer,
-				party_type="Customer",
-				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
-				company=self.subscription.company,
-				customer_group=frappe.db.get_value("Customer", self.subscription.customer, "customer_group"),
-				tax_category=document.tax_category,
-				billing_address=document.customer_address,
-				shipping_address=document.shipping_address_name
-			)
-		#document.append_taxes_from_master()
-
 		self.add_due_date(document)
 
 		# Discounts
@@ -84,6 +68,31 @@ class SubscriptionTransactionBase:
 			from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import get_terms_and_conditions
 			document.tc_name = self.subscription.terms_and_conditions
 			document.terms = get_terms_and_conditions(self.subscription.terms_and_conditions, document.__dict__)
+
+		document.set_missing_values()
+
+		for item in document.items:
+			add_taxes_from_tax_template(item, document)
+
+		# Taxes
+		if self.subscription.tax_template:
+			document.taxes = []
+			document.taxes_and_charges = self.subscription.tax_template
+		elif not document.taxes:
+			from erpnext.accounts.party import set_taxes
+			frappe.form_dict["doctype"] = document.doctype
+			document.taxes_and_charges = set_taxes(
+				party=self.subscription.customer,
+				party_type="Customer",
+				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
+				company=self.subscription.company,
+				customer_group=frappe.db.get_value("Customer", self.subscription.customer, "customer_group"),
+				tax_category=document.tax_category,
+				billing_address=document.customer_address,
+				shipping_address=document.shipping_address_name
+			)
+
+		document.set_missing_values()
 
 		return document
 

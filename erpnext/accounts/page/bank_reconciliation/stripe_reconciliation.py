@@ -9,17 +9,16 @@ from frappe import _
 from frappe.utils import getdate
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
 
-@frappe.whitelist()
 def reconcile_stripe_payouts(bank_transactions):
-	bank_transactions = frappe.parse_json(bank_transactions) or []
-	if not bank_transactions:
-		frappe.throw(_("Please select a period with at least one Stripe transaction to reconcile"))
+	stripe_transactions = [transaction for transaction in bank_transactions if "stripe" in transaction.get("description").lower()]
+	if not stripe_transactions:
+		return
 
 	stripe_accounts = frappe.get_list("Stripe Settings", {"bank_account": bank_transactions[0].get("bank_account")})
 	if not stripe_accounts:
-		frappe.throw(_("Please link this bank account with at least one Stripe account"))
+		return
 
-	frappe.enqueue("erpnext.accounts.page.bank_reconciliation.stripe_reconciliation._reconcile_stripe_payouts", bank_transactions=bank_transactions, stripe_accounts=stripe_accounts)
+	_reconcile_stripe_payouts(bank_transactions=stripe_transactions, stripe_accounts=stripe_accounts)
 
 def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
 	reconciled_transactions = []
@@ -90,7 +89,7 @@ class StripeReconciliation:
 	def match_transactions_with_payouts(self):
 		for payout in self.payouts:
 			if (self.bank_transaction.get("currency").lower() == payout.get("currency")) and \
-				((self.bank_transaction.get("credit", 0) - self.bank_transaction.get("debit", 0)) * 100 == payout.get("amount")):
+				(((self.bank_transaction.get("credit", 0) - self.bank_transaction.get("debit", 0)) * 100 - payout.get("amount")) <= 0.01):
 				self.filtered_payout = payout
 				break
 
