@@ -18,7 +18,7 @@ def reconcile_stripe_payouts(bank_transactions):
 	if not stripe_accounts:
 		return
 
-	_reconcile_stripe_payouts(bank_transactions=bank_transactions, stripe_accounts=stripe_accounts)
+	_reconcile_stripe_payouts(bank_transactions=stripe_transactions, stripe_accounts=stripe_accounts)
 
 def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
 	reconciled_transactions = []
