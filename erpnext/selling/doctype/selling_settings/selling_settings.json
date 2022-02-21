@@ -13,6 +13,7 @@
   "selling_price_list",
   "close_opportunity_after_days",
   "default_valid_till",
+  "default_due_days",
   "column_break_5",
   "so_required",
   "dn_required",
@@ -159,13 +160,18 @@
    "fieldname": "create_tasks_from_sales_order",
    "fieldtype": "Check",
    "label": "Create a new task for each item line in a sales order"
+  },
+  {
+   "fieldname": "default_due_days",
+   "fieldtype": "Data",
+   "label": "Default Payment Delay for Sales Invoice"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-10-27 16:40:09.328159",
+ "modified": "2022-02-21 15:56:07.409775",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling Settings",

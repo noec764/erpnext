@@ -930,7 +930,7 @@
    "reqd": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment (Company Currency)",
@@ -940,7 +940,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounded_total",
    "fieldtype": "Currency",
    "label": "Rounded Total (Company Currency)",
@@ -982,7 +982,7 @@
    "reqd": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment",
@@ -1665,7 +1665,7 @@
    "fieldname": "disable_rounded_total",
    "fieldtype": "Check",
    "label": "Disable Rounded Total"
-   }
+  }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
@@ -1679,7 +1679,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2021-04-29 16:31:31.449925",
+ "modified": "2022-02-18 16:58:53.673503",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
