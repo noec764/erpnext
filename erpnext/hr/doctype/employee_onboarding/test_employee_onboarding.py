@@ -1,15 +1,18 @@
-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
+import unittest
 
 import frappe
-import unittest
-from frappe.utils import getdate
-from erpnext.hr.doctype.employee_onboarding.employee_onboarding import make_employee
-from erpnext.payroll.doctype.salary_slip.test_salary_slip import make_holiday_list
-from erpnext.hr.doctype.employee_onboarding.employee_onboarding import IncompleteTaskError
+from frappe.utils import add_days, getdate
+
+from erpnext.hr.doctype.employee_onboarding.employee_onboarding import (
+	IncompleteTaskError,
+	make_employee,
+)
 from erpnext.hr.doctype.job_offer.test_job_offer import create_job_offer
+from erpnext.payroll.doctype.salary_slip.test_salary_slip import make_holiday_list
+
 
 class TestEmployeeOnboarding(unittest.TestCase):
 	def setUp(self):
@@ -31,6 +34,15 @@ class TestEmployeeOnboarding(unittest.TestCase):
 
 		# boarding status
 		self.assertEqual(onboarding.boarding_status, 'Pending')
+
+		# start and end dates
+		start_date, end_date = frappe.db.get_value('Task', onboarding.activities[0].task, ['exp_start_date', 'exp_end_date'])
+		self.assertEqual(getdate(start_date), getdate(onboarding.boarding_begins_on))
+		self.assertEqual(getdate(end_date), add_days(start_date, onboarding.activities[0].duration))
+
+		start_date, end_date = frappe.db.get_value('Task', onboarding.activities[1].task, ['exp_start_date', 'exp_end_date'])
+		self.assertEqual(getdate(start_date), add_days(onboarding.boarding_begins_on, onboarding.activities[0].duration))
+		self.assertEqual(getdate(end_date), add_days(start_date, onboarding.activities[1].duration))
 
 		# complete the task
 		project = frappe.get_doc('Project', onboarding.project)
@@ -54,10 +66,7 @@ class TestEmployeeOnboarding(unittest.TestCase):
 		self.assertEqual(employee.employee_name, 'Test Researcher')
 
 	def tearDown(self):
-		for entry in frappe.get_all('Employee Onboarding'):
-			doc = frappe.get_doc('Employee Onboarding', entry.name)
-			doc.cancel()
-			doc.delete()
+		frappe.db.rollback()
 
 
 def get_job_applicant():
@@ -84,23 +93,31 @@ def get_job_offer(applicant_name):
 def create_employee_onboarding():
 	applicant = get_job_applicant()
 	job_offer = get_job_offer(applicant.name)
-	holiday_list = make_holiday_list()
+
+	holiday_list = make_holiday_list('_Test Employee Boarding')
+	holiday_list = frappe.get_doc('Holiday List', holiday_list)
+	holiday_list.holidays = []
+	holiday_list.save()
 
 	onboarding = frappe.new_doc('Employee Onboarding')
 	onboarding.job_applicant = applicant.name
 	onboarding.job_offer = job_offer.name
 	onboarding.date_of_joining = onboarding.boarding_begins_on = getdate()
 	onboarding.company = '_Test Company'
-	onboarding.holiday_list = holiday_list
+	onboarding.holiday_list = holiday_list.name
 	onboarding.designation = 'Researcher'
 	onboarding.append('activities', {
 		'activity_name': 'Assign ID Card',
 		'role': 'HR User',
-		'required_for_employee_creation': 1
+		'required_for_employee_creation': 1,
+		'begin_on': 0,
+		'duration': 1
 	})
 	onboarding.append('activities', {
 		'activity_name': 'Assign a laptop',
-		'role': 'HR User'
+		'role': 'HR User',
+		'begin_on': 1,
+		'duration': 1
 	})
 	onboarding.status = 'Pending'
 	onboarding.insert()
