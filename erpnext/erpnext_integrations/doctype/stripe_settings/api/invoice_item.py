@@ -17,6 +17,6 @@ class StripeInvoiceItem:
 
 	@handle_stripe_errors
 	def retrieve(self, id):
-		return self.gateway.stripe.Invoice.retrieve(
+		return self.gateway.stripe.InvoiceItem.retrieve(
 			id
 		)
