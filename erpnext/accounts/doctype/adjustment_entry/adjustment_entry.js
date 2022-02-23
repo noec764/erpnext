@@ -25,7 +25,6 @@ frappe.ui.form.on('Adjustment Entry', {
 				company: frm.doc.company
 			}
 		}).then(r => {
-			console.log(r.message)
 			frm.clear_table('details')
 			r.message.documents.forEach((d) => {
 				frm.add_child("details",d);

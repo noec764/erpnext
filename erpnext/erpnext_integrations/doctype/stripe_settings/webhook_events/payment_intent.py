@@ -41,14 +41,15 @@ class StripePaymentIntentWebhookHandler(StripeWebhooksController):
 		super().get_metadata()
 		if not self.metadata:
 			invoice_id = self.data.get("data", {}).get("object", {}).get("invoice")
-			invoice = StripeInvoice(self.stripe_settings).retrieve(invoice_id) or {}
-			metadata = invoice.get("metadata")
+			if invoice_id:
+				invoice = StripeInvoice(self.stripe_settings).retrieve(invoice_id) or {}
+				metadata = invoice.get("metadata")
 
-			if not metadata and invoice.get("subscription"):
-				subscription = StripeSubscription(self.stripe_settings).retrieve(invoice.get("subscription")) or {}
-				metadata = subscription.get("metadata")
+				if not metadata and invoice.get("subscription"):
+					subscription = StripeSubscription(self.stripe_settings).retrieve(invoice.get("subscription")) or {}
+					metadata = subscription.get("metadata")
 
-			self.metadata = metadata
+				self.metadata = metadata
 
 	def update_payment_request_status(self):
 		if self.payment_request:
