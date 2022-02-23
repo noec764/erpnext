@@ -13,8 +13,11 @@ from frappe.core.doctype.report.report import get_report_module_dotted_path
 ReportFilters = Dict[str, Any]
 ReportName = NewType("ReportName", str)
 
+
 class ERPNextTestCase(unittest.TestCase):
 	"""A sane default test class for ERPNext tests."""
+
+
 	@classmethod
 	def setUpClass(cls) -> None:
 		frappe.db.commit()
@@ -24,6 +27,7 @@ class ERPNextTestCase(unittest.TestCase):
 	def tearDownClass(cls) -> None:
 		frappe.db.rollback()
 		return super().tearDownClass()
+
 
 def create_test_contact_and_address():
 	frappe.db.sql('delete from tabContact')
@@ -62,6 +66,7 @@ def create_test_contact_and_address():
 	contact.add_phone("+91 0000000000", is_primary_phone=True)
 	contact.insert()
 
+
 @contextmanager
 def change_settings(doctype, settings_dict):
 	""" A context manager to ensure that settings are changed before running
@@ -69,6 +74,7 @@ def change_settings(doctype, settings_dict):
 	This is useful in tests where you want to make changes in a function but
 	don't retain those changes.
 	import and use as decorator to cover full function or using `with` statement.
+
 	example:
 	@change_settings("Stock Settings", {"item_naming_by": "Naming Series"})
 	def test_case(self):
@@ -97,6 +103,7 @@ def change_settings(doctype, settings_dict):
 			setattr(settings, key, value)
 		settings.save()
 
+
 def execute_script_report(
 		report_name: ReportName,
 		module: str,
@@ -105,8 +112,10 @@ def execute_script_report(
 		optional_filters: Optional[ReportFilters] = None
 	):
 	"""Util for testing execution of a report with specified filters.
+
 	Tests the execution of report with default_filters + filters.
 	Tests the execution using optional_filters one at a time.
+
 	Args:
 		report_name: Human readable name of report (unscrubbed)
 		module: module to which report belongs to
@@ -118,20 +127,28 @@ def execute_script_report(
 	if default_filters is None:
 		default_filters = {}
 
+	test_filters = []
 	report_execute_fn = frappe.get_attr(get_report_module_dotted_path(module, report_name) + ".execute")
 	report_filters = frappe._dict(default_filters).copy().update(filters)
 
-	report_data = report_execute_fn(report_filters)
+	test_filters.append(report_filters)
 
 	if optional_filters:
 		for key, value in optional_filters.items():
-			filter_with_optional_param = report_filters.copy().update({key: value})
-			report_execute_fn(filter_with_optional_param)
+			test_filters.append(report_filters.copy().update({key: value}))
 
-	return report_data
+	for test_filter in test_filters:
+		try:
+			report_execute_fn(test_filter)
+		except Exception:
+			print(f"Report failed to execute with filters: {test_filter}")
+			raise
+
+
 
 def timeout(seconds=30, error_message="Test timed out."):
 	""" Timeout decorator to ensure a test doesn't run for too long.
+
 		adapted from https://stackoverflow.com/a/2282656"""
 	def decorator(func):
 		def _handle_timeout(signum, frame):
