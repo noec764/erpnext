@@ -136,11 +136,8 @@ def setup_default_leaves():
 	]
 
 	for leave_type in leave_types:
-		try:
-			doc = frappe.get_doc(leave_type)
-			doc.insert(ignore_permissions=True)
-		except frappe.DuplicateEntryError:
-			pass
+		doc = frappe.get_doc(leave_type)
+		doc.insert(ignore_permissions=True, ignore_if_duplicate=True)
 
 	policy = {
 		"doctype": "Leave Policy",
@@ -153,8 +150,5 @@ def setup_default_leaves():
 		]
 	}
 
-	try:
-		doc = frappe.get_doc(policy)
-		doc.insert(ignore_permissions=True)
-	except frappe.DuplicateEntryError:
-		pass
+	doc = frappe.get_doc(policy)
+	doc.insert(ignore_permissions=True, ignore_if_duplicate=True)

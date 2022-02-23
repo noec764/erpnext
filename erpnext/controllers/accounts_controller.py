@@ -1901,16 +1901,16 @@ def add_taxes_from_tax_template(child_item, parent_doc, db_insert=True):
 	if child_item.get("item_tax_rate") and add_taxes_from_item_tax_template:
 		tax_map = json.loads(child_item.get("item_tax_rate"))
 		for tax_type in tax_map:
-			tax_rate = flt(tax_map[tax_type])
+			tax_rate = flt(tax_type["rate"])
 			taxes = parent_doc.get('taxes') or []
 			# add new row for tax head only if missing
-			found = any(tax.account_head == tax_type for tax in taxes)
+			found = any(tax.account_head == tax_type["account"] for tax in taxes)
 			if not found:
 				tax_row = parent_doc.append("taxes", {})
 				tax_row.update({
-					"description" : str(tax_type).split(' - ')[0],
+					"description" : tax_type["description"] or tax_type["account"],
 					"charge_type" : "On Net Total",
-					"account_head" : tax_type,
+					"account_head" : tax_type["account"],
 					"rate" : tax_rate
 				})
 				if parent_doc.doctype == "Purchase Order":

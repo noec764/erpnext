@@ -29,7 +29,6 @@ class StripeCustomer:
 	@handle_stripe_errors
 	def create(self, customer_id, **kwargs):
 		from frappe.contacts.doctype.contact.contact import get_default_contact
-		from hashlib import sha224
 		metadata = { "customer": customer_id }
 		customer_name = frappe.db.get_value("Customer", customer_id, "customer_name")
 		contact = get_default_contact("Customer", customer_id)

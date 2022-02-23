@@ -141,32 +141,22 @@ class StripeSettings(PaymentGatewayController):
 
 		if stripe_customer_id:
 			stripe_customer = StripeCustomer(self).get(stripe_customer_id)
-			return True if stripe_customer.get("default_source") else False
+			return bool(stripe_customer.get("default_source")) or bool(stripe_customer.get("invoice_settings", {}).get("default_payment_method"))
 
 		return False
 
 	def immediate_payment_processing(self, payment_request):
 		try:
-			processed_data = dict(
-				amount=cint(flt(payment_request.grand_total, payment_request.precision("grand_total")) * 100),
-				currency=payment_request.currency,
-				description=payment_request.subject,
-				reference=payment_request.reference_name,
-				links={},
-				metadata={
-					"reference_doctype": payment_request.reference_doctype,
-					"reference_name": payment_request.reference_name,
-					"payment_request": payment_request.name
-				}
-			)
-
 			customer = payment_request.get_customer()
 			stripe_customer_id = frappe.db.get_value("Integration References", dict(customer=customer, stripe_settings=self.name), "stripe_customer_id")
 
 			payment_intent = StripePaymentIntent(self, payment_request).create(
 				amount=cint(flt(payment_request.grand_total, payment_request.precision("grand_total")) * 100),
 				description=payment_request.subject,
-				statement_descriptor=frappe.db.get_value(payment_request.reference_doctype, payment_request.reference_name, "company") or payment_request.subject[:22],
+				statement_descriptor=(
+					frappe.db.get_value(payment_request.reference_doctype, payment_request.reference_name, "company")
+					or payment_request.subject[:22]
+				),
 				currency=payment_request.currency,
 				customer=stripe_customer_id,
 				confirm=True,
@@ -174,8 +164,9 @@ class StripeSettings(PaymentGatewayController):
 					"reference_doctype": payment_request.reference_doctype,
 					"reference_name": payment_request.reference_name,
 					"payment_request": payment_request.name
-				}
-			)
+				},
+				payment_method=StripeCustomer(self).get(stripe_customer_id).get("invoice_settings", {}).get("default_payment_method")
+			) or {}
 
 			return payment_intent.get("id")
 

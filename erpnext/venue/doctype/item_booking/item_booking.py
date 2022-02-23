@@ -2,13 +2,12 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate, get_time, now, now_datetime, cint, get_datetime, time_diff_in_minutes, flt, add_to_date, fmt_money, add_days, date_diff
 import datetime
-from datetime import timedelta, date
+from datetime import timedelta
 import calendar
 import json
 from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation
@@ -23,6 +22,7 @@ from frappe.integrations.doctype.google_calendar.google_calendar import get_goog
 from googleapiclient.errors import HttpError
 from frappe.desk.calendar import process_recurring_events
 from erpnext.venue.utils import get_linked_customers
+from erpnext.setup.utils import get_exchange_rate
 
 class ItemBooking(Document):
 	def before_insert(self):

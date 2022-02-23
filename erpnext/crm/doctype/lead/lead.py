@@ -2,10 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 
-
 import frappe
-from erpnext.accounts.party import set_taxes
-from erpnext.controllers.selling_controller import SellingController
 from frappe import _
 from frappe.contacts.address_and_contact import load_address_and_contact
 from frappe.email.inbox import link_communication_to_document
@@ -87,6 +84,16 @@ class Lead(SellingController):
 			})
 			self.contact_doc.save()
 
+	def set_prev(self):
+		if self.is_new():
+			self._prev = frappe._dict({
+				"contact_date": None,
+				"ends_on": None,
+				"contact_by": None
+			})
+		else:
+			self._prev = frappe.db.get_value("Lead", self.name, ["contact_date", "ends_on", "contact_by"], as_dict=1)
+
 	def add_calendar_event(self, opts=None, force=False):
 		if frappe.db.get_single_value('CRM Settings', 'create_event_on_next_contact_date'):
 			super(Lead, self).add_calendar_event({
@@ -134,6 +141,8 @@ class Lead(SellingController):
 				if to_remove:
 					linked_doc.remove(to_remove)
 					linked_doc.save(ignore_permissions=True)
+
+		self.delete_events()
 
 	def has_customer(self):
 		return frappe.db.get_value("Customer", {"lead_name": self.name})
@@ -205,7 +214,6 @@ class Lead(SellingController):
 			contact.insert(ignore_permissions=True)
 
 			return contact
-
 
 @frappe.whitelist()
 def make_customer(source_name, target_doc=None):

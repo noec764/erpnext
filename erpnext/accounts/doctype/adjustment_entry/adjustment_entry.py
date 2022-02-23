@@ -5,9 +5,10 @@
 from collections import defaultdict
 import datetime
 import frappe
+from frappe import _
 from frappe.model.document import Document
-from frappe.utils import date_diff, add_days, month_diff, getdate, flt, add_to_date, nowdate
-from erpnext.accounts.utils import get_fiscal_years, validate_fiscal_year, get_account_currency
+from frappe.utils import date_diff, add_days, month_diff, getdate, flt, nowdate, format_date
+from erpnext.accounts.utils import get_fiscal_years
 from erpnext.accounts.general_ledger import (validate_accounting_period, check_freezing_date,
 	get_accounting_journal, make_entry, make_reverse_gl_entries)
 
@@ -87,7 +88,7 @@ class AdjustmentEntry(Document):
 		fiscal_years = get_fiscal_years(self.posting_date, company=self.company)
 		if len(fiscal_years) > 1:
 			frappe.throw(_("Multiple fiscal years exist for the date {0}. Please set company in Fiscal Year").format(
-				formatdate(self.posting_date)))
+				format_date(self.posting_date)))
 		else:
 			fiscal_year = fiscal_years[0][0]
 

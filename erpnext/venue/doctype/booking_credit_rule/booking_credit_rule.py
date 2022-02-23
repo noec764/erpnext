@@ -328,7 +328,7 @@ class RuleProcessor:
 	def apply_custom_rules(self):
 		booking_calendar = None
 		if self.days > 1:
-			calendar_uom = (getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None) or frappe.db.get_single_value("Venue Settings", "minute_uom")
+			calendar_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
 			booking_calendar = get_item_calendar(self.item, calendar_uom)
 			if booking_calendar:
 				for d in range(self.days):

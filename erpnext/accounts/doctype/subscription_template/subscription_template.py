@@ -105,10 +105,14 @@ def make_subscription_from_sales_order_item(doc, method):
 	for item in doc.get("items"):
 		subscription_template = frappe.get_cached_value("Item", item.get("item_code"), "subscription_template")
 		if subscription_template:
-			frappe.get_doc("Subscription Template", subscription_template).make_subscription(**{
+			subscription = frappe.get_doc("Subscription Template", subscription_template).make_subscription(**{
 				"company": doc.company,
 				"customer": doc.customer,
 				"sales_order_item": item.name,
 				"start_date": item.delivery_date,
 				"ignore_permissions": True
 			})
+
+			doc.subscription = subscription.name
+			doc.add_subscription_event()
+			frappe.db.set_value(doc.doctype, doc.name, "subscription", subscription.name)

@@ -1,7 +1,7 @@
 import inspect
 import frappe
 
-__version__ = '2.8.3'
+__version__ = '2.9.1'
 
 def get_default_company(user=None):
 	'''Get default company for user'''

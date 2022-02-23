@@ -6,7 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint, fmt_money, getdate, nowdate, get_datetime, flt
 from frappe.integrations.utils import get_gateway_controller
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import (StripeCustomer, 
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import (StripeCustomer,
 	StripePaymentMethod, StripePaymentIntent, StripeInvoice, StripeSubscription)
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 
@@ -65,18 +65,19 @@ def make_payment_intent(payment_key, customer):
 			"payment_request": payment_request.name
 		}
 	)
+
 	return payment_intent
 
 @frappe.whitelist(allow_guest=True)
 def retry_invoice(**kwargs):
-	payment_request, payment_gateway = update_payment_method(**kwargs)
+	payment_request, payment_gateway = _update_payment_method(**kwargs)
 
 	invoice = StripeInvoice(payment_gateway).retrieve(kwargs.get("invoiceId"), expand=['payment_intent'])
 	return invoice
 
 @frappe.whitelist(allow_guest=True)
 def make_subscription(**kwargs):
-	payment_request, payment_gateway = update_payment_method(**kwargs)
+	payment_request, payment_gateway = _update_payment_method(**kwargs)
 
 	subscription = frappe.get_doc("Subscription", payment_request.is_linked_to_a_subscription())
 	items = [{'price': x.stripe_plan, 'quantity': x.qty} for x in subscription.plans if x.stripe_plan and x.status == "Active"]
@@ -107,7 +108,7 @@ def make_subscription(**kwargs):
 		**data
 	)
 
-def update_payment_method(**kwargs):
+def _update_payment_method(**kwargs):
 	payment_request = frappe.get_doc("Payment Request", {"payment_key": kwargs.get("payment_key")})
 	gateway_controller = get_gateway_controller("Payment Request", payment_request.name)
 	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
@@ -120,3 +121,7 @@ def update_payment_method(**kwargs):
 	)
 
 	return payment_request, payment_gateway
+
+@frappe.whitelist(allow_guest=True)
+def update_payment_method(**kwargs):
+	_update_payment_method(**kwargs)

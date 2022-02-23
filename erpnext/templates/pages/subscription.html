@@ -99,7 +99,6 @@ frappe.boot = {
 		new frappe.confirm(__('Cancel this subscription at the end of the current billing period ?'), function() {
 			return frappe.call("erpnext.templates.pages.subscription.cancel_subscription", {subscription: "{{ doc.name }}" })
 			.then(r => {
-				console.log(r)
 				if (r && r.message) {
 					frappe.show_alert({message: __("Subscription cancelled"), indicator: "green"})
 					location.reload()

@@ -18,7 +18,7 @@ def get_context(context):
 	context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
 	context.next_invoice_date = nowdate()
 	context.subscription_plans = get_subscription_plans(context.doc.customer)
-	context.payment_requests = get_open_payment_requests_for_subscription()
+	context.payment_requests = get_open_payment_requests_for_subscription(frappe.form_dict.name)
 
 	if not cint(frappe.db.get_single_value("Shopping Cart Settings", "enabled")) \
 		or frappe.session.user == "Guest":

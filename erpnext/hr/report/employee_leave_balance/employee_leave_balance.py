@@ -3,7 +3,6 @@
 
 
 import frappe
-from frappe.utils import flt, add_days
 from frappe import _
 from erpnext.hr.doctype.leave_application.leave_application import get_leaves_for_period, get_leave_balance_on
 from itertools import groupby
@@ -105,7 +104,7 @@ def get_data(filters):
 				new_allocation, expired_leaves = get_allocated_and_expired_leaves(filters.from_date, filters.to_date, employee.name, leave_type)
 
 
-				opening = get_leave_balance_on(employee.name, leave_type, add_days(filters.from_date, -1), filters.from_date, end_of_day_balance=True) #allocation boundary condition
+				opening = get_leave_balance_on(employee.name, leave_type, add_days(filters.from_date, -1)) #allocation boundary condition
 
 				row.leaves_allocated = new_allocation
 				row.leaves_expired = expired_leaves - leaves_taken if expired_leaves - leaves_taken > 0 else 0

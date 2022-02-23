@@ -7,6 +7,7 @@ import erpnext
 from frappe import _
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, flt
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
+from erpnext.controllers.accounts_controller import add_taxes_from_tax_template
 
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
@@ -47,23 +48,6 @@ class SubscriptionTransactionBase:
 			document.shipping_rule = self.subscription.shipping_rule
 			document.apply_shipping_rule()
 
-		# Taxes
-		if self.subscription.tax_template:
-			document.taxes_and_charges = self.subscription.tax_template
-		else:
-			from erpnext.accounts.party import set_taxes
-			document.taxes_and_charges = set_taxes(
-				party=self.subscription.customer,
-				party_type="Customer",
-				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
-				company=self.subscription.company,
-				customer_group=frappe.db.get_value("Customer", self.subscription.customer, "customer_group"),
-				tax_category=document.tax_category,
-				billing_address=document.customer_address,
-				shipping_address=document.shipping_address_name
-			)
-		#document.append_taxes_from_master()
-
 		self.add_due_date(document)
 
 		# Discounts
@@ -84,6 +68,31 @@ class SubscriptionTransactionBase:
 			from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import get_terms_and_conditions
 			document.tc_name = self.subscription.terms_and_conditions
 			document.terms = get_terms_and_conditions(self.subscription.terms_and_conditions, document.__dict__)
+
+		document.set_missing_values()
+
+		for item in document.items:
+			add_taxes_from_tax_template(item, document)
+
+		# Taxes
+		if self.subscription.tax_template:
+			document.taxes = []
+			document.taxes_and_charges = self.subscription.tax_template
+		elif not document.taxes:
+			from erpnext.accounts.party import set_taxes
+			frappe.form_dict["doctype"] = document.doctype
+			document.taxes_and_charges = set_taxes(
+				party=self.subscription.customer,
+				party_type="Customer",
+				posting_date=document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date,
+				company=self.subscription.company,
+				customer_group=frappe.db.get_value("Customer", self.subscription.customer, "customer_group"),
+				tax_category=document.tax_category,
+				billing_address=document.customer_address,
+				shipping_address=document.shipping_address_name
+			)
+
+		document.set_missing_values()
 
 		return document
 
@@ -150,7 +159,7 @@ class SubscriptionTransactionBase:
 	def get_prorata_factor(self):
 		prorate = cint(self.subscription.prorate_last_invoice) and (self.end_date == self.subscription.cancellation_date)
 		consumed = flt(date_diff(self.subscription.cancellation_date, self.start_date) + 1)
-		plan_days = flt(date_diff(self.end_date, self.start_date) + 1)
+		plan_days = flt(date_diff(self.end_date, self.start_date) + 1) or 1
 		prorata_factor = consumed / plan_days
 
 		return prorata_factor if prorate else 1
@@ -298,9 +307,7 @@ class SubscriptionPaymentRequestGenerator:
 				frappe.flags.mute_gateways_validation = False
 
 				if (
-					not not frappe.conf.mute_payment_gateways
-					and self.subscription.payment_gateway
-					and payment_request.get("payment_gateway_account")
+					not frappe.conf.mute_payment_gateways
 					and float(payment_request.get("grand_total")) > 0
 					and payment_request_document.check_if_immediate_payment_is_autorized()
 				):
@@ -323,16 +330,22 @@ class SubscriptionPaymentRequestGenerator:
 
 	def create_payment_request(self, submit=False):
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
-		sales_invoice = self.invoice
-		if not sales_invoice:
-			current_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
-			if current_invoices:
-				sales_invoice = current_invoices[0].get("name")
+		link_dt = "Sales Invoice"
+		link_dn = self.invoice
+		if not link_dn:
+			current_orders = SubscriptionPeriod(self.subscription).get_current_documents("Sales Order")
+			if current_orders:
+				link_dt = "Sales Order"
+				link_dn = current_orders[0].get("name")
+			else:
+				current_invoices = SubscriptionPeriod(self.subscription).get_current_documents("Sales Invoice")
+				if current_invoices:
+					link_dn = current_invoices[0].get("name")
 
 		pr = frappe.get_doc(
 			make_payment_request(**{
-				"dt": "Sales Invoice",
-				"dn": sales_invoice,
+				"dt": link_dt,
+				"dn": link_dn,
 				"subscription": self.subscription.name,
 				"party_type": "Customer",
 				"party": self.subscription.customer,

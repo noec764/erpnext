@@ -76,5 +76,13 @@
 	box-shadow: none;
 }
 
+.subscription-list {
+	display: flex;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: auto;
+	grid-gap: 1rem;
+}
+
 @import "erpnext/public/scss/shopping_cart";
 @import "erpnext/public/scss/portal";

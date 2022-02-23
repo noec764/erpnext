@@ -510,7 +510,7 @@ def _get_item_tax_template(args, taxes, out=None, for_validate=False):
 	for tax in taxes:
 		tax_company, applicable_for = frappe.get_value("Item Tax Template", tax.item_tax_template, ['company', 'applicable_for'])
 		transaction_type = "Sales" if args.get("doctype") in sales_doctypes else ("Purchases" if args.get("doctype") in purchase_doctypes else None)
-		if transaction_type and applicable_for not in (None, transaction_type):
+		if transaction_type and applicable_for not in (None, "", transaction_type):
 			continue
 
 		if tax_company == args['company']:

@@ -22,7 +22,6 @@ class WebhooksController():
 		self.subscription = None
 		self.sales_invoice = None
 		self.sales_order = None
-		self.period = {}
 		self.event_map = {}
 		self.status_map = {}
 		self.make_sales_invoice = False
@@ -50,13 +49,8 @@ class WebhooksController():
 
 		if reference_doc.doctype == "Subscription" and not self.subscription:
 			self.subscription = reference_doc
-			if self.payment_request:
-				self.period = frappe.db.get_value("Subscription Event", dict(
-					event_type="Payment request created",
-					subscription=self.subscription.name,
-					document_type="Payment Request",
-					document_name=self.payment_request.name
-				), ["period_start", "period_end"], as_dict=True)
+		elif self.payment_request and self.payment_request.subscription:
+			self.subscription = frappe.get_doc("Subscription", self.payment_request.subscription)
 
 		if reference_doc.doctype == "Sales Invoice" and not self.sales_invoice:
 			self.sales_invoice = reference_doc
@@ -72,16 +66,18 @@ class WebhooksController():
 			if self.payment_request and not self.subscription:
 				payment_entry = self.payment_request.run_method("create_payment_entry", submit=False)
 				payment_entry.reference_no = reference
+				payment_entry.reference_date = nowdate()
 				payment_entry.payment_request = self.payment_request.name
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
-			# For compatibility
-			# All new request should contain a payment_request key in their metadata or provide a way to obtain it in the handler (for subscriptions)
 			elif self.metadata.get("reference_doctype") in ("Sales Order", "Sales Invoice"):
+				frappe.flags.ignore_account_permission = True
 				payment_entry = get_payment_entry(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
+				frappe.flags.ignore_account_permission = False
 				payment_entry.reference_no = reference
+				payment_entry.reference_date = nowdate()
 				payment_entry.payment_request = self.payment_request.name if self.payment_request else None
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
@@ -90,6 +86,7 @@ class WebhooksController():
 			elif self.subscription:
 				payment_entry = self.subscription.run_method("create_payment")
 				payment_entry.reference_no = reference
+				payment_entry.reference_date = nowdate()
 				payment_entry.subscription = self.subscription.name
 				payment_entry.insert(ignore_permissions=True, ignore_mandatory=True)
 				if self.payment_request:
@@ -100,15 +97,15 @@ class WebhooksController():
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
-				if self.payment_request and self.payment_request.payment_gateway != self.subscription.payment_gateway:
-					self.subscription.db_set("payment_gateway", self.payment_request.payment_gateway)
-
 			else:
 				self.set_as_failed(_("The reference doctype should be a Payment Request, a Sales Invoice, a Sales Order or a Subscription"))
 		else:
 			payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=reference))
 			self.set_references(payment_entry.doctype, payment_entry.name)
 			self.set_as_completed()
+
+		if self.subscription and self.payment_request and self.payment_request.payment_gateway != self.subscription.payment_gateway:
+			self.subscription.db_set("payment_gateway", self.payment_request.payment_gateway)
 
 	def submit_payment(self, reference=None):
 		if not reference:

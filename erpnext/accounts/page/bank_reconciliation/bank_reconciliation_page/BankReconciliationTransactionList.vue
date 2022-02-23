@@ -66,7 +66,6 @@
 		<div class="text-center document-options">
 			<div class="btn-group" role="group" aria-label="Bank Transactions Options">
 				<button type="button" class="btn btn-default" @click="auto_reconciliation">{{ __("Automatic reconciliation") }}</button>
-				<button v-if="stripe_transactions.length" type="button" class="btn btn-default" @click="reconcile_stripe">{{ __("Reconcile Stripe Transactions") }}</button>
 			</div>
 		</div>
 	</div>
@@ -123,13 +122,6 @@ export default {
 				amount: transaction.unallocated_amount,
 				link: `/app/Form/Bank Transaction/${transaction.name}`
 			}))
-		},
-		stripe_transactions() {
-			return this.transactions
-				.filter(f => f.description&&f.description.toLowerCase().includes("stripe"))
-				.map(transaction => ({...transaction,
-					amount: transaction.credit > 0 ? transaction.unallocated_amount: -transaction.unallocated_amount
-				}))
 		}
 	},
 	mounted() {
@@ -186,14 +178,6 @@ export default {
 			this.list_filter = filter.value;
 			this.get_transaction_list(true)
 		},
-		reconcile_stripe: function() {
-			frappe.xcall('erpnext.accounts.page.bank_reconciliation.stripe_reconciliation.reconcile_stripe_payouts',
-				{bank_transactions: this.stripe_transactions}
-			).then((result) => {
-				this.get_transaction_list(true)
-				frappe.show_alert({message: __(`Stripe transactions reconciliation in progress`), indicator: "green"})
-			})
-		},
 		auto_reconciliation: function() {
 			frappe.xcall('erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation.auto_bank_reconciliation',
 				{bank_transactions: this.mapped_transactions}
@@ -203,7 +187,7 @@ export default {
 			})
 		},
 	}
-	
+
 }
 </script>
 
