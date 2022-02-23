@@ -295,6 +295,7 @@ def validate_party_gle_currency(party_type, party, company, party_account_curren
 			.format(party_type, party, existing_gle_currency), InvalidAccountCurrency)
 
 def validate_party_accounts(doc):
+	from erpnext.controllers.accounts_controller import validate_account_head
 	companies = []
 
 	for account in doc.get("accounts"):
@@ -317,6 +318,9 @@ def validate_party_accounts(doc):
 		if doc.get("default_currency") and party_account_currency and company_default_currency:
 			if doc.default_currency != party_account_currency and doc.default_currency != company_default_currency:
 				frappe.throw(_("Billing currency must be equal to either default company's currency or party account currency"))
+
+		# validate if account is mapped for same company
+		validate_account_head(account.idx, account.account, account.company)
 
 
 @frappe.whitelist()
