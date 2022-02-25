@@ -57,15 +57,19 @@ class TestShoppingCart(unittest.TestCase):
 		return quotation
 
 	def test_get_cart_customer(self):
+		def validate_quotation():
+			# test if quotation with customer is fetched
+			quotation = _get_cart_quotation()
+			self.assertEqual(quotation.quotation_to, "Customer")
+			self.assertEqual(quotation.party_name, "_Test Customer")
+			self.assertEqual(quotation.contact_email, frappe.session.user)
+			return quotation
+
+		self.login_as_customer("test_contact_two_customer@example.com", "_Test Contact 2 For _Test Customer")
+		validate_quotation()
+
 		self.login_as_customer()
-
-		# test if quotation with customer is fetched
-		quotation = _get_cart_quotation()
-		self.assertEqual(quotation.quotation_to, "Customer")
-		self.assertEqual(quotation.party_name, "_Test Customer")
-		self.assertEqual(quotation.contact_email, frappe.session.user)
-
-		return quotation
+		quotation = validate_quotation()
 
 	def test_add_to_cart(self):
 		self.login_as_customer()
@@ -254,10 +258,9 @@ class TestShoppingCart(unittest.TestCase):
 		self.create_user_if_not_exists("test_cart_user@example.com")
 		frappe.set_user("test_cart_user@example.com")
 
-	def login_as_customer(self):
-		self.create_user_if_not_exists("test_contact_customer@example.com",
-			"_Test Contact For _Test Customer")
-		frappe.set_user("test_contact_customer@example.com")
+	def login_as_customer(self, email="test_contact_customer@example.com", name="_Test Contact For _Test Customer"):
+		self.create_user_if_not_exists(email, name)
+		frappe.set_user(email)
 
 	def clear_existing_quotations(self):
 		quotations = frappe.get_all("Quotation", filters={
