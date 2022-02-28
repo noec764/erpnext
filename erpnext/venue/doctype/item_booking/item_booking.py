@@ -79,7 +79,7 @@ class ItemBooking(Document):
 		elif overlaps and len(overlaps) >= cint(simultaneous_bookings_allowed) and no_overlap_per_item:
 			frappe.throw(_("The maximum number of simultaneous bookings allowed for this item has been reached."))
 
-		elif overlaps:
+		elif overlaps and not simultaneous_bookings_allowed:
 			frappe.publish_realtime("booking_overlap")
 
 	def set_title(self):
@@ -975,7 +975,7 @@ def get_corresponding_party(user):
 
 	elif leads:
 		party_type = "Lead"
-		party_name = lead[0]
+		party_name = leads[0]
 
 	return party_type, party_name
 
@@ -990,3 +990,36 @@ def move_booking_with_event(doc, method):
 			doc.starts_on = add_days(booking.starts_on, days)
 			doc.ends_on = add_days(booking.ends_on, days)
 			doc.save()
+
+@frappe.whitelist()
+def get_booking_count(item=None, starts_on=None, ends_on=None):
+	if not (item and starts_on and ends_on):
+		return
+
+	simultaneous_bookings_enabled = frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking")
+	slots_left = 0
+
+	if simultaneous_bookings_enabled:
+		item_doc = frappe.get_doc("Item", item)
+		events = _get_events(getdate(starts_on), getdate(ends_on), item_doc)
+		timeslot = (get_datetime(starts_on), get_datetime(ends_on))
+		slots_left = cint(item_doc.get("simultaneous_bookings_allowed")) - get_simultaneaous_bookings(events, timeslot, item_doc.get("simultaneous_bookings_allowed"))
+
+	return slots_left
+
+def get_simultaneaous_bookings(scheduled_items, timeslot, simultaneous_bookings=None):
+	import itertools
+	from operator import itemgetter
+
+	count = 0
+	if cint(simultaneous_bookings) > 1:
+		sorted_schedule = sorted(scheduled_items, key=itemgetter('starts_on'))
+		for key, group in itertools.groupby(sorted_schedule, key=lambda x: x['starts_on']):
+			group_count = 0
+			for slot in group:
+				if get_datetime(timeslot[1]) > slot.get("starts_on") and get_datetime(timeslot[0]) < slot.get("ends_on"):
+					group_count += 1
+
+			count = max(count, group_count)
+
+	return count

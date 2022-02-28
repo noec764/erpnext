@@ -6,7 +6,7 @@ frappe.ui.form.on('Item Booking', {
 		frappe.realtime.on('booking_overlap', () => {
 			frappe.show_alert({
 				message: __("This item booking is overlapping with another item booking for the same item"),
-				indicator: orange
+				indicator: "orange"
 			})
 		})
 	},
@@ -94,6 +94,7 @@ frappe.ui.form.on('Item Booking', {
 		}
 
 		frm.trigger('add_repeat_text')
+		frm.trigger('get_booking_count')
 	},
 	add_repeat_text(frm) {
 		if (frm.doc.rrule) {
@@ -104,6 +105,7 @@ frappe.ui.form.on('Item Booking', {
 		frm.trigger('get_google_calendar_and_color');
 	},
 	item(frm) {
+		frm.trigger('get_booking_count')
 		frm.trigger('get_google_calendar_and_color');
 	},
 	get_google_calendar_and_color(frm) {
@@ -151,6 +153,24 @@ frappe.ui.form.on('Item Booking', {
 				frm.set_df_property(field.df.fieldname, "read_only", "1");
 			});
 		frm.disable_save();
+	},
+	get_booking_count: function(frm) {
+		frappe.xcall("erpnext.venue.doctype.item_booking.item_booking.get_booking_count", {
+			item: frm.doc.item,
+			starts_on: frm.doc.starts_on,
+			ends_on: frm.doc.ends_on,
+		}).then(r => {
+			frm.set_intro()
+			if (r) {
+				frm.set_intro(__("{0} slots are still available for this item and this time slot.", [r]))
+			}
+		});
+	},
+	starts_on: function(frm) {
+		frm.trigger('get_booking_count')
+	},
+	ends_on: function(frm) {
+		frm.trigger('get_booking_count')
 	}
 });
 
