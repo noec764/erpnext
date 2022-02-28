@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 
-
 import frappe, os, json
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
@@ -54,10 +53,7 @@ def create_hsn_codes(data, code_field):
 		hsn_code.description = d["description"]
 		hsn_code.hsn_code = d[code_field]
 		hsn_code.name = d[code_field]
-		try:
-			hsn_code.db_insert()
-		except frappe.DuplicateEntryError:
-			pass
+		hsn_code.db_insert(ignore_if_duplicate=True)
 
 def add_custom_roles_for_reports():
 	for report_name in ('GST Sales Register', 'GST Purchase Register',
@@ -569,15 +565,6 @@ def get_custom_fields():
 			dict(fieldname='hra_column_break', fieldtype='Column Break', insert_after='hra_component'),
 			dict(fieldname='arrear_component', label='Arrear Component',
 				fieldtype='Link', options='Salary Component', insert_after='hra_column_break'),
-			dict(fieldname='non_profit_section', label='Non Profit Settings',
-				fieldtype='Section Break', insert_after='arrear_component', collapsible=1),
-			dict(fieldname='company_80g_number', label='80G Number',
-				fieldtype='Data', insert_after='non_profit_section'),
-			dict(fieldname='with_effect_from', label='80G With Effect From',
-				fieldtype='Date', insert_after='company_80g_number'),
-			dict(fieldname='non_profit_column_break', fieldtype='Column Break', insert_after='with_effect_from'),
-			dict(fieldname='pan_details', label='PAN Number',
-				fieldtype='Data', insert_after='non_profit_column_break')
 		],
 		'Employee Tax Exemption Declaration':[
 			dict(fieldname='hra_section', label='HRA Exemption',
