@@ -2,13 +2,15 @@
 # License: GNU General Public License v3. See license.txt
 
 
-import frappe, unittest
+import frappe
+from frappe.permissions import add_user_permission, remove_user_permission
+from frappe.tests.utils import FrappeTestCase, change_settings
 import frappe.defaults
 from frappe.utils import flt, nowdate, nowtime
+
 from erpnext.stock.doctype.serial_no.serial_no import *
 from erpnext.stock.doctype.stock_ledger_entry.stock_ledger_entry import StockFreezeError
 from erpnext.stock.stock_ledger import get_previous_sle
-from frappe.permissions import add_user_permission, remove_user_permission
 from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import create_stock_reconciliation
 from erpnext.stock.doctype.item.test_item import set_item_variant_settings, make_item_variant, create_item
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
@@ -19,7 +21,6 @@ from erpnext.stock.doctype.stock_entry.stock_entry import (
 )
 from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import OpeningEntryAccountError
 from erpnext.stock.stock_ledger import NegativeStockError, get_previous_sle
-from erpnext.tests.utils import ERPNextTestCase, change_settings
 
 def get_sle(**args):
 	condition, values = "", []
@@ -32,7 +33,7 @@ def get_sle(**args):
 		order by timestamp(posting_date, posting_time) desc, creation desc limit 1"""% condition,
 		values, as_dict=1)
 
-class TestStockEntry(ERPNextTestCase):
+class TestStockEntry(FrappeTestCase):
 	def tearDown(self):
 		frappe.db.rollback()
 		frappe.set_user("Administrator")

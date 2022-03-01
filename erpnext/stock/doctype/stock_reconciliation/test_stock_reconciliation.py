@@ -4,8 +4,8 @@
 # ERPNext - web based ERP (http://erpnext.com)
 # For license information, please see license.txt
 
-
 import frappe
+from frappe.tests.utils import FrappeTestCase, change_settings
 from frappe.utils import add_days, cstr, flt, nowdate, nowtime, random_string
 
 from erpnext.accounts.utils import get_stock_and_account_balance
@@ -19,10 +19,9 @@ from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import (
 from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 from erpnext.stock.stock_ledger import get_previous_sle, update_entries_after
 from erpnext.stock.utils import get_incoming_rate, get_stock_value_on, get_valuation_method
-from erpnext.tests.utils import ERPNextTestCase, change_settings
 
 
-class TestStockReconciliation(ERPNextTestCase):
+class TestStockReconciliation(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		create_batch_or_serial_no_items()

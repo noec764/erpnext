@@ -4,12 +4,12 @@
 
 import frappe
 from frappe.utils import flt, add_days, nowdate, add_months
-from erpnext.tests.utils import ERPNextTestCase
+from frappe.tests.utils import FrappeTestCase
 
 test_dependencies = ["Product Bundle"]
 
 
-class TestQuotation(ERPNextTestCase):
+class TestQuotation(FrappeTestCase):
 	def test_make_quotation_without_terms(self):
 		quotation = make_quotation(do_not_save=1)
 		self.assertFalse(quotation.get('payment_schedule'))

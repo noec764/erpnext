@@ -3,8 +3,8 @@
 
 # For license information, please see license.txt
 
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext.stock.doctype.stock_entry.test_stock_entry import make_serialized_item
 from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_purchase_receipt
@@ -18,9 +18,8 @@ test_dependencies = ["Item"]
 test_records = frappe.get_test_records('Serial No')
 
 from erpnext.stock.doctype.serial_no.serial_no import *
-from erpnext.tests.utils import ERPNextTestCase
 
-class TestSerialNo(ERPNextTestCase):
+class TestSerialNo(FrappeTestCase):
 
 	def tearDown(self):
 		frappe.db.rollback()

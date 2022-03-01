@@ -4,10 +4,9 @@
 
 
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
-from erpnext.tests.utils import ERPNextTestCase
-
-class TestStockSettings(ERPNextTestCase):
+class TestStockSettings(FrappeTestCase):
 	def setUp(self):
 		super().setUp()
 		frappe.db.set_value("Stock Settings", None, "clean_description_html", 0)

@@ -2,28 +2,43 @@
 # License: GNU General Public License v3. See license.txt
 
 
-import frappe
-import json
-import frappe.defaults
-from frappe.utils import nowdate, nowtime, cstr, flt
-from erpnext.stock.stock_ledger import get_previous_sle
-from erpnext.accounts.utils import get_balance_on
-from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import get_gl_entries
-from erpnext.stock.doctype.delivery_note.delivery_note import make_sales_invoice, make_delivery_trip
-from erpnext.stock.doctype.stock_entry.test_stock_entry \
-	import make_stock_entry, make_serialized_item, get_qty_after_transaction
-from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos, SerialNoWarehouseError
-from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation \
-	import create_stock_reconciliation, set_valuation_method
-from erpnext.selling.doctype.sales_order.test_sales_order \
-	import make_sales_order, create_dn_against_so, automatically_fetch_payment_terms, compare_payment_schedules
-from erpnext.accounts.doctype.account.test_account import get_inventory_account
-from erpnext.stock.doctype.warehouse.test_warehouse import get_warehouse
-from erpnext.stock.doctype.item.test_item import make_item
-from erpnext.selling.doctype.product_bundle.test_product_bundle import make_product_bundle
-from erpnext.tests.utils import ERPNextTestCase
 
-class TestDeliveryNote(ERPNextTestCase):
+import json
+
+import frappe
+from frappe.tests.utils import FrappeTestCase
+from frappe.utils import cstr, flt, nowdate, nowtime
+
+from erpnext.accounts.doctype.account.test_account import get_inventory_account
+from erpnext.accounts.utils import get_balance_on
+from erpnext.selling.doctype.product_bundle.test_product_bundle import make_product_bundle
+from erpnext.selling.doctype.sales_order.test_sales_order import (
+	automatically_fetch_payment_terms,
+	compare_payment_schedules,
+	create_dn_against_so,
+	make_sales_order,
+)
+from erpnext.stock.doctype.delivery_note.delivery_note import (
+	make_delivery_trip,
+	make_sales_invoice,
+)
+from erpnext.stock.doctype.item.test_item import make_item
+from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import get_gl_entries
+from erpnext.stock.doctype.serial_no.serial_no import SerialNoWarehouseError, get_serial_nos
+from erpnext.stock.doctype.stock_entry.test_stock_entry import (
+	get_qty_after_transaction,
+	make_serialized_item,
+	make_stock_entry,
+)
+from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import (
+	create_stock_reconciliation,
+	set_valuation_method,
+)
+from erpnext.stock.doctype.warehouse.test_warehouse import get_warehouse
+from erpnext.stock.stock_ledger import get_previous_sle
+
+
+class TestDeliveryNote(FrappeTestCase):
 	def test_over_billing_against_dn(self):
 		frappe.db.set_value("Stock Settings", None, "allow_negative_stock", 1)
 
@@ -53,9 +68,7 @@ class TestDeliveryNote(ERPNextTestCase):
 
 		sle = frappe.get_doc("Stock Ledger Entry", {"voucher_type": "Delivery Note", "voucher_no": dn.name})
 
-		self.assertEqual(sle.stock_value_difference, flt(-1*stock_queue[0][1]))
-
-		self.assertEqual(sle.stock_value_difference, -1*stock_queue[0][1])
+		self.assertEqual(sle.stock_value_difference, flt(-1*stock_queue[0][1], 2))
 
 		self.assertFalse(get_gl_entries("Delivery Note", dn.name))
 
@@ -244,7 +257,7 @@ class TestDeliveryNote(ERPNextTestCase):
 
 		self.assertEqual(gle_warehouse_amount, stock_value_difference)
 
-	# hack because new_doc isn't considering is_return portion of status_updater
+		# hack because new_doc isn't considering is_return portion of status_updater
 		returned = frappe.get_doc("Delivery Note", dn1.name)
 		returned.update_prevdoc_status()
 		dn.load_from_db()
@@ -433,6 +446,7 @@ class TestDeliveryNote(ERPNextTestCase):
 
 		company = frappe.db.get_value('Warehouse', 'Stores - TCP1', 'company')
 		customer_name = create_internal_customer(
+			customer_name="_Test Internal Customer 2",
 			represents_company="_Test Company with perpetual inventory",
 			allowed_to_interact_with="_Test Company with perpetual inventory"
 		)
@@ -538,7 +552,10 @@ class TestDeliveryNote(ERPNextTestCase):
 
 	def test_dn_billing_status_case2(self):
 		# SO -> SI and SO -> DN1, DN2
-		from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note, make_sales_invoice
+		from erpnext.selling.doctype.sales_order.sales_order import (
+			make_delivery_note,
+			make_sales_invoice,
+		)
 
 		so = make_sales_order()
 
@@ -577,8 +594,10 @@ class TestDeliveryNote(ERPNextTestCase):
 
 	def test_dn_billing_status_case3(self):
 		# SO -> DN1 -> SI and SO -> SI and SO -> DN2
-		from erpnext.selling.doctype.sales_order.sales_order \
-			import make_delivery_note, make_sales_invoice as make_sales_invoice_from_so
+		from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note
+		from erpnext.selling.doctype.sales_order.sales_order import (
+			make_sales_invoice as make_sales_invoice_from_so,
+		)
 		frappe.db.set_value("Stock Settings", None, "allow_negative_stock", 1)
 
 		so = make_sales_order()
@@ -624,8 +643,8 @@ class TestDeliveryNote(ERPNextTestCase):
 
 	def test_dn_billing_status_case4(self):
 		# SO -> SI -> DN
-		from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 		from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_delivery_note
+		from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 
 		so = make_sales_order()
 
@@ -652,7 +671,6 @@ class TestDeliveryNote(ERPNextTestCase):
 
 	def test_delivery_note_with_cost_center(self):
 		from erpnext.accounts.doctype.cost_center.test_cost_center import create_cost_center
-
 		cost_center = "_Test Cost Center for BS Account - TCP1"
 		create_cost_center(cost_center_name="_Test Cost Center for BS Account", company="_Test Company with perpetual inventory")
 
@@ -757,6 +775,7 @@ class TestDeliveryNote(ERPNextTestCase):
 		self.assertEqual(si2.items[0].qty, 2)
 		self.assertEqual(si2.items[1].qty, 1)
 
+
 	def test_delivery_note_bundle_with_batched_item(self):
 		batched_bundle = make_item("_Test Batched bundle", {"is_stock_item": 0})
 		batched_item = make_item("_Test Batched Item",
@@ -775,7 +794,9 @@ class TestDeliveryNote(ERPNextTestCase):
 		self.assertTrue("TESTBATCH" in dn.packed_items[0].batch_no, "Batch number not added in packed item")
 
 	def test_payment_terms_are_fetched_when_creating_sales_invoice(self):
-		from erpnext.accounts.doctype.payment_entry.test_payment_entry import create_payment_terms_template
+		from erpnext.accounts.doctype.payment_entry.test_payment_entry import (
+			create_payment_terms_template,
+		)
 		from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 
 		automatically_fetch_payment_terms()

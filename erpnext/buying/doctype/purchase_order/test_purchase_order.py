@@ -1,13 +1,14 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import unittest
-import frappe
 import json
+
+import frappe
+from frappe.tests.utils import FrappeTestCase
 import frappe.defaults
-from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from frappe.utils import flt, add_days, nowdate, getdate
+
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.stock.doctype.item.test_item import make_item
 from erpnext.buying.doctype.purchase_order.purchase_order \
 	import (make_purchase_receipt, make_purchase_invoice as make_pi_from_po, make_rm_stock_entry as make_subcontract_transfer_entry)
@@ -21,7 +22,7 @@ from erpnext.manufacturing.doctype.blanket_order.test_blanket_order import make_
 
 from erpnext.stock.doctype.batch.test_batch import make_new_batch
 
-class TestPurchaseOrder(unittest.TestCase):
+class TestPurchaseOrder(FrappeTestCase):
 	def test_make_purchase_receipt(self):
 		po = create_purchase_order(do_not_submit=True)
 		self.assertRaises(frappe.ValidationError, make_purchase_receipt, po.name)

@@ -6,6 +6,8 @@ import frappe
 import frappe.permissions
 from frappe.utils import add_days, flt, getdate, nowdate, today
 from frappe.core.doctype.user_permission.test_user_permission import create_user
+from frappe.tests.utils import FrappeTestCase
+
 from erpnext.selling.doctype.sales_order.sales_order \
 	import make_material_request, make_delivery_note, make_sales_invoice, WarehouseRequired
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
@@ -21,9 +23,8 @@ from erpnext.maintenance.doctype.maintenance_schedule.test_maintenance_schedule 
 from erpnext.maintenance.doctype.maintenance_visit.test_maintenance_visit import (
 	make_maintenance_visit,
 )
-from erpnext.tests.utils import ERPNextTestCase
 
-class TestSalesOrder(ERPNextTestCase):
+class TestSalesOrder(FrappeTestCase):
 
 	@classmethod
 	def setUpClass(cls):
