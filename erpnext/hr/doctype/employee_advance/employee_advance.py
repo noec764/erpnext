@@ -1,15 +1,17 @@
-
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
-import frappe, erpnext
+import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.query_builder.functions import Sum
 from frappe.utils import flt, nowdate
+
+import erpnext
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
 from erpnext.hr.utils import validate_active_employee
+
 
 class EmployeeAdvanceOverPayment(frappe.ValidationError):
 	pass
@@ -25,19 +27,33 @@ class EmployeeAdvance(Document):
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ('GL Entry')
+		self.set_status(update=True)
 
-	def set_status(self):
+	def set_status(self, update=False):
+		precision = self.precision("paid_amount")
+		total_amount = flt(flt(self.claimed_amount) + flt(self.return_amount), precision)
+		status = None
+
 		if self.docstatus == 0:
-			self.status = "Draft"
-		if self.docstatus == 1:
-			if self.claimed_amount and flt(self.claimed_amount) == flt(self.paid_amount):
-				self.status = "Claimed"
-			elif self.paid_amount and self.advance_amount == flt(self.paid_amount):
-				self.status = "Paid"
+			status = "Draft"
+		elif self.docstatus == 1:
+			if flt(self.claimed_amount) > 0 and flt(self.claimed_amount, precision) == flt(self.paid_amount, precision):
+				status = "Claimed"
+			elif flt(self.return_amount) > 0 and flt(self.return_amount, precision) == flt(self.paid_amount, precision):
+				status = "Returned"
+			elif flt(self.claimed_amount) > 0 and (flt(self.return_amount) > 0) and total_amount == flt(self.paid_amount, precision):
+				status = "Partly Claimed and Returned"
+			elif flt(self.paid_amount) > 0 and flt(self.advance_amount, precision) == flt(self.paid_amount, precision):
+				status = "Paid"
 			else:
-				self.status = "Unpaid"
+				status = "Unpaid"
 		elif self.docstatus == 2:
-			self.status = "Cancelled"
+			status = "Cancelled"
+
+		if update:
+			self.db_set("status", status)
+		else:
+			self.status = status
 
 	def set_total_advance_paid(self):
 		gle = frappe.qb.DocType("GL Entry")
@@ -75,7 +91,7 @@ class EmployeeAdvance(Document):
 			return_amount = flt(return_amount) / flt(self.exchange_rate)
 
 		if flt(paid_amount) > self.advance_amount:
-			frappe.throw(_("Row #{0} Paid Amount cannot be greater than requested advance amount"),
+			frappe.throw(_("Row {0}# Paid Amount cannot be greater than requested advance amount"),
 				EmployeeAdvanceOverPayment)
 
 		if flt(return_amount) > self.paid_amount - self.claimed_amount:
@@ -83,9 +99,7 @@ class EmployeeAdvance(Document):
 
 		self.db_set("paid_amount", paid_amount)
 		self.db_set("return_amount", return_amount)
-		self.set_status()
-		frappe.db.set_value("Employee Advance", self.name , "status", self.status)
-
+		self.set_status(update=True)
 
 	def update_claimed_amount(self):
 		claimed_amount = frappe.db.sql("""
@@ -101,8 +115,8 @@ class EmployeeAdvance(Document):
 
 		frappe.db.set_value("Employee Advance", self.name, "claimed_amount", flt(claimed_amount))
 		self.reload()
-		self.set_status()
-		frappe.db.set_value("Employee Advance", self.name, "status", self.status)
+		self.set_status(update=True)
+
 
 @frappe.whitelist()
 def get_pending_amount(employee, posting_date):
@@ -220,7 +234,8 @@ def make_return_entry(employee, company, employee_advance_name, return_amount,  
 		'reference_name': employee_advance_name,
 		'party_type': 'Employee',
 		'party': employee,
-		'is_advance': 'Yes'
+		'is_advance': 'Yes',
+		'cost_center': erpnext.get_default_cost_center(company)
 	})
 
 	bank_amount = flt(return_amount) if bank_cash_account.account_currency==currency \
@@ -231,7 +246,8 @@ def make_return_entry(employee, company, employee_advance_name, return_amount,  
 		"debit_in_account_currency": bank_amount,
 		"account_currency": bank_cash_account.account_currency,
 		"account_type": bank_cash_account.account_type,
-		"exchange_rate": flt(exchange_rate) if bank_cash_account.account_currency == currency else 1
+		"exchange_rate": flt(exchange_rate) if bank_cash_account.account_currency == currency else 1,
+		"cost_center": erpnext.get_default_cost_center(company)
 	})
 
 	return je.as_dict()
