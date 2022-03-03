@@ -320,11 +320,10 @@ def get_due_date(posting_date, party_type, party, company=None, bill_date=None):
 	"""Get due date from `Payment Terms Template`"""
 	due_date = None
 	# default payment delay in days, set in selling settings
-	default_n_days = int(frappe.db.get_single_value('Selling Settings',
-			'default_due_days'))
+	default_payment_days = cint(frappe.db.get_single_value('Accounts Settings', 'default_payment_days'))
 	if (bill_date or posting_date) and party:
 		# default system payment delay applied when customer is added
-		due_date = add_days(posting_date, default_n_days)
+		due_date = add_days(bill_date or posting_date, default_payment_days)
 		template_name = get_payment_terms_template(party, party_type, company)
 
 		if template_name:
@@ -337,7 +336,7 @@ def get_due_date(posting_date, party_type, party, company=None, bill_date=None):
 					due_date = get_due_date_from_template(template_name, posting_date, bill_date).strftime("%Y-%m-%d")
 	# If due date is calculated from bill_date, check this condition
 	if getdate(due_date) < getdate(posting_date):
-		due_date = add_days(posting_date, default_n_days)
+		due_date = posting_date
 	return due_date
 
 def get_due_date_from_template(template_name, posting_date, bill_date):

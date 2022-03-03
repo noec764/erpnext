@@ -50,7 +50,10 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 
 		// Fetches the system default when due_date is empty
 		if (!doc.due_date){
-			this.frm.set_value("due_date", frappe.datetime.add_days(doc.posting_date, frappe.boot.sysdefaults.sales_invoice_due_date))
+			this.frm.set_value("due_date", frappe.datetime.add_days(
+				doc.posting_date, frappe.boot.sysdefaults.default_payment_days
+				)
+			)
 		}
 
 		if (this.frm.doc.is_return) {
