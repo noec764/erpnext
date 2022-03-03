@@ -26,6 +26,9 @@ def boot_session(bootinfo):
 		bootinfo.sysdefaults.quotation_valid_till = cint(frappe.db.get_single_value('Selling Settings',
 			'default_valid_till'))
 
+		bootinfo.sysdefaults.default_payment_days = cint(frappe.db.get_single_value('Accounts Settings',
+			'default_payment_days'))
+
 		bootinfo.sysdefaults.default_bank_account_name = frappe.db.get_value("Bank Account",
 			{"is_default": 1, "is_company_account": 1, "company": get_default_company()}, "name")
 
