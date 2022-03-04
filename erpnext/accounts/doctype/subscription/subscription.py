@@ -81,6 +81,9 @@ class Subscription(Document):
 			self.generate_sales_order()
 			SubscriptionStateManager(self).set_status()
 
+		# Update customer status
+		self.update_customer_status()
+
 	def process_active_subscription(self):
 		try:
 			self.generate_sales_order()
@@ -257,6 +260,31 @@ class Subscription(Document):
 	def link_sales_invoice(self, sales_invoice):
 		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
+	def update_customer_status(self):
+		# Customer status switches to "subscriber" when current subscription is any status but cancelled or on a
+		# trial period
+		if self.status not in {"Cancelled","Trial"}:
+			customer = frappe.get_doc('Customer', self.customer)
+			customer.status = "Subscriber"
+			customer.disabled = 0
+			customer.save()
+		else:
+			# Customer status switches back to "enabled" if current subscription status changes and
+			# no other active subscription exist
+			# Look for other subscriptions
+			subscription_list = frappe.db.get_list('Subscription',
+												   filters=[
+													   ['status', 'not in', {'Cancelled','Trial'}],
+													   ['name', '!=', self.name],
+												   ],
+												   fields=['name'],
+												   as_list=True
+												   )
+			# Customer status changes back to enabled only when there is no other subscription
+			if not len(subscription_list):
+				customer = frappe.get_doc('Customer', self.customer)
+				customer.status = "Enabled"
+				customer.save()
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
