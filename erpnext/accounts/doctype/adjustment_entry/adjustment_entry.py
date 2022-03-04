@@ -166,8 +166,8 @@ def get_documents(entry_type, date, company):
 
 	documents = [frappe._dict(line) for line in {tuple(document.items()) for document in documents}]
 
-	documents_list = ", ".join([f"'{x.document_name}'" for x in documents])
-	account_list = ", ".join([f"'{x.account}'" for x in documents])
+	documents_list = ", ".join([f"{frappe.db.escape(x.document_name)}" for x in documents])
+	account_list = ", ".join([f"{frappe.db.escape(x.account)}" for x in documents])
 
 	gl_entries = frappe.db.sql(f"""
 		SELECT account, debit, credit, voucher_type, voucher_no

@@ -505,7 +505,7 @@ def get_amount(ref_doc):
 	"""get amount based on doctype"""
 	dt = ref_doc.doctype
 	if dt == "Sales Order":
-		grand_total = flt(ref_doc.grand_total) - flt(ref_doc.advance_paid)
+		grand_total = flt(ref_doc.rounded_total or ref_doc.grand_total) - flt(ref_doc.advance_paid)
 
 	elif dt == "Sales Invoice":
 		if ref_doc.party_account_currency == ref_doc.currency:

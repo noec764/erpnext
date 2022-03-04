@@ -78,7 +78,9 @@ class WebhooksController():
 				frappe.flags.ignore_account_permission = False
 				payment_entry.reference_no = reference
 				payment_entry.reference_date = nowdate()
-				payment_entry.payment_request = self.payment_request.name if self.payment_request else None
+				if self.payment_request:
+					payment_entry.payment_request = self.payment_request.name
+					payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment")
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()

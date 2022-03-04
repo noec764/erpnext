@@ -19,7 +19,7 @@ frappe.ui.form.on('Social Media Post', {
 	refresh: function(frm){
 		if (frm.doc.docstatus === 1){
 			if (frm.doc.post_status != "Posted"){
-				add_post_btn(frm); 
+				add_post_btn(frm);
 			}
 			else if (frm.doc.post_status == "Posted"){
 				frm.set_df_property('sheduled_time', 'read_only', 1);
@@ -28,14 +28,14 @@ frappe.ui.form.on('Social Media Post', {
 			let html='';
 			if (frm.doc.twitter){
 				let color = frm.doc.twitter_post_id ? "green" : "red";
-				let status = frm.doc.twitter_post_id ? "Posted" : "Not Posted";
+				let status = frm.doc.twitter_post_id ? __("Posted") : __("Not Posted");
 				html += `<div class="col-xs-6">
-							<span class="indicator whitespace-nowrap ${color}"><span>Twitter : ${status} </span></span>	
+							<span class="indicator whitespace-nowrap ${color}"><span>Twitter : ${status} </span></span>
 						</div>` ;
 			}
 			if (frm.doc.linkedin){
 				let color = frm.doc.linkedin_post_id ? "green" : "red";
-				let status = frm.doc.linkedin_post_id ? "Posted" : "Not Posted";
+				let status = frm.doc.linkedin_post_id ? __("Posted") : __("Not Posted");
 				html += `<div class="col-xs-6">
 							<span class="indicator whitespace-nowrap ${color}"><span>LinkedIn : ${status} </span></span>
 						</div>` ;
@@ -46,7 +46,7 @@ frappe.ui.form.on('Social Media Post', {
 	}
 });
 var add_post_btn = function(frm){
-	frm.add_custom_button(('Post Now'), function(){
+	frm.add_custom_button((__('Post Now')), function(){
 		post(frm);
 	});
 }
@@ -63,5 +63,5 @@ var post = function(frm){
 			frappe.dom.unfreeze();
 		}
 	})
-	
+
 }
