@@ -10,7 +10,7 @@ from frappe.utils import get_url, call_hook_method, cint, flt, getdate, nowdate
 from frappe.integrations.utils import PaymentGatewayController, create_request_log, create_payment_gateway
 from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events import (StripeChargeWebhookHandler,
 	StripePaymentIntentWebhookHandler, StripeInvoiceWebhookHandler)
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice, StripeCustomer, StripePaymentIntent, StripeWebhookEndpoint
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePrice, StripeCustomer, StripePaymentIntent, StripeWebhookEndpoint, StripeInvoiceItem
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 import stripe
 
@@ -134,7 +134,10 @@ class StripeSettings(PaymentGatewayController):
 			prorate=kwargs.get("prorate", False)
 		)
 
-	def on_payment_request_submission(self, payment_request):
+	def can_make_immediate_payment(self, payment_request):
+		if self.subscription_cycle_on_stripe:
+			return False
+
 		customer = payment_request.get_customer()
 		stripe_customer_id = frappe.db.get_value("Integration References", dict(customer=customer, stripe_settings=self.name), "stripe_customer_id")
 

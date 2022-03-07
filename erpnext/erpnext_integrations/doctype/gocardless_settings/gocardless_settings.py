@@ -40,7 +40,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		create_payment_gateway('GoCardless-' + self.gateway_name, settings='GoCardLess Settings', controller=self.gateway_name)
 		call_hook_method('payment_gateway_enabled', gateway='GoCardless-' + self.gateway_name)
 
-	def on_payment_request_submission(self, payment_request):
+	def can_make_immediate_payment(self, payment_request):
 		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
 
 	def immediate_payment_processing(self, payment_request):

@@ -157,8 +157,8 @@ class PaymentRequest(Document):
 	def check_immediate_payment_for_gateway(self, gateway):
 		"""Returns a boolean"""
 		controller = get_payment_gateway_controller(gateway)
-		if hasattr(controller, 'on_payment_request_submission'):
-			return controller.on_payment_request_submission(self)
+		if hasattr(controller, 'can_make_immediate_payment'):
+			return controller.can_make_immediate_payment(self)
 
 		return False
 
