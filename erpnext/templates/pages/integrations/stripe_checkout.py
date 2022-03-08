@@ -1,6 +1,6 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
+# Copyright (c) 2022, Dokos SAS and Contributors
 # License: GNU General Public License v3. See license.txt
-from __future__ import unicode_literals
+
 from datetime import datetime
 import frappe
 from frappe import _
@@ -9,6 +9,9 @@ from frappe.integrations.utils import get_gateway_controller
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import (StripeCustomer,
 	StripePaymentMethod, StripePaymentIntent, StripeInvoice, StripeSubscription)
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
+
+expected_keys = ('amount', 'title', 'description', 'reference_doctype', 'reference_docname', 'webform',
+	'payer_name', 'payer_email', 'order_id', 'currency')
 
 def get_context(context):
 	context.no_cache = 1
@@ -38,6 +41,19 @@ def get_context(context):
 		context.payment_success_redirect = gateway_controller.redirect_url or "payment-success"
 		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "payment-failed"
 
+	elif not (set(expected_keys) - set(list(frappe.form_dict))):
+		for key in expected_keys:
+			context[key] = frappe.form_dict[key]
+
+		gateway_controller = frappe.get_doc("Stripe Settings", get_gateway_controller("Web Form", context.webform))
+		context.publishable_key = get_api_key(gateway_controller)
+		context.image = gateway_controller.header_img
+		context.is_subscription = 0
+		context.payment_success_redirect = gateway_controller.redirect_url or "payment-success"
+		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "payment-failed"
+		context.grand_total = context['amount']
+		context.amount = fmt_money(amount=context['amount'], currency=context['currency'])
+
 	else:
 		frappe.redirect_to_message(_('Invalid link'), _('This link is not valid.<br>Please contact us.'))
 		frappe.local.flags.redirect_location = frappe.local.response.location
@@ -50,20 +66,37 @@ def get_api_key(gateway_controller):
 	return gateway_controller.publishable_key
 
 @frappe.whitelist(allow_guest=True)
-def make_payment_intent(payment_key, customer):
-	payment_request = frappe.get_doc("Payment Request", {"payment_key": payment_key})
-	gateway_controller = get_gateway_controller("Payment Request", payment_request.name)
-	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
+def make_payment_intent(payment_key, customer=None, reference_doctype=None, reference_docname=None, webform=None, grand_total=None, currency=None):
+	if frappe.db.exists("Payment Request", {"payment_key": payment_key}):
+		payment_request = frappe.get_doc("Payment Request", {"payment_key": payment_key})
+		gateway_controller = get_gateway_controller("Payment Request", payment_request.name)
 
-	payment_intent = StripePaymentIntent(payment_gateway, payment_request).create(
-		amount=cint(flt(payment_request.grand_total) * 100),
-		currency=payment_request.currency,
-		customer=customer,
+	elif webform and reference_doctype and reference_docname:
+		payment_request = frappe._dict(
+			reference_doctype = reference_doctype,
+			reference_name = reference_docname,
+			grand_total = grand_total,
+			currency = currency,
+			name=f"{reference_doctype}-{reference_docname}"
+		)
+		gateway_controller = get_gateway_controller("Web Form", webform)
+
+	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
+	payment_intent_object = dict(
 		metadata={
 			"reference_doctype": payment_request.reference_doctype,
 			"reference_name": payment_request.reference_name,
 			"payment_request": payment_request.name
 		}
+	)
+
+	if customer:
+		payment_intent_object.update(dict(customer=customer))
+
+	payment_intent = StripePaymentIntent(payment_gateway, payment_request).create(
+		amount=cint(flt(payment_request.grand_total) * 100),
+		currency=payment_request.currency,
+		**payment_intent_object
 	)
 
 	return payment_intent

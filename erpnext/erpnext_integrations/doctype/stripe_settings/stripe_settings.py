@@ -162,6 +162,7 @@ class StripeSettings(PaymentGatewayController):
 				currency=payment_request.currency,
 				customer=stripe_customer_id,
 				confirm=True,
+				off_session=True,
 				metadata={
 					"reference_doctype": payment_request.reference_doctype,
 					"reference_name": payment_request.reference_name,

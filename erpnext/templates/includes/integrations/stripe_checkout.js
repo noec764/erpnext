@@ -1,4 +1,4 @@
-var is_subscription = {{ is_subscription }};
+var is_subscription = {{ is_subscription or 0 }};
 
 const loading = (isLoading) => {
 	if (isLoading) {
@@ -15,10 +15,15 @@ const loading = (isLoading) => {
 class StripeCheckout {
 	constructor(opts) {
 		Object.assign(this, opts)
-		this.payment_key = "{{ payment_key }}";
-		this.customer = "{{ customer }}";
+		this.payment_key = "{{ payment_key or '' }}";
+		this.customer = "{{ customer or '' }}";
 		this.stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
 		this.is_subscription = is_subscription;
+		this.reference_doctype = "{{ reference_doctype }}"
+		this.reference_docname = "{{ reference_docname }}"
+		this.grand_total = "{{ grand_total }}"
+		this.currency = "{{ currency }}"
+		this.webform = "{{ webform or '' }}"
 		this.client_secret = null;
 		this.card = null;
 		this.cardButton = document.getElementById('card-button');
@@ -40,7 +45,12 @@ class StripeCheckout {
 			method:"erpnext.templates.pages.integrations.stripe_checkout.make_payment_intent",
 			args: {
 				payment_key: this.payment_key,
-				customer: this.customer
+				customer: this.customer,
+				reference_doctype: this.reference_doctype,
+				reference_docname: this.reference_docname,
+				webform: this.webform,
+				grand_total: this.grand_total,
+				currency: this.currency
 			}
 		}).then(r => {
 			this.client_secret = r.message.client_secret;
@@ -92,7 +102,9 @@ class StripeCheckout {
 				me.showCardError(result);
 			} else {
 				me.orderComplete(result);
-				me.attachPaymentCard(result)
+				if (!this.webform) {
+					me.attachPaymentCard(result)
+				}
 			}
 		});
 	}
