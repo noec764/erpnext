@@ -102,9 +102,7 @@ class StripeCheckout {
 				me.showCardError(result);
 			} else {
 				me.orderComplete(result);
-				if (!this.webform) {
-					me.attachPaymentCard(result)
-				}
+				me.attachPaymentCard(result)
 			}
 		});
 	}

@@ -158,6 +158,9 @@ def make_subscription(**kwargs):
 	)
 
 def _update_payment_method(**kwargs):
+	if not kwargs.get("payment_key"):
+		return
+
 	payment_request = frappe.get_doc("Payment Request", {"payment_key": kwargs.get("payment_key")})
 	gateway_controller_name = get_gateway_controller("Payment Request", payment_request.name)
 	gateway_controller = frappe.get_doc("Stripe Settings", gateway_controller_name)
