@@ -65,6 +65,7 @@ class Customer(TransactionBase):
 		self.check_customer_group_change()
 		self.validate_default_bank_account()
 		self.validate_internal_customer()
+		self.set_status()
 
 		# set loyalty program tier
 		if frappe.db.exists('Customer', self.name):
@@ -110,7 +111,6 @@ class Customer(TransactionBase):
 			self.create_lead_address_contact()
 
 		self.update_customer_groups()
-		self.link_disabled_button_to_status()
 
 	def update_customer_groups(self):
 		ignore_doctypes = ["Lead", "Opportunity", "POS Profile", "Tax Rule", "Pricing Rule"]
@@ -276,13 +276,17 @@ class Customer(TransactionBase):
 							doc.name, args.get("customer_email_" + str(i)))
 				except frappe.NameError:
 					pass
-	def link_disabled_button_to_status(self,):
-		# Link field "Status" to disabled
-		if self.disabled:
-			self.status = "Disabled"
-		# without this condition, the status cannot ever switch to subscriber
-		elif self.status != "Subscriber":
-			self.status = "Enabled"
+
+	def has_active_subscription(self) -> bool:
+		"""
+		Checks if the customer has an active subscription
+		"""
+		return bool(
+			frappe.db.exists("Subscription", dict(
+				status=("not in", ("Cancelled", "Trial")),
+				customer=self.name
+			))
+		)
 
 def create_contact(contact, party_type, party, email):
 	"""Create contact based on given contact name"""
