@@ -17,6 +17,7 @@ import json
 
 import warnings
 
+from erpnext import get_default_company
 from erpnext.accounts.doctype.subscription.subscription_transaction import SubscriptionPaymentEntryGenerator
 
 class PaymentRequest(Document):
@@ -58,11 +59,12 @@ class PaymentRequest(Document):
 						.format(self.reference_doctype))
 
 	def validate_currency(self):
-		currency = frappe.db.get_value(self.reference_doctype, self.reference_name, "currency")
-		for gateway in self.payment_gateways:
-			if not frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway.get("payment_gateway"), currency=currency)):
-				frappe.msgprint(_("No payment gateway account found for payment gateway {0} and currency {1}."\
-					.format(gateway.get("payment_gateway"), currency)))
+		if frappe.get_meta(self.reference_doctype).has_field("currency"):
+			currency = frappe.db.get_value(self.reference_doctype, self.reference_name, "currency")
+			for gateway in self.payment_gateways:
+				if not frappe.db.exists("Payment Gateway Account", dict(payment_gateway=gateway.get("payment_gateway"), currency=currency)):
+					frappe.msgprint(_("No payment gateway account found for payment gateway {0} and currency {1}."\
+						.format(gateway.get("payment_gateway"), currency)))
 
 	def validate_payment_gateways(self):
 		if self.payment_gateways_template and not self.payment_gateways:
@@ -225,6 +227,11 @@ class PaymentRequest(Document):
 		frappe.flags.ignore_permissions = True
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		ref_doc.currency = ref_doc.get("currency", self.currency)
+		ref_doc.company_currency = ref_doc.get("company_currency",
+			frappe.db.get_value("Company", ref_doc.company, "default_currency")
+		)
+
 		gateway_defaults = frappe.db.get_value("Payment Gateway", self.payment_gateway,\
 				["fee_account", "cost_center", "mode_of_payment"], as_dict=1) or dict()
 
@@ -245,8 +252,13 @@ class PaymentRequest(Document):
 			else:
 				party_amount = self.grand_total
 
-			payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
-				party_amount=party_amount, bank_account=self.get_payment_account(), bank_amount=bank_amount)
+			payment_entry = get_payment_entry(
+				self.reference_doctype,
+				self.reference_name,
+				party_amount=party_amount,
+				bank_account=self.get_payment_account(),
+				bank_amount=bank_amount
+			)
 
 		payment_entry.setup_party_account_field()
 		payment_entry.set_missing_values()
@@ -431,7 +443,7 @@ def make_payment_request(**args):
 	args = frappe._dict(args)
 
 	ref_doc = frappe.get_doc(args.dt, args.dn)
-	grand_total = get_amount(ref_doc)
+	grand_total = args.grand_total or get_amount(ref_doc)
 
 	if args.loyalty_points and args.dt == "Sales Order":
 		from erpnext.accounts.doctype.loyalty_program.loyalty_program import validate_loyalty_points
@@ -459,7 +471,7 @@ def make_payment_request(**args):
 
 		pr = frappe.new_doc("Payment Request")
 		pr.update({
-			"currency": ref_doc.currency,
+			"currency": args.currency or ref_doc.currency,
 			"no_payment_link": args.no_payment_link,
 			"grand_total": grand_total,
 			"email_to": args.recipient_id or ref_doc.get("contact_email") or ref_doc.owner,

@@ -69,19 +69,20 @@ def get_api_key(gateway_controller):
 def make_payment_intent(payment_key, customer=None, reference_doctype=None, reference_docname=None, webform=None, grand_total=None, currency=None):
 	if frappe.db.exists("Payment Request", {"payment_key": payment_key}):
 		payment_request = frappe.get_doc("Payment Request", {"payment_key": payment_key})
-		gateway_controller = get_gateway_controller("Payment Request", payment_request.name)
+		gateway_controller_name = get_gateway_controller("Payment Request", payment_request.name)
+		gateway_controller = frappe.get_doc("Stripe Settings", gateway_controller_name)
 
 	elif webform and reference_doctype and reference_docname:
-		payment_request = frappe._dict(
+		gateway_controller_name = get_gateway_controller("Web Form", webform)
+		gateway_controller = frappe.get_doc("Stripe Settings", gateway_controller_name)
+		payment_request = create_payment_request(
 			reference_doctype = reference_doctype,
 			reference_name = reference_docname,
 			grand_total = grand_total,
 			currency = currency,
-			name=f"{reference_doctype}-{reference_docname}"
+			payment_gateway = frappe.db.get_value("Web Form", webform, "payment_gateway")
 		)
-		gateway_controller = get_gateway_controller("Web Form", webform)
 
-	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
 	payment_intent_object = dict(
 		metadata={
 			"reference_doctype": payment_request.reference_doctype,
@@ -93,13 +94,28 @@ def make_payment_intent(payment_key, customer=None, reference_doctype=None, refe
 	if customer:
 		payment_intent_object.update(dict(customer=customer))
 
-	payment_intent = StripePaymentIntent(payment_gateway, payment_request).create(
+	payment_intent = StripePaymentIntent(gateway_controller, payment_request).create(
 		amount=cint(flt(payment_request.grand_total) * 100),
 		currency=payment_request.currency,
 		**payment_intent_object
 	)
 
 	return payment_intent
+
+def create_payment_request(**kwargs):
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request, get_payment_gateway_account
+	return frappe.get_doc(
+			make_payment_request(**{
+				"dt": kwargs.get("reference_doctype"),
+				"dn": kwargs.get("reference_name"),
+				"grand_total": kwargs.get("grand_total"),
+				"submit_doc": True,
+				"return_doc": True,
+				"mute_email": 1,
+				"currency": kwargs.get("currency"),
+				"payment_gateway": kwargs.get("payment_gateway")
+			})
+		)
 
 @frappe.whitelist(allow_guest=True)
 def retry_invoice(**kwargs):
@@ -143,17 +159,17 @@ def make_subscription(**kwargs):
 
 def _update_payment_method(**kwargs):
 	payment_request = frappe.get_doc("Payment Request", {"payment_key": kwargs.get("payment_key")})
-	gateway_controller = get_gateway_controller("Payment Request", payment_request.name)
-	payment_gateway = frappe.get_doc("Stripe Settings", gateway_controller)
+	gateway_controller_name = get_gateway_controller("Payment Request", payment_request.name)
+	gateway_controller = frappe.get_doc("Stripe Settings", gateway_controller_name)
 
-	StripePaymentMethod(payment_gateway).attach(kwargs.get("paymentMethodId"), kwargs.get("customerId"))
-	StripeCustomer(payment_gateway).update(kwargs.get("customerId"),
+	StripePaymentMethod(gateway_controller).attach(kwargs.get("paymentMethodId"), kwargs.get("customerId"))
+	StripeCustomer(gateway_controller).update(kwargs.get("customerId"),
 		invoice_settings={
 			'default_payment_method': kwargs.get("paymentMethodId"),
 		}
 	)
 
-	return payment_request, payment_gateway
+	return payment_request, gateway_controller
 
 @frappe.whitelist(allow_guest=True)
 def update_payment_method(**kwargs):
