@@ -724,6 +724,14 @@ frappe.form.link_formatters['Employee'] = function(value, doc) {
 	}
 }
 
+frappe.form.link_formatters['Project'] = function(value, doc) {
+	if(doc && doc.project_name && doc.project_name !== value) {
+		return value? value + ': ' + doc.project_name: doc.project_name;
+	} else {
+		return value;
+	}
+}
+
 // add description on posting time
 $(document).on('app_ready', function() {
 	if(!frappe.datetime.is_timezone_same()) {
