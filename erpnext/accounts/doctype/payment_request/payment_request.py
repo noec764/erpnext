@@ -175,9 +175,12 @@ class PaymentRequest(Document):
 		controller = get_payment_gateway_controller(gateway)
 		if hasattr(controller, 'immediate_payment_processing'):
 			result = controller.immediate_payment_processing(self)
-			self.db_set("transaction_reference", result, commit=True)
-			self.db_set("status", "Pending", commit=True)
-			return result
+			if result:
+				self.db_set("transaction_reference", result, commit=True)
+				self.db_set("status", "Pending", commit=True)
+				return result
+			else:
+				frappe.throw(_("Payment cannot be processed immediately for this payment request."))
 
 	def generate_payment_key(self):
 		self.payment_key = frappe.generate_hash(self.as_json())

@@ -148,6 +148,9 @@ class StripeSettings(PaymentGatewayController):
 		return False
 
 	def immediate_payment_processing(self, payment_request):
+		if not self.can_make_immediate_payment(payment_request):
+			return
+
 		try:
 			customer = payment_request.get_customer()
 			stripe_customer_id = frappe.db.get_value("Integration References", dict(customer=customer, stripe_settings=self.name), "stripe_customer_id")

@@ -44,6 +44,9 @@ class GoCardlessSettings(PaymentGatewayController):
 		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
 
 	def immediate_payment_processing(self, payment_request):
+		if not self.can_make_immediate_payment(payment_request):
+			return
+
 		try:
 			processed_data = dict(
 				amount=cint(flt(payment_request.grand_total, payment_request.precision("grand_total")) * 100),
