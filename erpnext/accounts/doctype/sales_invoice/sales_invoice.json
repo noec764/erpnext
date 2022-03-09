@@ -10,7 +10,6 @@
   "customer_section",
   "title",
   "naming_series",
-  "tax_invoice_number",
   "customer",
   "customer_name",
   "tax_id",
@@ -1719,13 +1718,7 @@
    "fieldtype": "Currency",
    "label": "Amount Eligible for Commission",
    "read_only": 1
-  },
-  {
-   "fieldname": "tax_invoice_number",
-   "fieldtype": "Data",
-   "label": "Tax Invoice Number",
-   "read_only": 1
-   }
+  }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
@@ -1739,7 +1732,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2022-03-07 16:08:53.517903",
+ "modified": "2022-03-08 16:08:53.517903",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
