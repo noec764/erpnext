@@ -1,12 +1,10 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
 import frappe
 from frappe import _
 
 def execute(filters=None):
-	columns, data = [], []
 	data = get_data(filters)
 	columns = get_columns()
 	charts = get_chart_data(data)
