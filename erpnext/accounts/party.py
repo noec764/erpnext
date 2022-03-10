@@ -135,7 +135,7 @@ def set_contact_details(party_details, party, party_type):
 
 def set_other_values(party_details, party, party_type):
 	# copy
-	if party_type=="Customer":
+	if party_type == "Customer":
 		to_copy = ["customer_name", "customer_group", "territory", "language"]
 	else:
 		to_copy = ["supplier_name", "supplier_group", "language"]
@@ -154,12 +154,7 @@ def get_default_price_list(party):
 		return party.default_price_list
 
 	if party.doctype == "Customer":
-		price_list =  frappe.get_cached_value("Customer Group",
-			party.customer_group, "default_price_list")
-		if price_list:
-			return price_list
-
-	return None
+		return frappe.db.get_value("Customer Group", party.customer_group, "default_price_list")
 
 def set_price_list(party_details, party, party_type, given_price_list, pos=None):
 	# price list
