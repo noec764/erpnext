@@ -75,15 +75,6 @@
 					</div>
 				</div>
 			</li>
-			{% elif subscriptions_available %}
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Subscribe to a plan") }}</h5>
-						<a href="/subscription" class="btn btn-primary">{{ _("Subscribe") }}</a>
-					</div>
-				</div>
-			</li>
 			{% endif %}
 			{% if enable_stripe %}
 			<li>
@@ -109,11 +100,11 @@
 								<div id="card-element">
 								<!-- A Stripe Element will be inserted here. -->
 								</div>
-							
+
 								<!-- Used to display form errors. -->
 								<div id="card-errors" role="alert"></div>
 							</div>
-							
+
 							<button class="btn btn-primary" id="card-submit">{{ _("Add this card") }}</button>
 						</form>
 						<button class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</button>

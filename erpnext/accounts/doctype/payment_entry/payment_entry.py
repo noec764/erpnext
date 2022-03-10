@@ -817,7 +817,7 @@ def get_outstanding_reference_documents(args):
 
 	if not data:
 		frappe.msgprint(_("No outstanding invoices found for the {0} {1} which qualify the filters you have specified.")\
-			.format(args.get("party_type").lower(), frappe.bold(args.get("party"))))
+			.format(_(args.get("party_type")).lower(), frappe.bold(args.get("party"))))
 
 	return data
 

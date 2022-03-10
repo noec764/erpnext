@@ -104,7 +104,7 @@ def get_invoices_mrr(invoices, period):
 
 def monthdelta(d1, d2):
 	from calendar import monthrange
-	from datetime import datetime, timedelta
+	from datetime import timedelta
 	delta = 0
 	while True:
 		mdays = monthrange(d1.year, d1.month)[1]

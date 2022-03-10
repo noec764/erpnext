@@ -69,7 +69,7 @@ class StripeWebhooksController(WebhooksController):
 		elif self.metadata.get("reference_doctype") == "Payment Request":
 			payment_request_id = self.metadata.get("reference_name")
 
-		if payment_request_id:
+		if payment_request_id and frappe.db.exists("Payment Request", payment_request_id):
 			self.payment_request = frappe.get_doc("Payment Request", payment_request_id)
 
 	def add_fees_before_submission(self, payment_entry):
@@ -129,4 +129,5 @@ class StripeWebhooksController(WebhooksController):
 		if self.charges:
 			for charge in self.charges:
 				self.create_payment(charge)
-				self.submit_payment(charge)
+				if self.integration_request.status != "Failed":
+					self.submit_payment(charge)

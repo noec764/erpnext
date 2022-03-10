@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 from hashlib import sha224
-import stripe, gocardless_pro
+import stripe
 
 class IdempotencyKey:
 	def __init__(self, document, action, id):
