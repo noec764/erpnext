@@ -6,14 +6,17 @@ from collections import deque
 from functools import partial
 
 import frappe
-from frappe.utils import cstr, flt
 from frappe.test_runner import make_test_records
 from frappe.tests.utils import FrappeTestCase
-from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import create_stock_reconciliation
+from frappe.utils import cstr, flt
+
+from erpnext.buying.doctype.purchase_order.test_purchase_order import create_purchase_order
 from erpnext.manufacturing.doctype.bom.bom import item_query, make_variant_bom
 from erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool import update_cost
 from erpnext.stock.doctype.item.test_item import make_item
-from erpnext.buying.doctype.purchase_order.test_purchase_order import create_purchase_order
+from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import (
+	create_stock_reconciliation,
+)
 from erpnext.tests.test_subcontracting import set_backflush_based_on
 
 test_records = frappe.get_test_records('BOM')
@@ -340,7 +343,6 @@ class TestBOM(FrappeTestCase):
 		frappe.delete_doc("BOM", bom1.name, ignore_missing=True, force=True)
 		frappe.delete_doc("BOM", bom2.name, ignore_missing=True, force=True)
 
-
 	def test_bom_with_process_loss_item(self):
 		fg_item_non_whole, fg_item_whole, bom_item = create_process_loss_bom_items()
 
@@ -439,11 +441,63 @@ class TestBOM(FrappeTestCase):
 		}
 		create_nested_bom(bom_tree, prefix="")
 
+	def test_version_index(self):
+
+		bom = frappe.new_doc("BOM")
+
+		version_index_test_cases = [
+			(1, []),
+			(1, ["BOM#XYZ"]),
+			(2, ["BOM/ITEM/001"]),
+			(2, ["BOM-ITEM-001"]),
+			(3, ["BOM-ITEM-001", "BOM-ITEM-002"]),
+			(4, ["BOM-ITEM-001", "BOM-ITEM-002", "BOM-ITEM-003"]),
+		]
+
+		for expected_index, existing_boms in version_index_test_cases:
+			with self.subTest():
+				self.assertEqual(expected_index, bom.get_next_version_index(existing_boms),
+						msg=f"Incorrect index for {existing_boms}")
+
+	def test_bom_versioning(self):
+		bom_tree = {
+			frappe.generate_hash(length=10) : {
+				frappe.generate_hash(length=10): {}
+			}
+		}
+		bom = create_nested_bom(bom_tree, prefix="")
+		self.assertEqual(int(bom.name.split("-")[-1]), 1)
+		original_bom_name = bom.name
+
+		bom.cancel()
+		bom.reload()
+		self.assertEqual(bom.name, original_bom_name)
+
+		# create a new amendment
+		amendment = frappe.copy_doc(bom)
+		amendment.docstatus = 0
+		amendment.amended_from = bom.name
+
+		amendment.save()
+		amendment.submit()
+		amendment.reload()
+
+		self.assertNotEqual(amendment.name, bom.name)
+		# `origname-001-1` version
+		self.assertEqual(int(amendment.name.split("-")[-1]), 1)
+		self.assertEqual(int(amendment.name.split("-")[-2]), 1)
+
+		# create a new version
+		version = frappe.copy_doc(amendment)
+		version.docstatus = 0
+		version.amended_from = None
+		version.save()
+		self.assertNotEqual(amendment.name, version.name)
+		self.assertEqual(int(version.name.split("-")[-1]), 2)
+
+
 def get_default_bom(item_code="_Test FG Item 2"):
 	return frappe.db.get_value("BOM", {"item": item_code, "is_active": 1, "is_default": 1})
-
-
-
 
 def level_order_traversal(node):
 	traversal = []
