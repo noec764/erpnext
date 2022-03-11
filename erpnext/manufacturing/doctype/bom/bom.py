@@ -1,29 +1,28 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from typing import List
-from collections import deque
-import frappe, erpnext
-from frappe.utils import cint, cstr, flt, today
-from frappe import _
-from erpnext.setup.utils import get_exchange_rate
-from frappe.website.website_generator import WebsiteGenerator
-from erpnext.stock.get_item_details import get_conversion_factor
-from erpnext.stock.get_item_details import get_price_list_rate
-from frappe.core.doctype.version.version import get_diff
-from erpnext.controllers.queries import get_match_cond
-from erpnext.stock.doctype.item.item import get_item_details
-from frappe.model.mapper import get_mapped_doc
-
 import functools
-
-
-
+import re
+from collections import deque
 from operator import itemgetter
+from typing import List
+
+import frappe
+from frappe import _
+from frappe.core.doctype.version.version import get_diff
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import cint, cstr, flt, today
+from frappe.website.website_generator import WebsiteGenerator
+
+import erpnext
+from erpnext.setup.utils import get_exchange_rate
+from erpnext.stock.doctype.item.item import get_item_details
+from erpnext.stock.get_item_details import get_conversion_factor, get_price_list_rate
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
 }
+
 
 class BOMTree:
 	"""Full tree representation of a BOM"""
@@ -69,6 +68,7 @@ class BOMTree:
 			- SubAssy2
 				- item3
 			- item4
+
 		returns = [SubAssy1, item1, item2, SubAssy2, item3, item4]
 		"""
 		traversal = []
@@ -104,27 +104,21 @@ class BOM(WebsiteGenerator):
 	)
 
 	def autoname(self):
-		names = frappe.db.sql_list("""select name from `tabBOM` where item=%s""", self.item)
+		# ignore amended documents while calculating current index
+		existing_boms = frappe.get_all(
+			"BOM",
+			filters={"item": self.item, "amended_from": ["is", "not set"]},
+			pluck="name"
+		)
 
-		if names:
-			# name can be BOM/ITEM/001, BOM/ITEM/001-1, BOM-ITEM-001, BOM-ITEM-001-1
-
-			# split by item
-			names = [name.split(self.item, 1) for name in names]
-			names = [d[-1][1:] for d in filter(lambda x: len(x) > 1 and x[-1], names)]
-
-			# split by (-) if cancelled
-			if names:
-				names = [cint(name.split('-')[-1]) for name in names]
-				idx = max(names) + 1
-			else:
-				idx = 1
+		if existing_boms:
+			index = self.get_next_version_index(existing_boms)
 		else:
-			idx = 1
+			index = 1
 
 		prefix = self.doctype
-		suffix = "%.3i" % idx
-		bom_name = prefix + "-" + self.item + "-" + suffix
+		suffix = "%.3i" % index  # convert index to string (1 -> "001")
+		bom_name = f"{prefix}-{self.item}-{suffix}"
 
 		if len(bom_name) <= 140:
 			name = bom_name
@@ -135,7 +129,7 @@ class BOM(WebsiteGenerator):
 			truncated_item_name = self.item[:truncated_length]
 			# if a partial word is found after truncate, remove the extra characters
 			truncated_item_name = truncated_item_name.rsplit(" ", 1)[0]
-			name = prefix + "-" + truncated_item_name + "-" + suffix
+			name = f"{prefix}-{truncated_item_name}-{suffix}"
 
 		if frappe.db.exists("BOM", name):
 			conflicting_bom = frappe.get_doc("BOM", name)
@@ -148,6 +142,26 @@ class BOM(WebsiteGenerator):
 					.format(msg, "<br>"))
 
 		self.name = name
+
+	@staticmethod
+	def get_next_version_index(existing_boms: List[str]) -> int:
+		# split by "/" and "-"
+		delimiters = ["/", "-"]
+		pattern = "|".join(map(re.escape, delimiters))
+		bom_parts = [re.split(pattern, bom_name) for bom_name in existing_boms]
+
+		# filter out BOMs that do not follow the following formats: BOM/ITEM/001, BOM-ITEM-001
+		valid_bom_parts = list(filter(lambda x: len(x) > 1 and x[-1], bom_parts))
+
+		# extract the current index from the BOM parts
+		if valid_bom_parts:
+			# handle cancelled and submitted documents
+			indexes = [cint(part[-1]) for part in valid_bom_parts]
+			index = max(indexes) + 1
+		else:
+			index = 1
+
+		return index
 
 	def validate(self):
 		self.route = frappe.scrub(self.name).replace('_', '-')
@@ -237,6 +251,7 @@ class BOM(WebsiteGenerator):
 				"sourced_by_supplier": item.sourced_by_supplier,
 				"do_not_explode": item.do_not_explode
 			})
+
 			for r in ret:
 				if not item.get(r):
 					item.set(r, ret[r])
@@ -838,7 +853,7 @@ def get_bom_items_as_dict(bom, company, qty=1, fetch_exploded=1, fetch_scrap_ite
 				item.image,
 				bom.project,
 				bom_item.rate,
-				bom_item.amount,
+				sum(bom_item.{qty_field}/ifnull(bom.quantity, 1)) * bom_item.rate * %(qty)s as amount,
 				item.stock_uom,
 				item.item_group,
 				item.allow_alternative_item,
