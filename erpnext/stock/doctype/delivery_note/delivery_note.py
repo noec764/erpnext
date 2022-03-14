@@ -790,3 +790,6 @@ def make_shipment(source_name, target_doc=None):
 	}, target_doc, postprocess)
 
 	return doclist
+
+def on_doctype_update():
+	frappe.db.add_index("Delivery Note", ["customer", "is_return", "return_against"])
