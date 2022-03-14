@@ -16,7 +16,11 @@ from erpnext.projects.doctype.timesheet.timesheet import get_projectwise_timeshe
 from erpnext.assets.doctype.asset.depreciation import (get_disposal_account_and_cost_center,
 	get_gl_entries_on_asset_disposal, get_gl_entries_on_asset_regain, make_depreciation_entry)
 from erpnext.stock.doctype.batch.batch import set_batch_nos
-from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos, get_delivery_note_serial_no
+from erpnext.stock.doctype.serial_no.serial_no import (
+	get_delivery_note_serial_no,
+	get_serial_nos,
+	update_serial_nos_after_submit,
+)
 from erpnext.setup.doctype.company.company import update_company_current_month_sales
 from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
 from erpnext.accounts.doctype.loyalty_program.loyalty_program import (get_loyalty_program_details_with_points,
@@ -214,6 +218,8 @@ class SalesInvoice(SellingController):
 			# because updating reserved qty in bin depends upon updated delivered qty in SO
 			if self.update_stock == 1:
 				self.update_stock_ledger()
+			if self.is_return and self.update_stock:
+				update_serial_nos_after_submit(self, "items")
 
 			# this sequence because outstanding may get -ve
 			self.make_gl_entries()

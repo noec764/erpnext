@@ -7,7 +7,10 @@ import frappe
 import frappe.defaults
 from erpnext.controllers.selling_controller import SellingController
 from erpnext.stock.doctype.batch.batch import set_batch_nos
-from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
+from erpnext.stock.doctype.serial_no.serial_no import (
+	get_delivery_note_serial_no,
+	update_serial_nos_after_submit,
+)
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.desk.notifications import clear_doctype_notifications
@@ -221,6 +224,9 @@ class DeliveryNote(SellingController):
 		# Updating stock ledger should always be called after updating prevdoc status,
 		# because updating reserved qty in bin depends upon updated delivered qty in SO
 		self.update_stock_ledger()
+		if self.is_return:
+			update_serial_nos_after_submit(self, "items")
+
 		self.make_gl_entries()
 		self.repost_future_sle_and_gle()
 
