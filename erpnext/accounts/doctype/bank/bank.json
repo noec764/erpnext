@@ -101,15 +101,15 @@
    "read_only": 1
   },
   {
-    "fieldname": "bank_logo",
-    "fieldtype": "Attach Image",
-    "hidden": 1,
-    "label": "Bank Logo"
-   }
+   "fieldname": "bank_logo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Bank Logo"
+  }
  ],
  "image_field": "bank_logo",
  "links": [],
- "modified": "2020-10-30 10:35:38.252581",
+ "modified": "2022-03-15 09:34:23.116215",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",
@@ -126,6 +126,24 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User",
+   "select": 1
   }
  ],
  "quick_entry": 1,

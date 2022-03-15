@@ -68,8 +68,9 @@
    "label": "Creation Date"
   }
  ],
+ "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-05-22 12:01:58.712402",
+ "modified": "2022-03-15 09:35:44.280934",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sepa Mandate",
@@ -84,6 +85,19 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "select": 1,
    "share": 1,
    "write": 1
   }

@@ -56,7 +56,7 @@
   }
  ],
  "links": [],
- "modified": "2021-12-16 16:52:32.378745",
+ "modified": "2022-03-15 09:27:46.602422",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Item Tax Template",
@@ -71,6 +71,7 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -83,6 +84,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -93,6 +95,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts User",
+   "select": 1,
    "share": 1
   }
  ],
