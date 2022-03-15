@@ -8,6 +8,7 @@ from frappe.utils import cint, flt
 from erpnext.stock.utils import update_included_uom_in_report, is_reposting_item_valuation_in_progress
 from frappe import _
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
+from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import get_stock_balance_for
 
 
 def execute(filters=None):
@@ -67,7 +68,10 @@ def update_available_serial_nos(available_serial_nos, sle):
 	serial_nos = get_serial_nos(sle.serial_no)
 	key = (sle.item_code, sle.warehouse)
 	if key not in available_serial_nos:
-		available_serial_nos.setdefault(key, [])
+		stock_balance = get_stock_balance_for(sle.item_code, sle.warehouse, sle.date.split(' ')[0],
+			sle.date.split(' ')[1], batch_no=sle.batch_no)
+		serials = get_serial_nos(stock_balance['serial_nos']) if stock_balance['serial_nos'] else []
+		available_serial_nos.setdefault(key, serials)
 
 	existing_serial_no = available_serial_nos[key]
 	for sn in serial_nos:
