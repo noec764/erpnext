@@ -207,14 +207,15 @@
    "label": "SWIFT number"
   },
   {
-    "in_global_search": 1,
    "fieldname": "branch_code",
    "fieldtype": "Data",
+   "in_global_search": 1,
    "label": "Branch Code"
   }
  ],
+ "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-06-24 15:54:33.814079",
+ "modified": "2022-03-15 09:34:36.346245",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Account",
@@ -230,6 +231,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -242,6 +244,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts User",
+   "select": 1,
    "share": 1,
    "write": 1
   }

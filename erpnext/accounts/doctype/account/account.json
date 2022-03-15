@@ -205,9 +205,10 @@
  ],
  "icon": "fa fa-money",
  "idx": 1,
+ "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2020-06-25 08:03:34.857608",
+ "modified": "2022-03-15 09:30:41.904475",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -224,6 +225,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts User",
+   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -232,21 +234,24 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Auditor"
+   "role": "Auditor",
+   "select": 1
   },
   {
    "email": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User"
+   "role": "Sales User",
+   "select": 1
   },
   {
    "email": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "select": 1
   },
   {
    "create": 1,
@@ -258,6 +263,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager",
+   "select": 1,
    "set_user_permissions": 1,
    "share": 1,
    "write": 1

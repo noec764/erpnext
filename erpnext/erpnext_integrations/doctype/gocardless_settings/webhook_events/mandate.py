@@ -41,7 +41,7 @@ STATUS_MAP = {
 class GoCardlessMandateWebhookHandler(WebhooksController):
 	def __init__(self, **kwargs):
 		super(GoCardlessMandateWebhookHandler, self).__init__(**kwargs)
-		
+
 		self.event_map = EVENT_MAP
 		self.action_type = self.data.get("action")
 		self.mandate = self.data.get("links", {}).get("mandate")
@@ -50,7 +50,7 @@ class GoCardlessMandateWebhookHandler(WebhooksController):
 		self.add_mandate_to_integration_request()
 
 	def check_existing_mandate(self):
-		return False if frappe.db.exists("Sepa Mandate", dict(mandate=mandate)) else True
+		return False if frappe.db.exists("Sepa Mandate", dict(mandate=self.mandate)) else True
 
 	def change_mandate_status(self):
 		try:
@@ -69,7 +69,7 @@ class GoCardlessMandateWebhookHandler(WebhooksController):
 
 		if customer:
 			GoCardlessMandates(self.gocardless_settings).register(
-				redirect_flow.links.mandate,
+				self.mandate,
 				customer
 			)
 

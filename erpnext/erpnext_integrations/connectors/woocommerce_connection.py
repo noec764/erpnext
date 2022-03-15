@@ -1,6 +1,7 @@
 
 from __future__ import unicode_literals
 import frappe, base64, hashlib, hmac, json
+from functools import wraps
 from frappe import _
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import create_update_order

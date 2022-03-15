@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:company",
  "creation": "2019-10-11 09:17:33.294941",
  "doctype": "DocType",
@@ -85,7 +86,9 @@
    "reqd": 1
   }
  ],
- "modified": "2019-10-11 12:10:50.976778",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-03-15 09:35:18.273928",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sepa Direct Debit Settings",
@@ -98,8 +101,27 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "select": 1,
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User",
+   "select": 1
   }
  ],
  "sort_field": "modified",

@@ -62,15 +62,15 @@
    "fieldtype": "Column Break"
   },
   {
-    "default": "0",
-    "fieldname": "enable_european_access",
-    "fieldtype": "Check",
-    "label": "Enable European Access"
+   "default": "0",
+   "fieldname": "enable_european_access",
+   "fieldtype": "Check",
+   "label": "Enable European Access"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-03-02 17:35:27.544259",
+ "modified": "2022-03-15 09:31:36.640483",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Plaid Settings",
@@ -85,6 +85,22 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User",
+   "select": 1
   }
  ],
  "sort_field": "modified",
