@@ -469,7 +469,7 @@ accounting_dimension_doctypes = ["GL Entry", "Sales Invoice", "Purchase Invoice"
 	"Expense Claim", "Expense Claim Detail", "Expense Taxes and Charges", "Stock Entry", "Budget", "Payroll Entry", "Delivery Note",
 	"Sales Invoice Item", "Purchase Invoice Item", "Purchase Order Item", "Journal Entry Account", "Material Request Item", "Delivery Note Item",
 	"Purchase Receipt Item", "Stock Entry Detail", "Payment Entry Deduction", "Sales Taxes and Charges", "Purchase Taxes and Charges", "Shipping Rule",
-	"Landed Cost Item", "Asset Value Adjustment", "Loyalty Program", "Fee Schedule", "Fee Structure", "Stock Reconciliation",
+	"Landed Cost Item", "Asset Value Adjustment", "Loyalty Program", "Stock Reconciliation",
 	"Travel Request", "Fees", "POS Profile", "Opening Invoice Creation Tool", "Opening Invoice Creation Tool Item", "Subscription",
 	"Subscription Plan", "POS Invoice", "POS Invoice Item"
 ]
@@ -580,3 +580,5 @@ global_search_doctypes = {
 additional_timeline_content = {
 	'*': ['erpnext.telephony.doctype.call_log.call_log.get_linked_call_logs']
 }
+
+translated_search_doctypes = ["Party Type"]

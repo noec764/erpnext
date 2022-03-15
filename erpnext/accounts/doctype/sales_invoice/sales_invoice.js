@@ -67,6 +67,14 @@ erpnext.accounts.SalesInvoiceController = class SalesInvoiceController extends e
 
 		this.frm.toggle_reqd("due_date", !this.frm.doc.is_return);
 
+		// Fetches the system default when due_date is empty
+		if (!doc.due_date){
+			this.frm.set_value("due_date", frappe.datetime.add_days(
+				doc.posting_date, frappe.boot.sysdefaults.default_payment_days
+				)
+			)
+		}
+
 		if (this.frm.doc.is_return) {
 			this.frm.return_print_format = "Sales Invoice Return";
 		}

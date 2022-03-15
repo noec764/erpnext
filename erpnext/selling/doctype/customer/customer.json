@@ -31,6 +31,7 @@
      "so_required",
      "dn_required",
      "disabled",
+     "status",
      "is_internal_customer",
      "represents_company",
      "allowed_to_transact_section",
@@ -507,7 +508,15 @@
          "no_copy": 1,
          "options": "Prospect",
          "print_hide": 1
-        }
+        },
+        {
+          "default": "Enabled",
+          "fieldname": "status",
+          "fieldtype": "Select",
+          "hidden": 1,
+          "label": "Status",
+          "options": "Subscriber\nEnabled\nDisabled"
+         }
     ],
     "icon": "fa fa-user",
     "idx": 363,
@@ -519,7 +528,7 @@
         "link_fieldname": "party"
        }
     ],
-    "modified": "2021-10-20 22:07:52.485809",
+    "modified": "2022-03-20 22:07:52.485809",
     "modified_by": "Administrator",
     "module": "Selling",
     "name": "Customer",

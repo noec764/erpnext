@@ -72,6 +72,7 @@ class Customer(TransactionBase):
 		self.check_customer_group_change()
 		self.validate_default_bank_account()
 		self.validate_internal_customer()
+		self.set_status()
 
 		# set loyalty program tier
 		if frappe.db.exists('Customer', self.name):
@@ -270,6 +271,17 @@ class Customer(TransactionBase):
 				_("Multiple Loyalty Programs found for Customer {}. Please select manually.")
 				.format(frappe.bold(self.customer_name))
 			)
+
+	def has_active_subscription(self) -> bool:
+		"""
+		Checks if the customer has an active subscription
+		"""
+		return bool(
+			frappe.db.exists("Subscription", dict(
+				status=("not in", ("Cancelled", "Trial")),
+				customer=self.name
+			))
+		)
 
 def create_contact(contact, party_type, party, email):
 	"""Create contact based on given contact name"""

@@ -609,6 +609,7 @@ class ReceivablePayableReport(object):
 				docstatus < 2
 				and is_cancelled = 0
 				and party_type=%s
+				and is_cancelled=0
 				and (party is not null and party != '')
 				{2} {3} {4}"""
 			.format(select_fields, doc_currency_fields, date_condition, conditions, order_by, remarks=remarks), values, as_dict=True)

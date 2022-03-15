@@ -8,6 +8,7 @@ import re
 import pytz
 from frappe.model.document import Document
 from frappe import _
+from frappe.utils import cint
 from datetime import datetime
 
 from pyyoutube import Api
@@ -54,9 +55,10 @@ def get_frequency(value):
 
 def update_youtube_data():
 	# Called every 30 minutes via hooks
-	enable_youtube_tracking, frequency = frappe.db.get_value("Video Settings", "Video Settings", ["enable_youtube_tracking", "frequency"]) or None, None
+	settings = frappe.db.get_value("Video Settings", "Video Settings", ["enable_youtube_tracking", "frequency"])
+	enable_youtube_tracking, frequency = settings[0][0], settings[0][1]
 
-	if not enable_youtube_tracking:
+	if not cint(enable_youtube_tracking):
 		return
 
 	frequency = get_frequency(frequency)

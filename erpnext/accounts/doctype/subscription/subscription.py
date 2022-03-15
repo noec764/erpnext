@@ -31,6 +31,7 @@ class Subscription(Document):
 
 	def on_update(self):
 		self.update_payment_gateway_subscription()
+		self.set_customer_status()
 
 	def on_trash(self):
 		events = frappe.get_all("Subscription Event", filters={"subscription": self.name}, fields=["name", "docstatus"])
@@ -80,6 +81,8 @@ class Subscription(Document):
 		elif self.status == "To order":
 			self.generate_sales_order()
 			SubscriptionStateManager(self).set_status()
+
+		self.set_customer_status()
 
 	def process_active_subscription(self):
 		try:
@@ -257,6 +260,8 @@ class Subscription(Document):
 	def link_sales_invoice(self, sales_invoice):
 		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
+	def set_customer_status(self):
+		frappe.get_doc("Customer", self.customer).set_status(update=True)
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \

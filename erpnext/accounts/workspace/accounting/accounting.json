@@ -1100,6 +1100,15 @@
    "type": "Link"
   },
   {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Adjustment Entry",
+   "link_to": "Adjustment Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1259,7 +1268,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-02 07:14:30.927301",
+ "modified": "2022-03-03 09:10:34.057446",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",

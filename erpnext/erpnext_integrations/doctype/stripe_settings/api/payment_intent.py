@@ -12,7 +12,6 @@ class StripePaymentIntent:
 		return self.gateway.stripe.PaymentIntent.create(
 			amount=amount,
 			currency=currency,
-			setup_future_usage='off_session',
 			idempotency_key=IdempotencyKey("payment_intent", "create", self.payment_request.name).get(),
 			**kwargs
 		)

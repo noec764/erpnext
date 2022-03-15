@@ -181,8 +181,6 @@ def toggle_disabling(doc):
 def get_doctypes_with_dimensions():
 	return frappe.get_hooks("accounting_dimension_doctypes")
 
-	return doclist
-
 def get_accounting_dimensions(as_list=True):
 	if frappe.flags.accounting_dimensions is None:
 		frappe.flags.accounting_dimensions = frappe.get_all("Accounting Dimension",

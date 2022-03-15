@@ -15,6 +15,7 @@
    "invoicing_features_section",
    "check_supplier_invoice_uniqueness",
    "automatically_fetch_payment_terms",
+   "default_payment_days",
    "column_break_17",
    "enable_common_party_accounting",
    "enable_discount_accounting",
@@ -340,6 +341,13 @@
     "fieldname": "report_setting_section",
     "fieldtype": "Section Break",
     "label": "Report Setting"
+   },
+   {
+    "default": "0",
+    "description": "Can be overwritten by defining default payment terms in parties",
+    "fieldname": "default_payment_days",
+    "fieldtype": "Int",
+    "label": "Default Payment Days for Invoices"
    }
   ],
   "icon": "icon-cog",
@@ -347,7 +355,7 @@
   "index_web_pages_for_search": 1,
   "issingle": 1,
   "links": [],
-  "modified": "2022-02-04 12:32:36.805652",
+  "modified": "2022-03-04 12:32:36.805652",
   "modified_by": "Administrator",
   "module": "Accounts",
   "name": "Accounts Settings",

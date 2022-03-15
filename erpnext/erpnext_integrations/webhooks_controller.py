@@ -6,7 +6,6 @@ import frappe
 from frappe import _
 import json
 from frappe.utils import nowdate, getdate, flt
-from datetime import timedelta
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 from erpnext.accounts.doctype.subscription.subscription_transaction import SubscriptionInvoiceGenerator
@@ -64,13 +63,20 @@ class WebhooksController():
 
 		if not frappe.db.exists("Payment Entry", dict(reference_no=reference, docstatus=("!=", 2))):
 			if self.payment_request and not self.subscription:
-				payment_entry = self.payment_request.run_method("create_payment_entry", submit=False)
-				payment_entry.reference_no = reference
-				payment_entry.reference_date = nowdate()
-				payment_entry.payment_request = self.payment_request.name
-				payment_entry.insert(ignore_permissions=True)
-				self.set_references(payment_entry.doctype, payment_entry.name)
-				self.set_as_completed()
+				try:
+					payment_entry = self.payment_request.run_method("create_payment_entry", submit=False)
+					payment_entry.reference_no = reference
+					payment_entry.reference_date = nowdate()
+					payment_entry.payment_request = self.payment_request.name
+					payment_entry.insert(ignore_permissions=True)
+					self.set_references(payment_entry.doctype, payment_entry.name)
+					self.set_as_completed()
+				except Exception:
+					# Handle exceptions for references other than predefined sales documents (eg. Requests from webforms)
+					self.set_as_failed(_("Payment entry cannot be created from payment request for doctype {0}").format(
+						self.metadata.get("reference_doctype")
+						)
+					)
 
 			elif self.metadata.get("reference_doctype") in ("Sales Order", "Sales Invoice"):
 				frappe.flags.ignore_account_permission = True
@@ -78,7 +84,9 @@ class WebhooksController():
 				frappe.flags.ignore_account_permission = False
 				payment_entry.reference_no = reference
 				payment_entry.reference_date = nowdate()
-				payment_entry.payment_request = self.payment_request.name if self.payment_request else None
+				if self.payment_request:
+					payment_entry.payment_request = self.payment_request.name
+					payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment")
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()

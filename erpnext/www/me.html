@@ -74,15 +74,6 @@
 					</div>
 				</div>
 			</li>
-			{% elif subscriptions_available %}
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Subscribe to a plan") }}</h5>
-						<a href="/subscription" class="btn btn-primary">{{ _("Subscribe") }}</a>
-					</div>
-				</div>
-			</li>
 			{% endif %}
 			{% if enable_stripe %}
 			<li>

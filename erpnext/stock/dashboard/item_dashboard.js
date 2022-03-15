@@ -231,6 +231,7 @@ erpnext.stock.move_item = function (item, source, target, actual_qty, rate, call
 			label: __('Quantity'),
 			reqd: 1,
 			fieldtype: 'Float',
+			default: 1,
 			description: __('Available {0}', [actual_qty])
 		},
 		{

@@ -941,7 +941,7 @@
    "reqd": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment (Company Currency)",
@@ -951,7 +951,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "base_rounded_total",
    "fieldtype": "Currency",
    "label": "Rounded Total (Company Currency)",
@@ -993,7 +993,7 @@
    "reqd": 1
   },
   {
-    "depends_on": "eval:!doc.disable_rounded_total",
+   "depends_on": "eval:!doc.disable_rounded_total",
    "fieldname": "rounding_adjustment",
    "fieldtype": "Currency",
    "label": "Rounding Adjustment",

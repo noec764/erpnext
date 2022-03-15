@@ -78,7 +78,7 @@ class SubscriptionTransactionBase:
 		if self.subscription.tax_template:
 			document.taxes = []
 			document.taxes_and_charges = self.subscription.tax_template
-		elif not document.taxes:
+		elif not document.get("taxes"):
 			from erpnext.accounts.party import set_taxes
 			frappe.form_dict["doctype"] = document.doctype
 			document.taxes_and_charges = set_taxes(
