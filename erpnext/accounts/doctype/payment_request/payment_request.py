@@ -231,7 +231,8 @@ class PaymentRequest(Document):
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 		ref_doc.currency = ref_doc.get("currency", self.currency)
-		ref_doc.company_currency = ref_doc.get("company_currency",
+
+		company_currency = ref_doc.get("company_currency",
 			frappe.db.get_value("Company", ref_doc.company, "default_currency")
 		)
 
@@ -250,7 +251,7 @@ class PaymentRequest(Document):
 			party_account_currency = ref_doc.get("party_account_currency") or get_account_currency(party_account)
 
 			bank_amount = self.grand_total
-			if party_account_currency == ref_doc.company_currency and party_account_currency != self.currency:
+			if party_account_currency == company_currency and party_account_currency != self.currency:
 				party_amount = ref_doc.base_grand_total
 			else:
 				party_amount = self.grand_total
