@@ -92,7 +92,7 @@ def make_payment_intent(payment_key, customer=None, reference_doctype=None, refe
 	)
 
 	if not webform:
-		payment_intent.update(dict(setup_future_usage='off_session'))
+		payment_intent_object.update(dict(setup_future_usage='off_session'))
 
 	if customer:
 		payment_intent_object.update(dict(customer=customer))
