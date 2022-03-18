@@ -17,6 +17,7 @@ from erpnext.stock import get_warehouse_account_map
 from erpnext.accounts.general_ledger import make_gl_entries, merge_similar_entries, make_reverse_gl_entries
 from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
 from erpnext.buying.utils import check_on_hold_or_closed_status
+from erpnext.controllers.accounts_controller import validate_account_head
 from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
 from erpnext.assets.doctype.asset.asset import get_asset_account, is_cwip_accounting_enabled
 from frappe.model.mapper import get_mapped_doc
@@ -99,6 +100,7 @@ class PurchaseInvoice(BuyingController):
 		self.validate_uom_is_integer("uom", "qty")
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.set_expense_account(for_validate=True)
+		self.validate_expense_account()
 		self.set_against_expense_account()
 		self.validate_write_off_account()
 		self.validate_multiple_billing("Purchase Receipt", "pr_detail", "amount", "items")
@@ -294,6 +296,10 @@ class PurchaseInvoice(BuyingController):
 				item.expense_account = asset_received_but_not_billed
 			elif not item.expense_account and for_validate:
 				throw(_("Expense account is mandatory for item {0}").format(item.item_code or item.item_name))
+
+	def validate_expense_account(self):
+		for item in self.get('items'):
+			validate_account_head(item.idx, item.expense_account, self.company, _('Expense', context="Account Validation"))
 
 	def set_against_expense_account(self):
 		against_accounts = []
