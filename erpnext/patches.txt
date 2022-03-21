@@ -296,6 +296,7 @@ execute:frappe.delete_doc_if_exists('Workspace', 'ERPNext Integrations Settings'
 erpnext.patches.v14_0.set_payroll_cost_centers
 erpnext.patches.v13_0.update_asset_quantity_field
 erpnext.patches.v13_0.enable_provisional_accounting
+erpnext.patches.v13_0.enable_ksa_vat_docs
 
 
 # Dokos
