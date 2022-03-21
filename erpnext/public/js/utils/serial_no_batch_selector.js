@@ -75,7 +75,7 @@ erpnext.SerialNoBatchSelector = class SerialNoBatchSelector {
 				fieldtype:'Float',
 				read_only: me.has_batch && !me.has_serial_no,
 				label: me.has_batch && !me.has_serial_no ? __('Selected Qty') : __('Qty'),
-				default: flt(me.item.stock_qty),
+				default: flt(me.item.stock_qty) || flt(me.item.transfer_qty),
 			},
 			...get_pending_qty_fields(me),
 			{
