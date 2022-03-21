@@ -1,16 +1,23 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import frappe
 import json
 
-from frappe.model.naming import make_autoname
-from frappe.utils import cint, cstr, flt, add_days, nowdate, getdate, get_link_to_form
-from erpnext.stock.get_item_details import get_reserved_qty_for_so
-
+import frappe
 from frappe import _, ValidationError
+from frappe.model.naming import make_autoname
+from frappe.utils import (
+	add_days,
+	cint,
+	cstr,
+	flt,
+	get_link_to_form,
+	getdate,
+	nowdate,
+	safe_json_loads,
+)
 
+from erpnext.stock.get_item_details import get_reserved_qty_for_so
 from erpnext.controllers.stock_controller import StockController
 
 class SerialNoCannotCreateDirectError(ValidationError): pass
@@ -567,7 +574,8 @@ def get_delivery_note_serial_no(item_code, qty, delivery_note):
 @frappe.whitelist()
 def auto_fetch_serial_number(qty, item_code, warehouse,
 		posting_date=None, batch_nos=None, for_doctype=None, exclude_sr_nos=None):
-	filters = { "item_code": item_code, "warehouse": warehouse }
+
+	filters = frappe._dict({"item_code": item_code, "warehouse": warehouse})
 
 	if exclude_sr_nos is None:
 		exclude_sr_nos = []
@@ -575,13 +583,14 @@ def auto_fetch_serial_number(qty, item_code, warehouse,
 		exclude_sr_nos = get_serial_nos(clean_serial_no_string("\n".join(exclude_sr_nos)))
 
 	if batch_nos:
-		try:
-			filters["batch_no"] = json.loads(batch_nos) if (type(json.loads(batch_nos)) == list) else [json.loads(batch_nos)]
-		except Exception:
-			filters["batch_no"] = [batch_nos]
+		batch_nos = safe_json_loads(batch_nos)
+		if isinstance(batch_nos, list):
+			filters.batch_no = batch_nos
+		elif isinstance(batch_nos, str):
+			filters.batch_no = [batch_nos]
 
 	if posting_date:
-		filters["expiry_date"] = posting_date
+		filters.expiry_date = posting_date
 
 	serial_numbers = []
 	if for_doctype == 'POS Invoice':
