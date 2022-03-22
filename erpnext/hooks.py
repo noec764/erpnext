@@ -58,7 +58,7 @@ on_session_creation = [
 ]
 on_logout = "erpnext.shopping_cart.utils.clear_cart_count"
 
-treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Group', 'Sales Person', 'Territory', 'Supplier Group']
+treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Group', 'Sales Person', 'Territory', 'Supplier Group', 'Bank Transaction Category']
 
 # website
 update_website_context = ["erpnext.shopping_cart.utils.update_website_context"]

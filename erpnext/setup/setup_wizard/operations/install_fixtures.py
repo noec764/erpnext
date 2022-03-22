@@ -239,6 +239,9 @@ def install(country=None):
 
 		# Warehouse Type
 		{'doctype': 'Warehouse Type', 'name': 'Transit'},
+
+		# Bank Transaction Category
+		{'doctype': 'Bank Transaction Category', 'category': _('All Categories'), 'is_group': 1, 'name': _('All Categories'), 'parent_bank_transaction_category': ''},
 	]
 
 	from erpnext.setup.setup_wizard.data.industry_type import get_industry_types
