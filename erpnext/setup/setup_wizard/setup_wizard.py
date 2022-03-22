@@ -6,7 +6,7 @@
 import frappe
 from frappe import _
 
-from .operations import install_fixtures as fixtures, company_setup, sample_data
+from .operations import install_fixtures as fixtures, company_setup
 
 def get_setup_stages(args=None):
 	if frappe.db.sql("select name from tabCompany"):
@@ -100,17 +100,6 @@ def stage_four(args):
 def fin(args):
 	frappe.local.message_log = []
 	login_as_first_user(args)
-
-	make_sample_data(args.get('domains'))
-
-def make_sample_data(domains):
-	try:
-		sample_data.make_sample_data(domains)
-	except Exception:
-		# clear message
-		if frappe.message_log:
-			frappe.message_log.pop()
-		pass
 
 def login_as_first_user(args):
 	if args.get("email") and hasattr(frappe.local, "login_manager"):
