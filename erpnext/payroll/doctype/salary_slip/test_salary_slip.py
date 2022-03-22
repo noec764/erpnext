@@ -35,6 +35,7 @@ from erpnext.payroll.doctype.salary_structure.salary_structure import make_salar
 class TestSalarySlip(unittest.TestCase):
 	def setUp(self):
 		setup_test()
+		frappe.flags.pop("via_payroll_entry", None)
 
 	def tearDown(self):
 		frappe.db.set_value("Payroll Settings", None, "include_holidays_in_total_working_days", 0)
@@ -339,17 +340,17 @@ class TestSalarySlip(unittest.TestCase):
 		self.assertTrue(salary_slip_test_employee.has_permission("read"))
 
 	def test_email_salary_slip(self):
-		frappe.db.sql("delete from `tabEmail Queue`")
+		frappe.db.delete("Email Queue")
 
-		frappe.db.set_value("Payroll Settings", None, "email_salary_slip_to_employee", 1)
+		user_id = "test_email_salary_slip@salary.com"
 
-		make_employee("test_email_salary_slip@salary.com", company="_Test Company")
-		ss = make_employee_salary_slip("test_email_salary_slip@salary.com", "Monthly", "Test Salary Slip Email")
+		make_employee(user_id, company="_Test Company")
+		ss = make_employee_salary_slip(user_id, "Monthly", "Test Salary Slip Email")
 		ss.company = "_Test Company"
 		ss.save()
 		ss.submit()
 
-		email_queue = frappe.db.sql("""select name from `tabEmail Queue`""")
+		email_queue = frappe.db.a_row_exists("Email Queue")
 		self.assertTrue(email_queue)
 
 	def test_loan_repayment_salary_slip(self):
