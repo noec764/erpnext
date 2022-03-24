@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
+# Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
-import arrow
+import re
+
 import frappe
 from frappe import _
-from frappe.utils import getdate
 
 from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayouts
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
@@ -51,18 +50,20 @@ class GoCardlessReconciliation:
 			BankReconciliation([self.bank_transaction], self.documents).reconcile()
 
 	def get_payouts_and_transactions(self):
-		reference = self.bank_transaction.get("description").split("|")[1].strip()
-		payouts = GoCardlessPayouts(self.gocardless_settings).get_list(
-			reference=reference
-		)
-
-		for payout in payouts.records:
-			items = self.gocardless_settings.client.payout_items.list(
-				params=dict(payout=payout.id)
+		found_reference = re.search(r'GoCardless(.*?)CT', self.bank_transaction.get("description"))
+		if found_reference:
+			reference = found_reference.group(1).strip()
+			payouts = GoCardlessPayouts(self.gocardless_settings).get_list(
+				reference=reference
 			)
-			for item in items.records:
-				if item.type == "payment_paid_out":
-					self.payouts.append(item)
+
+			for payout in payouts.records:
+				items = self.gocardless_settings.client.payout_items.list(
+					params=dict(payout=payout.id)
+				)
+				for item in items.records:
+					if item.type == "payment_paid_out":
+						self.payouts.append(item)
 
 	def get_payment_references(self):
 		for payout in self.payouts:

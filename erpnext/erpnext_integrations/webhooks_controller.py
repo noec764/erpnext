@@ -183,11 +183,12 @@ class WebhooksController():
 
 		if frappe.db.exists("Payment Entry", dict(reference_no=reference)):
 			payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=reference))
+			payment_entry.flags.ignore_permissions = True
 			if payment_entry.docstatus == 1:
 				payment_entry.cancel()
+				self.set_references(payment_entry.doctype, payment_entry.name)
 			elif payment_entry.docstatus == 0:
 				payment_entry.delete()
-			self.set_references(payment_entry.doctype, payment_entry.name)
 			self.set_as_completed()
 		else:
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))

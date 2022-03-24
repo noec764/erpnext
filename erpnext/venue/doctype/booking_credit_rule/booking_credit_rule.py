@@ -97,13 +97,18 @@ def trigger_credit_rules(doc, method):
 			frappe.get_doc("Booking Credit Rule", rule.name).process_rule(doc)
 
 def get_trigger_docs():
-	return frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
+	trigger_docs = frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
+	if not trigger_docs:
+		trigger_docs = set_trigger_docs()
+	return trigger_docs
 
 def set_trigger_docs():
-	return frappe.cache().set_value("booking_credit_documents", _get_booking_credit_documents())
+	trigger_docs = _get_booking_credit_documents()
+	frappe.cache().set_value("booking_credit_documents", trigger_docs)
+	return trigger_docs
 
 def _get_booking_credit_documents():
-	return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
+	return frappe.get_all("Booking Credit Rule", pluck="trigger_document", distinct=True)
 
 def trigger_after_specific_time():
 	rules = frappe.get_all("Booking Credit Rule",
