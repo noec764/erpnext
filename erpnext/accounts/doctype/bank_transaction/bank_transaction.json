@@ -210,13 +210,15 @@
    "allow_on_submit": 1,
    "fieldname": "category",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Category",
    "options": "Bank Transaction Category"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-25 17:46:37.091044",
+ "modified": "2022-03-25 17:53:44.034813",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
