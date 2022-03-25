@@ -207,6 +207,7 @@
    "options": "Account"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "category",
    "fieldtype": "Link",
    "label": "Category",
@@ -215,7 +216,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-17 22:33:36.219475",
+ "modified": "2022-03-25 17:46:37.091044",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
