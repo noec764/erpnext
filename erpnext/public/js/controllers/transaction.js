@@ -402,11 +402,13 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 	}
 
 	barcode(doc, cdt, cdn) {
-		var d = locals[cdt][cdn];
-		if(d.barcode=="" || d.barcode==null) {
+		const d = locals[cdt][cdn];
+		if (!d.barcode) {
 			// barcode cleared, remove item
 			d.item_code = "";
 		}
+		// flag required for circular triggers
+		d._triggerd_from_barcode = true;
 		this.item_code(doc, cdt, cdn);
 	}
 
@@ -426,7 +428,9 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			this.frm.doc.doctype === 'Delivery Note') {
 			show_batch_dialog = 1;
 		}
-		item.barcode = null;
+		if (!item._triggerd_from_barcode) {
+			item.barcode = null;
+		}
 
 		if(item.item_code || item.barcode || item.serial_no) {
 			if(!this.validate_company_and_party()) {
