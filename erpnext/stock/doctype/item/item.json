@@ -433,7 +433,6 @@
    "fieldname": "has_batch_no",
    "fieldtype": "Check",
    "label": "Has Batch No",
-   "no_copy": 1,
    "oldfieldname": "has_batch_no",
    "oldfieldtype": "Select"
   },
@@ -483,7 +482,6 @@
    "fieldname": "has_serial_no",
    "fieldtype": "Check",
    "label": "Has Serial No",
-   "no_copy": 1,
    "oldfieldname": "has_serial_no",
    "oldfieldtype": "Select"
   },
@@ -998,7 +996,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 0,
- "modified": "2022-02-11 08:07:46.663220",
+ "modified": "2022-03-25 06:38:55.942304",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
