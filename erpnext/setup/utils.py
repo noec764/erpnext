@@ -14,8 +14,8 @@ def before_tests():
 	frappe.clear_cache()
 	# complete setup if missing
 	from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
-	current_year = now_datetime().year
-	if not frappe.get_list("Company"):
+	if not frappe.db.a_row_exists("Company"):
+		current_year = now_datetime().year
 		setup_complete({
 			"currency"			:"USD",
 			"full_name"			:"Test User",
@@ -39,7 +39,7 @@ def before_tests():
 	frappe.db.sql("delete from `tabSalary Slip`")
 	frappe.db.sql("delete from `tabItem Price`")
 
-	enable_all_roles_and_domains()
+	_enable_all_domains()
 	set_defaults_for_tests()
 
 	frappe.db.commit()
@@ -119,21 +119,32 @@ def format_ces_api(data, param):
 def enable_all_roles_and_domains():
 	""" enable all roles and domain for testing """
 	# add all roles to users
-	domains = frappe.get_all("Domain")
+	_enable_all_domains()
+	_enable_all_roles_for_admin()
+
+def _enable_all_domains():
+	domains = frappe.get_all("Domain", pluck="name")
 	if not domains:
 		return
+	frappe.get_single('Domain Settings').set_active_domains(domains)
 
+def _enable_all_roles_for_admin():
 	from frappe.desk.page.setup_wizard.setup_wizard import add_all_roles_to
-	frappe.get_single('Domain Settings').set_active_domains(\
-		[d.name for d in domains])
-	add_all_roles_to('Administrator')
+	all_roles = set(frappe.db.get_values("Role", pluck="name"))
+	admin_roles = set(frappe.db.get_values("Has Role",
+		{"parent": "Administrator"}, fieldname="role", pluck="role"))
+
+	if all_roles.difference(admin_roles):
+		add_all_roles_to('Administrator')
 
 def set_defaults_for_tests():
-	selling_settings = frappe.get_single("Selling Settings")
-	selling_settings.customer_group = get_root_of("Customer Group")
-	selling_settings.territory = get_root_of("Territory")
-	selling_settings.save()
-
+	defaults = {
+		"customer_group": get_root_of("Customer Group"),
+		"territory": get_root_of("Territory"),
+	}
+	frappe.db.set_single_value("Selling Settings", defaults)
+	for key, value in defaults.items():
+			frappe.db.set_default(key, value)
 	frappe.db.set_single_value("Stock Settings", "auto_insert_price_list_rate_if_missing", 0)
 
 def insert_record(records):
