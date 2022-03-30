@@ -381,6 +381,14 @@ def install(country=None):
 		{"doctype": "Sales Stage", "stage_name": _("Negotiation/Review")},
 		# Warehouse Type
 		{"doctype": "Warehouse Type", "name": "Transit"},
+		# Bank Transaction Category
+		{
+			"doctype": "Bank Transaction Category",
+			"category": _("All Categories"),
+			"is_group": 1,
+			"name": _("All Categories"),
+			"parent_bank_transaction_category": "",
+		},
 	]
 
 	from erpnext.setup.setup_wizard.data.industry_type import get_industry_types
@@ -544,7 +552,7 @@ def add_uom_data():
 	)
 	for d in uoms:
 		if not frappe.db.exists("UOM", _(d.get("uom_name"))):
-			uom_doc = frappe.get_doc(
+			frappe.get_doc(
 				{
 					"doctype": "UOM",
 					"uom_name": _(d.get("uom_name")),
@@ -567,7 +575,7 @@ def add_uom_data():
 		if not frappe.db.exists(
 			"UOM Conversion Factor", {"from_uom": _(d.get("from_uom")), "to_uom": _(d.get("to_uom"))}
 		):
-			uom_conversion = frappe.get_doc(
+			frappe.get_doc(
 				{
 					"doctype": "UOM Conversion Factor",
 					"category": _(d.get("category")),

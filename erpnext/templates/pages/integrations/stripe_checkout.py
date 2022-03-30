@@ -142,7 +142,7 @@ def make_payment_intent(
 	)
 
 	if not webform:
-		payment_intent.update(dict(setup_future_usage="off_session"))
+		payment_intent_object.update(dict(setup_future_usage="off_session"))
 
 	if customer:
 		payment_intent_object.update(dict(customer=customer))
@@ -157,10 +157,7 @@ def make_payment_intent(
 
 
 def create_payment_request(**kwargs):
-	from erpnext.accounts.doctype.payment_request.payment_request import (
-		get_payment_gateway_account,
-		make_payment_request,
-	)
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 	return frappe.get_doc(
 		make_payment_request(

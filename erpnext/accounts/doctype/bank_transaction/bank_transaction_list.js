@@ -4,6 +4,7 @@ frappe.provide("erpnext.accounts");
 
 frappe.listview_settings['Bank Transaction'] = {
 	add_fields: ["unallocated_amount"],
+	hide_name_column: 1,
 	get_indicator: function(doc) {
 		if (doc.status === "Unreconciled") {
 			return [__("Unreconciled", null, "Bank Transaction"), "orange", "status,=,Unreconciled"];

@@ -66,6 +66,7 @@ treeviews = [
 	"Sales Person",
 	"Territory",
 	"Supplier Group",
+	"Bank Transaction Category",
 ]
 
 # website
@@ -477,10 +478,6 @@ scheduler_events = {
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
 		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce",
 	],
-	"daily_long": [
-		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries",
-		"erpnext.bulk_transaction.doctype.bulk_transaction_log.bulk_transaction_log.retry_failing_transaction",
-	],
 	"daily": [
 		"erpnext.stock.reorder_item.reorder_item",
 		"erpnext.support.doctype.issue.issue.auto_close_tickets",
@@ -520,6 +517,8 @@ scheduler_events = {
 		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
 		"erpnext.crm.doctype.lead.lead.daily_open_lead",
 		"erpnext.venue.doctype.booking_credit.booking_credit.process_expired_booking_credits",
+		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries",
+		"erpnext.bulk_transaction.doctype.bulk_transaction_log.bulk_transaction_log.retry_failing_transaction",
 	],
 	"weekly": ["erpnext.hr.doctype.employee.employee_reminders.send_reminders_in_advance_weekly"],
 	"monthly": ["erpnext.hr.doctype.employee.employee_reminders.send_reminders_in_advance_monthly"],

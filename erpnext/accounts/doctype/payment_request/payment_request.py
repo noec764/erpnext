@@ -12,7 +12,6 @@ from frappe.model.document import Document
 from frappe.utils import flt, get_url, nowdate
 from frappe.utils.background_jobs import enqueue
 
-from erpnext import get_default_company
 from erpnext.accounts.doctype.payment_entry.payment_entry import (
 	get_company_defaults,
 	get_payment_entry,
@@ -262,7 +261,8 @@ class PaymentRequest(Document):
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 		ref_doc.currency = ref_doc.get("currency", self.currency)
-		ref_doc.company_currency = ref_doc.get(
+
+		company_currency = ref_doc.get(
 			"company_currency", frappe.db.get_value("Company", ref_doc.company, "default_currency")
 		)
 
@@ -290,9 +290,7 @@ class PaymentRequest(Document):
 			)
 
 			bank_amount = self.grand_total
-			if (
-				party_account_currency == ref_doc.company_currency and party_account_currency != self.currency
-			):
+			if party_account_currency == company_currency and party_account_currency != self.currency:
 				party_amount = ref_doc.base_grand_total
 			else:
 				party_amount = self.grand_total

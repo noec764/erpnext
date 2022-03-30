@@ -10,6 +10,7 @@
   "naming_series",
   "date",
   "reference_number",
+  "category",
   "status",
   "column_break_2",
   "company",
@@ -206,11 +207,20 @@
    "hidden": 1,
    "label": "Bank Account Head",
    "options": "Account"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Category",
+   "options": "Bank Transaction Category"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-21 19:05:04.208222",
+ "modified": "2022-03-25 17:53:44.034813",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",

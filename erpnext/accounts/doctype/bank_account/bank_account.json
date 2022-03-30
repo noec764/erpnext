@@ -214,8 +214,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2022-03-15 09:34:36.346245",
+ "links": [
+  {
+   "group": "Transactions",
+   "link_doctype": "Bank Transaction",
+   "link_fieldname": "bank_account"
+  }
+ ],
+ "modified": "2022-03-18 11:38:44.880387",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Account",

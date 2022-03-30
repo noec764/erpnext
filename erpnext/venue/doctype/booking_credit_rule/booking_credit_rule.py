@@ -3,7 +3,6 @@
 
 import calendar
 import math
-from collections import defaultdict
 from datetime import date, datetime, timedelta
 from itertools import chain
 
@@ -22,13 +21,10 @@ from frappe.utils import (
 	get_year_ending,
 	getdate,
 	now_datetime,
-	nowdate,
-	time_diff,
 	time_diff_in_minutes,
 )
 
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
-from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.doctype.item_booking.item_booking import get_item_calendar, get_uom_in_minutes
 from erpnext.venue.utils import get_linked_customers
 
@@ -117,15 +113,20 @@ def trigger_credit_rules(doc, method):
 
 
 def get_trigger_docs():
-	return frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
+	trigger_docs = frappe.cache().get_value("booking_credit_documents", _get_booking_credit_documents)
+	if not trigger_docs:
+		trigger_docs = set_trigger_docs()
+	return trigger_docs
 
 
 def set_trigger_docs():
-	return frappe.cache().set_value("booking_credit_documents", _get_booking_credit_documents())
+	trigger_docs = _get_booking_credit_documents()
+	frappe.cache().set_value("booking_credit_documents", trigger_docs)
+	return trigger_docs
 
 
 def _get_booking_credit_documents():
-	return frappe.get_all("Booking Credit Rule", pluck="trigger_document")
+	return frappe.get_all("Booking Credit Rule", pluck="trigger_document", distinct=True)
 
 
 def trigger_after_specific_time():
@@ -598,7 +599,7 @@ class RuleProcessor:
 		return self.item
 
 	def get_recurrence(self):
-		from dateutil import relativedelta, rrule
+		from dateutil import rrule
 
 		if self.rule.recurrence_interval and self.rule.recurrence_end:
 			end_date = getattr(self.doc, self.rule.recurrence_end, None) or now_datetime()
