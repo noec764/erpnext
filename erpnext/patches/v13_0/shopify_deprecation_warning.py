@@ -1,6 +1,7 @@
 import click
 import frappe
 
+
 def execute():
 	click.secho(
 		"Shopify Integration is moved to a separate app and will be removed from Dokos in version 3.\n"

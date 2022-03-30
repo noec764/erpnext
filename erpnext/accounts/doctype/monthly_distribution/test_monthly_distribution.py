@@ -2,10 +2,12 @@
 # See license.txt
 
 
-import frappe
 import unittest
 
-test_records = frappe.get_test_records('Monthly Distribution')
+import frappe
+
+test_records = frappe.get_test_records("Monthly Distribution")
+
 
 class TestMonthlyDistribution(unittest.TestCase):
 	pass

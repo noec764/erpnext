@@ -1,17 +1,21 @@
-
 # Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
 
-import frappe
-from frappe.utils import today
-from erpnext.hr.doctype.designation.test_designation import create_designation
-from erpnext.hr.doctype.employee_referral.employee_referral import create_job_applicant, create_additional_salary
-from erpnext.hr.doctype.employee.test_employee import make_employee
 import unittest
 
-class TestEmployeeReferral(unittest.TestCase):
+import frappe
+from frappe.utils import today
 
+from erpnext.hr.doctype.designation.test_designation import create_designation
+from erpnext.hr.doctype.employee.test_employee import make_employee
+from erpnext.hr.doctype.employee_referral.employee_referral import (
+	create_additional_salary,
+	create_job_applicant,
+)
+
+
+class TestEmployeeReferral(unittest.TestCase):
 	def setUp(self):
 		frappe.db.sql("DELETE FROM `tabJob Applicant`")
 		frappe.db.sql("DELETE FROM `tabEmployee Referral`")
@@ -19,13 +23,12 @@ class TestEmployeeReferral(unittest.TestCase):
 	def test_workflow_and_status_sync(self):
 		emp_ref = create_employee_referral()
 
-		#Check Initial status
+		# Check Initial status
 		self.assertTrue(emp_ref.status, "Pending")
 
 		job_applicant = create_job_applicant(emp_ref.name)
 
-
-		#Check status sync
+		# Check status sync
 		emp_ref.reload()
 		self.assertTrue(emp_ref.status, "In Process")
 
@@ -42,7 +45,6 @@ class TestEmployeeReferral(unittest.TestCase):
 
 		emp_ref.reload()
 		self.assertTrue(emp_ref.status, "Accepted")
-
 
 		# Check for Referral reference in additional salary
 

@@ -45,7 +45,7 @@ frappe.ui.form.on('Bank Transaction', {
 		frm.page.clear_actions_menu();
 		if (frm.doc.docstatus == 1 && frm.doc.unallocated_amount > 0) {
 			frm.page.add_action_item(__('Make payment entry'), function() {
-				make_new_doc(frm.doc, "Payment Entry");			
+				make_new_doc(frm.doc, "Payment Entry");
 			});
 		}
 

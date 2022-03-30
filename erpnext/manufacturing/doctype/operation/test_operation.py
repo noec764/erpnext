@@ -2,13 +2,16 @@
 # See license.txt
 
 
-import frappe
 import unittest
 
-test_records = frappe.get_test_records('Operation')
+import frappe
+
+test_records = frappe.get_test_records("Operation")
+
 
 class TestOperation(unittest.TestCase):
 	pass
+
 
 def make_operation(*args, **kwargs):
 	args = args if args else kwargs
@@ -18,11 +21,9 @@ def make_operation(*args, **kwargs):
 	args = frappe._dict(args)
 
 	if not frappe.db.exists("Operation", args.operation):
-		doc = frappe.get_doc({
-			"doctype": "Operation",
-			"name": args.operation,
-			"workstation": args.workstation
-		})
+		doc = frappe.get_doc(
+			{"doctype": "Operation", "name": args.operation, "workstation": args.workstation}
+		)
 
 		doc.insert()
 

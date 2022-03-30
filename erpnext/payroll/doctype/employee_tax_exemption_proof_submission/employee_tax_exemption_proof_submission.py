@@ -1,14 +1,20 @@
-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
 import frappe
-from frappe.model.document import Document
 from frappe import _
+from frappe.model.document import Document
 from frappe.utils import flt
-from erpnext.hr.utils import validate_tax_declaration, get_total_exemption_amount, validate_active_employee, \
-	calculate_hra_exemption_for_period, validate_duplicate_exemption_for_payroll_period
+
+from erpnext.hr.utils import (
+	calculate_hra_exemption_for_period,
+	get_total_exemption_amount,
+	validate_active_employee,
+	validate_duplicate_exemption_for_payroll_period,
+	validate_tax_declaration,
+)
+
 
 class EmployeeTaxExemptionProofSubmission(Document):
 	def validate(self):
@@ -17,7 +23,9 @@ class EmployeeTaxExemptionProofSubmission(Document):
 		self.set_total_actual_amount()
 		self.set_total_exemption_amount()
 		self.calculate_hra_exemption()
-		validate_duplicate_exemption_for_payroll_period(self.doctype, self.name, self.payroll_period, self.employee)
+		validate_duplicate_exemption_for_payroll_period(
+			self.doctype, self.name, self.payroll_period, self.employee
+		)
 
 	def set_total_actual_amount(self):
 		self.total_actual_amount = flt(self.get("house_rent_payment_amount"))

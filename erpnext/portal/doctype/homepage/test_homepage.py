@@ -1,16 +1,17 @@
-
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
 
-import frappe
 import unittest
+
+import frappe
 from frappe.utils import set_request
 from frappe.website.serve import get_response
 
+
 class TestHomepage(unittest.TestCase):
 	def test_homepage_load(self):
-		set_request(method='GET', path='home')
+		set_request(method="GET", path="home")
 		response = get_response()
 
 		self.assertEqual(response.status_code, 200)

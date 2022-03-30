@@ -1,16 +1,15 @@
-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import frappe
+import requests
+from frappe import _
 from frappe.utils.password import get_decrypted_password
 from plaid import Client
-from plaid.errors import APIError, ItemError, InvalidRequestError
+from plaid.errors import APIError, InvalidRequestError, ItemError
 
-import frappe
-from frappe import _
-import requests
 
-class PlaidConnector():
+class PlaidConnector:
 	def __init__(self, access_token=None):
 
 		plaid_settings = frappe.get_single("Plaid Settings")
@@ -23,7 +22,7 @@ class PlaidConnector():
 			client_id=self.settings.plaid_client_id,
 			secret=self.settings.get_password("plaid_secret"),
 			environment=self.settings.plaid_env,
-			api_version="2020-09-14"
+			api_version="2020-09-14",
 		)
 
 	def get_access_token(self, public_token):
@@ -36,25 +35,29 @@ class PlaidConnector():
 		return access_token
 
 	def get_token_request(self, update_mode=False):
-		country_codes = ["US", "CA", "FR", "IE", "NL", "ES", "GB"] if self.settings.enable_european_access else ["US", "CA"]
+		country_codes = (
+			["US", "CA", "FR", "IE", "NL", "ES", "GB"]
+			if self.settings.enable_european_access
+			else ["US", "CA"]
+		)
 		args = {
 			"client_name": self.client_name,
 			# only allow Plaid-supported languages and countries (LAST: Sep-19-2020)
 			"language": frappe.local.lang if frappe.local.lang in ["en", "fr", "es", "nl"] else "en",
 			"country_codes": country_codes,
-			"user": {
-				"client_user_id": frappe.generate_hash(frappe.session.user, length=32)
-			}
+			"user": {"client_user_id": frappe.generate_hash(frappe.session.user, length=32)},
 		}
 
 		if update_mode:
 			args["access_token"] = self.access_token
 		else:
-			args.update({
-				"client_id": self.settings.plaid_client_id,
-				"secret": self.settings.plaid_secret,
-				"products": self.products,
-			})
+			args.update(
+				{
+					"client_id": self.settings.plaid_client_id,
+					"secret": self.settings.plaid_secret,
+					"products": self.products,
+				}
+			)
 
 		return args
 
@@ -89,11 +92,7 @@ class PlaidConnector():
 
 	def get_transactions(self, start_date, end_date, account_id=None):
 		self.auth()
-		kwargs = dict(
-			access_token=self.access_token,
-			start_date=start_date,
-			end_date=end_date
-		)
+		kwargs = dict(access_token=self.access_token, start_date=start_date, end_date=end_date)
 		if account_id:
 			kwargs.update(dict(account_ids=[account_id]))
 
@@ -102,7 +101,9 @@ class PlaidConnector():
 			transactions = response["transactions"]
 
 			while len(transactions) < response["total_transactions"]:
-				response = self.client.Transactions.get(self.access_token, start_date=start_date, end_date=end_date, offset=len(transactions))
+				response = self.client.Transactions.get(
+					self.access_token, start_date=start_date, end_date=end_date, offset=len(transactions)
+				)
 				transactions.extend(response["transactions"])
 			return transactions
 		except ItemError as e:

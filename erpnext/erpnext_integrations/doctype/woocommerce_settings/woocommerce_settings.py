@@ -1,18 +1,29 @@
-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
 
+from urllib.parse import urlparse
+
 import frappe
 from frappe import _
-from frappe.utils import cint
-from frappe.model.document import Document
-from urllib.parse import urlparse
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
+from frappe.model.document import Document
+from frappe.utils import cint
 
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import WooCommerceTaxes, WooCommerceShippingMethods, sync_orders
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import sync_items, sync_products
-from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.webhooks import create_webhooks, delete_webhooks
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import (
+	WooCommerceShippingMethods,
+	WooCommerceTaxes,
+	sync_orders,
+)
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import (
+	sync_items,
+	sync_products,
+)
+from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.webhooks import (
+	create_webhooks,
+	delete_webhooks,
+)
+
 
 class WoocommerceSettings(Document):
 	def validate(self):
@@ -28,29 +39,61 @@ class WoocommerceSettings(Document):
 			# create
 			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute"]:
 				fields = [
-					dict(fieldname='woocommerce_id', label='Woocommerce ID', fieldtype='Data', read_only=1, print_hide=1, translatable=0),
-					dict(fieldname='last_woocommerce_sync', label='Last Woocommerce Sync', fieldtype='Datetime', hidden=1, print_hide=1)
+					dict(
+						fieldname="woocommerce_id",
+						label="Woocommerce ID",
+						fieldtype="Data",
+						read_only=1,
+						print_hide=1,
+						translatable=0,
+					),
+					dict(
+						fieldname="last_woocommerce_sync",
+						label="Last Woocommerce Sync",
+						fieldtype="Datetime",
+						hidden=1,
+						print_hide=1,
+					),
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
 
 			for doctype in ["Customer", "Address"]:
 				fields = [
-					dict(fieldname='woocommerce_email', label='Woocommerce Email', fieldtype='Data', read_only=1, print_hide=1, translatable=0)
+					dict(
+						fieldname="woocommerce_email",
+						label="Woocommerce Email",
+						fieldtype="Data",
+						read_only=1,
+						print_hide=1,
+						translatable=0,
+					)
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
 
 			for doctype in ["Item"]:
 				fields = [
-					dict(fieldname='sync_with_woocommerce', label='Sync with Woocommerce', fieldtype='Check', insert_after='is_stock_item', print_hide=1)
+					dict(
+						fieldname="sync_with_woocommerce",
+						label="Sync with Woocommerce",
+						fieldtype="Check",
+						insert_after="is_stock_item",
+						print_hide=1,
+					)
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
 
 			for doctype in ["Sales Order"]:
 				fields = [
-					dict(fieldname='woocommerce_number', label='Woocommerce Number', fieldtype='Data', read_only=1, translatable=0),
+					dict(
+						fieldname="woocommerce_number",
+						label="Woocommerce Number",
+						fieldtype="Data",
+						read_only=1,
+						translatable=0,
+					),
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
@@ -78,9 +121,7 @@ class WoocommerceSettings(Document):
 			# for CI Test to work
 			url = "http://localhost:8000"
 
-		server_url = '{uri.scheme}://{uri.netloc}'.format(
-			uri=urlparse(url)
-		)
+		server_url = "{uri.scheme}://{uri.netloc}".format(uri=urlparse(url))
 
 		delivery_url = server_url + endpoint
 		self.endpoint = delivery_url
@@ -88,7 +129,12 @@ class WoocommerceSettings(Document):
 	def create_webhooks(self):
 		if self.enable_sync and self.endpoint:
 			create_webhooks()
-		elif not self.enable_sync and self.woocommerce_server_url and self.api_consumer_key and self.api_consumer_secret:
+		elif (
+			not self.enable_sync
+			and self.woocommerce_server_url
+			and self.api_consumer_key
+			and self.api_consumer_secret
+		):
 			delete_webhooks()
 
 
@@ -98,11 +144,13 @@ def generate_secret():
 	woocommerce_settings.secret = frappe.generate_hash()
 	woocommerce_settings.save()
 
+
 @frappe.whitelist()
 def get_series():
 	return {
-		"sales_order_series" : frappe.get_meta("Sales Order").get_options("naming_series"),
+		"sales_order_series": frappe.get_meta("Sales Order").get_options("naming_series"),
 	}
+
 
 @frappe.whitelist()
 def get_taxes():
@@ -110,15 +158,18 @@ def get_taxes():
 	taxes = wc_api.get_taxes()
 	return taxes
 
+
 @frappe.whitelist()
 def get_shipping_methods():
 	wc_api = WooCommerceShippingMethods()
 	shipping_methods = wc_api.get_shipping_methods(params={"per_page": 100})
 	return shipping_methods
 
+
 @frappe.whitelist()
 def get_products():
 	sync_items()
+
 
 def sync_woocommerce():
 	if cint(frappe.db.get_single_value("Woocommerce Settings", "enable_sync")):

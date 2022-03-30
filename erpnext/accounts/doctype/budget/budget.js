@@ -12,7 +12,7 @@ frappe.ui.form.on('Budget', {
 				}
 			};
 		});
-		
+
 		frm.set_query("monthly_distribution", function() {
 			return {
 				filters: {

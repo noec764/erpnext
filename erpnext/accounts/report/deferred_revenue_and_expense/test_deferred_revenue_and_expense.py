@@ -348,4 +348,3 @@ def clear_accounts_and_items():
 	).run()
 	qb.from_(customer).delete().where(customer.customer_name == "_Test Customer DR").run()
 	qb.from_(supplier).delete().where(supplier.supplier_name == "_Test Furniture Supplier").run()
-

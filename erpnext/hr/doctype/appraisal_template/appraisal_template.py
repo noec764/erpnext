@@ -3,11 +3,10 @@
 
 
 import frappe
-from frappe.utils import cint, flt
-from frappe.utils import cint
 from frappe import _
-
 from frappe.model.document import Document
+from frappe.utils import cint, flt
+
 
 class AppraisalTemplate(Document):
 	def validate(self):

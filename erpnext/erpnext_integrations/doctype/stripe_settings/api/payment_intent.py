@@ -1,5 +1,6 @@
-from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
 from erpnext.erpnext_integrations.doctype.stripe_settings.api.errors import handle_stripe_errors
+from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
+
 
 class StripePaymentIntent:
 	def __init__(self, gateway, payment_request):
@@ -18,35 +19,20 @@ class StripePaymentIntent:
 
 	@handle_stripe_errors
 	def retrieve(self, id, client_secret):
-		return self.gateway.stripe.PaymentIntent.retrieve(
-			id,
-			client_secret=client_secret
-		)
+		return self.gateway.stripe.PaymentIntent.retrieve(id, client_secret=client_secret)
 
 	@handle_stripe_errors
 	def update(self, id, **kwargs):
-		return self.gateway.stripe.PaymentIntent.modify(
-			id,
-			**kwargs
-		)
+		return self.gateway.stripe.PaymentIntent.modify(id, **kwargs)
 
 	@handle_stripe_errors
 	def confirm(self, id, **kwargs):
-		return self.gateway.stripe.PaymentIntent.confirm(
-			id,
-			**kwargs
-		)
+		return self.gateway.stripe.PaymentIntent.confirm(id, **kwargs)
 
 	@handle_stripe_errors
 	def capture(self, id, **kwargs):
-		return self.gateway.stripe.PaymentIntent.attach(
-			id,
-			**kwargs
-		)
+		return self.gateway.stripe.PaymentIntent.attach(id, **kwargs)
 
 	@handle_stripe_errors
 	def cancel(self, id, **kwargs):
-		return self.gateway.stripe.PaymentIntent.detach(
-			id,
-			**kwargs
-		)
+		return self.gateway.stripe.PaymentIntent.detach(id, **kwargs)

@@ -1,5 +1,3 @@
-
-
 # dokos - web based ERP (http://dokos.io)
 # Copyright (C) 2012 Frappe Technologies Pvt Ltd
 #
@@ -19,9 +17,5 @@
 # default settings that can be made for a user.
 
 
-
 product_name = "dokos"
-user_defaults = {
-	"Company": "company",
-	"Territory": "territory"
-}
+user_defaults = {"Company": "company", "Territory": "territory"}

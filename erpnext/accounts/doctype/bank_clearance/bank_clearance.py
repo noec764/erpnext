@@ -3,13 +3,12 @@
 
 
 import frappe
-from frappe.utils import flt, getdate, nowdate, fmt_money
-from frappe import msgprint, _
+from frappe import _, msgprint
 from frappe.model.document import Document
+from frappe.utils import flt, fmt_money, getdate, nowdate
 
-form_grid_templates = {
-	"journal_entries": "templates/form_grid/bank_clearance_grid.html"
-}
+form_grid_templates = {"journal_entries": "templates/form_grid/bank_clearance_grid.html"}
+
 
 class BankClearance(Document):
 	@frappe.whitelist()
@@ -28,7 +27,8 @@ class BankClearance(Document):
 		if self.bank_account_no:
 			account_cond = " and t2.bank_account = {0}".format(frappe.db.escape(self.bank_account_no))
 
-		journal_entries = frappe.db.sql("""
+		journal_entries = frappe.db.sql(
+			"""
 			select
 				"Journal Entry" as payment_document, t1.name as payment_entry,
 				t1.cheque_no as cheque_number, t1.cheque_date,
@@ -42,12 +42,18 @@ class BankClearance(Document):
 				and ifnull(t1.is_opening, 'No') = 'No' {0} {1}
 			group by t2.account, t1.name
 			order by t1.posting_date ASC, t1.name DESC
-		""".format(condition, account_cond), (self.bank_account, self.from_date, self.to_date), as_dict=1)
+		""".format(
+				condition, account_cond
+			),
+			(self.bank_account, self.from_date, self.to_date),
+			as_dict=1,
+		)
 
 		if self.bank_account_no:
 			condition += " and bank_account = %(bank_account_no)s"
 
-		payment_entries = frappe.db.sql("""
+		payment_entries = frappe.db.sql(
+			"""
 			select
 				"Payment Entry" as payment_document, name as payment_entry,
 				reference_no as cheque_number, reference_date as cheque_date,
@@ -61,13 +67,22 @@ class BankClearance(Document):
 				and posting_date >= %(from)s and posting_date <= %(to)s {condition}
 			order by
 				posting_date ASC, name DESC
-		""".format(condition=condition),
-		        {"account":self.bank_account, "from":self.from_date,
-				"to":self.to_date, "bank_account_no": self.bank_account_no}, as_dict=1)
+		""".format(
+				condition=condition
+			),
+			{
+				"account": self.bank_account,
+				"from": self.from_date,
+				"to": self.to_date,
+				"bank_account_no": self.bank_account_no,
+			},
+			as_dict=1,
+		)
 
 		pos_entries = []
 		if self.include_pos_transactions:
-			pos_entries = frappe.db.sql("""
+			pos_entries = frappe.db.sql(
+				"""
 				select
 					"Sales Invoice Payment" as payment_document, sip.name as payment_entry, sip.amount as debit,
 					si.posting_date, si.debit_to as against_account, sip.clearance_date,
@@ -78,19 +93,25 @@ class BankClearance(Document):
 					and account.name = sip.account and si.posting_date >= %(from)s and si.posting_date <= %(to)s {0}
 				order by
 					si.posting_date ASC, si.name DESC
-			""".format(condition),
-			        {"account":self.bank_account, "from":self.from_date, "to":self.to_date}, as_dict=1)
+			""".format(
+					condition
+				),
+				{"account": self.bank_account, "from": self.from_date, "to": self.to_date},
+				as_dict=1,
+			)
 
-		entries = sorted(list(payment_entries)+list(journal_entries+list(pos_entries)),
-			key=lambda k: k['posting_date'] or getdate(nowdate()))
+		entries = sorted(
+			list(payment_entries) + list(journal_entries + list(pos_entries)),
+			key=lambda k: k["posting_date"] or getdate(nowdate()),
+		)
 
-		self.set('payment_entries', [])
+		self.set("payment_entries", [])
 		self.total_amount = 0.0
 
 		for d in entries:
-			row = self.append('payment_entries', {})
+			row = self.append("payment_entries", {})
 
-			amount = flt(d.get('debit', 0)) - flt(d.get('credit', 0))
+			amount = flt(d.get("debit", 0)) - flt(d.get("credit", 0))
 
 			formatted_amount = fmt_money(abs(amount), 2, d.account_currency)
 			d.amount = formatted_amount + " " + (_("Dr") if amount > 0 else _("Cr"))
@@ -104,21 +125,24 @@ class BankClearance(Document):
 	@frappe.whitelist()
 	def update_clearance_date(self):
 		clearance_date_updated = False
-		for d in self.get('payment_entries'):
+		for d in self.get("payment_entries"):
 			if d.clearance_date:
 				if not d.payment_document:
 					frappe.throw(_("Row #{0}: Payment document is required to complete the transaction"))
 
 				if d.cheque_date and getdate(d.clearance_date) < getdate(d.cheque_date):
-					frappe.throw(_("Row #{0}: Clearance date {1} cannot be before Cheque Date {2}")
-						.format(d.idx, d.clearance_date, d.cheque_date))
+					frappe.throw(
+						_("Row #{0}: Clearance date {1} cannot be before Cheque Date {2}").format(
+							d.idx, d.clearance_date, d.cheque_date
+						)
+					)
 
 			if d.clearance_date or self.include_reconciled_entries:
 				if not d.clearance_date:
 					d.clearance_date = None
 
 				payment_entry = frappe.get_doc(d.payment_document, d.payment_entry)
-				payment_entry.db_set('clearance_date', d.clearance_date)
+				payment_entry.db_set("clearance_date", d.clearance_date)
 
 				if d.payment_document == "Sales Invoice Payment":
 					payment_entry = frappe.get_doc("Sales Invoice", payment_entry.parent)
@@ -127,7 +151,7 @@ class BankClearance(Document):
 					if hasattr(payment_entry, "update_unreconciled_amount"):
 						payment_entry.run_method("update_unreconciled_amount")
 				else:
-					payment_entry.db_set('unreconciled_amount', 0)
+					payment_entry.db_set("unreconciled_amount", 0)
 					for f in ["unreconciled_from_amount", "unreconciled_to_amount"]:
 						if frappe.get_meta(payment_entry.doctype).has_field(f):
 							payment_entry.db_set(f, 0)

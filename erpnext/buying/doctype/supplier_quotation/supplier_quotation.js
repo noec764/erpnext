@@ -73,7 +73,7 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 							company: me.frm.doc.company
 						},
 						get_query_method: "erpnext.buying.doctype.request_for_quotation.request_for_quotation.get_rfq_containing_supplier"
-	
+
 					})
 				}, __("Get items from"));
 		}

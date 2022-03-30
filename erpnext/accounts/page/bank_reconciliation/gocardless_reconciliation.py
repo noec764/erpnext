@@ -3,24 +3,35 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
 import arrow
 import frappe
 from frappe import _
 from frappe.utils import getdate
 
-from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayouts
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
+from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessPayouts
+
 
 def reconcile_gocardless_payouts(bank_transactions):
-	gocardless_transactions = [transaction for transaction in bank_transactions if "gocardless" in transaction.get("description").lower()]
+	gocardless_transactions = [
+		transaction
+		for transaction in bank_transactions
+		if "gocardless" in transaction.get("description").lower()
+	]
 	if not gocardless_transactions:
 		return
 
-	gocardless_accounts = frappe.get_list("GoCardless Settings", {"bank_account": bank_transactions[0].get("bank_account")})
+	gocardless_accounts = frappe.get_list(
+		"GoCardless Settings", {"bank_account": bank_transactions[0].get("bank_account")}
+	)
 	if not gocardless_accounts:
 		return
 
-	_reconcile_gocardless_payouts(bank_transactions=gocardless_transactions, gocardless_accounts=gocardless_accounts)
+	_reconcile_gocardless_payouts(
+		bank_transactions=gocardless_transactions, gocardless_accounts=gocardless_accounts
+	)
+
 
 def _reconcile_gocardless_payouts(bank_transactions, gocardless_accounts):
 	reconciled_transactions = []
@@ -33,6 +44,7 @@ def _reconcile_gocardless_payouts(bank_transactions, gocardless_accounts):
 				bank_reconciliation.reconcile()
 				if bank_reconciliation.documents:
 					reconciled_transactions.append(bank_transaction.get("name"))
+
 
 class GoCardlessReconciliation:
 	def __init__(self, gocardless_settings, bank_transaction):
@@ -52,14 +64,10 @@ class GoCardlessReconciliation:
 
 	def get_payouts_and_transactions(self):
 		reference = self.bank_transaction.get("description").split("|")[1].strip()
-		payouts = GoCardlessPayouts(self.gocardless_settings).get_list(
-			reference=reference
-		)
+		payouts = GoCardlessPayouts(self.gocardless_settings).get_list(reference=reference)
 
 		for payout in payouts.records:
-			items = self.gocardless_settings.client.payout_items.list(
-				params=dict(payout=payout.id)
-			)
+			items = self.gocardless_settings.client.payout_items.list(params=dict(payout=payout.id))
 			for item in items.records:
 				if item.type == "payment_paid_out":
 					self.payouts.append(item)
@@ -69,8 +77,8 @@ class GoCardlessReconciliation:
 			links = getattr(payout, "links") or {}
 			payment = getattr(links, "payment")
 
-			payment_entry = frappe.db.get_value("Payment Entry", dict(reference_no=payment, docstatus=1, status=("=", "Unreconciled")))
+			payment_entry = frappe.db.get_value(
+				"Payment Entry", dict(reference_no=payment, docstatus=1, status=("=", "Unreconciled"))
+			)
 			if payment_entry:
-				self.documents.append(
-					frappe.get_doc("Payment Entry", payment_entry).as_dict()
-				)
+				self.documents.append(frappe.get_doc("Payment Entry", payment_entry).as_dict())

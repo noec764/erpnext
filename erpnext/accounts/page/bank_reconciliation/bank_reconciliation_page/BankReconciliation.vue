@@ -101,7 +101,7 @@ export default {
 			this.$refs.transactionsList.get_transaction_list(true);
 		}
 	}
-	
+
 }
 </script>
 

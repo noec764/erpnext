@@ -1,10 +1,11 @@
-
 # Copyright (c) 2018, Frappe and Contributors
 # See license.txt
 
 
-import frappe
 import unittest
+
+import frappe
+
 
 class TestQualityAction(unittest.TestCase):
 	# quality action has no code

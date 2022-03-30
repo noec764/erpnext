@@ -5,8 +5,8 @@
 
 
 import frappe
-
 from frappe.model.document import Document
+
 
 class ShippingRuleCondition(Document):
 	pass

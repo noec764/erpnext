@@ -35,6 +35,7 @@ def retry_failing_transaction(log_date=None):
 	else:
 		return "No Failed Records"
 
+
 def job(data, log_date):
 	for d in data:
 		failed = []
@@ -51,7 +52,7 @@ def job(data, log_date):
 				d.to_doctype,
 				status="Failed",
 				log_date=log_date,
-				restarted=1
+				restarted=1,
 			)
 
 		if not failed:

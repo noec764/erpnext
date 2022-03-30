@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
 	if frappe.db.exists("DocType", "Sepa Mandate"):
 		return

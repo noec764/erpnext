@@ -1,7 +1,7 @@
-from woocommerce import API
-import requests
-
 import frappe
+import requests
+from woocommerce import API
+
 
 class WooCommerceAPI:
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -9,13 +9,17 @@ class WooCommerceAPI:
 		self.version = version
 		self.api = {}
 
-		if self.settings.woocommerce_server_url and self.settings.api_consumer_key and self.settings.api_consumer_secret:
+		if (
+			self.settings.woocommerce_server_url
+			and self.settings.api_consumer_key
+			and self.settings.api_consumer_secret
+		):
 			self.api = API(
 				url=self.settings.woocommerce_server_url,
 				consumer_key=self.settings.api_consumer_key,
 				consumer_secret=self.settings.api_consumer_secret,
 				version=version,
-				timeout=5000
+				timeout=5000,
 			)
 
 	def get(self, path, params=None):

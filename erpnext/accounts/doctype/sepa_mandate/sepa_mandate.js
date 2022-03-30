@@ -4,7 +4,7 @@
 frappe.ui.form.on('Sepa Mandate', {
 	refresh: function(frm) {
 		frm.trigger("toggle_reqd_fields")
-		
+
 		if (frm.doc.status != "Cancelled" && !frm.doc.registered_on_gocardless) {
 			frm.add_custom_button(__("Cancel this mandate"), () => {
 				frm.set_value("status", "Cancelled");

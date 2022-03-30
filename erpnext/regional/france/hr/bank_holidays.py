@@ -1,13 +1,16 @@
 # Copyright (c) 2020, Dokos SAS and Contributors
 # License: See license.txt
 
+from datetime import date, timedelta
+
 import frappe
 from frappe.utils import cint
-from datetime import date, timedelta
 
 """
 Source code: https://github.com/etalab/jours-feries-france
 """
+
+
 class JoursFeries(object):
 	ZONES = [
 		"Métropole",
@@ -34,9 +37,7 @@ class JoursFeries(object):
 
 		if zone not in JoursFeries.ZONES:
 			valid_values = ", ".join(JoursFeries.ZONES)
-			raise ValueError(
-				"%s is invalid. Supported values: %s" % (zone, valid_values)
-			)
+			raise ValueError("%s is invalid. Supported values: %s" % (zone, valid_values))
 
 		return zone
 
@@ -49,11 +50,7 @@ class JoursFeries(object):
 		while not JoursFeries.is_bank_holiday(date, zone):
 			date = date + timedelta(days=1)
 
-		return [
-			(k, v)
-			for k, v in JoursFeries.for_year(date.year, zone).items()
-			if v == date
-		][0]
+		return [(k, v) for k, v in JoursFeries.for_year(date.year, zone).items() if v == date][0]
 
 	@staticmethod
 	def for_year(year, zone=None):
@@ -78,9 +75,7 @@ class JoursFeries(object):
 
 		bank_holidays = {k: v for k, v in bank_holidays.items() if v}
 
-		return {
-			k: v for k, v in sorted(bank_holidays.items(), key=lambda item: item[1])
-		}
+		return {k: v for k, v in sorted(bank_holidays.items(), key=lambda item: item[1])}
 
 	@staticmethod
 	def paques(year):
@@ -201,6 +196,7 @@ class JoursFeries(object):
 			return date(year, 12, 20)
 
 		return None
+
 
 @frappe.whitelist()
 def get_french_zones():

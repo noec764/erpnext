@@ -71,7 +71,7 @@ stripe_payment_methods = class {
 			displayError.textContent = '';
 			}
 		});
-		
+
 		// Handle form submission.
 		const submitButton = document.getElementById('card-submit');
 		submitButton.addEventListener('click', function(event) {

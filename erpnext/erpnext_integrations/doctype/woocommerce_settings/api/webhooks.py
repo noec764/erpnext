@@ -1,7 +1,9 @@
 import json
+
 import frappe
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
+
 
 class WooCommerceWebhooks(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
@@ -10,9 +12,13 @@ class WooCommerceWebhooks(WooCommerceAPI):
 	def create(self, data):
 		return self.post("webhooks", data).json()
 
+
 def create_webhooks():
 	wc_api = WooCommerceWebhooks()
-	webhooks = {x.get("topic"): x.get("delivery_url") for x in wc_api.get("webhooks", params={"per_page": 100}).json()}
+	webhooks = {
+		x.get("topic"): x.get("delivery_url")
+		for x in wc_api.get("webhooks", params={"per_page": 100}).json()
+	}
 
 	for topic, name in {
 		"coupon.created": "Coupon Created",
@@ -33,12 +39,15 @@ def create_webhooks():
 		"product.restored": "Product Restored",
 	}.items():
 		if not webhooks.get(topic) == wc_api.settings.endpoint:
-			wc_api.create({
-				"topic": topic,
-				"name": name,
-				"delivery_url": wc_api.settings.endpoint,
-				"secret": wc_api.settings.secret
-			})
+			wc_api.create(
+				{
+					"topic": topic,
+					"name": name,
+					"delivery_url": wc_api.settings.endpoint,
+					"secret": wc_api.settings.secret,
+				}
+			)
+
 
 def delete_webhooks():
 	wc_api = WooCommerceWebhooks()

@@ -11,11 +11,13 @@ def execute():
 	query = (
 		frappe.qb.from_(work_order)
 		.select(
-			work_order.name, work_order.produced_qty,
+			work_order.name,
+			work_order.produced_qty,
 			work_order.material_request,
 			work_order.material_request_item,
-			work_order.sales_order
-		).where(
+			work_order.sales_order,
+		)
+		.where(
 			(work_order.material_request.isnotnull())
 			& (work_order.material_request_item.isnotnull())
 			& (work_order.sales_order.isnotnull())
