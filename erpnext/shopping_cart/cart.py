@@ -71,8 +71,6 @@ def place_order():
 	cart_settings = frappe.db.get_value("Shopping Cart Settings", None,
 		["company", "allow_items_not_in_stock"], as_dict=1)
 	quotation.company = cart_settings.company
-	if not quotation.get("customer_address"):
-		throw(_("{0} is required").format(_(quotation.meta.get_label("customer_address"))))
 
 	quotation.flags.ignore_permissions = True
 	quotation.submit()
@@ -223,6 +221,16 @@ def add_new_address(doc):
 		else "customer_address", address.name)
 
 	return address
+
+@frappe.whitelist()
+def check_for_address():
+	# This method is true if an address is already available or false if no address has been entered by the customer yet
+	quotation = _get_cart_quotation()
+	if not quotation.get("customer_address"):
+		is_address = False
+	else:
+		is_address = True
+	return is_address
 
 @frappe.whitelist(allow_guest=True)
 def create_lead_for_item_inquiry(lead, subject, message):

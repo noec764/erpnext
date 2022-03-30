@@ -155,6 +155,103 @@ $.extend(shopping_cart, {
 		});
 	},
 
+	address_form: function(){
+			// Check to see if an address is already present
+			frappe.call({
+				method: 'erpnext.shopping_cart.cart.check_for_address',
+				freeze: true,
+				callback: function(r) {
+					var a = r.message;
+					// If no address is found in the cart, then opens an address form
+					if (a === false){
+						const d = new frappe.ui.Dialog({
+						title: __('New Address'),
+						fields: [
+							{
+								label: __('Address Title'),
+								fieldname: 'address_title',
+								fieldtype: 'Data',
+								reqd: 1
+							},
+							{
+								label: __('Address Line 1'),
+								fieldname: 'address_line1',
+								fieldtype: 'Data',
+								reqd: 1
+							},
+							{
+								label: __('Address Line 2'),
+								fieldname: 'address_line2',
+								fieldtype: 'Data'
+							},
+							{
+								label: __('City/Town'),
+								fieldname: 'city',
+								fieldtype: 'Data',
+								reqd: 1
+							},
+							{
+								label: __('State'),
+								fieldname: 'state',
+								fieldtype: 'Data'
+							},
+							{
+								label: __('Country'),
+								fieldname: 'country',
+								fieldtype: 'Link',
+								reqd: 1,
+								options: 'Country',
+								only_select: 1
+							},
+							{
+								fieldname: "column_break0",
+								fieldtype: "Column Break",
+								width: "50%"
+							},
+							{
+								label: __('Address Type'),
+								fieldname: 'address_type',
+								fieldtype: 'Select',
+								options: [
+									{ "label": __("Billing"), "value": "Billing" },
+									{ "label": __("Shipping"), "value": "Shipping" },
+								],
+								reqd: 1
+							},
+							{
+								label: __('Postal Code'),
+								fieldname: 'pincode',
+								fieldtype: 'Data'
+							},
+							{
+								fieldname: "phone",
+								fieldtype: "Data",
+								label: "Phone"
+							}
+						],
+						primary_action_label: __('Save'),
+						primary_action: (values) => {
+							frappe.call('erpnext.shopping_cart.cart.add_new_address', { doc: values })
+								.then(r => {
+									frappe.call({
+										method: "erpnext.shopping_cart.cart.update_cart_address",
+										args: {
+											address_type: r.message.address_type,
+											address_name: r.message.name
+										},
+										callback: function (r) {
+											d.hide();
+											window.location.reload();
+										}
+									});
+								});
+						}
+					})
+						d.show();
+					}
+				}
+			});
+	},
 
 	bind_dropdown_cart_buttons: function () {
 		$(".cart-icon").on('click', '.number-spinner button', function () {

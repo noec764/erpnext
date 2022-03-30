@@ -99,6 +99,7 @@ $.extend(shopping_cart, {
 
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", function() {
+			shopping_cart.address_form(this);
 			shopping_cart.place_order(this);
 		});
 	},
