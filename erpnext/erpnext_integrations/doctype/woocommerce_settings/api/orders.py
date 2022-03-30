@@ -1,21 +1,19 @@
 from collections import defaultdict
 
 import frappe
-from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.utils import add_days, cint, flt, now_datetime, nowdate
 from frappe.utils.background_jobs import get_jobs
-from requests.exceptions import HTTPError
 
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
+from erpnext.e_commerce.variant_selector.utils import get_item_codes_by_attributes
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers import (
 	sync_customer,
 	sync_guest_customers,
 )
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import get_simple_item
-from erpnext.portal.product_configurator.utils import get_item_codes_by_attributes
 from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note, make_sales_invoice
 from erpnext.stock.stock_ledger import NegativeStockError
 
@@ -36,7 +34,7 @@ class WooCommerceTaxes(WooCommerceAPI):
 		return self.get(f"taxes/{id}", params=params).json()
 
 	def get_taxes(self, params=None):
-		return self.get(f"taxes", params=params).json()
+		return self.get("taxes", params=params).json()
 
 
 class WooCommerceShippingMethods(WooCommerceAPI):
@@ -44,7 +42,7 @@ class WooCommerceShippingMethods(WooCommerceAPI):
 		super(WooCommerceShippingMethods, self).__init__(version, args, kwargs)
 
 	def get_shipping_methods(self, params=None):
-		return self.get(f"shipping_methods", params=params).json()
+		return self.get("shipping_methods", params=params).json()
 
 
 def sync_orders():

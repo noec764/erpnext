@@ -3,7 +3,7 @@ from frappe.utils import cint, flt, get_datetime, now_datetime
 from frappe.utils.nestedset import get_root_of
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
-from erpnext.utilities.product import get_price, get_qty_in_stock
+from erpnext.utilities.product import adjust_qty_for_expired_items, get_price
 
 
 class WooCommerceProducts(WooCommerceAPI):
@@ -443,3 +443,35 @@ def _update_stock(doc):
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
+
+
+def get_qty_in_stock(item_code, item_warehouse_field, warehouse=None):
+	in_stock, stock_qty = 0, ""
+	template_item_code, is_stock_item = frappe.db.get_value(
+		"Item", item_code, ["variant_of", "is_stock_item"]
+	)
+
+	if not warehouse:
+		warehouse = frappe.db.get_value("Item", item_code, item_warehouse_field)
+
+	if not warehouse and template_item_code and template_item_code != item_code:
+		warehouse = frappe.db.get_value("Item", template_item_code, item_warehouse_field)
+
+	if warehouse:
+		stock_qty = frappe.db.sql(
+			"""
+			select GREATEST(S.actual_qty - S.reserved_qty - S.reserved_qty_for_production - S.reserved_qty_for_sub_contract, 0) / IFNULL(C.conversion_factor, 1)
+			from tabBin S
+			inner join `tabItem` I on S.item_code = I.Item_code
+			left join `tabUOM Conversion Detail` C on I.sales_uom = C.uom and C.parent = I.Item_code
+			where S.item_code=%s and S.warehouse=%s""",
+			(item_code, warehouse),
+		)
+
+		if stock_qty:
+			stock_qty = adjust_qty_for_expired_items(item_code, stock_qty, warehouse)
+			in_stock = stock_qty[0][0] > 0 and 1 or 0
+
+	return frappe._dict(
+		{"in_stock": in_stock, "stock_qty": stock_qty, "is_stock_item": is_stock_item}
+	)

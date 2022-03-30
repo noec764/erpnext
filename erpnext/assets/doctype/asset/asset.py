@@ -9,7 +9,6 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.model.document import Document
 from frappe.utils import (
 	add_days,
 	add_months,
@@ -17,7 +16,6 @@ from frappe.utils import (
 	date_diff,
 	flt,
 	get_datetime,
-	get_first_day,
 	get_last_day,
 	getdate,
 	month_diff,
@@ -27,7 +25,6 @@ from frappe.utils import (
 
 import erpnext
 from erpnext.accounts.general_ledger import make_reverse_gl_entries
-from erpnext.accounts.utils import get_account_currency
 from erpnext.assets.doctype.asset.depreciation import (
 	get_depreciation_accounts,
 	get_disposal_account_and_cost_center,
@@ -994,6 +991,8 @@ class ProrataStraightLineDepreciationSchedule(DepreciationSchedule):
 
 		self.remaining_value_to_depreciate -= flt(self.depreciation_amount, precision=precision)
 
+		return self.depreciation_amount
+
 	def get_coefficient(self):
 		months = abs(month_diff(self.booking_end_date, self.booking_start_date))
 
@@ -1044,6 +1043,8 @@ class StraightLineDepreciationSchedule(DepreciationSchedule):
 			/ flt(self.depreciations_basis, precision=precision)
 		) * flt(self.coefficient)
 
+		return self.depreciation_amount
+
 
 class ManualDepreciationSchedule(DepreciationSchedule):
 	def __init__(self, asset, finance_book):
@@ -1056,6 +1057,8 @@ class ManualDepreciationSchedule(DepreciationSchedule):
 			flt(self.value_to_depreciate, precision=precision)
 			/ flt(self.depreciations_basis, precision=precision)
 		) * flt(self.coefficient)
+
+		return self.depreciation_amount
 
 
 class DoubleDecliningBalanceSchedule(DepreciationSchedule):
@@ -1073,6 +1076,8 @@ class DoubleDecliningBalanceSchedule(DepreciationSchedule):
 			)
 
 		self.value_to_depreciate -= flt(self.depreciation_amount, precision=precision)
+
+		return self.depreciation_amount
 
 	def get_coefficient(self):
 		self.coefficient = 200.0 / self.depreciations_basis
@@ -1101,3 +1106,9 @@ DEPRECIATION_METHOD_MAP = {
 	"Written Down Value": WrittenDownValueSchedule,
 	"Manual": ManualDepreciationSchedule,
 }
+
+
+def get_depreciation_amount(asset, depreciable_value, row):
+	depreciation_method = DEPRECIATION_METHOD_MAP.get(row.depreciation_method)(asset, row)
+	depreciation_method.value_to_depreciate = depreciable_value
+	return depreciation_method.get_depreciation_amount()

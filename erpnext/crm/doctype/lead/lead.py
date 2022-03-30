@@ -9,6 +9,9 @@ from frappe.email.inbox import link_communication_to_document
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import comma_and, cstr, getdate, has_gravatar, nowdate, validate_email_address
 
+from erpnext.accounts.party import set_taxes
+from erpnext.controllers.selling_controller import SellingController
+
 
 class Lead(SellingController):
 	def get_feed(self):
@@ -79,14 +82,6 @@ class Lead(SellingController):
 				"links", {"link_doctype": "Lead", "link_name": self.name, "link_title": self.lead_name}
 			)
 			self.contact_doc.save()
-
-	def set_prev(self):
-		if self.is_new():
-			self._prev = frappe._dict({"contact_date": None, "ends_on": None, "contact_by": None})
-		else:
-			self._prev = frappe.db.get_value(
-				"Lead", self.name, ["contact_date", "ends_on", "contact_by"], as_dict=1
-			)
 
 	def add_calendar_event(self, opts=None, force=False):
 		if frappe.db.get_single_value("CRM Settings", "create_event_on_next_contact_date"):
