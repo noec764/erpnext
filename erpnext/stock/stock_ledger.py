@@ -230,7 +230,6 @@ class update_entries_after(object):
 			where item_code = %(item_code)s
 				and warehouse = %(warehouse)s
 				and is_cancelled = 0
-				and name != %(sle_id)s
 				and timestamp(posting_date, time_format(posting_time, %(time_format)s)) < timestamp(%(posting_date)s, time_format(%(posting_time)s, %(time_format)s))
 			order by timestamp(posting_date, posting_time) desc, creation desc
 			limit 1""", args, as_dict=1)
@@ -278,7 +277,7 @@ class update_entries_after(object):
 			where
 				item_code = %(item_code)s
 				and warehouse = %(warehouse)s
-				and name = %(sle_id)s
+				and timestamp(posting_date, time_format(posting_time, %(time_format)s)) = timestamp(%(posting_date)s, time_format(%(posting_time)s, %(time_format)s))
 			order by
 				creation ASC
 			for update
@@ -349,7 +348,6 @@ class update_entries_after(object):
 					self.wh_data.qty_after_transaction += flt(sle.actual_qty)
 					self.wh_data.stock_value = flt(self.wh_data.qty_after_transaction) * flt(self.wh_data.valuation_rate)
 				else:
-					frappe.log_error(self.wh_data.qty_after_transaction, "FIFO")
 					self.get_fifo_values(sle)
 					self.wh_data.qty_after_transaction += flt(sle.actual_qty)
 					self.wh_data.stock_value = sum((flt(batch[0]) * flt(batch[1]) for batch in self.wh_data.stock_queue))
