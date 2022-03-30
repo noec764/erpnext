@@ -11,6 +11,8 @@ repos:
         files: "erpnext.*"
         exclude: ".*json$|.*txt$|.*csv|.*md"
       - id: check-yaml
+      - id: no-commit-to-branch
+        args: ['--branch', 'master']
       - id: check-merge-conflict
       - id: check-ast
 
