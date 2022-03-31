@@ -26,6 +26,7 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import delet
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import get_party_tax_withholding_details
 from frappe.model.utils import get_fetch_values
 from frappe.contacts.doctype.address.address import get_address_display
+from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
 
 from six import iteritems
 
@@ -217,6 +218,9 @@ class SalesInvoice(SellingController):
 
 			if self.update_stock == 1:
 				self.repost_future_sle_and_gle()
+
+		if self.is_return and self.is_down_payment_invoice:
+			update_outstanding_amt(self.debit_to, "Customer", self.customer, self.doctype, self.return_against)
 
 		if not self.is_return and not self.is_down_payment_invoice:
 			self.update_billing_status_for_zero_amount_refdoc("Delivery Note")
@@ -604,7 +608,7 @@ class SalesInvoice(SellingController):
 	def add_remarks(self):
 		if not self.remarks:
 			if self.po_no and self.po_date:
-				self.remarks = _("Against Customer Order {0} dated {1}").format(self.po_no, 
+				self.remarks = _("Against Customer Order {0} dated {1}").format(self.po_no,
 					formatdate(self.po_date))
 			else:
 				self.remarks = _("No Remarks")
@@ -803,7 +807,6 @@ class SalesInvoice(SellingController):
 				make_reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 
 			if update_outstanding == "No":
-				from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
 				update_outstanding_amt(self.debit_to, "Customer", self.customer,
 					self.doctype, self.return_against if cint(self.is_return) and self.return_against else self.name)
 
@@ -1301,7 +1304,7 @@ class SalesInvoice(SellingController):
 
 		discounting_status = None
 		if self.is_discounted:
-			discountng_status = get_discounting_status(self.name)
+			discounting_status = get_discounting_status(self.name)
 
 		if not status:
 			if self.docstatus == 2:
@@ -1309,11 +1312,11 @@ class SalesInvoice(SellingController):
 			elif self.docstatus == 1:
 				if self.is_internal_transfer():
 					self.status = 'Internal Transfer'
-				elif outstanding_amount > 0 and due_date < nowdate and self.is_discounted and discountng_status=='Disbursed':
+				elif outstanding_amount > 0 and due_date < nowdate and self.is_discounted and discounting_status=='Disbursed':
 					self.status = "Overdue and Discounted"
 				elif outstanding_amount > 0 and due_date < nowdate:
 					self.status = "Overdue"
-				elif outstanding_amount > 0 and due_date >= nowdate and self.is_discounted and discountng_status=='Disbursed':
+				elif outstanding_amount > 0 and due_date >= nowdate and self.is_discounted and discounting_status=='Disbursed':
 					self.status = "Unpaid and Discounted"
 				elif outstanding_amount > 0 and due_date >= nowdate:
 					self.status = "Unpaid"

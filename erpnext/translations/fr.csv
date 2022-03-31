@@ -10983,8 +10983,6 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {}  To Receive,{} à recevoir,
 {}  available,{} disponibles,
 {}  to Receive,{} à recevoir,
-{} - {} now have {} as they had no outstanding amount left before submitting the Payment Entry.,{} - {} aura désormais {} car il son montant restant dû était nul avant la validation de cette écriture de paiement.,
-negative outstanding amount,un montant restant dû négatif,
 {} Assets created for {},{} actifs créés pour {},
 {} Assigned,{} assigné·es,
 {} Available,{} disponibles,
