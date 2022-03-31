@@ -13,7 +13,7 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardl
 EVENT_MAP = {
 	'created': 'create_payment',
 	'submitted': 'create_payment',
-	'confirmed': 'submit_payment',
+	'confirmed': 'create_payment',
 	'cancelled': 'cancel_payment',
 	'failed': 'cancel_payment',
 	'paid_out': 'submit_payment'
