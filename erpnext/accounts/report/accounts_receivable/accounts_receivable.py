@@ -6,9 +6,8 @@ from collections import OrderedDict
 
 import frappe
 from frappe import _, scrub
-from frappe.utils import cint, cstr, flt, formatdate, getdate, now, nowdate, time_diff_in_seconds
+from frappe.utils import cint, cstr, flt, getdate, nowdate
 
-import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 	get_dimension_with_children,
@@ -107,12 +106,13 @@ class ReceivablePayableReport(object):
 		for gle in self.gl_entries:
 			# get the balance object for voucher_type
 			key = (gle.voucher_type, gle.voucher_no, gle.party)
-			if not key in self.voucher_balance:
+			if key not in self.voucher_balance:
 				self.voucher_balance[key] = frappe._dict(
 					voucher_type=gle.voucher_type,
 					voucher_no=gle.voucher_no,
 					party=gle.party,
 					posting_date=gle.posting_date,
+					party_account=gle.account,
 					account_currency=gle.account_currency,
 					remarks=gle.remarks if self.filters.get("show_remarks") else None,
 					invoiced=0.0,
@@ -778,18 +778,22 @@ class ReceivablePayableReport(object):
 			conditions.append("party=%s")
 			values.append(self.filters.get(party_type_field))
 
-		# get GL with "receivable" or "payable" account_type
-		account_type = "Receivable" if self.party_type == "Customer" else "Payable"
-		accounts = [
-			d.name
-			for d in frappe.get_all(
-				"Account", filters={"account_type": account_type, "company": self.filters.company}
-			)
-		]
+		if self.filters.party_account:
+			conditions.append("account =%s")
+			values.append(self.filters.party_account)
+		else:
+			# get GL with "receivable" or "payable" account_type
+			account_type = "Receivable" if self.party_type == "Customer" else "Payable"
+			accounts = [
+				d.name
+				for d in frappe.get_all(
+					"Account", filters={"account_type": account_type, "company": self.filters.company}
+				)
+			]
 
-		if accounts:
-			conditions.append("account in (%s)" % ",".join(["%s"] * len(accounts)))
-			values += accounts
+			if accounts:
+				conditions.append("account in (%s)" % ",".join(["%s"] * len(accounts)))
+				values += accounts
 
 	def add_customer_filters(self, conditions, values):
 		if self.filters.get("customer_group"):
@@ -864,7 +868,7 @@ class ReceivablePayableReport(object):
 			return True
 
 	def get_party_details(self, party):
-		if not party in self.party_details:
+		if party not in self.party_details:
 			if self.party_type == "Customer":
 				self.party_details[party] = frappe.db.get_value(
 					"Customer",
@@ -887,6 +891,13 @@ class ReceivablePayableReport(object):
 			fieldname="party",
 			fieldtype="Link",
 			options=self.party_type,
+			width=180,
+		)
+		self.add_column(
+			label="Receivable Account" if self.party_type == "Customer" else "Payable Account",
+			fieldname="party_account",
+			fieldtype="Link",
+			options="Account",
 			width=180,
 		)
 
