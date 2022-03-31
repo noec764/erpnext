@@ -62,7 +62,6 @@ class PaymentEntry(AccountsController):
 		self.set_remarks()
 		self.validate_duplicate_entry()
 		self.validate_allocated_amount()
-		self.validate_paid_invoices()
 		self.ensure_supplier_is_not_blocked()
 		self.update_unreconciled_amount()
 		self.set_status()
@@ -293,25 +292,6 @@ class PaymentEntry(AccountsController):
 					if ref_doc.doctype != "Subscription" and ref_doc.docstatus != 1:
 						frappe.throw(_("{0} {1} must be submitted")
 							.format(d.reference_doctype, d.reference_name))
-
-	def validate_paid_invoices(self):
-		no_oustanding_refs = {}
-
-		for d in self.get("references"):
-			if not d.allocated_amount:
-				continue
-
-			if d.reference_doctype in ("Sales Invoice", "Purchase Invoice", "Fees"):
-				outstanding_amount, is_return = frappe.get_cached_value(d.reference_doctype, d.reference_name, ["outstanding_amount", "is_return"])
-				if outstanding_amount <= 0 and not is_return:
-					no_oustanding_refs.setdefault(d.reference_doctype, []).append(d)
-
-		for k, v in no_oustanding_refs.items():
-			frappe.msgprint(
-				_("{} - {} now have {} as they had no outstanding amount left before submitting the Payment Entry.")
-				.format(k, frappe.bold(", ".join(_(d.reference_name) for d in v)), frappe.bold(_("negative outstanding amount")))
-				+ "<br><br>" + _("If this is undesirable please cancel the corresponding Payment Entry."),
-				title=_("Warning"), indicator="orange")
 
 	def validate_journal_entry(self):
 		for d in self.get("references"):
