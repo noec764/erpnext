@@ -383,12 +383,11 @@ def get_pricing_rule_for_item(args, price_list_rate=0, doc=None, for_validate=Fa
 
 def update_args_for_pricing_rule(args):
 	if not (args.item_group and args.brand):
-		try:
-			args.item_group, args.brand = frappe.get_cached_value(
-				"Item", args.item_code, ["item_group", "brand"]
-			)
-		except frappe.DoesNotExistError:
+		item = frappe.get_cached_value("Item", args.item_code, ("item_group", "brand"))
+		if not item:
 			return
+
+		args.item_group, args.brand = item
 
 		if not args.item_group:
 			frappe.throw(_("Item Group not mentioned in item master for item {0}").format(args.item_code))
@@ -577,7 +576,6 @@ def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
 
 def check_booking_credit_rule(args, doc):
 	from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
-	from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 
 	if args.get("customer") and doc:
 		convertible_items = frappe.get_all(
