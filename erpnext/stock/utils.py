@@ -2,6 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 import json
+from typing import Dict, Optional
 
 import frappe
 from frappe import _
@@ -404,8 +405,6 @@ def update_included_uom_in_report(columns, result, include_uom, conversion_facto
 	if not include_uom or not conversion_factors:
 		return
 
-	convertible_cols = {}
-
 	is_dict_obj = False
 	if isinstance(result[0], dict):
 		is_dict_obj = True
@@ -547,3 +546,51 @@ def check_pending_reposting(posting_date: str, throw_error: bool = True) -> bool
 		)
 
 	return bool(reposting_pending)
+
+
+@frappe.whitelist()
+def scan_barcode(search_value: str) -> Dict[str, Optional[str]]:
+
+	# search barcode no
+	barcode_data = frappe.db.get_value(
+		"Item Barcode",
+		{"barcode": search_value},
+		["barcode", "parent as item_code"],
+		as_dict=True,
+	)
+	if barcode_data:
+		return _update_item_info(barcode_data)
+
+	# search serial no
+	serial_no_data = frappe.db.get_value(
+		"Serial No",
+		search_value,
+		["name as serial_no", "item_code", "batch_no"],
+		as_dict=True,
+	)
+	if serial_no_data:
+		return _update_item_info(serial_no_data)
+
+	# search batch no
+	batch_no_data = frappe.db.get_value(
+		"Batch",
+		search_value,
+		["name as batch_no", "item as item_code"],
+		as_dict=True,
+	)
+	if batch_no_data:
+		return _update_item_info(batch_no_data)
+
+	return {}
+
+
+def _update_item_info(scan_result: Dict[str, Optional[str]]) -> Dict[str, Optional[str]]:
+	if item_code := scan_result.get("item_code"):
+		if item_info := frappe.get_cached_value(
+			"Item",
+			item_code,
+			["has_batch_no", "has_serial_no"],
+			as_dict=True,
+		):
+			scan_result.update(item_info)
+	return scan_result
