@@ -223,14 +223,10 @@ def add_new_address(doc):
 	return address
 
 @frappe.whitelist()
-def check_for_address():
+def get_customer_address():
 	# This method is true if an address is already available or false if no address has been entered by the customer yet
 	quotation = _get_cart_quotation()
-	if not quotation.get("customer_address"):
-		is_address = False
-	else:
-		is_address = True
-	return is_address
+	return quotation.get("customer_address")
 
 @frappe.whitelist(allow_guest=True)
 def create_lead_for_item_inquiry(lead, subject, message):

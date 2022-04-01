@@ -18,10 +18,10 @@ var getParams = function (url) {
 	return params;
 };
 
-frappe.ready(function() {
+frappe.ready(function () {
 	var full_name = frappe.session && frappe.session.user_fullname;
 	// update user
-	if(full_name) {
+	if (full_name) {
 		$('.navbar li[data-label="User"] a')
 			.html('<i class="fas fa-fixed-width fa-user"></i> ' + full_name);
 	}
@@ -33,20 +33,20 @@ frappe.ready(function() {
 	var referral_coupon_code = url_args['cc'];
 	var referral_sales_partner = url_args['sp'];
 
- 	var d = new Date();
+	var d = new Date();
 	// expires within 30 minutes
 	d.setTime(d.getTime() + (0.02 * 24 * 60 * 60 * 1000));
-	var expires = "expires="+d.toUTCString();
+	var expires = "expires=" + d.toUTCString();
 	if (referral_coupon_code) {
 		document.cookie = "referral_coupon_code=" + referral_coupon_code + ";" + expires + ";path=/";
 	}
 	if (referral_sales_partner) {
 		document.cookie = "referral_sales_partner=" + referral_sales_partner + ";" + expires + ";path=/";
 	}
-	referral_coupon_code=frappe.get_cookie("referral_coupon_code");
-	referral_sales_partner=frappe.get_cookie("referral_sales_partner");
+	referral_coupon_code = frappe.get_cookie("referral_coupon_code");
+	referral_sales_partner = frappe.get_cookie("referral_sales_partner");
 
- 	if (referral_coupon_code && $(".tot_quotation_discount").val()==undefined ) {
+	if (referral_coupon_code && $(".tot_quotation_discount").val() == undefined) {
 		$(".txtcoupon").val(referral_coupon_code);
 	}
 	if (referral_sales_partner) {
@@ -60,12 +60,12 @@ frappe.ready(function() {
 });
 
 $.extend(shopping_cart, {
-	show_shoppingcart_dropdown: function() {
-		$(".shopping-cart").on('shown.bs.dropdown', function() {
+	show_shoppingcart_dropdown: function () {
+		$(".shopping-cart").on('shown.bs.dropdown', function () {
 			if (!$('.shopping-cart-menu .cart-container').length) {
 				return frappe.call({
 					method: 'erpnext.shopping_cart.cart.get_shopping_cart_menu',
-					callback: function(r) {
+					callback: function (r) {
 						if (r.message) {
 							$('.shopping-cart-menu').html(r.message);
 						}
@@ -75,9 +75,9 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	update_cart: function(opts) {
-		if(frappe.session.user==="Guest") {
-			if(localStorage) {
+	update_cart: function (opts) {
+		if (frappe.session.user === "Guest") {
+			if (localStorage) {
 				localStorage.setItem("last_visited", window.location.pathname);
 			}
 			window.location.href = "/login";
@@ -104,20 +104,20 @@ $.extend(shopping_cart, {
 		}
 	},
 
-	set_cart_count: function() {
+	set_cart_count: function () {
 		var cart_count = frappe.get_cookie("cart_count");
-		if(frappe.session.user==="Guest") {
+		if (frappe.session.user === "Guest") {
 			cart_count = 0;
 		}
 
-		if(cart_count) {
+		if (cart_count) {
 			$(".shopping-cart").toggleClass('hidden', false);
 		}
 
 		var $cart = $('.cart-icon');
 		var $badge = $cart.find("#cart-count");
 
-		if(parseInt(cart_count) === 0 || cart_count === undefined) {
+		if (parseInt(cart_count) === 0 || cart_count === undefined) {
 			$cart.css("display", "none");
 			$(".cart-items").html('Cart is Empty');
 			$(".cart-tax-items").hide();
@@ -127,14 +127,14 @@ $.extend(shopping_cart, {
 			$cart.css("display", "flex");
 		}
 
-		if(cart_count) {
+		if (cart_count) {
 			$badge.html(cart_count);
 		} else {
 			$badge.remove();
 		}
 	},
 
-	shopping_cart_update: function({item_code, qty, cart_dropdown, additional_notes, uom, booking}) {
+	shopping_cart_update: function ({ item_code, qty, cart_dropdown, additional_notes, uom, booking }) {
 		frappe.freeze();
 		return shopping_cart.update_cart({
 			item_code,
@@ -155,102 +155,98 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	address_form: function(){
-			// Check to see if an address is already present
-			frappe.call({
-				method: 'erpnext.shopping_cart.cart.check_for_address',
-				freeze: true,
-				callback: function(r) {
-					var a = r.message;
-					// If no address is found in the cart, then opens an address form
-					if (a === false){
-						const d = new frappe.ui.Dialog({
-						title: __('New Address'),
-						fields: [
-							{
-								label: __('Address Title'),
-								fieldname: 'address_title',
-								fieldtype: 'Data',
-								reqd: 1
-							},
-							{
-								label: __('Address Line 1'),
-								fieldname: 'address_line1',
-								fieldtype: 'Data',
-								reqd: 1
-							},
-							{
-								label: __('Address Line 2'),
-								fieldname: 'address_line2',
-								fieldtype: 'Data'
-							},
-							{
-								label: __('City/Town'),
-								fieldname: 'city',
-								fieldtype: 'Data',
-								reqd: 1
-							},
-							{
-								label: __('State'),
-								fieldname: 'state',
-								fieldtype: 'Data'
-							},
-							{
-								label: __('Country'),
-								fieldname: 'country',
-								fieldtype: 'Link',
-								reqd: 1,
-								options: 'Country',
-								only_select: 1
-							},
-							{
-								fieldname: "column_break0",
-								fieldtype: "Column Break",
-								width: "50%"
-							},
-							{
-								label: __('Address Type'),
-								fieldname: 'address_type',
-								fieldtype: 'Select',
-								options: [
-									{ "label": __("Billing"), "value": "Billing" },
-									{ "label": __("Shipping"), "value": "Shipping" },
-								],
-								reqd: 1
-							},
-							{
-								label: __('Postal Code'),
-								fieldname: 'pincode',
-								fieldtype: 'Data'
-							},
-							{
-								fieldname: "phone",
-								fieldtype: "Data",
-								label: "Phone"
-							}
+	new_cart_address: function (reload) {
+		return new Promise(resolve => {
+			const d = new frappe.ui.Dialog({
+				title: __('New Address'),
+				fields: [
+					{
+						label: __('Address Title'),
+						fieldname: 'address_title',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('Address Line 1'),
+						fieldname: 'address_line1',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('Address Line 2'),
+						fieldname: 'address_line2',
+						fieldtype: 'Data'
+					},
+					{
+						label: __('City/Town'),
+						fieldname: 'city',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('State'),
+						fieldname: 'state',
+						fieldtype: 'Data'
+					},
+					{
+						label: __('Country'),
+						fieldname: 'country',
+						fieldtype: 'Link',
+						options: 'Country',
+						reqd: 1,
+						only_select: 1
+					},
+					{
+						fieldname: "column_break0",
+						fieldtype: "Column Break",
+						width: "50%"
+					},
+					{
+						label: __('Address Type'),
+						fieldname: 'address_type',
+						fieldtype: 'Select',
+						options: [
+							'Billing',
+							'Shipping'
 						],
-						primary_action_label: __('Save'),
-						primary_action: (values) => {
-							frappe.call('erpnext.shopping_cart.cart.add_new_address', { doc: values })
-								.then(r => {
-									frappe.call({
-										method: "erpnext.shopping_cart.cart.update_cart_address",
-										args: {
-											address_type: r.message.address_type,
-											address_name: r.message.name
-										},
-										callback: function (r) {
-											d.hide();
-											window.location.reload();
-										}
-									});
-								});
-						}
-					})
-						d.show();
-					}
+						default: 'Shipping',
+						reqd: 1
+					},
+					{
+						label: __('Postal Code'),
+						fieldname: 'pincode',
+						fieldtype: 'Data'
+					},
+					{
+						fieldname: "phone",
+						fieldtype: "Data",
+						label: "Phone"
+					},
+				],
+				primary_action_label: __('Save'),
+				primary_action: (values) => {
+					frappe.call('erpnext.shopping_cart.cart.add_new_address', { doc: values })
+						.then(r => {
+							frappe.call({
+								method: "erpnext.shopping_cart.cart.update_cart_address",
+								args: {
+									address_type: r.message.address_type,
+									address_name: r.message.name
+								},
+								callback: function (r) {
+									resolve();
+									d.hide();
+
+									reload && window.location.reload();
+								}
+							});
+						});
+
 				}
-			});
+			})
+
+			d.show();
+		});
 	},
 
 	bind_dropdown_cart_buttons: function () {
@@ -269,7 +265,7 @@ $.extend(shopping_cart, {
 			}
 			input.val(newVal);
 			var item_code = input.attr("data-item-code");
-			shopping_cart.shopping_cart_update({item_code, qty: newVal, cart_dropdown: true});
+			shopping_cart.shopping_cart_update({ item_code, qty: newVal, cart_dropdown: true });
 			return false;
 		});
 
