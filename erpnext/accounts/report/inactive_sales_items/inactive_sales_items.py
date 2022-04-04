@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import add_days, cint, getdate, today
+from frappe.utils import cint
 
 
 def execute(filters=None):
@@ -29,7 +29,7 @@ def get_columns():
 			"options": "Item Group",
 			"width": 150,
 		},
-		{"fieldname": "item", "fieldtype": "Link", "options": "Item", "label": "Item", "width": 150},
+		{"fieldname": "item", "fieldtype": "Link", "options": "Item", "label": _("Item"), "width": 150},
 		{"fieldname": "item_name", "fieldtype": "Data", "label": _("Item Name"), "width": 150},
 		{
 			"fieldname": "customer",
@@ -92,7 +92,6 @@ def get_data(filters):
 
 
 def get_sales_details(filters):
-	data = []
 	item_details_map = {}
 
 	date_field = "s.transaction_date" if filters["based_on"] == "Sales Order" else "s.posting_date"

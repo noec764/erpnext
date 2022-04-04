@@ -156,7 +156,8 @@ class SupplierScorecard(Document):
 		if scp_count > 0:
 			self.save()
 			frappe.msgprint(
-				_("Created {0} scorecards for {1} between: ").format(scp_count, self.supplier)
+				_("Created {0} scorecards for {1} between:").format(scp_count, supplier)
+				+ " "
 				+ str(first_start_date)
 				+ " - "
 				+ str(last_end_date)

@@ -1,8 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import frappe
 from frappe import _
 
 from erpnext.controllers.trends import get_columns, get_data
@@ -50,7 +48,7 @@ def get_chart_data(data, conditions, filters):
 		"data": {
 			"labels": labels,
 			"datasets": [
-				{"name": _("{0} Quoted Amount").format(filters.get("period")), "values": datapoints}
+				{"name": _(filters.get("period")) + " " + _("Quoted Amount"), "values": datapoints}
 			],
 		},
 		"type": "line",

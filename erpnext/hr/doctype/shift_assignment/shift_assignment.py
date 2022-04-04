@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cint, cstr, date_diff, flt, formatdate, getdate, now_datetime, nowdate
+from frappe.utils import cstr, getdate, now_datetime, nowdate
 
 from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
 from erpnext.hr.doctype.holiday_list.holiday_list import is_holiday
@@ -81,10 +81,10 @@ class ShiftAssignment(Document):
 				frappe.bold(self.employee), frappe.bold(self.shift_type), frappe.bold(shift_details.name)
 			)
 		if shift_details.start_date:
-			msg += _(" from {0}").format(getdate(self.start_date).strftime("%d-%m-%Y"))
+			msg += " " + _("from {0}").format(getdate(self.start_date).strftime("%d-%m-%Y"))
 			title = _("Ongoing Shift")
 			if shift_details.end_date:
-				msg += _(" to {0}").format(getdate(self.end_date).strftime("%d-%m-%Y"))
+				msg += " " + _("to {0}").format(getdate(self.end_date).strftime("%d-%m-%Y"))
 				title = _("Active Shift")
 		if msg:
 			frappe.throw(msg, title=title)

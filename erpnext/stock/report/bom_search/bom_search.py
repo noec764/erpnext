@@ -1,9 +1,8 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and Contributors and contributors
 # For license information, please see license.txt
 
-import json
-
 import frappe
+from frappe import _
 
 
 def execute(filters=None):
@@ -35,10 +34,10 @@ def execute(filters=None):
 	return [
 		{
 			"fieldname": "parent",
-			"label": "BOM",
+			"label": _("BOM"),
 			"width": 200,
 			"fieldtype": "Dynamic Link",
 			"options": "doctype",
 		},
-		{"fieldname": "doctype", "label": "Type", "width": 200, "fieldtype": "Data"},
+		{"fieldname": "doctype", "label": _("Type"), "width": 200, "fieldtype": "Data"},
 	], data

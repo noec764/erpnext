@@ -518,18 +518,18 @@ class BuyingController(StockController, Subcontracting):
 
 						sl_entries.append(from_warehouse_sle)
 
-				if flt(d.rejected_qty) != 0:
-					sl_entries.append(
-						self.get_sl_entries(
-							d,
-							{
-								"warehouse": d.rejected_warehouse,
-								"actual_qty": flt(d.rejected_qty) * flt(d.conversion_factor),
-								"serial_no": cstr(d.rejected_serial_no).strip(),
-								"incoming_rate": 0.0,
-							},
-						)
+			if flt(d.rejected_qty) != 0:
+				sl_entries.append(
+					self.get_sl_entries(
+						d,
+						{
+							"warehouse": d.rejected_warehouse,
+							"actual_qty": flt(d.rejected_qty) * flt(d.conversion_factor),
+							"serial_no": cstr(d.rejected_serial_no).strip(),
+							"incoming_rate": 0.0,
+						},
 					)
+				)
 
 		self.make_sl_entries_for_supplier_warehouse(sl_entries)
 		self.make_sl_entries(
