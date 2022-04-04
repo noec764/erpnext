@@ -630,7 +630,7 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:parent.is_subcontracted == 'Yes'",
+   "depends_on": "eval:parent.is_subcontracted",
    "fieldname": "include_exploded_items",
    "fieldtype": "Check",
    "label": "Include Exploded Items",
@@ -873,7 +873,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-11-15 17:04:07.191013",
+ "modified": "2021-11-16 17:04:07.191013",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",

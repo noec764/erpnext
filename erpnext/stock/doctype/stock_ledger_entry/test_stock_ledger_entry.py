@@ -2,7 +2,6 @@
 # See license.txt
 
 import json
-from operator import itemgetter
 from uuid import uuid4
 
 import frappe
@@ -117,7 +116,7 @@ class TestStockLedgerEntry(FrappeTestCase):
 		self.assertEqual(finished_item_sle.get("valuation_rate"), 540)
 
 		# Reconciliation for _Test Item for Reposting at Stores on 12-04-2020: Qty = 50, Rate = 150
-		sr = create_stock_reconciliation(
+		create_stock_reconciliation(
 			item_code="_Test Item for Reposting",
 			warehouse="Stores - _TC",
 			qty=50,
@@ -436,7 +435,7 @@ class TestStockLedgerEntry(FrappeTestCase):
 			item_code=subcontracted_item,
 			qty=10,
 			rate=20,
-			is_subcontracted="Yes",
+			is_subcontracted=1,
 		)
 
 		self.assertEqual(pr1.items[0].valuation_rate, 120)
@@ -1057,7 +1056,7 @@ class TestStockLedgerEntry(FrappeTestCase):
 		item = make_item(properties={"allow_negative_stock": 1}).name
 		warehouse = "_Test Warehouse - _TC"
 
-		receipt = make_stock_entry(item_code=item, target=warehouse, qty=10, rate=10)
+		make_stock_entry(item_code=item, target=warehouse, qty=10, rate=10)
 		consume1 = make_stock_entry(item_code=item, source=warehouse, qty=15)
 
 		self.assertSLEs(consume1, [{"stock_value": -5 * 10, "stock_queue": [[-5, 10]]}])
@@ -1146,14 +1145,16 @@ def create_items():
 
 
 def setup_item_valuation_test(
-	valuation_method="FIFO", suffix=None, use_batchwise_valuation=1, batches_list=["X", "Y"]
+	valuation_method="FIFO", suffix=None, use_batchwise_valuation=1, batches_list=None
 ):
-	from erpnext.stock.doctype.batch.batch import make_batch
 	from erpnext.stock.doctype.item.test_item import make_item
 	from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 
 	if not suffix:
 		suffix = get_unique_suffix()
+
+	if not batches_list:
+		batches_list = ["X", "Y"]
 
 	item = make_item(
 		f"IV - Test Item {valuation_method} {suffix}",

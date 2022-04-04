@@ -458,16 +458,15 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "No",
+   "default": "0",
    "fieldname": "is_subcontracted",
-   "fieldtype": "Select",
+   "fieldtype": "Check",
    "in_standard_filter": 1,
-   "label": "Supply Raw Materials",
-   "options": "No\nYes",
+   "label": "Is Subcontracted",
    "print_hide": 1
   },
   {
-   "depends_on": "eval:doc.is_subcontracted==\"Yes\"",
+    "depends_on": "eval:doc.is_subcontracted",
    "fieldname": "supplier_warehouse",
    "fieldtype": "Link",
    "label": "Supplier Warehouse",
@@ -1145,7 +1144,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-12-27 11:25:09.869909",
+ "modified": "2021-12-28 11:25:09.869909",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
