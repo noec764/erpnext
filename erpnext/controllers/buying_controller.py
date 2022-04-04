@@ -461,7 +461,10 @@ class BuyingController(StockController, Subcontracting):
 		stock_items = self.get_stock_items()
 
 		for d in self.get("items"):
-			if d.item_code in stock_items and d.warehouse:
+			if d.item_code not in stock_items:
+				continue
+
+			if d.warehouse:
 				pr_qty = flt(d.qty) * flt(d.conversion_factor)
 
 				if pr_qty:
@@ -485,6 +488,7 @@ class BuyingController(StockController, Subcontracting):
 					sle = self.get_sl_entries(
 						d, {"actual_qty": flt(pr_qty), "serial_no": cstr(d.serial_no).strip()}
 					)
+
 					if self.is_return:
 						outgoing_rate = get_rate_for_return(
 							self.doctype, self.name, d.item_code, self.return_against, item_row=d
