@@ -35,5 +35,6 @@ def get_data():
 			{"label": _("Traceability"), "items": ["Serial No", "Batch"]},
 			{"label": _("Move"), "items": ["Stock Entry"]},
 			{"label": _("Bookings"), "items": ["Item Booking", "Item Booking Calendar"]},
+			{"label": _("E-commerce"), "items": ["Website Item"]},
 		],
 	}
