@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import frappe
 import pandas as pd
-from frappe import _, scrub
+from frappe import _
 from frappe.desk.form.assign_to import add
 from frappe.utils import (
 	add_days,

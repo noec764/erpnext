@@ -19,6 +19,7 @@ from frappe.utils import (
 	now_datetime,
 	nowtime,
 	strip,
+	strip_html,
 )
 from frappe.utils.html_utils import clean_html
 
@@ -70,10 +71,6 @@ class Item(Document):
 		self.item_code = strip(self.item_code)
 		self.name = self.item_code
 
-	def before_insert(self):
-		if not self.description:
-			self.description = self.item_name
-
 	def after_insert(self):
 		"""set opening stock and item price"""
 		if self.standard_rate:
@@ -87,7 +84,7 @@ class Item(Document):
 		if not self.item_name:
 			self.item_name = self.item_code
 
-		if not self.description:
+		if not strip_html(cstr(self.description)).strip():
 			self.description = self.item_name
 
 		self.validate_uom()
