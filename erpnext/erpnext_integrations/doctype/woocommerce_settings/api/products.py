@@ -1,3 +1,5 @@
+from requests.exceptions import HTTPError
+
 import frappe
 from frappe.utils import flt, now_datetime, get_datetime, cint
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
@@ -364,12 +366,12 @@ def create_attributes(product):
 				"woocommerce_id": attr.get("id"),
 				"item_attribute_values": []
 			})
-			
+
 			for attr_value in attr.get("options"):
 				row = new_item_attribute_entry.append('item_attribute_values', {})
 				row.attribute_value = attr_value[:140]
 				row.abbr = attr_value[:140]
-			
+
 			new_item_attribute_entry.insert(ignore_permissions=True)
 		else:
 			item_attr = frappe.get_doc("Item Attribute", attr.get("name"))
@@ -414,6 +416,11 @@ def _update_stock(doc):
 					wc_api.put(f"products/{item.get('woocommerce_id')}", {
 						"stock_quantity": doc.actual_qty
 					})
+
+	except HTTPError as http_err:
+		# If item is a variant, it will not be found
+		if http_err.response.status_code != 404:
+			frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")

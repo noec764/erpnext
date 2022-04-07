@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-from requests.exceptions import HTTPError
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.utils import nowdate, cint, flt, now_datetime, add_days
