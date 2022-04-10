@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-from requests.exceptions import HTTPError
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.utils import nowdate, cint, flt, now_datetime, add_days
@@ -48,9 +47,15 @@ def sync_orders():
 
 	woocommerce_orders = get_woocommerce_orders(wc_api)
 	excluded_ids = get_completed_and_excluded_orders()
+	closed_orders = get_closed_orders()
 
 	for woocommerce_order in woocommerce_orders:
 		if str(woocommerce_order.get("id")) in excluded_ids:
+			continue
+		elif (
+			str(woocommerce_order.get("id")) in closed_orders
+			and woocommerce_order.get("status") in ("failed", "refunded")
+		):
 			continue
 
 		frappe.enqueue(sync_order, queue='long', wc_api=wc_api, woocommerce_order=woocommerce_order)
@@ -110,10 +115,19 @@ def get_completed_and_excluded_orders():
 	return frappe.get_all("Sales Order",
 		filters={
 			"woocommerce_id": ("is", "set"),
-			"status": ("in", ("Completed", "Closed"))
+			"status": "Completed"
 		},
 		pluck="woocommerce_id"
 	) + frappe.get_all("Woocommerce Excluded Order", pluck="name")
+
+def get_closed_orders():
+	return frappe.get_all("Sales Order",
+		filters={
+			"woocommerce_id": ("is", "set"),
+			"status": "Closed"
+		},
+		pluck="woocommerce_id"
+	)
 
 def create_sales_order(settings, woocommerce_order, customer):
 	return frappe.get_doc({
@@ -302,8 +316,14 @@ def get_shipping_account_head(id):
 
 def _update_sales_order(settings, woocommerce_order, customer):
 	original_so = frappe.get_doc("Sales Order", dict(woocommerce_id=woocommerce_order.get("id")))
-	if original_so.status in ("Completed", "Closed"):
+	if original_so.status == "Completed":
 		return
+
+	elif original_so.status == "Closed":
+		if woocommerce_order.get("status") in ("failed", "refunded"):
+			return
+		else:
+			original_so.update_status("Draft")
 
 	if woocommerce_order.get("status") == "cancelled" and original_so.docstatus == 1:
 		original_so.cancel()

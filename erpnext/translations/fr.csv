@@ -8516,7 +8516,7 @@ Set Qty in Transactions based on Serial No Input,Définir la quantité dans les 
 Set Reserve Warehouse,Définir un entrepôt de réserve,
 Set Response Time and Resolution Time for Priority {0} in row {1}.,Définissez le temps de réponse et le temps de résolution pour la priorité {0} à la ligne {1},
 Set Response Time and Resolution for Priority {0} at index {1}.,Définissez le temps de réponse et de résolution pour la priorité {0} à l'index {1}.,
-Set Shipping Address or Billing Address,Définissez une adresse de livraison ou une adresse de facturation,
+Set Shipping Address or Billing Address,Veuillez définir une adresse de livraison ou une adresse de facturation,
 Set Source Warehouse,Définir l'entrepôt source,
 "Set Start Time and End Time for  \
 					Support Day {0} at index {1}.",Définissez l'heure de début et l'heure de fin du jour de support {0} à l'index {1}.,
