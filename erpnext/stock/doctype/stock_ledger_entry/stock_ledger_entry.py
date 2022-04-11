@@ -209,6 +209,11 @@ class StockLedgerEntry(Document):
 					msg += "<br>" + "<br>".join(authorized_users)
 					frappe.throw(msg, BackDatedStockTransaction, title=_("Backdated Stock Entry"))
 
+	def on_cancel(self):
+		msg = _("Individual Stock Ledger Entry cannot be cancelled.")
+		msg += "<br>" + _("Please cancel related transaction.")
+		frappe.throw(msg)
+
 	def validate_future_posting(self):
 		if date_diff(self.posting_date, getdate()) > 0:
 			msg = _("Posting future stock transactions are not allowed due to Immutable Ledger")

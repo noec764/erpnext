@@ -6,8 +6,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.model.meta import get_field_precision
-from frappe.model.naming import set_name_from_naming_options
-from frappe.utils import cint, flt, fmt_money, formatdate, getdate
+from frappe.utils import cint, flt, fmt_money
 
 import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
@@ -260,6 +259,11 @@ class GLEntry(Document):
 	def validate_and_set_fiscal_year(self):
 		if not self.fiscal_year:
 			self.fiscal_year = get_fiscal_year(self.posting_date, company=self.company)[0]
+
+	def on_cancel(self):
+		msg = _("Individual GL Entry cannot be cancelled.")
+		msg += "<br>" + _("Please cancel related transaction.")
+		frappe.throw(msg)
 
 	def check_accounting_journal(self):
 		if not self.accounting_journal and cint(
