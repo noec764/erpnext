@@ -139,7 +139,7 @@ def save_entries(gl_map, adv_adj, update_outstanding, from_repost=False):
 		make_entry(entry, adv_adj, update_outstanding, from_repost)
 
 def get_accounting_number(doc: dict) -> str:
-	return make_autoname("GLE-.fiscal_year.-.#########", "GL Entry", doc)
+	return make_autoname(_("AEN-.fiscal_year.-.#########"), "GL Entry", doc)
 
 def make_entry(args, adv_adj, update_outstanding, from_repost=False):
 	gle = frappe.new_doc("GL Entry")
