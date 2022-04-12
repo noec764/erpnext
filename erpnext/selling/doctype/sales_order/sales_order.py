@@ -21,6 +21,7 @@ from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import validate_inter_company_party, update_linked_doc,\
 	unlink_inter_company_doc
+from erpnext.accounts.doctype.subscription_event.subscription_event import delete_linked_subscription_events
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -211,6 +212,8 @@ class SalesOrder(SellingController):
 		if self.coupon_code:
 			from erpnext.accounts.doctype.pricing_rule.utils import update_coupon_code_count
 			update_coupon_code_count(self.coupon_code,'cancelled')
+
+		delete_linked_subscription_events(self)
 
 	def update_project(self):
 		if frappe.db.get_single_value('Selling Settings', 'sales_update_frequency') != "Each Transaction":
