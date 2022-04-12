@@ -6,13 +6,12 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-import erpnext
 from erpnext.accounts.deferred_revenue import (
 	build_conditions,
 	convert_deferred_expense_to_expense,
 	convert_deferred_revenue_to_income,
 )
-from erpnext.accounts.general_ledger import make_reverse_gl_entries
+from erpnext.accounts.general_ledger import make_gl_entries
 
 
 class ProcessDeferredAccounting(Document):
@@ -35,4 +34,4 @@ class ProcessDeferredAccounting(Document):
 			filters={"against_voucher_type": self.doctype, "against_voucher": self.name},
 		)
 
-		make_reverse_gl_entries(gl_entries=gl_entries)
+		make_gl_entries(gl_entries=gl_entries, cancel=1)
