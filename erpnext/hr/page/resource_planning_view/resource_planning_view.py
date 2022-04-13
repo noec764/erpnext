@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 import frappe
-import pandas as pd
 from frappe import _
 from frappe.desk.form.assign_to import add
 from frappe.utils import (
@@ -15,6 +14,7 @@ from frappe.utils import (
 	nowdate,
 	time_diff_in_hours,
 )
+from frappe.utils.dateutils import get_dates_from_timegrain
 from frappe.utils.nestedset import get_descendants_of
 
 CALENDAR_MAP = {
@@ -144,13 +144,13 @@ class ResourceQuery:
 		# FullCalendar returns the next day in its API
 		end = add_days(self.end, -1)
 		holidays_for_employee = [
-			h.holiday_date for h in get_holidays_for_employee(employee, self.start, end)
+			getdate(h.holiday_date) for h in get_holidays_for_employee(employee, self.start, end)
 		]
 
 		total = 0.0
-		for date in pd.date_range(self.start, end):
+		for date in get_dates_from_timegrain(self.start, end):
 			if date not in holidays_for_employee:
-				total += self.working_time.get(employee, {}).get(CALENDAR_MAP.get(date.dayofweek), 0.0)
+				total += self.working_time.get(employee, {}).get(CALENDAR_MAP.get(date.weekday()), 0.0)
 		return total
 
 	def get_group_by_data(self):
@@ -773,7 +773,7 @@ def get_shift_type_totals(start, end, filters, group_by=None):
 
 	out = []
 	for shift_type in shift_types:
-		for date in pd.date_range(start, end):
+		for date in get_dates_from_timegrain(start, end):
 
 			ass_by_res = defaultdict(int)
 			for assignment in assignments:
