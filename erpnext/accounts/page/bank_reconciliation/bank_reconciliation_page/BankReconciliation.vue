@@ -82,6 +82,10 @@ export default {
 		erpnext.bank_reconciliation.on('filter_change', data => {
 			this[data.name] = data.value;
 		})
+
+		erpnext.bank_reconciliation.on('refresh', () => {
+			this.reset_list()
+		})
 	},
 	methods: {
 		transactions_change: function(selection) {
@@ -101,7 +105,7 @@ export default {
 			this.$refs.transactionsList.get_transaction_list(true);
 		}
 	}
-	
+
 }
 </script>
 

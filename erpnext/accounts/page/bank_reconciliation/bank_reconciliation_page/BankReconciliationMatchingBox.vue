@@ -104,7 +104,7 @@ export default {
 				{label:__('Date'), field:'date', type: "date", dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
 				{label:__('Party'), field:'party', width: "20%"},
 				{label:__('Amount'), field:'amount', type: 'decimal', formatFn: this.formatAmount, width: "30%"},
-				{label:__('Reference'), field:'reference_string', width: "30%"},
+				{label:__('Reference'), field:'reference_string', width: "30%", html: true},
 				{label:__('Reference Date'), field:'reference_date', type: "date", dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
 				{field:'link'}
 			]
