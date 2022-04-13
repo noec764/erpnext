@@ -244,8 +244,6 @@ erpnext.patches.v13_0.rename_stop_to_send_birthday_reminders
 execute:frappe.rename_doc("Workspace", "Loan Management", "Loans", force=True)
 erpnext.patches.v13_0.update_timesheet_changes
 erpnext.patches.v13_0.add_doctype_to_sla
-erpnext.patches.v13_0.germany_make_custom_fields
-erpnext.patches.v13_0.germany_fill_debtor_creditor_number
 erpnext.patches.v13_0.set_training_event_attendance
 erpnext.patches.v13_0.bill_for_rejected_quantity_in_purchase_invoice
 erpnext.patches.v13_0.rename_issue_status_hold_to_on_hold
@@ -349,6 +347,7 @@ erpnext.patches.v14_0.rename_ongoing_status_in_sla_documents
 erpnext.patches.v14_0.add_default_exit_questionnaire_notification_template
 erpnext.patches.v14_0.delete_einvoicing_doctypes
 erpnext.patches.v14_0.delete_shopify_doctypes
+erpnext.patches.v14_0.delete_datev_doctypes
 erpnext.patches.v14_0.rearrange_company_fields
 erpnext.patches.v14_0.update_leave_notification_template
 erpnext.patches.v13_0.update_sane_transfer_against
