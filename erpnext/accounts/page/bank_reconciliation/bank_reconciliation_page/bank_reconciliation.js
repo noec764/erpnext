@@ -84,7 +84,7 @@ erpnext.accounts.bankReconciliationPage = class BankReconciliationPage {
 				}
 			}
 		})
-		
+
 		this.make_reconciliation_tool();
 
 		me.add_actions()

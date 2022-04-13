@@ -103,7 +103,7 @@ export default {
 			columns: [
 				{field: "name", hidden: true},
 				{label:__("Date"), field:"date", type: 'date', dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
-				{label:__("Description"), field:"description", width: "60%"},
+				{label:__("Description"), field:"description", width: "60%", html: true},
 				{label:__("Amount"), field:"amount", width: "100%", type: "decimal", formatFn: this.formatAmount},
 				{field: "currency", hidden: true},
 				{field: "debit", hidden: true},

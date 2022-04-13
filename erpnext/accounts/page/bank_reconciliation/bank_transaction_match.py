@@ -63,7 +63,7 @@ class BankTransactionMatch:
 
 		# Get similar bank transactions from history
 		similar_transactions_matches = self.get_similar_transactions_references()
-		
+
 		result = amount_matches + similar_transactions_matches
 		output = sorted([i for n, i in enumerate(result) if i not in result[n + 1:]], \
 			key=lambda x: x.get("posting_date", x.get("reference_date")), reverse=True)
@@ -109,7 +109,7 @@ class BankTransactionMatch:
 						"amount": result.get("unreconciled_from_amount", 0) * -1,\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field),
+						"reference_string": f'{result.get("name")}: {result.get(reference_field)}',
 						"unreconciled_amount": result.get("unreconciled_from_amount", 0)
 					}))
 
@@ -118,7 +118,7 @@ class BankTransactionMatch:
 						"amount": result.get("unreconciled_to_amount", 0),\
 						"party": result.get(party_field),\
 						"reference_date": result.get(date_field), \
-						"reference_string": result.get(reference_field),
+						"reference_string": f'{result.get("name")}: {result.get(reference_field)}',
 						"unreconciled_amount": result.get("unreconciled_to_amount", 0)
 					}))
 
@@ -129,7 +129,7 @@ class BankTransactionMatch:
 					else ((flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0))) * -1),\
 				"party": x.get(party_field),\
 				"reference_date": x.get(date_field), \
-				"reference_string": x.get(reference_field) \
+				"reference_string": f'{x.get("name")}: {x.get(reference_field)}' \
 			}) for x in query_result]
 
 		elif self.document_type == "Sales Invoice":
@@ -139,7 +139,7 @@ class BankTransactionMatch:
 					else (flt(x.get("unreconciled_amount", 0)) if flt(x.get("unreconciled_amount")) > 0 else flt(x.get("outstanding_amount", 0))), \
 				"party": x.get(party_field), \
 				"reference_date": x.get(date_field), \
-				"reference_string": x.get(reference_field) \
+				"reference_string": f'{x.get("name")}: {x.get(reference_field)}' \
 			}) for x in query_result]
 
 		elif self.document_type == "Expense Claim":
@@ -147,7 +147,7 @@ class BankTransactionMatch:
 				"amount": x.get("total_amount_reimbursed", 0) - x.get("total_sanctioned_amount", 0),
 				"party": x.get(party_field),
 				"reference_date": x.get(date_field), \
-				"reference_string": x.get(reference_field)
+				"reference_string": f'{x.get("name")}: {x.get(reference_field)}'
 			}) for x in query_result]
 
 		else:
