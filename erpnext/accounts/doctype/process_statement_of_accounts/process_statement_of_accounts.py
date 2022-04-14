@@ -3,7 +3,6 @@
 
 
 import copy
-from datetime import timedelta
 
 import frappe
 from frappe import _
@@ -11,7 +10,6 @@ from frappe.model.document import Document
 from frappe.utils import add_days, add_months, format_date, getdate, today
 from frappe.utils.jinja import validate_template
 from frappe.utils.pdf import get_pdf
-from frappe.utils.print_format import report_to_pdf
 from frappe.www.printview import get_print_style
 
 from erpnext import get_company_currency
@@ -37,8 +35,9 @@ class ProcessStatementOfAccounts(Document):
 			frappe.throw(_("Customers not selected."))
 
 		if self.enable_auto_email:
-			self.to_date = self.start_date
-			self.from_date = add_months(self.to_date, -1 * self.filter_duration)
+			if self.start_date and getdate(self.start_date) >= getdate(today()):
+				self.to_date = self.start_date
+				self.from_date = add_months(self.to_date, -1 * self.filter_duration)
 
 
 def get_report_pdf(doc, consolidated=True):
