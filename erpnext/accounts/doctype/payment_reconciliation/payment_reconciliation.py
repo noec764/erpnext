@@ -8,11 +8,7 @@ from frappe.model.document import Document
 from frappe.utils import flt, getdate, nowdate, today
 
 import erpnext
-from erpnext.accounts.utils import (
-	get_outstanding_invoices,
-	reconcile_against_document,
-	update_reference_in_payment_entry,
-)
+from erpnext.accounts.utils import get_outstanding_invoices, reconcile_against_document
 from erpnext.controllers.accounts_controller import get_advance_payment_entries
 
 
@@ -354,9 +350,13 @@ class PaymentReconciliation(Document):
 			)
 
 			if self.minimum_invoice_amount:
-				condition += " and `{0}` >= {1}".format(dr_or_cr, flt(self.minimum_invoice_amount))
+				condition += " and {dr_or_cr} >= {amount}".format(
+					dr_or_cr=dr_or_cr, amount=flt(self.minimum_invoice_amount)
+				)
 			if self.maximum_invoice_amount:
-				condition += " and `{0}` <= {1}".format(dr_or_cr, flt(self.maximum_invoice_amount))
+				condition += " and {dr_or_cr} <= {amount}".format(
+					dr_or_cr=dr_or_cr, amount=flt(self.maximum_invoice_amount)
+				)
 
 		elif get_return_invoices:
 			condition = " and doc.company = '{0}' ".format(self.company)
@@ -371,15 +371,19 @@ class PaymentReconciliation(Document):
 				else ""
 			)
 			dr_or_cr = (
-				"gl.debit_in_account_currency"
+				"debit_in_account_currency"
 				if erpnext.get_party_account_type(self.party_type) == "Receivable"
-				else "gl.credit_in_account_currency"
+				else "credit_in_account_currency"
 			)
 
 			if self.minimum_invoice_amount:
-				condition += " and `{0}` >= {1}".format(dr_or_cr, flt(self.minimum_payment_amount))
+				condition += " and gl.{dr_or_cr} >= {amount}".format(
+					dr_or_cr=dr_or_cr, amount=flt(self.minimum_payment_amount)
+				)
 			if self.maximum_invoice_amount:
-				condition += " and `{0}` <= {1}".format(dr_or_cr, flt(self.maximum_payment_amount))
+				condition += " and gl.{dr_or_cr} <= {amount}".format(
+					dr_or_cr=dr_or_cr, amount=flt(self.maximum_payment_amount)
+				)
 
 		else:
 			condition += (
