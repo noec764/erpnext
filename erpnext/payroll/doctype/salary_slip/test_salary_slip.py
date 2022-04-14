@@ -704,6 +704,7 @@ class TestSalarySlip(unittest.TestCase):
 			"Monthly",
 			other_details={"max_benefits": 100000},
 			test_tax=True,
+			include_flexi_benefits=True,
 			employee=employee,
 			payroll_period=payroll_period,
 		)
@@ -807,6 +808,7 @@ class TestSalarySlip(unittest.TestCase):
 			"Monthly",
 			other_details={"max_benefits": 100000},
 			test_tax=True,
+			include_flexi_benefits=True,
 			employee=employee,
 			payroll_period=payroll_period,
 		)
@@ -954,7 +956,9 @@ def create_account(account_name, company, parent_account, account_type=None):
 	return account
 
 
-def make_earning_salary_component(setup=False, test_tax=False, company_list=None):
+def make_earning_salary_component(
+	setup=False, test_tax=False, company_list=None, include_flexi_benefits=False
+):
 	data = [
 		{
 			"salary_component": "Basic Salary",
@@ -975,7 +979,7 @@ def make_earning_salary_component(setup=False, test_tax=False, company_list=None
 		},
 		{"salary_component": "Leave Encashment", "abbr": "LE", "type": "Earning"},
 	]
-	if test_tax:
+	if include_flexi_benefits:
 		data.extend(
 			[
 				{
@@ -995,11 +999,18 @@ def make_earning_salary_component(setup=False, test_tax=False, company_list=None
 					"type": "Earning",
 					"max_benefit_amount": 15000,
 				},
+			]
+		)
+	if test_tax:
+		data.extend(
+			[
 				{"salary_component": "Performance Bonus", "abbr": "B", "type": "Earning"},
 			]
 		)
+
 	if setup or test_tax:
 		make_salary_component(data, test_tax, company_list)
+
 	data.append(
 		{
 			"salary_component": "Basic Salary",

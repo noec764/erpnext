@@ -296,6 +296,17 @@
    "type": "Link"
   },
   {
+    "dependencies": "Salary Structure",
+    "hidden": 0,
+    "is_query_report": 1,
+    "label": "Income Tax Computation",
+    "link_count": 0,
+    "link_to": "Income Tax Computation",
+    "link_type": "Report",
+    "onboard": 0,
+    "type": "Link"
+   },
+  {
    "dependencies": "Salary Slip",
    "hidden": 0,
    "is_query_report": 1,
@@ -318,7 +329,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-02 07:14:32.194059",
+ "modified": "2022-02-23 17:41:19.098813",
  "modified_by": "Administrator",
  "module": "Payroll",
  "name": "Payroll",
