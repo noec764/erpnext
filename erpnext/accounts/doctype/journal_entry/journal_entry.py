@@ -6,7 +6,7 @@ import json
 
 import frappe
 from frappe import _, msgprint, scrub
-from frappe.utils import cint, cstr, flt, fmt_money, formatdate, get_link_to_form, getdate, nowdate
+from frappe.utils import cint, cstr, flt, fmt_money, formatdate, get_link_to_form, nowdate
 
 import erpnext
 from erpnext.accounts.deferred_revenue import get_deferred_booking_accounts
@@ -18,7 +18,6 @@ from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category 
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import (
-	check_if_stock_and_account_balance_synced,
 	get_account_currency,
 	get_balance_on,
 	get_stock_accounts,
@@ -88,9 +87,6 @@ class JournalEntry(AccountsController):
 		self.update_inter_company_jv()
 		self.update_invoice_discounting()
 		self.update_status_for_full_and_final_statement()
-		check_if_stock_and_account_balance_synced(
-			self.posting_date, self.company, self.doctype, self.name
-		)
 		self.update_unreconciled_amount()
 
 	def on_cancel(self):
