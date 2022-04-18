@@ -63,6 +63,7 @@ treeviews = [
 	"Warehouse",
 	"Item Group",
 	"Customer Group",
+	"Supplier Group",
 	"Sales Person",
 	"Territory",
 	"Supplier Group",
