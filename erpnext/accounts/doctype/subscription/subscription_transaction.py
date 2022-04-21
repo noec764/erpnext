@@ -68,6 +68,8 @@ class SubscriptionTransactionBase:
 			from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import get_terms_and_conditions
 			document.tc_name = self.subscription.terms_and_conditions
 			document.terms = get_terms_and_conditions(self.subscription.terms_and_conditions, document.__dict__)
+		else:
+			document.tc_name = frappe.db.get_value("Company", self.subscription.company, "default_selling_terms")
 
 		document.set_missing_values()
 

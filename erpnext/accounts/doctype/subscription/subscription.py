@@ -9,6 +9,7 @@ from frappe.model.document import Document
 from frappe.utils.data import nowdate, getdate, cint, add_days, flt, global_date_format
 import numpy as np
 
+from erpnext.accounts.party import get_default_contact
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
 from erpnext.accounts.doctype.subscription.subscription_state_manager import (SubscriptionStateManager, SubscriptionPeriod)
 from erpnext.accounts.doctype.subscription.subscription_transaction import (
@@ -21,6 +22,7 @@ class Subscription(Document):
 		SubscriptionPlansManager(self).set_plans_rates()
 
 	def validate(self):
+		self.get_billing_contact()
 		self.validate_interval_count()
 		self.validate_trial_period()
 		SubscriptionPlansManager(self).set_plans_status()
@@ -262,6 +264,11 @@ class Subscription(Document):
 
 	def set_customer_status(self):
 		frappe.get_doc("Customer", self.customer).set_status(update=True)
+
+	def get_billing_contact(self):
+		if self.customer and not self.contact_person:
+			self.contact_person = get_default_contact("Customer", self.customer)
+
 
 def update_grand_total():
 	subscriptions = frappe.get_all("Subscription", filters={"status": ("!=", "Cancelled")}, \
