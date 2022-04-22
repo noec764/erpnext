@@ -6,9 +6,10 @@ import frappe
 import erpnext
 from frappe import _
 from frappe.utils.data import nowdate, getdate, cint, add_days, date_diff, flt
+
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 from erpnext.controllers.accounts_controller import add_taxes_from_tax_template
-
+from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import get_terms_and_conditions
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import SubscriptionPlansManager
 
@@ -64,10 +65,11 @@ class SubscriptionTransactionBase:
 		self.add_subscription_dates(document)
 
 		# Terms and conditions
-		if self.subscription.terms_and_conditions:
-			from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import get_terms_and_conditions
-			document.tc_name = self.subscription.terms_and_conditions
-			document.terms = get_terms_and_conditions(self.subscription.terms_and_conditions, document.__dict__)
+		document.tc_name = (
+			self.subscription.terms_and_conditions or
+			frappe.db.get_value("Company", self.subscription.company, "default_selling_terms")
+		)
+		document.terms = get_terms_and_conditions(document.tc_name, document.__dict__)
 
 		document.set_missing_values()
 

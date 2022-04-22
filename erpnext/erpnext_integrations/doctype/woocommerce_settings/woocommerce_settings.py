@@ -28,8 +28,7 @@ class WoocommerceSettings(Document):
 			# create
 			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute"]:
 				fields = [
-					dict(fieldname='woocommerce_id', label='Woocommerce ID', fieldtype='Data', read_only=1, print_hide=1, translatable=0),
-					dict(fieldname='last_woocommerce_sync', label='Last Woocommerce Sync', fieldtype='Datetime', hidden=1, print_hide=1)
+					dict(fieldname='woocommerce_id', label='Woocommerce ID', fieldtype='Data', read_only=1, print_hide=1, translatable=0)
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
@@ -43,6 +42,7 @@ class WoocommerceSettings(Document):
 
 			for doctype in ["Item"]:
 				fields = [
+					dict(fieldname='last_woocommerce_sync', label='Last Woocommerce Sync', fieldtype='Datetime', hidden=1, print_hide=1),
 					dict(fieldname='sync_with_woocommerce', label='Sync with Woocommerce', fieldtype='Check', insert_after='is_stock_item', print_hide=1)
 				]
 				for df in fields:
