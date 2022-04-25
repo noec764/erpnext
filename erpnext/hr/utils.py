@@ -4,8 +4,6 @@
 
 import frappe
 from frappe import _
-from frappe.desk.form import assign_to
-from frappe.model.document import Document
 from frappe.utils import (
 	add_days,
 	cstr,
@@ -17,7 +15,6 @@ from frappe.utils import (
 	getdate,
 	nowdate,
 	today,
-	unique,
 )
 
 import erpnext
@@ -90,29 +87,6 @@ def delete_employee_work_history(details, employee, date):
 				filters["from_date"] = date
 	if filters:
 		frappe.db.delete("Employee Internal Work History", filters)
-
-
-@frappe.whitelist()
-def get_employee_fields_label():
-	fields = []
-	for df in frappe.get_meta("Employee").get("fields"):
-		if df.fieldname in [
-			"salutation",
-			"user_id",
-			"employee_number",
-			"employment_type",
-			"holiday_list",
-			"branch",
-			"department",
-			"designation",
-			"grade",
-			"notice_number_of_days",
-			"reports_to",
-			"leave_policy",
-			"company_email",
-		]:
-			fields.append({"value": df.fieldname, "label": df.label})
-	return fields
 
 
 @frappe.whitelist()
