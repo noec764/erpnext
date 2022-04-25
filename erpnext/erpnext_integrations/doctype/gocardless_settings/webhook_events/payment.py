@@ -1,8 +1,6 @@
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-import json
-
 import frappe
 from frappe import _
 from frappe.utils import flt, getdate
@@ -17,7 +15,7 @@ from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 EVENT_MAP = {
 	"created": "create_payment",
 	"submitted": "create_payment",
-	"confirmed": "submit_payment",
+	"confirmed": "create_payment",
 	"cancelled": "cancel_payment",
 	"failed": "cancel_payment",
 	"paid_out": "submit_payment",

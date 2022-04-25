@@ -132,6 +132,7 @@ export default {
 							frappe.show_alert({message:__(`${result.duplicates} entries are duplicates and have not been created`), indicator:'orange'});
 						}
 						erpnext.bank_transaction.trigger('close_dialog');
+						erpnext.bank_reconciliation.trigger("refresh")
 					}
 				})
 			}
@@ -158,6 +159,7 @@ export default {
 					frappe.show_alert({message:__(`Bank account '${bank_account[0].account_name}' has been synchronized`), indicator:'green'});
 					frappe.show_alert({message:__(`${result.length} bank transaction(s) created`), indicator:'green'});
 					erpnext.bank_transaction.trigger('close_dialog');
+					erpnext.bank_reconciliation.trigger("refresh")
 				}
 			})
 		}

@@ -1,7 +1,7 @@
 import frappe
 import frappe.utils.nestedset
-from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
+from frappe.exceptions import DuplicateEntryError, TimestampMismatchError
 from frappe.utils import cint
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
@@ -12,7 +12,7 @@ class WooCommerceCustomers(WooCommerceAPI):
 		super(WooCommerceCustomers, self).__init__(version, args, kwargs)
 
 	def get_customers(self, params=None):
-		return self.get(f"customers", params=params)
+		return self.get("customers", params=params)
 
 
 def get_customers():
@@ -212,7 +212,9 @@ def add_contact(customer, woocommerce_customer):
 		)
 		try:
 			doc.save()
-		except frappe.exceptions.TimestampMismatchError:
+		except DuplicateEntryError:
+			pass
+		except TimestampMismatchError:
 			# Handle the update of two sales orders contact details concurrently
 			pass
 

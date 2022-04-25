@@ -87,7 +87,7 @@ def get_gl_entries(filters):
 		"""
 		select
 			gl.posting_date as GlPostDate, gl.name as GlName, gl.account, gl.transaction_date,
-			sum(gl.debit) as debit, sum(gl.credit) as credit,
+			sum(gl.debit) as debit, sum(gl.credit) as credit, gl.accounting_entry_number,
 			sum(gl.debit_in_account_currency) as debitCurr, sum(gl.credit_in_account_currency) as creditCurr,
 			gl.voucher_type, gl.voucher_no, gl.against_voucher_type,
 			gl.against_voucher, gl.account_currency, gl.against,
@@ -127,12 +127,16 @@ def get_result_as_list(data, filters):
 	accounts = frappe.get_all(
 		"Account", filters={"Company": filters.company}, fields=["name", "account_number"]
 	)
+	journals = {
+		j.journal_code: j.journal_name
+		for j in frappe.get_all("Accounting Journal", fields=["journal_code", "journal_name"])
+	}
 
 	party_data = [x for x in data if x.get("against_voucher")]
 
 	for d in data:
 		JournalCode = d.get("accounting_journal") or re.split("-|/|[0-9]", d.get("voucher_no"))[0]
-		EcritureNum = d.get("GlName")
+		EcritureNum = d.get("accounting_entry_number")
 
 		EcritureDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
@@ -193,22 +197,17 @@ def get_result_as_list(data, filters):
 		DateLet = get_date_let(d, party_data) if d.get("against_voucher") else None
 		EcritureLet = d.get("against_voucher", "") if DateLet else ""
 
+		Montantdevise = None
 		if Idevise != company_currency:
 			Montantdevise = (
 				"{:.2f}".format(d.get("debitCurr")).replace(".", ",")
 				if d.get("debitCurr") != 0
 				else "{:.2f}".format(d.get("creditCurr")).replace(".", ",")
 			)
-		else:
-			Montantdevise = (
-				"{:.2f}".format(d.get("debit")).replace(".", ",")
-				if d.get("debit") != 0
-				else "{:.2f}".format(d.get("credit")).replace(".", ",")
-			)
 
 		row = [
 			JournalCode,
-			d.get("voucher_type"),
+			journals.get(JournalCode),
 			EcritureNum,
 			EcritureDate,
 			CompteNum,
@@ -224,7 +223,7 @@ def get_result_as_list(data, filters):
 			DateLet or "",
 			ValidDate,
 			Montantdevise,
-			Idevise,
+			Idevise if Idevise != company_currency else None,
 		]
 
 		result.append(row)

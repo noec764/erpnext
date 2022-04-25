@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import frappe
 from frappe.contacts.doctype.address.address import get_preferred_address
-from frappe.utils import add_days, cint, flt, now_datetime, nowdate
+from frappe.utils import add_days, cint, flt, nowdate
 from frappe.utils.background_jobs import get_jobs
 
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
@@ -16,6 +16,8 @@ from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.customers imp
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import get_simple_item
 from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note, make_sales_invoice
 from erpnext.stock.stock_ledger import NegativeStockError
+
+DELIVERY_STATUSES = ["shipped", "completed", "lpc_transit", "lpc_delivered"]
 
 
 class WooCommerceOrders(WooCommerceAPI):
@@ -53,9 +55,15 @@ def sync_orders():
 
 	woocommerce_orders = get_woocommerce_orders(wc_api)
 	excluded_ids = get_completed_and_excluded_orders()
+	closed_orders = get_closed_orders()
 
 	for woocommerce_order in woocommerce_orders:
 		if str(woocommerce_order.get("id")) in excluded_ids:
+			continue
+		elif str(woocommerce_order.get("id")) in closed_orders and woocommerce_order.get("status") in (
+			"failed",
+			"refunded",
+		):
 			continue
 
 		frappe.enqueue(sync_order, queue="long", wc_api=wc_api, woocommerce_order=woocommerce_order)
@@ -124,9 +132,17 @@ def get_woocommerce_orders(wc_api):
 def get_completed_and_excluded_orders():
 	return frappe.get_all(
 		"Sales Order",
-		filters={"woocommerce_id": ("is", "set"), "status": ("in", ("Completed", "Closed"))},
+		filters={"woocommerce_id": ("is", "set"), "status": "Completed"},
 		pluck="woocommerce_id",
 	) + frappe.get_all("Woocommerce Excluded Order", pluck="name")
+
+
+def get_closed_orders():
+	return frappe.get_all(
+		"Sales Order",
+		filters={"woocommerce_id": ("is", "set"), "status": "Closed"},
+		pluck="woocommerce_id",
+	)
 
 
 def create_sales_order(settings, woocommerce_order, customer):
@@ -156,7 +172,6 @@ def create_sales_order(settings, woocommerce_order, customer):
 			"shipping_address_name": get_preferred_address(
 				"Customer", customer.name, "is_shipping_address"
 			),
-			"last_woocommerce_sync": now_datetime(),
 			"disable_rounded_total": 0,
 		}
 	)
@@ -200,13 +215,13 @@ def get_order_items(order, settings, delivery_date):
 	for item in order.get("line_items"):
 		item_code = None
 
-		if flt(item.get("price")) == 0 and True in [
+		if not flt(item.get("price")) and True in [
 			x.get("key") == "_bundled_by" or x.get("key") == "_bundled_item_id"
 			for x in item.get("meta_data")
 		]:
 			continue
 
-		if item.get("product_id") == 0:
+		if not item.get("product_id"):
 			item_code = get_or_create_missing_item(settings, item)
 
 		if not item_code:
@@ -219,13 +234,13 @@ def get_order_items(order, settings, delivery_date):
 				{
 					"item_code": item_code,
 					"rate": flt(item.get("price")),
-					"is_free_item": flt(item.get("price")) == 0,
+					"is_free_item": not flt(item.get("price")),
 					"delivery_date": delivery_date or nowdate(),
 					"qty": item.get("quantity"),
 					"warehouse": warehouse or settings.warehouse,
 					"stock_uom": stock_uom,
 					"uom": frappe.db.get_value("Item", item_code, "sales_uom") or stock_uom,
-					"discount_percentage": 100 if flt(item.get("price")) == 0 else 0,
+					"discount_percentage": 0.0 if flt(item.get("price")) else 100.0,
 				}
 			)
 		else:
@@ -252,7 +267,12 @@ def get_item_code_and_warehouse(item):
 
 			if cint(has_variants) and len(item.get("meta_data")):
 				variants = get_item_codes_by_attributes(
-					{x.get("display_key"): x.get("value") for x in item.get("meta_data")}, item_code
+					{
+						x.get("display_key"): x.get("value")
+						for x in item.get("meta_data")
+						if isinstance(x.get("value"), str)
+					},
+					item_code,
 				)
 				if variants:
 					item_code = variants[0]
@@ -369,51 +389,78 @@ def get_shipping_account_head(id):
 
 def _update_sales_order(settings, woocommerce_order, customer):
 	original_so = frappe.get_doc("Sales Order", dict(woocommerce_id=woocommerce_order.get("id")))
-	if original_so.status in ("Completed", "Closed"):
+	if original_so.status == "Completed":
 		return
 
-	if woocommerce_order.get("status") == "cancelled" and original_so.docstatus == 1:
-		original_so.cancel()
-	elif original_so.docstatus == 2:
+	elif original_so.status == "Closed":
+		if woocommerce_order.get("status") in ("failed", "refunded"):
+			return
+		else:
+			original_so.update_status("Draft")
+
+	if woocommerce_order.get("status") == "cancelled":
+		if original_so.docstatus == 1:
+			original_so.cancel()
 		return
+
+	if original_so.docstatus == 2 and woocommerce_order.get("status") != "cancelled":
+		return frappe.db.set_value("Sales Order", original_so.name, "docstatus", 1)
 
 	updated_so = create_sales_order(settings, woocommerce_order, customer)
 	sales_order = original_so
 
 	so_are_similar = compare_sales_orders(original_so, updated_so)
 
-	if not so_are_similar and updated_so.items:
-		original_so.flags.ignore_permissions = True
-		original_so.cancel()
+	if not so_are_similar and not (flt(original_so.per_delivered) or flt(original_so.per_billed)):
+		try:
+			if original_so.docstatus == 1:
+				original_so.flags.ignore_permissions = True
+				original_so.cancel()
 
-		sales_order = updated_so
-		sales_order.flags.ignore_permissions = True
-		sales_order.insert()
-		sales_order.submit()
-		frappe.db.commit()
+			sales_order = updated_so
+			sales_order.flags.ignore_permissions = True
+			sales_order.insert()
+			sales_order.submit()
+			frappe.db.commit()
+		except Exception:
+			# Usually this throws an exception when the original so can't be cancelled
+			pass
 
-	if (
-		sales_order
-		and woocommerce_order.get("date_paid")
-		and cint(settings.create_payments_and_sales_invoice)
-	):
-		if woocommerce_order.get("status") == "refunded":
-			refund_sales_order(settings, woocommerce_order, sales_order)
-		else:
-			register_payment_and_invoice(woocommerce_order, sales_order)
+	if sales_order:
+		update_so_status(sales_order, woocommerce_order)
 
-	if sales_order and woocommerce_order.get("status") == "completed":
-		register_delivery(settings, woocommerce_order, sales_order)
+		if cint(settings.create_payments_and_sales_invoice):
+			if woocommerce_order.get("status") == "refunded":
+				refund_sales_order(settings, woocommerce_order, sales_order)
+			elif woocommerce_order.get("date_paid") or (
+				woocommerce_order.get("payment_method")
+				and woocommerce_order.get("status") in DELIVERY_STATUSES
+			):
+				# Delivered sales orders with a payment method are assumed to be paid
+				register_payment_and_invoice(woocommerce_order, sales_order)
 
-	frappe.db.set_value("Sales Order", sales_order.name, "last_woocommerce_sync", now_datetime())
+		if woocommerce_order.get("status") in DELIVERY_STATUSES:
+			register_delivery(settings, woocommerce_order, sales_order)
 
+
+def update_so_status(sales_order, woocommerce_order):
+	sales_order.reload()
 	if woocommerce_order.get("status") == "on-hold":
-		frappe.db.set_value("Sales Order", sales_order.name, "status", "On Hold")
+		sales_order.update_status("On Hold")
+	elif sales_order.status == "On Hold":
+		sales_order.reload()
+		sales_order.update_status("Draft")
 	elif woocommerce_order.get("status") == "failed":
-		frappe.db.set_value("Sales Order", sales_order.name, "status", "Closed")
+		sales_order.update_status("Closed")
 
 
 def compare_sales_orders(original, updated):
+	if not updated.items:
+		return True
+
+	if original.docstatus == 2:
+		return False
+
 	if updated.grand_total and original.grand_total != updated.grand_total:
 		return False
 
@@ -445,7 +492,7 @@ def get_qty_per_item(items):
 
 def register_payment_and_invoice(woocommerce_order, sales_order):
 	# Keep 99.99 because of rounding issues
-	if sales_order.per_billed < 99.99 and sales_order.docstatus == 1:
+	if flt(sales_order.per_billed) < 99.99 and sales_order.docstatus == 1:
 		try:
 			if sales_order.status in ("On Hold", "Closed"):
 				frappe.db.set_value("Sales Order", sales_order.name, "status", "To Bill")
@@ -461,7 +508,7 @@ def register_payment_and_invoice(woocommerce_order, sales_order):
 
 def make_payment(woocommerce_order, sales_order):
 	if (
-		sales_order.advance_paid < sales_order.grand_total
+		flt(sales_order.advance_paid) < flt(sales_order.grand_total)
 		and woocommerce_order.get("transaction_id")
 		and not frappe.get_all(
 			"Payment Entry", dict(reference_no=woocommerce_order.get("transaction_id"))
@@ -555,7 +602,7 @@ def make_sales_invoice_from_sales_order(woocommerce_order, sales_order):
 
 
 def register_delivery(settings, woocommerce_order, sales_order):
-	if sales_order.per_delivered < 100:
+	if flt(sales_order.per_delivered) < 100:
 		_make_delivery_note(woocommerce_order, sales_order)
 
 

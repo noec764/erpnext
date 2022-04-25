@@ -1,9 +1,6 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
 # MIT License. See license.txt
 
-
-import json
-
 import frappe
 import frappe.www.list
 from frappe import _
@@ -23,7 +20,6 @@ def get_context(context):
 	context.show_sidebar = True
 	context.enable_stripe = False
 	context.enable_gocardless = False
-	context.subscription = False
 	context.lang = frappe.local.lang
 	context.credits_balance = None
 
@@ -44,9 +40,6 @@ def get_context(context):
 				context.enable_stripe = True
 				context.stripe_payment_methods = get_customer_payment_methods(references)
 				context.publishable_key = get_api_key(references.stripe_settings)
-
-		if frappe.db.exists("Subscription", {"customer": customers[0]}):
-			context.subscription = frappe.get_doc("Subscription", {"customer": customers[0]})
 
 		context.credits_balance = get_balance(customers[0]) or None
 

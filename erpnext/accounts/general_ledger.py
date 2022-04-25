@@ -6,6 +6,7 @@ import copy
 import frappe
 from frappe import _
 from frappe.model.meta import get_field_precision
+from frappe.model.naming import make_autoname
 from frappe.utils import cint, cstr, flt, formatdate, getdate, now
 
 import erpnext
@@ -257,11 +258,19 @@ def save_entries(gl_map, adv_adj, update_outstanding, from_repost=False):
 	if gl_map:
 		check_freezing_date(gl_map[0]["posting_date"], adv_adj)
 
+	accounting_number = get_accounting_number(gl_map[0])
+
 	for entry in gl_map:
 		if not entry.get("accounting_journal"):
 			get_accounting_journal(entry)
 
+		entry["accounting_entry_number"] = accounting_number
+
 		make_entry(entry, adv_adj, update_outstanding, from_repost)
+
+
+def get_accounting_number(doc: dict) -> str:
+	return make_autoname(_("AEN-.fiscal_year.-.#########"), "GL Entry", doc)
 
 
 def make_entry(args, adv_adj, update_outstanding, from_repost=False):

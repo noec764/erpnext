@@ -1,9 +1,10 @@
 import frappe
 from frappe.utils import cint, flt, get_datetime, now_datetime
 from frappe.utils.nestedset import get_root_of
+from requests.exceptions import HTTPError
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
-from erpnext.utilities.product import adjust_qty_for_expired_items, get_price
+from erpnext.utilities.product import get_price
 
 
 class WooCommerceProducts(WooCommerceAPI):
@@ -143,7 +144,7 @@ def get_price_and_qty(item, settings):
 		)
 
 	if item.is_stock_item:
-		qty_in_stock = get_qty_in_stock(item.item_code, "website_warehouse", settings.warehouse)
+		qty_in_stock = (item.item_code, "website_warehouse", settings.warehouse)
 		if qty_in_stock.stock_qty:
 			item_data.update({"stock_quantity": f"{qty_in_stock.stock_qty[0][0]}"})
 
@@ -258,7 +259,7 @@ def create_variant(wc_api, variant, template, attributes):
 		)
 		try:
 			frappe.get_doc(item).insert(ignore_permissions=True)
-		except frappe.exceptions.DuplicateEntryError as e:
+		except frappe.exceptions.DuplicateEntryError:
 			pass
 		except Exception:
 			print(product.get("slug") or product.get("sku"), product.get("id"), frappe.get_traceback())
@@ -268,7 +269,7 @@ def create_simple_item(settings, product):
 	item = get_simple_item(settings, product)
 	try:
 		frappe.get_doc(item).insert(ignore_permissions=True)
-	except frappe.exceptions.DuplicateEntryError as e:
+	except frappe.exceptions.DuplicateEntryError:
 		pass
 
 
@@ -441,37 +442,10 @@ def _update_stock(doc):
 				if product.get("stock_quantity") != doc.actual_qty:
 					wc_api.put(f"products/{item.get('woocommerce_id')}", {"stock_quantity": doc.actual_qty})
 
+	except HTTPError as http_err:
+		# If item is a variant, it will not be found
+		if http_err.response.status_code != 404:
+			frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
+
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
-
-
-def get_qty_in_stock(item_code, item_warehouse_field, warehouse=None):
-	in_stock, stock_qty = 0, ""
-	template_item_code, is_stock_item = frappe.db.get_value(
-		"Item", item_code, ["variant_of", "is_stock_item"]
-	)
-
-	if not warehouse:
-		warehouse = frappe.db.get_value("Item", item_code, item_warehouse_field)
-
-	if not warehouse and template_item_code and template_item_code != item_code:
-		warehouse = frappe.db.get_value("Item", template_item_code, item_warehouse_field)
-
-	if warehouse:
-		stock_qty = frappe.db.sql(
-			"""
-			select GREATEST(S.actual_qty - S.reserved_qty - S.reserved_qty_for_production - S.reserved_qty_for_sub_contract, 0) / IFNULL(C.conversion_factor, 1)
-			from tabBin S
-			inner join `tabItem` I on S.item_code = I.Item_code
-			left join `tabUOM Conversion Detail` C on I.sales_uom = C.uom and C.parent = I.Item_code
-			where S.item_code=%s and S.warehouse=%s""",
-			(item_code, warehouse),
-		)
-
-		if stock_qty:
-			stock_qty = adjust_qty_for_expired_items(item_code, stock_qty, warehouse)
-			in_stock = stock_qty[0][0] > 0 and 1 or 0
-
-	return frappe._dict(
-		{"in_stock": in_stock, "stock_qty": stock_qty, "is_stock_item": is_stock_item}
-	)

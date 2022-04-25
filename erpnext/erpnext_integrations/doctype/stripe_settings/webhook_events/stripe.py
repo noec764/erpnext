@@ -145,7 +145,7 @@ class StripeWebhooksController(WebhooksController):
 
 				payment_entry.set_amounts()
 
-				if payment_entry.unallocated_amount:
+				if payment_entry.total_allocated_amount and payment_entry.unallocated_amount:
 					payment_entry.deductions[0].amount -= flt(payment_entry.unallocated_amount)
 
 		self.integration_request.db_set("output", json.dumps(output, indent=4))

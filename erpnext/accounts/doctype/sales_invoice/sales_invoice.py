@@ -22,6 +22,7 @@ from frappe.utils import (
 
 import erpnext
 from erpnext.accounts.deferred_revenue import validate_service_stop_date
+from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
 from erpnext.accounts.doctype.loyalty_program.loyalty_program import (
 	get_loyalty_program_details_with_points,
 	validate_loyalty_points,
@@ -279,6 +280,11 @@ class SalesInvoice(SellingController):
 
 			# this sequence because outstanding may get -ve
 			self.make_gl_entries()
+
+		if self.is_return and self.is_down_payment_invoice:
+			update_outstanding_amt(
+				self.debit_to, "Customer", self.customer, self.doctype, self.return_against
+			)
 
 		if not self.is_return and not self.is_down_payment_invoice:
 			self.update_billing_status_for_zero_amount_refdoc("Delivery Note")
@@ -986,8 +992,6 @@ class SalesInvoice(SellingController):
 				make_reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 
 			if update_outstanding == "No":
-				from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
-
 				update_outstanding_amt(
 					self.debit_to,
 					"Customer",

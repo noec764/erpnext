@@ -94,7 +94,16 @@ $.extend(shopping_cart, {
 	},
 
 	bind_place_order: function() {
-		$(".btn-place-order").on("click", function() {
+		$(".btn-place-order").on("click", async function() {
+			const address = await frappe.call({
+				method: 'erpnext.shopping_cart.cart.get_customer_address',
+				freeze: true,
+			})
+
+			if (!address.message) {
+				await shopping_cart.new_cart_address(false)
+			}
+
 			shopping_cart.place_order(this);
 		});
 	},

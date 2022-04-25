@@ -18,10 +18,10 @@ var getParams = function (url) {
 	return params;
 };
 
-frappe.ready(function() {
+frappe.ready(function () {
 	var full_name = frappe.session && frappe.session.user_fullname;
 	// update user
-	if(full_name) {
+	if (full_name) {
 		$('.navbar li[data-label="User"] a')
 			.html('<i class="fa fa-fixed-width fa fa-user"></i> ' + full_name);
 	}
@@ -35,17 +35,17 @@ frappe.ready(function() {
 	var d = new Date();
 	// expires within 30 minutes
 	d.setTime(d.getTime() + (0.02 * 24 * 60 * 60 * 1000));
-	var expires = "expires="+d.toUTCString();
+	var expires = "expires=" + d.toUTCString();
 	if (referral_coupon_code) {
 		document.cookie = "referral_coupon_code=" + referral_coupon_code + ";" + expires + ";path=/";
 	}
 	if (referral_sales_partner) {
 		document.cookie = "referral_sales_partner=" + referral_sales_partner + ";" + expires + ";path=/";
 	}
-	referral_coupon_code=frappe.get_cookie("referral_coupon_code");
-	referral_sales_partner=frappe.get_cookie("referral_sales_partner");
+	referral_coupon_code = frappe.get_cookie("referral_coupon_code");
+	referral_sales_partner = frappe.get_cookie("referral_sales_partner");
 
-	if (referral_coupon_code && $(".tot_quotation_discount").val()==undefined ) {
+	if (referral_coupon_code && $(".tot_quotation_discount").val() == undefined) {
 		$(".txtcoupon").val(referral_coupon_code);
 	}
 	if (referral_sales_partner) {
@@ -59,8 +59,8 @@ frappe.ready(function() {
 });
 
 $.extend(shopping_cart, {
-	show_shoppingcart_dropdown: function() {
-		$(".shopping-cart").on('shown.bs.dropdown', function() {
+	show_shoppingcart_dropdown: function () {
+		$(".shopping-cart").on('shown.bs.dropdown', function () {
 			if (!$('.shopping-cart-menu .cart-container').length) {
 				return frappe.call({
 					method: 'erpnext.e_commerce.shopping_cart.cart.get_shopping_cart_menu',
@@ -74,8 +74,8 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	update_cart: function(opts) {
-		if (frappe.session.user==="Guest") {
+	update_cart: function (opts) {
+		if (frappe.session.user === "Guest") {
 			if (localStorage) {
 				localStorage.setItem("last_visited", window.location.pathname);
 			}
@@ -108,18 +108,18 @@ $.extend(shopping_cart, {
 		$(".intermediate-empty-cart").remove();
 
 		var cart_count = frappe.get_cookie("cart_count");
-		if(frappe.session.user==="Guest") {
+		if (frappe.session.user === "Guest") {
 			cart_count = 0;
 		}
 
-		if(cart_count) {
+		if (cart_count) {
 			$(".shopping-cart").toggleClass('hidden', false);
 		}
 
 		var $cart = $('.cart-icon');
 		var $badge = $cart.find("#cart-count");
 
-		if(parseInt(cart_count) === 0 || cart_count === undefined) {
+		if (parseInt(cart_count) === 0 || cart_count === undefined) {
 			$cart.css("display", "none");
 			$(".cart-tax-items").hide();
 			$(".btn-place-order").hide();
@@ -137,7 +137,7 @@ $.extend(shopping_cart, {
 			$("#cart-count").text(cart_count);
 		}
 
-		if(cart_count) {
+		if (cart_count) {
 			$badge.html(cart_count);
 
 			if (animate) {
@@ -151,13 +151,16 @@ $.extend(shopping_cart, {
 		}
 	},
 
-	shopping_cart_update: function({item_code, qty, cart_dropdown, additional_notes}) {
-		shopping_cart.update_cart({
+	shopping_cart_update: function ({ item_code, qty, cart_dropdown, additional_notes, uom, booking }) {
+		frappe.freeze();
+		return shopping_cart.update_cart({
 			item_code,
 			qty,
 			additional_notes,
 			with_items: 1,
 			btn: this,
+			uom: uom,
+			booking: booking
 			callback: function(r) {
 				if(!r.exc) {
 					$(".cart-items").html(r.message.items);
@@ -182,9 +185,98 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	toggle_button_class(button, remove, add) {
-		button.removeClass(remove);
-		button.addClass(add);
+	new_cart_address: function (reload) {
+		return new Promise(resolve => {
+			const d = new frappe.ui.Dialog({
+				title: __('New Address'),
+				fields: [
+					{
+						label: __('Address Title'),
+						fieldname: 'address_title',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('Address Line 1'),
+						fieldname: 'address_line1',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('Address Line 2'),
+						fieldname: 'address_line2',
+						fieldtype: 'Data'
+					},
+					{
+						label: __('City/Town'),
+						fieldname: 'city',
+						fieldtype: 'Data',
+						reqd: 1
+					},
+					{
+						label: __('State'),
+						fieldname: 'state',
+						fieldtype: 'Data'
+					},
+					{
+						label: __('Country'),
+						fieldname: 'country',
+						fieldtype: 'Link',
+						options: 'Country',
+						reqd: 1,
+						only_select: 1
+					},
+					{
+						fieldname: "column_break0",
+						fieldtype: "Column Break",
+						width: "50%"
+					},
+					{
+						label: __('Address Type'),
+						fieldname: 'address_type',
+						fieldtype: 'Select',
+						options: [
+							'Billing',
+							'Shipping'
+						],
+						default: 'Shipping',
+						reqd: 1
+					},
+					{
+						label: __('Postal Code'),
+						fieldname: 'pincode',
+						fieldtype: 'Data'
+					},
+					{
+						fieldname: "phone",
+						fieldtype: "Data",
+						label: "Phone"
+					},
+				],
+				primary_action_label: __('Save'),
+				primary_action: (values) => {
+					frappe.call('erpnext.shopping_cart.cart.add_new_address', { doc: values })
+						.then(r => {
+							frappe.call({
+								method: "erpnext.shopping_cart.cart.update_cart_address",
+								args: {
+									address_type: r.message.address_type,
+									address_name: r.message.name
+								},
+								callback: function (r) {
+									resolve();
+									d.hide();
+
+									reload && window.location.reload();
+								}
+							});
+						});
+
+				}
+			})
+
+			d.show();
+		});
 	},
 
 	bind_add_to_cart_action() {
@@ -211,7 +303,8 @@ $.extend(shopping_cart, {
 			const item_code = $btn.data('item-code');
 			erpnext.e_commerce.shopping_cart.update_cart({
 				item_code,
-				qty: 1
+				qty: 1,
+				cart_dropdown: true
 			});
 
 		});

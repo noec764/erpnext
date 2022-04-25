@@ -22,6 +22,7 @@ from erpnext.accounts.doctype.subscription.subscription_transaction import (
 	SubscriptionPaymentRequestGenerator,
 	SubscriptionSalesOrderGenerator,
 )
+from erpnext.accounts.party import get_default_contact
 
 BILLING_STATUS = ["Billable", "Billing failed", "Cancelled and billable"]
 
@@ -31,6 +32,7 @@ class Subscription(Document):
 		SubscriptionPlansManager(self).set_plans_rates()
 
 	def validate(self):
+		self.get_billing_contact()
 		self.validate_interval_count()
 		self.validate_trial_period()
 		SubscriptionPlansManager(self).set_plans_status()
@@ -311,6 +313,10 @@ class Subscription(Document):
 
 	def set_customer_status(self):
 		frappe.get_doc("Customer", self.customer).set_status(update=True)
+
+	def get_billing_contact(self):
+		if self.customer and not self.contact_person:
+			self.contact_person = get_default_contact("Customer", self.customer)
 
 
 def update_grand_total():

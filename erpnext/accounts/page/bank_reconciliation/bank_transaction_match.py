@@ -4,22 +4,16 @@
 
 import difflib
 
-import arrow
 import frappe
 import numpy as np
 from frappe import _
-from frappe.utils import add_days, flt, getdate, nowdate
+from frappe.utils import add_days, flt, getdate
 from frappe.utils.dateutils import parse_date
 
 from erpnext import get_default_company
-from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
 from erpnext.accounts.doctype.bank_transaction.bank_transaction import (
 	get_bank_transaction_balance_on,
 )
-from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import (
-	get_party_account_based_on_invoice_discounting,
-)
-from erpnext.accounts.utils import get_account_currency
 
 PARTY_FIELD = {
 	"Payment Entry": "party",
@@ -140,9 +134,9 @@ class BankTransactionMatch:
 								"amount": result.get("unreconciled_from_amount", 0) * -1,
 								"party": result.get(party_field),
 								"reference_date": result.get(date_field),
-								"reference_string": result.get(reference_field),
+								"reference_string": f'{result.get("name")}: {result.get(reference_field)}',
 								"unreconciled_amount": result.get("unreconciled_from_amount", 0),
-							}
+							},
 						)
 					)
 
@@ -157,9 +151,9 @@ class BankTransactionMatch:
 								"amount": result.get("unreconciled_to_amount", 0),
 								"party": result.get(party_field),
 								"reference_date": result.get(date_field),
-								"reference_string": result.get(reference_field),
+								"reference_string": f'{result.get("name")}: {result.get(reference_field)}',
 								"unreconciled_amount": result.get("unreconciled_to_amount", 0),
-							}
+							},
 						)
 					)
 
@@ -184,8 +178,8 @@ class BankTransactionMatch:
 						),
 						"party": x.get(party_field),
 						"reference_date": x.get(date_field),
-						"reference_string": x.get(reference_field),
-					}
+						"reference_string": f'{x.get("name")}: {x.get(reference_field)}',
+					},
 				)
 				for x in query_result
 			]
@@ -211,8 +205,8 @@ class BankTransactionMatch:
 						),
 						"party": x.get(party_field),
 						"reference_date": x.get(date_field),
-						"reference_string": x.get(reference_field),
-					}
+						"reference_string": f'{x.get("name")}: {x.get(reference_field)}',
+					},
 				)
 				for x in query_result
 			]
@@ -225,8 +219,8 @@ class BankTransactionMatch:
 						"amount": x.get("total_amount_reimbursed", 0) - x.get("total_sanctioned_amount", 0),
 						"party": x.get(party_field),
 						"reference_date": x.get(date_field),
-						"reference_string": x.get(reference_field),
-					}
+						"reference_string": f'{x.get("name")}: {x.get(reference_field)}',
+					},
 				)
 				for x in query_result
 			]
@@ -296,7 +290,7 @@ class BankTransactionMatch:
 					or parent_map.get(x.get("parent"), {}).get("remark")
 					or parent_map.get(x.get("parent"), {}).get("user_remark"),
 					"unreconciled_amount": x.get("unreconciled_amount"),
-				}
+				},
 			)
 			for x in party_query_result
 		]
@@ -393,7 +387,7 @@ class BankTransactionMatch:
 							"Journal Entry Account",
 							filters={
 								"parent": reference.get("name"),
-								"parenttype": document_type,
+								"parenttype": reference.get("doctype"),
 								"party_type": ["is", "set"],
 							},
 							fields=["party"],
