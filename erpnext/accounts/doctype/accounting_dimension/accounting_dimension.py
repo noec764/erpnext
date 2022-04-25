@@ -98,7 +98,7 @@ def make_dimension_in_accounting_doctypes(doc, doclist=None):
 			if doctype == "Budget":
 				add_dimension_to_budget_doctype(df.copy(), doc)
 			else:
-				create_custom_field(doctype, df)
+				create_custom_field(doctype, df, ignore_validate=True)
 
 		count += 1
 
@@ -114,7 +114,7 @@ def add_dimension_to_budget_doctype(df, doc):
 		}
 	)
 
-	create_custom_field("Budget", df)
+	create_custom_field("Budget", df, ignore_validate=True)
 
 	property_setter = frappe.db.exists("Property Setter", "Budget-budget_against-options")
 
