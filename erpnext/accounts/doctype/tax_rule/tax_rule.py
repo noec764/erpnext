@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 from frappe.contacts.doctype.address.address import get_default_address
 from frappe.model.document import Document
-from frappe.utils import cint, cstr, getdate
+from frappe.utils import cint, cstr
 from frappe.utils.nestedset import get_root_of
 
 from erpnext.setup.doctype.customer_group.customer_group import get_parent_customer_groups
@@ -162,10 +162,15 @@ def get_party_details(party, party_type, args=None):
 def get_tax_template(posting_date, args):
 	"""Get matching tax rule"""
 	args = frappe._dict(args)
+	from_date = to_date = posting_date
+	if not posting_date:
+		from_date = "1900-01-01"
+		to_date = "4000-01-01"
+
 	conditions = [
 		"""(from_date is null or from_date <= '{0}')
-		and (to_date is null or to_date >= '{0}')""".format(
-			getdate(posting_date)
+		and (to_date is null or to_date >= '{1}')""".format(
+			from_date, to_date
 		)
 	]
 
