@@ -69,7 +69,8 @@ class SubscriptionTransactionBase:
 			self.subscription.terms_and_conditions or
 			frappe.db.get_value("Company", self.subscription.company, "default_selling_terms")
 		)
-		document.terms = get_terms_and_conditions(document.tc_name, document.__dict__)
+		if document.tc_name:
+			document.terms = get_terms_and_conditions(document.tc_name, document.__dict__)
 
 		document.set_missing_values()
 

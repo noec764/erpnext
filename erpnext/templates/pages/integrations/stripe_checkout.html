@@ -45,8 +45,8 @@
 				<span id="loading-text" class="hidden">{{ _("Processing...") }}</span>
 				<span id="button-text">{{_('Pay')}} {{ amount }}</span>
 			</button>
-			<p id="card-error" role="alert"></p>
-			<p class="result-message hidden">
+			<p id="card-error" class="stripe-bottom-message" role="alert"></p>
+			<p class="result-message stripe-bottom-message hidden">
 				{{ _("Payment succeeded. Refresh the page to pay again.") }}
 			</p>
 		</form>
