@@ -106,6 +106,10 @@ class WebhooksController():
 				self.set_as_completed()
 
 			else:
+				self.set_references(
+					self.metadata.get("reference_doctype"),
+					self.metadata.get("reference_name")
+				)
 				self.set_as_failed(_("The reference doctype should be a Payment Request, a Sales Invoice, a Sales Order or a Subscription"))
 		else:
 			payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=reference))
@@ -153,6 +157,10 @@ class WebhooksController():
 			self.set_references("Payment Entry", payment_entry_name)
 			self.set_as_completed()
 		else:
+			self.set_references(
+				self.metadata.get("reference_doctype"),
+				self.metadata.get("reference_name")
+			)
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
 
 	def add_subscription_references(self, payment_entry):
@@ -191,7 +199,11 @@ class WebhooksController():
 				payment_entry.delete()
 			self.set_as_completed()
 		else:
-			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
+			self.set_references(
+				self.metadata.get("reference_doctype"),
+				self.metadata.get("reference_name")
+			)
+			self.set_as_failed()
 
 	def get_sales_invoice(self, reference=None, start=None, end=None):
 		invoice = None
@@ -256,18 +268,20 @@ class WebhooksController():
 				si.delete()
 			return si
 
-	def set_references(self, dt, dn):
-		self.integration_request.db_set("reference_doctype", dt, update_modified=False)
-		self.integration_request.db_set("reference_docname", dn, update_modified=False)
-		self.integration_request.load_from_db()
+	def set_references(self, dt=None, dn=None):
+		if dt and dn:
+			self.integration_request.db_set("reference_doctype", dt, update_modified=False)
+			self.integration_request.db_set("reference_docname", dn, update_modified=False)
+			self.integration_request.load_from_db()
 
 	def set_as_not_handled(self):
 		self.integration_request.db_set("error", _("This type of event is not handled"), update_modified=False)
 		self.integration_request.load_from_db()
 		self.integration_request.update_status({}, "Not Handled")
 
-	def set_as_failed(self, message):
-		self.integration_request.db_set("error", str(message), update_modified=False)
+	def set_as_failed(self, message=None):
+		if message:
+			self.integration_request.db_set("error", str(message), update_modified=False)
 		self.integration_request.load_from_db()
 		self.integration_request.update_status({}, "Failed")
 

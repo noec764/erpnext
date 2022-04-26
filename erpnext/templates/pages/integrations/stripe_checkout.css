@@ -111,7 +111,12 @@
 }
 
 #card-error {
-	color: #fa755a;
+  color: #fa755a;
+}
+
+.stripe-bottom-message {
+  margin: 2rem 0;
+  text-align: center;
 }
 
 .stripe-image {
