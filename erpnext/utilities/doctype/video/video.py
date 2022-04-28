@@ -59,7 +59,7 @@ def update_youtube_data():
 	settings = frappe.db.get_value(
 		"Video Settings", "Video Settings", ["enable_youtube_tracking", "frequency"]
 	)
-	enable_youtube_tracking, frequency = settings[0][0], settings[0][1]
+	enable_youtube_tracking, frequency = settings[0], settings[1]
 
 	if not cint(enable_youtube_tracking):
 		return

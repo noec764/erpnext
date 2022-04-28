@@ -277,7 +277,8 @@
      {
       "fieldname": "website",
       "fieldtype": "Data",
-      "label": "Website"
+      "label": "Website",
+      "options": "URL"
      },
      {
       "fieldname": "column_break1",
@@ -528,7 +529,7 @@
         "link_fieldname": "party"
        }
     ],
-    "modified": "2022-04-16 20:32:34.000304",
+    "modified": "2022-04-17 20:32:34.000304",
     "modified_by": "Administrator",
     "module": "Selling",
     "name": "Customer",
