@@ -80,6 +80,7 @@
    "fieldname": "asset_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Asset Name",
    "reqd": 1
   },
@@ -92,14 +93,15 @@
    "reqd": 1
   },
   {
-    "depends_on": "item_code",
+   "depends_on": "item_code",
    "fetch_from": "item_code.item_name",
    "fieldname": "item_name",
    "fieldtype": "Read Only",
+   "in_preview": 1,
    "label": "Item Name"
   },
   {
-    "depends_on": "item_code",
+   "depends_on": "item_code",
    "fetch_from": "item_code.asset_category",
    "fieldname": "asset_category",
    "fieldtype": "Link",
@@ -162,6 +164,7 @@
    "fieldname": "location",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Location",
    "options": "Location",
    "reqd": 1
@@ -170,6 +173,7 @@
    "fieldname": "custodian",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
+   "in_preview": 1,
    "label": "Custodian",
    "options": "Employee"
   },
@@ -188,6 +192,7 @@
   {
    "fieldname": "purchase_date",
    "fieldtype": "Date",
+   "in_preview": 1,
    "label": "Purchase Date",
    "reqd": 1
   },
@@ -213,6 +218,7 @@
   {
    "fieldname": "gross_purchase_amount",
    "fieldtype": "Currency",
+   "in_preview": 1,
    "label": "Gross Purchase Amount",
    "options": "Company:company:default_currency",
    "reqd": 1
@@ -466,23 +472,23 @@
  "image_field": "image",
  "is_submittable": 1,
  "links": [
-    {
-     "group": "Maintenance",
-     "link_doctype": "Asset Maintenance",
-     "link_fieldname": "asset_name"
-    },
-    {
-     "group": "Repair",
-     "link_doctype": "Asset Repair",
-     "link_fieldname": "asset_name"
-    },
-    {
-     "group": "Value",
-     "link_doctype": "Asset Value Adjustment",
-     "link_fieldname": "asset"
-    }
-   ],
- "modified": "2021-01-22 12:38:59.091510",
+  {
+   "group": "Maintenance",
+   "link_doctype": "Asset Maintenance",
+   "link_fieldname": "asset_name"
+  },
+  {
+   "group": "Repair",
+   "link_doctype": "Asset Repair",
+   "link_fieldname": "asset_name"
+  },
+  {
+   "group": "Value",
+   "link_doctype": "Asset Value Adjustment",
+   "link_fieldname": "asset"
+  }
+ ],
+ "modified": "2022-04-29 09:43:03.049035",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset",
@@ -520,6 +526,7 @@
   }
  ],
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "asset_name",

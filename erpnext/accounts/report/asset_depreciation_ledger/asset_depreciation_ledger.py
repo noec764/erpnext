@@ -1,9 +1,8 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
-import frappe, erpnext
-from frappe.utils import flt
+import frappe
+from frappe.utils import flt, getdate
 from frappe import _
 
 def execute(filters=None):
@@ -16,8 +15,6 @@ def get_data(filters):
 		where ifnull(account_type, '') = 'Depreciation' """)
 
 	filters_data = [["company", "=", filters.get('company')],
-		["posting_date", ">=", filters.get('from_date')],
-		["posting_date", "<=", filters.get('to_date')],
 		["against_voucher_type", "=", "Asset"],
 		["account", "in", depreciation_accounts]]
 
@@ -54,13 +51,18 @@ def get_data(filters):
 			else:
 				asset_data.accumulated_depreciation_amount += d.debit
 
+			if d.posting_date < getdate(filters.get('from_date')) or d.posting_date > getdate(filters.get('to_date')):
+				continue
+
 			row = frappe._dict(asset_data)
 			row.update({
 				"depreciation_amount": d.debit,
 				"depreciation_date": d.posting_date,
 				"amount_after_depreciation": (flt(row.gross_purchase_amount) -
 					flt(row.accumulated_depreciation_amount)),
-				"depreciation_entry": d.voucher_no
+				"depreciation_entry": d.voucher_no,
+				"status": _(row.status),
+				"depreciation_method": _(row.depreciation_method)
 			})
 
 			data.append(row)
@@ -85,7 +87,7 @@ def get_columns():
 			"fieldname": "asset",
 			"fieldtype": "Link",
 			"options": "Asset",
-			"width": 120
+			"width": 200
 		},
 		{
 			"label": _("Depreciation Date"),
@@ -135,7 +137,7 @@ def get_columns():
 			"label": _("Current Status"),
 			"fieldname": "status",
 			"fieldtype": "Data",
-			"width": 120
+			"width": 200
 		},
 		{
 			"label": _("Depreciation Method"),
