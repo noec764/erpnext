@@ -360,7 +360,7 @@ def update_outstanding_amt(
 				_("Outstanding for {0} cannot be less than zero ({1})").format(against_voucher, fmt_money(bal))
 			)
 
-	if against_voucher_type in ["Sales Invoice", "Purchase Invoice", "Fees"]:
+	if against_voucher_type in ["Sales Invoice", "Purchase Invoice"]:
 		ref_doc = frappe.get_doc(against_voucher_type, against_voucher)
 
 		# Down payment invoices have no GL entries attached, therefore initial balance is 0

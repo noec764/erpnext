@@ -41,8 +41,6 @@ def execute():
 	for d in doctypes:
 		update_records(d, comp_dict)
 
-	update_instructors(comp_dict)
-
 	frappe.local.lang = "en"
 
 
@@ -71,34 +69,4 @@ def update_records(doctype, comp_dict):
 			department = CASE %s END
 	"""
 		% (doctype, " ".join(when_then))
-	)
-
-
-def update_instructors(comp_dict):
-	when_then = []
-	emp_details = frappe.get_all("Employee", fields=["name", "company"])
-
-	for employee in emp_details:
-		records = comp_dict[employee.company] if employee.company else []
-
-		for department in records:
-			when_then.append(
-				"""
-				WHEN employee = "%s" and department = "%s"
-				THEN "%s"
-			"""
-				% (employee.name, department, records[department])
-			)
-
-	if not when_then:
-		return
-
-	frappe.db.sql(
-		"""
-		update
-			`tabInstructor`
-		set
-			department = CASE %s END
-	"""
-		% (" ".join(when_then))
 	)

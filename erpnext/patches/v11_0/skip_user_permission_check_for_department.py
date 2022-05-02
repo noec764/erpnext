@@ -11,7 +11,6 @@ def execute():
 		"Appraisal",
 		"Leave Allocation",
 		"Expense Claim",
-		"Instructor",
 		"Salary Slip",
 		"Attendance",
 		"Training Feedback",
