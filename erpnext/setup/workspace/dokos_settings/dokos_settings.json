@@ -93,7 +93,6 @@
    "icon": "organization",
    "label": "Manufacturing Settings",
    "link_to": "Manufacturing Settings",
-   "restrict_to_domain": "Manufacturing",
    "type": "DocType"
   },
   {

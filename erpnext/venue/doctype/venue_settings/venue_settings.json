@@ -128,7 +128,6 @@
    "write": 1
   }
  ],
- "restrict_to_domain": "Venue",
  "sort_field": "modified",
  "sort_order": "DESC"
 }

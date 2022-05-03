@@ -44,12 +44,6 @@ default_sales_partner_type = [
 
 def install(country=None):
 	records = [
-		# domains
-		{"doctype": "Domain", "domain": "Distribution"},
-		{"doctype": "Domain", "domain": "Manufacturing"},
-		{"doctype": "Domain", "domain": "Retail"},
-		{"doctype": "Domain", "domain": "Services"},
-		{"doctype": "Domain", "domain": "Venue"},
 		# ensure at least an empty Address Template exists for this Country
 		{"doctype": "Address Template", "country": country},
 		# item group
@@ -773,7 +767,6 @@ def install_defaults(args=None):
 	frappe.db.set_value("Stock Settings", None, "email_footer_address", args.get("company_name"))
 
 	set_global_defaults(args)
-	set_active_domains(args)
 	update_stock_settings()
 	update_shopping_cart_settings(args)
 
@@ -797,10 +790,6 @@ def set_global_defaults(args):
 	)
 
 	global_defaults.save()
-
-
-def set_active_domains(args):
-	frappe.get_single("Domain Settings").set_active_domains(args.get("domains"))
 
 
 def update_stock_settings():

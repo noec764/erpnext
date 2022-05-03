@@ -418,7 +418,6 @@
  "pin_to_bottom": 0,
  "pin_to_top": 0,
  "public": 1,
- "restrict_to_domain": "Manufacturing",
  "roles": [],
  "sequence_id": 8,
  "shortcuts": [
@@ -427,7 +426,6 @@
    "format": "{} Active",
    "label": "Item",
    "link_to": "Item",
-   "restrict_to_domain": "Manufacturing",
    "stats_filter": "{\n    \"disabled\": 0\n}",
    "type": "DocType"
   },
@@ -436,7 +434,6 @@
    "format": "{} Active",
    "label": "BOM",
    "link_to": "BOM",
-   "restrict_to_domain": "Manufacturing",
    "stats_filter": "{\n    \"is_active\": 1\n}",
    "type": "DocType"
   },
@@ -445,7 +442,6 @@
    "format": "{} Open",
    "label": "Work Order",
    "link_to": "Work Order",
-   "restrict_to_domain": "Manufacturing",
    "stats_filter": "{ \n    \"status\": [\"in\", \n        [\"Draft\", \"Not Started\", \"In Process\"]\n    ]\n}",
    "type": "DocType"
   },
@@ -454,7 +450,6 @@
    "format": "{} Open",
    "label": "Production Plan",
    "link_to": "Production Plan",
-   "restrict_to_domain": "Manufacturing",
    "stats_filter": "{ \n    \"status\": [\"not in\", [\"Completed\"]]\n}",
    "type": "DocType"
   },
@@ -466,7 +461,6 @@
   {
    "label": "Work Order Summary",
    "link_to": "Work Order Summary",
-   "restrict_to_domain": "Manufacturing",
    "type": "Report"
   },
   {
@@ -482,7 +476,6 @@
   {
    "label": "Dashboard",
    "link_to": "Manufacturing",
-   "restrict_to_domain": "Manufacturing",
    "type": "Dashboard"
   }
  ],

@@ -93,14 +93,6 @@ gcalendar_integrations = {
 	}
 }
 
-domains = {
-	"Distribution": "erpnext.domains.distribution",
-	"Manufacturing": "erpnext.domains.manufacturing",
-	"Retail": "erpnext.domains.retail",
-	"Services": "erpnext.domains.services",
-	"Venue": "erpnext.domains.venue",
-}
-
 website_generators = ["Item Group", "Website Item", "BOM", "Sales Partner", "Job Opening"]
 
 website_context = {

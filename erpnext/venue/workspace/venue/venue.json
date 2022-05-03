@@ -316,7 +316,6 @@
  "pin_to_bottom": 0,
  "pin_to_top": 0,
  "public": 1,
- "restrict_to_domain": "Venue",
  "roles": [],
  "sequence_id": 13,
  "shortcuts": [

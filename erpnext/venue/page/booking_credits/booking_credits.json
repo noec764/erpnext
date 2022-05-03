@@ -10,7 +10,6 @@
  "name": "booking-credits",
  "owner": "Administrator",
  "page_name": "booking-credits",
- "restrict_to_domain": "Venue",
  "roles": [
   {
    "role": "System Manager"
