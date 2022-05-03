@@ -80,8 +80,8 @@ def get_context(context):
 		)
 
 		frappe.local.flags.redirect_location = redirect_flow.redirect_url
-	except Exception as e:
-		frappe.log_error(e, "GoCardless Payment Error")
+	except Exception:
+		frappe.log_error(_("GoCardless Payment Error"))
 		frappe.local.flags.redirect_location = "payment-failed"
 		raise frappe.Redirect
 
@@ -108,10 +108,7 @@ def get_linked_payment_request(context):
 
 
 def create_payment_request(**kwargs):
-	from erpnext.accounts.doctype.payment_request.payment_request import (
-		get_payment_gateway_account,
-		make_payment_request,
-	)
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 	pr = frappe.get_doc(
 		make_payment_request(

@@ -2,19 +2,15 @@
 # License: GNU General Public License v3. See license.txt
 
 
-import json
 import re
-import traceback
 import zipfile
-from decimal import Decimal
 
 import dateutil
 import frappe
 from bs4 import BeautifulSoup as bs
 from frappe import _
-from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 from frappe.model.document import Document
-from frappe.utils import add_days, cint, flt, get_datetime_str, get_files_path, nowdate, today
+from frappe.utils import flt, get_datetime_str, today
 from frappe.utils.data import format_datetime
 from frappe.utils.file_manager import save_file
 
@@ -81,13 +77,13 @@ class ImportSupplierInvoice(Document):
 			invoices_args["terms"] = get_payment_terms_from_file(file_content)
 
 			supplier_name = create_supplier(self.supplier_group, supp_dict)
-			address = create_address(supplier_name, supp_dict)
+			create_address(supplier_name, supp_dict)
 			pi_name = create_purchase_invoice(supplier_name, file_name, invoices_args, self.name)
 
 			self.file_count += 1
 			if pi_name:
 				self.purchase_invoices_count += 1
-				file_save = save_file(
+				save_file(
 					file_name,
 					encoded_content,
 					"Purchase Invoice",
@@ -163,8 +159,8 @@ def get_file_content(file_name, zip_file_object):
 	except UnicodeDecodeError:
 		try:
 			content = encoded_content.decode("utf-16")
-		except UnicodeDecodeError as e:
-			frappe.log_error(message=e, title="UTF-16 encoding error for File Name: " + file_name)
+		except UnicodeDecodeError:
+			frappe.log_error(_("UTF-16 encoding error for File Name: ") + file_name)
 
 	return content
 
@@ -393,11 +389,9 @@ def create_purchase_invoice(supplier_name, file_name, args, name):
 		pi.imported_grand_total = calc_total
 		pi.save()
 		return pi.name
-	except Exception as e:
+	except Exception:
 		frappe.db.set_value("Import Supplier Invoice", name, "status", "Error")
-		frappe.log_error(
-			message=e, title="Create Purchase Invoice: " + args.get("bill_no") + "File Name: " + file_name
-		)
+		pi.log_error(_("Unable to create Puchase Invoice"))
 		return None
 
 

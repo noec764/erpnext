@@ -133,7 +133,7 @@ def repost(doc):
 	except Exception:
 		frappe.db.rollback()
 		traceback = frappe.get_traceback()
-		frappe.log_error(traceback)
+		frappe.log_error(_("Unable to setup regional tax settings"))
 
 		message = frappe.message_log.pop() if frappe.message_log else ""
 		if traceback:

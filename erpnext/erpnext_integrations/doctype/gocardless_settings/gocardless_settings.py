@@ -81,8 +81,7 @@ class GoCardlessSettings(PaymentGatewayController):
 				frappe.throw(_("This customer has no valid mandate"))
 
 		except Exception:
-			frappe.log_error(
-				frappe.get_traceback(),
+			self.log_error(
 				_("GoCardless direct processing failed for {0}".format(payment_request.name)),
 			)
 

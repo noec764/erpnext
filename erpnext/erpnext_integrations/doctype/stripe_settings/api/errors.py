@@ -7,6 +7,6 @@ def handle_stripe_errors(func):
 		try:
 			return func(*args, **kwargs)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), "Stripe Gateway Error")
+			frappe.log_error(_("Stripe Gateway Error"))
 
 	return wrapper

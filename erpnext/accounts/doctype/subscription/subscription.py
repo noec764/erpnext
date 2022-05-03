@@ -105,9 +105,7 @@ class Subscription(Document):
 			SubscriptionStateManager(self).set_status()
 			SubscriptionPaymentRequestGenerator(self, invoice.name).make_payment_request()
 		except Exception:
-			frappe.log_error(
-				frappe.get_traceback(), _("Subscription update error for subscription {0}").format(self.name)
-			)
+			frappe.log_error(_("Subscription update error for subscription {0}").format(self.name))
 
 	def generate_sales_order(self):
 		if self.create_sales_order:

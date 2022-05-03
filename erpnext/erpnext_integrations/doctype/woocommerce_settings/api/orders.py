@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import frappe
+from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.utils import add_days, cint, flt, nowdate
 from frappe.utils.background_jobs import get_jobs
@@ -92,9 +93,12 @@ def sync_order(wc_api, woocommerce_order):
 			else:
 				_new_sales_order(wc_api.settings, woocommerce_order, customer)
 		except Exception:
+			msg = _("WooCommerce Order: {0}\n\n{1}").format(
+				woocommerce_order.get("id"), frappe.get_traceback()
+			)
 			frappe.log_error(
-				f"WooCommerce Order: {woocommerce_order.get('id')}\n\n{frappe.get_traceback()}",
-				"WooCommerce Order Sync Error",
+				message=msg,
+				title=_("WooCommerce Order Sync Error"),
 			)
 
 
@@ -193,7 +197,7 @@ def _new_sales_order(settings, woocommerce_order, customer):
 	else:
 		error = f"No items found for Woocommerce order {woocommerce_order.get('id')}"
 		exclude_order(woocommerce_order, error)
-		frappe.log_error(error, "Woocommerce Order Error")
+		so.log_error(message=error, title=_("Woocommerce Order Error"))
 
 
 def exclude_order(woocommerce_order, error=None):
@@ -244,9 +248,9 @@ def get_order_items(order, settings, delivery_date):
 				}
 			)
 		else:
-			frappe.log_error(
-				f"Order: {order.get('id')}\n\nItem missing for Woocommerce product: {item.get('product_id')}",
-				"Woocommerce Order Error",
+			order.log_error(
+				message=_("Item missing for Woocommerce product: {0}").format(item.get("product_id")),
+				title=_("Woocommerce Order Error"),
 			)
 
 	return items
@@ -316,9 +320,9 @@ def get_order_taxes(order, settings):
 				}
 			)
 		else:
-			frappe.log_error(
-				f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce tax: {tax.get('label')}",
-				"Woocommerce Order Error",
+			order.log_error(
+				message=_("Account head missing for Woocommerce tax: {0}").format(tax.get("label")),
+				title=_("Woocommerce Order Error"),
 			)
 
 	taxes = update_taxes_with_shipping_lines(order, taxes, order.get("shipping_lines"), settings)
@@ -360,9 +364,11 @@ def update_taxes_with_shipping_lines(order, taxes, shipping_lines, settings):
 					},
 				)
 			else:
-				frappe.log_error(
-					f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce shipping method: {shipping_charge.get('method_id')}",
-					"Woocommerce Order Error",
+				order.log_error(
+					message=_(
+						"WooCommerce Order: {0}\n\nAccount head missing for Woocommerce shipping method: {1}"
+					).format(order.get("id"), shipping_charge.get("method_id")),
+					title=_("Woocommerce Order Error"),
 				)
 
 	return taxes
@@ -500,9 +506,11 @@ def register_payment_and_invoice(woocommerce_order, sales_order):
 			make_payment(woocommerce_order, sales_order)
 			make_sales_invoice_from_sales_order(woocommerce_order, sales_order)
 		except Exception:
-			frappe.log_error(
-				f"WooCommerce Order: {woocommerce_order.get('id')}\nSales Order: {sales_order.name}\n\n{frappe.get_traceback()}",
-				"Woocommerce Payment and Invoice Error",
+			sales_order.log_error(
+				message=_("WooCommerce Order: {0}\n\n{1}").format(
+					woocommerce_order.get("id"), frappe.get_traceback()
+				),
+				title=_("Woocommerce Payment and Invoice Error"),
 			)
 
 

@@ -2,17 +2,12 @@
 # For license information, please see license.txt
 
 
-import warnings
 from urllib.parse import urlencode
 
 import frappe
 import stripe
 from frappe import _
-from frappe.integrations.utils import (
-	PaymentGatewayController,
-	create_payment_gateway,
-	create_request_log,
-)
+from frappe.integrations.utils import PaymentGatewayController, create_payment_gateway
 from frappe.utils import call_hook_method, cint, flt, get_url, getdate, nowdate
 
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
@@ -252,7 +247,6 @@ class StripeSettings(PaymentGatewayController):
 
 		except Exception:
 			frappe.log_error(
-				frappe.get_traceback(),
 				_("Stripe direct processing failed for {0}".format(payment_request.name)),
 			)
 
@@ -290,7 +284,7 @@ def create_webhooks(stripe_settings, url):
 			)
 		return result
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), "Stripe webhook creation error")
+		frappe.log_error(_("Stripe webhook creation error"))
 
 
 def delete_webhooks(stripe_settings, url):
@@ -299,9 +293,9 @@ def delete_webhooks(stripe_settings, url):
 	for webhook in webhooks_list.get("data", []):
 		if webhook.get("url") == url:
 			try:
-				result = StripeWebhookEndpoint(stripe_settings).delete(webhook.get("id"))
+				StripeWebhookEndpoint(stripe_settings).delete(webhook.get("id"))
 				frappe.db.set_value("Stripe Settings", stripe_settings.name, "webhook_secret_key", "")
 			except Exception:
-				frappe.log_error(frappe.get_traceback(), "Stripe webhook deletion error")
+				frappe.log_error(_("Stripe webhook deletion error"))
 
 	return webhooks_list

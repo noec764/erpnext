@@ -30,7 +30,7 @@ def webhooks():
 				**{"doctype": "Integration Request", "docname": doc.name}
 			)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("GoCardless webhooks processing error"))
+			frappe.log_error(_("GoCardless webhooks processing error"))
 
 	frappe.response.message = "Webhook received and event type handled"
 	frappe.response.http_status_code = 200
@@ -44,10 +44,10 @@ def get_events(request):
 		data = gocardless_webhooks.parse(payload, secret, received_signature)
 		return account, data
 
-	except InvalidSignatureError as e:
-		frappe.log_error(e, _("GoCardless webhook error"))
-	except Exception as e:
-		frappe.log_error(e, _("GoCardless webhook error"))
+	except InvalidSignatureError:
+		frappe.log_error(_("GoCardless webhook error"))
+	except Exception:
+		frappe.log_error(_("GoCardless webhook error"))
 
 
 def get_api_key(request):
@@ -65,8 +65,8 @@ def get_api_key(request):
 		gocardless_accounts = frappe.get_all("GoCardless Settings")
 		if len(gocardless_accounts) > 1:
 			frappe.log_error(
-				_("Please define your GoCardless account in the webhook URL's query string"),
-				_("GoCardless webhook error"),
+				message=_("Please define your GoCardless account in the webhook URL's query string"),
+				title=_("GoCardless webhook error"),
 			)
 		else:
 			return gocardless_accounts[0].get("name"), frappe.db.get_value(

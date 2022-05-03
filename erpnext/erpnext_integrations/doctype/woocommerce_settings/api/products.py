@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.utils import cint, flt, get_datetime, now_datetime
 from frappe.utils.nestedset import get_root_of
 from requests.exceptions import HTTPError
@@ -36,7 +37,8 @@ def sync_items():
 			create_item(wc_api, product)
 		except Exception:
 			frappe.log_error(
-				f"Product: {product.get('id')}\n\n{frappe.get_traceback()}", "WooCommerce Products Sync Error"
+				message=_("Product: {0}\n\n{1}").format(product.get("id"), frappe.get_traceback()),
+				title=_("WooCommerce Products Sync Error"),
 			)
 
 
@@ -52,8 +54,8 @@ def sync_products():
 				frappe.db.set_value("Item", item.name, "woocommerce_id", res.get("id"))
 			frappe.db.set_value("Item", item.name, "last_woocommerce_sync", now_datetime())
 
-		except Exception as e:
-			frappe.log_error(e, "Woocommerce Sync Error")
+		except Exception:
+			frappe.log_error(_("Woocommerce Sync Error"))
 
 
 def get_items():
@@ -445,7 +447,7 @@ def _update_stock(doc):
 	except HTTPError as http_err:
 		# If item is a variant, it will not be found
 		if http_err.response.status_code != 404:
-			frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
+			frappe.log_error(_("Woocommerce stock update error"))
 
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), "Woocommerce stock update error")
+		frappe.log_error(_("Woocommerce stock update error"))

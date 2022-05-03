@@ -37,7 +37,7 @@ from erpnext.accounts.party import get_party_account_currency
 from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
 	get_shopping_cart_settings,
 )
-from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation
+from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation, get_party
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price
@@ -180,7 +180,7 @@ class ItemBooking(Document):
 					update_child(item.item_code, childname)
 
 				if not childnames:
-					for _ in range(int(item.qty)):
+					for dummy in range(int(item.qty)):
 						update_child(item.item_code)
 
 		elif frappe.db.exists("Item Booking", dict(parent_item_booking=self.name)):
@@ -367,7 +367,7 @@ def book_new_slot(**kwargs):
 		return doc
 	except Exception:
 		if frappe.db.get_value("User", frappe.session.user, "user_type") != "System User":
-			frappe.log_error(frappe.get_traceback(), _("New item booking error"))
+			frappe.log_error(_("New item booking error"))
 
 
 @frappe.whitelist()
@@ -395,7 +395,7 @@ def remove_booked_slot(name):
 @frappe.whitelist()
 def get_booked_slots(quotation=None, uom=None, item_code=None):
 	if not quotation and not frappe.session.user == "Guest":
-		dummy, quotation = has_cart_quotation()
+		dummy, quotation = _get_cart_quotation()
 
 	if not quotation:
 		return []
@@ -643,7 +643,7 @@ def _find_available_slot(date, duration, line, scheduled_items, item, quotation=
 					(get_datetime(scheduled_item.get("starts_on")), get_datetime(scheduled_item.get("ends_on")))
 				)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("Slot availability error"))
+			frappe.log_error(_("Slot availability error"))
 
 	sorted_schedule = list(reduced(sorted(current_schedule, key=lambda x: x[0])))
 
@@ -696,7 +696,7 @@ def _get_selected_slots(events, quotation=None):
 		return []
 
 	if not quotation or quotation == "null":
-		dummy, quotation_list = has_cart_quotation()
+		dummy, quotation_list = _get_cart_quotation()
 		if quotation_list:
 			quotation = quotation_list[0].name
 
@@ -1320,3 +1320,20 @@ def get_simultaneaous_bookings(scheduled_items, timeslot, simultaneous_bookings=
 			count = max(count, group_count)
 
 	return count
+
+
+def _get_cart_quotation():
+	party = get_party()
+
+	return frappe.get_all(
+		"Quotation",
+		fields=["name"],
+		filters={
+			"party_name": party.name,
+			"contact_email": frappe.session.user,
+			"order_type": "Shopping Cart",
+			"docstatus": 0,
+		},
+		order_by="modified desc",
+		limit_page_length=1,
+	)

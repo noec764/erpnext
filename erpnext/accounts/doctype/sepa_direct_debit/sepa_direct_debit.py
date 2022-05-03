@@ -1,12 +1,10 @@
 # Copyright (c) 2019, Dokos SAS and contributors
 # For license information, please see license.txt
 
-import datetime
-
 import frappe
-from frappe import _, msgprint
+from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cint, flt, fmt_money, getdate, now_datetime, nowdate
+from frappe.utils import cint, flt, getdate, now_datetime, nowdate
 
 exclude_from_linked_with = True
 
@@ -216,6 +214,6 @@ def create_sepa_payment_entries(from_date, to_date, mode_of_payment):
 				frappe.db.commit()
 
 		return "Success"
-	except Exception as e:
-		frappe.log_error(frappe.get_tracebeck(), "SEPA payments generation error")
+	except Exception:
+		payment_entry.log_error(_("SEPA payments generation error"))
 		return "Error"

@@ -425,7 +425,7 @@ class PaymentRequest(Document):
 
 			return comm
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), _("Payment request communication creation error"))
+			comm.log_error(_("Payment request communication creation error"))
 
 	def get_payment_success_url(self):
 		return self.payment_success_url

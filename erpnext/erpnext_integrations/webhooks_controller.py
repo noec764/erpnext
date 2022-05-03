@@ -39,7 +39,7 @@ class WebhooksController:
 			try:
 				method()
 			except Exception as e:
-				frappe.log_error(frappe.get_traceback(), "Webhook processing error")
+				frappe.log_error(_("Webhook processing error"))
 				self.set_as_failed(e)
 
 	def process_metadata(self):

@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt, formatdate, getdate
 from frappe.utils.dateutils import parse_date
-from ofxtools.models.bank import CCSTMTRS, STMTRS
+from ofxtools.models.bank import STMTRS
 from ofxtools.Parser import OFXTree
 
 
@@ -82,8 +82,8 @@ def upload_ofx_bank_statement():
 					data.append(make_transaction_row(stmt, transaction, stmt.curdef))
 
 		return {"columns": columns, "data": data}
-	except Exception as e:
-		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
+	except Exception:
+		frappe.log_error(_("OFX Parser Error"))
 		frappe.throw(_("OFX Parser Error. Please check your error logs."))
 
 
@@ -139,7 +139,7 @@ def create_bank_entries(columns, data, bank_account, upload_type=None):
 
 		except Exception:
 			errors += 1
-			frappe.log_error(frappe.get_traceback(), _("Bank transaction creation error"))
+			bank_transaction.log_error(_("Bank transaction creation error"))
 
 	return {"success": success, "errors": errors, "duplicates": duplicates, "status": "Complete"}
 

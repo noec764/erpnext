@@ -50,7 +50,6 @@ def get_customer_payment_methods(references):
 		return StripePaymentMethod(stripe_settings).get_list(references.stripe_customer_id)
 	except Exception:
 		frappe.log_error(
-			frappe.get_traceback(),
 			_("[Portal] Stripe payment methods retrieval error for {0}").format(references.customer),
 		)
 
@@ -65,7 +64,7 @@ def remove_payment_card(id):
 			return StripePaymentMethod(stripe_settings).detach(id)
 
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), _("[Portal] Stripe payment source deletion error"))
+		frappe.log_error(_("[Portal] Stripe payment source deletion error"))
 
 
 @frappe.whitelist()
@@ -78,6 +77,4 @@ def add_new_payment_card(payment_method):
 			return StripePaymentMethod(stripe_settings).attach(payment_method, account.stripe_customer_id)
 
 	except Exception:
-		frappe.log_error(
-			frappe.get_traceback(), _("[Portal] New stripe payment source registration error")
-		)
+		frappe.log_error(_("[Portal] New stripe payment source registration error"))

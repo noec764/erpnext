@@ -1,5 +1,6 @@
 import frappe
 import frappe.utils.nestedset
+from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.exceptions import DuplicateEntryError, TimestampMismatchError
 from frappe.utils import cint
@@ -120,7 +121,7 @@ def sync_customer(settings, woocommerce_customer):
 
 		return customer
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), "Woocommerce Customer Creation Error")
+		customer.log_error(_("Woocommerce Customer Creation Error"))
 
 
 def sync_guest_customers(order):
@@ -187,7 +188,7 @@ def _add_update_address(
 			pass
 
 	except Exception:
-		frappe.log_error(f"Address: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Address Error")
+		doc.log_error(_("Woocommerce Address Error"))
 
 
 def add_contact(customer, woocommerce_customer):
@@ -218,8 +219,8 @@ def add_contact(customer, woocommerce_customer):
 			# Handle the update of two sales orders contact details concurrently
 			pass
 
-	except Exception as e:
-		frappe.log_error(f"Contact: {doc.name}\n\n{frappe.get_traceback()}", "Woocommerce Contact Error")
+	except Exception:
+		doc.log_error(_("Woocommerce Contact Error"))
 
 
 def get_country_name(code):

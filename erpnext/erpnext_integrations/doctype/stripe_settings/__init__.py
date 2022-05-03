@@ -62,8 +62,8 @@ def get_api_key(request):
 		stripe_accounts = frappe.get_all("Stripe Settings")
 		if len(stripe_accounts) > 1:
 			frappe.log_error(
-				_("Please define your Stripe account in the webhook URL's query string"),
-				_("Stripe webhook error"),
+				message=_("Please define your Stripe account in the webhook URL's query string"),
+				title=_("Stripe webhook error"),
 			)
 		else:
 			return stripe_accounts[0].get("name"), frappe.get_doc(

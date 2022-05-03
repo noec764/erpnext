@@ -54,7 +54,7 @@ def add_institution(token, response):
 			)
 			bank.insert()
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), title=_("Plaid Link Error"))
+			frappe.log_error(_("Plaid Link Error"))
 
 	else:
 		bank = frappe.get_doc("Bank", response["institution"]["name"])
@@ -112,7 +112,7 @@ def add_bank_accounts(response, bank, company):
 					_("Bank account {0} already exists and could not be created again").format(account["name"])
 				)
 			except Exception:
-				frappe.log_error(frappe.get_traceback(), title=_("Plaid Link Error"))
+				frappe.log_error(_("Plaid Link Error"))
 				frappe.throw(
 					_("There was an error creating Bank Account while linking with Plaid."),
 					title=_("Plaid Link Failed"),
@@ -134,7 +134,7 @@ def add_bank_accounts(response, bank, company):
 				existing_account.save()
 				result.append(existing_bank_account)
 			except Exception:
-				frappe.log_error(frappe.get_traceback(), title=_("Plaid Link Error"))
+				frappe.log_error(_("Plaid Link Error"))
 				frappe.throw(
 					_("There was an error updating Bank Account {} while linking with Plaid.").format(
 						existing_bank_account
@@ -191,7 +191,7 @@ def sync_transactions(bank, bank_account):
 		return result
 
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), _("Plaid transactions sync error"))
+		frappe.log_error(_("Plaid transactions sync error"))
 
 
 def get_transactions(bank, bank_account=None, start_date=None, end_date=None):

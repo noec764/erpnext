@@ -26,6 +26,6 @@ def handle_idempotency(func):
 				)
 			)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), "Payment Gateway Error")
+			frappe.log_error(_("Payment Gateway Error"))
 
 	return wrapper
