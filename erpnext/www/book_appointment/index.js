@@ -41,6 +41,7 @@ function setup_date_picker() {
 	let date_picker = document.getElementById('appointment-date');
 	let today = new Date();
 	date_picker.min = today.toISOString().substr(0, 10);
+	date_picker.value = date_picker.min
 	today.setDate(today.getDate() + window.appointment_settings.advance_booking_days);
 	date_picker.max = today.toISOString().substr(0, 10);
 }
@@ -69,7 +70,7 @@ function on_date_or_timezone_select() {
 	window.selected_timezone = timezone.value;
 	update_time_slots(date_picker.value, timezone.value);
 	let lead_text = document.getElementById('lead-text');
-	lead_text.innerHTML = "Select Time"
+	lead_text.innerHTML = __("Select Time")
 }
 
 async function get_time_slots(date, timezone) {
@@ -89,7 +90,7 @@ async function update_time_slots(selected_date, selected_timezone) {
 	clear_time_slots();
 	if (window.slots.length <= 0) {
 		let message_div = document.createElement('p');
-		message_div.innerHTML = "There are no slots available on this date";
+		message_div.innerHTML = __("There are no slots available on this date");
 		timeslot_container.appendChild(message_div);
 		return
 	}
@@ -125,10 +126,10 @@ function clear_time_slots() {
 function get_slot_layout(time) {
 	let timezone = document.getElementById("appointment-timezone").value;
 	time = new Date(time);
-	let start_time_string = moment(time).tz(timezone).format("LT");
+	let start_time_string = moment(time).tz(timezone).locale(frappe.boot.lang).format("LT");
 	let end_time = moment(time).tz(timezone).add(window.appointment_settings.appointment_duration, 'minutes');
-	let end_time_string = end_time.format("LT");
-	return `<span style="font-size: 1.2em;">${start_time_string}</span><br><span class="text-muted small">to ${end_time_string}</span>`;
+	let end_time_string = end_time.locale(frappe.boot.lang).format("LT");
+	return `<span style="font-size: 1.2em;">${start_time_string}</span><br><span class="text-muted small">${__("to")} ${end_time_string}</span>`;
 }
 
 function select_time() {
@@ -182,8 +183,8 @@ function setup_details_page() {
 	let date_container = document.getElementsByClassName('date-span')[0];
 	let time_container = document.getElementsByClassName('time-span')[0];
 	setup_search_params();
-	date_container.innerHTML = moment(window.selected_date).format("MMM Do YYYY");
-	time_container.innerHTML = moment(window.selected_time, "HH:mm:ss").format("LT");
+	date_container.innerHTML = moment(window.selected_date).locale(frappe.boot.lang).format("LL");
+	time_container.innerHTML = moment(window.selected_time, "HH:mm:ss").locale(frappe.boot.lang).format("LT");
 }
 
 function setup_search_params() {
@@ -239,7 +240,7 @@ async function submit() {
 				window.location.href = redirect_url;},5000)
 		},
 		error: (err)=>{
-			frappe.show_alert("Something went wrong please try again");
+			frappe.show_alert(_("Something went wrong please try again"));
 			button.disabled = false;
 		}
 	});

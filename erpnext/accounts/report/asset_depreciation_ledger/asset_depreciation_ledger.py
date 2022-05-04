@@ -4,9 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt
-
-import erpnext
+from frappe.utils import flt, getdate
 
 
 def execute(filters=None):
@@ -23,8 +21,6 @@ def get_data(filters):
 
 	filters_data = [
 		["company", "=", filters.get("company")],
-		["posting_date", ">=", filters.get("from_date")],
-		["posting_date", "<=", filters.get("to_date")],
 		["against_voucher_type", "=", "Asset"],
 		["account", "in", depreciation_accounts],
 	]
@@ -70,6 +66,11 @@ def get_data(filters):
 			else:
 				asset_data.accumulated_depreciation_amount += d.debit
 
+			if d.posting_date < getdate(filters.get("from_date")) or d.posting_date > getdate(
+				filters.get("to_date")
+			):
+				continue
+
 			row = frappe._dict(asset_data)
 			row.update(
 				{
@@ -79,6 +80,8 @@ def get_data(filters):
 						flt(row.gross_purchase_amount) - flt(row.accumulated_depreciation_amount)
 					),
 					"depreciation_entry": d.voucher_no,
+					"status": _(row.status),
+					"depreciation_method": _(row.depreciation_method),
 				}
 			)
 
@@ -113,7 +116,7 @@ def get_columns():
 			"fieldname": "asset",
 			"fieldtype": "Link",
 			"options": "Asset",
-			"width": 120,
+			"width": 200,
 		},
 		{
 			"label": _("Depreciation Date"),
@@ -159,7 +162,7 @@ def get_columns():
 			"options": "Asset Category",
 			"width": 120,
 		},
-		{"label": _("Current Status"), "fieldname": "status", "fieldtype": "Data", "width": 120},
+		{"label": _("Current Status"), "fieldname": "status", "fieldtype": "Data", "width": 200},
 		{
 			"label": _("Depreciation Method"),
 			"fieldname": "depreciation_method",
