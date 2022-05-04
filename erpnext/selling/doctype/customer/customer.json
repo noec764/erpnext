@@ -276,7 +276,8 @@
   {
    "fieldname": "website",
    "fieldtype": "Data",
-   "label": "Website"
+   "label": "Website",
+   "options": "URL"
   },
   {
    "fieldname": "column_break1",
@@ -509,7 +510,7 @@
  "idx": 363,
  "image_field": "image",
  "links": [],
- "modified": "2022-03-04 14:50:29.315030",
+ "modified": "2022-04-04 14:50:29.315030",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

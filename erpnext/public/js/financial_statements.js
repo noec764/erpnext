@@ -57,6 +57,7 @@ erpnext.financial_statements = {
 			});
 		});
 
+		report.page.standard_actions.find(".custom-btn-group").empty()
 		const views_menu = report.page.add_custom_button_group(__('Financial Statements'));
 
 		report.page.add_custom_menu_item(views_menu, __("Balance Sheet"), function() {
