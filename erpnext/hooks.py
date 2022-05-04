@@ -438,9 +438,9 @@ doc_events = {
 auto_cancel_exempted_doctypes = ["Payment Entry", "Asset Movement"]
 
 override_doctype_dashboards = {
-	"User": "erpnext.fixtures.user.get_dashboard_data",
-	"Event": "erpnext.fixtures.event.get_dashboard_data",
-	"Payment Gateway": "erpnext.fixtures.payment_gateway.get_dashboard_data",
+	"User": "erpnext.overrides.user.get_dashboard_data",
+	"Event": "erpnext.overrides.event.get_dashboard_data",
+	"Payment Gateway": "erpnext.overrides.payment_gateway.get_dashboard_data",
 }
 
 after_migrate = ["erpnext.setup.install.update_select_perm_after_install"]

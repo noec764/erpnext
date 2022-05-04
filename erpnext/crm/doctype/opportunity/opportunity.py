@@ -65,8 +65,8 @@ class Opportunity(TransactionBase):
 		total = base_total = 0
 		for item in self.get("items"):
 			item.amount = flt(item.rate) * flt(item.qty)
-			item.base_rate = flt(self.conversion_rate * item.rate)
-			item.base_amount = flt(self.conversion_rate * item.amount)
+			item.base_rate = flt(self.conversion_rate) * flt(item.rate)
+			item.base_amount = flt(self.conversion_rate) * flt(item.amount)
 			total += item.amount
 			base_total += item.base_amount
 

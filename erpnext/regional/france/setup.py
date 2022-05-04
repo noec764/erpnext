@@ -4,7 +4,6 @@
 
 import frappe
 from frappe import _
-import os
 from frappe.utils import cint
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
@@ -59,9 +58,7 @@ def add_custom_roles_for_reports():
 
 
 def make_fixtures(company=None):
-	company = (
-		company.name if company else frappe.db.get_value("Global Defaults", None, "default_company")
-	)
+	company = company if company else frappe.db.get_value("Global Defaults", None, "default_company")
 	company_doc = frappe.get_doc("Company", company)
 
 	if company_doc.chart_of_accounts == "Plan Comptable Général":
@@ -96,7 +93,7 @@ def default_accounts_mapping(accounts, company):
 		"default_inventory_account": 310,
 		"stock_adjustment_account": 603,
 		"stock_received_but_not_billed": 4081,
-		"service_received_but_not_billed": 4081,
+		"default_provisional_account": 4081,
 		"expenses_included_in_valuation": 608,
 		"accumulated_depreciation_account": 281,
 		"depreciation_expense_account": 681,

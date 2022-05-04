@@ -22,7 +22,7 @@ def after_install():
 	set_single_defaults()
 	create_print_setting_custom_fields()
 	add_all_roles_to("Administrator")
-	for role in ["Customer", "Supplier"]:
+	for role in ["Customer", "Supplier", "Volunteer"]:
 		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
 	add_company_to_session_defaults()

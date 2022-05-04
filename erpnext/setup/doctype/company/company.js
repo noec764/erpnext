@@ -209,7 +209,7 @@ erpnext.company.setup_queries = function(frm) {
 				{"root_type": "Expense", "account_type": "Expenses Included in Valuation"}],
 			["stock_received_but_not_billed",
 				{"root_type": "Liability", "account_type": "Stock Received But Not Billed"}],
-			["service_received_but_not_billed",
+			["default_provisional_account",
 				{"root_type": "Liability", "account_type": "Service Received But Not Billed"}],
 		], function(i, v) {
 			erpnext.company.set_custom_query(frm, v);
@@ -458,9 +458,9 @@ frappe.tour["Company"] = [
 		description: __("Stock received but not billed account.")
 	},
 	{
-		fieldname: "service_received_but_not_billed",
-		title: __("Service Received But Not Billed"),
-		description: __("Service received but not billed account.")
+		fieldname: "default_provisional_account",
+		title: __("Default provisional account"),
+		description: __("Default provisional account.")
 	},
 	{
 		fieldname: "expenses_included_in_valuation",
