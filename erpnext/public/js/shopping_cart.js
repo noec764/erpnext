@@ -160,7 +160,7 @@ $.extend(shopping_cart, {
 			with_items: 1,
 			btn: this,
 			uom: uom,
-			booking: booking
+			booking: booking,
 			callback: function(r) {
 				if(!r.exc) {
 					$(".cart-items").html(r.message.items);
