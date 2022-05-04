@@ -23,13 +23,13 @@ frappe.listview_settings['Sales Invoice'] = {
 		return [__(doc.status), status_colors[doc.status], "status,=,"+doc.status];
 	},
 	right_column: "grand_total",
-	onload: function(list_view) {
+	onload: function(listview) {
 		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
-			list_view.page.add_actions_menu_item(
+			listview.page.add_actions_menu_item(
 				__("Accounting Journal Adjustment"),
 				() => {
 					const docnames = list_view.get_checked_items(true);
-					new erpnext.journalAdjustment({doctype: list_view.doctype, docnames: docnames})
+					new erpnext.journalAdjustment({doctype: listview.doctype, docnames: docnames})
 				},
 				true
 			);
