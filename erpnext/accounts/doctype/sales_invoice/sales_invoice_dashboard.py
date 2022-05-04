@@ -13,7 +13,10 @@ def get_data():
 			"Auto Repeat": "reference_document",
 			"Bank Transaction": "payment_entry",
 		},
-		"internal_links": {"Sales Order": ["items", "sales_order"]},
+		"internal_links": {
+			"Sales Order": ["items", "sales_order"],
+			"Timesheet": ["timesheets", "time_sheet"],
+		},
 		"transactions": [
 			{
 				"label": _("Payment"),
