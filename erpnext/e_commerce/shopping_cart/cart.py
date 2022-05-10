@@ -496,7 +496,7 @@ def set_taxes(quotation, cart_settings):
 	quotation.taxes_and_charges = set_taxes(
 		quotation.party_name,
 		"Customer",
-		quotation.transaction_date,
+		None,
 		quotation.company,
 		customer_group=customer_group,
 		supplier_group=None,
