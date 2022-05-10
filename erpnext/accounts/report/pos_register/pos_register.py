@@ -3,9 +3,8 @@
 
 
 import frappe
-from frappe import _, _dict
+from frappe import _
 
-from erpnext import get_company_currency, get_default_company
 from erpnext.accounts.report.sales_register.sales_register import get_mode_of_payments
 
 
@@ -63,7 +62,7 @@ def get_pos_entries(filters, group_by_field):
 		"""
 		SELECT
 			p.posting_date, p.name as pos_invoice, p.pos_profile,
-			p.owner, p.base_grand_total as grand_total, p.base_paid_amount as paid_amount,
+			p.owner, p.base_grand_total as grand_total, p.base_paid_amount - p.change_amount as paid_amount,
 			p.customer, p.is_return {select_mop_field}
 		FROM
 			`tabPOS Invoice` p {from_sales_invoice_payment}
