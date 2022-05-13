@@ -99,7 +99,7 @@ class TestPaymentEntry(unittest.TestCase):
 
 	def test_payment_entry_for_blocked_supplier_payments_past_date(self):
 		# this test is meant to fail only if something fails in the try block
-		with self.assertRaises(Exception):
+		with self.assertRaises(Exception):  # noqa
 			try:
 				supplier = frappe.get_doc("Supplier", "_Test Supplier")
 				supplier.on_hold = 1
@@ -744,6 +744,21 @@ class TestPaymentEntry(unittest.TestCase):
 			flt(payment_entry.total_taxes_and_charges, 2), flt(10 / payment_entry.target_exchange_rate, 2)
 		)
 
+	def test_payment_entry_against_onhold_purchase_invoice(self):
+		pi = make_purchase_invoice()
+
+		pe = get_payment_entry("Purchase Invoice", pi.name, bank_account="_Test Bank USD - _TC")
+		pe.reference_no = "1"
+		pe.reference_date = "2016-01-01"
+
+		# block invoice after creating payment entry
+		# since `get_payment_entry` will not attach blocked invoice to payment
+		pi.block_invoice()
+		with self.assertRaises(frappe.ValidationError) as err:
+			pe.save()
+
+		self.assertTrue("is on hold" in str(err.exception).lower())
+
 
 def create_payment_entry(**args):
 	payment_entry = frappe.new_doc("Payment Entry")
@@ -776,7 +791,7 @@ def create_payment_terms_template():
 	create_payment_term("Tax Receivable")
 
 	if not frappe.db.exists("Payment Terms Template", "Test Receivable Template"):
-		payment_term_template = frappe.get_doc(
+		frappe.get_doc(
 			{
 				"doctype": "Payment Terms Template",
 				"template_name": "Test Receivable Template",
@@ -806,7 +821,7 @@ def create_payment_terms_template_with_discount():
 	create_payment_term("30 Credit Days with 10% Discount")
 
 	if not frappe.db.exists("Payment Terms Template", "Test Discount Template"):
-		payment_term_template = frappe.get_doc(
+		frappe.get_doc(
 			{
 				"doctype": "Payment Terms Template",
 				"template_name": "Test Discount Template",

@@ -8,7 +8,7 @@ from collections import defaultdict
 import frappe
 from frappe import scrub
 from frappe.desk.reportview import get_filters_cond, get_match_cond
-from frappe.utils import getdate, nowdate, unique
+from frappe.utils import nowdate, unique
 
 import erpnext
 from erpnext.stock.get_item_details import _get_item_tax_template
@@ -160,6 +160,7 @@ def tax_account_query(doctype, txt, searchfield, start, page_len, filters):
 				{account_type_condition}
 				AND is_group = 0
 				AND company = %(company)s
+				AND disabled = %(disabled)s
 				AND (account_currency = %(currency)s or ifnull(account_currency, '') = '')
 				AND `{searchfield}` LIKE %(txt)s
 				{mcond}
@@ -173,6 +174,7 @@ def tax_account_query(doctype, txt, searchfield, start, page_len, filters):
 			dict(
 				account_types=filters.get("account_type"),
 				company=filters.get("company"),
+				disabled=filters.get("disabled", 0),
 				currency=company_currency,
 				txt="%{}%".format(txt),
 				offset=start,
@@ -212,7 +214,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 	extra_searchfields = [
 		field
 		for field in searchfields
-		if not field in ["name", "item_group", "description", "item_name"]
+		if field not in ["name", "item_group", "description", "item_name"]
 	]
 
 	if extra_searchfields:
@@ -221,7 +223,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 	searchfields = searchfields + [
 		field
 		for field in [searchfield or "name", "item_code", "item_group", "item_name"]
-		if not field in searchfields
+		if field not in searchfields
 	]
 	searchfields = " or ".join(field + " like %(txt)s" for field in searchfields)
 
@@ -781,7 +783,6 @@ def get_tax_template(doctype, txt, searchfield, start, page_len, filters):
 			"item_code": filters.get("item_code"),
 			"posting_date": valid_from,
 			"tax_category": filters.get("tax_category"),
-			"company": filters.get("company"),
 			"doctype": filters.get("doctype"),
 			"company": company,
 		}
