@@ -64,7 +64,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 			this.frm.set_query("item_code", "items", function() {
 				return {
 					query: "erpnext.controllers.queries.item_query",
-					filters: {'is_sales_item': 1, "is_down_payment_item": Boolean(me.frm.doc.is_down_payment_invoice), "customer": cur_frm.doc.customer}
+					filters: {'is_sales_item': 1, 'is_down_payment_item': Boolean(me.frm.doc.is_down_payment_invoice), 'customer': cur_frm.doc.customer, 'has_variants': 0}
 				}
 			});
 		}
