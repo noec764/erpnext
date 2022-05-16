@@ -4,7 +4,6 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt
 
 from erpnext.hr.doctype.leave_application.leave_application import get_leave_details
 from erpnext.hr.report.employee_leave_balance.employee_leave_balance import (
@@ -36,9 +35,10 @@ def get_columns(leave_types):
 
 def get_conditions(filters):
 	conditions = {
-		"status": "Active",
 		"company": filters.company,
 	}
+	if filters.get("employee_status"):
+		conditions.update({"status": filters.get("employee_status")})
 	if filters.get("department"):
 		conditions.update({"department": filters.get("department")})
 	if filters.get("employee"):
