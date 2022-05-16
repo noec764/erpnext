@@ -6,13 +6,18 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import EventEmitterMixin from 'frappe/public/js/frappe/event_emitter';
 
 frappe.provide("erpnext.booking_dialog");
 frappe.provide("erpnext.booking_dialog_update")
 
+erpnext.booking_dialog_update.events = {}
+
 erpnext.booking_dialog = class BookingDialog {
 	constructor(opts) {
 		Object.assign(this, opts);
+		Object.assign(erpnext.booking_dialog_update.events, EventEmitterMixin);
+
 		this.sales_uom = null;
 		this.uoms = [];
 		this.uoms_btns = {};
@@ -25,19 +30,13 @@ erpnext.booking_dialog = class BookingDialog {
 	}
 
 	show() {
-		frappe.require([
-			'libs.bundle.js',
-			'controls.bundle.js'
-		], () => {
-			frappe.utils.make_event_emitter(erpnext.booking_dialog_update);
-			this.get_selling_uoms()
-			.then(() => {
-				this.build_sidebar();
-				this.build_calendar();
-				document.getElementById('item-booking').classList.add('fade');
-				this.refresh_bookings();
-			})
-		});
+		this.get_selling_uoms()
+		.then(() => {
+			this.build_sidebar();
+			this.build_calendar();
+			document.getElementById('item-booking').classList.add('fade');
+			this.refresh_bookings();
+		})
 	}
 
 	get_selling_uoms() {

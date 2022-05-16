@@ -880,13 +880,6 @@
    "label": "Enable Item Booking"
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.show_in_website",
-   "fieldname": "disable_unit_purchasing",
-   "fieldtype": "Check",
-   "label": "Disable unit purchasing"
-  },
-  {
    "default": "1",
    "depends_on": "eval:doc.enable_item_booking",
    "fieldname": "simultaneous_bookings_allowed",

@@ -96,6 +96,20 @@
 						role="button">
 						{{  _("View in Cart") if cart_settings.enable_checkout else _("View in Quote") }}
 					</a>
+					{% if product_info.booking_enabled %}
+					<a
+						data-item-code="{{item_code}}"
+						class="btn btn-primary btn-item-calendar mr-2 w-30-40"
+						href="?calendar=1"
+					>
+						<span class="mr-2">
+							<svg class="icon icon-md">
+								<use href="#icon-calendar"></use>
+							</svg>
+						</span>
+						{{ _("Select a slot") }}
+					</a>
+					{% else %}
 					<button
 						data-item-code="{{item_code}}"
 						class="btn btn-primary btn-add-to-cart mr-2 w-30-40"
@@ -107,6 +121,7 @@
 						</span>
 						{{ _("Add to Cart") if cart_settings.enable_checkout else  _("Add to Quote") }}
 					</button>
+					{% endif %}
 				{% endif %}
 
 				<!-- Contact Us -->

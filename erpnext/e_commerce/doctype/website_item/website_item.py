@@ -217,6 +217,8 @@ class WebsiteItem(WebsiteGenerator):
 		context.search_link = "/search"
 		context.body_class = "product-page"
 
+		context.show_calendar = "calendar" in frappe.form_dict and frappe.form_dict.calendar
+
 		context.parents = get_parent_item_groups(self.item_group, from_item=True)  # breadcumbs
 		self.attributes = frappe.get_all(
 			"Item Variant Attribute",

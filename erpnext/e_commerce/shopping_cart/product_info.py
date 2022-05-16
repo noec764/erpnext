@@ -53,11 +53,15 @@ def get_product_info_for_website(item_code, skip_quotation_creation=False):
 		else:
 			stock_status = get_web_item_qty_in_stock(item_code, "website_warehouse")
 
+	item_info = frappe.db.get_value(
+		"Item", item_code, ("stock_uom", "sales_uom", "enable_item_booking"), as_dict=True
+	)
 	product_info = {
 		"price": price,
 		"qty": 0,
-		"uom": frappe.db.get_value("Item", item_code, "stock_uom"),
-		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom"),
+		"uom": item_info.get("stock_uom"),
+		"sales_uom": item_info.get("sales_uom"),
+		"booking_enabled": item_info.get("enable_item_booking"),
 	}
 
 	if stock_status:

@@ -855,6 +855,12 @@ body.product-page {
 	.t-and-c-terms {
 		font-size: 14px;
 	}
+
+	.form-control {
+		border-width: 1px;
+		border-color: var(--gray-100);
+		border-style: solid;
+	}
 }
 
 .no-image-cart-item {
