@@ -14,7 +14,7 @@
   "has_variants",
   "variant_of",
   "published",
-  "disable_unit_purchasing",
+  "enable_item_booking",
   "column_break_3",
   "item_code",
   "item_name",
@@ -24,6 +24,8 @@
   "description",
   "brand",
   "image",
+  "item_booking_section",
+  "enabled_booking_uom",
   "display_section",
   "website_image",
   "website_image_alt",
@@ -332,6 +334,7 @@
    "options": "Recommended Items"
   },
   {
+   "depends_on": "eval:!doc.enable_item_booking",
    "fieldname": "stock_information_section",
    "fieldtype": "Section Break",
    "label": "Stock Information"
@@ -348,17 +351,32 @@
    "label": "On Backorder"
   },
   {
+   "depends_on": "eval:doc.enable_item_booking",
+   "fieldname": "item_booking_section",
+   "fieldtype": "Section Break",
+   "label": "Item Booking"
+  },
+  {
+   "fieldname": "enabled_booking_uom",
+   "fieldtype": "Table MultiSelect",
+   "label": "Booking Unit of Measures",
+   "options": "Item Booking UOM"
+  },
+  {
    "default": "0",
-   "fieldname": "disable_unit_purchasing",
+   "depends_on": "eval:doc.enable_item_booking",
+   "fetch_from": "item_code.enable_item_booking",
+   "fieldname": "enable_item_booking",
    "fieldtype": "Check",
-   "label": "Disable Unit Purchasing"
+   "label": "Item Booking Enabled",
+   "read_only": 1
   }
  ],
  "has_web_view": 1,
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-13 14:36:27.981436",
+ "modified": "2022-05-18 09:26:00.768112",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "Website Item",

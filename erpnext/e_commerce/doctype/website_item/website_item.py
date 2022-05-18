@@ -217,7 +217,7 @@ class WebsiteItem(WebsiteGenerator):
 		context.search_link = "/search"
 		context.body_class = "product-page"
 
-		context.show_calendar = "calendar" in frappe.form_dict and frappe.form_dict.calendar
+		context.calendar_date = frappe.form_dict.get("date")
 
 		context.parents = get_parent_item_groups(self.item_group, from_item=True)  # breadcumbs
 		self.attributes = frappe.get_all(
@@ -228,6 +228,8 @@ class WebsiteItem(WebsiteGenerator):
 
 		if self.slideshow:
 			context.update(get_slideshow(self))
+
+		context.booking_enabled = self.enable_item_booking
 
 		self.set_metatags(context)
 		self.set_shopping_cart_data(context)
@@ -320,7 +322,9 @@ class WebsiteItem(WebsiteGenerator):
 		from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 
 		context.shopping_cart = get_product_info_for_website(
-			self.item_code, skip_quotation_creation=True
+			self.item_code,
+			skip_quotation_creation=True,
+			additional_uoms=[u.uom for u in self.enabled_booking_uom],
 		)
 
 	def copy_specification_from_item_group(self):
@@ -472,3 +476,12 @@ def make_website_item(doc, save=True):
 	insert_item_to_index(website_item)
 
 	return [website_item.name, website_item.web_item_name]
+
+
+@frappe.whitelist()
+def get_booking_uoms(*args):
+	minute = frappe.db.get_single_value("Venue Settings", "minute_uom")
+	return [
+		[uom]
+		for uom in frappe.get_all("UOM Conversion Factor", filters={"to_uom": minute}, pluck="from_uom")
+	]

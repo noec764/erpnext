@@ -257,7 +257,15 @@ class Item(Document):
 
 		if web_item:
 			changed = {}
-			editable_fields = ["item_name", "item_group", "stock_uom", "brand", "description", "disabled"]
+			editable_fields = [
+				"item_name",
+				"item_group",
+				"stock_uom",
+				"brand",
+				"description",
+				"disabled",
+				"enable_item_booking",
+			]
 			doc_before_save = self.get_doc_before_save()
 
 			for field in editable_fields:

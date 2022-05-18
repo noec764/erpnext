@@ -11,6 +11,12 @@ frappe.ui.form.on('Website Item', {
 				filters: {"is_group": 0}
 			};
 		});
+
+		frm.set_query("enabled_booking_uom", () => {
+			return {
+				query: "erpnext.e_commerce.doctype.website_item.website_item.get_booking_uoms",
+			};
+		});
 	},
 
 	refresh: (frm) => {
