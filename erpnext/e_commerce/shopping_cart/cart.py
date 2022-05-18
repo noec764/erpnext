@@ -141,11 +141,9 @@ def request_for_quotation():
 def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=None, booking=None):
 	quotation = _get_cart_quotation()
 
-	if booking == "None":
-		booking = None
-
 	empty_card = False
 	qty = flt(qty)
+
 	if qty == 0:
 		if booking:
 			quotation_items = quotation.get("items", filters={"item_booking": ["!=", booking]})

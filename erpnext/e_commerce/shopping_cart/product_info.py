@@ -16,8 +16,11 @@ from erpnext.utilities.product import (
 
 
 @frappe.whitelist(allow_guest=True)
-def get_product_info_for_website(item_code, skip_quotation_creation=False):
+def get_product_info_for_website(item_code, skip_quotation_creation=False, additional_uoms=None):
 	"""get product price / stock info for website"""
+
+	if not additional_uoms:
+		additional_uoms = []
 
 	cart_settings = get_shopping_cart_settings()
 	if not cart_settings.enabled:
@@ -34,15 +37,36 @@ def get_product_info_for_website(item_code, skip_quotation_creation=False):
 		else _set_price_list(cart_settings, None)
 	)
 
+	item_info = frappe.db.get_value(
+		"Item", item_code, ("stock_uom", "sales_uom", "enable_item_booking"), as_dict=True
+	)
+
 	price = {}
+	price_per_uom = {}
 	if cart_settings.show_price:
 		is_guest = frappe.session.user == "Guest"
 		# Show Price if logged in.
 		# If not logged in, check if price is hidden for guest.
 		if not is_guest or not cart_settings.hide_price_for_guest:
 			price = get_price(
-				item_code, selling_price_list, cart_settings.default_customer_group, cart_settings.company
+				item_code,
+				selling_price_list,
+				cart_settings.default_customer_group,
+				cart_settings.company,
+				uom=(item_info.get("sales_uom") or item_info.get("stock_uom")),
 			)
+
+			for uom in additional_uoms:
+				price_per_uom[uom] = (
+					get_price(
+						item_code,
+						selling_price_list,
+						cart_settings.default_customer_group,
+						cart_settings.company,
+						uom=uom,
+					)
+					or {}
+				)
 
 	stock_status = None
 
@@ -56,8 +80,9 @@ def get_product_info_for_website(item_code, skip_quotation_creation=False):
 	product_info = {
 		"price": price,
 		"qty": 0,
-		"uom": frappe.db.get_value("Item", item_code, "stock_uom"),
-		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom"),
+		"uom": item_info.get("stock_uom"),
+		"sales_uom": item_info.get("sales_uom") or item_info.get("stock_uom"),
+		"price_per_uom": price_per_uom,
 	}
 
 	if stock_status:

@@ -77,24 +77,30 @@ def qty_from_all_warehouses(batch_info):
 	return qty
 
 
-def get_price(item_code, price_list, customer_group, company, qty=1):
+def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 	from erpnext.e_commerce.shopping_cart.cart import get_party
 
-	template_item_code = frappe.db.get_value("Item", item_code, "variant_of")
+	template_item_code, stock_uom = frappe.db.get_value(
+		"Item", item_code, ["variant_of", "stock_uom"]
+	)
 
 	if price_list:
-		price = frappe.get_all(
-			"Item Price",
-			fields=["price_list_rate", "currency"],
-			filters={"price_list": price_list, "item_code": item_code},
-		)
+		filters = {
+			"price_list": price_list,
+			"item_code": item_code,
+			"valid_from": ("<=", nowdate()),
+			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
+		}
+		if uom:
+			filters["uom"] = uom
+		elif stock_uom:
+			filters["uom"] = ("in", ("", None, stock_uom))
+
+		price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"], filters=filters)
 
 		if template_item_code and not price:
-			price = frappe.get_all(
-				"Item Price",
-				fields=["price_list_rate", "currency"],
-				filters={"price_list": price_list, "item_code": template_item_code},
-			)
+			filters["item_code"] = template_item_code
+			price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"], filters=filters)
 
 		if price:
 			party = get_party()

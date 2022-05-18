@@ -19,29 +19,36 @@
 	<div class="item-content">
 		<div class="product-page-content mb-5" itemscope itemtype="http://schema.org/Product">
 			<!-- Image, Description, Add to Cart -->
-			{% if show_calendar %}
-			<div id="item-booking">
-				<div class="calendar-card"></div>
-				<div class="calendar-sidebar"></div>
-			</div>
-			{% else %}
 			<div class="row mb-5 item-website-description">
 				{% include "templates/generators/item/item_image.html" %}
 				{% include "templates/generators/item/item_details.html" %}
 			</div>
-			{% endif %}
 		</div>
 	</div>
 </div>
 
 <!-- Additional Info/Reviews, Recommendations -->
-{% if not show_calendar %}
 <div class="d-flex">
+	{% if booking_enabled %}
+		<div class="mt-4 w-100 item-booking-section">
+			<div class="product-container my-4 booking-container">
+				<div class="booking-header p-4">
+					{{ _("Select a slot") }}
+				</div>
+				<div class="w-100 mt-4 mb-2 row">
+					<div class="booking-calendar col-12 col-md-6"></div>
+					<div class="booking-selector col-12 col-md-6"></div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
 	{% set show_recommended_items = recommended_items and shopping_cart.cart_settings.enable_recommendations %}
 	{% set info_col = 'col-9' if show_recommended_items else 'col-12' %}
 
 	{% set padding_top = 'pt-0' if (show_tabs and tabs) else '' %}
 
+	{% if (show_tabs and tabs) or website_specifications or doc.website_content or (shopping_cart.cart_settings.enable_reviews and not doc.has_variants) %}
 	<div class="product-container mt-4 {{ padding_top }} {{ info_col }}">
 		<div class="item-content {{ 'mt-minus-2' if (show_tabs and tabs) else '' }}">
 			<div class="product-page-content" itemscope itemtype="http://schema.org/Product">
@@ -67,11 +74,12 @@
 			</div>
 		</div>
 	</div>
+	{% endif %}
 
 	<!-- Recommended Items -->
 	{% if show_recommended_items %}
 		<div class="mt-4 col-3 recommended-item-section">
-			<span class="recommendation-header">Recommended</span>
+			<span class="recommendation-header">{{ _("Recommended") }}</span>
 			<div class="product-container mt-2 recommendation-container">
 				{% for item in recommended_items %}
 					{{ recommended_item_row(item) }}
@@ -79,9 +87,7 @@
 			</div>
 		</div>
 	{% endif %}
-
 </div>
-{% endif %}
 {% endblock %}
 
 {% block style %}
@@ -100,17 +106,6 @@
 	#item-booking.fade {
 		opacity: 1;
 		transition: opacity 1.5s;
-	}
-
-	.calendar-card {
-		width: 100%;
-		padding: 15px;
-	}
-
-	.calendar-sidebar {
-		margin-left: 15px;
-		z-index: 1;
-		min-width: 10rem;
 	}
 
 	.formatted-price {
@@ -181,14 +176,14 @@
 
 {% block script %}
 <script>
-{% if show_calendar %}
-frappe.ready(() => {
-	new erpnext.booking_dialog({
-		parentId: 'item-booking',
-		item: "{{ doc.name }}"
+	frappe.ready(() => {
+		new erpnext.booking_section({
+			parentId: 'booking-calendar',
+			item: "{{ item_code }}",
+			uom: "{{ shopping_cart.product_info.sales_uom }}",
+			date: "{{ calendar_date }}"
+		})
 	})
-})
-{% endif %}
 </script>
 {% endblock %}
 
@@ -196,6 +191,7 @@ frappe.ready(() => {
 <!-- js should be loaded in body! -->
 <script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
 {{ include_script("frappe-web.bundle.js") }}
-{{ include_script("controls.bundle.js") }}
 {{ include_script("dialog.bundle.js") }}
+{{ include_script("controls.bundle.js") }}
+{{ include_script("portal-calendar.bundle.js") }}
 {% endblock %}

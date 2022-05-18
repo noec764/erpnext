@@ -8,7 +8,11 @@
 		<!-- Price and Availability -->
 		{% if cart_settings.show_price and product_info.price %}
 			{% set price_info = product_info.price %}
-
+			{% if doc.enable_item_booking %}
+			<div class="product-price">
+				{{ price_info.formatted_price_sales_uom }} / {{ product_info.sales_uom }}
+			</div>
+			{% else %}
 			<div class="product-price">
 				<!-- Final Price -->
 				{{ price_info.formatted_price_sales_uom }}
@@ -16,7 +20,7 @@
 				<!-- Striked Price and Discount  -->
 				{% if price_info.formatted_mrp %}
 					<small class="formatted-price">
-						<s>MRP {{ price_info.formatted_mrp }}</s>
+						<s>{{ _("MRP {0}").format(price_info.formatted_mrp) }}</s>
 					</small>
 					<small class="ml-1 formatted-price in-green">
 						-{{ price_info.get("formatted_discount_percent") or price_info.get("formatted_discount_rate")}}
@@ -28,11 +32,12 @@
 					({{ price_info.formatted_price }} / {{ product_info.uom }})
 				</small>
 			</div>
+			{% endif %}
 		{% else %}
 			{{ _("UOM") }} : {{ product_info.uom }}
 		{% endif %}
 
-		{% if cart_settings.show_stock_availability %}
+		{% if cart_settings.show_stock_availability and not doc.enable_item_booking %}
 		<div class="mt-2">
 			{% if product_info.get("on_backorder") %}
 				<span class="no-stock out-of-stock" style="color: var(--primary-color);">
@@ -53,6 +58,25 @@
 		</div>
 		{% endif %}
 
+		{% if doc.enable_item_booking and doc.enabled_booking_uom %}
+		<div class="mt-2">
+			{% for uom in doc.enabled_booking_uom %}
+				<button
+					data-uom="{{uom.uom}}"
+					class="btn btn-secondary btn-change-uom mr-2"
+					{% if uom.uom == product_info.sales_uom %}disabled{% endif %}
+				>
+					<span class="mr-2">
+						<svg class="icon icon-xs">
+							<use href="#icon-filter"></use>
+						</svg>
+					</span>
+					{{ _(uom.uom) }}
+				</button>
+			{% endfor %}
+		</div>
+		{% endif %}
+
 		<!-- Offers -->
 		{% if doc.offers %}
 			<br>
@@ -60,7 +84,7 @@
 				<span class="mr-1 tag-icon">
 					<svg class="icon icon-lg"><use href="#icon-tag"></use></svg>
 				</span>
-				<b>Available Offers</b>
+				<b>{{ _("Available Offers") }}</b>
 			</div>
 			<div class="offer-container">
 				{% for offer in doc.offers %}
@@ -96,6 +120,7 @@
 						role="button">
 						{{  _("View in Cart") if cart_settings.enable_checkout else _("View in Quote") }}
 					</a>
+					{% if not doc.enable_item_booking %}
 					<button
 						data-item-code="{{item_code}}"
 						class="btn btn-primary btn-add-to-cart mr-2 w-30-40"
@@ -107,6 +132,7 @@
 						</span>
 						{{ _("Add to Cart") if cart_settings.enable_checkout else  _("Add to Quote") }}
 					</button>
+					{% endif %}
 				{% endif %}
 
 				<!-- Contact Us -->
@@ -167,6 +193,27 @@
 					$btn.prop('disabled', false);
 				}
 			})
+
+		});
+
+		$('.page_content').on('click', '.btn-change-uom', (e) => {
+			// Bind action on add to cart button
+			const $btn = $(e.currentTarget);
+			$('.page_content').find('.btn-change-uom').each(function() {
+				$(this).attr('disabled', false);
+			});
+			$btn.prop('disabled', true);
+			const uom = $btn.data('uom');
+			const uom_price = {{ product_info.price_per_uom }}
+
+			let html_content = __("Not Available")
+			if (uom_price[uom].formatted_price) {
+				html_content = `${uom_price[uom].formatted_price} / ${__(uom)}`
+			}
+
+			$('.page_content').find('.product-price').html(html_content)
+
+			erpnext.booking_section_update.trigger("update_calendar", uom)
 
 		});
 	});
