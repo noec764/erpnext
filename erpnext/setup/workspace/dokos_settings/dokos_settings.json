@@ -1,31 +1,23 @@
 {
- "category": "",
  "charts": [],
+ "color": "#6195ff",
  "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Your Shortcuts\\n\\t\\t\\t\\n\\t\\t\\n\\t\\t\\t\\n\\t\\t\\n\\t\\t\\t\\n\\t\\t\",\"level\":4,\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Support Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shopping Cart Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Domain Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Products Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Naming Series\",\"col\":4}}]",
  "creation": "2020-03-12 14:47:51.166455",
- "developer_mode_only": 0,
- "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "Settings",
- "extends_another_page": 1,
  "hide_custom": 0,
  "idx": 0,
- "is_default": 0,
- "is_standard": 1,
  "label": "Dokos Settings",
  "links": [],
- "modified": "2021-11-05 21:32:55.323591",
- "modified_by": "Administrator",
+ "modified": "2022-05-19 09:59:29.238929",
+ "modified_by": "thierry@dokos.io",
  "module": "Setup",
  "name": "Dokos Settings",
- "onboarding": "",
  "owner": "Administrator",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
  "public": 1,
+ "quick_lists": [],
  "roles": [],
- "sequence_id": 11,
+ "sequence_id": 11.0,
  "shortcuts": [
   {
    "icon": "project",
@@ -34,13 +26,13 @@
    "type": "DocType"
   },
   {
-    "color": "Grey",
-    "doc_view": "",
-    "icon": "dot-horizontal",
-    "label": "Naming Series",
-    "link_to": "Naming Series",
-    "type": "DocType"
-   },
+   "color": "Grey",
+   "doc_view": "",
+   "icon": "dot-horizontal",
+   "label": "Naming Series",
+   "link_to": "Naming Series",
+   "type": "DocType"
+  },
   {
    "icon": "accounting",
    "label": "Accounts Settings",
@@ -79,8 +71,8 @@
   },
   {
    "icon": "retail",
-   "label": "Shopping Cart Settings",
-   "link_to": "Shopping Cart Settings",
+   "label": "E Commerce Settings",
+   "link_to": "E Commerce Settings",
    "type": "DocType"
   },
   {
@@ -99,13 +91,6 @@
    "icon": "setting",
    "label": "Domain Settings",
    "link_to": "Domain Settings",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "",
-   "icon": "retail",
-   "label": "Products Settings",
-   "link_to": "Products Settings",
    "type": "DocType"
   },
   {

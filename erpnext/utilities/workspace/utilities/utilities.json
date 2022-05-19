@@ -1,19 +1,13 @@
 {
- "category": "",
  "charts": [],
+ "color": "#6195ff",
  "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Video\", \"col\": 4}}]",
  "creation": "2020-09-10 12:21:22.335307",
- "developer_mode_only": 0,
- "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "Tools",
- "extends_another_page": 1,
  "hide_custom": 0,
  "icon": "",
  "idx": 0,
- "is_default": 0,
- "is_standard": 1,
  "label": "Utilities",
  "links": [
   {
@@ -47,17 +41,15 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-01 17:33:51.249380",
- "modified_by": "Administrator",
+ "modified": "2022-05-19 09:59:57.503578",
+ "modified_by": "thierry@dokos.io",
  "module": "Utilities",
  "name": "Utilities",
- "onboarding": "",
  "owner": "user@erpnext.com",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
  "public": 1,
+ "quick_lists": [],
  "roles": [],
- "sequence_id": 29,
+ "sequence_id": 29.0,
  "shortcuts": [],
  "title": "Tools"
 }

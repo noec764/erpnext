@@ -1,19 +1,13 @@
 {
- "category": "",
  "charts": [],
+ "color": "#62B6CB",
  "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Vos raccourcis\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Point Of Sale\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Rapports et donn\\u00e9es de base\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings & Configurations\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Loyalty Program\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Opening & Closing\", \"col\": 4}}]",
  "creation": "2020-03-02 17:18:32.505616",
- "developer_mode_only": 0,
- "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "",
- "extends_another_page": 0,
  "hide_custom": 0,
  "icon": "retail",
  "idx": 0,
- "is_default": 0,
- "is_standard": 1,
  "label": "Retail",
  "links": [
   {
@@ -107,18 +101,16 @@
    "type": "Link"
   }
  ],
- "modified": "2021-10-02 07:14:32.735851",
- "modified_by": "Administrator",
+ "modified": "2022-05-19 09:56:03.882166",
+ "modified_by": "thierry@dokos.io",
  "module": "Selling",
  "name": "Retail",
- "onboarding": "",
  "owner": "Administrator",
  "parent_page": "",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
  "public": 1,
+ "quick_lists": [],
  "roles": [],
- "sequence_id": 15,
+ "sequence_id": 15.0,
  "shortcuts": [
   {
    "doc_view": "",

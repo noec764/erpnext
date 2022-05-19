@@ -1,24 +1,17 @@
 {
- "cards_label": "Masters & Reports",
- "category": "",
  "charts": [
   {
    "chart_name": "Warehouse wise Stock Value"
   }
  ],
+ "color": "#f4a261",
  "content": "[{\"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Stock\", \"col\": 12}}, {\"type\": \"chart\", \"data\": {\"chart_name\": null, \"col\": 12}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Quick Access\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Item\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Material Request\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Entry\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Purchase Receipt\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Delivery Note\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Ledger\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Balance\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Dashboard\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Masters & Reports\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Items and Pricing\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Stock Transactions\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Stock Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Serial No and Batch\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Tools\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Key Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Other Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Incorrect Data Report\", \"col\": 4}}]",
  "creation": "2020-03-02 15:43:10.096528",
- "developer_mode_only": 0,
- "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "",
- "extends_another_page": 0,
  "hide_custom": 0,
  "icon": "stock",
  "idx": 0,
- "is_default": 0,
- "is_standard": 1,
  "label": "Stock",
  "links": [
   {
@@ -723,18 +716,16 @@
    "type": "Link"
   }
  ],
- "modified": "2021-11-23 04:34:00.420870",
- "modified_by": "Administrator",
+ "modified": "2022-05-19 09:56:13.125137",
+ "modified_by": "thierry@dokos.io",
  "module": "Stock",
  "name": "Stock",
- "onboarding": "",
  "owner": "Administrator",
  "parent_page": "",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
  "public": 1,
+ "quick_lists": [],
  "roles": [],
- "sequence_id": 9,
+ "sequence_id": 9.0,
  "shortcuts": [
   {
    "color": "Green",
@@ -789,6 +780,5 @@
    "type": "Dashboard"
   }
  ],
- "shortcuts_label": "Quick Access",
  "title": "Stock"
 }
