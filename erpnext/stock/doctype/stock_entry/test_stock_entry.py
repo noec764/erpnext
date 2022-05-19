@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+
 import frappe
 from frappe.permissions import add_user_permission, remove_user_permission
 from frappe.tests.utils import FrappeTestCase, change_settings
@@ -9,6 +10,7 @@ from frappe.utils import add_days, flt, nowdate, nowtime
 from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.stock.doctype.item.test_item import (
 	create_item,
+	make_item,
 	make_item_variant,
 	set_item_variant_settings,
 )
@@ -748,7 +750,7 @@ class TestStockEntry(FrappeTestCase):
 		self.assertEqual(frappe.db.get_value("Serial No", serial_no2, "status"), "Inactive")
 
 	def test_warehouse_company_validation(self):
-		company = frappe.db.get_value("Warehouse", "_Test Warehouse 2 - _TC1", "company")
+		frappe.db.get_value("Warehouse", "_Test Warehouse 2 - _TC1", "company")
 		frappe.get_doc("User", "test2@example.com").add_roles(
 			"Sales User", "Sales Manager", "Stock User", "Stock Manager"
 		)
@@ -1439,6 +1441,21 @@ class TestStockEntry(FrappeTestCase):
 		self.assertEqual(mapped_se.items[0].actual_qty, 2)
 		self.assertEqual(mapped_se.items[0].basic_rate, 100)
 		self.assertEqual(mapped_se.items[0].basic_amount, 200)
+
+	def test_stock_entry_item_details(self):
+		item = make_item()
+
+		se = make_stock_entry(
+			item_code=item.name, qty=1, to_warehouse="_Test Warehouse - _TC", do_not_submit=True
+		)
+
+		self.assertEqual(se.items[0].item_name, item.item_name)
+		se.items[0].item_name = "wat"
+		se.items[0].stock_uom = "Kg"
+		se.save()
+
+		self.assertEqual(se.items[0].item_name, item.item_name)
+		self.assertEqual(se.items[0].stock_uom, item.stock_uom)
 
 
 def make_serialized_item(**args):
