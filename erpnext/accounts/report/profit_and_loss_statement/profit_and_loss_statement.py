@@ -175,5 +175,10 @@ def get_chart_data(filters, columns, income, expense, net_profit_loss):
 		chart["type"] = "line"
 
 	chart["fieldtype"] = "Currency"
+	chart["colors"] = [
+		"#2490EF",
+		"#ffa00a",
+		"#2F9D58" if net_profit and flt(net_profit[0]) > 0 else "#718096",
+	]
 
 	return chart

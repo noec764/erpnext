@@ -56,12 +56,12 @@ frappe.listview_settings['Purchase Invoice'] = {
 			);
 		});
 
-		listview.page.add_action_item(__("Purchase Receipt"), ()=>{
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Purchase Receipt");
+		list_view.page.add_action_item(__("Purchase Receipt"), ()=>{
+			erpnext.bulk_transaction_processing.create(list_view, "Purchase Invoice", "Purchase Receipt");
 		});
 
-		listview.page.add_action_item(__("Payment"), ()=>{
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Payment");
+		list_view.page.add_action_item(__("Payment"), ()=>{
+			erpnext.bulk_transaction_processing.create(list_view, "Purchase Invoice", "Payment");
 		});
 	}
 };
