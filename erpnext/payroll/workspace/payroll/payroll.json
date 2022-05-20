@@ -10,9 +10,11 @@
  "creation": "2020-05-27 19:54:23.405607",
  "docstatus": 0,
  "doctype": "Workspace",
+ "hidden": 0,
  "hide_custom": 0,
  "icon": "money-coins-1",
  "idx": 0,
+ "is_standard": 1,
  "label": "Payroll",
  "links": [
   {
@@ -323,7 +325,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:57:13.787838",
+ "modified": "2022-05-20 10:42:09.562933",
  "modified_by": "Administrator",
  "module": "Payroll",
  "name": "Payroll",

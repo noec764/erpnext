@@ -5,8 +5,11 @@
  "creation": "2020-08-20 19:30:48.138801",
  "docstatus": 0,
  "doctype": "Workspace",
+ "extends_page": "Integrations",
+ "hidden": 0,
  "hide_custom": 0,
  "idx": 0,
+ "is_standard": 1,
  "label": "Dokos Integrations",
  "links": [
   {
@@ -68,7 +71,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:59:48.889202",
+ "modified": "2022-05-20 11:12:54.632814",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Dokos Integrations",

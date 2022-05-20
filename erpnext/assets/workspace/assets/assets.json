@@ -10,9 +10,11 @@
  "creation": "2020-03-02 15:43:27.634865",
  "docstatus": 0,
  "doctype": "Workspace",
+ "hidden": 0,
  "hide_custom": 0,
  "icon": "assets",
  "idx": 0,
+ "is_standard": 1,
  "label": "Assets",
  "links": [
   {
@@ -172,7 +174,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:53:55.229735",
+ "modified": "2022-05-20 10:42:11.261658",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Assets",

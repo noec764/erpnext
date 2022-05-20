@@ -9,9 +9,11 @@
  "creation": "2020-03-02 15:43:10.096528",
  "docstatus": 0,
  "doctype": "Workspace",
+ "hidden": 0,
  "hide_custom": 0,
  "icon": "stock",
  "idx": 0,
+ "is_standard": 1,
  "label": "Stock",
  "links": [
   {
@@ -716,7 +718,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:56:13.125137",
+ "modified": "2022-05-20 10:42:09.795068",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock",

@@ -5,9 +5,11 @@
  "creation": "2020-03-02 15:49:28.632014",
  "docstatus": 0,
  "doctype": "Workspace",
+ "hidden": 0,
  "hide_custom": 0,
  "icon": "quality",
  "idx": 0,
+ "is_standard": 1,
  "label": "Quality",
  "links": [
   {
@@ -142,7 +144,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:54:51.352511",
+ "modified": "2022-05-20 10:42:10.523439",
  "modified_by": "Administrator",
  "module": "Quality Management",
  "name": "Quality",

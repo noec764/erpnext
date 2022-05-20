@@ -6,9 +6,11 @@
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
+ "hidden": 0,
  "hide_custom": 0,
  "icon": "loan",
  "idx": 0,
+ "is_standard": 1,
  "label": "Loans",
  "links": [
   {
@@ -239,7 +241,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-19 09:54:32.539575",
+ "modified": "2022-05-20 10:42:10.677395",
  "modified_by": "Administrator",
  "module": "Loan Management",
  "name": "Loans",
