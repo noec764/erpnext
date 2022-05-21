@@ -102,7 +102,12 @@ class PaymentEntry(AccountsController):
 		self.set_status()
 
 	def on_cancel(self):
-		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Sepa Direct Debit Details")
+		self.ignore_linked_doctypes = (
+			"GL Entry",
+			"Stock Ledger Entry",
+			"Payment Ledger Entry",
+			"Sepa Direct Debit Details",
+		)
 		delete_linked_subscription_events(self)
 		self.make_gl_entries(cancel=1)
 		self.update_expense_claim()

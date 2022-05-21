@@ -410,7 +410,12 @@ class SalesInvoice(SellingController):
 		delete_linked_subscription_events(self)
 
 		self.unlink_sales_invoice_from_timesheets()
-		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Repost Item Valuation")
+		self.ignore_linked_doctypes = (
+			"GL Entry",
+			"Stock Ledger Entry",
+			"Repost Item Valuation",
+			"Payment Ledger Entry",
+		)
 
 	def on_trash(self):
 		delete_linked_subscription_events(self)

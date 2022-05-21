@@ -4,15 +4,11 @@
 
 import frappe
 from frappe import _
-from frappe.model.document import Document
-from frappe.utils import cstr, flt, get_fullname, get_link_to_form
-from frappe.utils.csvutils import getlink
+from frappe.utils import cstr, flt, get_link_to_form
 
 import erpnext
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
 from erpnext.accounts.general_ledger import make_gl_entries
-from erpnext.accounts.party import get_party_account
-from erpnext.accounts.utils import get_account_currency
 from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.hr.utils import set_employee_name, share_doc_with_approver, validate_active_employee
 
@@ -108,7 +104,7 @@ class ExpenseClaim(AccountsController):
 
 	def on_cancel(self):
 		self.update_task_and_project()
-		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry")
+		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
 		if self.payable_account:
 			self.make_gl_entries(cancel=True)
 
