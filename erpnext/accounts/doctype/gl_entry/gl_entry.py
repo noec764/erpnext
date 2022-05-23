@@ -210,7 +210,7 @@ def update_outstanding_amt(account, party_type, party, against_voucher_type, aga
 		where against_voucher_type=%s and against_voucher=%s
 		and voucher_type != 'Invoice Discounting'
 		{0} {1}""".format(party_condition, account_condition),
-		(against_voucher_type, against_voucher), debug=True)[0][0] or 0.0)
+		(against_voucher_type, against_voucher))[0][0] or 0.0)
 
 	if against_voucher_type == 'Purchase Invoice':
 		bal = -bal
