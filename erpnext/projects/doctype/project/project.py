@@ -341,39 +341,27 @@ def get_timeline_data(doctype, name):
 def get_project_list(
 	doctype, txt, filters, limit_start, limit_page_length=20, order_by="modified"
 ):
-	meta = frappe.get_meta(doctype)
+	from frappe.utils.user import is_website_user
+	from frappe.www.list import get_list
+
 	if not filters:
 		filters = []
 
-	fields = "distinct *"
+	ignore_permissions = False
+	user = frappe.session.user
 
-	or_filters = []
+	if is_website_user(user):
+		filters.append({"name": ("in", frappe.get_all("Project User", {"user": user}, pluck="parent"))})
+		ignore_permissions = user != "Guest"
 
-	if txt:
-		if meta.search_fields:
-			for f in meta.get_search_fields():
-				if f == "name" or meta.get_field(f).fieldtype in (
-					"Data",
-					"Text",
-					"Small Text",
-					"Text Editor",
-					"select",
-				):
-					or_filters.append([doctype, f, "like", "%" + txt + "%"])
-		else:
-			if isinstance(filters, dict):
-				filters["name"] = ("like", "%" + txt + "%")
-			else:
-				filters.append([doctype, "name", "like", "%" + txt + "%"])
-
-	return frappe.get_list(
+	return get_list(
 		doctype,
-		fields=fields,
+		txt=txt,
 		filters=filters,
-		or_filters=or_filters,
 		limit_start=limit_start,
 		limit_page_length=limit_page_length,
 		order_by=order_by,
+		ignore_permissions=ignore_permissions,
 	)
 
 
