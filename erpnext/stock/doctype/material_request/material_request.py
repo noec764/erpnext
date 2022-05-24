@@ -20,7 +20,7 @@ form_grid_templates = {"items": "templates/form_grid/material_request_grid.html"
 
 class MaterialRequest(BuyingController):
 	def get_feed(self):
-		return _("{0}: {1}").format(self.status, self.material_request_type)
+		return
 
 	def check_if_already_pulled(self):
 		pass
@@ -29,10 +29,10 @@ class MaterialRequest(BuyingController):
 		so_items = {}  # Format --> {'SO/00001': {'Item/001': 120, 'Item/002': 24}}
 		for d in self.get("items"):
 			if d.sales_order:
-				if not d.sales_order in so_items:
+				if d.sales_order not in so_items:
 					so_items[d.sales_order] = {d.item_code: flt(d.qty)}
 				else:
-					if not d.item_code in so_items[d.sales_order]:
+					if d.item_code not in so_items[d.sales_order]:
 						so_items[d.sales_order][d.item_code] = flt(d.qty)
 					else:
 						so_items[d.sales_order][d.item_code] += flt(d.qty)
