@@ -103,8 +103,6 @@ class TestPricingRule(unittest.TestCase):
 		self.assertEqual(details.get("discount_percentage"), 15)
 
 	def test_pricing_rule_for_margin(self):
-		from frappe import MandatoryError
-
 		from erpnext.stock.get_item_details import get_item_details
 
 		test_record = {
@@ -205,8 +203,6 @@ class TestPricingRule(unittest.TestCase):
 		self.assertEqual(details.get("discount_percentage"), 10)
 
 	def test_pricing_rule_for_variants(self):
-		from frappe import MandatoryError
-
 		from erpnext.stock.get_item_details import get_item_details
 
 		if not frappe.db.exists("Item", "Test Variant PRT"):
@@ -752,7 +748,7 @@ class TestPricingRule(unittest.TestCase):
 			title="_Test Pricing Rule with Min Qty - 2",
 		)
 
-		si = create_sales_invoice(do_not_submit=True, customer="_Test Customer 1", qty=1, currency="USD")
+		si = create_sales_invoice(do_not_submit=True, customer="_Test Customer 1", qty=1)
 		item = si.items[0]
 		item.stock_qty = 1
 		si.save()
