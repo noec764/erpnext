@@ -66,6 +66,12 @@ a.transaction-list-item {
 	text-align: right;
 }
 
+.order-container {
+	.table {
+		width: unset;
+	}
+}
+
 .order-item-table {
 	border: none;
 }

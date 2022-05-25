@@ -1,9 +1,9 @@
 {% if doc.status!="Cancelled" %}
-<a href="/projects?project={{ doc.name | urlencode }}" class="web-list-item transaction-list-item">
-	<div class="row w-100">
+<div class="web-list-item transaction-list-item">
+	<div class="row">
 		<div class="col-xs-4 project-link">
-				<div>{{ doc.project_name }}</div>
-				<span class="text-muted">{{ doc.name }}</span>
+			<div class="small">{{ doc.project_name }}</div>
+			<span class="small text-muted">{{ doc.name }}</span>
 		</div>
 		<div class="col-xs-3 text-center">
 			{% if doc.percent_complete %}
@@ -53,5 +53,6 @@
 			{% endif %}
 		</div>
 	</div>
-	</a>
+	<a class="transaction-item-link" href="/projects?project={{ doc.name | urlencode }}">{{ _("Link") }}</a>
+</div>
 {% endif %}
