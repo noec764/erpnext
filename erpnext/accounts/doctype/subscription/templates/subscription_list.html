@@ -12,7 +12,9 @@
 					<div class="card-body">
 						<h5 class="card-title">{{ subscription_template.name }}</h5>
 						<p class="card-text">{{ subscription_template.portal_description or "" }}</p>
-						<button class="btn btn-primary" id='{{ scrub(subscription_template.name) }}_subscription'>{{ _("Subscribe") }}</button>
+						<div class="text-right">
+							<button class="btn btn-primary" id='{{ scrub(subscription_template.name) }}_subscription'>{{ _("Subscribe") }}</button>
+						</div>
 					</div>
 				</div>
 			{% endfor %}
