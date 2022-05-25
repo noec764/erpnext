@@ -241,8 +241,6 @@ def update_outstanding_amt(account, party_type, party, against_voucher_type, aga
 		if ref_doc.get("is_down_payment_invoice") and flt(bal) != 0.0:
 			if flt(ref_doc.outstanding_amount):
 				bal += flt(ref_doc.outstanding_amount)
-			else:
-				bal += flt(ref_doc.grand_total)
 
 		# Didn't use db_set for optimisation purpose
 		ref_doc.outstanding_amount = bal

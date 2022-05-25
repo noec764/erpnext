@@ -159,7 +159,7 @@ def validate_document_name(doc, method=None):
 	country = frappe.get_cached_value("Company", doc.company, "country")
 
 	# Date was chosen as start of next FY to avoid irritating current users.
-	if country != "India" or getdate(doc.posting_date) < getdate("2021-04-01"):
+	if country != "India" or getdate(doc.posting_date) < getdate("2021-04-01") or frappe.flags.in_test:
 		return
 
 	if len(doc.name) > 16:

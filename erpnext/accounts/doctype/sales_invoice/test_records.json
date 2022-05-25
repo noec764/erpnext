@@ -405,8 +405,8 @@
     "cost_center": "_Test Cost Center - _TC",
     "customer": "_Test Customer",
     "customer_name": "_Test Customer",
-    "debit_to": "_Test Receivable - _TC",
     "doctype": "Sales Invoice",
+    "is_down_payment_invoice": 1,
     "items": [
      {
       "amount": 500.0,
