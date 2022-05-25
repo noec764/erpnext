@@ -220,6 +220,18 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				}
 			});
 		}
+
+		if (this.frm.fields_dict["items"].grid.get_field("uom")) {
+			this.frm.set_query("uom", "items", function(doc, cdt, cdn) {
+				const row = locals[cdt][cdn];
+				return {
+					query: "erpnext.controllers.queries.get_uoms",
+					filters: {
+						"item_code": row.item_code
+					}
+				};
+			});
+		}
 	}
 
 	onload() {
