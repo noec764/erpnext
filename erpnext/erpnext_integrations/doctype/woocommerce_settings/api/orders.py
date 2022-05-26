@@ -254,26 +254,36 @@ def get_or_create_missing_item(settings, product):
 
 def get_order_taxes(order, settings):
 	taxes = []
-	for tax in order.get("tax_lines"):
-		account_head = get_tax_account_head(tax.get("rate_id"))
+	line_item_taxes = defaultdict(lambda: defaultdict(float))
+	for item in order.get("line_items", []) + order.get("shipping_lines", []):
+		for item_tax in item.get("taxes"):
+			account_head = get_tax_account_head(item_tax.get("id"))
+			if account_head:
+				line_item_taxes[account_head]["id"] = item_tax.get("id")
+				line_item_taxes[account_head]["total"] += flt(item_tax.get("total"), precision=9)
+			else:
+				frappe.log_error(f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce tax: {item_tax.get('id')}", "Woocommerce Order Error")
 
-		if account_head:
-			taxes.append({
-				"charge_type": "Actual",
-				"account_head": account_head,
-				"description": tax.get("label"),
-				"rate": 0,
-				"tax_amount": flt(tax.get("tax_total") or 0) + flt(tax.get("shipping_tax_total") or 0),
-				"included_in_print_rate": 0,
-				"cost_center": settings.cost_center
-			})
-		else:
-			frappe.log_error(f"WooCommerce Order: {order.get('id')}\n\nAccount head missing for Woocommerce tax: {tax.get('label')}", "Woocommerce Order Error")
+	for account_head in line_item_taxes:
+		taxes.append({
+			"charge_type": "Actual",
+			"account_head": account_head,
+			"description": get_label_from_wc_tax_summary(order, line_item_taxes[account_head]["id"]),
+			"rate": 0,
+			"tax_amount": flt(line_item_taxes[account_head]["total"], precision=9), #flt(tax.get("tax_total") or 0) + flt(tax.get("shipping_tax_total") or 0),
+			"included_in_print_rate": 0,
+			"cost_center": settings.cost_center
+		})
 
 	taxes = update_taxes_with_shipping_lines(order, taxes, order.get("shipping_lines"), settings)
 	taxes = update_taxes_with_fee_lines(taxes, order.get("fee_lines"), settings)
 
 	return taxes
+
+def get_label_from_wc_tax_summary(order, id):
+	for tax in order.get("tax_lines"):
+		if tax.get("rate_id") == id:
+			return tax.get("label")
 
 def update_taxes_with_fee_lines(taxes, fee_lines, settings):
 	for fee_charge in fee_lines:

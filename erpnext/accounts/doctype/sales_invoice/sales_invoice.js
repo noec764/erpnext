@@ -13,6 +13,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 	},
 	company: function() {
 		erpnext.accounts.dimensions.update_dimension(this.frm, this.frm.doctype);
+		this._super();
 	},
 	onload: function() {
 		var me = this;

@@ -397,5 +397,45 @@
   "price_list_currency": "INR",
   "selling_price_list": "_Test Price List",
   "territory": "_Test Territory"
- }
+ },
+ {
+    "company": "_Test Company",
+    "conversion_rate": 1.0,
+    "currency": "INR",
+    "cost_center": "_Test Cost Center - _TC",
+    "customer": "_Test Customer",
+    "customer_name": "_Test Customer",
+    "doctype": "Sales Invoice",
+    "is_down_payment_invoice": 1,
+    "items": [
+     {
+      "amount": 500.0,
+      "base_amount": 500.0,
+      "base_rate": 500.0,
+      "cost_center": "_Test Cost Center - _TC",
+      "description": "999-Down Payment",
+      "doctype": "Sales Invoice Item",
+      "income_account": "Sales - _TC",
+      "expense_account": "_Test Account Cost for Goods Sold - _TC",
+      "item_code": "999-Down Payment",
+      "item_name": "999-Down Payment",
+      "parentfield": "items",
+      "qty": 1.0,
+      "rate": 500.0,
+      "uom": "_Test UOM",
+      "conversion_factor": 1,
+      "stock_uom": "_Test UOM"
+     }
+    ],
+    "base_grand_total": 561.8,
+    "grand_total": 561.8,
+    "is_pos": 0,
+    "naming_series": "T-SINV-",
+    "base_net_total": 500.0,
+    "plc_conversion_rate": 1.0,
+    "price_list_currency": "INR",
+    "selling_price_list": "_Test Price List",
+    "territory": "_Test Territory",
+    "title": "Down Payment Invoice"
+   }
 ]

@@ -239,7 +239,8 @@ def update_outstanding_amt(account, party_type, party, against_voucher_type, aga
 		# Down payment invoices have no GL entries attached, therefore initial balance is 0
 		# On payment relink, they should not be updated
 		if ref_doc.get("is_down_payment_invoice") and flt(bal) != 0.0:
-			bal += flt(ref_doc.outstanding_amount)
+			if flt(ref_doc.outstanding_amount):
+				bal += flt(ref_doc.outstanding_amount)
 
 		# Didn't use db_set for optimisation purpose
 		ref_doc.outstanding_amount = bal

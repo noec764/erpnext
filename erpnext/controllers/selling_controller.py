@@ -75,7 +75,9 @@ class SellingController(StockController):
 				doctype=self.doctype, company=self.company,
 				posting_date=self.get('posting_date'),
 				fetch_payment_terms_template=fetch_payment_terms_template,
-				party_address=self.customer_address, shipping_address=self.shipping_address_name)
+				party_address=self.customer_address, shipping_address=self.shipping_address_name,
+				down_payment=self.get("is_down_payment_invoice")
+			)
 			if not self.meta.get_field("sales_team"):
 				party_details.pop("sales_team")
 			self.update_if_missing(party_details)
