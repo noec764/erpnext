@@ -80,7 +80,7 @@
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-03-15 09:27:59.106440",
+ "modified": "2022-05-16 16:14:52.061672",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Taxes and Charges Template",
@@ -124,7 +124,10 @@
    "select": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
+ "title_field": "title",
  "track_changes": 1
 }
