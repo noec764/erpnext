@@ -2,8 +2,8 @@
 	{
 		"abbr": "_TC",
 		"company_name": "_Test Company",
-		"country": "France",
-		"default_currency": "EUR",
+		"country": "India",
+		"default_currency": "INR",
 		"doctype": "Company",
 		"domain": "Manufacturing",
 		"chart_of_accounts": "Standard",

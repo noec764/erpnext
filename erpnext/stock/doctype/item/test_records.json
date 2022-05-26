@@ -464,5 +464,14 @@
    "item_name": "138-CMS Shoe",
    "stock_uom": "_Test UOM",
    "gst_hsn_code": "999800"
+  },
+  {
+    "description": "_Test",
+    "doctype": "Item",
+    "is_stock_item": 1,
+    "item_code": "999-Down Payment",
+    "item_group": "_Test Item Group",
+    "item_name": "999-Down Payment",
+    "stock_uom": "_Test UOM"
   }
  ]

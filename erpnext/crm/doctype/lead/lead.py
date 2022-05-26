@@ -143,8 +143,6 @@ class Lead(SellingController):
 					linked_doc.remove(to_remove)
 					linked_doc.save(ignore_permissions=True)
 
-		self.delete_events()
-
 	def has_customer(self):
 		return frappe.db.get_value("Customer", {"lead_name": self.name})
 

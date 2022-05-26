@@ -320,7 +320,7 @@
     "idx": 1,
     "is_submittable": 1,
     "links": [],
-    "modified": "2021-06-09 12:08:53.930200",
+    "modified": "2022-05-09 12:08:53.930200",
     "modified_by": "Administrator",
     "module": "Projects",
     "name": "Timesheet",
@@ -392,6 +392,54 @@
       "permlevel": 1,
       "read": 1,
       "role": "Accounts User",
+      "write": 1
+     },
+     {
+      "amend": 1,
+      "cancel": 1,
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "HR Manager",
+      "select": 1,
+      "share": 1,
+      "submit": 1,
+      "write": 1
+     },
+     {
+      "permlevel": 1,
+      "read": 1,
+      "role": "HR Manager",
+      "select": 1,
+      "write": 1
+     },
+     {
+      "amend": 1,
+      "cancel": 1,
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "import": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Projects Manager",
+      "select": 1,
+      "share": 1,
+      "submit": 1,
+      "write": 1
+     },
+     {
+      "permlevel": 1,
+      "read": 1,
+      "role": "Projects Manager",
+      "select": 1,
       "write": 1
      }
     ],

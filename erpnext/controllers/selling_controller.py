@@ -83,6 +83,7 @@ class SellingController(StockController):
 				party_address=self.customer_address,
 				shipping_address=self.shipping_address_name,
 				company_address=self.get("company_address"),
+				down_payment=self.get("is_down_payment_invoice"),
 			)
 			if not self.meta.get_field("sales_team"):
 				party_details.pop("sales_team")

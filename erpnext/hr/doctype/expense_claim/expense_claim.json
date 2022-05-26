@@ -39,6 +39,7 @@
   "accounting_details",
   "company",
   "mode_of_payment",
+  "unreconciled_amount",
   "clearance_date",
   "column_break_24",
   "payable_account",
@@ -377,13 +378,22 @@
  "fieldtype": "Link",
  "label": "Delivery Trip",
  "options": "Delivery Trip"
+  },
+  {
+   "fieldname": "unreconciled_amount",
+   "fieldtype": "Currency",
+   "label": "Unreconciled Amount",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   }
+
  ],
  "icon": "fa fa-money",
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-11-22 16:26:57.787838",
+ "modified": "2022-05-04 05:35:12.040199",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Expense Claim",

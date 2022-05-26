@@ -304,6 +304,7 @@ def _make_test_records(verbose=None):
 		["_Test Payable", "Current Liabilities", 0, "Payable", None],
 		["_Test Receivable USD", "Current Assets", 0, "Receivable", "USD"],
 		["_Test Payable USD", "Current Liabilities", 0, "Payable", "USD"],
+		["_Test Down Payment", "Current Assets", 0, "Receivable", None],
 	]
 
 	for company, abbr in [
