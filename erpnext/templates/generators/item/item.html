@@ -181,7 +181,7 @@
 			parentId: 'booking-calendar',
 			item: "{{ item_code }}",
 			uom: "{{ shopping_cart.product_info.sales_uom }}",
-			date: "{{ calendar_date }}"
+			date: "{{ calendar_date or '' }}"
 		})
 	})
 </script>

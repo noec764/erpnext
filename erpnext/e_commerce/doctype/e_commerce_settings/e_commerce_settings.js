@@ -8,9 +8,6 @@ frappe.ui.form.on("E Commerce Settings", {
 			frm.refresh_field("quotation_series");
 		}
 
-		frm.set_query('payment_gateway_account', function() {
-			return { 'filters': { 'payment_channel': "Email" } };
-		});
 	},
 	refresh: function(frm) {
 		if (frm.doc.enabled) {

@@ -22,6 +22,7 @@ def get_context(context):
 	context.enable_gocardless = False
 	context.lang = frappe.local.lang
 	context.credits_balance = None
+	context.current_user = frappe.get_doc("User", frappe.session.user)
 
 	active_tokens = frappe.get_all(
 		"OAuth Bearer Token",

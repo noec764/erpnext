@@ -34,6 +34,7 @@
   "checkout_settings_section",
   "enable_checkout",
   "show_price_in_quotation",
+  "no_payment_gateway",
   "column_break_27",
   "save_quotations_as_draft",
   "payment_gateway_account",
@@ -251,11 +252,11 @@
    "label": "Save Quotations as Draft"
   },
   {
-   "depends_on": "enable_checkout",
+   "depends_on": "eval:doc.enable_checkout && !doc.no_payment_gateway",
    "fieldname": "payment_gateway_account",
    "fieldtype": "Link",
    "label": "Payment Gateway Account",
-   "mandatory_depends_on": "enable_checkout",
+   "mandatory_depends_on": "eval:doc.enable_checkout && !doc.no_payment_gateway",
    "options": "Payment Gateway Account"
   },
   {
@@ -359,19 +360,26 @@
    "fieldname": "show_price_in_quotation",
    "fieldtype": "Check",
    "label": "Show Price in Quotation"
-},
-{
- "default": "0",
- "fieldname": "is_redisearch_enabled",
- "fieldtype": "Check",
- "label": "Enable Redisearch",
- "read_only_depends_on": "eval:!doc.is_redisearch_loaded"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_redisearch_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Redisearch",
+   "read_only_depends_on": "eval:!doc.is_redisearch_loaded"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.enable_checkout",
+   "fieldname": "no_payment_gateway",
+   "fieldtype": "Check",
+   "label": "Do not use a payment gateway"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-04-01 18:35:56.106756",
+ "modified": "2022-05-27 08:58:11.665228",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "E Commerce Settings",

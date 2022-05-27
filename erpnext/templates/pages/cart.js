@@ -96,7 +96,7 @@ $.extend(shopping_cart, {
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", async function() {
 			const address = await frappe.call({
-				method: 'erpnext.shopping_cart.cart.get_customer_address',
+				method: 'erpnext.e_commerce.shopping_cart.cart.get_customer_address',
 				freeze: true,
 			})
 

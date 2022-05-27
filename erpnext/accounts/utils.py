@@ -1029,7 +1029,9 @@ def create_payment_gateway_account(gateway):
 
 	if not bank_account:
 		# try creating one
-		bank_account = create_bank_account({"company_name": company, "bank_account": _(gateway)})
+		bank_account = create_bank_account(
+			frappe._dict({"company_name": company, "bank_account": _(gateway)})
+		)
 
 	if not bank_account:
 		frappe.msgprint(_("Payment Gateway Account not created, please create one manually."))

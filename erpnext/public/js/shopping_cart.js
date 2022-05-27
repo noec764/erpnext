@@ -275,7 +275,7 @@ $.extend(shopping_cart, {
 
 				}
 			})
-
+			d.$wrapper.find(".modal-content").addClass("frappe-card");
 			d.show();
 		});
 	},
