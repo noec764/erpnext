@@ -49,7 +49,6 @@ def get_data(filters):
 	get_calendar_capacity(filters, items_dict)
 
 	output = [{"item": x, **items_dict[x]} for x in items_dict]
-	print(output)
 
 	for line in output:
 		line["percent"] = (
