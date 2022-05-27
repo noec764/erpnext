@@ -174,7 +174,7 @@ erpnext.ProductGrid = class {
 			return `
 				<div id="${ item.name }" class="btn
 					btn-sm btn-primary btn-add-to-cart-list
-					w-100 mt-2 ${ item.in_cart ? 'hidden' : '' }"
+					w-100 mt-2 ${ item.in_cart || item.enable_item_booking ? 'hidden' : '' }"
 					data-item-code="${ item.item_code }">
 					<span class="mr-2">
 						<svg class="icon icon-md">
@@ -191,6 +191,22 @@ erpnext.ProductGrid = class {
 						${ item.in_cart ? '' : 'hidden' }"
 						data-item-code="${ item.item_code }">
 						${ settings.enable_checkout ? __('Go to Cart') :  __('Go to Quote') }
+					</div>
+				</a>
+
+				<a href="${item.route}">
+					<div id="${ item.name }" class="btn
+						btn-sm btn-primary
+						ml-4 mb-0 mt-0
+						${ item.in_cart || !item.enable_item_booking ? 'hidden' : '' }"
+						data-item-code="${ item.item_code }"
+						style="padding: 0.25rem 1rem; min-width: 135px;">
+						<span class="mr-2">
+							<svg class="icon icon-md">
+								<use href="#icon-assets"></use>
+							</svg>
+						</span>
+						${ settings.enable_checkout ? __('Add to Cart') :  __('Add to Quote') }
 					</div>
 				</a>
 			`;

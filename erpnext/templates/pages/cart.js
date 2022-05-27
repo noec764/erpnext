@@ -151,7 +151,7 @@ $.extend(shopping_cart, {
 		$('.cart-items').on('change', 'textarea', function() {
 			const $textarea = $(this);
 			const item_code = $textarea.attr('data-item-code');
-			const qty = $textarea.closest('tr').find('.cart-qty').val();
+			const qty = $textarea.closest('tr').find('.cart-qty').val() || 1;
 			const notes = $textarea.val();
 			shopping_cart.shopping_cart_update({
 				item_code,

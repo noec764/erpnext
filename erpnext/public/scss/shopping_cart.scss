@@ -97,9 +97,9 @@ body.product-page {
 	}
 
 	.card:hover, .card:focus-within {
-		.btn-add-to-cart-list {
-			visibility: visible;
-		}
+		// .btn-add-to-cart-list {
+		// 	visibility: visible;
+		// }
 		.like-action {
 			visibility: visible;
 		}
@@ -220,9 +220,9 @@ body.product-page {
 		box-shadow: 0px 16px 60px rgba(0, 0, 0, 0.08), 0px 8px 30px -20px rgba(0, 0, 0, 0.04);
 		transition: box-shadow 400ms;
 
-		.btn-add-to-cart-list {
-			visibility: visible;
-		}
+		// .btn-add-to-cart-list {
+		// 	visibility: visible;
+		// }
 		.like-action-list {
 			visibility: visible;
 		}
@@ -1177,7 +1177,6 @@ body.product-page {
 }
 
 .btn-add-to-cart-list{
-	visibility: hidden;
 	box-shadow: none;
 	margin: var(--margin-sm) 0;
 	// margin-top: auto !important;
