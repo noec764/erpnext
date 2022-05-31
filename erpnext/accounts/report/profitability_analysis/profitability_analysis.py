@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import cstr, flt, formatdate, getdate
+from frappe.utils import cstr, flt
 
 from erpnext.accounts.report.financial_statements import (
 	filter_accounts,
@@ -211,6 +211,7 @@ def set_gl_entries_by_account(
 		{additional_conditions}
 		and posting_date <= %(to_date)s
 		and {based_on} is not null
+		and is_cancelled = 0
 		order by {based_on}, posting_date""".format(
 			additional_conditions="\n".join(additional_conditions), based_on=based_on
 		),
