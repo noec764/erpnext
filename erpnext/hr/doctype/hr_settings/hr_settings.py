@@ -3,7 +3,6 @@
 
 # For license information, please see license.txt
 import frappe
-from frappe import _
 from frappe.model.document import Document
 from frappe.utils import format_date
 
@@ -22,7 +21,7 @@ class HRSettings(Document):
 		PROCEED_WITH_FREQUENCY_CHANGE = False
 
 	def set_naming_series(self):
-		from erpnext.setup.doctype.naming_series.naming_series import set_by_naming_series
+		from erpnext.utilities.naming import set_by_naming_series
 
 		set_by_naming_series(
 			"Employee",
