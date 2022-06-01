@@ -700,7 +700,6 @@ class ReceivablePayableReport(object):
 				`tabGL Entry`
 			where
 				docstatus < 2
-				and is_cancelled = 0
 				and party_type=%s
 				and is_cancelled=0
 				and (party is not null and party != '')
