@@ -1925,7 +1925,7 @@ def get_default_taxes_and_charges(
 def get_taxes_and_charges(master_doctype, master_name):
 	if not master_name:
 		return
-	from frappe.model import default_fields
+	from frappe.model import child_table_fields, default_fields
 
 	tax_master = frappe.get_doc(master_doctype, master_name)
 
@@ -1933,7 +1933,7 @@ def get_taxes_and_charges(master_doctype, master_name):
 	for i, tax in enumerate(tax_master.get("taxes")):
 		tax = tax.as_dict()
 
-		for fieldname in default_fields:
+		for fieldname in default_fields + child_table_fields:
 			if fieldname in tax:
 				del tax[fieldname]
 
