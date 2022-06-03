@@ -155,6 +155,6 @@ def create_sepa_payment_entries(from_date, to_date, mode_of_payment):
 
 		return "Success"
 	except Exception as e:
-		frappe.log_error(frappe.get_tracebeck(), "SEPA payments generation error")
+		frappe.log_error(frappe.get_traceback(), "SEPA payments generation error")
 		return "Error"
 
