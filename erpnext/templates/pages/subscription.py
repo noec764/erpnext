@@ -16,7 +16,7 @@ def get_context(context):
 	context.breadcrumbs = True
 
 	context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
-	context.next_invoice_date = nowdate()
+	context.next_invoice_date = context.doc.get_next_invoice_date() if hasattr(context.doc, "get_next_invoice_date") else None
 	context.subscription_plans = get_subscription_plans(context.doc.customer)
 	context.payment_requests = get_open_payment_requests_for_subscription(frappe.form_dict.name)
 
