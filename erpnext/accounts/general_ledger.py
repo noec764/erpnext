@@ -157,7 +157,8 @@ def get_accounting_journal(entry):
 	applicable_rules = []
 	rules = frappe.get_all("Accounting Journal",
 		filters={"company": entry.get("company"), "disabled": 0},
-		fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"])
+		fields=["name", "type", "account", "`tabAccounting Journal Rule`.document_type", "`tabAccounting Journal Rule`.condition"]
+	)
 
 	applicable_rules = [rule for rule in rules if (rule.account in (entry.account, entry.against, None))]
 	if applicable_rules:

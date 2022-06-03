@@ -203,6 +203,14 @@ frappe.ui.form.on("Journal Entry", {
 					update_jv_details(frm.doc, doc.accounts);
 				});
 		}
+	},
+
+	accounting_journal: function(frm) {
+		if (frm.doc.accounting_journal) {
+			frm.doc.accounts.forEach(a => {
+				frappe.model.set_value(a.doctype, a.name, "accounting_journal", frm.doc.accounting_journal)
+			})
+		}
 	}
 });
 
@@ -407,6 +415,7 @@ erpnext.accounts.JournalEntry = frappe.ui.form.Controller.extend({
 				row.party = d.party;
 				row.party_type = d.party_type;
 			}
+			row.accounting_journal = doc.accounting_journal;
 		});
 
 		// set difference
