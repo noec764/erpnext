@@ -13,6 +13,7 @@
   "voucher_type",
   "naming_series",
   "finance_book",
+  "accounting_journal",
   "column_break1",
   "from_template",
   "company",
@@ -512,13 +513,19 @@
    "options": "Journal Entry Template",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "accounting_journal",
+   "fieldtype": "Link",
+   "label": "Accounting Journal",
+   "options": "Accounting Journal"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 176,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-04-29 16:31:51.276190",
+ "modified": "2022-06-03 14:50:34.573712",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",

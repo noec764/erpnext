@@ -25,12 +25,15 @@
 	</div>
 	{% if payment_requests %}
 	<div class="invoicing-status frappe-card">
-		<h5 class="subscriptions-section-title">${ __("Outstanding amounts") }</h5>
+		<h5 class="subscriptions-section-title">{{ _("Outstanding amounts") }}</h5>
 		{% for payment_request in payment_requests %}
-		<div>
+		<div class="my-4">
 			<div>{{ _("Total:") }}
-				<span> ${{ frappe.utils.format_currency(doc.outstanding_amount, doc.currency) }}</span>
-			<div>
+				<span> {{ frappe.utils.fmt_money(frappe.utils.flt(payment_request.grand_total), currency=payment_request.currency) }}</span>
+			</div>
+			<div>{{ _("Reference:") }}
+				<span> {{ _(payment_request.reference_doctype) }}</span> <span> {{ payment_request.reference_name }}</span>
+			</div>
 			<div><a class="btn btn-warning" href="{{ payment_request.payment_link }}">{{ _("Pay immediately") }}</a></div>
 		</div>
 		{% endfor %}
@@ -38,15 +41,19 @@
 	{% endif %}
 	{% if not doc.cancellation_date %}
 		{% if subscription_plans %}
-		<div class="available-plans frappe-card">
-			<h5 class="subscriptions-section-title">{{ _("Your options") }}</h5>
-			{% include "templates/includes/subscriptions/subscription_plans.html" %}
+		<div class="my-4 py-5 frappe-card">
+			<div>
+				<h5 class="subscriptions-section-title">{{ _("Your options") }}</h5>
+				{% include "templates/includes/subscriptions/subscription_plans.html" %}
+			</div>
 		</div>
 		{% endif %}
-	<div class="cancellation-options frappe-card">
-		<h5 class="subscriptions-section-title">{{ _("Cancellation options") }}</h5>
+	<div class="my-4 py-5 frappe-card">
 		<div>
-			<button class="btn btn-danger" id="subscription-cancellation-btn">{{ _("Cancel my subscription") }}</button>
+			<h5 class="subscriptions-section-title">{{ _("Cancellation options") }}</h5>
+			<div>
+				<button class="btn btn-danger" id="subscription-cancellation-btn">{{ _("Cancel my subscription") }}</button>
+			</div>
 		</div>
 	</div>
 	{% endif %}

@@ -16,7 +16,7 @@ def get_context(context):
 	context.breadcrumbs = True
 
 	context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
-	context.next_invoice_date = nowdate()
+	context.next_invoice_date = context.doc.get_next_invoice_date() if hasattr(context.doc, "get_next_invoice_date") else None
 	context.subscription_plans = get_subscription_plans(context.doc.customer)
 	context.payment_requests = get_open_payment_requests_for_subscription(frappe.form_dict.name)
 
@@ -35,15 +35,36 @@ def get_subscription_plans(customer):
 
 def get_open_payment_requests_for_subscription(subscription):
 	output = []
+	orders = frappe.get_all("Sales Order", filters={"subscription": subscription}, pluck="name")
+	invoices = frappe.get_all("Sales Invoice", filters={"subscription": subscription}, pluck="name")
 	payment_requests = frappe.get_all("Payment Request", filters={
 		"docstatus": 1,
-		"reference_doctype": "Subscription",
-		"reference_name": subscription,
-		"status": "Initiated"
-	}, fields=["name", "payment_key", "grand_total"])
+		"status": "Initiated",
+		"reference_doctype": ("in", ("Sales Order", "Sales Invoice")),
+		"reference_name": ("in", orders + invoices)
+	}, fields=["name", "payment_key", "grand_total", "reference_doctype", "reference_name", "currency"],
+	order_by="transaction_date desc")
 
-	if payment_requests:
-		output = [dict(x, **{"payment_link": get_payment_link(x.payment_key)}) for x in payment_requests]
+	references = []
+	for payment_request in payment_requests:
+		print("payment_request", payment_request)
+		if payment_request.reference_doctype == "Sales Invoice":
+			invoice = frappe.db.get_value(payment_request.reference_doctype, payment_request.reference_name, ("outstanding_amount", "docstatus"), as_dict=True)
+			print(invoice)
+			if invoice.docstatus != 1 or not invoice.outstanding_amount:
+				frappe.db.set_value("Payment Request", payment_request.name, "status", "Cancelled")
+				continue
+
+		elif payment_request.reference_doctype == "Sales Order":
+			order = frappe.db.get_value(payment_request.reference_doctype, payment_request.reference_name, ("advance_paid", "docstatus", "status"), as_dict=True)
+			if not order.docstatus == 1 or order.outstanding_amount or not order.status in ("Completed", "Closed"):
+				frappe.db.set_value("Payment Request", payment_request.name, "status", "Cancelled")
+				continue
+
+		if (payment_request.reference_doctype, payment_request.reference_name) not in references:
+			payment_request["payment_link"] = get_payment_link(payment_request.payment_key)
+			output.append(payment_request)
+			references.append((payment_request.reference_doctype, payment_request.reference_name))
 
 	return output
 

@@ -22,7 +22,13 @@ $.extend(erpnext, {
 
 	toggle_naming_series: function() {
 		if(cur_frm.fields_dict.naming_series) {
-			cur_frm.toggle_display("naming_series", cur_frm.doc.__islocal?true:false);
+			cur_frm.toggle_display("naming_series", cur_frm.doc.__islocal ? true : false);
+			if (cur_frm.doc.__islocal) {
+				const naming_series = cur_frm.get_field("naming_series");
+				if (!naming_series.value) {
+					cur_frm.set_value("naming_series", naming_series.default || naming_series.get_options()[0]);
+				}
+			}
 		}
 	},
 
