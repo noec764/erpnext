@@ -165,8 +165,8 @@ class PartyLedgerSummaryReport(object):
 				or row.closing_amount
 			):
 				total_party_adjustment = sum(
-					amount for amount in self.party_adjustment_details.get(party, {})
-				).values()
+					amount for amount in self.party_adjustment_details.get(party, {}).values()
+				)
 				row.paid_amount -= total_party_adjustment
 
 				adjustments = self.party_adjustment_details.get(party, {})
