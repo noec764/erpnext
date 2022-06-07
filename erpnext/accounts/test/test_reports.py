@@ -27,6 +27,7 @@ REPORT_FILTER_TEST_CASES: List[Tuple[ReportName, ReportFilters]] = [
 	("Gross Profit", {"group_by": "Customer Group"}),
 	("Item-wise Sales Register", {}),
 	("Item-wise Purchase Register", {}),
+	("Sales Register", {"item_group": "All Item Groups"}),
 	("Sales Register", {}),
 	("Purchase Register", {}),
 	(
