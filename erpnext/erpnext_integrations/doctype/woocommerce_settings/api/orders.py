@@ -3,7 +3,7 @@ from collections import defaultdict
 import frappe
 from frappe import _
 from frappe.contacts.doctype.address.address import get_preferred_address
-from frappe.utils import add_days, cint, flt, nowdate
+from frappe.utils import add_days, cint, flt, get_timestamp, nowdate
 from frappe.utils.background_jobs import get_jobs
 
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
@@ -111,24 +111,18 @@ def _sync_customer(wc_api, id):
 
 
 def get_woocommerce_orders(wc_api):
-	max_orders = wc_api.settings.max_orders
 	per_page = 100
-	documents_fetched = min(per_page, max_orders if max_orders else per_page)
-	response = wc_api.get_orders(params={"per_page": documents_fetched})
+	response = wc_api.get_orders(
+		params={
+			"per_page": per_page,
+			"modified_after": get_timestamp(wc_api.settings.last_synchronization_datetime),
+		}
+	)
 	woocommerce_orders = response.json()
 
-	if not max_orders or len(woocommerce_orders) < max_orders:
-		for page_idx in range(2, cint(response.headers.get("X-WP-TotalPages")) + 1):
-			if not max_orders or documents_fetched < cint(max_orders):
-				response = wc_api.get_orders(params={"per_page": per_page, "page": page_idx})
-
-				new_orders = (
-					response.json()
-					if documents_fetched + len(response.json()) < cint(max_orders) or not max_orders
-					else response.json()[: cint(max_orders) - documents_fetched]
-				)
-				documents_fetched += per_page
-				woocommerce_orders.extend(new_orders)
+	for page_idx in range(2, cint(response.headers.get("X-WP-TotalPages")) + 1):
+		response = wc_api.get_orders(params={"per_page": per_page, "page": page_idx})
+		woocommerce_orders.extend(response.json())
 
 	return woocommerce_orders
 

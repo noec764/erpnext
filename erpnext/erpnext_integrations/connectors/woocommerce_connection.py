@@ -11,7 +11,10 @@ from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import
 	create_update_order,
 )
 
-handler_map = {"order.created": create_update_order, "order.updated": create_update_order}
+handler_map = {
+	"order.created": create_update_order,
+	"order.updated": create_update_order,
+}
 
 
 def woocommerce_webhook(f):

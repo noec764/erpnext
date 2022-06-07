@@ -1,7 +1,3 @@
-import json
-
-import frappe
-
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 
 
@@ -54,4 +50,4 @@ def delete_webhooks():
 
 	webhooks = wc_api.get("webhooks", params={"per_page": 100}).json()
 	for webhook in webhooks:
-		res = wc_api.delete(f"webhooks/{webhook['id']}", params={"force": True}).json()
+		wc_api.delete(f"webhooks/{webhook['id']}", params={"force": True}).json()

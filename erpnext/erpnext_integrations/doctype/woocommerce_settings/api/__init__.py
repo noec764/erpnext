@@ -1,5 +1,4 @@
 import frappe
-import requests
 from woocommerce import API
 
 
