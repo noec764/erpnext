@@ -227,7 +227,7 @@
    "options": "Payment Gateway"
   },
   {
-   "depends_on": "eval:doc.enabled",
+   "depends_on": "eval:doc.enable_sync",
    "fieldname": "last_synchronization_datetime",
    "fieldtype": "Datetime",
    "label": "Last synchronization datetime",
@@ -237,7 +237,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-06-07 18:30:03.314920",
+ "modified": "2022-06-08 13:14:03.631488",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

@@ -11,8 +11,8 @@ from frappe.model.document import Document
 from frappe.utils import cint
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import (
-	WooCommerceShippingMethods,
-	WooCommerceTaxes,
+	WooCommerceShippingMethodsAPI,
+	WooCommerceTaxesAPI,
 	sync_orders,
 )
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products import (
@@ -37,7 +37,7 @@ class WoocommerceSettings(Document):
 	def create_delete_custom_fields(self):
 		if self.enable_sync:
 			# create
-			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute"]:
+			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute", "Item Booking"]:
 				fields = [
 					dict(
 						fieldname="woocommerce_id",
@@ -154,14 +154,14 @@ def get_series():
 
 @frappe.whitelist()
 def get_taxes():
-	wc_api = WooCommerceTaxes()
+	wc_api = WooCommerceTaxesAPI()
 	taxes = wc_api.get_taxes()
 	return taxes
 
 
 @frappe.whitelist()
 def get_shipping_methods():
-	wc_api = WooCommerceShippingMethods()
+	wc_api = WooCommerceShippingMethodsAPI()
 	shipping_methods = wc_api.get_shipping_methods(params={"per_page": 100})
 	return shipping_methods
 

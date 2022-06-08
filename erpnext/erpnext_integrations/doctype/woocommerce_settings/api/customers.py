@@ -8,16 +8,16 @@ from frappe.utils import cint
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
 
 
-class WooCommerceCustomers(WooCommerceAPI):
+class WooCommerceCustomersAPI(WooCommerceAPI):
 	def __init__(self, version="wc/v3", *args, **kwargs):
-		super(WooCommerceCustomers, self).__init__(version, args, kwargs)
+		super(WooCommerceCustomersAPI, self).__init__(version, args, kwargs)
 
 	def get_customers(self, params=None):
 		return self.get("customers", params=params)
 
 
 def get_customers():
-	wc_api = WooCommerceCustomers()
+	wc_api = WooCommerceCustomersAPI()
 
 	woocommerce_customers = get_woocommerce_customers(wc_api)
 
@@ -125,7 +125,7 @@ def sync_customer(settings, woocommerce_customer):
 
 
 def sync_guest_customers(order):
-	wc_api = WooCommerceCustomers()
+	wc_api = WooCommerceCustomersAPI()
 	customer_object = {
 		"first_name": order.get("billing", {}).get("first_name"),
 		"last_name": order.get("billing", {}).get("last_name"),
