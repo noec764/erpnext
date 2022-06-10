@@ -613,7 +613,7 @@ class WooCommerceOrderSync:
 			payment_entry = get_payment_entry(self.sales_order.doctype, self.sales_order.name)
 			if payment_entry.paid_amount:
 				if self.woocommerce_order.get("payment_method") == "stripe":
-					self.add_stripe_fees(self.woocommerce_order, payment_entry)
+					self.add_stripe_fees(payment_entry)
 				payment_entry.posting_date = self.woocommerce_order.get("date_paid")
 				payment_entry.reference_no = (
 					self.woocommerce_order.get("transaction_id")
