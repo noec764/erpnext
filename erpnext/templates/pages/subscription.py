@@ -8,7 +8,7 @@ from frappe.utils import cint, get_url, nowdate
 from erpnext.accounts.doctype.payment_request.payment_request import get_payment_link
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
-from erpnext.shopping_cart.cart import get_party
+from erpnext.e_commerce.shopping_cart.cart import get_party
 
 
 def get_context(context):
