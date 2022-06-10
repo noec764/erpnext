@@ -127,6 +127,9 @@ class WoocommerceSettings(Document):
 		self.endpoint = delivery_url
 
 	def create_webhooks(self):
+		if frappe.conf.developer_mode:
+			return
+
 		if self.enable_sync and self.endpoint:
 			create_webhooks()
 		elif (
