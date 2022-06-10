@@ -30,6 +30,7 @@ class website_maker(object):
 		website_settings = frappe.get_doc("Website Settings", "Website Settings")
 		website_settings.home_page = "home"
 		website_settings.website_theme = "Dokos"
+		website_settings.app_name = "Dokos"
 		website_settings.brand_html = self.company
 		website_settings.copyright = self.company
 		website_settings.top_bar_items = []
