@@ -105,7 +105,7 @@ class WooCommerceOrdersSync:
 					"per_page": per_page,
 					"modified_after": get_datetime(
 						self.wc_api.settings.last_synchronization_datetime or add_years(now_datetime(), -99)
-					).isformat(),
+					).isoformat(),
 					"dp": 4,
 					"page": page_idx,
 				}

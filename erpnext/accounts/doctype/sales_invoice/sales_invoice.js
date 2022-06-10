@@ -866,7 +866,7 @@ frappe.ui.form.on('Sales Invoice', {
 					title: __("Fetch Timesheet"),
 					fields: [
 						{
-							"label" : __("From"),
+							"label" : __("From", null, "Fetch timesheet in sales invoice"),
 							"fieldname": "from_time",
 							"fieldtype": "Date",
 							"reqd": 1,
@@ -876,7 +876,7 @@ frappe.ui.form.on('Sales Invoice', {
 							fieldname: "col_break_1",
 						},
 						{
-							"label" : __("To"),
+							"label" : __("To", null, "Fetch timesheet in sales invoice"),
 							"fieldname": "to_time",
 							"fieldtype": "Date",
 							"reqd": 1,

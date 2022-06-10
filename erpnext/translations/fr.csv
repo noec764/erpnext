@@ -250,10 +250,10 @@ INV-.####<br>
 <li>Calculating Basic Salary based on <code>base</code>
 <pre><code>Condition: base &lt; 10000</code></pre>
 <pre><code>Formula: base * .2</code></pre></li>
-<li>Calculating HRA based on Basic Salary<code>BS</code> 
+<li>Calculating HRA based on Basic Salary<code>BS</code>
 <pre><code>Condition: BS &gt; 2000</code></pre>
 <pre><code>Formula: BS * .1</code></pre></li>
-<li>Calculating TDS based on Employment Type<code>employment_type</code> 
+<li>Calculating TDS based on Employment Type<code>employment_type</code>
 <pre><code>Condition: employment_type==""Intern""</code></pre>
 <pre><code>Amount: 1000</code></pre></li>
 </ol>","<h3>Aide</h3>
@@ -361,7 +361,7 @@ INV-.####<br>
 
 <pre>Contract for Customer {{ party_name }}
 
--Valid From : {{ start_date }} 
+-Valid From : {{ start_date }}
 -Valid To : {{ end_date }}
 </pre>
 
@@ -415,7 +415,7 @@ INV-.####<br>
 
 <pre>Delivery Terms for Order number {{ name }}
 
--Order Date : {{ transaction_date }} 
+-Order Date : {{ transaction_date }}
 -Expected Delivery Date : {{ delivery_date }}
 </pre>
 
@@ -923,13 +923,13 @@ For Example: If you are selling Laptops and Backpacks separately and have a spec
 
 Note: BOM = Bill of Materials","Regroupement d' **Articles** dans un autre **Article**. Ceci est utile si vous regroupez certains **Articles** dans un lot et que vous maintenez l'inventaire des **Articles** du lot et non de l'**Article** composé. L'**Article** composé aura ""Article En Stock"" à ""Non"" et ""Article À Vendre"" à ""Oui"". Exemple : Si vous vendez des Ordinateurs Portables et Sacs à Dos séparément et qu'il y a un prix spécial si le client achète les deux, alors l'Ordinateur Portable + le Sac à Dos sera un nouveau Produit Groupé. Remarque: nomenclature = Liste
 Des Matériaux",
-"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**. 
+"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**.
 
 The package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item"" as ""Yes"".
 
 For Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.
 
-Note: BOM = Bill of Materials","Agréger un groupe de **Items** dans un autre **Item**. C'est utile si vous regroupez certains **Items** dans un paquet et que vous gardez en stock les **Items** emballés et non le **Item** agrégé. 
+Note: BOM = Bill of Materials","Agréger un groupe de **Items** dans un autre **Item**. C'est utile si vous regroupez certains **Items** dans un paquet et que vous gardez en stock les **Items** emballés et non le **Item** agrégé.
 
 Le paquet **Item** aura pour ""Is Stock Item"" la valeur ""No"" et pour ""Is Sales Item"" la valeur ""Yes"".
 
@@ -10134,7 +10134,7 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 
 #### Description of Columns
 
-1. Calculation Type: 
+1. Calculation Type:
     - This can be on **Net Total** (that is the sum of basic amount).
     - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
     - **Actual** (as mentioned).
@@ -10152,9 +10152,9 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 
 Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous les **articles**. Si des **articles** ont des taux différents, ils doivent être ajoutés dans la table **Taxe sur les articles** de la fiche **article**.
 
-#### Description des colonnes 
+#### Description des colonnes
 
-1. Type de calcul: 
+1. Type de calcul:
     - Il peut s'agir du **Total net** (c'est-à-dire la somme du montant de base).
     - **Sur le total / montant de la ligne précédente** (pour les taxes ou frais cumulés). Si vous sélectionnez cette option, la taxe sera appliquée sous la forme d'un pourcentage du montant ou du total de la ligne précédente (dans le tableau des taxes).
     - **Réel** (comme indiqué).
@@ -10215,7 +10215,7 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 
 #### Description of Columns
 
-1. Calculation Type: 
+1. Calculation Type:
     - This can be on **Net Total** (that is the sum of basic amount).
     - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
     - **Actual** (as mentioned).
@@ -10234,7 +10234,7 @@ Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous
 
 #### Description des colonnes
 
-1. Type de calcul : 
+1. Type de calcul :
     - Il peut s'agir du **Total net** (c'est-à-dire la somme du montant de base).
     - **Sur le total / montant de la ligne précédente** (pour les taxes ou frais cumulés). Si vous sélectionnez cette option, la taxe sera appliquée sous la forme d'un pourcentage du montant ou du total de la ligne précédente (dans le tableau des taxes).
     - **Actuel** (comme mentionné).
@@ -12654,3 +12654,5 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {} {} is already linked with {} {},{} {} est déjà lié avec {} {},
 {} {} should be between {} and {},{} {} doit être entre {} et {},
 ← Back to upload files,← Retour au téléchargement de fichiers,
+From,Date de début,Fetch timesheet in sales invoice
+To,Date de fin,Fetch timesheet in sales invoice
