@@ -14,10 +14,10 @@ frappe.listview_settings['Delivery Note'] = {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
 	},
-	onload: function (doclist) {
+	onload: function (listview) {
 		const action = () => {
-			const selected_docs = doclist.get_checked_items();
-			const docnames = doclist.get_checked_items(true);
+			const selected_docs = listview.get_checked_items();
+			const docnames = listview.get_checked_items(true);
 
 			if (selected_docs.length > 0) {
 				for (let doc of selected_docs) {
@@ -54,8 +54,6 @@ frappe.listview_settings['Delivery Note'] = {
 			};
 		};
 
-		// doclist.page.add_actions_menu_item(__('Create Delivery Trip'), action, true);
-
 		listview.page.add_action_item(__('Create Delivery Trip'), action);
 
 		listview.page.add_action_item(__("Sales Invoice"), ()=>{
@@ -67,11 +65,11 @@ frappe.listview_settings['Delivery Note'] = {
 		});
 
 		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
-			doclist.page.add_actions_menu_item(
+			listview.page.add_actions_menu_item(
 				__("Accounting Journal Adjustment"),
 				() => {
-					const docnames = doclist.get_checked_items(true);
-					new erpnext.journalAdjustment({doctype: doclist.doctype, docnames: docnames})
+					const docnames = listview.get_checked_items(true);
+					new erpnext.journalAdjustment({doctype: listview.doctype, docnames: docnames})
 				},
 				true
 			);
