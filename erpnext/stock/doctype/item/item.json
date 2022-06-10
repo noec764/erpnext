@@ -11,7 +11,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "details",
+  "general_settings",
   "naming_series",
   "item_code",
   "variant_of",
@@ -902,7 +902,7 @@
    "collapsible": 1,
    "depends_on": "eval:doc.enable_item_booking",
    "fieldname": "calendar_section",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Calendar Section"
   },
   {
@@ -954,13 +954,6 @@
    "label": "Quality"
   },
   {
-   "fieldname": "details",
-   "fieldtype": "Tab Break",
-   "label": "Details",
-   "oldfieldtype": "Section Break",
-   "options": "fa fa-flag"
-  },
-  {
    "fieldname": "dashboard_tab",
    "fieldtype": "Tab Break",
    "label": "Dashboard",
@@ -971,6 +964,13 @@
    "fieldname": "accounting",
    "fieldtype": "Tab Break",
    "label": "Accounting"
+  },
+  {
+   "fieldname": "general_settings",
+   "fieldtype": "Tab Break",
+   "label": "General Settings",
+   "oldfieldtype": "Section Break",
+   "options": "fa fa-flag"
   }
  ],
  "icon": "fa fa-tag",
@@ -978,7 +978,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-08 19:16:35.066216",
+ "modified": "2022-06-10 16:48:00.672941",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
