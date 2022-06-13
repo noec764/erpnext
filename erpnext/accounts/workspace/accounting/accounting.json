@@ -10,7 +10,7 @@
   }
  ],
  "color": "#407395",
- "content": "[{\"type\":\"chart\",\"data\":{\"chart_name\":\"Profit and Loss\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Balance\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Chart of Accounts\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Journal Entry\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment Entry\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Receivable\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"General Ledger\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Trial Balance\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Rapports et donn\u00e9es de base</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"General Ledger\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounts Receivable\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounts Payable\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Financial Statements\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Taxes\",\"col\":4}}]",
+ "content": "[{\"type\":\"chart\",\"data\":{\"chart_name\":\"Profit and Loss\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Balance\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Chart of Accounts\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Journal Entry\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment Entry\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Receivable\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"General Ledger\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Trial Balance\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Rapports et donn\u00e9es de base</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"General Ledger\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounts Receivable\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Accounts Payable\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Financial Statements\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Taxes\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Bank and Payments\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Subscription Management\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Equity Management\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Budget and Cost Centers\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Opening and closing\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Profitability\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Trends\",\"col\":4}}]",
  "creation": "2020-03-02 15:41:59.515192",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -22,6 +22,17 @@
  "label": "Accounting",
  "links": [
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Master Data",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -33,6 +44,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -44,6 +56,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -55,6 +68,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -66,6 +80,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -77,6 +92,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -88,6 +104,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Accounting Journal",
@@ -98,6 +115,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -109,6 +127,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -120,6 +139,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "General Ledger",
@@ -128,6 +148,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -139,6 +160,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -150,6 +172,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -161,6 +184,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -172,6 +196,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -183,6 +208,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Accounts Receivable",
@@ -191,6 +217,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -202,6 +229,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -213,6 +241,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -224,6 +253,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -235,6 +265,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -246,6 +277,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -257,6 +289,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -268,6 +301,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -279,6 +313,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -290,6 +325,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -301,6 +337,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Accounts Payable",
@@ -309,6 +346,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -320,6 +358,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -331,6 +370,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -342,6 +382,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -353,6 +394,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -364,6 +406,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -375,6 +418,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -386,6 +430,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -397,6 +442,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -408,6 +454,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
@@ -416,6 +463,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -427,6 +475,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Journal Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -438,6 +487,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -449,6 +499,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Customer",
    "hidden": 0,
    "is_query_report": 1,
@@ -460,6 +511,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -471,6 +523,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Address",
    "hidden": 0,
    "is_query_report": 1,
@@ -482,6 +535,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Financial Statements",
@@ -490,6 +544,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -501,6 +556,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -512,6 +568,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -523,6 +580,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -534,6 +592,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -545,6 +604,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -556,6 +616,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -567,6 +628,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -578,6 +640,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings",
@@ -586,6 +649,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -597,6 +661,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -608,6 +673,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -619,6 +685,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank and Payments",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -630,6 +707,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -641,6 +719,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Bank Transaction",
@@ -651,6 +730,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -662,6 +742,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -673,6 +754,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Payment Reconciliation",
@@ -683,6 +765,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -694,6 +777,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sepa Mandate",
@@ -704,6 +788,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sepa Direct Debit",
@@ -714,6 +799,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sepa Direct Debit Settings",
@@ -724,6 +810,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription Management",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -735,6 +832,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -746,6 +844,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -757,6 +856,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -769,6 +869,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -781,6 +882,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -793,6 +895,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -805,6 +908,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -817,6 +921,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -829,6 +934,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -841,6 +947,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -853,6 +960,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -865,6 +973,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -877,6 +986,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -889,6 +999,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Equity Management",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -900,6 +1021,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -911,6 +1033,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Share Transfer",
    "hidden": 0,
    "is_query_report": 1,
@@ -922,6 +1045,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Share Transfer",
    "hidden": 0,
    "is_query_report": 1,
@@ -933,6 +1057,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Budget and Cost Centers",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -944,6 +1079,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -955,6 +1091,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -966,6 +1103,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Cost Center",
    "hidden": 0,
    "is_query_report": 0,
@@ -977,6 +1115,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Cost Center",
    "hidden": 0,
    "is_query_report": 1,
@@ -988,6 +1127,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -999,6 +1139,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Opening and closing",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1010,6 +1161,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Adjustment Entry",
@@ -1020,6 +1172,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1031,6 +1184,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1042,6 +1196,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Fichier des Ecritures Comptables [FEC]",
@@ -1053,6 +1208,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Taxes",
@@ -1061,6 +1217,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1072,6 +1229,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1083,6 +1241,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1094,6 +1253,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1105,6 +1265,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1116,6 +1277,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -1127,6 +1289,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Profitability",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -1138,6 +1311,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "GL Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -1149,6 +1323,17 @@
    "type": "Link"
   },
   {
+   "columns": 4,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trends",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
    "dependencies": "Sales Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -1160,6 +1345,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Invoice",
    "hidden": 0,
    "is_query_report": 1,
@@ -1171,7 +1357,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-20 10:42:08.991676",
+ "modified": "2022-06-13 17:49:33.115875",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
@@ -1183,46 +1369,55 @@
  "sequence_id": 3.0,
  "shortcuts": [
   {
+   "columns": 0,
    "label": "Chart of Accounts",
    "link_to": "Account",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Sales Invoice",
    "link_to": "Sales Invoice",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Purchase Invoice",
    "link_to": "Purchase Invoice",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Journal Entry",
    "link_to": "Journal Entry",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Payment Entry",
    "link_to": "Payment Entry",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Accounts Receivable",
    "link_to": "Accounts Receivable",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "General Ledger",
    "link_to": "General Ledger",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Trial Balance",
    "link_to": "Trial Balance",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Dashboard",
    "link_to": "Accounts",
    "type": "Dashboard"
