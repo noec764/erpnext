@@ -113,7 +113,7 @@ frappe.ui.form.on('Service Level Agreement', {
 					['DocType', 'istable', '=', 0],
 					['DocType', 'is_submittable', '=', 0],
 					['DocType', 'name', 'not in', invalid_doctypes],
-					['DocType', 'module', 'not in', ["Email", "Core", "Custom", "Event Streaming", "Social", "Data Migration", "Geo", "Desk"]]
+					['DocType', 'module', 'not in', ["Email", "Core", "Custom", "Event Streaming", "Social", "Geo", "Desk"]]
 				]
 			};
 		});

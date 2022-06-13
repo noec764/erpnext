@@ -14,7 +14,7 @@ frappe.ui.form.on('Employee Grievance', {
 		});
 		frm.set_query('associated_document_type', function() {
 			let ignore_modules = ["Setup", "Core", "Integrations", "Automation", "Website",
-				"Utilities", "Event Streaming", "Social", "Chat", "Data Migration", "Printing", "Desk", "Custom"];
+				"Utilities", "Event Streaming", "Social", "Chat", "Printing", "Desk", "Custom"];
 			return {
 				filters: {
 					istable: 0,

@@ -1,5 +1,4 @@
 import frappe
-from frappe import _
 
 
 def execute():
@@ -8,11 +7,6 @@ def execute():
 		{
 			"document": "DocType",
 			"items": [x["name"] for x in frappe.get_all("DocType", filters={"module": "Hub Node"})],
-		},
-		{"document": "Data Migration Plan", "items": ["Hub Sync"]},
-		{
-			"document": "Data Migration Mapping",
-			"items": ["Company to Hub Company", "Hub Message to Lead", "Item to Hub Item"],
 		},
 		{"document": "Module Def", "items": ["Hub Node"]},
 	]

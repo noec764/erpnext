@@ -150,7 +150,7 @@ class ServiceLevelAgreement(Document):
 				"name": ["not in", invalid_doctypes],
 				"module": [
 					"not in",
-					["Email", "Core", "Custom", "Event Streaming", "Social", "Data Migration", "Geo", "Desk"],
+					["Email", "Core", "Custom", "Event Streaming", "Social", "Geo", "Desk"],
 				],
 			},
 			pluck="name",
