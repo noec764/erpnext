@@ -1,11 +1,7 @@
 {
- "charts": [
-  {
-   "chart_name": "Territory Wise Sales"
-  }
- ],
+ "charts": [],
  "color": "#ec9a9a",
- "content": "[{\"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"CRM\", \"col\": 12}}, {\"type\": \"chart\", \"data\": {\"chart_name\": null, \"col\": 12}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Vos raccourcis\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Lead\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunity\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customer\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Analytics\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Dashboard\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Rapports et donn\\u00e9es de base\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Sales Pipeline\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Maintenance\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Campaign\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}]",
+ "content": "[{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"ToDo\",\"col\":4}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Open Opportunities\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vos raccourcis</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Opportunity\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Analytics\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Rapports et donn\u00e9es de base</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Sales Pipeline\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Campaign\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
  "creation": "2020-01-23 14:48:30.183272",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -17,6 +13,7 @@
  "label": "CRM",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sales Pipeline",
@@ -25,6 +22,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -36,6 +34,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -47,6 +46,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -58,6 +58,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -69,6 +70,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -80,6 +82,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -91,6 +94,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -102,6 +106,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -113,6 +118,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -124,6 +130,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
@@ -132,6 +139,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Lead",
    "hidden": 0,
    "is_query_report": 1,
@@ -143,6 +151,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -154,6 +163,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Lead",
    "hidden": 0,
    "is_query_report": 1,
@@ -165,6 +175,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Opportunity",
    "hidden": 0,
    "is_query_report": 1,
@@ -176,6 +187,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -187,6 +199,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Lead",
    "hidden": 0,
    "is_query_report": 1,
@@ -198,6 +211,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Lead",
    "hidden": 0,
    "is_query_report": 1,
@@ -209,6 +223,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Maintenance",
@@ -217,6 +232,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -228,6 +244,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -239,6 +256,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -250,6 +268,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Campaign",
@@ -258,6 +277,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -269,6 +289,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -280,6 +301,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -291,14 +313,27 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings",
-   "link_count": 0,
+   "link_count": 10,
    "onboard": 0,
    "type": "Card Break"
   },
   {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CRM Settings",
+   "link_count": 0,
+   "link_to": "CRM Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -310,6 +345,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -321,6 +357,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -332,6 +369,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -343,6 +381,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -354,6 +393,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -365,6 +405,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -376,6 +417,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -387,6 +429,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -398,19 +441,31 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-20 10:42:11.012647",
+ "modified": "2022-06-13 16:14:20.071485",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "CRM",
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
- "quick_lists": [],
+ "quick_lists": [
+  {
+   "document_type": "ToDo",
+   "label": "ToDo",
+   "quick_list_filter": "{\"allocated_to\": frappe.session.user}"
+  },
+  {
+   "document_type": "Opportunity",
+   "label": "Open Opportunities",
+   "quick_list_filter": "{\"status\":[\"in\",[\"Open\",\"Replied\"]]}"
+  }
+ ],
  "roles": [],
  "sequence_id": 6.0,
  "shortcuts": [
   {
    "color": "Blue",
+   "columns": 0,
    "format": "{} Open",
    "label": "Lead",
    "link_to": "Lead",
@@ -419,6 +474,7 @@
   },
   {
    "color": "Blue",
+   "columns": 0,
    "format": "{} Assigned",
    "label": "Opportunity",
    "link_to": "Opportunity",
@@ -426,16 +482,19 @@
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Customer",
    "link_to": "Customer",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Sales Analytics",
    "link_to": "Sales Analytics",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Dashboard",
    "link_to": "CRM",
    "type": "Dashboard"
