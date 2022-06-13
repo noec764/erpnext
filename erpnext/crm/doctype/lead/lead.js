@@ -16,7 +16,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		this.frm.set_df_property('first_name', 'reqd', true);
 	}
 
-	onload() {
+	onload () {
 		this.frm.set_query("customer", function (doc, cdt, cdn) {
 			return { query: "erpnext.controllers.queries.customer_query" }
 		});
@@ -30,7 +30,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		});
 	}
 
-	refresh() {
+	refresh () {
 		let doc = this.frm.doc;
 		erpnext.toggle_naming_series();
 		frappe.dynamic_link = { doc: doc, fieldname: 'name', doctype: 'Lead' }
@@ -65,12 +65,12 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 			frappe.call({
 				method: 'erpnext.crm.doctype.lead.lead.add_lead_to_prospect',
 				args: {
-					'lead': this.frm.doc.name,
+					'lead': cur_frm.doc.name,
 					'prospect': data.prospect
 				},
 				callback: function(r) {
 					if (!r.exc) {
-						this.frm.reload_doc();
+						frm.reload_doc();
 					}
 				},
 				freeze: true,
@@ -82,50 +82,50 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 	make_customer () {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_customer",
-			frm: this.frm
+			frm: cur_frm
 		})
 	}
 
-	make_opportunity() {
+	make_opportunity () {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_opportunity",
-			frm: this.frm
+			frm: cur_frm
 		})
 	}
 
-	make_quotation() {
+	make_quotation () {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.lead.lead.make_quotation",
-			frm: this.frm
+			frm: cur_frm
 		})
 	}
 
 	make_prospect () {
 		frappe.model.with_doctype("Prospect", function() {
 			let prospect = frappe.model.get_new_doc("Prospect");
-			prospect.company_name = this.frm.doc.company_name;
-			prospect.no_of_employees = this.frm.doc.no_of_employees;
-			prospect.industry = this.frm.doc.industry;
-			prospect.market_segment = this.frm.doc.market_segment;
-			prospect.territory = this.frm.doc.territory;
-			prospect.fax = this.frm.doc.fax;
-			prospect.website = this.frm.doc.website;
-			prospect.prospect_owner = this.frm.doc.lead_owner;
+			prospect.company_name = cur_frm.doc.company_name;
+			prospect.no_of_employees = cur_frm.doc.no_of_employees;
+			prospect.industry = cur_frm.doc.industry;
+			prospect.market_segment = cur_frm.doc.market_segment;
+			prospect.territory = cur_frm.doc.territory;
+			prospect.fax = cur_frm.doc.fax;
+			prospect.website = cur_frm.doc.website;
+			prospect.prospect_owner = cur_frm.doc.lead_owner;
 
 			let lead_prospect_row = frappe.model.add_child(prospect, 'prospect_lead');
-			lead_prospect_row.lead = this.frm.doc.name;
+			lead_prospect_row.lead = cur_frm.doc.name;
 
 			frappe.set_route("Form", "Prospect", prospect.name);
 		});
 	}
 
-	company_name() {
+	company_name () {
 		if (!this.frm.doc.lead_name) {
 			this.frm.set_value("lead_name", this.frm.doc.company_name);
 		}
 	}
 
-	contact_date() {
+	contact_date () {
 		if (this.frm.doc.contact_date) {
 			let d = moment(this.frm.doc.contact_date);
 			d.add(1, "day");
