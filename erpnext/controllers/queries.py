@@ -807,6 +807,7 @@ def get_fields(doctype, fields=None):
 @frappe.validate_and_sanitize_search_inputs
 def get_uoms(doctype, txt, searchfield, start, page_len, filters):
 	UOM = frappe.qb.DocType("UOM")
+	uom_list = []
 	if filters and filters.get("item_code"):
 		UOM_Conversion_Detail = frappe.qb.DocType("UOM Conversion Detail")
 
@@ -819,7 +820,7 @@ def get_uoms(doctype, txt, searchfield, start, page_len, filters):
 			.orderby(UOM_Conversion_Detail.uom, order=frappe.qb.desc)
 		).run()
 
-	else:
+	if not (filters and filters.get("item_code")) or not uom_list:
 		uom_list = frappe.get_list("UOM", fields=["uom_name", "must_be_whole_number"], as_list=True)
 
 	return tuple(
