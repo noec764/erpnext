@@ -50,6 +50,7 @@ def get_cart_quotation(doc=None):
 		"billing_addresses": get_billing_addresses(party),
 		"shipping_rules": get_applicable_shipping_rules(party),
 		"cart_settings": frappe.get_cached_doc("E Commerce Settings"),
+		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
 	}
 
 

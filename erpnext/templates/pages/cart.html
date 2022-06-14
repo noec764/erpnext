@@ -129,4 +129,9 @@
 {{ include_script("frappe-web.bundle.js") }}
 {{ include_script("controls.bundle.js") }}
 {{ include_script("dialog.bundle.js") }}
+
+<script>Object.assign(frappe.boot, {
+	link_title_doctypes: {{ link_title_doctypes }}
+})
+</script>
 {% endblock %}
