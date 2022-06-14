@@ -197,7 +197,7 @@ erpnext.ProductGrid = class {
 				<a href="${item.route}">
 					<div id="${ item.name }" class="btn
 						btn-sm btn-primary
-						ml-4 mb-0 mt-0
+						mb-0 mt-0 w-100
 						${ item.in_cart || !item.enable_item_booking ? 'hidden' : '' }"
 						data-item-code="${ item.item_code }"
 						style="padding: 0.25rem 1rem; min-width: 135px;">

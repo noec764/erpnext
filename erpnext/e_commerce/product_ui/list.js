@@ -196,7 +196,7 @@ erpnext.ProductList = class {
 					</div>
 				</a>
 
-				<a href="${item.route}">
+				<a href="${item.route}" style="float: right;">
 					<div id="${ item.name }" class="btn
 						btn-sm btn-primary
 						ml-4 mb-0 mt-0

@@ -200,7 +200,7 @@ class BookingSelector {
 		</div>`)
 
 		this.$content.find('.timeslot-options').on('click', function() {
-			const selected_slot = this.slots.filter(f => f.id == $(this).attr("data-slot-id"));
+			const selected_slot = me.slots.filter(f => f.id == $(this).attr("data-slot-id"));
 			me.select_slot(selected_slot)
 		})
 
