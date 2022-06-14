@@ -201,9 +201,9 @@ def item_details(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.db.sql(
 		"""select name, item_name, description from `tabItem`
 				where name in ( select item_code FROM `tabDelivery Note Item`
-	 						where parent= %s)
-	 			and %s like "%s" %s
-	 			limit  %s, %s """
+						where parent= %s)
+			and %s like "%s" %s
+			limit %s offset %s """
 		% ("%s", searchfield, "%s", get_match_cond(doctype), "%s", "%s"),
-		((filters or {}).get("delivery_note"), "%%%s%%" % txt, start, page_len),
+		((filters or {}).get("delivery_note"), "%%%s%%" % txt, page_len, start),
 	)

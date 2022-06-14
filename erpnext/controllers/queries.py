@@ -33,7 +33,7 @@ def employee_query(doctype, txt, searchfield, start, page_len, filters):
 			if(locate(%(_txt)s, employee_name), locate(%(_txt)s, employee_name), 99999),
 			idx desc,
 			name, employee_name
-		limit %(start)s, %(page_len)s""".format(
+		limit %(page_len)s offset %(start)s""".format(
 			**{
 				"fields": ", ".join(fields),
 				"key": searchfield,
@@ -64,7 +64,7 @@ def lead_query(doctype, txt, searchfield, start, page_len, filters):
 			if(locate(%(_txt)s, company_name), locate(%(_txt)s, company_name), 99999),
 			idx desc,
 			name, lead_name
-		limit %(start)s, %(page_len)s""".format(
+		limit %(page_len)s offset %(start)s""".format(
 			**{"fields": ", ".join(fields), "key": searchfield, "mcond": get_match_cond(doctype)}
 		),
 		{"txt": "%%%s%%" % txt, "_txt": txt.replace("%", ""), "start": start, "page_len": page_len},
@@ -98,7 +98,7 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 			if(locate(%(_txt)s, customer_name), locate(%(_txt)s, customer_name), 99999),
 			idx desc,
 			name, customer_name
-		limit %(start)s, %(page_len)s""".format(
+		limit %(page_len)s offset %(start)s""".format(
 			**{
 				"fields": ", ".join(fields),
 				"scond": searchfields,
@@ -165,7 +165,7 @@ def tax_account_query(doctype, txt, searchfield, start, page_len, filters):
 				AND `{searchfield}` LIKE %(txt)s
 				{mcond}
 			ORDER BY idx DESC, name
-			LIMIT %(offset)s, %(limit)s
+			LIMIT %(limit)s offset %(offset)s
 		""".format(
 				account_type_condition=account_type_condition,
 				searchfield=searchfield,
@@ -350,7 +350,7 @@ def get_project_name(doctype, txt, searchfield, start, page_len, filters):
 			if(locate(%(_txt)s, name), locate(%(_txt)s, name), 99999),
 			idx desc,
 			`tabProject`.name asc
-		limit {start}, {page_len}""".format(
+		limit {page_len} offset {start}""".format(
 			fields=", ".join(["`tabProject`.{0}".format(f) for f in fields]),
 			cond=cond,
 			scond=searchfields,
@@ -382,7 +382,7 @@ def get_delivery_notes_to_be_billed(doctype, txt, searchfield, start, page_len, 
 					and return_against in (select name from `tabDelivery Note` where per_billed < 100)
 				)
 			)
-			%(mcond)s order by `tabDelivery Note`.`%(key)s` asc limit %(start)s, %(page_len)s
+			%(mcond)s order by `tabDelivery Note`.`%(key)s` asc limit %(page_len)s offset %(start)s
 	"""
 		% {
 			"fields": ", ".join(["`tabDelivery Note`.{0}".format(f) for f in fields]),
@@ -455,7 +455,7 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 				{match_conditions}
 			group by batch_no {having_clause}
 			order by batch.expiry_date, sle.batch_no desc
-			limit %(start)s, %(page_len)s""".format(
+			limit %(page_len)s offset %(start)s""".format(
 				search_columns=search_columns,
 				cond=cond,
 				match_conditions=get_match_cond(doctype),
@@ -481,7 +481,7 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 			{0}
 			{match_conditions}
 			order by expiry_date, name desc
-			limit %(start)s, %(page_len)s""".format(
+			limit %(page_len)s offset %(start)s""".format(
 				cond,
 				search_columns=search_columns,
 				search_cond=search_cond,
@@ -660,7 +660,7 @@ def warehouse_query(doctype, txt, searchfield, start, page_len, filters):
 			{fcond} {mcond}
 		order by ifnull(`tabBin`.actual_qty, 0) desc
 		limit
-			{start}, {page_len}
+			{page_len} offset {start}
 		""".format(
 		bin_conditions=get_filters_cond(
 			doctype, filter_dict.get("Bin"), bin_conditions, ignore_permissions=True

@@ -9,7 +9,7 @@ from frappe import _
 from frappe.core.doctype.communication.email import make
 from frappe.desk.form.load import get_attachments
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import cint, get_url
+from frappe.utils import get_url
 from frappe.utils.print_format import download_pdf
 from frappe.utils.user import get_user_fullname
 
@@ -286,7 +286,7 @@ def get_supplier_contacts(doctype, txt, searchfield, start, page_len, filters):
 		"""select `tabContact`.name from `tabContact`, `tabDynamic Link`
 		where `tabDynamic Link`.link_doctype = 'Supplier' and (`tabDynamic Link`.link_name=%(name)s
 		and `tabDynamic Link`.link_name like %(txt)s) and `tabContact`.name = `tabDynamic Link`.parent
-		limit %(start)s, %(page_len)s""",
+		limit %(page_len)s offset %(start)s""",
 		{"start": start, "page_len": page_len, "txt": "%%%s%%" % txt, "name": filters.get("supplier")},
 	)
 

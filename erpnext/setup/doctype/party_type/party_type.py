@@ -16,12 +16,12 @@ class PartyType(Document):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_party_type(doctype, txt, searchfield, start, page_len, filters):
-	cond = ""
+	query_filter = {}
 	if filters and filters.get("account"):
 		account_type = frappe.db.get_value("Account", filters.get("account"), "account_type")
-		cond = "and account_type = '%s'" % account_type
+		query_filter = {"account_type": account_type}
 
-	party_types = [d["name"] for d in frappe.get_all("Party Type")]
+	party_types = [d["name"] for d in frappe.get_all("Party Type", filters=query_filter)]
 
 	output = [[v] for v in party_types if re.search(txt + ".*", _(v), re.IGNORECASE)]
 	return output
