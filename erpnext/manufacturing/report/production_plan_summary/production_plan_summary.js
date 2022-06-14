@@ -24,7 +24,7 @@ frappe.query_reports["Production Plan Summary"] = {
 
 		if (column.fieldname == "document_name") {
 			var color = data.pending_qty > 0 ? 'red': 'green';
-			value = `<a style='color:${color}' href="#Form/${data['document_type']}/${data['document_name']}" data-doctype="${data['document_type']}">${data['document_name']}</a>`;
+			value = `<a style='color:${color}' href="/app/${data['document_type']}/${data['document_name']}" data-doctype="${data['document_type']}">${data['document_name']}</a>`;
 		}
 
 		return value;

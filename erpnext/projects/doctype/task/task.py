@@ -118,14 +118,14 @@ class Task(NestedSet):
 	def validate_parent_template_task(self):
 		if self.parent_task:
 			if not frappe.db.get_value("Task", self.parent_task, "is_template"):
-				parent_task_format = """<a href="#Form/Task/{0}">{0}</a>""".format(self.parent_task)
+				parent_task_format = """<a href="apps/task/{0}">{0}</a>""".format(self.parent_task)
 				frappe.throw(_("Parent Task {0} is not a Template Task").format(parent_task_format))
 
 	def validate_depends_on_tasks(self):
 		if self.depends_on:
 			for task in self.depends_on:
 				if not frappe.db.get_value("Task", task.task, "is_template"):
-					dependent_task_format = """<a href="#Form/Task/{0}">{0}</a>""".format(task.task)
+					dependent_task_format = """<a href="/app/task/{0}">{0}</a>""".format(task.task)
 					frappe.throw(_("Dependent Task {0} is not a Template Task").format(dependent_task_format))
 
 	def validate_completed_on(self):
