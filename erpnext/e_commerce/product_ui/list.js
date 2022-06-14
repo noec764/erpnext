@@ -208,7 +208,7 @@ erpnext.ProductList = class {
 								<use href="#icon-assets"></use>
 							</svg>
 						</span>
-						${ settings.enable_checkout ? __('Add to Cart') :  __('Add to Quote') }
+						${ __('Select a slot') }
 					</div>
 				</a>
 			`;
