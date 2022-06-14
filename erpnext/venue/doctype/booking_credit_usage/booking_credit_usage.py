@@ -1,12 +1,10 @@
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
-
 import frappe
 from frappe.model.document import Document
 
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
-from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 from erpnext.venue.utils import get_customer
 
 
@@ -43,7 +41,6 @@ class BookingCreditUsage(Document):
 		for doc in frappe.get_all(
 			"Booking Credit Usage Reference",
 			filters={"booking_credit_usage": self.name},
-			fields=["name"],
 			pluck="name",
 		):
 			frappe.delete_doc("Booking Credit Usage Reference", doc)

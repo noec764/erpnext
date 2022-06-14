@@ -3,8 +3,7 @@
 
 
 import frappe
-from frappe.model.document import Document
-from frappe.utils import add_days, flt, get_datetime, getdate, now_datetime, nowdate
+from frappe.utils import flt, get_datetime, getdate, now_datetime
 
 from erpnext.controllers.status_updater import StatusUpdater
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
@@ -26,6 +25,7 @@ class BookingCredit(StatusUpdater):
 			"credits": self.quantity,
 			"reference_doctype": self.doctype,
 			"reference_document": self.name,
+			"expiration_date": self.expiration_date,
 			"uom": self.uom,
 			"item": self.item,
 		}
@@ -58,8 +58,6 @@ def get_balance(customer, date=None, uom=None):
 	query_filters = {"customer": customer, "docstatus": 1}
 	if uom:
 		query_filters.update({"uom": uom})
-	# if date:
-	# 	query_filters.update({"date": ("<", add_days(getdate(date), 1))})
 
 	booking_credits = frappe.get_all(
 		"Booking Credit Ledger",
@@ -72,7 +70,6 @@ def get_balance(customer, date=None, uom=None):
 		booking_credits += _process_expired_booking_credits(date=date, customer=customer, submit=False)
 
 	items = list(set([x.item for x in booking_credits if x.item is not None]))
-
 	balance = {}
 	for item in items:
 		balance[item] = []
@@ -132,7 +129,7 @@ def get_balance(customer, date=None, uom=None):
 
 
 def process_expired_booking_credits():
-	_process_expired_booking_credits()
+	return _process_expired_booking_credits()
 
 
 def _process_expired_booking_credits(date=None, customer=None, submit=True):
@@ -148,7 +145,7 @@ def _process_expired_booking_credits(date=None, customer=None, submit=True):
 	)
 	balance_entries = []
 	for expired_entry in expired_entries:
-		if expired_entry.expiration_date >= getdate(date):
+		if getdate(expired_entry.expiration_date) >= getdate(date):
 			continue
 
 		balance = _calculate_expired_booking_entry(expired_entry, date)
@@ -169,7 +166,7 @@ def _calculate_expired_booking_entry(expired_entry, date):
 			"Booking Credit Ledger",
 			filters={
 				"customer": expired_entry.customer,
-				"date": ("<", add_days(get_datetime(date), 1)),
+				"date": ("<=", get_datetime(date)),
 				"docstatus": 1,
 				"uom": expired_entry.uom,
 			},

@@ -146,7 +146,6 @@ class ItemBooking(Document):
 		for doc in frappe.get_all(
 			"Booking Credit Usage Reference",
 			filters={"reference_doctype": "Item Booking", "reference_document": self.name},
-			fields=["booking_credit_usage"],
 			pluck="booking_credit_usage",
 		):
 			doc = frappe.get_doc("Booking Credit Usage", doc)
