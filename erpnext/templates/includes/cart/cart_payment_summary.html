@@ -11,7 +11,7 @@
 			<table class="table w-100">
 				<tr>
 					{% set total_items = frappe.utils.cstr(frappe.utils.flt(doc.total_qty, 0)) %}
-					<td class="bill-label">{{ _("Net Total (") + total_items + _(" Items)") }}</td>
+					<td class="bill-label">{{ _("Net Total (") + total_items + " " + _("Items)") }}</td>
 					<td class="bill-content net-total text-right">{{ doc.get_formatted("net_total") }}</td>
 				</tr>
 

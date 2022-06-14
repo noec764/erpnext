@@ -164,11 +164,13 @@ $.extend(shopping_cart, {
 	bind_remove_cart_item: function() {
 		$(".cart-items").on("click", ".remove-cart-item", (e) => {
 			const $remove_cart_item_btn = $(e.currentTarget);
-			var item_code = $remove_cart_item_btn.data("item-code");
+			const item_code = $remove_cart_item_btn.data("item-code");
+			const item_booking = $remove_cart_item_btn.data("item-booking");
 
 			shopping_cart.shopping_cart_update({
 				item_code: item_code,
-				qty: 0
+				qty: 0,
+				booking: item_booking
 			});
 		});
 	},

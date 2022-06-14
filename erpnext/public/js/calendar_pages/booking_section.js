@@ -184,8 +184,7 @@ class BookingSelector {
 
 	build() {
 		const me = this;
-
-		const slots_div = this.slots.length ? this.slots.map(s => {
+		const slots_div = this.slots.length ? this.slots.sort((a,b) => new Date(a.start) - new Date(b.start)).map(s => {
 			return `<div class="timeslot-options mb-4 px-4" data-slot-id="${s.id}">
 				<button class="btn btn-outline-secondary ${s.status == 'selected' ? 'selected' : ''}" type="button">
 					<div>
@@ -201,7 +200,7 @@ class BookingSelector {
 		</div>`)
 
 		this.$content.find('.timeslot-options').on('click', function() {
-			const selected_slot = me.slots.filter(f => f.id == $(this).attr("data-slot-id"));
+			const selected_slot = this.slots.filter(f => f.id == $(this).attr("data-slot-id"));
 			me.select_slot(selected_slot)
 		})
 
