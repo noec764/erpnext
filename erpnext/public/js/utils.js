@@ -26,7 +26,7 @@ $.extend(erpnext, {
 			if (cur_frm.doc.__islocal) {
 				const naming_series = cur_frm.get_field("naming_series");
 				if (!naming_series.value) {
-					cur_frm.set_value("naming_series", naming_series.default || naming_series.get_options()[0]);
+					cur_frm.set_value("naming_series", naming_series.default || naming_series.df.options[0].value);
 				}
 			}
 		}
