@@ -16,6 +16,7 @@
   "process_deferred_accounting",
   "reversal_of",
   "tax_withholding_category",
+  "accounting_journal",
   "column_break1",
   "from_template",
   "company",
@@ -546,13 +547,19 @@
  "label": "Process Deferred Accounting",
  "options": "Process Deferred Accounting",
  "read_only": 1
+  },
+  {
+   "fieldname": "accounting_journal",
+   "fieldtype": "Link",
+   "label": "Accounting Journal",
+   "options": "Accounting Journal"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 176,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-06 17:18:46.865259",
+ "modified": "2022-06-03 14:50:34.573712",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",
