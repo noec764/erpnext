@@ -239,6 +239,7 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length=20, 
 		limit_page_length,
 		ignore_permissions=False,
 		or_filters=or_filters,
+		order_by="starts_on desc",
 	)
 
 

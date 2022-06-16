@@ -220,7 +220,7 @@ class BookingSelector {
 			selected_slot = selected_slot[0]
 
 			if (frappe.session.user == "Guest") {
-				window.location = `/login?redirect-to=${window.location.pathname}?date=${selected_slot.start}`
+				return window.location = `/login?redirect-to=${window.location.pathname}?date=${selected_slot.start}`
 			}
 
 			if (selected_slot.status == "selected") {

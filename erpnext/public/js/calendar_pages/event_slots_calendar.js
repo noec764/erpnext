@@ -16,12 +16,7 @@ erpnext.eventSlotsBookings = class EventSlotsBookings {
 	}
 
 	show() {
-		frappe.require([
-			'libs.bundle.js',
-			'controls.bundle.js'
-		], () => {
-			this.build_calendar()
-		});
+		this.build_calendar()
 	}
 
 	build_calendar() {
