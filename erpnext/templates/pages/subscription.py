@@ -24,7 +24,7 @@ def get_context(context):
 	context.payment_requests = get_open_payment_requests_for_subscription(frappe.form_dict.name)
 
 	if (
-		not cint(frappe.db.get_single_value("Shopping Cart Settings", "enabled"))
+		not cint(frappe.db.get_single_value("E Commerce Settings", "enabled"))
 		or frappe.session.user == "Guest"
 	):
 		frappe.throw(_("You need to be logged in to access this page"), frappe.PermissionError)
@@ -118,7 +118,7 @@ def new_subscription(template):
 	customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 	customer = customers[0] if customers else get_party().name
 
-	company = frappe.db.get_single_value("Shopping Cart Settings", "company")
+	company = frappe.db.get_single_value("E Commerce Settings", "company")
 
 	subscription = make_subscription(
 		template=template,

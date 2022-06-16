@@ -56,7 +56,7 @@ def execute():
 
 	# shift data to E Commerce Settings
 	map_into_e_commerce_settings("Products Settings", products_settings_fields)
-	map_into_e_commerce_settings("Shopping Cart Settings", shopping_cart_settings_fields)
+	map_into_e_commerce_settings("E Commerce Settings", shopping_cart_settings_fields)
 
 	# move filters and attributes tables to E Commerce Settings from Products Settings
 	for doctype in ("Website Filter Field", "Website Attribute"):

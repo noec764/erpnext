@@ -6,12 +6,7 @@ import unittest
 
 import frappe
 
-from erpnext.accounts.doctype.tax_rule.tax_rule import (
-	ConflictingTaxRule,
-	IncorrectCustomerGroup,
-	IncorrectSupplierType,
-	get_tax_template,
-)
+from erpnext.accounts.doctype.tax_rule.tax_rule import ConflictingTaxRule, get_tax_template
 from erpnext.crm.doctype.opportunity.opportunity import make_quotation
 from erpnext.crm.doctype.opportunity.test_opportunity import make_opportunity
 
@@ -21,7 +16,7 @@ test_records = frappe.get_test_records("Tax Rule")
 class TestTaxRule(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
-		frappe.db.set_value("Shopping Cart Settings", None, "enabled", 0)
+		frappe.db.set_value("E Commerce Settings", None, "enabled", 0)
 
 	@classmethod
 	def tearDownClass(cls):

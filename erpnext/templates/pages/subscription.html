@@ -6,7 +6,7 @@
 
 {% block page_content %}
 <div class="subscriptions-section">
-	<div class="current-subscription frappe-card">
+	<div class="current-subscription">
 		<div class="subscription-subtitle">
 			{% if doc.cancellation_date %}
 				<h6 class="small muted">
@@ -24,7 +24,7 @@
 		</div>
 	</div>
 	{% if payment_requests %}
-	<div class="invoicing-status frappe-card">
+	<div class="invoicing-status">
 		<h5 class="subscriptions-section-title">{{ _("Outstanding amounts") }}</h5>
 		{% for payment_request in payment_requests %}
 		<div class="my-4">
@@ -41,14 +41,14 @@
 	{% endif %}
 	{% if not doc.cancellation_date %}
 		{% if subscription_plans %}
-		<div class="my-4 py-5 frappe-card">
+		<div class="my-4 py-5">
 			<div>
 				<h5 class="subscriptions-section-title">{{ _("Your options") }}</h5>
 				{% include "templates/includes/subscriptions/subscription_plans.html" %}
 			</div>
 		</div>
 		{% endif %}
-	<div class="my-4 py-5 frappe-card">
+	<div class="my-4 py-5">
 		<div>
 			<h5 class="subscriptions-section-title">{{ _("Cancellation options") }}</h5>
 			<div>
@@ -73,7 +73,6 @@
 .cancellation-options,
 .invoicing-status {
 	margin: 2rem 0;
-	padding: 2rem;
 }
 
 .subscription-subtitle h6 {
