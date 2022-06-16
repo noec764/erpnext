@@ -101,16 +101,18 @@ frappe.boot = {
 };
 </script>
 <script>
+	{% if not doc.cancellation_date %}
 	document.getElementById('subscription-cancellation-btn').addEventListener("click", function(e) {
 		new frappe.confirm(__('Cancel this subscription at the end of the current billing period ?'), function() {
 			return frappe.call("erpnext.templates.pages.subscription.cancel_subscription", {subscription: "{{ doc.name }}" })
 			.then(r => {
-				if (r && r.message) {
+				if (!r.exc) {
 					frappe.show_alert({message: __("Subscription cancelled"), indicator: "green"})
 					location.reload()
 				}
 			})
 		})
 	})
+	{% endif %}
 </script>
 {% endblock %}

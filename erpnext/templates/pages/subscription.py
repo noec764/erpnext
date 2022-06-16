@@ -16,7 +16,12 @@ def get_context(context):
 	context.show_sidebar = True
 	context.breadcrumbs = True
 
-	context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
+	try:
+		context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
+	except Exception:
+		frappe.local.flags.redirect_location = "/subscriptions"
+		raise frappe.Redirect
+
 	context.next_invoice_date = (
 		context.doc.get_next_invoice_date() if hasattr(context.doc, "get_next_invoice_date") else None
 	)
@@ -85,7 +90,7 @@ def get_open_payment_requests_for_subscription(subscription):
 			if (
 				not order.docstatus == 1
 				or order.outstanding_amount
-				or not order.status in ("Completed", "Closed")
+				or order.status not in ("Completed", "Closed")
 			):
 				frappe.db.set_value("Payment Request", payment_request.name, "status", "Cancelled")
 				continue
@@ -146,5 +151,7 @@ def new_subscription(template):
 @frappe.whitelist()
 def cancel_subscription(subscription):
 	subscription = frappe.get_doc("Subscription", subscription)
-	subscription.cancellation_date = subscription.current_invoice_end
-	return subscription.save(ignore_permissions=True)
+	if subscription.current_invoice_end:
+		return subscription.cancel_subscription(ignore_permissions=True)
+	else:
+		return frappe.delete_doc("Subscription", subscription.name, ignore_permissions=True)

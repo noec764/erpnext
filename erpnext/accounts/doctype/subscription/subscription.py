@@ -130,7 +130,7 @@ class Subscription(Document):
 	def cancel_subscription(self, **kwargs):
 		self.cancellation_date = kwargs.get("cancellation_date") or self.current_invoice_end
 		self.prorate_last_invoice = kwargs.get("prorate_last_invoice")
-		self.save()
+		self.save(ignore_permissions=kwargs.get("ignore_permissions"))
 		self.cancel_gateway_subscription()
 
 	def restart_subscription(self):
@@ -468,6 +468,11 @@ def new_invoice_end(subscription, end_date):
 
 
 def get_list_context(context=None):
+	templates = frappe.get_all(
+		"Subscription Template",
+		filters={"enable_on_portal": 1},
+		fields=["name", "portal_description", "portal_image"],
+	)
 	context.update(
 		{
 			"show_sidebar": True,
@@ -477,9 +482,14 @@ def get_list_context(context=None):
 			"get_list": get_subscriptions_list,
 			"row_template": "accounts/doctype/subscription/templates/subscription_row.html",
 			"list_template": "accounts/doctype/subscription/templates/subscription_list.html",
-			"subscription_templates": frappe.get_all(
-				"Subscription Template", filters={"enable_on_portal": 1}, fields=["*"]
-			),
+			"subscription_templates": templates,
+			"header_action": frappe.render_template(
+				"templates/includes/subscriptions/subscription_list_header.html",
+				{"subscription_templates": templates},
+			)
+			if templates
+			else None,
+			"base_scripts": ["frappe-web.bundle.js", "dialog.bundle.js", "controls.bundle.js"],
 		}
 	)
 

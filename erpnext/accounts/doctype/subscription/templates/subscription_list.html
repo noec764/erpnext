@@ -46,17 +46,19 @@
 {%- endif %}
 
 <script>
-	{% for subscription_template in subscription_templates %}
-	document.getElementById("{{ scrub(subscription_template.name) }}_subscription").addEventListener("click", function(e) {
-		new frappe.confirm(__('Subscribe to {0} ?', ["{{ subscription_template.name }}"]), function() {
-			return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: "{{ subscription_template.name }}"})
-			.then(r => {
-				if (r && r.message) {
-					frappe.show_alert({message: __("Subscription created"), indicator: "green"})
-					window.location = r.message.payment_link ? r.message.payment_link : `/subscriptions/${r.message.subscription.name}`;
-				}
+	{% if not result -%}
+		{% for subscription_template in subscription_templates %}
+		document.getElementById("{{ scrub(subscription_template.name) }}_subscription").addEventListener("click", function(e) {
+			new frappe.confirm(__('Subscribe to {0} ?', ["{{ subscription_template.name }}"]), function() {
+				return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: "{{ subscription_template.name }}"})
+				.then(r => {
+					if (r && r.message) {
+						frappe.show_alert({message: __("Subscription created"), indicator: "green"})
+						window.location = r.message.payment_link ? r.message.payment_link : `/subscriptions/${r.message.subscription.name}`;
+					}
+				})
 			})
 		})
-	})
-	{% endfor %}
+		{% endfor %}
+	{%- endif %}
 </script>
