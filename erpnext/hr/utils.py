@@ -492,10 +492,10 @@ def check_effective_date(from_date, to_date, frequency, based_on_date_of_joining
 
 
 class EarnedLeaveAllocator:
-	def __init__(self, calculator):
+	def __init__(self, calculator, date=None):
 		self.calculator = calculator
 		self.e_leave_types = get_earned_leaves()
-		self.today = getdate()
+		self.today = getdate(date or nowdate())
 
 	def allocate(self):
 		for e_leave_type in self.e_leave_types:
@@ -551,6 +551,7 @@ class EarnedLeaveCalculator:
 				and self.formula_map.get(self.leave_type.earned_leave_frequency_formula)
 			):
 				self.formula_map.get(self.leave_type.earned_leave_frequency_formula)()
+
 			elif self.leave_type.earned_leave_frequency != "Custom Formula":
 				self.earned_leaves = (
 					flt(self.annual_allocation) / self.divide_by_frequency[self.leave_type.earned_leave_frequency]
@@ -580,6 +581,12 @@ class EarnedLeaveCalculator:
 
 		allocation.db_set("total_leaves_allocated", new_allocation, update_modified=False)
 		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
+
+		text = _("allocated {0} leave(s) via scheduler on {1}").format(
+			frappe.bold(self.earned_leaves), frappe.bold(formatdate(today()))
+		)
+
+		allocation.add_comment(comment_type="Info", text=text)
 
 
 def get_attendance(employee, start_date, end_date):

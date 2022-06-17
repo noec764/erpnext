@@ -79,8 +79,8 @@ frappe.ui.form.on('Payroll Entry', {
 		}
 
 		if (frm.doc.status == "Failed" && frm.doc.error_message) {
-			const issue = `<a id="jump_to_error" style="text-decoration: underline;">issue</a>`;
-			let process = (cint(frm.doc.salary_slips_created)) ? "submission" : "creation";
+			const issue = `<a id="jump_to_error" style="text-decoration: underline;">${__("issue") }</a>`;
+			let process = (cint(frm.doc.salary_slips_created)) ? __("submission") : __("creation");
 
 			frm.dashboard.set_headline(
 				__("Salary Slip {0} failed. You can resolve the {1} and retry {0}.", [process, issue])

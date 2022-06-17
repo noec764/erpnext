@@ -1,7 +1,7 @@
 {
  "charts": [],
  "color": "#62B6CB",
- "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Vos raccourcis\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Point Of Sale\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Rapports et donn\\u00e9es de base\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings & Configurations\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Loyalty Program\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Opening & Closing\", \"col\": 4}}]",
+ "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Your Shortcuts\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Point Of Sale\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports &amp; Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings & Configurations\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Loyalty Program\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Opening & Closing\", \"col\": 4}}]",
  "creation": "2020-03-02 17:18:32.505616",
  "docstatus": 0,
  "doctype": "Workspace",

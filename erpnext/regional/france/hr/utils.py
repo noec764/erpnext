@@ -4,7 +4,8 @@
 import math
 
 import frappe
-from frappe.utils import flt, getdate, today
+from frappe import _
+from frappe.utils import flt, formatdate, getdate, today
 
 from erpnext.hr.utils import (
 	EarnedLeaveAllocator,
@@ -18,8 +19,8 @@ def allocate_earned_leaves():
 
 
 class FranceLeaveAllocator(EarnedLeaveAllocator):
-	def __init__(self, calculator):
-		super(FranceLeaveAllocator, self).__init__(calculator)
+	def __init__(self, calculator, date=None):
+		super(FranceLeaveAllocator, self).__init__(calculator, date)
 
 
 class FranceLeaveCalculator(EarnedLeaveCalculator):
@@ -67,3 +68,9 @@ class FranceLeaveCalculator(EarnedLeaveCalculator):
 
 		allocation.db_set("total_leaves_allocated", new_allocation, update_modified=False)
 		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
+
+		text = _("allocated {0} leave(s) via scheduler on {1}").format(
+			frappe.bold(self.earned_leaves), frappe.bold(formatdate(today()))
+		)
+
+		allocation.add_comment(comment_type="Info", text=text)
