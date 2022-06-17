@@ -20,6 +20,15 @@ class OverlappingShiftAttendanceError(frappe.ValidationError):
 	pass
 
 
+ATTENDANCE_COLOR_STATUSES = {
+	"Present": "green",
+	"Work From Home": "green",
+	"Absent": "red",
+	"On Leave": "red",
+	"Half Day": "orange",
+}
+
+
 class Attendance(Document):
 	def validate(self):
 		from erpnext.controllers.status_updater import validate_status
@@ -249,8 +258,10 @@ def add_attendance(events, start, end, conditions=None):
 			"doctype": "Attendance",
 			"start": d.attendance_date,
 			"end": d.attendance_date,
-			"title": f"{cstr(d.employee_name)}: {cstr(d.status)}",
+			"title": f"{cstr(d.employee_name)}: {cstr(_(d.status))}",
 			"docstatus": d.docstatus,
+			"color": ATTENDANCE_COLOR_STATUSES.get(d.status),
+			"classNames": "wrapped-title",
 		}
 		if e not in events:
 			events.append(e)

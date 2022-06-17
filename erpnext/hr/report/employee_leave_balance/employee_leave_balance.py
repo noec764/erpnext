@@ -41,14 +41,14 @@ def get_columns() -> List[Dict]:
 			"label": _("Employee"),
 			"fieldtype": "Link",
 			"fieldname": "employee",
-			"width": 100,
+			"width": 150,
 			"options": "Employee",
 		},
 		{
 			"label": _("Employee Name"),
 			"fieldtype": "Dynamic Link",
 			"fieldname": "employee_name",
-			"width": 100,
+			"width": 250,
 			"options": "employee",
 		},
 		{
