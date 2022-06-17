@@ -848,7 +848,6 @@ def get_subitems(
 			`tabBOM Item` bom_item
 			JOIN `tabBOM` bom ON bom.name = bom_item.parent
 			JOIN `tabItem` item ON bom_item.item_code = item.name
-			JOIN tabItem item ON bom_item.item_code = item.name
 			LEFT JOIN `tabItem Default` item_default
 				ON item.name = item_default.parent and item_default.company = %(company)s
 			LEFT JOIN `tabUOM Conversion Detail` item_uom
