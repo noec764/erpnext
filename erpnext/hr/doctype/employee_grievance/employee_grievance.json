@@ -50,7 +50,7 @@
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Date ",
+   "label": "Date",
    "reqd": 1
   },
   {
@@ -202,7 +202,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-06-22 12:51:01.499486",
+ "modified": "2021-06-23 12:51:01.499486",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee Grievance",
