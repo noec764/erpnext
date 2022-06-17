@@ -1296,16 +1296,16 @@ def item_query(doctype, txt, searchfield, start, page_len, filters):
 
 	fields = ["name", "item_group", "item_name", "description"]
 	fields.extend(
-		[field for field in searchfields if not field in ["name", "item_group", "description"]]
+		[field for field in searchfields if field not in ["name", "item_group", "description"]]
 	)
 
 	searchfields = searchfields + [
 		field
 		for field in [searchfield or "name", "item_code", "item_group", "item_name"]
-		if not field in searchfields
+		if field not in searchfields
 	]
 
-	query_filters = {"disabled": 0, "ifnull(end_of_life, '5050-50-50')": (">", today())}
+	query_filters = {"disabled": 0, "end_of_life": (">", today())}
 
 	or_cond_filters = {}
 	if txt:

@@ -51,7 +51,7 @@ class TestJobOffer(unittest.TestCase):
 		frappe.db.set_value("HR Settings", None, "check_vacancies", 1)
 
 	def tearDown(self):
-		frappe.db.sql("DELETE FROM `tabJob Offer` WHERE 1")
+		frappe.db.sql("DELETE FROM `tabJob Offer`")
 
 
 def create_job_offer(**args):
@@ -60,7 +60,7 @@ def create_job_offer(**args):
 		job_applicant = create_job_applicant()
 
 	if not frappe.db.exists("Designation", args.designation):
-		designation = create_designation(designation_name=args.designation)
+		create_designation(designation_name=args.designation)
 
 	job_offer = frappe.get_doc(
 		{

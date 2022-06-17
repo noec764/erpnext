@@ -237,13 +237,27 @@ def get_list_context(context=None):
 
 
 def set_expired_status():
-	frappe.db.sql(
-		"""
-		UPDATE
-			`tabQuotation` SET `status` = 'Expired'
+	# filter out submitted non expired quotations whose validity has been ended
+	cond = "`tabQuotation`.docstatus = 1 and `tabQuotation`.status != 'Expired' and `tabQuotation`.valid_till < %s"
+	# check if those QUO have SO against it
+	so_against_quo = """
+		SELECT
+			so.name FROM `tabSales Order` so, `tabSales Order Item` so_item
 		WHERE
-			`status` not in ('Ordered', 'Expired', 'Lost', 'Cancelled') AND `valid_till` < %s
-		""",
+			so_item.docstatus = 1 and so.docstatus = 1
+			and so_item.parent = so.name
+			and so_item.prevdoc_docname = `tabQuotation`.name"""
+
+	# if not exists any SO, set status as Expired
+	frappe.db.multisql(
+		{
+			"mariadb": """UPDATE `tabQuotation`  SET `tabQuotation`.status = 'Expired' WHERE {cond} and not exists({so_against_quo})""".format(
+				cond=cond, so_against_quo=so_against_quo
+			),
+			"postgres": """UPDATE `tabQuotation` SET status = 'Expired' FROM `tabSales Order`, `tabSales Order Item` WHERE {cond} and not exists({so_against_quo})""".format(
+				cond=cond, so_against_quo=so_against_quo
+			),
+		},
 		(nowdate()),
 	)
 

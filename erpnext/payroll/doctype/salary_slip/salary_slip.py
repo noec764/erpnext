@@ -531,7 +531,7 @@ class SalarySlip(TransactionBase):
 			SELECT attendance_date, status, leave_type
 			FROM `tabAttendance`
 			WHERE
-				status in ("Absent", "Half Day", "On leave")
+				status in ('Absent', 'Half Day', 'On leave')
 				AND employee = %s
 				AND docstatus = 1
 				AND attendance_date between %s and %s

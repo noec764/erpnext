@@ -1153,7 +1153,6 @@ def check_stock_uom_with_bin(item, stock_uom):
 	if stock_uom == frappe.db.get_value("Item", item, "stock_uom"):
 		return
 
-	matched = True
 	ref_uom = frappe.db.get_value("Stock Ledger Entry", {"item_code": item}, "stock_uom")
 
 	if ref_uom:
@@ -1166,7 +1165,7 @@ def check_stock_uom_with_bin(item, stock_uom):
 
 	bin_list = frappe.db.sql(
 		"""
-			select * from tabBin where item_code = %s
+			select * from `tabBin` where item_code = %s
 				and (reserved_qty > 0 or ordered_qty > 0 or indented_qty > 0 or planned_qty > 0)
 				and stock_uom != %s
 			""",
@@ -1182,7 +1181,7 @@ def check_stock_uom_with_bin(item, stock_uom):
 		)
 
 	# No SLE or documents against item. Bin UOM can be changed safely.
-	frappe.db.sql("""update tabBin set stock_uom=%s where item_code=%s""", (stock_uom, item))
+	frappe.db.sql("""update `tabBin` set stock_uom=%s where item_code=%s""", (stock_uom, item))
 
 
 def get_item_defaults(item_code, company):
