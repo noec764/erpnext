@@ -160,7 +160,7 @@
        "default": "1",
        "fieldname": "send_work_anniversary_reminders",
        "fieldtype": "Check",
-       "label": "Work Anniversaries "
+       "label": "Work Anniversaries"
       },
       {
        "default": "Weekly",
@@ -260,7 +260,7 @@
     "idx": 1,
     "issingle": 1,
     "links": [],
-    "modified": "2022-01-25 10:52:56.192773",
+    "modified": "2022-01-26 10:52:56.192773",
     "modified_by": "Administrator",
     "module": "HR",
     "name": "HR Settings",

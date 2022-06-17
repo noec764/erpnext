@@ -2,6 +2,7 @@
  - Net,- Net,
  Currently no stock available in any warehouse,"Actuellement, aucun stock disponible dans aucun entrepôt",
  Purchase Value,Valeur d'achat,
+ To Discuss : {0},Sujets à aborder: {0},
  days.,jours.,
  or ,ou,
  performing either one below:,effectuer l'une des actions suivantes,
@@ -212,51 +213,6 @@ INV-.####<br>
 <pre><code>Condition: employment_type==""Intern""</code></pre>
 <pre><code>Amount: 1000</code></pre></li>
 </ol>","<h3>Aide</h3>
-
-<p>Notes:</p>
-
-<ol>
-<li>Vous pouvez utiliser le champ <code>base</code> pour utiliser le salaire de base de l'employé</li>
-<li>Vous pouvez utiliser les abréviation de composantes salariale dans les conditions et les formules. <code>SB = Salaire de base</code></li>
-<li>Vous pouvez utiliser les noms de champs des détails de l'employé dans les conditions et les formules. <code>Type de poste = employment_type</code><code>Branche = branch</code></li>
-<li>Vous pouvez utiliser le nom de champ des fiches de paie dans les conditions et les formules. <code>Jours avant échéance = payment_days</code><code>Congés sans solde = leave_without_pay</code></li>
-<li>Le montant peut aussi être entré sur la base de conditions. Voir l'exemple 3</li></ol>
-
-<h4>Exemples</h4>
-<ol>
-<li>Calcul du salaire de base sur la base de <code>base</code>
-<pre><code>Condition: base &lt; 10000</code></pre>
-<pre><code>Formule: base * .2</code></pre></li>
-<li>Calcul de l'allocation logement sur la base du salaire de base<code>BS</code>
-<pre><code>Condition: BS &gt; 2000</code></pre>
-<pre><code>Formule: BS * .1</code></pre></li>
-<li>Calcul du prélèvement à la source sur la base tu type de poste<code>employment_type</code>
-<pre><code>Condition: employment_type==""Intern""</code></pre>
-<pre><code>Montant: 1000</code></pre></li>
-</ol>",
-"<h3>Help</h3>
-
-<p>Notes:</p>
-
-<ol>
-<li>Use field <code>base</code> for using base salary of the Employee</li>
-<li>Use Salary Component abbreviations in conditions and formulas. <code>BS = Basic Salary</code></li>
-<li>Use field name for employee details in conditions and formulas. <code>Employment Type = employment_type</code><code>Branch = branch</code></li>
-<li>Use field name from Salary Slip in conditions and formulas. <code>Payment Days = payment_days</code><code>Leave without pay = leave_without_pay</code></li>
-<li>Direct Amount can also be entered based on Condition. See example 3</li></ol>
-
-<h4>Examples</h4>
-<ol>
-<li>Calculating Basic Salary based on <code>base</code>
-<pre><code>Condition: base &lt; 10000</code></pre>
-<pre><code>Formula: base * .2</code></pre></li>
-<li>Calculating HRA based on Basic Salary<code>BS</code>
-<pre><code>Condition: BS &gt; 2000</code></pre>
-<pre><code>Formula: BS * .1</code></pre></li>
-<li>Calculating TDS based on Employment Type<code>employment_type</code>
-<pre><code>Condition: employment_type==""Intern""</code></pre>
-<pre><code>Amount: 1000</code></pre></li>
-</ol>","<h3>Aide</h3>
 <p>|&micro;|||&micro;||</p>
 <p>Notes:</p>
 <p>|&micro;|||&micro;||</p>
@@ -342,35 +298,6 @@ INV-.####<br>
 
 <h4>Templating</h4>
 
-<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de modèle de contrat</h4>
-
-<pre>Contrat pour le client {{ party_name }}
-
--Valide à partir du : {{ start_date }}
--Valide jusqu'au : {{ end_date }}
-</pre>
-
-<h4>Comment récupérer les noms des champs</h4>
-
-<p>Les noms de champs que vous pouvez utiliser dans vos modèles de contrat sont les champs dans le contrat pour lequel vous créez ce modèle. Vous pouvez trouver les champs de tous les types de documents via Paramètres &gt; Personnaliser le formulaire et en sélectionnant le type de document (ex. Contrat)</p>
-
-<h4>Modèle</h4>
-
-<p>Les modèles sont générés en utilisant le language Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
-"<h4>Contract Template Example</h4>
-
-<pre>Contract for Customer {{ party_name }}
-
--Valid From : {{ start_date }}
--Valid To : {{ end_date }}
-</pre>
-
-<h4>How to get fieldnames</h4>
-
-<p>The field names you can use in your Contract Template are the fields in the Contract for which you are creating the template. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Contract)</p>
-
-<h4>Templating</h4>
-
 <p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de mod&egrave;le de contrat</h4>
 <p>|&micro;|||&micro;||</p>
 <pre>Contract for Customer {{ party_name }}|&micro;|||&micro;||-Valid From : {{ start_date }} |&micro;||-Valid To : {{ end_date }}|&micro;||</pre>
@@ -382,35 +309,6 @@ INV-.####<br>
 <h4>Mod&egrave;les</h4>
 <p>|&micro;|||&micro;||</p>
 <p>Les modèles sont compilés à l'aide du langage de création de modèles Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">Lire la documentaion.</a></p>",
-"<h4>Standard Terms and Conditions Example</h4>
-
-<pre>Delivery Terms for Order number {{ name }}
-
--Order Date : {{ transaction_date }}
--Expected Delivery Date : {{ delivery_date }}
-</pre>
-
-<h4>How to get fieldnames</h4>
-
-<p>The fieldnames you can use in your email template are the fields in the document from which you are sending the email. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Sales Invoice)</p>
-
-<h4>Templating</h4>
-
-<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemples de termes et conditions</h4>
-
-<pre>Termes de livraison pour la commande numéro {{ name }}
-
--Date de la commande : {{ transaction_date }}
--Date de livraison prévue : {{ delivery_date }}
-</pre>
-
-<h4>Comment récupérer les noms des champs</h4>
-
-<p>Les noms de champs que vous pouvez utiliser dans votre email sont les champs du document à partir duquel vous envoyez votre email. Vous pouvez trouver les champs de tous les types de documents via Paramètres &gt; Personnaliser le formulaire et en sélectionnant le type de document (ex. Facture de vente)</p>
-
-<h4>Modèle</h4>
-
-<p>Les modèles sont générés en utilisant le language Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
 "<h4>Standard Terms and Conditions Example</h4>
 
 <pre>Delivery Terms for Order number {{ name }}
@@ -921,14 +819,6 @@ The package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item""
 
 For Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.
 
-Note: BOM = Bill of Materials","Regroupement d' **Articles** dans un autre **Article**. Ceci est utile si vous regroupez certains **Articles** dans un lot et que vous maintenez l'inventaire des **Articles** du lot et non de l'**Article** composé. L'**Article** composé aura ""Article En Stock"" à ""Non"" et ""Article À Vendre"" à ""Oui"". Exemple : Si vous vendez des Ordinateurs Portables et Sacs à Dos séparément et qu'il y a un prix spécial si le client achète les deux, alors l'Ordinateur Portable + le Sac à Dos sera un nouveau Produit Groupé. Remarque: nomenclature = Liste
-Des Matériaux",
-"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**.
-
-The package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item"" as ""Yes"".
-
-For Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.
-
 Note: BOM = Bill of Materials","Agréger un groupe de **Items** dans un autre **Item**. C'est utile si vous regroupez certains **Items** dans un paquet et que vous gardez en stock les **Items** emballés et non le **Item** agrégé.
 
 Le paquet **Item** aura pour ""Is Stock Item"" la valeur ""No"" et pour ""Is Sales Item"" la valeur ""Yes"".
@@ -1028,6 +918,7 @@ Allow Print Before Pay,Autoriser l'impression avant la paie,
 Allow Production on Holidays,Autoriser la production pendant les jours fériés,
 Allow Purchase Invoice Creation Without Purchase Order,Autoriser la création de factures d'achat sans commande fournisseur,
 Allow Purchase Invoice Creation Without Purchase Receipt,Autoriser le création de factures d'achat sans reçu d'achat,
+Allow Purchase,Autoriser les achats,
 Allow Rename Attribute Value,Autoriser le renommage de la valeur de l'attribut,
 Allow Resetting Service Level Agreement from Support Settings.,Autoriser la réinitialisation de l'accord de niveau de service depuis les paramètres du support.,
 Allow Resetting Service Level Agreement,Autoriser la réinitialisation de l'accord de niveau de service,
@@ -1090,6 +981,7 @@ Amount Eligible for Commission,Montant éligible pour la commission,
 Amount In Figure,Montant En Chiffre,
 Amount Paid,Montant payé,
 Amount based on formula,Montant basé sur la formule,
+Amount in Account Currency,Montant en devise du compte,
 Amount in Custody,Montant conservé,
 Amount in company currency,Montant dans la devise de la société,
 Amount in transaction currency,Montant dans la devise de la transaction,
@@ -1418,7 +1310,6 @@ Auto Opt In (For all customers),Adhésion automatique (pour tous les clients),
 Auto Repeat Detail,Détail de la Répétition Automatique,
 Auto Repeat Section,Répétition Automatique,
 Auto Repeat,Répétition,
-Auto Write Off Amount,Annulation automatique du montant,
 Auto close Issue after 7 days,Fermer automatiquement le ticket après 7 jours,
 Auto close Opportunity Replied after the no. of days mentioned above,Fermeture automatique de l'opportunité de réponse après le nombre de jours mentionné ci-dessus.,
 Auto close Opportunity after 15 days,Fermer automatiquement les opportunités après 15 jours,
@@ -1450,6 +1341,7 @@ Available Leave(s),Congé(s) disponible(s),
 Available Leave,Congés disponibles,
 Available Leaves,Congés disponibles,
 Available Offers,Offres disponibles,
+Available Points:,Points disponibles:,
 Available Qty For Consumption,Qté disponible pour la consommation,
 Available Qty at Company,Quantité disponible pour la société,
 Available Qty at From Warehouse,Qté disponible à l'entrepôt source,
@@ -1541,6 +1433,7 @@ BOM {0} does not belong to Item {1},nomenclature {0} n'appartient pas à l'artic
 BOM {0} must be active,nomenclature {0} doit être active,
 BOM {0} must be submitted,nomenclature {0} doit être soumise,
 BOM,Nomenclature,
+BOMs Updated,Nomenclatures mises à jour,
 BOOK-CREDIT-,BOOK-CREDIT,
 BOOK-CREDIT-USAGE-,BOOK-CREDIT-USAGE,
 BR,BR,
@@ -1616,6 +1509,7 @@ Bank account cannot be named as {0},Compte bancaire ne peut pas être nommé {0}
 Bank account {0} already exists and could not be created again,Le compte bancaire {0} existe déjà et ne peut pas être créé une seconde fois,
 Bank account,Compte bancaire,
 Bank accounts added,Comptes bancaires ajoutés,
+Bank and Payments,Banque et Paiements,
 Bank reconciliation dashboard,Tableau de bord de rapprochement bancaire,
 Bank statement balance,Solde du relevé bancaire,
 Bank transaction creation error,Erreur de création d'une transaction bancaire,
@@ -1661,10 +1555,12 @@ Batch Booking,Prélèvement en lot (batch booking),
 Batch Description,Description du Lot,
 Batch Details,Détails du lot,
 Batch Entries,Ecritures de lots,
+Batch Expiry Date,Date d'expiration du lot,
 Batch ID is mandatory,Le N° du lot est obligatoire,
 Batch ID,ID du Lot,
 Batch Identification,Identification par lots,
 Batch Item Expiry Status,Statut d'expiration des articles en lots,
+Batch No.,N° de lot,
 Batch No,N° du lot,
 Batch Number Series,Série de numéros de lots,
 Batch Quantity,Quantité du lot,
@@ -1786,6 +1682,7 @@ Booking Credit Conversions,Conversions de crédits de réservation,
 Booking Credit Ledger,Grand livre de crédit de réservation,
 Booking Credit Rule,Règle de crédit de réservation,
 Booking Credit Rules,Règles de crédit de réservation,
+Booking Credit Usage Reference,Référence de déduction de crédit de réservation,
 Booking Credit Usage,Déduction de crédit de réservation,
 Booking Credit,Addition de crédit de réservation,
 Booking Credits Addition,Addition de crédits de réservation,
@@ -1825,6 +1722,7 @@ Budget Detail,Détail du budget,
 Budget List,Liste budgétaire,
 Budget Variance Report,Rapport d'Écarts de Budget,
 Budget Variance,Variance du budget,
+Budget and Cost Centers,Budget et Centres de coûts,
 Budget cannot be assigned against Group Account {0},Budget ne peut pas être attribué pour le Compte de Groupe {0},
 "Budget cannot be assigned against {0}, as it's not an Income or Expense account","Budget ne peut pas être affecté pour {0}, car ce n'est pas un compte de produits ou de charges",
 Budget,Budget,
@@ -2405,6 +2303,7 @@ Confirm booking after payment,Confirmer la réservation après le paiement,
 Confirm cancellation ?,Confirmer l'annulation,
 Confirm,Confirmer,
 Confirmation Date,Date de Confirmation,
+Confirmed and not confirmed,Confirmé et non confirmé,
 Confirmed orders from Customers.,Commandes confirmées des clients.,
 Confirmed,Confirmé,
 Congés Payés,Congés payés,
@@ -2494,6 +2393,7 @@ Convert Item Description to Clean HTML in Transactions,Convertir la description 
 Convert Item Description to Clean HTML,Convertir la description de l'élément pour nettoyer le code HTML,
 Convert minutes into:,Convertir les minutes en:,
 Convert to Group,Convertir en Groupe,
+Convert to Ledger,Convertir en enfant,Warehouse
 Convert to Non-Group,Convertir en non-groupe,
 Converted By,Converti par,
 Converted,Converti,
@@ -2556,6 +2456,7 @@ Could not generate Secret,Impossible de générer le Secret,
 Could not retrieve information for {0}.,Impossible de récupérer les informations pour {0}.,
 Could not solve criteria score function for {0}. Make sure the formula is valid.,Impossible de résoudre la fonction de score de critères pour {0}. Assurez-vous que la formule est valide.,
 Could not solve weighted score function. Make sure the formula is valid.,Impossible de résoudre la fonction de score pondéré. Assurez-vous que la formule est valide.,
+Could not submit some Salary Slips: {},Impossible de valider certaines fiches de paie: {},
 Could not submit some Salary Slips,Les fiches de paie n'ont pas pu être soumises,
 "Could not update stock, invoice contains drop shipping item.","Impossible de mettre à jour de stock, facture contient un élément en livraison directe.",
 Couldn't Set Service Level Agreement {0}.,Erreur de sélection de l'accord de niveau de service {0}.,
@@ -2807,6 +2708,7 @@ Current Invoicing Period End Date,Date de fin de la période de facturation en c
 Current Invoicing Period Start Date,Date de début de la période de facturation en cours,
 Current Job Openings,Offres d'Emploi Actuelles,
 Current Job Title,Intitulé du poste actuel,
+Current Level,Niveau actuel,
 Current Liabilities,Dettes Actuelles,
 Current Odometer Value should be greater than Last Odometer Value {0},La valeur actuelle de l'odomètre doit être supérieure à la dernière valeur de l'odomètre {0},
 Current Odometer reading entered should be greater than initial Vehicle Odometer {0},Le Compteur(kms) Actuel entré devrait être plus grand que le Compteur(kms) initial du Véhicule {0},
@@ -2972,6 +2874,7 @@ Days Since Last order,Jours depuis la dernière commande,
 Days Until Due,Jours avant échéance,
 Days for which Holidays are blocked for this department.,Jours pour lesquels les jours fériés sont bloquées pour ce département.,
 Days,Jours,
+DeLinked,Délié,
 Dear,Cher·e,
 Debit ({0}),Débit ({0}),
 Debit A/C Number,Numéro de compte à débiter,
@@ -3825,6 +3728,7 @@ Endpoints,Points de terminaison,
 Ends On date cannot be before Next Contact Date.,La date de fin ne peut pas être avant la prochaine date de contact,
 Ends On,Se termine le,
 Ends on,Termine le,
+Ends,Fin,
 Energy Point Leaderboard,Tableau des points d'énergie,
 Energy,Énergie,
 Engine Oil,Huile Moteur,
@@ -3835,6 +3739,7 @@ Ensure Delivery Based on Produced Serial No,Assurer une livraison basée sur le 
 Enter API key in Google Settings.,Veuillez entrer une clé API dans les paramètres Google,
 Enter Coupon Code,Entrer un code promotionnel,
 "Enter First and Last name of Employee, based on Which Full Name will be updated. IN transactions, it will be Full Name which will be fetched.","Entrez le prénom et le nom de l'employé, en fonction desquels le nom complet sera mis à jour. Dans les transactions, c'est le nom complet qui sera récupéré.",
+Enter Loyalty Points,Entrez vos points de fidélité,
 Enter Supplier,Entrer un fournisseur,
 Enter Value,Entrer une valeur,
 Enter Visit Details,Entrez les détails de la visite,
@@ -3850,9 +3755,6 @@ Enter discount percentage.,Entrez le pourcentage de réduction,
 Enter name of campaign if source of enquiry is campaign,Entrez le nom de la campagne si la source de l'enquête est une campagne,
 Enter retirement age in years,Entrez l'âge de la retraite en années,
 Enter the Bank Guarantee Number before submittting.,Entrez le numéro de garantie bancaire avant de valider.,
-"Enter the Operation, the table will fetch the Operation details like Hourly Rate, Workstation automatically.\
-|| After that, set the Operation Time in minutes and the table will calculate the Operation Costs based on the Hourly Rate and Operation Time.","Saisissez l'opération, le tableau récupérera automatiquement les détails de l'opération comme le taux horaire, le poste de travail. \
-|| Ensuite, définissez la durée de l'opération en minutes et le tableau calculera les coûts de l'opération sur la base du taux horaire et de la durée de l'opération.",
 Enter the Standard Working Hours for a normal work day. These hours will be used in calculations of reports such as Employee Hours Utilization and Project Profitability analysis.,Entrez les heures de travail standard pour une journée de travail normale. Ces heures seront utilisées dans les calculs des rapports tels que l'utilisation des heures des employés et l'analyse de la rentabilité du projet.,
 Enter the exact paid amount.,Veuillez entrer le montant payé exact.,
 Enter the name of the Beneficiary before submittting.,Entrez le nom du bénéficiaire avant de valider.,
@@ -3869,6 +3771,7 @@ Entity Type,Type d'entité,
 Entity,Entité,
 Entry Type,Type d'Écriture,
 Entry set as reconciled,Ecriture considérée comme rapprochée,
+Equity Management,Gestion des actions,
 Equity/Liability Account,Compte de capitaux propres / passif,
 Equity,Capitaux propres,
 Error Description,Erreur de description,
@@ -3890,6 +3793,7 @@ Error while reposting item valuation,Erreur lors de la comptabilisation de la va
 Error! Failed to get access token.,Erreur! Impossible d'obtenir le jeton d'accès,
 Error! Failed to get request token.,Erreur! Impossible d'obtenir le jeton de demande,
 Error: Not a valid id?,Erreur : Pas un identifiant valide ?,
+Error: {0} is mandatory field,Erreur: {0} est un champ obligatoire, 
 Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire,
 Error,Erreur,
 Estimated Arrival,Arrivée estimée,
@@ -3927,6 +3831,7 @@ If series is set and Serial No is not mentioned in transactions, then automatic 
 Exception Budget Approver Role,Rôle d'approbateur de budget exceptionnel,
 Exceptional corrections,Corrections exceptionnelles,
 Excess Materials Consumed,Matériel excédentaire consommé,
+Excess Transfer,Transfert en excès,
 Excessive machine set up time,Temps de préparation de la machine excessif,
 Exchange Gain / Loss Account,Compte de gains / pertes de change,
 Exchange Gain/Loss,Gains / pertes de change,
@@ -4079,6 +3984,7 @@ Failed to setup post company fixtures,Échec de la configuration des éléments 
 Failed,Échec,
 Failure Date,Date d'échec,
 Failure Description,Description de l'erreur,
+Failure Details,Détails de l'erreur,
 Failure redirect URL,URL de redirection en cas d'erreur,
 Family Background,Antécédents Familiaux,
 Fax,Fax,
@@ -4346,6 +4252,7 @@ From employee is required while receiving Asset {0} to a target location,L'emplo
 From value must be less than to value in row {0},De la Valeur doit être inférieure à la valeur de la ligne {0},
 From {0} | {1} {2},Du {0} | {1} {2},
 From(Year),Du (Année),
+From,Date de début,Fetch timesheet in sales invoice
 From,De,Project Portal
 From,Unité de mesure initiale,UOM Conversion Factor
 From,Expéditeur,
@@ -4388,6 +4295,7 @@ Future dates not allowed,Dates futures non autorisées,
 GL Account,Compte GL,
 GL Balance,Solde du GL,
 GL Entry,Écriture GL,
+GL reposting index,Index de reposting GL,
 GST Account,Compte GST,
 GST Accounts,Comptes GST,
 GST HSN Code does not exist for one or more items,Le code GST HSN n'existe pas pour un ou plusieurs articles,
@@ -5175,6 +5083,7 @@ Invalid {0}! The check digit validation has failed. Please ensure you've typed t
 Invalid {0}! The check digit validation has failed. ,{0} invalide! La vérification des chiffres de contrôle a échoué,
 Invalid {0}: {1},Invalide {0} : {1},
 Invalid {0},Invalide {0},
+Inventory Settings,Paramètres de stock,
 "Inventory, Warehouses, Analysis and more.","Inventaire, entrepôts, analyse et plus.",
 Inventory,Inventaire,
 Investigated,Enquêté,
@@ -5591,7 +5500,7 @@ Last Known Successful Sync of Employee Checkin. Reset this only if you are sure 
 Last Month Downtime Analysis,Analyse des temps d'arrêt du mois précédent,
 "Last Name, Email or Phone/Mobile of the user are mandatory to continue.","Le nom, email et numéro de téléphone/mobile de l'utilisateur est obligatoire pour continuer.",
 Last Name,Nom,
-Last Odometer Value,Dernière valeur du compteur kilométrique,
+Last Odometer Value,Dernière valeur de l'odomètre,
 Last Order Amount,Montant de la Dernière Commande,
 Last Order Date,Date de la Dernière Commande,
 Last Order Id,ID de la dernière commande,
@@ -5606,6 +5515,7 @@ Last carbon check date cannot be a future date,La date de dernière vérificatio
 Last day of the month,Dernier jour du mois,
 Last quarter,Dernier trimestre,
 Last subscription invoices,Dernières factures pour cet abonnement,
+Last synchronization datetime,Date/Heure de dernière syncronisation,
 Late Entry Grace Period,Délai supplémentaire pour les arrivées tardives,
 Late Entry,Arrivée tardive,
 Latest Age,Le plus tard,
@@ -6321,6 +6231,7 @@ Mode of payment,Mode de paiement,
 Mode,Mode,
 Model,Modèle,
 Modes of Payment,Modes de paiement,
+Modified On,Modifié le,
 Modify Current Invoicing End Date,Modifier la date de fin de la période de facturation,
 Modify,Modifier,
 Monday,Lundi,
@@ -6377,6 +6288,7 @@ Multiple fiscal years exist for the date {0}. Please set company in Fiscal Year,
 Multiple items cannot be marked as finished item,Plusieurs articles ne peuvent pas être notés comme des articles finis.,
 Music,Musique,
 Must be Whole Number,Doit être un nombre entier,
+Must be a whole number,Doit être un nombre entier,
 Mute Email,Ne pas envoyer d'email,
 My Account,Mon compte,
 N/A,N/A,
@@ -6478,6 +6390,7 @@ New Section,Nouvelle section,
 New Serial No cannot have Warehouse. Warehouse must be set by Stock Entry or Purchase Receipt,Les Nouveaux N° de série ne peuvent avoir d'entrepot. L'Entrepôt doit être établi par Écriture de stock ou Reçus d'Achat,
 New Status,Nouveau statut,
 New Transactions,Créer des transactions,
+New Version,Nouvelle version,
 New Warehouse Name,Nouveau Nom d'Entrepôt,
 New Workplace,Nouveau Lieu de Travail,
 New credit limit is less than current outstanding amount for the customer. Credit limit has to be atleast {0},Nouvelle limite de crédit est inférieure à l'encours actuel pour le client. Limite de crédit doit être au moins de {0},
@@ -6544,6 +6457,7 @@ No Supplier found for Inter Company Transactions which represents company {0},Au
 No Tasks,Aucune tâche,
 No Tax Withholding data found for the current Fiscal Year.,Aucune donnée de retenue d'impôt trouvée pour l'exercice en cours.,
 No Tax Withholding data found for the current posting date.,Aucune donnée de retenue d'impôt trouvée pour la date d'enregistrement actuelle.,
+No Terms,Aucuns termes de paiement,
 No Timesheet Found.,Aucune feuille de temps trouvée,
 No Timesheets,Pas de feuilles de temps,
 No Unreconciled Invoices and Payments found for this party and account,Aucune facture ou paiement non concilié n'a été trouvé pour cette partie et ce compte.,
@@ -6791,7 +6705,7 @@ Online,En ligne,
 Only Approvers can Approve this Request.,Seuls les approbateurs peuvent approuver cette demande.,
 Only CSV and Excel files can be used to for importing data. Please check the file format you are trying to upload,Seuls les fichiers CSV et Excel peuvent être utilisés pour l'importation de données. Veuillez vérifier le format du fichier que vous essayez de télécharger.,
 Only Completed documents can be submitted,Seuls les documents complétés peuvent être soumis,
-Only Deduct Tax On Excess Amount,Déduire la taxe sur le montant excédentaire uniquement,
+Only Deduct Tax On Excess Amount,Déduire uniquement les taxes sur les montant en excès,
 Only Employee Grievance with status {0} or {1} can be submitted,Seules les plaintes d'employés ayant le statut {0} ou {1} peuvent être soumises.,
 Only Interviewer Are allowed to submit Interview Feedback,Seul l'intervieweur est autorisé à soumettre des commentaires sur l'entretien,
 Only Interviews with Cleared or Rejected status can be submitted.,"Seuls les entretiens avec le statut ""Cleared"" ou ""Rejected"" peuvent être soumis.",
@@ -6857,6 +6771,7 @@ Opening Stock,Stock d'Ouverture,
 Opening Time,Horaire d'Ouverture,
 Opening Value,Valeur d'Ouverture,
 Opening and Closing,A-nouveaux et clôture,
+Opening and closing,Ouverture et clôture,
 Opening {0} Invoice created,Ouverture {0} Facture créée,
 Opening,Ouverture,
 Operating Cost (Company Currency),Coût d'Exploitation (Devise Société),
@@ -7233,6 +7148,7 @@ Payment Gateway,Passerelle de paiement,
 Payment Gateways Template,Modèle de passerelles de paiement,
 Payment Gateways,Passerelles de paiement,
 Payment Key,Clé de paiement,
+Payment Ledger Entry,Ecriture de journal de paiements,
 Payment Limit,Limite de paiement,
 Payment Logs,Journaux de paiement,
 Payment Method,Méthodes de paiement,
@@ -7910,6 +7826,7 @@ Posting future transactions are not allowed due to Immutable Ledger,Le comptabil
 Posting timestamp must be after {0},Horodatage de Publication doit être après {0},
 Potential Sales Deal,Ventes Potentielles,
 Potential opportunities for selling.,Opportunités potentielles de vente.,
+Powered by Dokos,Propulsé par Dokos,
 Pre Sales,Prévente,
 Pre-configured formula for certain types of leaves. Usually country dependent.,Formules pré-configurée pour certains types de congés. Dépend généralement du pays.,
 Prefered Contact Email,Email de Contact Préféré,
@@ -8032,11 +7949,13 @@ Process Statement Of Accounts Customer,Client de situation de compte client,
 Process Statement Of Accounts,Situation de compte client,
 Process Type,Type de traitement,
 Process payment immediately,Obtenir le paiement immédiatement,
+Processed BOMs,Nomenclatures mises à jour,
 Processed Files,Fichiers traités,
 Processes,Processus,
 Processing Chart of Accounts and Parties,Traitement du plan comptable et des tiers,
 Processing Items and UOMs,Traitement des articles et unités de mesure,
 Processing Party Addresses,Traitement des adresses des tiers,
+Processing Sales! Please Wait...,Enregistrement des ventes! Veuillez patienter...,
 Processing Vouchers,Traitement des références,
 Processing XML Files,Fichiers XML en cours d'analyse,
 Processing...,Traitement en cours...,
@@ -8060,7 +7979,7 @@ Product Tax Category,Catégorie de taxe sur les produits,
 Product Tax Code,Code des taxes sur les produits,
 Product query with filter failed,Échec d'une requête de produit avec filtre,
 "Product: {0}\
-||{1}","Produit : {0}\
+||{1}","Produit: {0}\
 ||{1}",
 Product,Produit,
 Production Analytics,Analyse de la production,
@@ -8565,6 +8484,7 @@ Reference document doesn't have the 'get_stripe_subscription_plans_details' meth
 Reference document is not linked to Stripe payment plans,Le document de référence n'est pas lié à un plan de paiement Stripe,
 Reference number of the invoice from the previous system,Numéro de référence de la facture du système précédent,
 "Reference: {0}, Item Code: {1} and Customer: {2}","Référence: {0}, Code de l'article: {1} et Client: {2}",
+Reference:,Reference:,
 Reference,Référence,
 References,Références,
 Referral Bonus Payment Status,Statut du paiement du bonus de recommandation,
@@ -8606,7 +8526,7 @@ Release date must be in the future,La date de fin de mise en attente doit être 
 Relieving Date Missing,Date de détachement manquante,
 Relieving Date must be greater than Date of Joining,La Date de départ doit être postérieure à la date d'embauche,
 Relieving Date must be greater than or equal to Date of Joining,La date de départ de l'entreprise doit être supérieure ou égale à la date de démarrage dans l'entreprise.,
-Relieving Date,Date de détachement,
+Relieving Date,Date de départ,
 Remaining Balance,Solde restant,
 Remaining Benefits (Yearly),Prestations sociales restantes (par année),
 Remark,Remarque,
@@ -9388,6 +9308,7 @@ Search by filename or extension,Chercher par nom de fichier ou extension,
 Search by invoice id or customer name,Chercher par numéro de facture ou nom du client,
 "Search by item code, serial number or barcode","Cherchez par code d'article, numéro de série ou code barre",
 "Search by item code, serial number, batch no or barcode","Recherche par code article, numéro de série, numéro de lot ou code-barres",
+Search for Products,Chercher des produits,
 Search for a payment,Chercher un paiement,
 Search for a specific bank transaction,Chercher une transaction en particulier,
 Search for a specific document,Chercher un document en particulier,
@@ -9819,6 +9740,7 @@ Shared secret,Secret partagé,
 Shared with the user {0} with {1} access,Partagé avec l'utiliseur {0} et le droit d'·de {1},
 Shareholder,Actionnaire,
 Shelf Life In Days,Durée de conservation en jours,
+Shelf Life in Days,Durée de vie en jours,
 Shift Actual End,Fin réelle du quart,
 Shift Actual Start,Début réel du quart,
 Shift Assignment: {0} created for Employee: {1},Affectation de quart: {0} créé pour l'employé: {1},
@@ -10104,47 +10026,6 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 7. Total: Cumulative total to this point.
 8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
 9. Consider Tax or Charge for: In this section you can specify if the tax / charge is only for valuation (not a part of total) or only for total (does not add value to the item) or for both.
-10. Add or Deduct: Whether you want to add or deduct the tax.","Modèle de la taxe standard qui peut être appliqué à toutes les Opérations d'Achat. Ce modèle peut contenir la liste des titres d'impôts ainsi que d'autres titre de charges comme ""Livraison"", ""Assurance"", ""Gestion"", etc.
-
-#### Remarque
-
-Le taux d'imposition que vous définissez ici sera le taux d'imposition standard pour tous les **Articles**. S'il y a des **Articles** qui ont des taux différents, ils doivent être ajoutés dans la table **Taxe de l'Article** dans les données de base **Article**.
-
-#### Description des Colonnes
-
-1. Type de Calcul :
-    - Cela peut être le **Total net** (qui est la somme des montants de base).
-    - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).
-    - **Réel** (comme mentionné).
-2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée
-3. Centre de Coût : Si la taxe / redevance est un revenu (comme la livraison) ou une charge, elle doit être comptabilisée dans un Centre de coûts.
-4. Description : Description de la taxe (qui sera imprimée sur les factures / devis).
-5. Taux : Le taux d'imposition.
-6. Montant : Le montant de la taxe.
-7. Total : Total accumulé à ce point.
-8. Entrez la Ligne : Si elle est basée sur ""Total de la Ligne Précédente"" vous pouvez sélectionner le numéro de la ligne qui sera pris comme base pour ce calcul (par défaut la ligne précédente).
-9. Considérez Taxe ou Charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est seulement pour la valorisation (pas une partie du total) ou seulement pour le total (n'ajoute pas de la valeur à l'article) ou pour les deux.
-10. Ajouter ou Déduire : Ce que vous voulez ajouter ou déduire de la taxe.",
-"Standard tax template that can be applied to all Purchase Transactions. This template can contain list of tax heads and also other expense heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
-
-#### Note
-
-The tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.
-
-#### Description of Columns
-
-1. Calculation Type:
-    - This can be on **Net Total** (that is the sum of basic amount).
-    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
-    - **Actual** (as mentioned).
-2. Account Head: The Account ledger under which this tax will be booked
-3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.
-4. Description: Description of the tax (that will be printed in invoices / quotes).
-5. Rate: Tax rate.
-6. Amount: Tax amount.
-7. Total: Cumulative total to this point.
-8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
-9. Consider Tax or Charge for: In this section you can specify if the tax / charge is only for valuation (not a part of total) or only for total (does not add value to the item) or for both.
 10. Add or Deduct: Whether you want to add or deduct the tax.","Modèle de taxe standard qui peut être appliqué à toutes les transactions d'achat. Ce modèle peut contenir une liste de rubriques de taxe ainsi que d'autres rubriques de dépenses comme ""Expédition"", ""Assurace"", ""Manutention"" etc.
 
 #### Note
@@ -10166,46 +10047,6 @@ Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous
 8. Entrer la ligne : Si vous vous basez sur le ""Total de la ligne précédente"", vous pouvez sélectionner le numéro de la ligne qui sera prise comme base pour ce calcul (par défaut, la ligne précédente).
 9. Considérer la taxe ou la charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est uniquement pour l'évaluation (pas une partie du total) ou uniquement pour le total (n'ajoute pas de valeur à l'article) ou pour les deux..
 10. Ajouter ou déduire : Si vous voulez ajouter ou déduire la taxe.",
-"Standard tax template that can be applied to all Sales Transactions. This template can contain list of tax heads and also other expense / income heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
-
-#### Note
-
-The tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.
-
-#### Description of Columns
-
-1. Calculation Type:
-    - This can be on **Net Total** (that is the sum of basic amount).
-    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
-    - **Actual** (as mentioned).
-2. Account Head: The Account ledger under which this tax will be booked
-3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.
-4. Description: Description of the tax (that will be printed in invoices / quotes).
-5. Rate: Tax rate.
-6. Amount: Tax amount.
-7. Total: Cumulative total to this point.
-8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
-9. Is this Tax included in Basic Rate?: If you check this, it means that this tax will not be shown below the item table, but will be included in the Basic Rate in your main item table. This is useful where you want give a flat price (inclusive of all taxes) price to customers.","Modèle de la taxe standard qui peut être appliqué à toutes les Opérations d'Achat. Ce modèle peut contenir la liste des titres d'impôts ainsi que d'autres titre de charges comme ""Livraison"", ""Assurance"", ""Gestion"", etc.
-
-#### Remarque
-
-Le taux d'imposition que vous définissez ici sera le taux d'imposition standard pour tous les **Articles**. S'il y a des **Articles** qui ont des taux différents, ils doivent être ajoutés dans la table **Taxe de l'Article** dans les données de base **Article**.
-
-#### Description des Colonnes
-
-1. Type de Calcul :
-    - Cela peut être le **Total net** (qui est la somme des montants de base).
-    - **Total / Montant Sur la Ligne Précédente** (pour les taxes ou frais accumulés). Si vous sélectionnez cette option, la taxe sera appliquée en pourcentage du montant ou du total de la ligne précédente (dans la table d'impôts).
-    - **Réel** (comme mentionné).
-2. Titre du Compte : Le journal comptable dans lequel cette taxe sera comptabilisée
-3. Centre de Coût : Si la taxe / redevance est un revenu (comme la livraison) ou une charge, elle doit être comptabilisée dans un Centre de coûts.
-4. Description : Description de la taxe (qui sera imprimée sur les factures / devis).
-5. Taux : Le taux d'imposition.
-6. Montant : Le montant de la taxe.
-7. Total : Total accumulé à ce point.
-8. Entrez la Ligne : Si elle est basée sur ""Total de la Ligne Précédente"" vous pouvez sélectionner le numéro de la ligne qui sera pris comme base pour ce calcul (par défaut la ligne précédente).
-9. Considérez Taxe ou Charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est seulement pour la valorisation (pas une partie du total) ou seulement pour le total (n'ajoute pas de la valeur à l'article) ou pour les deux.
-10. Ajouter ou Déduire : Ce que vous voulez ajouter ou déduire de la taxe.",
 "Standard tax template that can be applied to all Sales Transactions. This template can contain list of tax heads and also other expense / income heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
 
 #### Note
@@ -10279,6 +10120,7 @@ Started a background job to create {1} {0},Lancement d'un travail en arrière-pl
 Starting location from left edge,Position initiale depuis bord gauche,
 Starting position from top edge,Position initiale depuis bord haut,
 Starts On,Commence le,
+Starts,Début,
 State/UT Tax,Taxe par Etat/Territoire de l'union,
 Statement Of Accounts for {{ customer.name }},Situation de compte pour {{ customer.name }},
 Statement of Account,Relevé de Compte,
@@ -10436,6 +10278,7 @@ Submit Salary Slip,Valider la Fiche de Paie,
 Submit invoice automatically,Valider la facture automatiquement,
 Submit this Work Order for further processing.,Valider cet ordre de travail pour continuer son traitement.,
 Submit this to create the Employee record,Valider pour créer la fiche employé,
+Submit your Quotation,Envoyez votre devis,
 Submit,Valider,
 Submitted,Soumis,
 Submitting Review ...,Soumettre une révision ...,
@@ -11194,6 +11037,7 @@ To {0},À {0},
 To(Year) year can not be less than From(year) ,L'année de fin ne peut être inférieure à l'année de début,
 To(Year) year can not be less than From(year),L'année To(Year) ne peut pas être inférieure à l'année From(year),
 To(Year),Au (Année),
+To,Date de fin,Fetch timesheet in sales invoice
 To,Unité de mesure finale,UOM Conversion Factor
 To,Destinataires,
 Today is {0}'s birthday 🎉,Aujourd'hui c'est l'anniversaire de {0} 🎉,
@@ -11503,6 +11347,7 @@ Tree of Procedures,Arbre de procédures,
 Tree of Quality Procedures.,Arbre de procédures de qualité,
 Tree of financial Cost Centers.,Arbre des centres de coûts financiers.,
 Tree of financial accounts.,Arbre des comptes financiers.,
+Trends,Tendances,
 Trial Balance (Simple),Balance Générale (simple),
 Trial Balance for Party,Balance auxiliaire,
 Trial Balance,Balance Générale,
@@ -11553,7 +11398,7 @@ UPC-A,UPC-A,
 URL can only be a string,L'URL ne peut être qu'une chaîne de caractères,
 "URL for ""All Products""","URL pour ""Tous les Produits""",
 US,NOUS,
-UTF-16 encoding error for File Name:,Erreur d'encodage UTF-16 pour le nom de fichier :,
+UTF-16 encoding error for File Name:,Error d'encodage en UTF-16 pour le nom de fichier:,
 UTGST Account,Compte UTGST,
 Unable to create Puchase Invoice,Impossible de créer une facture d'achat.,
 Unable to find DocType {0},Impossible de trouver le DocType {0},
@@ -11759,6 +11604,7 @@ VAT in accounts to compare,TVA en compte à comparer,
 VAT on Expenses and All Other Inputs,TVA sur les charges et autres entrées,
 VAT on Sales and All Other Outputs,TVA sur les produits et autres sorties,
 Vacancies cannot be lower than the current openings,Les postes ouverts ne peuvent pas être moins nombreux que les offres actuelles,
+Vacancies fulfilled,Postes vacants remplis,
 Vacancies,Postes vacants,
 Valid From Date must be lesser than Valid Upto Date.,La date de début de validité doit être inférieure à la date de mise en service valide.,
 Valid From Time must be lesser than Valid Upto Time.,La date de début de validité doit être inférieure à la date de fin de validité,
@@ -12040,11 +11886,12 @@ Won Opportunity (Last 1 Month),Opportunités gagnées (30 jours glissants),
 WooCommerce ID,ID WooCommerce,
 WooCommerce Order Sync Error,Erreur de synchronisation de la commande WooCommerce,
 "WooCommerce Order: {0}\
-||Account head missing for Woocommerce shipping method: {1}","Commande WooCommerce : {0}\
-||Account head missing for Woocommerce shipping method : {1}",
+||Account head missing for Woocommerce shipping method: {1}","Commande WooCommerce: {0}\
+||Compte comptable manquant pour la méthode de livraison Woocommerce: {1}",
 "WooCommerce Order: {0}\
-||{1}","Commande WooCommerce : {0}\
+||{1}","Commande WooCommerce: {0}\
 ||{1}",
+WooCommerce Order,Commande WooCommerce,
 WooCommerce Products Sync Error,Erreur de synchronisation des produits WooCommerce,
 WooCommerce Products,Produits WooCommerce,
 WooCommerce products added to Dokos,Produits WooCommerce ajoutés à Dokos,
@@ -12456,6 +12303,7 @@ up to ,jusqu'au,
 uploaded file,fichier téléchargé,
 user@example.com,utilisateur@exemple.com,
 valuation rate,taux de valorisation,
+via BOM Update Tool,via l'outil de mise à jour de nomenclatures,
 web link,lien web,
 wi,wi,
 woocommerce - {0},woocommerce - {0},
@@ -12483,6 +12331,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0} Sales Value,Valeur des ventes {0},
 {0} Serial No {1} cannot be delivered,{0} N° de série {1} ne peut pas être livré,
 {0} Serial Numbers required for Item {1}. You have provided {2}.,{0} Numéros de Série requis pour objet {1}. Vous en avez fourni {2}.,
+{0} account is not of type {1},le compte {0} n'est pas de type {1},
 {0} against Bill {1} dated {2},{0} pour la Facture {1} du {2},
 {0} against Purchase Order {1},{0} pour la commande fournisseur d'Achat {1},
 {0} against Sales Invoice {1},{0} pour la Facture de vente {1},
@@ -12616,6 +12465,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0}: From {0} of type {1},{0} : Du {0} de type {1},
 {0}: From {1},{0}: De {1},
 {0}: {1} does not exists,{0} : {1} n'existe pas,
+{0}: {1} must be less than {2},{0}: {1} doit être inférieur à {2}, 
 {0}: {1} must be less than {2},{0} : {1} doit être inférieur à {2}.,
 {0}: {1} not found in Invoice Details table,{0} : {1} introuvable dans la table de Détails de la Facture,
 {0}{1} Did you rename the item? Please contact Administrator / Tech support,{0}{1} Avez-vous renommé l'article ? Veuillez contacter l'Administrateur / le support technique,
@@ -12653,5 +12503,3 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {} {} is already linked with {} {},{} {} est déjà lié avec {} {},
 {} {} should be between {} and {},{} {} doit être entre {} et {},
 ← Back to upload files,← Retour au téléchargement de fichiers,
-From,Date de début,Fetch timesheet in sales invoice
-To,Date de fin,Fetch timesheet in sales invoice

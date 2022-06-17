@@ -16,7 +16,7 @@ class PaymentLedgerEntry(Document):
 			ignore_permissions=True,
 		)
 		if not valid_account:
-			frappe.throw(_("{0} account is not of type {1}").format(self.account, self.account_type))
+			frappe.throw(_("{0} account is not of type {1}").format(self.account, _(self.account_type)))
 
 	def validate(self):
 		self.validate_account()

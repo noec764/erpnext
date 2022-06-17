@@ -160,7 +160,7 @@ def get_file_content(file_name, zip_file_object):
 		try:
 			content = encoded_content.decode("utf-16")
 		except UnicodeDecodeError:
-			frappe.log_error(_("UTF-16 encoding error for File Name: ") + file_name)
+			frappe.log_error(_("UTF-16 encoding error for File Name:") + " " + file_name)
 
 	return content
 

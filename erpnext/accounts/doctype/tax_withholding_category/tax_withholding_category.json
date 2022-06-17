@@ -87,7 +87,7 @@
       "description": "Tax will be withheld only for amount exceeding the cumulative threshold",
       "fieldname": "tax_on_excess_amount",
       "fieldtype": "Check",
-      "label": "Only Deduct Tax On Excess Amount ",
+      "label": "Only Deduct Tax On Excess Amount",
       "show_days": 1,
       "show_seconds": 1
      },
@@ -102,7 +102,7 @@
     ],
     "index_web_pages_for_search": 1,
     "links": [],
-    "modified": "2021-07-27 21:47:34.396071",
+    "modified": "2021-07-28 21:47:34.396071",
     "modified_by": "Administrator",
     "module": "Accounts",
     "name": "Tax Withholding Category",

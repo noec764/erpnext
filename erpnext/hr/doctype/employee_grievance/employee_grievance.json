@@ -89,7 +89,7 @@
   {
    "fieldname": "employee_responsible",
    "fieldtype": "Link",
-   "label": "Employee Responsible ",
+   "label": "Employee Responsible",
    "options": "Employee"
   },
   {
@@ -202,7 +202,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-06-21 12:51:01.499486",
+ "modified": "2021-06-22 12:51:01.499486",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee Grievance",
