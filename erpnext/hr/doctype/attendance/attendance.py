@@ -235,12 +235,33 @@ def get_events(start, end, filters=None):
 	events = []
 
 	filters = frappe.parse_json(filters)
-	filters.append({"employee": ("in", frappe.db.get_list("Employee", pluck="name"))})
+	if not filters or not any("employee" in f for f in filters):
+		employees = frappe.db.get_list("Employee", pluck="name")
+		filters.append({"employee": ("in", employees)})
+	else:
+		employee_filter = [f for f in filters if "employee" in f][0]
+		employees = [employee_filter[3]] if isinstance(employee_filter[3], str) else employee_filter[3]
 
 	from frappe.desk.reportview import get_filters_cond
 
 	conditions = get_filters_cond("Attendance", filters, [])
 	add_attendance(events, start, end, conditions=conditions)
+
+	for employee in employees:
+		holiday_dates = get_holiday_dates_for_employee(employee, start, end)
+		for holiday_date in holiday_dates:
+			events.append(
+				{
+					"name": f"{employee}_{holiday_date}",
+					"start": getdate(holiday_date),
+					"end": getdate(holiday_date),
+					"display": "background",
+					"color": "#DCE0E3",
+					"all_day": 1,
+					"title": _("Holiday"),
+				}
+			)
+
 	return events
 
 

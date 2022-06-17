@@ -406,6 +406,9 @@ def get_holidays_for_employee(
 	"""
 	holiday_list = get_holiday_list_for_employee(employee, raise_exception=raise_exception)
 
+	if holiday_list or frappe.db.get_value("Holiday List", holiday_list, "from_date") > end_date:
+		holiday_list = get_previous_holiday_list(holiday_list, start_date, end_date)
+
 	if not holiday_list:
 		return []
 
@@ -417,6 +420,20 @@ def get_holidays_for_employee(
 	holidays = frappe.get_all("Holiday", fields=["description", "holiday_date"], filters=filters)
 
 	return holidays
+
+
+def get_previous_holiday_list(holiday_list, start, end):
+	while True:
+		name, from_date, to_date, replaced_list = frappe.db.get_value(
+			"Holiday List", holiday_list, ["name", "from_date", "to_date", "replaces_holiday_list"]
+		)
+
+		if getdate(from_date) <= getdate(start) and getdate(to_date) >= getdate(end):
+			return name
+		elif not replaced_list:
+			return
+
+		holiday_list = replaced_list
 
 
 @erpnext.allow_regional
