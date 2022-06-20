@@ -532,15 +532,15 @@ class AccountsController(TransactionBase):
 					if ret.get("pricing_rules"):
 						self.apply_pricing_rule_on_items(item, ret)
 						self.set_pricing_rule_details(item, ret)
-					else:
-						# Transactions line item without item code
+				else:
+					# Transactions line item without item code
 
-						uom = item.get("uom")
-						stock_uom = item.get("stock_uom")
-						if bool(uom) != bool(stock_uom):  # xor
-							item.stock_uom = item.uom = uom or stock_uom
+					uom = item.get("uom")
+					stock_uom = item.get("stock_uom")
+					if bool(uom) != bool(stock_uom):  # xor
+						item.stock_uom = item.uom = uom or stock_uom
 
-						item.conversion_factor = get_uom_conv_factor(item.get("uom"), item.get("stock_uom"))
+					item.conversion_factor = get_uom_conv_factor(item.get("uom"), item.get("stock_uom"))
 
 			if self.doctype == "Purchase Invoice":
 				self.set_expense_account(for_validate)
