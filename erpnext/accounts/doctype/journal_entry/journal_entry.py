@@ -844,7 +844,7 @@ class JournalEntry(AccountsController):
 						item=d,
 					)
 				)
-			return gl_map
+		return gl_map
 
 	def make_gl_entries(self, cancel=0, adv_adj=0):
 		from erpnext.accounts.general_ledger import make_gl_entries
