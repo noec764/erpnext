@@ -131,11 +131,11 @@ def setup_default_leaves():
 			"is_carry_forward": 0,
 			"include_holiday": 0,
 			"is_compensatory": 0,
-			"max_leaves_allowed": 25,
+			"max_leaves_allowed": 30,
 			"allow_negative": 1,
 			"is_earned_leave": 1,
 			"earned_leave_frequency": "Custom Formula",
-			"earned_leave_frequency_formula": "Congés payés sur jours ouvrés",
+			"earned_leave_frequency_formula": "Congés payés sur jours ouvrables",
 		},
 		{
 			"doctype": "Leave Type",
@@ -158,7 +158,7 @@ def setup_default_leaves():
 	policy = {
 		"doctype": "Leave Policy",
 		"title": _("Congés Payés"),
-		"leave_policy_details": [{"leave_type": _("Congés Payés"), "annual_allocation": 25}],
+		"leave_policy_details": [{"leave_type": _("Congés Payés"), "annual_allocation": 30}],
 	}
 
 	doc = frappe.get_doc(policy)

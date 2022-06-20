@@ -14,7 +14,6 @@ from frappe.utils import (
 	get_link_to_form,
 	getdate,
 	nowdate,
-	today,
 )
 
 import erpnext
@@ -268,7 +267,7 @@ def generate_leave_encashment():
 
 		leave_allocation = frappe.get_all(
 			"Leave Allocation",
-			filters={"to_date": add_days(today(), -1), "leave_type": ("in", leave_type)},
+			filters={"to_date": add_days(nowdate(), -1), "leave_type": ("in", leave_type)},
 			fields=[
 				"employee",
 				"leave_period",
@@ -600,7 +599,7 @@ class EarnedLeaveCalculator:
 		create_additional_leave_ledger_entry(allocation, allocation_difference, self.parent.today)
 
 		text = _("allocated {0} leave(s) via scheduler on {1}").format(
-			frappe.bold(self.earned_leaves), frappe.bold(formatdate(today()))
+			frappe.bold(self.earned_leaves), frappe.bold(formatdate(nowdate()))
 		)
 
 		allocation.add_comment(comment_type="Info", text=text)
