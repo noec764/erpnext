@@ -32,7 +32,7 @@ frappe.ui.form.on("Journal Entry", {
 		if(frm.doc.docstatus==1) {
 			frm.add_custom_button(__('Reverse Journal Entry'), function() {
 				return erpnext.journal_entry.reverse_journal_entry(frm);
-			}, __('Actions'));
+			}, __('Make'));
 
 			if (frm.doc.unreconciled_amount > 0) {
 				frm.add_custom_button(__('Set as reconciled'), () => {
@@ -44,7 +44,7 @@ frappe.ui.form.on("Journal Entry", {
 							indicator: "green"
 						})
 					})
-				}, __('Actions'), true);
+				}, __('Make'), true);
 			}
 		}
 
