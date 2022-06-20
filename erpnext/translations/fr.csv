@@ -266,10 +266,10 @@ INV-.####<br>
 <li>Calculating Basic Salary based on <code>base</code>
 <pre><code>Condition: base &lt; 10000</code></pre>
 <pre><code>Formula: base * .2</code></pre></li>
-<li>Calculating HRA based on Basic Salary<code>BS</code> 
+<li>Calculating HRA based on Basic Salary<code>BS</code>
 <pre><code>Condition: BS &gt; 2000</code></pre>
 <pre><code>Formula: BS * .1</code></pre></li>
-<li>Calculating TDS based on Employment Type<code>employment_type</code> 
+<li>Calculating TDS based on Employment Type<code>employment_type</code>
 <pre><code>Condition: employment_type==""Intern""</code></pre>
 <pre><code>Amount: 1000</code></pre></li>
 </ol>","<h3>Aide</h3>
@@ -288,10 +288,10 @@ INV-.####<br>
 <li>Calculer un salaire de base sur la <code>base</code>
 <pre><code>Condition: base &lt; 10000</code></pre>
 <pre><code>Formule: base * .2</code></pre></li>
-<li>Calculer un HRA sur un salaire de base<code>BS</code> 
+<li>Calculer un HRA sur un salaire de base<code>BS</code>
 <pre><code>Condition: BS &gt; 2000</code></pre>
 <pre><code>Formule: BS * .1</code></pre></li>
-<li>Calculer un TDS basé sur le type de contrat<code>employment_type</code> 
+<li>Calculer un TDS basé sur le type de contrat<code>employment_type</code>
 <pre><code>Condition: employment_type==""Stagiaire""</code></pre>
 <pre><code>Montant: 1000</code></pre></li>
 </ol>",
@@ -358,7 +358,7 @@ INV-.####<br>
 
 <pre>Contract for Customer {{ party_name }}
 
--Valid From : {{ start_date }} 
+-Valid From : {{ start_date }}
 -Valid To : {{ end_date }}
 </pre>
 
@@ -372,7 +372,7 @@ INV-.####<br>
 
 <pre>Contrat pour le client {{ party_name }}
 
--Valide à partir du : {{ start_date }} 
+-Valide à partir du : {{ start_date }}
 -Valid jusqu'au : {{ end_date }}
 </pre>
 
@@ -412,7 +412,7 @@ INV-.####<br>
 
 <pre>Delivery Terms for Order number {{ name }}
 
--Order Date : {{ transaction_date }} 
+-Order Date : {{ transaction_date }}
 -Expected Delivery Date : {{ delivery_date }}
 </pre>
 
@@ -426,7 +426,7 @@ INV-.####<br>
 
 <pre>Conditions de livraison pour la commande {{ name }}
 
--Date de commande : {{ transaction_date }} 
+-Date de commande : {{ transaction_date }}
 -Date de livraison prévue : {{ delivery_date }}
 </pre>
 
@@ -918,15 +918,15 @@ Agent Group,Groupe de l'agent,
 Agent Unavailable Message,Message quand l'agent est indisponible,
 Agents,Agents,
 Age,Âge,
-"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**. 
+"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**.
 
 The package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item"" as ""Yes"".
 
 For Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.
 
-Note: BOM = Bill of Materials","Agréger un groupe de **Items** dans un autre **Item**. C'est utile si vous regroupez certains **Items** dans un paquet et que vous gardez en stock les **Items** emballés et non le **Item** agrégé. 
+Note: BOM = Bill of Materials","Agréger un groupe de **Items** dans un autre **Item**. C'est utile si vous regroupez certains **Items** dans un paquet et que vous gardez en stock les **Items** emballés et non le **Item** agrégé.
 |
-|Le paquet **Item** aura pour ""Est un article en stock"" la valeur ""Non"" et pour ""Autoriser la vente"" la valeur ""Oui"". 
+|Le paquet **Item** aura pour ""Est un article en stock"" la valeur ""Non"" et pour ""Autoriser la vente"" la valeur ""Oui"".
 |
 |Par exemple : Si vous vendez des ordinateurs portables et des sacs à dos séparément et que vous avez un prix spécial si le client achète les deux, alors l'ordinateur portable + le sac à dos seront un nouvel article groupé de produits.
 |
@@ -3905,7 +3905,7 @@ Error while reposting item valuation,Erreur lors de la comptabilisation de la va
 Error! Failed to get access token.,Erreur! Impossible d'obtenir le jeton d'accès,
 Error! Failed to get request token.,Erreur! Impossible d'obtenir le jeton de demande,
 Error: Not a valid id?,Erreur : Pas un identifiant valide ?,
-Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire, 
+Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire,
 Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire,
 Error,Erreur,
 Estimated Arrival,Arrivée estimée,
@@ -7864,7 +7864,7 @@ Please set {0} and {1} in {2}.,Veuillez définir {0} et {1} dans {2}.,
 "Please set {0} for Batched Item {1}, which is used to set {2} on Submit.","Veuillez définir {0} pour l'article en lot {1}, utilisé pour définir {2} à la validation.",
 Please set {0} for address {1},Veuillez remplir le champ {0} pour l'adresse {1},
 Please set {0} for the Employee or for Department: {1},Veuillez définir {0} pour l'employé ou pour le département: {1},
-Please set {0} for the Employee: {1},Veuillez définir {0} pour l'employé:,
+Please set {0} for the Employee: {1},Veuillez définir {0} pour l'employé: {1},
 Please set {0}.,Veuillez définir {0}.,
 Please set {0},Veuillez définir {0},customer
 Please set {0},Veuillez définir {0},
@@ -10176,7 +10176,7 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 
 #### Description of Columns
 
-1. Calculation Type: 
+1. Calculation Type:
     - This can be on **Net Total** (that is the sum of basic amount).
     - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
     - **Actual** (as mentioned).
@@ -10196,7 +10196,7 @@ Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous
 
 #### Description des colonnes
 
-1. Type de calcul: 
+1. Type de calcul:
     - Le calcul peut se faire sur le **TotalNet** (la somme des montants unitaires).
     - **Sur le total/montant d'une ligne précédente** (pour les taxes ou frais cumulatifs). Si vous sélectionnez cette option, la taxe sera appliquée comme un pourcentage du total ou du montant de la ligne précédente (dans la table de taxes et frais).
     - **Réel** (le montant entré dans la ligne).
@@ -10256,7 +10256,7 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 
 #### Description of Columns
 
-1. Calculation Type: 
+1. Calculation Type:
     - This can be on **Net Total** (that is the sum of basic amount).
     - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
     - **Actual** (as mentioned).
@@ -10275,7 +10275,7 @@ Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous
 
 #### Description des colonnes
 
-1. Type de calcul: 
+1. Type de calcul:
     - Le calcul peut se faire sur le **TotalNet** (la somme des montants unitaires).
     - **Sur le total/montant d'une ligne précédente** (pour les taxes ou frais cumulatifs). Si vous sélectionnez cette option, la taxe sera appliquée comme un pourcentage du total ou du montant de la ligne précédente (dans la table de taxes et frais).
     - **Réel** (le montant entré dans la ligne).
@@ -12666,7 +12666,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0}: From {0} of type {1},{0} : Du {0} de type {1},
 {0}: From {1},{0}: De {1},
 {0}: {1} does not exists,{0} : {1} n'existe pas,
-{0}: {1} must be less than {2},{0}: {1} doit être inférieur à {2}, 
+{0}: {1} must be less than {2},{0}: {1} doit être inférieur à {2},
 {0}: {1} must be less than {2},{0} : {1} doit être inférieur à {2},
 {0}: {1} not found in Invoice Details table,{0} : {1} introuvable dans la table de Détails de la Facture,
 {0}{1} Did you rename the item? Please contact Administrator / Tech support,{0}{1} Avez-vous renommé l'article ? Veuillez contacter l'Administrateur / le support technique,

@@ -593,6 +593,7 @@ regional_overrides = {
 	"France": {
 		"erpnext.accounts.report.balance_sheet.balance_sheet.execute": "erpnext.regional.france.report.balance_sheet.balance_sheet.execute",
 		"erpnext.hr.utils.allocate_earned_leaves": "erpnext.regional.france.hr.utils.allocate_earned_leaves",
+		"erpnext.hr.doctype.leave_application.leave_application.get_regional_number_of_leave_days": "erpnext.regional.france.hr.utils.get_regional_number_of_leave_days",
 	},
 	"India": {
 		"erpnext.tests.test_regional.test_method": "erpnext.regional.india.utils.test_method",

@@ -19,6 +19,7 @@ from frappe.utils import (
 	nowdate,
 )
 
+import erpnext
 from erpnext.buying.doctype.supplier_scorecard.supplier_scorecard import daterange
 from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
 from erpnext.hr.doctype.leave_block_list.leave_block_list import get_applicable_block_dates
@@ -732,7 +733,19 @@ def get_number_of_leave_days(
 ) -> float:
 	"""Returns number of leave days between 2 dates after considering half day and holidays
 	(Based on the include_holiday setting in Leave Type)"""
-	number_of_days = 0
+	number_of_days = get_regional_number_of_leave_days(
+		employee,
+		leave_type,
+		from_date,
+		to_date,
+		half_day,
+		half_day_date,
+		holiday_list,
+	)
+
+	if number_of_days:
+		return number_of_days
+
 	if cint(half_day) == 1:
 		if getdate(from_date) == getdate(to_date):
 			number_of_days = 0.5
@@ -747,7 +760,21 @@ def get_number_of_leave_days(
 		number_of_days = flt(number_of_days) - flt(
 			get_holidays(employee, from_date, to_date, holiday_list=holiday_list)
 		)
+
 	return number_of_days
+
+
+@erpnext.allow_regional
+def get_regional_number_of_leave_days(
+	employee: str,
+	leave_type: str,
+	from_date: str,
+	to_date: str,
+	half_day: Optional[int] = None,
+	half_day_date: Optional[str] = None,
+	holiday_list: Optional[str] = None,
+) -> float:
+	return 0
 
 
 @frappe.whitelist()
