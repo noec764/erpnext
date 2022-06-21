@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import add_years, cint, flt, getdate, nowdate
+from frappe.utils import add_years, cint, flt, getdate
 
 import erpnext
 from erpnext.accounts.report.financial_statements import get_period_list
@@ -228,8 +228,8 @@ class ForecastingReport(ExponentialSmoothingForecast):
 			"data": {
 				"labels": labels,
 				"datasets": [
-					{"name": "Demand", "values": self.total_demand},
-					{"name": "Forecast", "values": self.total_forecast},
+					{"name": _("Demand"), "values": self.total_demand},
+					{"name": _("Forecast"), "values": self.total_forecast},
 				],
 			},
 			"type": "line",

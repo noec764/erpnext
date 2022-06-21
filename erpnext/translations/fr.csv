@@ -213,66 +213,6 @@ INV-.####<br>
 <pre><code>Condition: employment_type==""Intern""</code></pre>
 <pre><code>Amount: 1000</code></pre></li>
 </ol>","<h3>Aide</h3>
-<p>|&micro;|||&micro;||</p>
-<p>Notes:</p>
-<p>|&micro;|||&micro;||</p>
-<ol>|&micro;||
-<li>Utiliser le champ <code>base</code> pour l'utilisation du salaire de base de l'employ&eacute;</li>
-|&micro;||
-<li>Utilisez les abr&eacute;viations de la composante salariale dans les conditions et les formules. <code>BS = Salaire de base</code></li>
-|&micro;||
-<li>Utiliser le nom du champ pour les d&eacute;tails de l'employ&eacute; dans les conditions et les formules. <code>Type d'emploi = employment_type</code><code>Branch = branch</code></li>
-|&micro;||
-<li>Utiliser le nom du champ de la fiche de salaire dans les conditions et les formules <code>Jours de paiement = payment_days</code><code>Leave without pay = leave_without_pay</code></li>
-|&micro;||
-<li>Le montant direct peut &eacute;galement &ecirc;tre saisi en fonction de la condition. Voir l'exemple 3</li>
-</ol>
-<p>|&micro;|||&micro;||</p>
-<h4>Exemples</h4>
-<p>|&micro;||</p>
-<ol>|&micro;||
-<li>Calcul du salaire de base sur bas&eacute; sur la <code>base de</code>|&micro;||
-<pre><code>Condition: base &lt; 10000</code></pre>
-|&micro;||
-<pre><code>Formule: base * .2</code></pre>
-</li>
-|&micro;||
-<li>Calcul du HRA sur la base du salaire de base<code>BS</code> |&micro;||
-<pre><code>Condition: BS &gt; 2000</code></pre>
-|&micro;||
-<pre><code>Formule: BS * .1</code></pre>
-</li>
-|&micro;||
-<li>Calcul du TDS en fonction du type d'emploi<code>employment_type</code> |&micro;||
-<pre><code>Condition: employment_type==""Intern""</code></pre>
-|&micro;||
-<pre><code>Montant: 1000</code></pre>
-</li>
-|&micro;||</ol>
-<p>Lorem ipsum dolor sit amet, nonumes voluptatum mel ea, cu case ceteros cum. Novum commodo malorum vix ut. Dolores consequuntur in ius, sale electram dissentiunt quo te. Cu duo omnes invidunt, eos eu mucius fabellas. Stet facilis ius te, quando voluptatibus eos in. Ad vix mundi alterum, integre urbanitas intellegam vix in.</p>",
-"<h3>Help</h3>
-
-<p>Notes:</p>
-
-<ol>
-<li>Use field <code>base</code> for using base salary of the Employee</li>
-<li>Use Salary Component abbreviations in conditions and formulas. <code>BS = Basic Salary</code></li>
-<li>Use field name for employee details in conditions and formulas. <code>Employment Type = employment_type</code><code>Branch = branch</code></li>
-<li>Use field name from Salary Slip in conditions and formulas. <code>Payment Days = payment_days</code><code>Leave without pay = leave_without_pay</code></li>
-<li>Direct Amount can also be entered based on Condition. See example 3</li></ol>
-
-<h4>Examples</h4>
-<ol>
-<li>Calculating Basic Salary based on <code>base</code>
-<pre><code>Condition: base &lt; 10000</code></pre>
-<pre><code>Formula: base * .2</code></pre></li>
-<li>Calculating HRA based on Basic Salary<code>BS</code>
-<pre><code>Condition: BS &gt; 2000</code></pre>
-<pre><code>Formula: BS * .1</code></pre></li>
-<li>Calculating TDS based on Employment Type<code>employment_type</code>
-<pre><code>Condition: employment_type==""Intern""</code></pre>
-<pre><code>Amount: 1000</code></pre></li>
-</ol>","<h3>Aide</h3>
 
 <p>Notes:</p>
 
@@ -343,31 +283,6 @@ INV-.####<br>
 
 <h4>Templating</h4>
 
-<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de mod&egrave;le de contrat</h4>
-<p>|&micro;|||&micro;||</p>
-<pre>Contract for Customer {{ party_name }}|&micro;|||&micro;||-Valid From : {{ start_date }} |&micro;||-Valid To : {{ end_date }}|&micro;||</pre>
-<p>|&micro;|||&micro;||</p>
-<h4>Comment obtenir des noms de champs</h4>
-<p>|&micro;|||&micro;||</p>
-<p>Les noms des champs que vous pouvez utiliser dans votre modèle de contrat sont les champs du contrat pour lequel vous créez le modèle. Vous pouvez trouver les champs de n'importe quel document via Configuration &gt ; Personnaliser la vue du formulaire et en sélectionnant le type de document (par exemple, Contrat).</p>
-<p>|&micro;|||&micro;||</p>
-<h4>Mod&egrave;les</h4>
-<p>|&micro;|||&micro;||</p>
-<p>Les modèles sont compilés à l'aide du langage de création de modèles Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">Lire la documentaion.</a></p>",
-"<h4>Contract Template Example</h4>
-
-<pre>Contract for Customer {{ party_name }}
-
--Valid From : {{ start_date }}
--Valid To : {{ end_date }}
-</pre>
-
-<h4>How to get fieldnames</h4>
-
-<p>The field names you can use in your Contract Template are the fields in the Contract for which you are creating the template. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Contract)</p>
-
-<h4>Templating</h4>
-
 <p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de modèle de contrat</h4>
 
 <pre>Contrat pour le client {{ party_name }}
@@ -383,31 +298,6 @@ INV-.####<br>
 <h4>Variables</h4>
 
 <p>Les variables sont compilées grâce au language de modelisation Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">lisez cette documentation.</a></p>",
-"<h4>Standard Terms and Conditions Example</h4>
-
-<pre>Delivery Terms for Order number {{ name }}
-
--Order Date : {{ transaction_date }}
--Expected Delivery Date : {{ delivery_date }}
-</pre>
-
-<h4>How to get fieldnames</h4>
-
-<p>The fieldnames you can use in your email template are the fields in the document from which you are sending the email. You can find out the fields of any documents via Setup &gt; Customize Form View and selecting the document type (e.g. Sales Invoice)</p>
-
-<h4>Templating</h4>
-
-<p>Templates are compiled using the Jinja Templating Language. To learn more about Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">read this documentation.</a></p>","<h4>Exemple de conditions g&eacute;n&eacute;rales</h4>
-<p>|&micro;|||&micro;||</p>
-<pre>Delivery Terms for Order number {{ name }}|&micro;|||&micro;||-Order Date : {{ transaction_date }} |&micro;||-Expected Delivery Date : {{ delivery_date }}|&micro;||</pre>
-<p>|&micro;|||&micro;||</p>
-<h4>Comment obtenir des noms de champs</h4>
-<p>|&micro;|||&micro;||</p>
-<p>Les noms de champs que vous pouvez utiliser dans votre mod&egrave;le d'e-mail sont les champs du document &agrave; partir duquel vous envoyez l'e-mail. Vous pouvez trouver les champs de n'importe quel document via Configuration &gt; Personnaliser la vue du formulaire et en s&eacute;lectionnant le type de document (par exemple, la facture de vente).</p>
-<p>|&micro;|||&micro;||</p>
-<h4>Mod&egrave;les</h4>
-<p>|&micro;|||&micro;||</p>
-<p>Les modèles sont compilés à l'aide du langage de création de modèles Jinja. Pour en savoir plus sur Jinja, <a class=""strong"" href=""http://jinja.pocoo.org/docs/dev/templates/"">Lire la documentation.</a></p>",
 "<h4>Standard Terms and Conditions Example</h4>
 
 <pre>Delivery Terms for Order number {{ name }}
@@ -1979,6 +1869,7 @@ Cancellation delay,Délai d'annulation,
 Cancellation of e-way bill is currently not supported. ,L'annulation des factures e-way n'est pas supportée pour le moment.,
 Cancellation options,Options d'annulation,
 Cancelled and billable,Annulé et facturable,
+Cancelled,Annulé,"docstatus,=,2"
 Cancelled,Annulé,
 Cancelling E-Invoices...,Annulation des e-factures...,
 Cannot Calculate Arrival Time as Driver Address is Missing.,Le système n'a pas pu calculer l'heure d'arrivée car l'adresse du livreur est manquante,
@@ -2503,6 +2394,7 @@ Conversion rate cannot be 0 or 1,Le taux de conversion ne peut pas être égal �
 Convert Item Description to Clean HTML in Transactions,Convertir la description de l'article en HTML propre dans les transactions,
 Convert Item Description to Clean HTML,Convertir la description de l'élément pour nettoyer le code HTML,
 Convert minutes into:,Convertir les minutes en:,
+Convert to Group,Convertir en groupe,Warehouse
 Convert to Group,Convertir en Groupe,
 Convert to Ledger,Convertir en enfant,Warehouse
 Convert to Non-Group,Convertir en non-groupe,
@@ -3238,6 +3130,7 @@ Delivery against Sales Order,Livraison pour un bon de commande,
 Delivery to,Livré à,
 Delivery warehouse required for stock item {0},Entrepôt de Livraison requis pour article du stock {0},
 Delivery,Livraison,
+Demand,Demande,
 Department (optional),Département (Optionnel),
 Department Analytics,Analyse des départements,
 Department Approver,Approbateur du département,
@@ -3474,6 +3367,7 @@ Downtime Entry,Ecriture de temps d'arrêt,
 Downtime Reason,Raison pour le temps d'arrêt,
 Downtime,Temps d'arrêt,
 Draft invoices,Factures en brouillon,
+Draft,Brouillon,"docstatus,=,0"
 Draft,Brouillon,
 "Drag and drop files, ",Glisser/déposer des fichiers,
 Dr,déb.,
@@ -3905,7 +3799,7 @@ Error while reposting item valuation,Erreur lors de la comptabilisation de la va
 Error! Failed to get access token.,Erreur! Impossible d'obtenir le jeton d'accès,
 Error! Failed to get request token.,Erreur! Impossible d'obtenir le jeton de demande,
 Error: Not a valid id?,Erreur : Pas un identifiant valide ?,
-Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire,
+Error: {0} is mandatory field,Erreur: {0} est un champ obligatoire, 
 Error: {0} is mandatory field,Erreur : {0} est un champ obligatoire,
 Error,Erreur,
 Estimated Arrival,Arrivée estimée,
@@ -4025,6 +3919,7 @@ Expense Taxes and Charges,Frais et charges de la note de frais,
 Expense Type,Type de dépense,
 Expense account is mandatory for item {0},Compte de charge est obligatoire pour l'article {0},
 Expense or Difference account is mandatory for Item {0} as it impacts overall stock value,Compte de Charge et d'Écarts est obligatoire pour objet {0} car il impacte la valeur globale des actions,
+Expense,Charge,Account Validation
 Expense,Charges,
 Expenses Included In Asset Valuation,Dépenses incluses dans la valorisation de l'actif,
 Expenses Included In Valuation,Dépenses incluses dans la valorisation,
@@ -4183,6 +4078,7 @@ First Response Time for Issues,Délai de première réponse aux tickets,
 First Response Time for Opportunity,Délai de première réponse aux opportunités,
 First Response Time,Durée avant la première réponse,
 First add items in the Item Locations table,Veuillez commencer par ajouter vos articles dans le tableau de localisation des articles,
+First working day after leave,Premier jour de travail après les congés,
 "Fiscal Regime is mandatory, kindly set the fiscal regime in the company {0}","Le régime fiscal est obligatoire, veuillez le définir pour la société {0}",
 Fiscal Year Company,Société de l'Exercice Fiscal,
 Fiscal Year End Date should be one year after Fiscal Year Start Date,La date de fin de l'année fiscale doit être un an après la date de début de l'année fiscale,
@@ -4272,6 +4168,7 @@ For the 'Apply Rule On Other' condition the field {0} is mandatory,Le champ {0} 
 "For {0}, only credit accounts can be linked against another debit entry","Pour {0}, seuls les comptes de crédit peuvent être liés avec une autre écriture de débit",
 "For {0}, only debit accounts can be linked against another credit entry","Pour {0}, seuls les comptes de débit peuvent être liés avec une autre écriture de crédit",
 For,Pour,
+Forecast,Prévision,
 Forecasting,Prévisionnel,
 Foreign Trade Details,Détails du Commerce Extérieur,
 Form View,Vue de Formulaire,
@@ -4439,6 +4336,7 @@ Gateways Payment Plans,Plans de paiement des passerelles de paiement,
 Gender Diversity Ratio,Ratio de diversité de genre,
 Gender,Genre,
 General Ledger Filters,Filtres du grand livre,
+General Ledger,Grand livre,Warehouse
 General Ledger,Grand livre,
 General Settings,Paramètres Généraux,
 General,Général,
@@ -4991,6 +4889,7 @@ Income Tax Slab not set in Salary Structure Assignment: {0},Tranche de taux d'im
 Income Tax Slab: {0} is disabled,Tranche de taux d'imposition: {0} est désactivé,
 Income Tax Slab,Tranche d'impôt sur le revenu,
 Income Tax,Impôt sur le Revenu,
+Income,Revenu,Account Validation
 Income,Revenus,
 Incoming Bills (Purchase Invoice),Factures entrantes (Facture d'achat),
 Incoming Call Handling Schedule,Calendrier de gestion des appels entrants,
@@ -5629,6 +5528,7 @@ Last day of the month,Dernier jour du mois,
 Last quarter,Dernier trimestre,
 Last subscription invoices,Dernières factures pour cet abonnement,
 Last synchronization datetime,Date/Heure de dernière syncronisation,
+Last working day before leave,Dernier jour de travail avant les congés,
 Late Entry Grace Period,Délai supplémentaire pour les arrivées tardives,
 Late Entry,Arrivée tardive,
 Latest Age,Le plus tard,
@@ -7867,6 +7767,7 @@ Please set {0} for the Employee or for Department: {1},Veuillez définir {0} pou
 Please set {0} for the Employee: {1},Veuillez définir {0} pour l'employé: {1},
 Please set {0}.,Veuillez définir {0}.,
 Please set {0},Veuillez définir {0},customer
+Please set {0},Veuillez sélectionner {0},supplier
 Please set {0},Veuillez définir {0},
 Please setup Employee Naming System in Human Resource > HR Settings,Veuillez définir un système de nommage des employés via Ressources Humaines > Paramètres RH,
 Please setup a default bank account for company {0},Veuillez définir un compte bancaire par défaut pour la société {0},
@@ -10147,47 +10048,6 @@ The tax rate you define here will be the standard tax rate for all **Items**. If
 7. Total: Cumulative total to this point.
 8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
 9. Consider Tax or Charge for: In this section you can specify if the tax / charge is only for valuation (not a part of total) or only for total (does not add value to the item) or for both.
-10. Add or Deduct: Whether you want to add or deduct the tax.","Modèle de taxe standard qui peut être appliqué à toutes les transactions d'achat. Ce modèle peut contenir une liste de rubriques de taxe ainsi que d'autres rubriques de dépenses comme ""Expédition"", ""Assurace"", ""Manutention"" etc.
-
-#### Note
-
-Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous les **articles**. Si des **articles** ont des taux différents, ils doivent être ajoutés dans la table **Taxe sur les articles** de la fiche **article**.
-
-#### Description des colonnes
-
-1. Type de calcul:
-    - Il peut s'agir du **Total net** (c'est-à-dire la somme du montant de base).
-    - **Sur le total / montant de la ligne précédente** (pour les taxes ou frais cumulés). Si vous sélectionnez cette option, la taxe sera appliquée sous la forme d'un pourcentage du montant ou du total de la ligne précédente (dans le tableau des taxes).
-    - **Réel** (comme indiqué).
-2. Intitulé du compte : Le livre de comptes sous lequel cette taxe sera comptabilisée.
-3. Centre de coût : Si la taxe/charge est un revenu (comme l'expédition) ou une dépense, elle doit être comptabilisée dans un centre de coût.
-4. Description : Description de la taxe (qui sera imprimée dans les factures / devis).
-5. Taux: Taux de taxe.
-6. Montant: Montant de taxe.
-7. Total : Total cumulé jusqu'à ce point.
-8. Entrer la ligne : Si vous vous basez sur le ""Total de la ligne précédente"", vous pouvez sélectionner le numéro de la ligne qui sera prise comme base pour ce calcul (par défaut, la ligne précédente).
-9. Considérer la taxe ou la charge pour : Dans cette section, vous pouvez spécifier si la taxe / redevance est uniquement pour l'évaluation (pas une partie du total) ou uniquement pour le total (n'ajoute pas de valeur à l'article) ou pour les deux..
-10. Ajouter ou déduire : Si vous voulez ajouter ou déduire la taxe.",
-"Standard tax template that can be applied to all Purchase Transactions. This template can contain list of tax heads and also other expense heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
-
-#### Note
-
-The tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.
-
-#### Description of Columns
-
-1. Calculation Type:
-    - This can be on **Net Total** (that is the sum of basic amount).
-    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
-    - **Actual** (as mentioned).
-2. Account Head: The Account ledger under which this tax will be booked
-3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.
-4. Description: Description of the tax (that will be printed in invoices / quotes).
-5. Rate: Tax rate.
-6. Amount: Tax amount.
-7. Total: Cumulative total to this point.
-8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
-9. Consider Tax or Charge for: In this section you can specify if the tax / charge is only for valuation (not a part of total) or only for total (does not add value to the item) or for both.
 10. Add or Deduct: Whether you want to add or deduct the tax.","Un modèle de taxes standard peut être appliqué à toutes les transactions d'achat. Ce modèle peut contenir une liste de comptes de taxe ainsi que d'autres types de frais et charges comme les frais de livraison, d'assurance, de douane, etc...
 
 #### Note
@@ -10209,45 +10069,6 @@ Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous
 8. Ligne de référence: Si le type est ""Total d'une ligne précédente"" vous pouvez sélectionner le numéro de ligne servant de base au calcul (par défaut ce sera la ligne précédente).
 9. Tenir compte des taxes et frais pour: Dans cette section vous pouvez indiquer si cette taxe/frais est uniquement à inclure dans la valorisation (et non dans le total du document) ou seulement dans le total (ne sera pas ajouté à la valorisation des articles) ou pour les deux.
 10. Ajouter ou déduire: Indiquer si vous souhaitez ajouter ou déduire cette ligne de taxes/frais.",
-"Standard tax template that can be applied to all Sales Transactions. This template can contain list of tax heads and also other expense / income heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
-
-#### Note
-
-The tax rate you define here will be the standard tax rate for all **Items**. If there are **Items** that have different rates, they must be added in the **Item Tax** table in the **Item** master.
-
-#### Description of Columns
-
-1. Calculation Type:
-    - This can be on **Net Total** (that is the sum of basic amount).
-    - **On Previous Row Total / Amount** (for cumulative taxes or charges). If you select this option, the tax will be applied as a percentage of the previous row (in the tax table) amount or total.
-    - **Actual** (as mentioned).
-2. Account Head: The Account ledger under which this tax will be booked
-3. Cost Center: If the tax / charge is an income (like shipping) or expense it needs to be booked against a Cost Center.
-4. Description: Description of the tax (that will be printed in invoices / quotes).
-5. Rate: Tax rate.
-6. Amount: Tax amount.
-7. Total: Cumulative total to this point.
-8. Enter Row: If based on ""Previous Row Total"" you can select the row number which will be taken as a base for this calculation (default is the previous row).
-9. Is this Tax included in Basic Rate?: If you check this, it means that this tax will not be shown below the item table, but will be included in the Basic Rate in your main item table. This is useful where you want give a flat price (inclusive of all taxes) price to customers.","Modèle de taxe standard qui peut être appliqué à toutes les transactions de vente. Ce modèle peut contenir une liste de rubriques de taxe ainsi que d'autres rubriques de dépenses/revenus comme ""Expédition"", ""Assurance"", ""Manutention"", etc.
-
-#### Note
-
-Le taux de taxe que vous définissez ici sera le taux de taxe standard pour tous les **articles**. Si des **articles** ont des taux différents, ils doivent être ajoutés dans la table **Taxe sur les articles** de la fiche **article**.
-
-#### Description des colonnes
-
-1. Type de calcul :
-    - Il peut s'agir du **Total net** (c'est-à-dire la somme du montant de base).
-    - **Sur le total / montant de la ligne précédente** (pour les taxes ou frais cumulés). Si vous sélectionnez cette option, la taxe sera appliquée sous la forme d'un pourcentage du montant ou du total de la ligne précédente (dans le tableau des taxes).
-    - **Actuel** (comme mentionné).
-2. Intitulé du compte : Le livre de comptes sous lequel cette taxe sera comptabilisée.
-3. Centre de coût : Si la taxe/charge est un revenu (comme l'expédition) ou une dépense, elle doit être comptabilisée dans un centre de coût.
-4. Description : Description de la taxe (qui sera imprimée dans les factures / devis).
-5. Taux : Taux d'imposition.
-6. Montant : Montant de la taxe.
-7. Total : Total cumulé jusqu'à ce point.
-8. Entrer la ligne : Si vous vous basez sur le ""Total de la ligne précédente"", vous pouvez sélectionner le numéro de la ligne qui sera prise comme base pour ce calcul (par défaut, la ligne précédente).
-9. Cette taxe est-elle incluse dans le taux de base ? Si vous cochez cette case, cela signifie que cette taxe ne sera pas affichée sous le tableau des articles, mais qu'elle sera incluse dans le taux de base de votre tableau principal des articles. Cette option est utile lorsque vous souhaitez proposer un prix forfaitaire (toutes taxes comprises) à vos clients.",
 "Standard tax template that can be applied to all Sales Transactions. This template can contain list of tax heads and also other expense / income heads like ""Shipping"", ""Insurance"", ""Handling"" etc.
 
 #### Note
@@ -11136,6 +10957,7 @@ Time logs are required for {0} {1},Des feuilles de temps sont nécessaires pour 
 Time slot is not available,Le créneau horaire n'est pas disponible,
 Time to send,Heure d'envoi,
 Time(in mins),Temps (en min),
+Time,Heure,Cart
 Time,Temps,
 Timeline,Chronologie,
 Timer exceeded the given hours.,La minuterie a dépassé les heures configurées.,
@@ -12521,6 +12343,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0} Digest,Récapitulatif {0},
 {0} Invoice created successfully.,{0} Facture créée avec succès.,
 {0} Invoices created successfully.,{0} Factures créées avec succès.,
+{0} Missing,{0} manquant,
 {0} Name,Nom {0},
 {0} Not in Stock,{0} Pas en stock,
 {0} Number {1} already used in account {2},{0} numéro {1} déjà utilisé dans le compte {2},
@@ -12666,7 +12489,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0}: From {0} of type {1},{0} : Du {0} de type {1},
 {0}: From {1},{0}: De {1},
 {0}: {1} does not exists,{0} : {1} n'existe pas,
-{0}: {1} must be less than {2},{0}: {1} doit être inférieur à {2},
+{0}: {1} must be less than {2},{0}: {1} doit être inférieur à {2}, 
 {0}: {1} must be less than {2},{0} : {1} doit être inférieur à {2},
 {0}: {1} not found in Invoice Details table,{0} : {1} introuvable dans la table de Détails de la Facture,
 {0}{1} Did you rename the item? Please contact Administrator / Tech support,{0}{1} Avez-vous renommé l'article ? Veuillez contacter l'Administrateur / le support technique,
