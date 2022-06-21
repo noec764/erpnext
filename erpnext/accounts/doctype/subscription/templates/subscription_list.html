@@ -2,30 +2,11 @@
 <h4 class="text-muted">{{ sub_title }}</h4>
 {% endif %}
 {% if not result -%}
-		{% if subscription_templates %}
-			<div class="subscription-list">
-			{% for subscription_template in subscription_templates %}
-				<div class="card" style="width: 18rem;">
-					{% if subscription_template.portal_image %}
-					<img class="card-img-top" src="{{ subscription_template.portal_image }}" alt="{{ subscription_template.name }}">
-					{% endif %}
-					<div class="card-body">
-						<h5 class="card-title">{{ subscription_template.name }}</h5>
-						<p class="card-text">{{ subscription_template.portal_description or "" }}</p>
-						<div class="text-right">
-							<button class="btn btn-primary" id='{{ scrub(subscription_template.name) }}_subscription'>{{ _("Subscribe") }}</button>
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-			</div>
-		{% else %}
-			<div class="row align-items-center justify-content-center text-muted" style="min-height: 300px;">
-				<div>
-					{{ no_result_message or _("Nothing to show") }}
-				</div>
-			</div>
-		{% endif %}
+<div class="row align-items-center justify-content-center text-muted" style="min-height: 300px;">
+	<div>
+		{{ no_result_message or _("Nothing to show") }}
+	</div>
+</div>
 {% else %}
 	<div class="website-list" data-doctype="{{ doctype }}"
 		data-txt="{{ txt or '[notxt]' | e }}">
@@ -44,21 +25,3 @@
 		</div>
 	</div>
 {%- endif %}
-
-<script>
-	{% if not result -%}
-		{% for subscription_template in subscription_templates %}
-		document.getElementById("{{ scrub(subscription_template.name) }}_subscription").addEventListener("click", function(e) {
-			new frappe.confirm(__('Subscribe to {0} ?', ["{{ subscription_template.name }}"]), function() {
-				return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: "{{ subscription_template.name }}"})
-				.then(r => {
-					if (r && r.message) {
-						frappe.show_alert({message: __("Subscription created"), indicator: "green"})
-						window.location = r.message.payment_link ? r.message.payment_link : `/subscriptions/${r.message.subscription.name}`;
-					}
-				})
-			})
-		})
-		{% endfor %}
-	{%- endif %}
-</script>

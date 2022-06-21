@@ -112,7 +112,9 @@ class EventsCalendar {
 				me.eventClick(event)
 			},
 			displayEventTime: this.get_time_display(),
-			height: "auto"
+			height: "auto",
+			slotMinTime: '08:00:00',
+			slotMaxTime: '20:00:00'
 		}
 	}
 

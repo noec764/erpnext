@@ -473,6 +473,7 @@ def get_list_context(context=None):
 		filters={"enable_on_portal": 1},
 		fields=["name", "portal_description", "portal_image"],
 	)
+
 	context.update(
 		{
 			"show_sidebar": True,
@@ -489,7 +490,7 @@ def get_list_context(context=None):
 			)
 			if templates
 			else None,
-			"base_scripts": ["frappe-web.bundle.js", "dialog.bundle.js", "controls.bundle.js"],
+			"base_scripts": ["dialog.bundle.js", "controls.bundle.js"],
 		}
 	)
 
