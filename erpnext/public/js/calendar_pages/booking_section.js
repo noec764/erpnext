@@ -27,11 +27,7 @@ erpnext.booking_section = class BookingDialog {
 	}
 
 	build_calendar() {
-		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-		]).then(() => {
-			this.calendar = new BookingCalendar(this)
-		})
+		this.calendar = new BookingCalendar(this)
 
 		erpnext.booking_section_update.on("update_calendar", r => {
 			this.uom = r;

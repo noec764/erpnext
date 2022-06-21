@@ -3,7 +3,7 @@
 {% block title %}{{ _("Book Appointment") }}{% endblock %}
 
 {% block script %}
-<script src="assets/js/moment-bundle.min.js"></script>
+{{ include_script("moment-bundle.min.js") }}
 <script src="book_appointment/index.js"></script>
 {% endblock %}
 
