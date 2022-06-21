@@ -96,7 +96,9 @@ class BookingCalendar {
 	calendar_options() {
 		const me = this;
 		return {
-			eventClassNames: 'booking-calendar',
+			eventClassNames: function(arg) {
+				return ['booking-calendar', arg.event.extendedProps.status || ""]
+			},
 			initialView: "dayGridMonth",
 			contentHeight: 'auto',
 			headerToolbar: me.get_header_toolbar(),
@@ -137,11 +139,6 @@ class BookingCalendar {
 					item: me.parent.item,
 					uom: me.parent.uom
 				}).then(result => {
-					result.message.map(r => {
-						r.display = 'background'
-						r.textColor = "#117f35"
-						r.allDay = 1
-					})
 					me.slots = result.message;
 					callback(result.message);
 
@@ -162,7 +159,6 @@ class BookingCalendar {
 class BookingSelector {
 	constructor(opts) {
 		Object.assign(this, opts);
-
 		this.make()
 	}
 
@@ -181,10 +177,15 @@ class BookingSelector {
 	build() {
 		const me = this;
 		const slots_div = this.slots.length ? this.slots.sort((a,b) => new Date(a.start) - new Date(b.start)).map(s => {
+			const number_indicator = s.number > 0 ? `<div class="cart-indicator list-indicator ml-0">${s.number}</div>` : ""
+
 			return `<div class="timeslot-options mb-4 px-4" data-slot-id="${s.id}">
-				<button class="btn btn-outline-secondary ${s.status == 'selected' ? 'selected' : ''}" type="button">
-					<div>
-						${moment(s.start).locale(this.parent.locale).format('LT')} - ${moment(s.end).locale(this.parent.locale).format('LT')}
+				<button class="btn btn-outline-secondary ${s.status}" type="button">
+					<div class="d-flex justify-content-center">
+						<div class="mx-auto">
+							${moment(s.start).locale(this.parent.locale).format('LT')} - ${moment(s.end).locale(this.parent.locale).format('LT')}
+						</div>
+						${number_indicator}
 					</div>
 				</button>
 			</div>`

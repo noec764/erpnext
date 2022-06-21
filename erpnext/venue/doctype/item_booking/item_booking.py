@@ -563,6 +563,7 @@ class ItemBookingAvailabilities:
 	def _find_available_slot(self, line, scheduled_items):
 		slots = []
 		output = []
+		user_scheduled_items = [x for x in scheduled_items if x.get("user") == self.user]
 
 		simultaneous_booking_allowed = frappe.get_cached_value(
 			"Venue Settings", None, "enable_simultaneous_booking"
@@ -582,11 +583,30 @@ class ItemBookingAvailabilities:
 			slots.extend(self._get_all_slots(line, simultaneous_booking_allowed))
 
 		for slot in slots:
-			output.append(self.get_available_dict(slot, scheduled_items))
+			output.append(self.get_available_dict(slot))
 
-		for scheduled_item in scheduled_items:
-			if scheduled_item.get("user") == self.user:
-				output.append(self.get_available_dict(scheduled_item, "selected"))
+		for scheduled_item in user_scheduled_items:
+			added = False
+			for out in output:
+				if (
+					out.get("start") == scheduled_item.get("starts_on").isoformat()
+					and out.get("end") == scheduled_item.get("ends_on").isoformat()
+				):
+					out.id = scheduled_item.get("name")
+					out.status = "selected"
+					out.number += 1
+					added = True
+
+				elif getdate(out.get("start")) == getdate(scheduled_item.get("starts_on")) or getdate(
+					out.get("end")
+				) == getdate(scheduled_item.get("ends_on")):
+					out.color = "var(--primary-color)"
+
+			if not added:
+				out = self.get_available_dict(scheduled_item, "selected")
+				out.color = "var(--primary-color)"
+				out.number += 1
+				output.append(out)
 
 		return output
 
@@ -656,12 +676,19 @@ class ItemBookingAvailabilities:
 		        - available
 		        - selected
 		"""
-		return {
-			"start": slot.get("starts_on").isoformat(),
-			"end": slot.get("ends_on").isoformat(),
-			"id": slot.get("name") or frappe.generate_hash(length=8),
-			"status": status or "available",
-		}
+		return frappe._dict(
+			{
+				"start": slot.get("starts_on").isoformat(),
+				"end": slot.get("ends_on").isoformat(),
+				"id": slot.get("name") or frappe.generate_hash(length=8),
+				"status": status or "available",
+				"number": 0,
+				"total_available": self.item_doc.get("simultaneous_bookings_allowed"),
+				"display": "background",
+				"color": None,
+				"allDay": 1,
+			}
+		)
 
 
 def _get_events(start, end, item=None, user=None):

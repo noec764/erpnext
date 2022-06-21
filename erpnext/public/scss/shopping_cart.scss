@@ -679,6 +679,10 @@ body.product-page {
 	width: 16px;
 	font-size: 10px;
 	border-radius: 50%;
+
+	&.badge-primary {
+		color: #ffff;
+	}
 }
 
 
