@@ -4,7 +4,7 @@
 frappe.provide("erpnext.accounts");
 
 frappe.pages['bank-reconciliation'].on_page_load = function(wrapper) {
-	frappe.require('bank-reconciliation.bundle.js', function() {
+	frappe.require('bank_reconciliation.bundle.js', function() {
 		new erpnext.accounts.bankReconciliationPage(wrapper);
 	});
 }

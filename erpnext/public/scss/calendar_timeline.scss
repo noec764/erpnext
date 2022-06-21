@@ -1,6 +1,5 @@
-@import '~@fullcalendar/resource-timeline/main.css';
-@import '~@fullcalendar/timeline/main.css';
-@import '~@fullcalendar/scrollgrid/main.css';
+@import '../node_modules/@fullcalendar/resource-timeline/main';
+@import '../node_modules/@fullcalendar/timeline/main';
 
 .fc.resource-calendar {
 	min-height: 500px;
