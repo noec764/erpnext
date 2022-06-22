@@ -111,7 +111,7 @@ class ReceivablePayableReport(object):
 		for ple in self.ple_entries:
 			# get the balance object for voucher_type
 			key = (ple.voucher_type, ple.voucher_no, ple.party)
-			if not key in self.voucher_balance:
+			if key not in self.voucher_balance:
 				self.voucher_balance[key] = frappe._dict(
 					voucher_type=ple.voucher_type,
 					voucher_no=ple.voucher_no,
