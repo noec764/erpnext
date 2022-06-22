@@ -432,6 +432,7 @@ class BankTransactionMatch:
 					"payment_document": self.document_type,
 				},
 				fields=["payment_document", "payment_entry"],
+				parent_doctype="Bank Transaction",
 			)
 		]
 		return self.get_linked_documents(document_names=payments_references, unreconciled=False)
