@@ -773,9 +773,10 @@ def get_item_calendar(item=None, uom=None):
 					filters={"parent": filtered_calendars[0].name, "parenttype": "Item Booking Calendar"},
 					fields=["start_time", "end_time", "day"],
 				),
+				"name": filtered_calendars[0].name,
 			}
 
-	return {"type": "Daily", "calendar": []}
+	return {"type": "Daily", "calendar": [], "name": None}
 
 
 def get_uom_in_minutes(uom=None):
