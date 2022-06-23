@@ -11,10 +11,12 @@ from frappe.utils import (
 	cint,
 	flt,
 	get_datetime,
+	get_time_zone,
 	now_datetime,
 	nowdate,
 )
 from frappe.utils.background_jobs import get_jobs
+from pytz import timezone
 
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
@@ -80,20 +82,28 @@ class WooCommerceOrdersSync:
 
 		self.get_woocommerce_orders()
 		for woocommerce_order in self.woocommerce_orders:
-			frappe.enqueue(
-				sync_order, queue="long", wc_api=self.wc_api, woocommerce_order=woocommerce_order
-			)
+			if frappe.conf.developer_mode:
+				sync_order(self.wc_api, woocommerce_order)
+			else:
+				frappe.enqueue(
+					sync_order, queue="long", wc_api=self.wc_api, woocommerce_order=woocommerce_order
+				)
 
 		self.set_synchronization_datetime()
 
 	def get_woocommerce_orders(self):
+		woocommerce_time_zone = self.wc_api.settings.woocommerce_site_timezone or "UTC"
+		user_time_zone = get_time_zone()
+		last_modified_timestamp = get_datetime(
+			self.wc_api.settings.last_synchronization_datetime or add_years(now_datetime(), -99)
+		)
+		localized_timestamp = timezone(user_time_zone).localize(last_modified_timestamp)
+		woocommerce_timestamp = localized_timestamp.astimezone(timezone(woocommerce_time_zone))
 		per_page = 100
 		response = self.wc_api.get_orders(
 			params={
 				"per_page": per_page,
-				"modified_after": get_datetime(
-					self.wc_api.settings.last_synchronization_datetime or add_years(now_datetime(), -99)
-				).isoformat(),
+				"modified_after": woocommerce_timestamp,
 				"dp": 4,
 			}
 		)
@@ -103,9 +113,7 @@ class WooCommerceOrdersSync:
 			response = self.wc_api.get_orders(
 				params={
 					"per_page": per_page,
-					"modified_after": get_datetime(
-						self.wc_api.settings.last_synchronization_datetime or add_years(now_datetime(), -99)
-					).isoformat(),
+					"modified_after": woocommerce_timestamp,
 					"dp": 4,
 					"page": page_idx,
 				}
@@ -117,7 +125,7 @@ class WooCommerceOrdersSync:
 			"Woocommerce Settings",
 			None,
 			"last_synchronization_datetime",
-			frappe.utils.get_datetime_str(now_datetime()),
+			frappe.utils.get_datetime_str(add_to_date(now_datetime(), minutes=-1)),
 		)
 
 
@@ -242,11 +250,18 @@ class WooCommerceOrderSync:
 		self.sales_order.reload()
 		if self.woocommerce_order.get("status") == "on-hold":
 			self.sales_order.update_status("On Hold")
+			self.update_booking_status("Not Confirmed")
 		elif self.sales_order.status == "On Hold":
 			self.sales_order.reload()
 			self.sales_order.update_status("Draft")
 		elif self.woocommerce_order.get("status") == "failed":
 			self.sales_order.update_status("Closed")
+			self.update_booking_status("Cancelled")
+
+	def update_booking_status(self, status):
+		for item in self.sales_order.items:
+			if item.item_booking:
+				frappe.db.set_value("Item Booking", item.item_booking, "status", status)
 
 	def _new_sales_order(self):
 		so = self.create_sales_order()
@@ -406,16 +421,19 @@ class WooCommerceOrderSync:
 
 	def get_woocommerce_bookings(self):
 		# TODO: implement a request filtered by order as soon as it is available on WooCoommerce side
-		bookings = (
-			WooCommerceBookingsAPI()
-			.get_bookings(
-				params={"after": add_to_date(self.woocommerce_order.get("date_created"), hours=-1)}
+		try:
+			bookings = (
+				WooCommerceBookingsAPI()
+				.get_bookings(
+					params={"after": add_to_date(self.woocommerce_order.get("date_created"), hours=-1)}
+				)
+				.json()
+				or []
 			)
-			.json()
-			or []
-		)
 
-		self.bookings = [b for b in bookings if b.get("order_id") == self.woocommerce_order.get("id")]
+			self.bookings = [b for b in bookings if b.get("order_id") == self.woocommerce_order.get("id")]
+		except Exception:
+			self.bookings = []
 
 	def create_update_item_booking(self, booking, item_code):
 		existing_booking = frappe.db.get_value("Item Booking", dict(woocommerce_id=booking.get("id")))
@@ -423,6 +441,7 @@ class WooCommerceOrderSync:
 			doc = frappe.get_doc("Item Booking", existing_booking)
 		else:
 			doc = frappe.new_doc("Item Booking")
+			doc.woocommerce_id = booking.get("id")
 
 		doc.starts_on = datetime.fromtimestamp(booking.get("start"))
 		doc.ends_on = datetime.fromtimestamp(booking.get("end"))

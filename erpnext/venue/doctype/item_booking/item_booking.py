@@ -117,7 +117,7 @@ class ItemBooking(Document):
 			frappe.publish_realtime("booking_overlap")
 
 	def set_title(self):
-		if self.meta._fields["title"].hidden or not self.title:
+		if self.meta.get_field("title").hidden or not self.title:
 			self.title = self.item_name or ""
 			if self.user:
 				user_name = frappe.db.get_value("User", self.user, "full_name")
@@ -1267,8 +1267,10 @@ def get_booking_count(item=None, starts_on=None, ends_on=None):
 		item_doc = frappe.get_doc("Item", item)
 		events = _get_events(getdate(starts_on), getdate(ends_on), item_doc)
 		timeslot = (get_datetime(starts_on), get_datetime(ends_on))
-		slots_left = cint(item_doc.get("simultaneous_bookings_allowed")) - get_simultaneaous_bookings(
-			events, timeslot, item_doc.get("simultaneous_bookings_allowed")
+		slots_left = (
+			cint(item_doc.get("simultaneous_bookings_allowed"))
+			- get_simultaneaous_bookings(events, timeslot, item_doc.get("simultaneous_bookings_allowed"))
+			- 1
 		)
 
 	return slots_left

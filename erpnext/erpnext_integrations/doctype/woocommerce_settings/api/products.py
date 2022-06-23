@@ -5,6 +5,7 @@ from frappe.utils.nestedset import get_root_of
 from requests.exceptions import HTTPError
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api import WooCommerceAPI
+from erpnext.stock.utils import get_stock_balance
 from erpnext.utilities.product import get_price
 
 
@@ -67,16 +68,13 @@ def get_items():
 			"modified",
 			"last_woocommerce_sync",
 			"has_variants",
-			"web_long_description",
 			"description",
-			"website_content",
 			"item_code",
 			"stock_uom",
 			"weight_per_unit",
 			"weight_uom",
 			"is_stock_item",
 			"variant_of",
-			"website_warehouse",
 			"woocommerce_id",
 			"item_name",
 		],
@@ -103,8 +101,8 @@ def prepare_item(settings, item):
 	item_data = {
 		"name": item.item_name,
 		"sku": item.item_code,
-		"description": item.get("web_long_description") or item.get("description"),
-		"short_description": item.get("website_content") or item.get("description"),
+		"description": item.get("description"),
+		"short_description": item.get("description"),
 		"manage_stock": f"{True if item.is_stock_item else False}",
 	}
 
@@ -146,9 +144,9 @@ def get_price_and_qty(item, settings):
 		)
 
 	if item.is_stock_item:
-		qty_in_stock = (item.item_code, "website_warehouse", settings.warehouse)
-		if qty_in_stock.stock_qty:
-			item_data.update({"stock_quantity": f"{qty_in_stock.stock_qty[0][0]}"})
+		qty_in_stock = get_stock_balance(item.item_code, settings.warehouse)
+		if qty_in_stock:
+			item_data.update({"stock_quantity": f"{qty_in_stock}"})
 
 	return item_data
 
@@ -314,11 +312,9 @@ def get_simple_item(settings, product):
 		"item_group": get_item_group(product.get("categories")),
 		"has_variants": False,
 		"stock_uom": settings.default_uom,
-		"default_warehouse": settings.warehouse,
 		"image": get_item_image(product),
 		"weight_uom": product.get("weight_unit"),
 		"weight_per_unit": product.get("weight"),
-		"web_long_description": product.get("short_description") or product.get("name"),
 		"include_item_in_manufacturing": 0,
 		"standard_rate": product.get("price"),
 		"item_defaults": [
@@ -429,16 +425,13 @@ def update_stock(doc, method):
 def _update_stock(doc):
 	try:
 		wc_api = WooCommerceProducts()
-		if not wc_api.api:
+		if not wc_api.api or not wc_api.settings.synchronize_stock_levels:
 			return
 
 		item = frappe.get_cached_doc("Item", doc.item_code)
 
 		if item.get("woocommerce_id") and item.get("sync_with_woocommerce"):
-			if item.get("website_warehouse") == doc.warehouse or (
-				not item.get("website_warehouse") and wc_api.settings.warehouse == doc.warehouse
-			):
-
+			if wc_api.settings.warehouse == doc.warehouse:
 				product = wc_api.get(f"products/{item.get('woocommerce_id')}").json()
 
 				if product.get("stock_quantity") != doc.actual_qty:

@@ -231,7 +231,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 		invoice.currency = self.subscription.currency
 
-		## Add dimensions in invoice for subscription:
+		# Add dimensions in invoice for subscription:
 		accounting_dimensions = get_accounting_dimensions()
 
 		for dimension in accounting_dimensions:

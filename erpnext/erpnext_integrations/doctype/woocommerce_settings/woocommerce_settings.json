@@ -5,17 +5,25 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "general_details_tab",
   "enable_sync",
-  "last_synchronization_datetime",
   "column_break_2",
-  "sync_products",
-  "create_payments_and_sales_invoice",
+  "last_synchronization_datetime",
   "sb_00",
   "woocommerce_server_url",
   "secret",
   "cb_00",
   "api_consumer_key",
   "api_consumer_secret",
+  "endpoints",
+  "endpoint",
+  "synchronization_settings_section",
+  "sync_products",
+  "create_payments_and_sales_invoice",
+  "synchronize_stock_levels",
+  "column_break_16",
+  "woocommerce_site_timezone",
+  "currency_precision",
   "defaults_section",
   "warehouse",
   "sales_order_series",
@@ -30,13 +38,12 @@
   "sb_accounting_details",
   "get_tax_account",
   "tax_accounts",
-  "get_shipping_methods",
-  "shipping_accounts",
-  "fee_account",
   "section_break_28",
   "stripe_gateway",
-  "endpoints",
-  "endpoint"
+  "shipping_tab",
+  "get_shipping_methods",
+  "shipping_accounts",
+  "fee_account"
  ],
  "fields": [
   {
@@ -81,13 +88,13 @@
   {
    "depends_on": "eval:!doc.__islocal&&doc.enable_sync",
    "fieldname": "sb_accounting_details",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Accounting Details"
   },
   {
    "depends_on": "eval:doc.enable_sync",
    "fieldname": "defaults_section",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Defaults"
   },
   {
@@ -102,7 +109,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "The fallback series is \"SO-WOO-\".",
    "fieldname": "sales_order_series",
    "fieldtype": "Select",
    "label": "Sales Order Series",
@@ -203,14 +209,13 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.enable_sync",
+   "description": "If not checked, Dokos items will be updated from WooCommerce products (recommended)",
    "fieldname": "sync_products",
    "fieldtype": "Check",
    "label": "Update Woocommerce products from Dokos items"
   },
   {
    "default": "1",
-   "depends_on": "eval:doc.enable_sync",
    "fieldname": "create_payments_and_sales_invoice",
    "fieldtype": "Check",
    "label": "Create payments and sales invoice"
@@ -218,7 +223,8 @@
   {
    "depends_on": "eval:doc.enable_sync",
    "fieldname": "section_break_28",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Stripe Settings"
   },
   {
    "fieldname": "stripe_gateway",
@@ -232,12 +238,52 @@
    "fieldtype": "Datetime",
    "label": "Last synchronization datetime",
    "reqd": 1
+  },
+  {
+   "fieldname": "general_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "General Details"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal&&doc.enable_sync",
+   "fieldname": "shipping_tab",
+   "fieldtype": "Tab Break",
+   "label": "Shipping"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Will update the currency precision in sales orders and sales invoices",
+   "fieldname": "currency_precision",
+   "fieldtype": "Select",
+   "label": "Currency Precision",
+   "options": "\n2\n3\n4\n5\n6\n7\n8\n9"
+  },
+  {
+   "default": "0",
+   "description": "Synchronization will be based on stock levels in Dokos",
+   "fieldname": "synchronize_stock_levels",
+   "fieldtype": "Check",
+   "label": "Synchronize stock levels"
+  },
+  {
+   "depends_on": "eval:doc.enable_sync",
+   "fieldname": "synchronization_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Synchronization Settings"
+  },
+  {
+   "fieldname": "woocommerce_site_timezone",
+   "fieldtype": "Select",
+   "label": "WooCommerce Site Timezone"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-06-08 13:14:03.631488",
+ "modified": "2022-06-23 11:29:50.572898",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

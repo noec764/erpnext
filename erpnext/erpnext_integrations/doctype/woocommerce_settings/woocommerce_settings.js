@@ -10,6 +10,14 @@ frappe.ui.form.on('Woocommerce Settings', {
 		})
 	},
 	refresh(frm) {
+		frappe.call({
+			method: "frappe.core.doctype.system_settings.system_settings.load",
+			callback: function(data) {
+				frappe.all_timezones = data.message.timezones;
+				frm.set_df_property("woocommerce_site_timezone", "options", frappe.all_timezones);
+			}
+		});
+
 		if (frm.doc.enable_sync) {
 			frm.trigger("sync_buttons");
 		}
@@ -83,7 +91,7 @@ frappe.ui.form.on('Woocommerce Settings', {
 	},
 
 	sync_buttons(frm) {
-		frm.add_custom_button(__('Get woocommerce products'), () => {
+		frm.add_custom_button(__('Get WooCommerce products'), () => {
 			frappe.confirm(
 				__("Add WooCommerce products to Dokos ?"),
 				() => {
@@ -94,6 +102,28 @@ frappe.ui.form.on('Woocommerce Settings', {
 						frappe.show_alert({
 							indicator: "green",
 							message: __("WooCommerce products added to Dokos")
+						})
+					}).fail(() => {
+						frappe.show_alert({
+							indicator: "red",
+							message: __("Synchronization failed")
+						})
+					});
+				}
+			);
+		}, __("Actions"));
+
+		frm.add_custom_button(__('Push items to WooCommerce'), () => {
+			frappe.confirm(
+				__("Add Dokos items to WooCommerce ?"),
+				() => {
+					frappe.call({
+						type:"POST",
+						method:"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.push_products",
+					}).done(() => {
+						frappe.show_alert({
+							indicator: "green",
+							message: __("Dokos items added to WooCommerce")
 						})
 					}).fail(() => {
 						frappe.show_alert({

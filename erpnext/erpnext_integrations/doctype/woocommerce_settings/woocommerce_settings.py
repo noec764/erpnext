@@ -7,7 +7,9 @@ from urllib.parse import urlparse
 import frappe
 from frappe import _
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 from frappe.model.document import Document
+from frappe.model.meta import get_field_precision
 from frappe.utils import cint
 
 from erpnext.erpnext_integrations.doctype.woocommerce_settings.api.orders import (
@@ -29,6 +31,7 @@ class WoocommerceSettings(Document):
 	def validate(self):
 		self.validate_settings()
 		self.create_delete_custom_fields()
+		self.update_property_setters()
 		self.create_webhook_url()
 
 	def on_update(self):
@@ -36,7 +39,7 @@ class WoocommerceSettings(Document):
 
 	def create_delete_custom_fields(self):
 		if self.enable_sync:
-			# create
+			# For translations: _("Woocommerce ID") _("Woocommerce Email") _("Last Woocommerce Sync") _("Sync with Woocommerce") _("Woocommerce Number")
 			for doctype in ["Customer", "Sales Order", "Item", "Address", "Item Attribute", "Item Booking"]:
 				fields = [
 					dict(
@@ -97,6 +100,27 @@ class WoocommerceSettings(Document):
 				]
 				for df in fields:
 					create_custom_field(doctype, df)
+
+	def update_property_setters(self):
+		if self.currency_precision:
+			for doctype in (
+				"Sales Order",
+				"Sales Order Item",
+				"Sales Invoice",
+				"Sales Invoice Item",
+				"Sales Taxes and Charges",
+			):
+				meta = frappe.get_meta(doctype)
+				for field in meta.fields:
+					if field.fieldtype in ("Currency") and get_field_precision(field) != self.currency_precision:
+						make_property_setter(
+							doctype,
+							field.fieldname,
+							"precision",
+							self.currency_precision,
+							"Select",
+							validate_fields_for_doctype=False,
+						)
 
 	def validate_settings(self):
 		if self.enable_sync:
@@ -174,11 +198,12 @@ def get_products():
 	sync_items()
 
 
+@frappe.whitelist()
+def push_products():
+	sync_products()
+
+
 def sync_woocommerce():
 	if cint(frappe.db.get_single_value("Woocommerce Settings", "enable_sync")):
-		if cint(frappe.db.get_single_value("Woocommerce Settings", "sync_products")):
-			sync_products()
-		else:
-			sync_items()
-
+		sync_items()
 		sync_orders()
