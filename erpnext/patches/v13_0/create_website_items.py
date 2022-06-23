@@ -9,6 +9,7 @@ def execute():
 	frappe.reload_doc("e_commerce", "doctype", "website_offer")
 	frappe.reload_doc("e_commerce", "doctype", "recommended_items")
 	frappe.reload_doc("e_commerce", "doctype", "e_commerce_settings")
+	frappe.reload_doc("e_commerce", "doctype", "item_booking_uom")
 	frappe.reload_doc("stock", "doctype", "item")
 
 	item_fields = [
