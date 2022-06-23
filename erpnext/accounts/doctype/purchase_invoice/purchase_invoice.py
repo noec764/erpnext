@@ -1418,6 +1418,7 @@ class PurchaseInvoice(BuyingController):
 			"Stock Ledger Entry",
 			"Repost Item Valuation",
 			"Payment Ledger Entry",
+			"Archived Document",
 		)
 		self.update_advance_tax_references(cancel=1)
 

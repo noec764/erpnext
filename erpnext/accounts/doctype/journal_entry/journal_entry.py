@@ -100,6 +100,7 @@ class JournalEntry(AccountsController):
 			"Stock Ledger Entry",
 			"Payment Ledger Entry",
 			"Sepa Direct Debit Details",
+			"Archived Document",
 		)
 		self.make_gl_entries(1)
 		self.update_advance_paid()

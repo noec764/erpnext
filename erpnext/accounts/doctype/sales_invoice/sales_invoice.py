@@ -416,6 +416,7 @@ class SalesInvoice(SellingController):
 			"Stock Ledger Entry",
 			"Repost Item Valuation",
 			"Payment Ledger Entry",
+			"Archived Document",
 		)
 
 	def on_trash(self):
