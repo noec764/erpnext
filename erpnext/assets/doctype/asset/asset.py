@@ -553,13 +553,9 @@ class Asset(AccountsController):
 			if args.get("rate_of_depreciation") and on_validate:
 				return args.get("rate_of_depreciation")
 
-			no_of_years = (
-				flt(args.get("total_number_of_depreciations") * flt(args.get("frequency_of_depreciation")))
-				/ 12
-			)
 			value = flt(args.get("expected_value_after_useful_life")) / flt(self.gross_purchase_amount)
-			# square root of flt(salvage_value) / flt(asset_cost)
-			depreciation_rate = math.pow(value, 1.0 / flt(no_of_years, 2))
+
+			depreciation_rate = math.pow(value, 1.0 / flt(args.get("total_number_of_depreciations"), 2))
 
 			return 100 * (1 - flt(depreciation_rate, float_precision))
 
@@ -801,7 +797,16 @@ def is_cwip_accounting_enabled(asset_category):
 def get_total_days(date, frequency):
 	period_start_date = add_months(date, cint(frequency) * -1)
 
+	if is_last_day_of_the_month(date):
+		period_start_date = get_last_day(period_start_date)
+
 	return date_diff(date, period_start_date)
+
+
+def is_last_day_of_the_month(date):
+	last_day_of_the_month = get_last_day(date)
+
+	return getdate(last_day_of_the_month) == getdate(date)
 
 
 class DepreciationRow:
