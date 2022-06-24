@@ -6,7 +6,8 @@ from datetime import timedelta
 
 import frappe
 from frappe import _
-from frappe.utils import flt, get_datetime, getdate
+from frappe.query_builder.functions import Sum
+from frappe.utils import flt, format_date, get_datetime, getdate
 from frappe.utils.dateutils import get_dates_from_timegrain
 
 from erpnext.venue.doctype.item_booking.item_booking import get_item_calendar
@@ -14,7 +15,7 @@ from erpnext.venue.doctype.item_booking.item_booking import get_item_calendar
 
 def execute(filters=None):
 	data, chart = get_data(filters)
-	columns = get_columns()
+	columns = get_columns(filters)
 	return columns, data, [], chart
 
 
@@ -37,7 +38,7 @@ def get_data(filters):
 		fields=["status", "name", "item", "item_name", "starts_on", "ends_on"],
 	)
 
-	items_dict = defaultdict(lambda: defaultdict(float))
+	items_dict = defaultdict(dict)
 
 	item_list = list(set(ib.item for ib in item_booking))
 	for item in item_list:
@@ -50,7 +51,29 @@ def get_data(filters):
 
 	# Get minutes booked
 	for ib in item_booking:
+		if "item_name" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["item_name"] = ib["item_name"]
+
+		if "total" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["total"] = 0.0
+
+		if "bookings" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["bookings"] = []
+
+		if "free_hours" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["free_hours"] = 0.0
+
+		if "billed_hours" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["billed_hours"] = 0.0
+
+		if "average_price" not in items_dict[ib["item"]]:
+			items_dict[ib["item"]]["average_price"] = 0.0
+
+		if filters.show_billing:
+			ib["total_price"] = get_item_booking_price(ib.name)
+
 		diff = timedelta(0)
+		capacity = 0.0
 		for date in get_dates_from_timegrain(ib.get("starts_on"), ib.get("ends_on")):
 			for line in items_dict[ib["item"]]["calendar"]:
 				if line.day == date.strftime("%A"):
@@ -64,15 +87,49 @@ def get_data(filters):
 						booking_end = schedule_end
 
 					diff += booking_end - booking_start
+					capacity += line.get("capacity")
 
-		ib["diff_minutes"] = diff.total_seconds() / 60.0
+		ib["total"] = flt(diff.total_seconds() / 3600.0)
+		ib["capacity"] = capacity
+		if filters.show_billing:
+			ib["average_price"] = ib["total_price"] / ib["total"]
+			ib["free_hours"] = ib["total"] if ib["total_price"] == 0 else 0.0
+			ib["billed_hours"] = ib["total"] if ib["total_price"] > 0 else 0.0
 
-		items_dict[ib["item"]]["item_name"] = ib["item_name"]
-		items_dict[ib["item"]]["total"] += flt(ib["diff_minutes"]) / 60.0
+		items_dict[ib["item"]]["total"] += ib["total"]
+		items_dict[ib["item"]]["bookings"].append(ib)
+		if filters.show_billing:
+			items_dict[ib["item"]]["free_hours"] += ib["free_hours"]
+			items_dict[ib["item"]]["billed_hours"] += ib["billed_hours"]
 
-	output = sorted(
-		[{"item": x, **items_dict[x]} for x in items_dict], key=lambda x: x["item"].lower()
+	if filters.show_billing:
+		for item in items_dict:
+			items_dict[item]["average_price"] = (
+				sum(x["total_price"] for x in items_dict[item]["bookings"]) / items_dict[item]["total"]
+			)
+
+	sorted_list = sorted(
+		[{"item": f"{x}: {items_dict[x]['item_name']}", **items_dict[x]} for x in items_dict],
+		key=lambda x: x["item"].lower(),
 	)
+
+	if filters.show_bookings:
+		output = []
+		for row in sorted_list:
+			output.append(row)
+			for booking in row.get("bookings"):
+				booking.item = None
+				booking.item_name = None
+				booking["item_booking"] = booking.name
+				booking["booking_dates"] = (
+					f"{format_date(booking.starts_on)} - {format_date(booking.ends_on)}"
+					if getdate(booking.starts_on) != getdate(booking.ends_on)
+					else format_date(booking.starts_on)
+				)
+				output.append(booking)
+
+	else:
+		output = sorted_list
 
 	for line in output:
 		line["percent"] = (
@@ -115,10 +172,28 @@ def get_calendar_capacity(company, date_range, item):
 	return calendar, capacity_per_day, total_capacity
 
 
-def get_columns():
+def get_item_booking_price(item_booking):
+	sales_order_item, sales_order = frappe.qb.DocType("Sales Order Item"), frappe.qb.DocType(
+		"Sales Order"
+	)
+	amounts = (
+		frappe.qb.from_(sales_order_item)
+		.from_(sales_order)
+		.select(Sum(sales_order_item.amount))
+		.where(
+			(sales_order_item.item_booking == item_booking)
+			& (sales_order.name == sales_order_item.parent)
+			& (sales_order.docstatus == 1)
+			& (sales_order.per_billed == 100.0)
+		)
+	).run()
+
+	return flt(amounts[0][0])
+
+
+def get_columns(filters):
 	columns = [
-		{"label": _("Item"), "fieldtype": "Link", "fieldname": "item", "options": "Item", "width": 180},
-		{"label": _("Item Name"), "fieldtype": "Data", "fieldname": "item_name", "width": 300},
+		{"label": _("Item"), "fieldtype": "Data", "fieldname": "item", "width": 300},
 		{
 			"label": _("Reference Calendar"),
 			"fieldtype": "Link",
@@ -126,25 +201,79 @@ def get_columns():
 			"options": "Item Booking Calendar",
 			"width": 250,
 		},
-		{
-			"label": _("Bookable Hours"),
-			"fieldtype": "Float",
-			"fieldname": "capacity",
-			"width": 200,
-		},
-		{
-			"label": _("Hours Booked"),
-			"fieldtype": "Float",
-			"fieldname": "total",
-			"width": 250,
-		},
-		{
-			"label": _("Booking rate"),
-			"fieldtype": "Percent",
-			"fieldname": "percent",
-			"width": 250,
-		},
 	]
+
+	if filters.show_bookings:
+		columns.extend(
+			[
+				{
+					"label": _("Item Booking"),
+					"fieldtype": "Link",
+					"fieldname": "item_booking",
+					"options": "Item Booking",
+					"width": 200,
+				},
+				{
+					"label": _("Dates"),
+					"fieldtype": "Data",
+					"fieldname": "booking_dates",
+					"width": 200,
+				},
+			]
+		)
+
+	columns.extend(
+		[
+			{
+				"label": _("Bookable Hours"),
+				"fieldtype": "Float",
+				"fieldname": "capacity",
+				"width": 180,
+			}
+		]
+	)
+
+	if filters.show_billing:
+		columns.extend(
+			[
+				{
+					"label": _("Free Hours"),
+					"fieldtype": "Float",
+					"fieldname": "free_hours",
+					"width": 180,
+				},
+				{
+					"label": _("Billed Hours"),
+					"fieldtype": "Float",
+					"fieldname": "billed_hours",
+					"width": 180,
+				},
+				{
+					"label": _("Average Price / Hour"),
+					"fieldtype": "Currency",
+					"fieldname": "average_price",
+					"width": 180,
+				},
+			]
+		)
+
+	columns.extend(
+		[
+			{
+				"label": _("Hours Booked"),
+				"fieldtype": "Float",
+				"fieldname": "total",
+				"width": 180,
+			},
+			{
+				"label": _("Booking rate"),
+				"fieldtype": "Percent",
+				"fieldname": "percent",
+				"width": 180,
+				"bold": 1,
+			},
+		]
+	)
 
 	return columns
 
@@ -152,10 +281,16 @@ def get_columns():
 def get_chart_data(data):
 	return {
 		"data": {
-			"labels": [x.get("item_name") for x in data],
+			"labels": [x.get("item_name") for x in data if not x.get("item_booking")],
 			"datasets": [
-				{"name": _("Capacity (Hours)"), "values": [round(x.get("capacity"), 2) for x in data]},
-				{"name": _("Bookings (Hours)"), "values": [round(x.get("total"), 2) for x in data]},
+				{
+					"name": _("Capacity (Hours)"),
+					"values": [round(x.get("capacity"), 2) for x in data if not x.get("item_booking")],
+				},
+				{
+					"name": _("Bookings (Hours)"),
+					"values": [round(x.get("total"), 2) for x in data if not x.get("item_booking")],
+				},
 			],
 		},
 		"type": "bar",

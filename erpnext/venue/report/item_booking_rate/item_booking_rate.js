@@ -35,6 +35,23 @@ frappe.query_reports["Item Booking Rate"] = {
 				}
 			],
 			reqd: 1
+		},
+		{
+			fieldtype: 'Check',
+			label: __('Show Billing Details'),
+			fieldname: 'show_billing'
+		},
+		{
+			fieldtype: 'Check',
+			label: __('Show Booking Details'),
+			fieldname: 'show_bookings'
+		},
+	],
+	"formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if (column.fieldname == "percent") {
+			value = value.bold();
 		}
-	]
+		return value;
+	},
 };
