@@ -18,7 +18,6 @@
   "endpoints",
   "endpoint",
   "synchronization_settings_section",
-  "sync_products",
   "create_payments_and_sales_invoice",
   "synchronize_stock_levels",
   "column_break_16",
@@ -81,7 +80,7 @@
   },
   {
    "fieldname": "api_consumer_secret",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "in_list_view": 1,
    "label": "API consumer secret"
   },
@@ -208,13 +207,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "0",
-   "description": "If not checked, Dokos items will be updated from WooCommerce products (recommended)",
-   "fieldname": "sync_products",
-   "fieldtype": "Check",
-   "label": "Update Woocommerce products from Dokos items"
-  },
-  {
    "default": "1",
    "fieldname": "create_payments_and_sales_invoice",
    "fieldtype": "Check",
@@ -283,7 +275,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-06-23 11:29:50.572898",
+ "modified": "2022-06-27 11:53:21.665616",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Woocommerce Settings",

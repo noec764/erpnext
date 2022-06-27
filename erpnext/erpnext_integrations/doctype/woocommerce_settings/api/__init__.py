@@ -16,7 +16,7 @@ class WooCommerceAPI:
 			self.api = API(
 				url=self.settings.woocommerce_server_url,
 				consumer_key=self.settings.api_consumer_key,
-				consumer_secret=self.settings.api_consumer_secret,
+				consumer_secret=self.settings.get_password(fieldname="api_consumer_secret"),
 				version=version,
 				timeout=5000,
 			)
