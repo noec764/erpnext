@@ -185,7 +185,7 @@ frappe.ui.form.on('Item Booking', {
 			const url = await frappe.db.get_single_value("WooCommerce Settings", "woocommerce_server_url")
 			const full_url = `${url}/wp-admin/post.php?post=${frm.doc.woocommerce_id}&action=edit`
 			let msg = __("This booking has been created in WooCommerce Booking.<br>")
-			msg += __("Any to date modification needs to be done at <a href='{}' target='_blank'>this address</a>.", [full_url])
+			msg += __("Any date modification needs to be done at <a href='{}' target='_blank'>this address</a>.", [full_url])
 			frm.set_intro(msg)
 		}
 	}
