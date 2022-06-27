@@ -75,26 +75,31 @@ frappe.ui.form.on('Item Booking', {
 		}
 
 		if (!frm.is_new() && frm.doc.status === "In cart") {
-			frappe.db.get_single_value("Venue Settings", "clear_item_booking_draft_duration")
-				.then(r => {
-					frm.delayInfo && clearInterval(frm.delayInfo);
-
-					if (r && r>0 && !frm.delayInfo) {
-						frm.delayInfo = setInterval( () => {
-							const delay = frappe.datetime.get_minute_diff(
-								frappe.datetime.add_minutes(frm.doc.modified || frappe.datetime.now_datetime(), r),
-								frappe.datetime.now_datetime())
-							frm.set_intro()
-							if (delay > 0) {
-								frm.set_intro(__("This document will be automatically deleted in {0} minutes if not validated.", [delay]))
-							}
-						}, 10000 )
-					}
-				} )
+			frm.trigger('set_cart_countdown');
+		} else {
+			frm.trigger('get_booking_count');
 		}
 
-		frm.trigger('add_repeat_text')
-		frm.trigger('get_booking_count')
+		frm.trigger('add_repeat_text');
+	},
+	set_cart_countdown(frm) {
+		frappe.db.get_single_value("Venue Settings", "clear_item_booking_draft_duration")
+		.then(r => {
+			frm.delayInfo && clearInterval(frm.delayInfo);
+
+			if (r && r>0 && !frm.delayInfo) {
+				frm.delayInfo = setInterval( () => {
+					const delay = frappe.datetime.get_minute_diff(
+						frappe.datetime.add_minutes(frm.doc.modified || frappe.datetime.now_datetime(), r),
+						frappe.datetime.now_datetime())
+					frm.set_intro()
+					if (delay > 0) {
+						frm.set_intro(__("This document will be automatically deleted in {0} minutes if not validated.", [delay]))
+					}
+					frm.trigger('set_woocommerce_info')
+				}, 10000 )
+			}
+		} )
 	},
 	add_repeat_text(frm) {
 		if (frm.doc.rrule) {
@@ -166,6 +171,7 @@ frappe.ui.form.on('Item Booking', {
 			}
 			frm.set_intro()
 			frm.set_intro(message)
+			frm.trigger('set_woocommerce_info')
 		});
 	},
 	starts_on: function(frm) {
@@ -173,6 +179,15 @@ frappe.ui.form.on('Item Booking', {
 	},
 	ends_on: function(frm) {
 		frm.trigger('get_booking_count')
+	},
+	set_woocommerce_info: async function(frm) {
+		if (frm.doc.woocommerce_id) {
+			const url = await frappe.db.get_single_value("WooCommerce Settings", "woocommerce_server_url")
+			const full_url = `${url}/wp-admin/post.php?post=${frm.doc.woocommerce_id}&action=edit`
+			let msg = __("This booking has been created in WooCommerce Booking.<br>")
+			msg += __("Any to date modification needs to be done at <a href='{}' target='_blank'>this address</a>.", [full_url])
+			frm.set_intro(msg)
+		}
 	}
 });
 

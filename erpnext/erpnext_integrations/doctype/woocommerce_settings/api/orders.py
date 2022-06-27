@@ -453,6 +453,8 @@ class WooCommerceOrderSync:
 		)
 		doc.item = item_code
 		doc.google_calendar_event_id = booking.get("google_calendar_event_id")
+		doc.party_type = "Customer"
+		doc.party = self.customer.name
 		doc.insert(ignore_permissions=True)
 
 		return doc.name
