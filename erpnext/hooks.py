@@ -343,7 +343,12 @@ doc_events = {
 		"on_update": [
 			"erpnext.support.doctype.service_level_agreement.service_level_agreement.on_communication_update",
 			"erpnext.support.doctype.issue.issue.set_first_response_time",
-		]
+		],
+		"after_insert": "erpnext.crm.utils.link_communications_with_prospect",
+	},
+	"Event": {
+		"after_insert": "erpnext.crm.utils.link_events_with_prospect",
+		"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event",
 	},
 	"Sales Taxes and Charges Template": {
 		"on_update": "erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings.validate_cart_settings"
@@ -427,7 +432,6 @@ doc_events = {
 	"Bin": {
 		"on_update": "erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products.update_stock"
 	},
-	"Event": {"on_update": "erpnext.venue.doctype.item_booking.item_booking.move_booking_with_event"},
 	"Sales Order": {
 		"on_submit": "erpnext.accounts.doctype.subscription_template.subscription_template.make_subscription_from_sales_order_item"
 	},
@@ -511,7 +515,6 @@ scheduler_events = {
 		"erpnext.projects.doctype.project.project.update_project_sales_billing",
 		"erpnext.loan_management.doctype.process_loan_security_shortfall.process_loan_security_shortfall.create_process_loan_security_shortfall",
 		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
-		"erpnext.crm.doctype.lead.lead.daily_open_lead",
 		"erpnext.venue.doctype.booking_credit.booking_credit.process_expired_booking_credits",
 		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries",
 		"erpnext.bulk_transaction.doctype.bulk_transaction_log.bulk_transaction_log.retry_failing_transaction",

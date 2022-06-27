@@ -32,19 +32,11 @@ frappe.ui.form.on("Opportunity", {
 		}
 	},
 
-	contact_date: function(frm) {
-		if(frm.doc.contact_date < frappe.datetime.now_datetime()){
-			frm.set_value("contact_date", "");
-			frappe.throw(__("Next follow up date should be greater than now."))
-		}
-	},
-
 	onload_post_render: function(frm) {
 		frm.get_field("items").grid.set_multiple_add("item_code", "qty");
 	},
 
 	party_name: function(frm) {
-		frm.toggle_display("contact_info", frm.doc.party_name);
 		frm.trigger('set_contact_link');
 
 		if (frm.doc.opportunity_from == "Customer") {
@@ -62,10 +54,6 @@ frappe.ui.form.on("Opportunity", {
 		frm.get_field("items").grid.set_multiple_add("item_code", "qty");
 	},
 
-	with_items: function(frm) {
-		frm.trigger('toggle_mandatory');
-	},
-
 	status:function(frm){
 		if (frm.doc.status == "Lost"){
 			frm.trigger('set_as_lost_dialog');
@@ -80,15 +68,19 @@ frappe.ui.form.on("Opportunity", {
 	contact_person: erpnext.utils.get_contact_details,
 
 	opportunity_from: function(frm) {
+		frm.trigger('setup_opportunity_from');
+
+		frm.set_value("party_name", "");
+	},
+
+	setup_opportunity_from: function(frm) {
 		frm.trigger('setup_queries');
-		frm.toggle_reqd("party_name", frm.doc.opportunity_from);
 		frm.trigger("set_dynamic_field_label");
 	},
 
 	refresh: function(frm) {
 		var doc = frm.doc;
-		frm.events.opportunity_from(frm);
-		frm.trigger('toggle_mandatory');
+		frm.trigger('setup_opportunity_from');
 		erpnext.toggle_naming_series();
 
 		if(!frm.is_new() && doc.status!=="Lost") {
@@ -102,22 +94,19 @@ frappe.ui.form.on("Opportunity", {
 					function() {
 						frm.trigger("make_request_for_quotation")
 					}, __('Create'));
+			}
 
-				if (frm.doc.opportunity_from != "Customer") {
-					frm.add_custom_button(__('Customer'),
-						function() {
-							frm.trigger("make_customer")
-						}, __('Create'));
-				}
-
-				frm.add_custom_button(__('Quotation'),
+			if (frm.doc.opportunity_from != "Customer") {
+				frm.add_custom_button(__('Customer'),
 					function() {
-						frm.trigger("create_quotation")
+						frm.trigger("make_customer")
 					}, __('Create'));
 			}
 
 			frm.add_custom_button(__('Quotation'),
-				cur_frm.cscript.create_quotation, __('Create'));
+				function() {
+					frm.trigger("create_quotation")
+				}, __('Create'));
 		}
 
 		if(!frm.doc.__islocal && frm.perm[0].write && frm.doc.docstatus==0) {
@@ -135,6 +124,12 @@ frappe.ui.form.on("Opportunity", {
 			}
 		}
 
+		if (!frm.is_new()) {
+			frappe.contacts.render_address_and_contact(frm);
+			// frm.trigger('render_contact_day_html');
+		} else {
+			frappe.contacts.clear_address_and_contact(frm);
+		}
 	},
 
 	set_contact_link: function(frm) {
@@ -177,7 +172,6 @@ frappe.ui.form.on("Opportunity", {
 	},
 
 	set_dynamic_field_label: function(frm){
-
 		if (frm.doc.opportunity_from) {
 			frm.set_df_property("party_name", "label", frm.doc.opportunity_from);
 		}
@@ -197,10 +191,6 @@ frappe.ui.form.on("Opportunity", {
 			method: "erpnext.crm.doctype.opportunity.opportunity.make_request_for_quotation",
 			frm: frm
 		})
-	},
-
-	toggle_mandatory: function(frm) {
-		frm.toggle_reqd("items", frm.doc.with_items ? 1:0);
 	},
 
 	change_form_labels: function(frm) {
@@ -237,10 +227,8 @@ frappe.ui.form.on("Opportunity", {
 			'total': flt(total),
 			'base_total': flt(base_total)
 		});
-	}
-
+	},
 });
-
 frappe.ui.form.on("Opportunity Item", {
 	calculate: function(frm, cdt, cdn) {
 		let row = frappe.get_doc(cdt, cdn);
@@ -255,7 +243,7 @@ frappe.ui.form.on("Opportunity Item", {
 	rate: function(frm, cdt, cdn) {
 		frm.trigger("calculate", cdt, cdn);
 	}
-});
+})
 
 // TODO commonify this code
 erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
@@ -275,19 +263,20 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 		this.frm.trigger('currency');
 	}
 
+	refresh() {
+		this.show_notes();
+		this.show_activities();
+	}
+
 	setup_queries() {
 		var me = this;
-
-		if(this.frm.fields_dict.contact_by.df.options.match(/^User/)) {
-			this.frm.set_query("contact_by", erpnext.queries.user);
-		}
 
 		me.frm.set_query('customer_address', erpnext.queries.address_query);
 
 		this.frm.set_query("item_code", "items", function() {
 			return {
 				query: "erpnext.controllers.queries.item_query",
-				filters: {'is_sales_item': 1, 'is_down_payment_item': 0}
+				filters: {'is_sales_item': 1}
 			};
 		});
 
@@ -298,13 +287,21 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 		}
 		else if (me.frm.doc.opportunity_from == "Customer") {
 			me.frm.set_query('party_name', erpnext.queries['customer']);
+		} else if (me.frm.doc.opportunity_from == "Prospect") {
+			me.frm.set_query('party_name', function() {
+				return {
+					filters: {
+						"company": me.frm.doc.company
+					}
+				};
+			});
 		}
 	}
 
 	create_quotation() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.opportunity.opportunity.make_quotation",
-			frm: me.frm
+			frm: cur_frm
 		})
 	}
 
@@ -314,6 +311,42 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 			frm: cur_frm
 		})
 	}
+
+	show_notes() {
+		const crm_notes = new erpnext.utils.CRMNotes({
+			frm: this.frm,
+			notes_wrapper: $(this.frm.fields_dict.notes_html.wrapper),
+		});
+		crm_notes.refresh();
+	}
+
+	show_activities() {
+		const crm_activities = new erpnext.utils.CRMActivities({
+			frm: this.frm,
+			open_activities_wrapper: $(this.frm.fields_dict.open_activities_html.wrapper),
+			all_activities_wrapper: $(this.frm.fields_dict.all_activities_html.wrapper),
+			form_wrapper: $(this.frm.wrapper),
+		});
+		crm_activities.refresh();
+	}
 };
 
 extend_cscript(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
+
+cur_frm.cscript.item_code = function(doc, cdt, cdn) {
+	var d = locals[cdt][cdn];
+	if (d.item_code) {
+		return frappe.call({
+			method: "erpnext.crm.doctype.opportunity.opportunity.get_item_details",
+			args: {"item_code":d.item_code},
+			callback: function(r, rt) {
+				if(r.message) {
+					$.each(r.message, function(k, v) {
+						frappe.model.set_value(cdt, cdn, k, v);
+					});
+					refresh_field('image_view', d.name, 'items');
+				}
+			}
+		})
+	}
+}

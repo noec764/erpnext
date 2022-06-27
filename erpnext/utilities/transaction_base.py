@@ -5,17 +5,7 @@
 import frappe
 import frappe.share
 from frappe import _
-from frappe.utils import (
-	cint,
-	cstr,
-	date_diff,
-	flt,
-	get_datetime,
-	get_link_to_form,
-	get_time,
-	now_datetime,
-	nowdate,
-)
+from frappe.utils import cint, flt, get_time, now_datetime
 
 from erpnext.controllers.status_updater import StatusUpdater
 
@@ -39,44 +29,6 @@ class TransactionBase(StatusUpdater):
 				get_time(self.posting_time)
 			except ValueError:
 				frappe.throw(_("Invalid Posting Time"))
-
-	def add_calendar_event(self, opts, force=False):
-		if (
-			cstr(self.contact_by) != cstr(self._prev.contact_by)
-			or cstr(self.contact_date) != cstr(self._prev.contact_date)
-			or force
-			or (hasattr(self, "ends_on") and cstr(self.ends_on) != cstr(self._prev.ends_on))
-		):
-
-			self._add_calendar_event(opts)
-
-	def _add_calendar_event(self, opts):
-		opts = frappe._dict(opts)
-
-		if self.contact_date:
-			event = frappe.get_doc(
-				{
-					"doctype": "Event",
-					"owner": opts.owner or self.owner,
-					"subject": opts.subject,
-					"description": opts.description,
-					"starts_on": self.contact_date,
-					"ends_on": opts.ends_on,
-					"event_type": "Private",
-				}
-			)
-
-			event.insert(ignore_permissions=True)
-
-			if frappe.db.exists("User", self.contact_by):
-				frappe.share.add(
-					"Event",
-					event.name,
-					self.contact_by,
-					write=1,
-					share=1,
-					flags={"ignore_share_permission": True},
-				)
 
 	def validate_uom_is_integer(self, uom_field, qty_fields):
 		validate_uom_is_integer(self, uom_field, qty_fields)
