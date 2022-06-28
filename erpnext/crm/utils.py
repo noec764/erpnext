@@ -102,12 +102,12 @@ def get_linked_prospect(reference_doctype, reference_name):
 
 
 def link_events_with_prospect(event, method):
-	if event.event_participants:
-		ref_doctype = event.event_participants[0].reference_doctype
-		ref_docname = event.event_participants[0].reference_docname
+	if event.event_references:
+		ref_doctype = event.event_references[0].reference_doctype
+		ref_docname = event.event_references[0].reference_docname
 		prospect = get_linked_prospect(ref_doctype, ref_docname)
 		if prospect:
-			event.add_participant("Prospect", prospect)
+			event.add_reference("Prospect", prospect)
 			event.save()
 
 
@@ -125,7 +125,7 @@ def link_open_events(ref_doctype, ref_docname, doc):
 	events = get_open_events(ref_doctype, ref_docname)
 	for event in events:
 		event_doc = frappe.get_doc("Event", event.name)
-		event_doc.add_participant(doc.doctype, doc.name)
+		event_doc.add_reference(doc.doctype, doc.name)
 		event_doc.save()
 
 
@@ -152,7 +152,7 @@ def get_open_todos(ref_doctype, ref_docname):
 
 def get_open_events(ref_doctype, ref_docname):
 	event = frappe.qb.DocType("Event")
-	event_link = frappe.qb.DocType("Event Participants")
+	event_link = frappe.qb.DocType("Event Reference")
 
 	query = (
 		frappe.qb.from_(event)
