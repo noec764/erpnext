@@ -11,7 +11,6 @@ from frappe.query_builder.functions import CombineDatetime
 from frappe.tests.utils import FrappeTestCase, change_settings
 from frappe.utils import add_days, add_to_date, flt, today
 
-from erpnext.accounts.doctype.gl_entry.gl_entry import rename_gle_sle_docs
 from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
 from erpnext.stock.doctype.item.test_item import make_item
 from erpnext.stock.doctype.landed_cost_voucher.test_landed_cost_voucher import (
@@ -1561,7 +1560,6 @@ class TestDeferredNaming(FrappeTestCase):
 		)
 
 		gle, sle = self.get_gle_sles(se)
-		rename_gle_sle_docs()
 		renamed_gle, renamed_sle = self.get_gle_sles(se)
 
 		self.assertFalse(gle & renamed_gle, msg="GLEs not renamed")
@@ -1585,7 +1583,6 @@ class TestDeferredNaming(FrappeTestCase):
 		)
 
 		gle, sle = self.get_gle_sles(se)
-		rename_gle_sle_docs()
 		renamed_gle, renamed_sle = self.get_gle_sles(se)
 
 		self.assertEqual(gle, renamed_gle, msg="GLEs are renamed while using hash naming")
