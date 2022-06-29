@@ -210,7 +210,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Prospecting",
    "fieldname": "sales_stage",
    "fieldtype": "Link",
    "label": "Sales Stage",
