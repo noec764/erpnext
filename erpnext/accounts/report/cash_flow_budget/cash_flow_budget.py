@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import math
+from collections import defaultdict
 
 import frappe
 from frappe import _
@@ -9,7 +10,9 @@ from frappe.query_builder import DocType, functions
 from frappe.utils import (
 	add_days,
 	add_months,
+	add_to_date,
 	cint,
+	date_diff,
 	flt,
 	format_date,
 	get_first_day,
@@ -25,8 +28,10 @@ def execute(filters=None):
 	period_list = get_period_list(filters.period_end_date, filters.periodicity)
 
 	columns = get_columns(filters, period_list)
-	data = CashFlowBudget(filters, period_list).get_data()
-	return columns, data
+	report = CashFlowBudget(filters, period_list)
+	data = report.get_data()
+	chart = report.chart
+	return columns, data, None, chart
 
 
 class CashFlowBudget:
@@ -39,9 +44,18 @@ class CashFlowBudget:
 	def get_data(self):
 		self.get_initial_bank_balance()
 
-		# Receivables / Payables
+		# Receivables
 		self.get_current_receivables()
+
+		# Subscriptions
+		self.get_subscription_amounts()
+
+		self.result.append({})
+
+		# Payables
 		self.get_current_payables()
+
+		# Auto Repeat
 
 		# Unreconciled payment entries
 
@@ -49,9 +63,9 @@ class CashFlowBudget:
 
 		# Salaries
 
-		# Taxes
-
 		self.get_balances()
+		self.get_chart_data()
+
 		return self.result
 
 	def get_current_receivables(self):
@@ -59,19 +73,27 @@ class CashFlowBudget:
 		args = {
 			"party_type": "Customer",
 			"naming_by": ["Selling Settings", "cust_master_name"],
+			"show_future_payments": 1,
 		}
 
-		receivables_report = ReceivablePayableReport(dict(args, **self.filters))
-		receivables_report.set_defaults()
-		receivables_report.get_data()
-		data = receivables_report.data
+		self.receivables_report = ReceivablePayableReport(dict(args, **self.filters))
+		self.receivables_report.set_defaults()
+		self.receivables_report.get_data()
+		data = self.receivables_report.data
 		self.receivables = {"label": _("Receivables")}
+
+		self.voucher_dict = defaultdict(str)
+		for ple in self.receivables_report.ple_entries:
+			self.voucher_dict[ple.voucher_no] = ple.due_date
 
 		for d in data:
 			for index, period in enumerate(self.period_list):
 				if period.key not in self.receivables:
 					self.receivables[period.key] = 0.0
-				due_date = d.get("due_date") or d.get("posting_date")
+				due_date = add_days(
+					d.get("due_date") or d.get("posting_date"),
+					self.get_average_payment_age(d.party, self.receivables_report),
+				)
 				if flt(d.outstanding) > 0:  # TODO: Maybe add a filter for this condition ?
 					if period.to_date >= getdate(due_date) >= period.from_date:
 						self.receivables[period.key] += flt(d.outstanding)
@@ -85,19 +107,28 @@ class CashFlowBudget:
 		args = {
 			"party_type": "Supplier",
 			"naming_by": ["Buying Settings", "supp_master_name"],
+			"show_future_payments": 1,
 		}
 
-		payables_report = ReceivablePayableReport(dict(args, **self.filters))
-		payables_report.set_defaults()
-		payables_report.get_data()
-		data = payables_report.data
+		self.payables_report = ReceivablePayableReport(dict(args, **self.filters))
+		self.payables_report.set_defaults()
+		self.payables_report.get_data()
+		data = self.payables_report.data
 		self.payables = {"label": _("Payables")}
+
+		if not self.voucher_dict:
+			self.voucher_dict = defaultdict(str)
+			for ple in self.payables_report.ple_entries:
+				self.voucher_dict[ple.voucher_no] = ple.due_date
 
 		for d in data:
 			for index, period in enumerate(self.period_list):
 				if period.key not in self.payables:
 					self.payables[period.key] = 0.0
-				due_date = d.get("due_date") or d.get("posting_date")
+				due_date = add_days(
+					d.get("due_date") or d.get("posting_date"),
+					self.get_average_payment_age(d.party, self.payables_report),
+				)
 				if flt(d.outstanding) > 0:  # TODO: Maybe add a filter for this condition ?
 					if period.to_date >= getdate(due_date) >= period.from_date:
 						self.payables[period.key] -= flt(d.outstanding)
@@ -105,6 +136,69 @@ class CashFlowBudget:
 						self.payables[period.key] -= flt(d.outstanding)
 
 		self.result.append(self.payables)
+
+	def get_average_payment_age(self, party, report):
+		ages = []
+		for ple in report.ple_entries:
+			if ple.voucher_type in ("Payment Entry", "Journal Entry") and ple.party == party:
+				ages.append(date_diff(ple.posting_date, self.voucher_dict.get(ple.against_voucher_no)))
+
+		return sum(ages) / len(ages) if ages else 0
+
+	def get_subscription_amounts(self):
+		subscriptions = frappe.get_all(
+			"Subscription",
+			filters={"status": ("!=", "Cancelled")},
+			fields=[
+				"name",
+				"customer",
+				"total",
+				"billing_interval",
+				"billing_interval_count",
+				"current_invoice_start",
+				"current_invoice_end",
+			],
+		)
+
+		self.subscriptions = {"label": _("Subscriptions")}
+		for subscription in subscriptions:
+			next_invoicing_date = add_days(subscription.current_invoice_end, 1)
+			for period in self.period_list:
+				if period.key not in self.subscriptions:
+					self.subscriptions[period.key] = 0.0
+
+				invoicing_date_with_delay = add_days(
+					next_invoicing_date,
+					self.get_average_payment_age(subscription.customer, self.receivables_report),
+				)
+				if getdate(period.to_date) >= invoicing_date_with_delay >= getdate(period.from_date):
+					self.subscriptions[period.key] += flt(subscription.total)
+
+				if getdate(period.to_date) >= next_invoicing_date >= getdate(period.from_date):
+					next_invoicing_date = add_to_date(
+						next_invoicing_date,
+						**self.get_billing_cycle_data(
+							subscription.billing_interval,
+							subscription.billing_interval_count,
+						)
+					)
+
+		self.result.append(self.subscriptions)
+
+	def get_billing_cycle_data(self, interval, interval_count):
+		data = {}
+		if interval not in ["Day", "Week"]:
+			data["days"] = -1
+		if interval == "Day":
+			data["days"] = interval_count - 1
+		elif interval == "Month":
+			data["months"] = interval_count
+		elif interval == "Year":
+			data["years"] = interval_count
+		elif interval == "Week":
+			data["days"] = interval_count * 7 - 1
+
+		return data
 
 	def get_initial_bank_balance(self):
 		bt = DocType("Bank Transaction")
@@ -134,8 +228,25 @@ class CashFlowBudget:
 					balance_row[period.key] = 0.0
 				balance_row[period.key] += flt(row.get(period.key))
 
+		for index, period in enumerate(self.period_list):
+			if index > 0:
+				balance_row[period.key] += balance_row.get(self.period_list[index - 1].key)
+
 		self.result.append({})
 		self.result.append(balance_row)
+
+	def get_chart_data(self):
+		data = {x: self.result[-1][x] for x in self.result[-1] if x != "label"}
+		self.chart = {
+			"data": {
+				"labels": [p.get("label") for p in self.period_list for x in data.keys() if x == p.key],
+				"datasets": [{"name": "", "values": [flt(x) for x in data.values()]}],
+			},
+			"type": "line",
+			"colors": ["light-green"],
+			"lineOptions": {"regionFill": 1},
+			"fieldtype": "Currency",
+		}
 
 
 def get_period_list(period_end_date, periodicity):
@@ -205,7 +316,7 @@ def get_columns(filters, period_list):
 				"fieldname": period.key,
 				"fieldtype": "Currency",
 				"label": period.label,
-				"width": 300,
+				"width": 250,
 				"options": currency,
 			}
 		)

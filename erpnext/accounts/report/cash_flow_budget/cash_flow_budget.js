@@ -34,6 +34,7 @@ frappe.query_reports["Cash Flow Budget"] = {
 			"fieldtype": "Date",
 			"default": frappe.datetime.add_days(frappe.datetime.add_months(frappe.datetime.month_start(), 3), -1),
 			"reqd": 1,
+			"min_date": frappe.datetime.now_date(true)
 		},
 		{
 			"fieldname": "periodicity",

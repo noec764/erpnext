@@ -153,16 +153,16 @@ def get_subscription_mrr(subscriptions, period):
 		subscription_total = flt(subscription.total) / flt(subscription.billing_interval_count)
 
 		if subscription.billing_interval == "Month":
-			month_total = subscription_total
+			month_total += subscription_total
 
 		elif subscription.billing_interval == "Year":
-			month_total = subscription_total / 12
+			month_total += subscription_total / 12
 
 		elif subscription.billing_interval == "Day":
-			month_total = subscription_total * date_diff(period.to_date, period.from_date)
+			month_total += subscription_total * date_diff(period.to_date, period.from_date)
 
 		elif subscription.billing_interval == "Week":
-			month_total = subscription_total * date_diff(period.to_date, period.from_date) / 7
+			month_total += subscription_total * date_diff(period.to_date, period.from_date) / 7
 
 	return month_total * month_diff(period.to_date, period.from_date)
 
