@@ -101,7 +101,7 @@ def create_print_setting_custom_fields():
 			"label": _("Print UOM after Quantity"),
 			"fieldname": "print_uom_after_quantity",
 			"fieldtype": "Check",
-			"default": 1,
+			"default": 0,
 			"insert_after": "compact_item_print",
 		},
 	)
