@@ -20,7 +20,7 @@
  "modified": "2022-06-29 15:00:13.899957",
  "modified_by": "thierry@dokos.io",
  "module": "Accounts",
- "name": "Sales_Invoice",
+ "name": "Sales Invoice",
  "owner": "thierry@dokos.io",
  "page_number": "Hide",
  "print_format_builder": 0,
