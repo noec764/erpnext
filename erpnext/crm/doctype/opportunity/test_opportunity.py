@@ -84,7 +84,6 @@ def make_opportunity_from_lead():
 		"doctype": "Opportunity",
 		"contact_email": new_lead_email_id,
 		"opportunity_type": "Sales",
-		"with_items": 0,
 		"transaction_date": today(),
 	}
 	# new lead should be created against the new.opportunity@example.com
