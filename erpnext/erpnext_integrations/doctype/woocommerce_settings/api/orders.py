@@ -95,7 +95,8 @@ def get_woocommerce_orders(wc_api):
 	per_page = 100
 	documents_fetched = min(per_page, max_orders if max_orders else per_page)
 	response = wc_api.get_orders(params={
-		"per_page": documents_fetched
+		"per_page": documents_fetched,
+		"dp": 4,
 	})
 	woocommerce_orders = response.json()
 
@@ -104,7 +105,8 @@ def get_woocommerce_orders(wc_api):
 			if not max_orders or documents_fetched < cint(max_orders):
 				response = wc_api.get_orders(params={
 					"per_page": per_page,
-					"page": page_idx
+					"page": page_idx,
+					"dp": 4,
 				})
 
 				new_orders = response.json() if documents_fetched + len(response.json()) < cint(max_orders) or not max_orders else response.json()[:cint(max_orders) - documents_fetched]
