@@ -87,15 +87,15 @@ def install(country=None):
 		# salary component
 		{
 			"doctype": "Salary Component",
-			"salary_component": _("Income Tax"),
-			"description": _("Income Tax"),
+			"salary_component": _("Income Tax", context="Salary Component"),
+			"description": _("Income Tax", context="Salary Component"),
 			"type": "Deduction",
 			"is_income_tax_component": 1,
 		},
 		{
 			"doctype": "Salary Component",
-			"salary_component": _("Basic"),
-			"description": _("Basic"),
+			"salary_component": _("Basic", context="Salary Component"),
+			"description": _("Basic" , context="Salary Component"),
 			"type": "Earning",
 		},
 		{

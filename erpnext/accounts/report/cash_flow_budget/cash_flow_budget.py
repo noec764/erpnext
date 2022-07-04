@@ -25,7 +25,7 @@ from erpnext.accounts.report.financial_statements import get_label, get_months
 
 
 def execute(filters=None):
-	period_list = get_period_list(filters.period_end_date, filters.periodicity)
+	period_list = get_period_list(filters.period_end_date, "Monthly")
 
 	columns = get_columns(filters, period_list)
 	report = CashFlowBudget(filters, period_list)
@@ -50,16 +50,23 @@ class CashFlowBudget:
 		# Subscriptions
 		self.get_subscription_amounts()
 
+		# Auto Repeat
+		self.get_revenue_from_auto_repeat()
+
 		self.result.append({})
 
 		# Payables
 		self.get_current_payables()
 
 		# Auto Repeat
-
-		# Unreconciled payment entries
+		self.get_expenses_from_auto_repeat()
 
 		# Expense claim payments
+		self.get_unpaid_expense_claims()
+
+		# Unreconciled payment entries
+		self.result.append({})
+		self.get_unreconciled_payment_entries()
 
 		# Salaries
 
@@ -146,6 +153,7 @@ class CashFlowBudget:
 		return sum(ages) / len(ages) if ages else 0
 
 	def get_subscription_amounts(self):
+		# TODO: Improve accuracy while taking performance into account
 		subscriptions = frappe.get_all(
 			"Subscription",
 			filters={"status": ("!=", "Cancelled")},
@@ -183,22 +191,125 @@ class CashFlowBudget:
 						)
 					)
 
-		self.result.append(self.subscriptions)
+		if len(self.subscriptions.keys()) > 1:
+			self.result.append(self.subscriptions)
 
 	def get_billing_cycle_data(self, interval, interval_count):
 		data = {}
-		if interval not in ["Day", "Week"]:
-			data["days"] = -1
-		if interval == "Day":
+		# if interval not in ["Day", "Daily", "Week", "Weekly"]:
+		# 	data["days"] = -1
+		if interval in ("Day", "Daily"):
 			data["days"] = interval_count - 1
-		elif interval == "Month":
+		elif interval in ("Month", "Monthly"):
 			data["months"] = interval_count
-		elif interval == "Year":
+		elif interval == "Quarterly":
+			data["months"] = interval_count * 3
+		elif interval == "Half-yearly":
+			data["months"] = interval_count * 6
+		elif interval in ("Year", "Yearly"):
 			data["years"] = interval_count
-		elif interval == "Week":
+		elif interval in ("Week", "Weekly"):
 			data["days"] = interval_count * 7 - 1
 
 		return data
+
+
+	def get_revenue_from_auto_repeat(self):
+		self.get_data_from_auto_repeat("Sales Invoice")
+
+	def get_expenses_from_auto_repeat(self):
+		self.get_data_from_auto_repeat("Purchase Invoice")
+
+	def get_data_from_auto_repeat(self, reference_doctype):
+		# TODO: Improve accuracy while taking performance into account
+		auto_repeat = frappe.get_all("Auto Repeat",
+			filters={"reference_doctype": reference_doctype, "disabled": 0},
+			fields=["reference_document", "next_schedule_date", "frequency", "repeat_on_day", "repeat_on_last_day"]
+		)
+
+		auto_repeat_data = {"label": _("Auto Repeat")}
+		for doc in auto_repeat:
+			invoice = frappe.db.get_value(reference_doctype, doc.reference_document,
+				["supplier as party" if reference_doctype == "Purchase Invoice" else "customer as party", "base_grand_total"], as_dict=True)
+			next_schedule_date = doc.next_schedule_date
+			for period in self.period_list:
+				if period.key not in auto_repeat_data:
+					auto_repeat_data[period.key] = 0.0
+
+				invoicing_date_with_delay = add_days(
+					next_schedule_date,
+					self.get_average_payment_age(invoice.party, self.payables_report if reference_doctype == "Purchase Invoice" else self.receivables_report),
+				)
+
+				if getdate(period.to_date) >= getdate(invoicing_date_with_delay) >= getdate(period.from_date):
+					auto_repeat_data[period.key] += flt(invoice.base_grand_total) * -1
+
+				if getdate(period.to_date) >= getdate(next_schedule_date) >= getdate(period.from_date):
+					next_schedule_date = add_to_date(
+						next_schedule_date,
+						**self.get_billing_cycle_data(
+							doc.frequency,
+							1,
+						)
+					)
+
+		if len(auto_repeat_data.keys()) > 1:
+			self.result.append(auto_repeat_data)
+
+	def get_unpaid_expense_claims(self):
+		ec = DocType("Expense Claim")
+		gle = DocType("GL Entry")
+		unpaid_exp_claims = (
+			frappe.qb.from_(gle)
+			.from_(ec)
+			.select(
+				(functions.Sum(gle.credit) - functions.Sum(gle.debit)).as_("outstanding_amt"),
+				ec.posting_date
+			)
+			.where(
+				(gle.party.isnotnull())
+				&(gle.against_voucher_type == "Expense Claim")
+				&(gle.against_voucher == ec.name)
+				&(ec.docstatus == 1)
+				&(ec.is_paid == 0)
+			)
+			.groupby(ec.name)
+			.having(functions.Sum(gle.credit) - functions.Sum(gle.debit) > 0)
+			.run(as_dict=True)
+		)
+
+		self.expense_claims = {"label": _("Expense Claims")}
+		for expense_claim in unpaid_exp_claims:
+			for period in self.period_list:
+				if period.key not in self.expense_claims:
+					self.expense_claims[period.key] = 0.0
+
+				if getdate(expense_claim.posting_date) < getdate(period.from_date) or getdate(period.to_date) >= getdate(expense_claim.posting_date) >= getdate(period.from_date):
+					self.expense_claims[period.key] += flt(expense_claim.outstanding_amt) * -1
+					break
+
+		if len(self.expense_claims.keys()) > 1:
+			self.result.append(self.expense_claims)
+
+	def get_unreconciled_payment_entries(self):
+		# TODO: Take into account a delay by payment method
+		payments = frappe.get_all("Payment Entry",
+			filters={"unreconciled_amount": (">=", 0.0), "docstatus": 1},
+			fields=["posting_date", "unreconciled_amount", "payment_type"]
+		)
+
+		self.unreconciled_payments = {"label": _("Unreconciled Payments")}
+		for payment in payments:
+			for period in self.period_list:
+				if period.key not in self.unreconciled_payments:
+					self.unreconciled_payments[period.key] = 0.0
+
+				if getdate(payment.posting_date) < getdate(period.from_date) or getdate(period.to_date) >= getdate(payment.posting_date) >= getdate(period.from_date):
+					self.unreconciled_payments[period.key] += flt(payment.unreconciled_amount) * (-1 if payment.payment_type == "Pay" else 1)
+					break
+
+		if len(self.unreconciled_payments.keys()) > 1:
+			self.result.append(self.unreconciled_payments)
 
 	def get_initial_bank_balance(self):
 		bt = DocType("Bank Transaction")

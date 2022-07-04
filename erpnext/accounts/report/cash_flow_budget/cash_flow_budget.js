@@ -36,19 +36,20 @@ frappe.query_reports["Cash Flow Budget"] = {
 			"reqd": 1,
 			"min_date": frappe.datetime.now_date(true)
 		},
-		{
-			"fieldname": "periodicity",
-			"label": __("Periodicity"),
-			"fieldtype": "Select",
-			"options": [
-				{ "value": "Monthly", "label": __("Monthly") },
-				{ "value": "Quarterly", "label": __("Quarterly") },
-				{ "value": "Half-Yearly", "label": __("Half-Yearly") },
-				{ "value": "Yearly", "label": __("Yearly") }
-			],
-			"default": "Monthly",
-			"reqd": 1
-		},
+		// {
+		// 	"fieldname": "periodicity",
+		// 	"label": __("Periodicity"),
+		// 	"fieldtype": "Select",
+		// 	"options": [
+		// 		{ "value": "Monthly", "label": __("Monthly") },
+		// 		{ "value": "Quarterly", "label": __("Quarterly") },
+		// 		{ "value": "Half-Yearly", "label": __("Half-Yearly") },
+		// 		{ "value": "Yearly", "label": __("Yearly") }
+		// 	],
+		// 	"default": "Monthly",
+		// 	"reqd": 1,
+		// 	"hidden": 1
+		// },
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
