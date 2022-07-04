@@ -12,6 +12,7 @@ def get_data():
 			"Sales Invoice": "return_against",
 			"Auto Repeat": "reference_document",
 			"Bank Transaction": "payment_entry",
+			"Purchase Invoice": "inter_company_invoice_reference",
 		},
 		"internal_links": {
 			"Sales Order": ["items", "sales_order"],
@@ -32,5 +33,6 @@ def get_data():
 			{"label": _("Reference"), "items": ["Timesheet", "Delivery Note", "Sales Order"]},
 			{"label": _("Returns"), "items": ["Sales Invoice"]},
 			{"label": _("Repeat"), "items": ["Auto Repeat"]},
+			{"label": _("Internal Transfers"), "items": ["Purchase Invoice"]},
 		],
 	}
