@@ -227,7 +227,7 @@ class CashFlowBudget:
 			fields=["reference_document", "next_schedule_date", "frequency", "repeat_on_day", "repeat_on_last_day"]
 		)
 
-		auto_repeat_data = {"label": _("Auto Repeat")}
+		auto_repeat_data = {"label": _("Repeated Invoices")}
 		for doc in auto_repeat:
 			invoice = frappe.db.get_value(reference_doctype, doc.reference_document,
 				["supplier as party" if reference_doctype == "Purchase Invoice" else "customer as party", "base_grand_total"], as_dict=True)
