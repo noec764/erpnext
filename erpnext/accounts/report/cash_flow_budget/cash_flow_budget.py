@@ -331,6 +331,7 @@ class CashFlowBudget:
 		self.result.append({})
 
 	def get_balances(self):
+		initial_balance = self.result[0]
 		balance_row = {"label": _("Balance")}
 
 		for row in self.result:
@@ -342,6 +343,7 @@ class CashFlowBudget:
 		for index, period in enumerate(self.period_list):
 			if index > 0:
 				balance_row[period.key] += balance_row.get(self.period_list[index - 1].key)
+				initial_balance[period.key] = balance_row.get(self.period_list[index - 1].key)
 
 		self.result.append({})
 		self.result.append(balance_row)
