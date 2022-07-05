@@ -1635,13 +1635,10 @@ class AccountsController(TransactionBase):
 				)
 				for item in data:
 					self.append("payment_schedule", item)
-			elif self.doctype not in ["Purchase Receipt"]:
-				data = dict(
-					due_date=due_date,
-					invoice_portion=100,
-					payment_amount=grand_total,
-					base_payment_amount=base_grand_total,
-				)
+			# Quotation doctype is excluded because the addition of a dummy payment term with a due_date set as the
+			# posting date causes an error when creating a sales order from it
+			elif self.doctype not in ["Purchase Receipt", "Quotation"]:
+				data = dict(due_date=due_date, invoice_portion=100, payment_amount=grand_total, base_payment_amount=base_grand_total)
 				self.append("payment_schedule", data)
 
 		for d in self.get("payment_schedule"):
