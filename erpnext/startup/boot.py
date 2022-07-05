@@ -17,7 +17,6 @@ def boot_session(bootinfo):
 	if frappe.session["user"] != "Guest":
 		update_page_info(bootinfo)
 
-		load_country_and_currency(bootinfo)
 		bootinfo.sysdefaults.territory = frappe.db.get_single_value("Selling Settings", "territory")
 		bootinfo.sysdefaults.customer_group = frappe.db.get_single_value(
 			"Selling Settings", "customer_group"
@@ -66,20 +65,6 @@ def boot_session(bootinfo):
 		bootinfo.party_account_types = frappe._dict(party_account_types)
 
 		frappe.cache().hdel("shopping_cart_party", frappe.session.user)
-
-
-def load_country_and_currency(bootinfo):
-	country = frappe.db.get_default("country")
-	if country and frappe.db.exists("Country", country):
-		bootinfo.docs += [frappe.get_doc("Country", country)]
-
-	bootinfo.docs += frappe.db.sql(
-		"""select name, fraction, fraction_units,
-		number_format, smallest_currency_fraction_value, symbol from tabCurrency
-		where enabled=1""",
-		as_dict=1,
-		update={"doctype": ":Currency"},
-	)
 
 
 def update_page_info(bootinfo):
