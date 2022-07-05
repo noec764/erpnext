@@ -353,7 +353,6 @@ doc_events = {
 	"Sales Taxes and Charges Template": {
 		"on_update": "erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings.validate_cart_settings"
 	},
-	"Tax Category": {"validate": "erpnext.regional.india.utils.validate_tax_category"},
 	"Sales Invoice": {
 		"on_submit": [
 			"erpnext.regional.italy.utils.sales_invoice_on_submit",
@@ -366,42 +365,22 @@ doc_events = {
 			"erpnext.regional.saudi_arabia.utils.delete_qr_code_file",
 		],
 		"on_trash": "erpnext.regional.check_deletion_permission",
-		"validate": [
-			"erpnext.regional.india.utils.validate_document_name",
-			"erpnext.regional.india.utils.update_taxable_values",
-			"erpnext.regional.india.utils.validate_sez_and_export_invoices",
-		],
 	},
 	"POS Invoice": {"on_submit": ["erpnext.regional.saudi_arabia.utils.create_qr_code"]},
 	"Purchase Invoice": {
 		"validate": [
-			"erpnext.regional.india.utils.validate_reverse_charge_transaction",
-			"erpnext.regional.india.utils.update_itc_availed_fields",
 			"erpnext.regional.united_arab_emirates.utils.update_grand_total_for_rcm",
 			"erpnext.regional.united_arab_emirates.utils.validate_returns",
-			"erpnext.regional.india.utils.update_taxable_values",
 		]
 	},
 	"Payment Entry": {
-		"validate": "erpnext.regional.india.utils.update_place_of_supply",
 		"on_submit": "erpnext.accounts.doctype.dunning.dunning.resolve_dunning",
 	},
 	"Address": {
 		"validate": [
-			"erpnext.regional.india.utils.validate_gstin_for_india",
 			"erpnext.regional.italy.utils.set_state_code",
-			"erpnext.regional.india.utils.update_gst_category",
 		]
 	},
-	"Supplier": {"validate": "erpnext.regional.india.utils.validate_pan_for_india"},
-	(
-		"Sales Invoice",
-		"Sales Order",
-		"Delivery Note",
-		"Purchase Invoice",
-		"Purchase Order",
-		"Purchase Receipt",
-	): {"validate": ["erpnext.regional.india.utils.set_place_of_supply"]},
 	"Contact": {
 		"on_trash": "erpnext.support.doctype.issue.issue.update_issue",
 		"after_insert": "erpnext.telephony.doctype.call_log.call_log.link_existing_conversations",
@@ -425,7 +404,6 @@ doc_events = {
 	},
 	"Company": {
 		"on_trash": [
-			"erpnext.regional.india.utils.delete_gst_settings_for_company",
 			"erpnext.regional.saudi_arabia.utils.delete_vat_settings_for_company",
 		]
 	},
@@ -603,15 +581,8 @@ regional_overrides = {
 		"erpnext.hr.doctype.leave_application.leave_application.get_regional_number_of_leave_days": "erpnext.regional.france.hr.utils.get_regional_number_of_leave_days",
 	},
 	"India": {
-		"erpnext.tests.test_regional.test_method": "erpnext.regional.india.utils.test_method",
-		"erpnext.controllers.taxes_and_totals.get_itemised_tax_breakup_header": "erpnext.regional.india.utils.get_itemised_tax_breakup_header",
-		"erpnext.controllers.taxes_and_totals.get_itemised_tax_breakup_data": "erpnext.regional.india.utils.get_itemised_tax_breakup_data",
-		"erpnext.accounts.party.get_regional_address_details": "erpnext.regional.india.utils.get_regional_address_details",
-		"erpnext.controllers.taxes_and_totals.get_regional_round_off_accounts": "erpnext.regional.india.utils.get_regional_round_off_accounts",
 		"erpnext.hr.utils.calculate_annual_eligible_hra_exemption": "erpnext.regional.india.utils.calculate_annual_eligible_hra_exemption",
 		"erpnext.hr.utils.calculate_hra_exemption_for_period": "erpnext.regional.india.utils.calculate_hra_exemption_for_period",
-		"erpnext.assets.doctype.asset.asset.get_depreciation_amount": "erpnext.regional.india.utils.get_depreciation_amount",
-		"erpnext.stock.doctype.item.item.set_item_tax_from_hsn_code": "erpnext.regional.india.utils.set_item_tax_from_hsn_code",
 	},
 	"United Arab Emirates": {
 		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data",

@@ -5,10 +5,8 @@
 import unittest
 
 import frappe
-from frappe.test_runner import make_test_objects
 
 from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_order
-from erpnext.stock.get_item_details import get_item_details
 
 test_dependencies = ["Item"]
 
@@ -32,7 +30,6 @@ def test_create_test_data():
 				"item_name": "_Test Tesla Car",
 				"apply_warehouse_wise_reorder_level": 0,
 				"warehouse": "Stores - _TC",
-				"gst_hsn_code": "999800",
 				"valuation_rate": 5000,
 				"standard_rate": 5000,
 				"item_defaults": [

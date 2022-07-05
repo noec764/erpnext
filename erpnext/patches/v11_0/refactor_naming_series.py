@@ -11,7 +11,6 @@ doctype_series_map = {
 	"Attendance": "HR-ATT-.YYYY.-",
 	"Auto Repeat": "SYS-ARP-.YYYY.-",
 	"Blanket Order": "MFG-BLR-.YYYY.-",
-	"C-Form": "ACC-CF-.YYYY.-",
 	"Campaign": "SAL-CAM-.YYYY.-",
 	"Customer": "CUST-.YYYY.-",
 	"Delivery Note": "MAT-DN-.YYYY.-",
