@@ -81,6 +81,83 @@ def send_email_to_leads_or_contacts():
 			if scheduled_date == getdate(today()):
 				send_mail(entry, email_campaign)
 
+def send_email_to_leads_or_contacts_hourly():
+	"""This function is called every hour through a hook.
+
+	It sends e-mails from email campaings at a given moment in time,
+	specified in the 'send_after' and 'send_at_hour' of the associated
+	Email Campaign Schedule child documents of the CRM Campaign.
+
+	Allows up to 60 minutes of lag by design, meaning that e-mails scheduled
+	for 9:00 will still be sent at the right time (9:00 + X minutes) if cron
+	triggers this function late (at most 60 minutes after 9:00), assuming
+	cron triggers it every hour.
+
+	/!\ If any DST or timezone changes happen around the moment an e-mail is
+	scheduled, this e-mail can be sent twice or never.
+	"""
+
+	import datetime
+
+	def should_send_email_now(dt_base, dt_now=frappe.utils.now_datetime(), precision=3600):
+		"""Check that dt_now is between dt_base and dt_base+precision
+
+		NOTE: A necessary condition for the function to return True
+		is that `dt_now` should be AFTER `dt_base`.
+		In most cases, `dt_now = frappe.utils.now_datetime()`.
+
+		Explanation with simplified examples:
+		precision = 1 hours = 60 minutes = 3600 seconds
+		+-------------------------------+
+		|  now  | base  | delta |  out  |
+		|-------+-------+-------+-------|
+		| 11:55 | 12:00 | - 5mn | False |
+		| 12:00 | 12:00 | + 0mn | True  |
+		| 12:05 | 12:00 | + 5mn | True  |
+		| 12:55 | 12:00 | +55mn | True  |
+		| 13:05 | 12:00 | +65mn | False |
+		|-------+-------+-------+-------|
+		| 11:55 | 12:30 | -35mn | False |
+		| 12:05 | 12:30 | -25mn | False |
+		| 12:25 | 12:30 | - 5mn | False |
+		| 12:30 | 12:30 | + 0mn | True  |
+		| 12:35 | 12:30 | + 5mn | True  |
+		| 12:55 | 12:30 | +25mn | True  |
+		| 13:05 | 12:30 | +35mn | True  |
+		| 13:35 | 12:30 | +65mn | False |
+		+-------------------------------+
+		"""
+		seconds = (dt_now - dt_base).total_seconds()
+		_debug(seconds=seconds)
+		return 0 <= seconds < precision
+
+	# First, we retrieve all the email campaigns that are In Progress,
+	# this includes all the Email Campaigns that must be sent today.
+
+	email_campaigns = frappe.get_all("Email Campaign", filters={
+		'status': ('not in', ['Unsubscribed', 'Completed', 'Scheduled'])
+	})
+
+	HOUR = 3600  # seconds
+	now = frappe.utils.now_datetime()
+
+	for camp in email_campaigns:
+		email_campaign = frappe.get_doc("Email Campaign", camp.name)
+		campaign = frappe.get_cached_doc("Campaign", email_campaign.campaign_name)
+
+		# Get start_date as a datetime object, time is set to 00:00:00
+		d = email_campaign.get('start_date')
+		start_date = datetime.datetime(d.year, d.month, d.day)
+
+		for entry in campaign.get("campaign_schedules"):
+			# Get the target datetime to send the mail
+			# by adding the offsets (days, time) to start_date
+			offset_days = entry.get('send_after_days') or 0  # int
+			offset_time = entry.get('send_at_time') or datetime.timedelta() # timedelta
+			scheduled_date = add_days(start_date, offset_days) + offset_time
+
+			if should_send_email_now(scheduled_date, now, precision=HOUR):
+				send_mail(entry, email_campaign)
 
 def send_mail(entry, email_campaign):
 	recipient_list = []
