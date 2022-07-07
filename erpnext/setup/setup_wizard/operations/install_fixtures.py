@@ -12,7 +12,6 @@ from frappe.desk.doctype.global_search_settings.global_search_settings import (
 )
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
 from frappe.utils import cstr, getdate
-from frappe.utils.nestedset import rebuild_tree
 
 from erpnext.accounts.doctype.account.account import RootNotEditable
 from erpnext.regional.address_template.setup import set_up_address_templates
@@ -95,7 +94,7 @@ def install(country=None):
 		{
 			"doctype": "Salary Component",
 			"salary_component": _("Basic", context="Salary Component"),
-			"description": _("Basic" , context="Salary Component"),
+			"description": _("Basic", context="Salary Component"),
 			"type": "Earning",
 		},
 		{
@@ -632,111 +631,6 @@ def install_company(args):
 	]
 
 	make_records(records)
-
-
-def install_post_company_fixtures(args=None):
-	existing_parents = [
-		x.name for x in frappe.get_all("Department", filters={"parent_department": ""}, fields=["name"])
-	]
-	existing_parent = existing_parents[0] if existing_parents else None
-	root_department = existing_parent if existing_parent else _("All Departments")
-
-	records = [
-		# Department
-		{
-			"doctype": "Department",
-			"department_name": root_department,
-			"is_group": 1,
-			"parent_department": "",
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Accounts"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Marketing"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Sales"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Purchase"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Operations"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Production"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Dispatch"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Customer Service"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Human Resources"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Management"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Quality Management"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Research & Development"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-		{
-			"doctype": "Department",
-			"department_name": _("Legal"),
-			"parent_department": root_department,
-			"company": args.company_name,
-		},
-	]
-
-	# Make root department with NSM updation
-	make_records(records[:1])
-
-	frappe.local.flags.ignore_update_nsm = True
-	make_records(records[1:])
-	frappe.local.flags.ignore_update_nsm = False
-
-	rebuild_tree("Department", "parent_department")
 
 
 def install_defaults(args=None):
