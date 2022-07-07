@@ -19,7 +19,7 @@ frappe.listview_settings['Bank Transaction'] = {
 		}
 	},
 	onload: function(list_view) {
-		frappe.require('assets/js/bank-transaction-importer.min.js', function() {
+		frappe.require('bank-transaction-importer.bundle.js', function() {
 			frappe.db.get_value("Plaid Settings", "Plaid Settings", "enabled", (r) => {
 				if (r && r.enabled == "1") {
 					list_view.page.add_menu_item(__("Synchronize this account"), function() {

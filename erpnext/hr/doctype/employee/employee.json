@@ -62,6 +62,8 @@
   "holiday_list",
   "default_shift",
   "salary_information",
+  "salary_currency",
+  "ctc",
   "salary_mode",
   "payroll_cost_center",
   "column_break_52",
@@ -207,7 +209,7 @@
    "label": "Status",
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Active\nLeft",
+   "options": "Active\nInactive\nSuspended\nLeft",
    "reqd": 1,
    "search_index": 1
   },
@@ -807,6 +809,18 @@
    "fieldtype": "Link",
    "label": "Shift Request Approver",
    "options": "User"
+},
+{
+ "fieldname": "salary_currency",
+ "fieldtype": "Link",
+ "label": "Salary Currency",
+ "options": "Currency"
+},
+{
+ "fieldname": "ctc",
+ "fieldtype": "Currency",
+ "label": "Cost to Company (CTC)",
+ "options": "salary_currency"
   }
  ],
  "icon": "fa fa-user",
@@ -819,11 +833,12 @@
    "link_fieldname": "employee"
   }
  ],
- "modified": "2022-01-19 21:34:15.300102",
+ "modified": "2022-06-10 01:29:32.952091",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
  "name_case": "Title Case",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -865,5 +880,6 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "employee_name"
 }

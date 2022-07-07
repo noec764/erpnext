@@ -1,23 +1,26 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
 import datetime
 import json
+
 import frappe
 from frappe import _
 from frappe.utils import flt, getdate
 
-from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import StripeWebhooksController
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeSubscription
+from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import (
+	StripeWebhooksController,
+)
 
 # TODO: Fix invoice handling
 EVENT_MAP = {
-	'invoice.created': '',
-	'invoice.deleted': '',
-	'invoice.finalized': '',
-	'invoice.voided': ''
+	"invoice.created": "",
+	"invoice.deleted": "",
+	"invoice.finalized": "",
+	"invoice.voided": "",
 }
+
 
 class StripeInvoiceWebhookHandler(StripeWebhooksController):
 	def __init__(self, **kwargs):
@@ -36,7 +39,9 @@ class StripeInvoiceWebhookHandler(StripeWebhooksController):
 				subscription = StripeSubscription(self.stripe_settings).retrieve(subscription_id)
 				self.metadata = subscription.get("metadata")
 			else:
-				self.metadata = self.data.get("data", {}).get("object", {}).get("lines", {}).get("data")[0].get("metadata")
+				self.metadata = (
+					self.data.get("data", {}).get("object", {}).get("lines", {}).get("data")[0].get("metadata")
+				)
 
 	def get_or_create_invoice(self):
 		reference = self.data.get("data", {}).get("object", {}).get("id")

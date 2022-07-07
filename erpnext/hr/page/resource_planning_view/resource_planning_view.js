@@ -26,8 +26,8 @@ class ResourcePlan {
 
 	show() {
 		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-			'assets/js/resource-calendar.min.js',
+			'moment.bundle.js',
+			'resource_calendar.bundle.js',
 		], () => {
 			this.build_calendar()
 		});

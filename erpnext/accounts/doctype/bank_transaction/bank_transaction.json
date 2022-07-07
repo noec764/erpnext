@@ -152,6 +152,7 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "Allocated Amount",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -172,6 +173,7 @@
    "fieldname": "unallocated_amount",
    "fieldtype": "Currency",
    "label": "Difference",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -222,6 +224,7 @@
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -268,5 +271,6 @@
  ],
  "sort_field": "date",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "bank_account"
 }

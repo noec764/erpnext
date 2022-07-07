@@ -18,17 +18,16 @@
      "tax_id",
      "tax_category",
      "tax_withholding_category",
-     "is_transporter",
-     "is_internal_supplier",
-     "represents_company",
      "image",
      "column_break0",
      "supplier_group",
      "supplier_type",
-     "pan",
      "allow_purchase_invoice_creation_without_purchase_order",
      "allow_purchase_invoice_creation_without_purchase_receipt",
+     "is_internal_supplier",
+     "represents_company",
      "disabled",
+     "is_transporter",
      "warn_rfqs",
      "warn_pos",
      "prevent_rfqs",
@@ -39,18 +38,25 @@
      "default_currency",
      "column_break_10",
      "default_price_list",
+     "address_contacts",
+     "address_html",
+     "column_break1",
+     "contact_html",
+     "primary_address_and_contact_detail_section",
+     "supplier_primary_contact",
+     "mobile_no",
+     "email_id",
+     "column_break_44",
+     "supplier_primary_address",
+     "primary_address",
+     "default_payable_accounts",
+     "accounts",
      "section_credit_limit",
      "payment_terms",
      "cb_21",
      "on_hold",
      "hold_type",
      "release_date",
-     "address_contacts",
-     "address_html",
-     "column_break1",
-     "contact_html",
-     "default_payable_accounts",
-     "accounts",
      "default_tax_withholding_config",
      "column_break2",
      "website",
@@ -170,11 +176,6 @@
       "reqd": 1
      },
      {
-      "fieldname": "pan",
-      "fieldtype": "Data",
-      "label": "PAN"
-     },
-     {
       "fieldname": "language",
       "fieldtype": "Link",
       "label": "Print Language",
@@ -257,7 +258,7 @@
       "collapsible": 1,
       "fieldname": "section_credit_limit",
       "fieldtype": "Section Break",
-      "label": "Credit Limit"
+      "label": "Payment Terms"
      },
      {
       "fieldname": "payment_terms",
@@ -378,17 +379,65 @@
         "fieldname": "allow_purchase_invoice_creation_without_purchase_receipt",
         "fieldtype": "Check",
         "label": "Allow Purchase Invoice Creation Without Purchase Receipt"
+      },
+      {
+       "fieldname": "primary_address_and_contact_detail_section",
+       "fieldtype": "Section Break",
+       "label": "Primary Address and Contact Detail"
+      },
+      {
+       "description": "Reselect, if the chosen contact is edited after save",
+       "fieldname": "supplier_primary_contact",
+       "fieldtype": "Link",
+       "label": "Supplier Primary Contact",
+       "options": "Contact"
+      },
+      {
+       "fetch_from": "supplier_primary_contact.mobile_no",
+       "fieldname": "mobile_no",
+       "fieldtype": "Read Only",
+       "label": "Mobile No"
+      },
+      {
+       "fetch_from": "supplier_primary_contact.email_id",
+       "fieldname": "email_id",
+       "fieldtype": "Read Only",
+       "label": "Email Id"
+      },
+      {
+       "fieldname": "column_break_44",
+       "fieldtype": "Column Break"
+      },
+      {
+       "fieldname": "primary_address",
+       "fieldtype": "Text",
+       "label": "Primary Address",
+       "read_only": 1
+      },
+      {
+       "description": "Reselect, if the chosen address is edited after save",
+       "fieldname": "supplier_primary_address",
+       "fieldtype": "Link",
+       "label": "Supplier Primary Address",
+       "options": "Address"
        }
     ],
     "icon": "fa fa-user",
     "idx": 370,
     "image_field": "image",
-    "links": [],
-    "modified": "2021-01-06 19:51:40.939087",
+    "links": [
+      {
+        "group": "Allowed Items",
+        "link_doctype": "Party Specific Item",
+        "link_fieldname": "party"
+      }
+     ],
+    "modified": "2022-04-16 18:02:27.838623",
     "modified_by": "Administrator",
     "module": "Buying",
     "name": "Supplier",
     "name_case": "Title Case",
+    "naming_rule": "By \"Naming Series\" field",
     "owner": "Administrator",
     "permissions": [
      {
@@ -448,6 +497,7 @@
     "show_name_in_global_search": 1,
     "sort_field": "modified",
     "sort_order": "ASC",
+    "states": [],
     "title_field": "supplier_name",
     "track_changes": 1
    }

@@ -311,7 +311,7 @@ erpnext.resource_calendar.resourceCalendar = class ResourceCalendar {
 		const view_selectors = {
 			"Employee": "users",
 			"Designation": "review",
-			"Department": "oranisation"
+			"Department": "organization"
 		}
 		this.views_menu = this.page.add_custom_button_group(__('{0} View', [__(this.view)]), view_selectors[this.view]);
 		Object.keys(view_selectors).forEach(v => {

@@ -1,30 +1,36 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
+import json
+
 import frappe
 from frappe import _
-import json
 from frappe.utils import flt
 
-from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import StripeWebhooksController
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeInvoice, StripeSubscription
+from erpnext.erpnext_integrations.doctype.stripe_settings.api import (
+	StripeInvoice,
+	StripeSubscription,
+)
+from erpnext.erpnext_integrations.doctype.stripe_settings.webhook_events.stripe import (
+	StripeWebhooksController,
+)
 
 EVENT_MAP = {
-	'payment_intent.created': 'update_payment_request_status',
-	'payment_intent.canceled': 'update_payment_request_status',
-	'payment_intent.payment_failed': 'cancel_payment',
-	'payment_intent.processing': 'update_payment_request_status',
-	'payment_intent.succeeded': 'create_submit_payment'
+	"payment_intent.created": "update_payment_request_status",
+	"payment_intent.canceled": "update_payment_request_status",
+	"payment_intent.payment_failed": "cancel_payment",
+	"payment_intent.processing": "update_payment_request_status",
+	"payment_intent.succeeded": "create_submit_payment",
 }
 
 STATUS_MAP = {
-	'payment_intent.created': 'Pending',
-	'payment_intent.canceled': 'Failed',
-	'payment_intent.payment_failed': 'Failed',
-	'payment_intent.processing': 'Pending',
-	'payment_intent.succeeded': 'Paid'
+	"payment_intent.created": "Pending",
+	"payment_intent.canceled": "Failed",
+	"payment_intent.payment_failed": "Failed",
+	"payment_intent.processing": "Pending",
+	"payment_intent.succeeded": "Paid",
 }
+
 
 class StripePaymentIntentWebhookHandler(StripeWebhooksController):
 	def __init__(self, **kwargs):
@@ -46,7 +52,9 @@ class StripePaymentIntentWebhookHandler(StripeWebhooksController):
 				metadata = invoice.get("metadata")
 
 				if not metadata and invoice.get("subscription"):
-					subscription = StripeSubscription(self.stripe_settings).retrieve(invoice.get("subscription")) or {}
+					subscription = (
+						StripeSubscription(self.stripe_settings).retrieve(invoice.get("subscription")) or {}
+					)
 					metadata = subscription.get("metadata")
 
 				self.metadata = metadata
@@ -57,4 +65,7 @@ class StripePaymentIntentWebhookHandler(StripeWebhooksController):
 		self.set_as_completed()
 
 	def get_charges(self):
-		self.charges = [x.get("id") for x in self.data.get("data", {}).get("object", {}).get("charges", {}).get("data", [])]
+		self.charges = [
+			x.get("id")
+			for x in self.data.get("data", {}).get("object", {}).get("charges", {}).get("data", [])
+		]

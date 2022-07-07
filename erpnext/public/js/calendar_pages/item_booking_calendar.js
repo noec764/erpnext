@@ -16,13 +16,7 @@ erpnext.itemBookingCalendar = class ItemBookingCalendar {
 	}
 
 	show() {
-		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-			'/assets/js/control.min.js',
-			'/assets/frappe/js/frappe/utils/datetime.js'
-		], () => {
-			this.build_calendar()
-		});
+		this.build_calendar()
 	}
 
 	build_calendar() {
@@ -114,7 +108,9 @@ class ItemCalendar {
 			displayEventTime: this.get_time_display(),
 			allDayContent: function() {
 				return __("All Day");
-			}
+			},
+			slotMinTime: '08:00:00',
+			slotMaxTime: '20:00:00'
 		}
 	}
 
@@ -123,10 +119,19 @@ class ItemCalendar {
 			start: moment(parameters.start).format("YYYY-MM-DD"),
 			end: moment(parameters.end).format("YYYY-MM-DD")
 		}).then(result => {
-			this.slots = result.message || []
+			this.slots = result.message || [];
+
+			this.set_min_max_times()
 
 			callback(this.slots);
 		})
+	}
+
+	set_min_max_times() {
+		let minTimes = this.slots.map(slot => moment(slot.start).format("HH:mm:ss")).sort()
+		minTimes.length && this.set_option("slotMinTime", minTimes[0])
+		let maxTimes =  this.slots.map(slot => moment(slot.end).format("HH:mm:ss")).sort().reverse()
+		maxTimes.length && this.set_option("slotMaxTime", maxTimes[0])
 	}
 
 	eventClick(event) {

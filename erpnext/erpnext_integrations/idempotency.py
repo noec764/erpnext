@@ -1,7 +1,9 @@
-import frappe
-from frappe import _
 from hashlib import sha224
+
+import frappe
 import stripe
+from frappe import _
+
 
 class IdempotencyKey:
 	def __init__(self, document, action, id):
@@ -18,7 +20,12 @@ def handle_idempotency(func):
 		try:
 			return func(*args, **kwargs)
 		except stripe.error.IdempotencyError:
-			frappe.throw(_("This request has already been completed within the last 24 hours.<br> Please contact us for any question."))
+			frappe.throw(
+				_(
+					"This request has already been completed within the last 24 hours.<br> Please contact us for any question."
+				)
+			)
 		except Exception:
-			frappe.log_error(frappe.get_traceback(), "Payment Gateway Error")
+			frappe.log_error(_("Payment Gateway Error"))
+
 	return wrapper

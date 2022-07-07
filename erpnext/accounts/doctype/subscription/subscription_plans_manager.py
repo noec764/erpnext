@@ -1,21 +1,30 @@
 import frappe
-from frappe.utils import nowdate, getdate, add_days, flt
-from erpnext.accounts.party import get_default_price_list
-from erpnext.stock.get_item_details import get_price_list_rate_for
+from frappe.utils import add_days, flt, getdate, nowdate
+
 from erpnext.accounts.doctype.pricing_rule.pricing_rule import get_pricing_rule_for_item
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
+from erpnext.accounts.party import get_default_price_list
+from erpnext.stock.get_item_details import get_price_list_rate_for
+
 
 class SubscriptionPlansManager:
 	def __init__(self, subscription):
 		self.subscription = subscription
 
 	def set_plans_status(self):
-		current_date = self.subscription.current_invoice_start or SubscriptionPeriod(self.subscription).get_current_invoice_start()
+		current_date = (
+			self.subscription.current_invoice_start
+			or SubscriptionPeriod(self.subscription).get_current_invoice_start()
+		)
 		for plan in self.subscription.plans:
 			previous_status = plan.status
-			if getdate(plan.from_date or "1900-01-01") <= getdate(current_date) and getdate(plan.to_date or "3000-12-31") >= getdate(current_date):
+			if getdate(plan.from_date or "1900-01-01") <= getdate(current_date) and getdate(
+				plan.to_date or "3000-12-31"
+			) >= getdate(current_date):
 				plan.status = "Active"
-			elif getdate(plan.from_date or "1900-01-01") >= getdate(current_date) and getdate(plan.to_date or "3000-12-31") >= getdate(current_date):
+			elif getdate(plan.from_date or "1900-01-01") >= getdate(current_date) and getdate(
+				plan.to_date or "3000-12-31"
+			) >= getdate(current_date):
 				plan.status = "Upcoming"
 			else:
 				plan.status = "Inactive"
@@ -28,14 +37,20 @@ class SubscriptionPlansManager:
 			previous_rate = plan.rate
 			date = getdate(nowdate()) if plan.status == "Active" else getdate(plan.from_date)
 			if not plan.uom:
-				plan.uom = frappe.get_cached_value("Item", plan.item, "sales_uom") or frappe.get_cached_value("Item", plan.item, "stock_uom")
+				plan.uom = frappe.get_cached_value("Item", plan.item, "sales_uom") or frappe.get_cached_value(
+					"Item", plan.item, "stock_uom"
+				)
 			plan.rate = self.get_plan_rate(plan, date)
 
 			if flt(previous_rate) != flt(plan.rate):
 				frappe.db.set_value("Subscription Plan Detail", plan.name, "rate", plan.rate)
 
 	def get_plans_total(self):
-		max_date = add_days(getdate(self.subscription.current_invoice_end), 1) if self.subscription.generate_invoice_at_period_start else self.subscription.current_invoice_end
+		max_date = (
+			add_days(getdate(self.subscription.current_invoice_end), 1)
+			if self.subscription.generate_invoice_at_period_start
+			else self.subscription.current_invoice_end
+		)
 		total = 0
 		for plan in [x for x in self.subscription.plans if x.status in ("Active", "Upcoming")]:
 			if not plan.to_date or getdate(plan.to_date) <= getdate(max_date):
@@ -62,7 +77,7 @@ class SubscriptionPlansManager:
 				"price_list": price_list,
 				"currency": self.subscription.currency,
 				"transaction_date": date,
-				"qty": plan.qty
+				"qty": plan.qty,
 			}
 
 			if frappe.db.get_value("Item", plan.item, "stock_uom") != plan.uom:
@@ -76,15 +91,17 @@ class SubscriptionPlansManager:
 
 			price_list_rate = get_price_list_rate_for(args, plan.item)
 
-			args.update({
-				"item_code": plan.item,
-				"stock_qty": plan.qty,
-				"transaction_type": "selling",
-				"price_list_rate": price_list_rate,
-				"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
-				"transaction_date": date,
-				"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse=''))
-			})
+			args.update(
+				{
+					"item_code": plan.item,
+					"stock_qty": plan.qty,
+					"transaction_type": "selling",
+					"price_list_rate": price_list_rate,
+					"price_list_currency": frappe.db.get_value("Price List", price_list, "currency"),
+					"transaction_date": date,
+					"warehouse": frappe.db.get_value("Warehouse", dict(is_group=1, parent_warehouse="")),
+				}
+			)
 			rule = get_pricing_rule_for_item(frappe._dict(args))
 
 			if rule.get("price_list_rate"):

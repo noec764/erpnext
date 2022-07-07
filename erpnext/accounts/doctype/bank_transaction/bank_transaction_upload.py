@@ -1,29 +1,31 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+import json
+
 import frappe
 from frappe import _
-import json
-from frappe.utils import getdate, flt, formatdate
+from frappe.utils import flt, formatdate, getdate
 from frappe.utils.dateutils import parse_date
-from six import iteritems
+from ofxtools.models.bank import STMTRS
 from ofxtools.Parser import OFXTree
-from ofxtools.models.bank import STMTRS, CCSTMTRS
+
 
 @frappe.whitelist()
 def upload_csv_bank_statement():
 	if frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("csv".encode("utf-8")):
 		from frappe.utils.csvutils import read_csv_content
+
 		rows = read_csv_content(frappe.local.uploaded_file)
 
 	elif frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("xlsx".encode("utf-8")):
 		from frappe.utils.xlsxutils import read_xlsx_file_from_attached_file
+
 		rows = read_xlsx_file_from_attached_file(fcontent=frappe.local.uploaded_file)
 
 	elif frappe.safe_encode(frappe.local.uploaded_filename).lower().endswith("xls".encode("utf-8")):
 		from frappe.utils.xlsxutils import read_xls_file_from_attached_file
+
 		rows = read_xls_file_from_attached_file(frappe.local.uploaded_file)
 
 	else:
@@ -38,6 +40,7 @@ def upload_csv_bank_statement():
 
 	return {"columns": columns, "data": data}
 
+
 @frappe.whitelist()
 def upload_ofx_bank_statement():
 	ofx_parser = OFXTree()
@@ -46,41 +49,28 @@ def upload_ofx_bank_statement():
 			"field": "id",
 			"label": "ID",
 		},
-		{
-			"field": "type",
-			"label": _("Type")
-		},
+		{"field": "type", "label": _("Type")},
 		{
 			"field": "date",
 			"label": _("Date"),
 			"type": "date",
 			"width": "100%",
 			"dateInputFormat": "yyyy-MM-dd",
-			"dateOutputFormat": frappe.db.get_default("date_format").replace("Y", "y").replace("m", "M").replace("D", "d") or  "yyyy-MM-dd"
+			"dateOutputFormat": frappe.db.get_default("date_format")
+			.replace("Y", "y")
+			.replace("m", "M")
+			.replace("D", "d")
+			or "yyyy-MM-dd",
 		},
-		{
-			"field": "description",
-			"label": _("Description")
-		},
-		{
-			"field": "debit",
-			"label": _("Debit"),
-			"type": "decimal"
-		},
-		{
-			"field": "credit",
-			"label": _("Credit"),
-			"type": "decimal"
-		},
-		{
-			"field": "currency",
-			"label": _("Currency")
-		}
-
+		{"field": "description", "label": _("Description")},
+		{"field": "debit", "label": _("Debit"), "type": "decimal"},
+		{"field": "credit", "label": _("Credit"), "type": "decimal"},
+		{"field": "currency", "label": _("Currency")},
 	]
 	data = []
 	try:
 		from io import BytesIO
+
 		with BytesIO(frappe.local.uploaded_file) as file:
 			ofx_parser.parse(file)
 			ofx = ofx_parser.convert()
@@ -92,9 +82,10 @@ def upload_ofx_bank_statement():
 					data.append(make_transaction_row(stmt, transaction, stmt.curdef))
 
 		return {"columns": columns, "data": data}
-	except Exception as e:
-		frappe.log_error(frappe.get_traceback(), _("OFX Parser Error"))
+	except Exception:
+		frappe.log_error(_("OFX Parser Error"))
 		frappe.throw(_("OFX Parser Error. Please check your error logs."))
+
 
 def make_transaction_row(stmt, transaction, currency=None):
 	return {
@@ -105,8 +96,9 @@ def make_transaction_row(stmt, transaction, currency=None):
 		"debit": abs(transaction.trnamt) if flt(transaction.trnamt) < 0 else 0,
 		"credit": transaction.trnamt if flt(transaction.trnamt) > 0 else 0,
 		"currency": currency,
-		"statement": "Bank" if type(stmt) == STMTRS else "Credit Card"
+		"statement": "Bank" if type(stmt) == STMTRS else "Credit Card",
 	}
+
 
 @frappe.whitelist()
 def create_bank_entries(columns, data, bank_account, upload_type=None):
@@ -124,7 +116,7 @@ def create_bank_entries(columns, data, bank_account, upload_type=None):
 		if all(item is None for item in d) is True:
 			continue
 		fields = {}
-		for key, dummy in iteritems(header_map):
+		for key, dummy in header_map.items():
 			fields.update({header_map.get(key): d.get(key)})
 
 		try:
@@ -147,10 +139,10 @@ def create_bank_entries(columns, data, bank_account, upload_type=None):
 
 		except Exception:
 			errors += 1
-			frappe.log_error(frappe.get_traceback(), _("Bank transaction creation error"))
-
+			bank_transaction.log_error(_("Bank transaction creation error"))
 
 	return {"success": success, "errors": errors, "duplicates": duplicates, "status": "Complete"}
+
 
 def get_header_mapping(columns, bank_account, upload_type):
 	if upload_type == "csv":
@@ -158,8 +150,10 @@ def get_header_mapping(columns, bank_account, upload_type):
 	elif upload_type == "ofx":
 		return get_ofx_header_mapping(columns)
 
+
 def get_csv_header_mapping(columns, bank_account):
 	return get_bank_mapping(bank_account)
+
 
 def get_ofx_header_mapping(columns):
 	return {
@@ -167,21 +161,29 @@ def get_ofx_header_mapping(columns):
 		"date": "date",
 		"description": "description",
 		"debit": "debit",
-		"credit": "credit"
+		"credit": "credit",
 	}
+
 
 def get_bank_mapping(bank_account):
 	bank_name = frappe.db.get_value("Bank Account", bank_account, "bank")
 	bank = frappe.get_doc("Bank", bank_name)
 
-	mapping = {row.file_field:row.bank_transaction_field for row in bank.bank_transaction_mapping}
+	mapping = {row.file_field: row.bank_transaction_field for row in bank.bank_transaction_mapping}
 
 	return mapping
 
+
 @frappe.whitelist()
 def get_bank_accounts_list():
-	bank_logos = {x.get("name"): x.get("bank_logo") for x in frappe.get_all("Bank", fields=["name", "bank_logo"])}
+	bank_logos = {
+		x.get("name"): x.get("bank_logo") for x in frappe.get_all("Bank", fields=["name", "bank_logo"])
+	}
 
-	bank_accounts = frappe.get_all("Bank Account", filters={"is_company_account": 1}, fields=["name", "account_name", "bank", "company"])
+	bank_accounts = frappe.get_all(
+		"Bank Account",
+		filters={"is_company_account": 1},
+		fields=["name", "account_name", "bank", "company"],
+	)
 
-	return [dict(x,**{"logo": bank_logos.get(x.get("bank"))}) for x in bank_accounts]
+	return [dict(x, **{"logo": bank_logos.get(x.get("bank"))}) for x in bank_accounts]

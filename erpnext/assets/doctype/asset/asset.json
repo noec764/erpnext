@@ -32,6 +32,7 @@
   "dimension_col_break",
   "section_break_5",
   "gross_purchase_amount",
+  "asset_quantity",
   "available_for_use_date",
   "column_break_18",
   "calculate_depreciation",
@@ -141,6 +142,7 @@
   },
   {
    "allow_on_submit": 1,
+   "fetch_from": "item_code.image",
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "hidden": 1,
@@ -264,6 +266,12 @@
    "fieldname": "section_break_23",
    "fieldtype": "Section Break",
    "label": "Finance Books"
+  },
+  {
+   "fieldname": "asset_quantity",
+   "fieldtype": "Int",
+   "label": "Asset Quantity",
+   "read_only_depends_on": "eval:!doc.is_existing_asset"
   },
   {
    "fieldname": "finance_books",
@@ -472,26 +480,27 @@
  "image_field": "image",
  "is_submittable": 1,
  "links": [
-  {
-   "group": "Maintenance",
-   "link_doctype": "Asset Maintenance",
-   "link_fieldname": "asset_name"
-  },
-  {
-   "group": "Repair",
-   "link_doctype": "Asset Repair",
-   "link_fieldname": "asset_name"
-  },
-  {
-   "group": "Value",
-   "link_doctype": "Asset Value Adjustment",
-   "link_fieldname": "asset"
-  }
- ],
- "modified": "2022-04-29 09:43:03.049035",
+    {
+     "group": "Maintenance",
+     "link_doctype": "Asset Maintenance",
+     "link_fieldname": "asset_name"
+    },
+    {
+     "group": "Repair",
+     "link_doctype": "Asset Repair",
+     "link_fieldname": "asset_name"
+    },
+    {
+     "group": "Value",
+     "link_doctype": "Asset Value Adjustment",
+     "link_fieldname": "asset"
+    }
+   ],
+ "modified": "2022-04-30 20:19:24.680027",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -529,6 +538,7 @@
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "asset_name",
  "track_changes": 1
 }

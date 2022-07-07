@@ -9,7 +9,6 @@ Manufacturing
 Stock
 Support
 Utilities
-Shopping Cart
 Assets
 Portal
 Maintenance
@@ -21,3 +20,5 @@ Loan Management
 Payroll
 Venue
 Telephony
+Bulk Transaction
+E-commerce

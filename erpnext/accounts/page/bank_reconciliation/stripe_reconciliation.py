@@ -1,24 +1,32 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import arrow
 import frappe
 from frappe import _
 from frappe.utils import getdate
+
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
 
+
 def reconcile_stripe_payouts(bank_transactions):
-	stripe_transactions = [transaction for transaction in bank_transactions if "stripe" in transaction.get("description").lower()]
+	stripe_transactions = [
+		transaction
+		for transaction in bank_transactions
+		if "stripe" in transaction.get("description").lower()
+	]
 	if not stripe_transactions:
 		return
 
-	stripe_accounts = frappe.get_list("Stripe Settings", {"bank_account": bank_transactions[0].get("bank_account")})
+	stripe_accounts = frappe.get_list(
+		"Stripe Settings", {"bank_account": bank_transactions[0].get("bank_account")}
+	)
 	if not stripe_accounts:
 		return
 
 	_reconcile_stripe_payouts(bank_transactions=stripe_transactions, stripe_accounts=stripe_accounts)
+
 
 def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
 	reconciled_transactions = []
@@ -31,6 +39,7 @@ def _reconcile_stripe_payouts(bank_transactions, stripe_accounts):
 				bank_reconciliation.reconcile()
 				if bank_reconciliation.documents:
 					reconciled_transactions.append(bank_transaction.get("name"))
+
 
 class StripeReconciliation:
 	def __init__(self, stripe_settings, bank_transaction):
@@ -63,8 +72,9 @@ class StripeReconciliation:
 		has_more = True
 		starting_after = None
 		while has_more:
-			result = self.stripe_settings.stripe.Payout.list(arrival_date=arrow.get(getdate(self.date)).timestamp, \
-				starting_after=starting_after)
+			result = self.stripe_settings.stripe.Payout.list(
+				arrival_date=arrow.get(getdate(self.date)).timestamp, starting_after=starting_after
+			)
 			if hasattr(result, "data"):
 				self.payouts.extend(result.data)
 
@@ -77,7 +87,9 @@ class StripeReconciliation:
 		has_more = True
 		starting_after = None
 		while has_more:
-			result = self.stripe_settings.stripe.BalanceTransaction.list(payout=payout.get("id"), starting_after=starting_after)
+			result = self.stripe_settings.stripe.BalanceTransaction.list(
+				payout=payout.get("id"), starting_after=starting_after
+			)
 			if hasattr(result, "data"):
 				payout["transactions"].extend(result.data)
 
@@ -88,17 +100,20 @@ class StripeReconciliation:
 
 	def match_transactions_with_payouts(self):
 		for payout in self.payouts:
-			if (self.bank_transaction.get("currency").lower() == payout.get("currency")) and \
-				(((self.bank_transaction.get("credit", 0) - self.bank_transaction.get("debit", 0)) * 100 - payout.get("amount")) <= 0.01):
+			if (self.bank_transaction.get("currency").lower() == payout.get("currency")) and (
+				(
+					(self.bank_transaction.get("credit", 0) - self.bank_transaction.get("debit", 0)) * 100
+					- payout.get("amount")
+				)
+				<= 0.01
+			):
 				self.filtered_payout = payout
 				break
 
 	def get_invoices_references(self):
 		for transaction in self.filtered_payout.get("transactions"):
 			if transaction.get("type") == "charge":
-				transaction["charge"] = self.stripe_settings.stripe.Charge.retrieve(
-					transaction.get("source")
-				)
+				transaction["charge"] = self.stripe_settings.stripe.Charge.retrieve(transaction.get("source"))
 
 	def get_corresponding_documents(self):
 		for transaction in self.filtered_payout.get("transactions"):
@@ -106,12 +121,19 @@ class StripeReconciliation:
 
 				for doctype in ["Payment Entry", "Sales Invoice", "Purchase Invoice", "Expense Claim"]:
 					reference_field = self.get_reference_field(doctype)
-					documents = [dict(x, **{"doctype": doctype}) for x in frappe.get_all(doctype, \
-						filters={"unreconciled_amount": ("!=", 0), "docstatus": 1}, \
-						or_filters=[{reference_field: ("like", transaction.get("charge", {}).get("id"))}, \
-						{reference_field: ("like", transaction.get("charge", {}).get("invoice"))}, \
-						{reference_field: ("like", transaction.get("charge", {}).get("payment_intent"))}],
-						fields=["*"])]
+					documents = [
+						dict(x, **{"doctype": doctype})
+						for x in frappe.get_all(
+							doctype,
+							filters={"unreconciled_amount": ("!=", 0), "docstatus": 1},
+							or_filters=[
+								{reference_field: ("like", transaction.get("charge", {}).get("id"))},
+								{reference_field: ("like", transaction.get("charge", {}).get("invoice"))},
+								{reference_field: ("like", transaction.get("charge", {}).get("payment_intent"))},
+							],
+							fields=["*"],
+						)
+					]
 					self.documents.extend(documents)
 
 	def get_reference_field(self, doctype):
@@ -120,5 +142,5 @@ class StripeReconciliation:
 			"Journal Entry": "cheque_no",
 			"Sales Invoice": "remarks",
 			"Purchase Invoice": "remarks",
-			"Expense Claim": "remark"
+			"Expense Claim": "remark",
 		}.get(doctype)

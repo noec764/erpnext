@@ -3,11 +3,13 @@
 		"public/less/erpnext.less",
 		"public/scss/call_popup.scss",
 		"public/scss/point-of-sale.scss",
+		"public/scss/hierarchy_chart.scss",
 		"public/scss/calendar_timeline.scss"
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",
-		"public/js/shopping_cart.js"
+		"public/js/shopping_cart.js",
+		"public/js/wishlist.js"
 	],
 	"css/erpnext-web.css": [
 		"public/scss/website.scss",
@@ -31,10 +33,13 @@
 		"public/js/templates/item_quick_entry.html",
 		"public/js/utils/item_quick_entry.js",
 		"public/js/utils/customer_quick_entry.js",
+		"public/js/utils/supplier_quick_entry.js",
 		"public/js/utils/dimension_tree_filter.js",
 		"public/js/telephony.js",
 		"public/js/templates/call_link.html",
-		"public/js/utils/shift_assignment_quick_entry.js"
+		"public/js/templates/node_card.html",
+		"public/js/utils/shift_assignment_quick_entry.js",
+		"public/js/bulk_transaction_processing.js"
 	],
 	"js/item-dashboard.min.js": [
 		"stock/dashboard/item_dashboard.html",
@@ -53,6 +58,10 @@
 		"selling/page/point_of_sale/pos_past_order_summary.js",
 		"selling/page/point_of_sale/pos_controller.js"
 	],
+	"js/hierarchy-chart.min.js": [
+		"public/js/hierarchy_chart/hierarchy_chart_desktop.js",
+		"public/js/hierarchy_chart/hierarchy_chart_mobile.js"
+	],
 	"js/portal-payments.min.js": [
 		"public/js/portal_payments/portal_payments.js"
 	],
@@ -69,5 +78,11 @@
 	],
 	"js/resource-calendar.min.js": [
 		"hr/page/resource_planning_view/resource_calendar.js"
+	],
+	"js/e-commerce.min.js": [
+		"e_commerce/product_ui/views.js",
+		"e_commerce/product_ui/grid.js",
+		"e_commerce/product_ui/list.js",
+		"e_commerce/product_ui/search.js"
 	]
 }

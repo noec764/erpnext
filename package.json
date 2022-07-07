@@ -13,6 +13,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "html2canvas": "^1.1.4",
     "@fullcalendar/adaptive": "^5.10.1",
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/daygrid": "^5.10.1",

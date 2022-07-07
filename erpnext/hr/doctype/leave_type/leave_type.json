@@ -19,6 +19,7 @@
   "fraction_of_daily_salary_per_leave",
   "is_optional_leave",
   "allow_negative",
+  "allow_over_allocation",
   "include_holiday",
   "exclude_from_leave_acquisition",
   "is_compensatory",
@@ -52,7 +53,7 @@
   {
    "fieldname": "max_leaves_allowed",
    "fieldtype": "Int",
-   "label": "Max Leaves Allowed"
+   "label": "Maximum Leave Allocation Allowed"
   },
   {
    "fieldname": "applicable_after",
@@ -63,7 +64,7 @@
    "fieldname": "max_continuous_days_allowed",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Maximum Continuous Days Applicable",
+   "label": "Maximum Consecutive Leaves Allowed",
    "oldfieldname": "max_days_allowed",
    "oldfieldtype": "Data"
   },
@@ -89,6 +90,7 @@
   },
   {
    "default": "0",
+   "description": "These leaves are holidays permitted by the company however, availing it is optional for an Employee.",
    "fieldname": "is_optional_leave",
    "fieldtype": "Check",
    "label": "Is Optional Leave"
@@ -218,19 +220,28 @@
    },
    {
     "depends_on": "eval:doc.is_ppl == 1",
+    "description": "For a day of leave taken, if you still pay (say) 50% of the daily salary, then enter 0.50 in this field.",
     "fieldname": "fraction_of_daily_salary_per_leave",
     "fieldtype": "Float",
     "label": "Fraction of Daily Salary per Leave",
     "mandatory_depends_on": "eval:doc.is_ppl == 1"
+  },
+  {
+   "default": "0",
+   "description": "Allows allocating more leaves than the number of days in the allocation period.",
+   "fieldname": "allow_over_allocation",
+   "fieldtype": "Check",
+   "label": "Allow Over Allocation"
    }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2021-03-02 11:22:33.776320",
+ "modified": "2022-05-09 05:01:38.957545",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -261,5 +272,7 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

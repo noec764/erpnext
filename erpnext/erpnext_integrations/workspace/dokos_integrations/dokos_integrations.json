@@ -1,31 +1,22 @@
 {
- "category": "Modules",
  "charts": [],
+ "color": "#6195ff",
+ "content": "[{\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Reports & Masters\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Payments\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}]",
  "creation": "2020-08-20 19:30:48.138801",
- "developer_mode_only": 0,
- "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends": "Integrations",
- "extends_another_page": 1,
- "hide_custom": 1,
+ "extends_page": "Integrations",
+ "hidden": 0,
+ "hide_custom": 0,
  "idx": 0,
- "is_default": 0,
  "is_standard": 1,
  "label": "Dokos Integrations",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Marketplace",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Woocommerce Settings",
+   "link_count": 0,
    "link_to": "Woocommerce Settings",
    "link_type": "DocType",
    "onboard": 0,
@@ -34,25 +25,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Amazon MWS Settings",
-   "link_to": "Amazon MWS Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Shopify Settings",
-   "link_to": "Shopify Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Payments",
+   "link_count": 0,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -61,6 +35,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "GoCardless Settings",
+   "link_count": 0,
    "link_to": "GoCardless Settings",
    "link_type": "DocType",
    "onboard": 0,
@@ -70,6 +45,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings",
+   "link_count": 0,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -78,6 +54,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Plaid Settings",
+   "link_count": 0,
    "link_to": "Plaid Settings",
    "link_type": "DocType",
    "onboard": 0,
@@ -87,18 +64,23 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Exotel Settings",
+   "link_count": 0,
    "link_to": "Exotel Settings",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2021-04-01 12:16:45.888244",
+ "modified": "2022-05-20 11:12:54.632814",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Dokos Integrations",
  "owner": "Administrator",
- "pin_to_bottom": 0,
- "pin_to_top": 0,
- "shortcuts": []
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 23.0,
+ "shortcuts": [],
+ "title": "Integrations"
 }

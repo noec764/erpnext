@@ -3,7 +3,6 @@
 {% block title %}{{ _("Book Appointment") }}{% endblock %}
 
 {% block script %}
-<script src="assets/js/moment-bundle.min.js"></script>
 <script src="book_appointment/index.js"></script>
 {% endblock %}
 
@@ -37,7 +36,7 @@
     </div>
 </div>
 <!--Enter Details-->
-<div id="enter-details" class="mb-5">
+<div id="enter-details" class="mb-5" style="display: none;">
     <div class="text-center mt-5">
         <h3>{{ _("Add details") }}</h3>
         <p class="lead text-muted">{{ _("Selected date is") }} <span class="date-span"></span> {{ _("at", context="Appointment Booking") }} <span class="time-span">

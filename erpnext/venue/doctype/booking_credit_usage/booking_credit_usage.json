@@ -16,11 +16,12 @@
   "column_break_3",
   "datetime",
   "section_break_4",
-  "quantity",
-  "column_break_6",
-  "uom",
-  "column_break_11",
   "item",
+  "column_break_6",
+  "quantity",
+  "column_break_11",
+  "uom",
+  "section_break_13",
   "amended_from"
  ],
  "fields": [
@@ -42,6 +43,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -108,15 +110,20 @@
    "label": "Item",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-10-21 15:57:15.297974",
+ "modified": "2022-06-14 15:54:44.494617",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -152,6 +159,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "user",
  "track_changes": 1
 }

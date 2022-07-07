@@ -6,6 +6,7 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 				doctype: "Employee",
 				target: cur_list,
 				setters: {
+					employee_name: '',
 					company: '',
 					department: '',
 				},
@@ -56,12 +57,14 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 						}
 					},
 					get_query() {
+						let filters = {"is_active": 1};
+						if (cur_dialog.fields_dict.company.value)
+							filters["company"] = cur_dialog.fields_dict.company.value;
+
 						return {
-							filters: {
-								is_active: ['=', 1]
-							}
+							filters: filters
 						};
-					}
+					},
 				},
 				{
 					fieldtype: "Column Break"
@@ -103,37 +106,6 @@ frappe.listview_settings['Leave Policy Assignment'] = {
 						}
 					});
 					cur_dialog.hide();
-				}
-			});
-		});
-
-		list_view.page.add_inner_button(__("Grant Leaves"), function () {
-			me.dialog = new frappe.ui.form.MultiSelectDialog({
-				doctype: "Leave Policy Assignment",
-				target: cur_list,
-				setters: {
-					company: '',
-					employee: '',
-				},
-				get_query() {
-					return {
-						filters: {
-							docstatus: ['=', 1],
-							leaves_allocated: ['=', 0]
-						}
-					};
-				},
-				add_filters_group: 1,
-				primary_action_label: __("Grant Leaves"),
-				action(leave_policy_assignments) {
-					frappe.call({
-						method: 'erpnext.hr.doctype.leave_policy_assignment.leave_policy_assignment.grant_leave_for_multiple_employees',
-						async: false,
-						args: {
-							leave_policy_assignments: leave_policy_assignments
-						}
-					});
-					me.dialog.hide();
 				}
 			});
 		});

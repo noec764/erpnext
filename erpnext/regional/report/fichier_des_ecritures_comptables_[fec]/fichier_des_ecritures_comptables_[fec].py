@@ -127,7 +127,10 @@ def get_result_as_list(data, filters):
 	accounts = frappe.get_all(
 		"Account", filters={"Company": filters.company}, fields=["name", "account_number"]
 	)
-	journals = {j.journal_code: j.journal_name for j in frappe.get_all("Accounting Journal", fields=["journal_code", "journal_name"])}
+	journals = {
+		j.journal_code: j.journal_name
+		for j in frappe.get_all("Accounting Journal", fields=["journal_code", "journal_name"])
+	}
 
 	party_data = [x for x in data if x.get("against_voucher")]
 

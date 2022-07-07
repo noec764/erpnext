@@ -38,7 +38,7 @@ export default {
             this.$emit('accountSelected', account)
         }
     }
-    
+
 }
 </script>
 

@@ -13,7 +13,7 @@
  "documentation_url": "https://doc.dokos.io/dokos/accounting/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-10-19 14:43:45.080823",
+ "modified": "2022-01-18 18:35:52.326688",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts",
@@ -26,22 +26,19 @@
    "step": "Setup Taxes"
   },
   {
-   "step": "Create a Product"
+    "step": "Accounts Settings"
   },
   {
-   "step": "Create a Supplier"
+    "step": "Cost Centers for Report and Budgeting"
   },
   {
    "step": "Create Your First Purchase Invoice"
   },
   {
-   "step": "Create a Customer"
+    "step": "Updating Opening Balances"
   },
   {
-   "step": "Create Your First Sales Invoice"
-  },
-  {
-   "step": "Configure Account Settings"
+    "step": "Financial Statements"
   }
  ],
  "subtitle": "Accounts, invoices and taxes.",

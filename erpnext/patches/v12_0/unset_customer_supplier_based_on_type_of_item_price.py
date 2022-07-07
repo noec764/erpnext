@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import frappe
 
 
@@ -16,7 +15,8 @@ def execute():
 		AND ip.`buying` = 0
 		AND (ip.`supplier` IS NOT NULL OR ip.`supplier` = '')
 		AND ip.`price_list` = pl.`name`
-		AND pl.`enabled` = 1""")
+		AND pl.`enabled` = 1"""
+	)
 
 	# update for buying
 	frappe.db.sql(
@@ -26,4 +26,5 @@ def execute():
 		AND ip.`buying` = 1
 		AND (ip.`customer` IS NOT NULL OR ip.`customer` = '')
 		AND ip.`price_list` = pl.`name`
-		AND pl.`enabled` = 1""")
+		AND pl.`enabled` = 1"""
+	)

@@ -121,7 +121,7 @@
    "fieldtype": "Select",
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nPaid\nUnpaid\nClaimed\nCancelled",
+   "options": "Draft\nPaid\nUnpaid\nClaimed\nReturned\nPartly Claimed and Returned\nCancelled",
    "read_only": 1
   },
   {
@@ -170,7 +170,7 @@
    "default": "0",
    "fieldname": "repay_unclaimed_amount_from_salary",
    "fieldtype": "Check",
-   "label": "Repay unclaimed amount from salary"
+   "label": "Repay Unclaimed Amount from Salary"
   },
   {
    "depends_on": "eval:cur_frm.doc.employee",
@@ -201,10 +201,11 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2021-03-31 22:31:53.746659",
+ "modified": "2022-01-17 19:33:52.345823",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee Advance",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -237,5 +238,41 @@
  "search_fields": "employee,employee_name",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [
+    {
+     "color": "Red",
+     "custom": 1,
+     "title": "Draft"
+    },
+    {
+     "color": "Green",
+     "custom": 1,
+     "title": "Paid"
+    },
+    {
+     "color": "Orange",
+     "custom": 1,
+     "title": "Unpaid"
+    },
+    {
+     "color": "Blue",
+     "custom": 1,
+     "title": "Claimed"
+    },
+    {
+     "color": "Gray",
+     "title": "Returned"
+    },
+    {
+     "color": "Yellow",
+     "title": "Partly Claimed and Returned"
+    },
+    {
+     "color": "Red",
+     "custom": 1,
+     "title": "Cancelled"
+    }
+   ],
+ "title_field": "employee_name",
  "track_changes": 1
 }

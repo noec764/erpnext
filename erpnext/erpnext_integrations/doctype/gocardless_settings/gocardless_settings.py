@@ -1,18 +1,26 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
+from urllib.parse import urlencode
+
 import frappe
 import gocardless_pro
-from gocardless_pro import errors
 from frappe import _
-from urllib.parse import urlencode
-from frappe.utils import get_url, call_hook_method, flt, cint
 from frappe.integrations.utils import PaymentGatewayController, create_payment_gateway
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events import (GoCardlessMandateWebhookHandler,
-	GoCardlessPaymentWebhookHandler)
-from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (GoCardlessPayments, GoCardlessMandates, GoCardlessCustomers)
+from frappe.utils import call_hook_method, cint, flt, get_url
+from gocardless_pro import errors
+
+from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (
+	GoCardlessCustomers,
+	GoCardlessMandates,
+	GoCardlessPayments,
+)
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events import (
+	GoCardlessMandateWebhookHandler,
+	GoCardlessPaymentWebhookHandler,
+)
+
 
 class GoCardlessSettings(PaymentGatewayController):
 	supported_currencies = ["AUD", "CAD", "DKK", "EUR", "GBP", "NZD", "SEK", "USD"]
@@ -30,15 +38,17 @@ class GoCardlessSettings(PaymentGatewayController):
 		try:
 			self.client = gocardless_pro.Client(
 				access_token=self.get_password(fieldname="access_token", raise_exception=False),
-				environment=self.environment
-				)
+				environment=self.environment,
+			)
 			return self.client
 		except Exception as e:
 			frappe.throw(str(e))
 
 	def on_update(self):
-		create_payment_gateway('GoCardless-' + self.gateway_name, settings='GoCardLess Settings', controller=self.gateway_name)
-		call_hook_method('payment_gateway_enabled', gateway='GoCardless-' + self.gateway_name)
+		create_payment_gateway(
+			"GoCardless-" + self.gateway_name, settings="GoCardLess Settings", controller=self.gateway_name
+		)
+		call_hook_method("payment_gateway_enabled", gateway="GoCardless-" + self.gateway_name)
 
 	def can_make_immediate_payment(self, payment_request):
 		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
@@ -57,8 +67,8 @@ class GoCardlessSettings(PaymentGatewayController):
 				metadata={
 					"reference_doctype": payment_request.reference_doctype,
 					"reference_name": payment_request.reference_name,
-					"payment_request": payment_request.name
-				}
+					"payment_request": payment_request.name,
+				},
 			)
 
 			customer = payment_request.get_customer()
@@ -71,76 +81,79 @@ class GoCardlessSettings(PaymentGatewayController):
 				frappe.throw(_("This customer has no valid mandate"))
 
 		except Exception:
-			frappe.log_error(frappe.get_traceback(),\
-				_("GoCardless direct processing failed for {0}".format(payment_request.name)))
+			self.log_error(
+				_("GoCardless direct processing failed for {0}".format(payment_request.name)),
+			)
 
 	def check_mandate_validity(self, customer):
-		if frappe.db.exists("Sepa Mandate", dict(
-			customer=customer,
-			status=["not in", ["Cancelled", "Expired", "Failed"]]
-			)
+		if frappe.db.exists(
+			"Sepa Mandate", dict(customer=customer, status=["not in", ["Cancelled", "Expired", "Failed"]])
 		):
-			registered_mandate = frappe.db.get_value("Sepa Mandate", dict(
-				customer=customer,
-				status=["not in", ["Cancelled", "Expired", "Failed"]]
-			), 'mandate')
+			registered_mandate = frappe.db.get_value(
+				"Sepa Mandate",
+				dict(customer=customer, status=["not in", ["Cancelled", "Expired", "Failed"]]),
+				"mandate",
+			)
 
 			try:
 				mandate = GoCardlessMandates(self).get(registered_mandate)
 
-				if mandate.status == "pending_customer_approval" or mandate.status == "pending_submission"\
-					or mandate.status == "submitted" or mandate.status == "active":
-					return {
-						"mandate": registered_mandate
-					}
+				if (
+					mandate.status == "pending_customer_approval"
+					or mandate.status == "pending_submission"
+					or mandate.status == "submitted"
+					or mandate.status == "active"
+				):
+					return {"mandate": registered_mandate}
 			except errors.InvalidApiUsageError:
 				pass
 		return {}
 
 	def get_environment(self):
-		return 'sandbox' if self.use_sandbox else 'live'
+		return "sandbox" if self.use_sandbox else "live"
 
 	def validate_transaction_currency(self, currency):
 		if currency not in self.supported_currencies:
-			frappe.throw(_("Please select another payment method. GoCardless does not support transactions in currency '{0}'").format(currency))
+			frappe.throw(
+				_(
+					"Please select another payment method. GoCardless does not support transactions in currency '{0}'"
+				).format(currency)
+			)
 
 	def get_payment_url(self, **kwargs):
 		payment_key = {"key": kwargs.get("payment_key")}
-		return get_url("./integrations/gocardless_checkout?{0}".format(urlencode(kwargs) if not kwargs.get("payment_key") else urlencode(payment_key)))
+		return get_url(
+			"./integrations/gocardless_checkout?{0}".format(
+				urlencode(kwargs) if not kwargs.get("payment_key") else urlencode(payment_key)
+			)
+		)
 
 	def handle_redirect_flow(self, redirect_flow, payment_request):
 		customer = payment_request.get_customer()
-		GoCardlessMandates(self).register(
-			redirect_flow.links.mandate,
-			customer
-		)
+		GoCardlessMandates(self).register(redirect_flow.links.mandate, customer)
 
-		GoCardlessCustomers(self).register(
-			redirect_flow.links.customer,
-			customer
-		)
+		GoCardlessCustomers(self).register(redirect_flow.links.customer, customer)
 
 		GoCardlessPayments(self, payment_request).create(
 			amount=cint(payment_request.grand_total * 100),
 			currency=payment_request.currency,
 			description=payment_request.subject,
 			reference=payment_request.reference_name,
-			links={
-				"mandate": redirect_flow.links.mandate
-			},
+			links={"mandate": redirect_flow.links.mandate},
 			metadata={
 				"reference_doctype": payment_request.reference_doctype,
 				"reference_name": payment_request.reference_name,
-				"payment_request": payment_request.name
-			}
+				"payment_request": payment_request.name,
+			},
 		)
+
 
 def handle_webhooks(**kwargs):
 	from erpnext.erpnext_integrations.webhooks_controller import handle_webhooks as _handle_webhooks
 
 	WEBHOOK_HANDLERS = {
 		"mandates": GoCardlessMandateWebhookHandler,
-		"payments": GoCardlessPaymentWebhookHandler
+		"payments": GoCardlessPaymentWebhookHandler,
 	}
 
 	_handle_webhooks(WEBHOOK_HANDLERS, **kwargs)

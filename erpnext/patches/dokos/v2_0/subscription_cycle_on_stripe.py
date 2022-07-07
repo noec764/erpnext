@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
 	frappe.reload_doc("erpnext_integrations", "doctype", "Stripe Settings")
 	for doc in frappe.get_all("Stripe Settings"):

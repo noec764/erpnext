@@ -8,39 +8,10 @@ frappe.pages['setup-wizard'].on_page_load = function(wrapper) {
 };
 
 frappe.setup.on("before_load", function () {
-	erpnext.setup.get_slides_settings().map(frappe.setup.add_slide);
+	erpnext.setup.slides_settings.map(frappe.setup.add_slide);
 });
 
-erpnext.setup.get_slides_settings = () => [
-	{
-		// Domain
-		name: 'domain',
-		title: __('Select your Domains'),
-		fields: [
-			{
-				fieldname: 'domains',
-				label: __('Domains'),
-				fieldtype: 'MultiCheck',
-				options: [
-					{ "label": __("Distribution"), "value": "Distribution" },
-					{ "label": __("Manufacturing"), "value": "Manufacturing" },
-					{ "label": __("Retail"), "value": "Retail" },
-					{ "label": __("Services"), "value": "Services" },
-					{ "label": __("Venue"), "value": "Venue" }
-				], reqd: 1
-			},
-		],
-		// help: __('Select the nature of your business.'),
-		validate: function () {
-			if (this.values.domains.length === 0) {
-				frappe.msgprint(__("Please select at least one domain."));
-				return false;
-			}
-			frappe.setup.domains = this.values.domains;
-			return true;
-		},
-	},
-
+erpnext.setup.slides_settings = [
 	{
 		// Brand
 		name: 'brand',
@@ -74,11 +45,11 @@ erpnext.setup.get_slides_settings = () => [
 			slide.get_input("company_name").on("change", function () {
 				var parts = slide.get_input("company_name").val().split(" ");
 				var abbr = $.map(parts, function (p) { return p ? p.substr(0, 1) : null }).join("");
-				slide.get_field("company_abbr").set_value(abbr.slice(0, 5).toUpperCase());
+				slide.get_field("company_abbr").set_value(abbr.slice(0, 10).toUpperCase());
 			}).val(frappe.boot.sysdefaults.company_name || "").trigger("change");
 
 			slide.get_input("company_abbr").on("change", function () {
-				if (slide.get_input("company_abbr").val().length > 5) {
+				if (slide.get_input("company_abbr").val().length > 10) {
 					frappe.msgprint(__("Company Abbreviation cannot have more than 5 characters"));
 					slide.get_field("company_abbr").set_value("");
 				}
@@ -92,7 +63,7 @@ erpnext.setup.get_slides_settings = () => [
 			if (!this.values.company_abbr) {
 				return false;
 			}
-			if (this.values.company_abbr.length > 5) {
+			if (this.values.company_abbr.length > 10) {
 				return false;
 			}
 			return true;
@@ -138,7 +109,7 @@ erpnext.setup.get_slides_settings = () => [
 			}
 
 			// Validate bank name
-			if(me.values.bank_account){
+			if(me.values.bank_account) {
 				frappe.call({
 					async: false,
 					method: "erpnext.accounts.doctype.account.chart_of_accounts.chart_of_accounts.validate_bank_account",

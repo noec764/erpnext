@@ -2,7 +2,7 @@ stages:
   - Unit Tests
 
 unittests:
-  image: "python:3.7-buster"
+  image: "python:3.9-buster"
 
   stage: Unit Tests
 
@@ -26,12 +26,12 @@ unittests:
     - dpkg -i wkhtmltox_0.12.5-1.buster_i386.deb && rm wkhtmltox_0.12.5-1.buster_i386.deb
     - rm -rf /var/lib/apt/lists/*
     - rm -rf /etc/apt/sources.list.d/*
-    - curl -sL https://deb.nodesource.com/setup_12.x | bash
+    - curl -sL https://deb.nodesource.com/setup_14.x | bash
     - apt-get install -y nodejs
     - npm install --global yarn
     - mkdir -p apps
     - mkdir -p apps/frappe
-    - git clone -b $CI_COMMIT_REF_NAME https://gitlab.com/dokos/dodock apps/frappe
+    - git clone -b $CI_COMMIT_REF_NAME --depth 1 https://gitlab.com/dokos/dodock apps/frappe || git clone -b ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master} --depth 1 https://gitlab.com/dokos/dodock apps/frappe
     - mkdir -p apps/erpnext
     - mv -f * apps/erpnext/ || true
     - mkdir -p sites logs && echo "frappe" > sites/apps.txt && echo "erpnext" >> sites/apps.txt

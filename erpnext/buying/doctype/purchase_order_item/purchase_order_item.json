@@ -10,6 +10,7 @@
   "item_code",
   "supplier_part_no",
   "item_name",
+  "product_bundle",
   "column_break_4",
   "schedule_date",
   "expected_delivery_date",
@@ -62,6 +63,7 @@
   "material_request_item",
   "sales_order",
   "sales_order_item",
+  "sales_order_packed_item",
   "supplier_quotation",
   "supplier_quotation_item",
   "col_break5",
@@ -97,6 +99,9 @@
   "is_fixed_asset",
   "item_tax_rate",
   "section_break_72",
+  "production_plan",
+  "production_plan_item",
+  "production_plan_sub_assembly_item",
   "page_break"
  ],
  "fields": [
@@ -209,6 +214,7 @@
    "width": "60px"
   },
   {
+   "depends_on": "eval:doc.uom != doc.stock_uom",
    "fieldname": "stock_uom",
    "fieldtype": "Link",
    "label": "Stock UOM",
@@ -238,6 +244,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval:doc.uom != doc.stock_uom",
    "fieldname": "conversion_factor",
    "fieldtype": "Float",
    "label": "UOM Conversion Factor",
@@ -486,7 +493,6 @@
    "no_copy": 1,
    "options": "Sales Order",
    "print_hide": 1,
-   "read_only": 1,
    "search_index": 1
   },
   {
@@ -569,7 +575,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "eval:parent.is_subcontracted == 'Yes'",
+    "depends_on": "eval:parent.is_subcontracted",
    "fieldname": "bom",
    "fieldtype": "Link",
    "label": "BOM",
@@ -578,7 +584,7 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:parent.is_subcontracted == 'Yes'",
+   "depends_on": "eval:parent.is_subcontracted",
    "fieldname": "include_exploded_items",
    "fieldtype": "Check",
    "label": "Include Exploded Items",
@@ -590,6 +596,7 @@
    "label": "Billed, Received & Returned"
   },
   {
+   "depends_on": "eval:doc.uom != doc.stock_uom",
    "fieldname": "stock_qty",
    "fieldtype": "Float",
    "label": "Qty in Stock UOM",
@@ -803,21 +810,61 @@
    "options": "Company:company:default_currency",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "production_plan",
+   "fieldtype": "Link",
+   "label": "Production Plan",
+   "options": "Production Plan",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "production_plan_item",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Production Plan Item",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "production_plan_sub_assembly_item",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Production Plan Sub Assembly Item",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_bundle",
+   "fieldtype": "Link",
+   "label": "Product Bundle",
+   "options": "Product Bundle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_order_packed_item",
+   "fieldtype": "Data",
+   "label": "Sales Order Packed Item",
+   "no_copy": 1,
+   "print_hide": 1
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-03-22 11:46:12.357435",
+ "modified": "2022-06-17 05:29:40.602349",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
  "search_fields": "item_name",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

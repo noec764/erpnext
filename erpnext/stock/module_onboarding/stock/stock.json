@@ -26,26 +26,20 @@
  "owner": "Administrator",
  "steps": [
   {
-   "step": "Setup your Warehouse"
-  },
-  {
-   "step": "Create a Product"
-  },
-  {
-    "step": "Create a Supplier"
-  },
-  {
-    "step": "Introduction to Stock Entry"
-  },
-  {
-    "step": "Create a Stock Entry"
-  },
-  {
-   "step": "Create a Purchase Receipt"
-  },
-  {
-   "step": "Stock Settings"
-  }
+    "step": "Stock Settings"
+},
+{
+ "step": "Create a Warehouse"
+},
+{
+ "step": "Create a Stock Entry"
+},
+{
+ "step": "Stock Opening Balance"
+},
+{
+ "step": "View Stock Projected Qty"
+}
  ],
  "subtitle": "Inventory, Warehouses, Analysis and more.",
  "success_message": "The Stock Module is all set up!",

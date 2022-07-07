@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-02-20 19:10:38",
@@ -94,12 +95,14 @@
   {
    "fieldname": "from_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "From Date",
    "reqd": 1
   },
   {
    "fieldname": "to_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "To Date",
    "reqd": 1
   },
@@ -109,6 +112,7 @@
    "label": "Allocation"
   },
   {
+   "allow_on_submit": 1,
    "bold": 1,
    "fieldname": "new_leaves_allocated",
    "fieldtype": "Float",
@@ -162,7 +166,7 @@
    "read_only": 1
   },
   {
-    "fetch_from": "leave_policy_assignment.leave_policy",
+   "fetch_from": "leave_policy_assignment.leave_policy",
    "fieldname": "leave_policy",
    "fieldtype": "Link",
    "hidden": 1,
@@ -214,28 +218,31 @@
    "read_only": 1
   },
   {
-    "fieldname": "leave_policy_assignment",
-    "fieldtype": "Link",
-    "label": "Leave Policy Assignment",
-    "options": "Leave Policy Assignment"
+   "fieldname": "leave_policy_assignment",
+   "fieldtype": "Link",
+   "label": "Leave Policy Assignment",
+   "options": "Leave Policy Assignment",
+   "read_only": 1
   },
   {
-    "fetch_from": "employee.company",
-    "fieldname": "company",
-    "fieldtype": "Link",
-    "label": "Company",
-    "options": "Company",
-    "read_only": 1,
-    "reqd": 1
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "icon": "fa fa-ok",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2021-04-14 15:28:26.335104",
+ "links": [],
+ "modified": "2022-06-17 11:15:14.298875",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Allocation",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -273,5 +280,7 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "timeline_field": "employee"
+ "states": [],
+ "timeline_field": "employee",
+ "title_field": "employee_name"
 }

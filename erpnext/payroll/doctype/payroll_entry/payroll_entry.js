@@ -40,30 +40,69 @@ frappe.ui.form.on('Payroll Entry', {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.docstatus == 0) {
-			if (!frm.is_new()) {
+		if (frm.doc.docstatus === 0 && !frm.is_new()) {
+			frm.page.clear_primary_action();
+			frm.add_custom_button(__("Get Employees"),
+				function () {
+					frm.events.get_employee_details(frm);
+				}
+			).toggleClass("btn-primary", !(frm.doc.employees || []).length);
+		}
+
+		if (
+			(frm.doc.employees || []).length
+			&& !frappe.model.has_workflow(frm.doctype)
+			&& !cint(frm.doc.salary_slips_created)
+			&& (frm.doc.docstatus != 2)
+		) {
+			if (frm.doc.docstatus == 0) {
 				frm.page.clear_primary_action();
-				frm.add_custom_button(__("Get Employees"),
-					function () {
-						frm.events.get_employee_details(frm);
-					}
-				).toggleClass('btn-primary', !(frm.doc.employees || []).length);
-			}
-			if ((frm.doc.employees || []).length && !frappe.model.has_workflow(frm.doctype)) {
-				frm.page.clear_primary_action();
-				frm.page.set_primary_action(__('Create Salary Slips'), () => {
-					frm.save('Submit').then(() => {
+				frm.page.set_primary_action(__("Create Salary Slips"), () => {
+					frm.save("Submit").then(() => {
 						frm.page.clear_primary_action();
 						frm.refresh();
 						frm.events.refresh(frm);
 					});
 				});
+			} else if (frm.doc.docstatus == 1 && frm.doc.status == "Failed") {
+				frm.add_custom_button(__("Create Salary Slip"), function () {
+					frm.call("create_salary_slips", {}, () => {
+						frm.reload_doc();
+					});
+				}).addClass("btn-primary");
 			}
 		}
-		if (frm.doc.docstatus == 1) {
+
+		if (frm.doc.docstatus == 1 && ["Submitted", "Failed"].includes(frm.doc.status)) {
 			if (frm.custom_buttons) frm.clear_custom_buttons();
 			frm.events.add_context_buttons(frm);
 		}
+
+		if (frm.doc.status == "Failed" && frm.doc.error_message) {
+			const issue = `<a id="jump_to_error" style="text-decoration: underline;">${__("issue") }</a>`;
+			let process = (cint(frm.doc.salary_slips_created)) ? __("submission") : __("creation");
+
+			frm.dashboard.set_headline(
+				__("Salary Slip {0} failed. You can resolve the {1} and retry {0}.", [process, issue])
+			);
+
+			$("#jump_to_error").on("click", (e) => {
+				e.preventDefault();
+				frappe.utils.scroll_to(
+					frm.get_field("error_message").$wrapper,
+					true,
+					30
+				);
+			});
+		}
+
+		frappe.realtime.on("completed_salary_slip_creation", function() {
+			frm.reload_doc();
+		});
+
+		frappe.realtime.on("completed_salary_slip_submission", function() {
+			frm.reload_doc();
+		});
 	},
 
 	get_employee_details: function (frm) {
@@ -88,7 +127,7 @@ frappe.ui.form.on('Payroll Entry', {
 			doc: frm.doc,
 			method: "create_salary_slips",
 			callback: function () {
-				frm.refresh();
+				frm.reload_doc();
 				frm.toolbar.refresh();
 			}
 		});
@@ -97,7 +136,7 @@ frappe.ui.form.on('Payroll Entry', {
 	add_context_buttons: function (frm) {
 		if (frm.doc.salary_slips_submitted || (frm.doc.__onload && frm.doc.__onload.submitted_ss)) {
 			frm.events.add_bank_entry_button(frm);
-		} else if (frm.doc.salary_slips_created) {
+		} else if (frm.doc.salary_slips_created && frm.doc.status != 'Queued') {
 			frm.add_custom_button(__("Submit Salary Slip"), function () {
 				submit_salary_slip(frm);
 			}).addClass("btn-primary");
@@ -112,7 +151,7 @@ frappe.ui.form.on('Payroll Entry', {
 			},
 			callback: function (r) {
 				if (r.message && !r.message.submitted) {
-					frm.add_custom_button("Make Bank Entry", function () {
+					frm.add_custom_button(__("Make Bank Entry"), function () {
 						make_bank_entry(frm);
 					}).addClass("btn-primary");
 				}
@@ -135,10 +174,26 @@ frappe.ui.form.on('Payroll Entry', {
 		});
 
 		frm.set_query('employee', 'employees', () => {
-			if (!frm.doc.company) {
-				frappe.msgprint(__("Please set a Company"));
-				return [];
+			let error_fields = [];
+			let mandatory_fields = ['company', 'payroll_frequency', 'start_date', 'end_date'];
+
+			let message = __('Mandatory fields required in {0}', [__(frm.doc.doctype)]);
+
+			mandatory_fields.forEach(field => {
+				if (!frm.doc[field]) {
+					error_fields.push(frappe.unscrub(field));
+				}
+			});
+
+			if (error_fields && error_fields.length) {
+				message = message + '<br><br><ul><li>' + error_fields.join('</li><li>') + "</ul>";
+				frappe.throw({
+					message: message,
+					indicator: 'red',
+					title: __('Missing Fields')
+				});
 			}
+
 			return {
 				query: "erpnext.payroll.doctype.payroll_entry.payroll_entry.employee_query",
 				filters: frm.events.get_employee_filters(frm)
@@ -148,25 +203,21 @@ frappe.ui.form.on('Payroll Entry', {
 
 	get_employee_filters: function (frm) {
 		let filters = {};
-		filters['company'] = frm.doc.company;
-		filters['start_date'] = frm.doc.start_date;
-		filters['end_date'] = frm.doc.end_date;
 		filters['salary_slip_based_on_timesheet'] = frm.doc.salary_slip_based_on_timesheet;
-		filters['payroll_frequency'] = frm.doc.payroll_frequency;
-		filters['payroll_payable_account'] = frm.doc.payroll_payable_account;
-		filters['currency'] = frm.doc.currency;
 
-		if (frm.doc.department) {
-			filters['department'] = frm.doc.department;
-		}
-		if (frm.doc.branch) {
-			filters['branch'] = frm.doc.branch;
-		}
-		if (frm.doc.designation) {
-			filters['designation'] = frm.doc.designation;
-		}
+		let fields = ['company', 'start_date', 'end_date', 'payroll_frequency', 'payroll_payable_account',
+			'currency', 'department', 'branch', 'designation'];
+
+		fields.forEach(field => {
+			if (frm.doc[field]) {
+				filters[field] = frm.doc[field];
+			}
+		});
 		if (frm.doc.employees) {
-			filters['employees'] = frm.doc.employees.filter(d => d.employee).map(d => d.employee);
+			let employees = frm.doc.employees.filter(d => d.employee).map(d => d.employee);
+			if (employees && employees.length) {
+				filters['employees'] = employees;
+			}
 		}
 		return filters;
 	},
@@ -318,6 +369,7 @@ const submit_salary_slip = function (frm) {
 				method: 'submit_salary_slips',
 				args: {},
 				callback: function () {
+					frm.reload_doc();
 					frm.events.refresh(frm);
 				},
 				doc: frm.doc,

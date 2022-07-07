@@ -4,8 +4,10 @@
 import frappe
 from erpnext.setup.utils import insert_record
 
+
 def setup_venue():
-    disable_desk_access_for_volunteer_role()
+	disable_desk_access_for_volunteer_role()
+
 
 def disable_desk_access_for_volunteer_role():
 	try:
@@ -17,11 +19,7 @@ def disable_desk_access_for_volunteer_role():
 	volunteer_role.desk_access = 0
 	volunteer_role.save()
 
+
 def create_volunteer_role():
-	volunteer_role = frappe.get_doc({
-		"doctype": "Role",
-		"role_name": "Volunteer",
-		"desk_access": 0,
-		"restrict_to_domain": "Venue"
-	})
+	volunteer_role = frappe.get_doc({"doctype": "Role", "role_name": "Volunteer", "desk_access": 0})
 	volunteer_role.insert()

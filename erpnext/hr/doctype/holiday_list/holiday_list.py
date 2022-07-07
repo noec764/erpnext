@@ -1,14 +1,18 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
-import frappe
-import json
-from frappe.utils import cint, getdate, formatdate, today, nowdate
-from frappe import throw, _
-from frappe.model.document import Document
 
-class OverlapError(frappe.ValidationError): pass
+import json
+
+import frappe
+from frappe import _, throw
+from frappe.model.document import Document
+from frappe.utils import cint, formatdate, getdate, nowdate, today
+
+
+class OverlapError(frappe.ValidationError):
+	pass
+
 
 class HolidayList(Document):
 	def validate(self):
@@ -19,9 +23,14 @@ class HolidayList(Document):
 	def get_weekly_off_dates(self):
 		self.validate_values()
 		date_list = self.get_weekly_off_date_list(self.from_date, self.to_date)
-		last_idx = max([cint(d.idx) for d in self.get("holidays")] or [0,])
+		last_idx = max(
+			[cint(d.idx) for d in self.get("holidays")]
+			or [
+				0,
+			]
+		)
 		for i, d in enumerate(date_list):
-			ch = self.append('holidays', {})
+			ch = self.append("holidays", {})
 			ch.description = _(self.weekly_off)
 			ch.holiday_date = d
 			ch.weekly_off = 1
@@ -31,21 +40,25 @@ class HolidayList(Document):
 		if not self.weekly_off:
 			throw(_("Please select weekly off day"))
 
-
 	def validate_days(self):
 		if getdate(self.from_date) > getdate(self.to_date):
 			throw(_("To Date cannot be before From Date"))
 
 		for day in self.get("holidays"):
 			if not (getdate(self.from_date) <= getdate(day.holiday_date) <= getdate(self.to_date)):
-				frappe.throw(_("The holiday on {0} is not between From Date and To Date").format(formatdate(day.holiday_date)))
+				frappe.throw(
+					_("The holiday on {0} is not between From Date and To Date").format(
+						formatdate(day.holiday_date)
+					)
+				)
 
 	def get_weekly_off_date_list(self, start_date, end_date):
 		start_date, end_date = getdate(start_date), getdate(end_date)
 
-		from dateutil import relativedelta
-		from datetime import timedelta
 		import calendar
+		from datetime import timedelta
+
+		from dateutil import relativedelta
 
 		date_list = []
 		existing_date_list = []
@@ -63,7 +76,8 @@ class HolidayList(Document):
 
 	@frappe.whitelist()
 	def clear_table(self):
-		self.set('holidays', [])
+		self.set("holidays", [])
+
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):
@@ -79,31 +93,60 @@ def get_events(start, end, filters=None):
 		filters = []
 
 	if start:
-		filters.append(['Holiday', 'holiday_date', '>', getdate(start)])
+		filters.append(["Holiday", "holiday_date", ">", getdate(start)])
 	if end:
-		filters.append(['Holiday', 'holiday_date', '<', getdate(end)])
+		filters.append(["Holiday", "holiday_date", "<", getdate(end)])
 
-	return frappe.get_list('Holiday List',
-		fields=['name', '`tabHoliday`.holiday_date', '`tabHoliday`.description', '`tabHoliday List`.color'],
-		filters = filters,
-		update={"allDay": 1})
+	return frappe.get_list(
+		"Holiday List",
+		fields=[
+			"name",
+			"`tabHoliday`.holiday_date",
+			"`tabHoliday`.description",
+			"`tabHoliday List`.color",
+		],
+		filters=filters,
+		update={"allDay": 1},
+	)
 
 
-def is_holiday(holiday_list, date=today()):
-	"""Returns true if the given date is a holiday in the given holiday list
-	"""
+def is_holiday(holiday_list, date=None):
+	"""Returns true if the given date is a holiday in the given holiday list"""
+	if date is None:
+		date = today()
 	if holiday_list:
-		return bool(frappe.get_all('Holiday List',
-			dict(name=holiday_list, holiday_date=date)))
+		return bool(frappe.get_all("Holiday List", dict(name=holiday_list, holiday_date=date)))
 	else:
 		return False
 
-def replace_expired_holiday_lists():
-	applicable_holiday_lists = {x.replaces_holiday_list: x.name for x in frappe.get_all("Holiday List", filters={"from_date": ("<=", nowdate()), "to_date": (">=", nowdate())}, fields=["name", "replaces_holiday_list"]) if x.replaces_holiday_list is not None}
-	for dt in frappe.get_all("DocField", filters={"fieldtype": "Link", "options": "Holiday List", "parent": ("!=", "Holiday List")}, fields=["parent", "fieldname"]):
-		if not frappe.model.meta.is_single(dt.parent):
-			for doc in frappe.get_all(dt.parent, filters={dt.fieldname: ("in", applicable_holiday_lists.keys())}):
-				frappe.db.set_value(dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname)))
 
-		elif frappe.model.meta.is_single(dt.parent) and frappe.db.get_single_value(dt.parent, dt.fieldname) in applicable_holiday_lists.keys():
-			frappe.db.set_value(dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname)))
+def replace_expired_holiday_lists():
+	applicable_holiday_lists = {
+		x.replaces_holiday_list: x.name
+		for x in frappe.get_all(
+			"Holiday List",
+			filters={"from_date": ("<=", nowdate()), "to_date": (">=", nowdate())},
+			fields=["name", "replaces_holiday_list"],
+		)
+		if x.replaces_holiday_list is not None
+	}
+	for dt in frappe.get_all(
+		"DocField",
+		filters={"fieldtype": "Link", "options": "Holiday List", "parent": ("!=", "Holiday List")},
+		fields=["parent", "fieldname"],
+	):
+		if not frappe.model.meta.is_single(dt.parent):
+			for doc in frappe.get_all(
+				dt.parent, filters={dt.fieldname: ("in", applicable_holiday_lists.keys())}
+			):
+				frappe.db.set_value(
+					dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname))
+				)
+
+		elif (
+			frappe.model.meta.is_single(dt.parent)
+			and frappe.db.get_single_value(dt.parent, dt.fieldname) in applicable_holiday_lists.keys()
+		):
+			frappe.db.set_value(
+				dt.parent, doc.name, dt.fieldname, applicable_holiday_lists.get(doc.get(dt.fieldname))
+			)

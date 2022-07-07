@@ -3,60 +3,79 @@
 
 import frappe
 from frappe import _
-from frappe.utils import getdate, flt, date_diff, month_diff, nowdate
-from erpnext.accounts.report.financial_statements import (get_period_list, get_columns)
+from frappe.utils import date_diff, flt, getdate, month_diff, nowdate
+
+from erpnext.accounts.report.financial_statements import get_columns, get_period_list
 from erpnext.accounts.utils import get_currency_precision
 
-PERIOD_MAP = {
-	"Month": "Monthly",
-	"Year": "Yearly"
-}
+PERIOD_MAP = {"Month": "Monthly", "Year": "Yearly"}
+
 
 def execute(filters=None):
-	period_list = get_period_list(filters.from_fiscal_year, filters.to_fiscal_year,
-		filters.period_start_date, filters.period_end_date, filters.filter_based_on,
-		filters.periodicity, company=filters.company)
+	period_list = get_period_list(
+		filters.from_fiscal_year,
+		filters.to_fiscal_year,
+		filters.period_start_date,
+		filters.period_end_date,
+		filters.filter_based_on,
+		filters.periodicity,
+		company=filters.company,
+	)
 
 	data = get_data(filters, period_list)
-	columns = get_columns(filters.periodicity, period_list, filters.accumulated_values, company=filters.company)
+	columns = get_columns(
+		filters.periodicity, period_list, filters.accumulated_values, company=filters.company
+	)
 	columns = [x for x in columns if x.get("fieldname") != "account"]
 	for column in columns:
 		if column["fieldname"] == "total":
 			column["label"] = _("Average")
 
-	columns.insert(0, {
-		"fieldname": "customer",
-		"fieldtype": "Link",
-		"options": "Customer",
-		"width": 500,
-		"label": _("Customer")
-	})
+	columns.insert(
+		0,
+		{
+			"fieldname": "customer",
+			"fieldtype": "Link",
+			"options": "Customer",
+			"width": 500,
+			"label": _("Customer"),
+		},
+	)
 	return columns, data, [], get_chart_data(columns, data)
 
+
 def get_data(filters, period_list):
-	invoices = frappe.get_all("Sales Invoice",
+	invoices = frappe.get_all(
+		"Sales Invoice",
 		filters={
-			#"posting_date": ("between", (filters.period_start_date, filters.period_end_date)),
+			# "posting_date": ("between", (filters.period_start_date, filters.period_end_date)),
 			"subscription": ("is", "set"),
-			"docstatus": 1
+			"docstatus": 1,
 		},
-		fields=["name", "subscription", "customer", "total", "posting_date", "from_date", "to_date"]
+		fields=["name", "subscription", "customer", "total", "posting_date", "from_date", "to_date"],
 	)
 
-	subscriptions = frappe.get_all("Subscription",
-		filters={
-			"status": ("!=", "Cancelled")
-		},
-		fields=["name", "customer", "total", "billing_interval", "billing_interval_count", "current_invoice_start", "current_invoice_end"]
+	subscriptions = frappe.get_all(
+		"Subscription",
+		filters={"status": ("!=", "Cancelled")},
+		fields=[
+			"name",
+			"customer",
+			"total",
+			"billing_interval",
+			"billing_interval_count",
+			"current_invoice_start",
+			"current_invoice_end",
+		],
 	)
 
 	filtered_invoices = []
 	for subscription in subscriptions:
-		filtered_invoices.extend([
-			x for x in invoices if x.subscription == subscription.name
-		])
+		filtered_invoices.extend([x for x in invoices if x.subscription == subscription.name])
 
-	customers = list(set([x.customer for x in filtered_invoices] + [x.customer for x in subscriptions]))
+	customers = list(
+		set([x.customer for x in filtered_invoices] + [x.customer for x in subscriptions])
+	)
 
 	result = []
 	precision = get_currency_precision() or 2
@@ -65,7 +84,10 @@ def get_data(filters, period_list):
 	for customer in customers:
 		customer_total = 0
 		average_count = 0
-		row = { "customer": customer, "currency": frappe.get_cached_value('Company', filters.company, "default_currency") }
+		row = {
+			"customer": customer,
+			"currency": frappe.get_cached_value("Company", filters.company, "default_currency"),
+		}
 		for index, period in enumerate(period_list):
 			total = get_invoices_mrr([x for x in filtered_invoices if x.customer == customer], period)
 			customer_subscriptions = [x for x in subscriptions if x.customer == customer]
@@ -78,33 +100,42 @@ def get_data(filters, period_list):
 			if total:
 				average_count += 1
 
-			row.update({ period.key: flt(total, precision) })
+			row.update({period.key: flt(total, precision)})
 
 		average_total = flt(customer_total, precision) / flt(average_count or 1)
 		total_row["total"] += average_total
-		row.update({ "total": average_total })
+		row.update({"total": average_total})
 		result.append(row)
 
-	result.sort(key=lambda x:x["total"], reverse=True)
+	result.sort(key=lambda x: x["total"], reverse=True)
 	result.append({})
 	result.append(total_row)
 	return result
+
 
 def get_invoices_mrr(invoices, period):
 	total = 0.0
 	for invoice in invoices:
 		if invoice.from_date and invoice.to_date:
-			if getdate(period.from_date).replace(day=1) >= getdate(invoice.from_date).replace(day=1) and getdate(period.to_date).replace(day=1) <= getdate(invoice.to_date).replace(day=1) and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1:
+			if (
+				getdate(period.from_date).replace(day=1) >= getdate(invoice.from_date).replace(day=1)
+				and getdate(period.to_date).replace(day=1) <= getdate(invoice.to_date).replace(day=1)
+				and monthdelta(invoice.from_date, invoice.to_date) + 1 > 1
+			):
 				return flt(invoice.total) / (monthdelta(invoice.from_date, invoice.to_date) + 1)
 
-			elif period.to_date >= getdate(invoice.posting_date) >= period.from_date and getdate(period.to_date) >= getdate(invoice.from_date):
+			elif period.to_date >= getdate(invoice.posting_date) >= period.from_date and getdate(
+				period.to_date
+			) >= getdate(invoice.from_date):
 				total += flt(invoice.total)
 
 	return total
 
+
 def monthdelta(d1, d2):
 	from calendar import monthrange
 	from datetime import timedelta
+
 	delta = 0
 	while True:
 		mdays = monthrange(d1.year, d1.month)[1]
@@ -115,24 +146,26 @@ def monthdelta(d1, d2):
 			break
 	return delta
 
+
 def get_subscription_mrr(subscriptions, period):
 	month_total = 0
 	for subscription in subscriptions:
 		subscription_total = flt(subscription.total) / flt(subscription.billing_interval_count)
 
 		if subscription.billing_interval == "Month":
-			month_total = subscription_total
+			month_total += subscription_total
 
 		elif subscription.billing_interval == "Year":
-			month_total = subscription_total / 12
+			month_total += subscription_total / 12
 
 		elif subscription.billing_interval == "Day":
-			month_total = subscription_total * date_diff(period.to_date, period.from_date)
+			month_total += subscription_total * date_diff(period.to_date, period.from_date)
 
 		elif subscription.billing_interval == "Week":
-			month_total = subscription_total * date_diff(period.to_date, period.from_date) / 7
+			month_total += subscription_total * date_diff(period.to_date, period.from_date) / 7
 
 	return month_total * month_diff(period.to_date, period.from_date)
+
 
 def get_chart_data(columns, data):
 	values = []
@@ -143,17 +176,12 @@ def get_chart_data(columns, data):
 
 	chart = {
 		"data": {
-			'labels': [d.get("label") for d in columns[3:] if d.get("fieldname") != "total"],
-			'datasets': [{
-				"name" : _("Monthly Recurring Revenue"),
-				"values": values
-			}]
+			"labels": [d.get("label") for d in columns[3:] if d.get("fieldname") != "total"],
+			"datasets": [{"name": _("Monthly Recurring Revenue"), "values": values}],
 		},
 		"type": "line",
-		"colors": ['#ffa00a'],
-		"lineOptions": {
-			"regionFill": 1
-		}
+		"colors": ["#ffa00a"],
+		"lineOptions": {"regionFill": 1},
 	}
 
 	return chart

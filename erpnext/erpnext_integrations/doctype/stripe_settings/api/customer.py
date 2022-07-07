@@ -1,6 +1,8 @@
 import frappe
-from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
+
 from erpnext.erpnext_integrations.doctype.stripe_settings.api.errors import handle_stripe_errors
+from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
+
 
 class StripeCustomer:
 	def __init__(self, gateway):
@@ -9,11 +11,11 @@ class StripeCustomer:
 	@handle_stripe_errors
 	def get_or_create(self, customer_id, stripe_id=None):
 		if not stripe_id:
-			stripe_id = frappe.db.get_value("Integration References",
-				dict(
-					customer=customer_id,
-					stripe_settings=self.gateway.name
-				), "stripe_customer_id")
+			stripe_id = frappe.db.get_value(
+				"Integration References",
+				dict(customer=customer_id, stripe_settings=self.gateway.name),
+				"stripe_customer_id",
+			)
 
 		if stripe_id:
 			customer = self.get(stripe_id)
@@ -29,7 +31,8 @@ class StripeCustomer:
 	@handle_stripe_errors
 	def create(self, customer_id, **kwargs):
 		from frappe.contacts.doctype.contact.contact import get_default_contact
-		metadata = { "customer": customer_id }
+
+		metadata = {"customer": customer_id}
 		customer_name = frappe.db.get_value("Customer", customer_id, "customer_name")
 		contact = get_default_contact("Customer", customer_id)
 		contact_email = frappe.db.get_value("Contact", contact, "email_id")
@@ -53,24 +56,21 @@ class StripeCustomer:
 			doc.stripe_settings = self.gateway.name
 			doc.save(ignore_permissions=True)
 		else:
-			doc = frappe.get_doc({
-				"doctype": "Integration References",
-				"customer": customer_id,
-				"stripe_customer_id": stripe_id,
-				"stripe_settings": self.gateway.name
-			}).insert(ignore_permissions=True)
+			doc = frappe.get_doc(
+				{
+					"doctype": "Integration References",
+					"customer": customer_id,
+					"stripe_customer_id": stripe_id,
+					"stripe_settings": self.gateway.name,
+				}
+			).insert(ignore_permissions=True)
 
 		frappe.db.commit()
 
 	@handle_stripe_errors
 	def update(self, stripe_id, **kwargs):
-		return self.gateway.stripe.Customer.modify(
-			stripe_id,
-			**kwargs
-		)
+		return self.gateway.stripe.Customer.modify(stripe_id, **kwargs)
 
 	@handle_stripe_errors
 	def delete(self, stripe_id):
-		return self.gateway.stripe.Customer.delete(
-			stripe_id
-		)
+		return self.gateway.stripe.Customer.delete(stripe_id)

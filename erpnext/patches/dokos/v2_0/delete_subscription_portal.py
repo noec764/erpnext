@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
 	item = frappe.db.get_value("Portal Menu Item", {"route": "/subscription"})
 	if item:

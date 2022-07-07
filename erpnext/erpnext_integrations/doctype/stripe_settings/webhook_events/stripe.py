@@ -2,13 +2,15 @@
 # For license information, please see license.txt
 
 import datetime
+import json
+
 import frappe
 from frappe import _
-import json
-from frappe.utils import flt, getdate, add_days
+from frappe.utils import add_days, flt, getdate
 
-from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeCharge, StripeInvoice
+from erpnext.erpnext_integrations.webhooks_controller import WebhooksController
+
 
 class StripeWebhooksController(WebhooksController):
 	def __init__(self, **kwargs):
@@ -18,11 +20,15 @@ class StripeWebhooksController(WebhooksController):
 		self.stripe_invoice = {}
 
 	def init_handler(self):
-		self.stripe_settings = frappe.get_doc("Stripe Settings", self.integration_request.get("payment_gateway_controller"))
-		self.payment_gateway = frappe.get_doc("Payment Gateway", dict(
-			gateway_settings="Stripe Settings",
-			gateway_controller=self.integration_request.get("payment_gateway_controller")
-			)
+		self.stripe_settings = frappe.get_doc(
+			"Stripe Settings", self.integration_request.get("payment_gateway_controller")
+		)
+		self.payment_gateway = frappe.get_doc(
+			"Payment Gateway",
+			dict(
+				gateway_settings="Stripe Settings",
+				gateway_controller=self.integration_request.get("payment_gateway_controller"),
+			),
 		)
 
 		self.get_metadata()
@@ -62,7 +68,9 @@ class StripeWebhooksController(WebhooksController):
 				self.period_start = getdate(datetime.datetime.utcfromtimestamp(period.get("start")))
 				self.period_end = getdate(datetime.datetime.utcfromtimestamp(period.get("end")))
 			if self.period_start and self.period_end:
-				payment_request_id = self.subscription.get_payment_request_for_period(self.period_start, add_days(self.period_end, -1))
+				payment_request_id = self.subscription.get_payment_request_for_period(
+					self.period_start, add_days(self.period_end, -1)
+				)
 
 		if self.metadata.get("payment_request"):
 			payment_request_id = self.metadata.get("payment_request")
@@ -79,20 +87,30 @@ class StripeWebhooksController(WebhooksController):
 			output.append(stripe_charge)
 
 			if stripe_charge.balance_transaction.currency != payment_entry.paid_to_account_currency:
-				currency_account = frappe.db.get_value("Payment Gateway Account", {
-					"payment_gateway": self.payment_gateway.name,
-					"currency": stripe_charge.balance_transaction.currency
-				}, "payment_account")
+				currency_account = frappe.db.get_value(
+					"Payment Gateway Account",
+					{
+						"payment_gateway": self.payment_gateway.name,
+						"currency": stripe_charge.balance_transaction.currency,
+					},
+					"payment_account",
+				)
 				if not currency_account:
-					frappe.throw(_("Please create a payment gateway account for currency {0}").format(stripe_charge.balance_transaction.currency))
+					frappe.throw(
+						_("Please create a payment gateway account for currency {0}").format(
+							stripe_charge.balance_transaction.currency
+						)
+					)
 
-				payment_entry.update({
-					"paid_to": currency_account,
-					"paid_to_account_currency": stripe_charge.balance_transaction.currency
-				})
+				payment_entry.update(
+					{
+						"paid_to": currency_account,
+						"paid_to_account_currency": stripe_charge.balance_transaction.currency,
+					}
+				)
 
 			# We suppose all charges within the same payment intent have the same exchange rate
-			exchange_rate = (1 / flt(stripe_charge.balance_transaction.get("exchange_rate") or 1))
+			exchange_rate = 1 / flt(stripe_charge.balance_transaction.get("exchange_rate") or 1)
 
 			received_amount = flt(stripe_charge.balance_transaction.get("amount")) / 100
 			paid_amount = received_amount * exchange_rate
@@ -101,21 +119,29 @@ class StripeWebhooksController(WebhooksController):
 			payment_entry.mode_of_payment = self.payment_gateway.mode_of_payment
 
 			if exchange_rate:
-				payment_entry.update({
-					"target_exchange_rate": exchange_rate,
-				})
+				payment_entry.update(
+					{
+						"target_exchange_rate": exchange_rate,
+					}
+				)
 
 			if fee_amount and self.payment_gateway.fee_account and self.payment_gateway.cost_center:
-				payment_entry.update({
-					"paid_amount": flt(paid_amount or payment_entry.paid_amount) - fee_amount,
-					"received_amount": flt(received_amount or payment_entry.received_amount) - flt(stripe_charge.balance_transaction.get("fee")) / 100
-				})
+				payment_entry.update(
+					{
+						"paid_amount": flt(paid_amount or payment_entry.paid_amount) - fee_amount,
+						"received_amount": flt(received_amount or payment_entry.received_amount)
+						- flt(stripe_charge.balance_transaction.get("fee")) / 100,
+					}
+				)
 
-				payment_entry.append("deductions", {
-					"account": self.payment_gateway.fee_account,
-					"cost_center": self.payment_gateway.cost_center,
-					"amount": fee_amount
-				})
+				payment_entry.append(
+					"deductions",
+					{
+						"account": self.payment_gateway.fee_account,
+						"cost_center": self.payment_gateway.cost_center,
+						"amount": fee_amount,
+					},
+				)
 
 				payment_entry.set_amounts()
 

@@ -117,7 +117,6 @@
    "select": 1
   }
  ],
- "route": "desk#Form/DocType/Accounting Journal",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "journal_name",

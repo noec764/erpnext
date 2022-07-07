@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # dokos - web based ERP (http://dokos.io)
 # Copyright (C) 2012 Frappe Technologies Pvt Ltd
 #
@@ -17,11 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # default settings that can be made for a user.
-from __future__ import unicode_literals
 
 
 product_name = "dokos"
-user_defaults = {
-	"Company": "company",
-	"Territory": "territory"
-}
+user_defaults = {"Company": "company", "Territory": "territory"}

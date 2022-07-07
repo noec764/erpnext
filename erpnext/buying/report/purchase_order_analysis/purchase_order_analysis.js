@@ -30,6 +30,14 @@ frappe.query_reports["Purchase Order Analysis"] = {
 			"default": frappe.datetime.get_today()
 		},
 		{
+			"fieldname":"project",
+			"label": __("Project"),
+			"fieldtype": "Link",
+			"width": "80",
+			"options": "Project"
+		},
+		{
+			"fieldname": "name",
 			"fieldname": "purchase_order",
 			"label": __("Purchase Order"),
 			"fieldtype": "Link",

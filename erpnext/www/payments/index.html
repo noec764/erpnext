@@ -8,6 +8,5 @@
 {% endblock %}
 
 {% block script %}
-<script type="text/javascript" src="/assets/js/frappe-vue.min.js"></script>
-<script type="text/javascript" src="/assets/js/portal-payments.min.js"></script>
+{{ include_script("portal-payments.bundle.js") }}
 {% endblock %}

@@ -1,15 +1,18 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
-from frappe.utils import get_link_to_form
 from frappe.model.document import Document
+from frappe.utils import get_link_to_form
+
+from erpnext.hr.utils import validate_active_employee
+
 
 class EmployeeReferral(Document):
 	def validate(self):
+		validate_active_employee(self.referrer)
 		self.set_full_name()
 		self.set_referral_bonus_payment_status()
 
@@ -27,14 +30,16 @@ class EmployeeReferral(Document):
 @frappe.whitelist()
 def create_job_applicant(source_name, target_doc=None):
 	emp_ref = frappe.get_doc("Employee Referral", source_name)
-	#just for Api call if some set status apart from default Status
+	# just for Api call if some set status apart from default Status
 	status = emp_ref.status
 	if emp_ref.status in ["Pending", "In process"]:
 		status = "Open"
 
 	job_applicant = frappe.new_doc("Job Applicant")
+	job_applicant.source = "Employee Referral"
 	job_applicant.employee_referral = emp_ref.name
 	job_applicant.status = status
+	job_applicant.designation = emp_ref.for_designation
 	job_applicant.applicant_name = emp_ref.full_name
 	job_applicant.email_id = emp_ref.email
 	job_applicant.phone_number = emp_ref.contact_no
@@ -42,9 +47,13 @@ def create_job_applicant(source_name, target_doc=None):
 	job_applicant.resume_link = emp_ref.resume_link
 	job_applicant.save()
 
-	frappe.msgprint(_("Job Applicant {0} created successfully.").format(
-		get_link_to_form("Job Applicant", job_applicant.name)),
-		title=_("Success"), indicator="green")
+	frappe.msgprint(
+		_("Job Applicant {0} created successfully.").format(
+			get_link_to_form("Job Applicant", job_applicant.name)
+		),
+		title=_("Success"),
+		indicator="green",
+	)
 
 	emp_ref.db_set("status", "In Process")
 
@@ -54,9 +63,8 @@ def create_job_applicant(source_name, target_doc=None):
 @frappe.whitelist()
 def create_additional_salary(doc):
 	import json
-	from six import string_types
 
-	if isinstance(doc, string_types):
+	if isinstance(doc, str):
 		doc = frappe._dict(json.loads(doc))
 
 	if not frappe.db.exists("Additional Salary", {"ref_docname": doc.name}):
@@ -68,4 +76,3 @@ def create_additional_salary(doc):
 		additional_salary.ref_docname = doc.name
 
 	return additional_salary
-

@@ -1,34 +1,38 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
 import frappe
 from frappe import _
 from frappe.utils import flt, getdate, nowdate
 from frappe.utils.dateutils import parse_date
-from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import get_party_account_based_on_invoice_discounting
-from erpnext.accounts.utils import get_account_currency
+
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
+from erpnext.accounts.doctype.invoice_discounting.invoice_discounting import (
+	get_party_account_based_on_invoice_discounting,
+)
+from erpnext.accounts.utils import get_account_currency
 
 PARTY_FIELD = {
 	"Payment Entry": "party",
 	"Journal Entry": "party",
 	"Sales Invoice": "customer",
 	"Purchase Invoice": "supplier",
-	"Expense Claim": "employee"
+	"Expense Claim": "employee",
 }
 
 PARTY_TYPES = {
 	"Sales Invoice": "Customer",
 	"Purchase Invoice": "Supplier",
-	"Expense Claim": "Employee"
+	"Expense Claim": "Employee",
 }
+
 
 @frappe.whitelist()
 def reconcile(bank_transactions, documents):
 	bank_reconciliation = BankReconciliation(bank_transactions, documents)
 	bank_reconciliation.reconcile()
+
 
 class BankReconciliation:
 	def __init__(self, bank_transactions, documents):
@@ -47,7 +51,6 @@ class BankReconciliation:
 		self.mode_of_payment = None
 		self.payment_entries = []
 
-
 	def check_unique_values(self):
 		self.check_party()
 		self.check_party_account()
@@ -64,7 +67,12 @@ class BankReconciliation:
 
 	def check_party_account(self):
 		if self.reconciliation_doctype == "Sales Invoice":
-			party_account = set([get_party_account_based_on_invoice_discounting(doc.get("name")) or doc.get("debit_to") for doc in self.documents])
+			party_account = set(
+				[
+					get_party_account_based_on_invoice_discounting(doc.get("name")) or doc.get("debit_to")
+					for doc in self.documents
+				]
+			)
 		elif self.reconciliation_doctype == "Purchase Invoice":
 			party_account = set([doc.get("credit_to") for doc in self.documents])
 		elif self.reconciliation_doctype == "Employee Advance":
@@ -86,7 +94,11 @@ class BankReconciliation:
 			setattr(self, fielname, next(iter(value)))
 
 	def reconcile(self):
-		if self.reconciliation_doctype in ["Sales Invoice", "Purchase Invoice", "Expense Claim"] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
+		if self.reconciliation_doctype in [
+			"Sales Invoice",
+			"Purchase Invoice",
+			"Expense Claim",
+		] and not (self.documents[0].get("is_pos") or self.documents[0].get("is_paid")):
 			self.check_unique_values()
 			self.make_payment_entries()
 			self.reconcile_created_payments()
@@ -101,19 +113,25 @@ class BankReconciliation:
 		for bank_transaction in self.bank_transactions:
 			if abs(self.documents[0]["unreconciled_amount"]) > reconciled_amount:
 				bank_transaction = frappe.get_doc("Bank Transaction", bank_transaction.get("name"))
-				allocated_amount = min(max(abs(bank_transaction.unallocated_amount), 0), abs(self.documents[0]["unreconciled_amount"]))
+				allocated_amount = min(
+					max(abs(bank_transaction.unallocated_amount), 0),
+					abs(self.documents[0]["unreconciled_amount"]),
+				)
 				date_value = self.documents[0].get("reference_date")
 				if isinstance(date_value, str):
 					date_value = parse_date(date_value)
 
 				if allocated_amount > 0:
-					bank_transaction.append('payment_entries', {
-						'payment_document': self.reconciliation_doctype,
-						'payment_entry': self.documents[0]["name"],
-						'allocated_amount': allocated_amount,
-						'party': self.documents[0][PARTY_FIELD.get(self.reconciliation_doctype)],
-						'date': getdate(date_value)
-					})
+					bank_transaction.append(
+						"payment_entries",
+						{
+							"payment_document": self.reconciliation_doctype,
+							"payment_entry": self.documents[0]["name"],
+							"allocated_amount": allocated_amount,
+							"party": self.documents[0][PARTY_FIELD.get(self.reconciliation_doctype)],
+							"date": getdate(date_value),
+						},
+					)
 
 					reconciled_amount += allocated_amount
 					bank_transaction.save()
@@ -126,13 +144,16 @@ class BankReconciliation:
 				date_value = parse_date(date_value)
 
 			if flt(bank_transaction.unallocated_amount) != 0:
-				bank_transaction.append('payment_entries', {
-					'payment_document': document.get("doctype"),
-					'payment_entry': document.get("name"),
-					'allocated_amount': abs(document.get("unreconciled_amount")),
-					'party': document.get(PARTY_FIELD.get(document.get("doctype"))),
-					'date': getdate(date_value)
-				})
+				bank_transaction.append(
+					"payment_entries",
+					{
+						"payment_document": document.get("doctype"),
+						"payment_entry": document.get("name"),
+						"allocated_amount": abs(document.get("unreconciled_amount")),
+						"party": document.get(PARTY_FIELD.get(document.get("doctype"))),
+						"date": getdate(date_value),
+					},
+				)
 
 				bank_transaction.save()
 
@@ -143,13 +164,18 @@ class BankReconciliation:
 			if isinstance(date_value, str):
 				date_value = parse_date(date_value)
 
-			bank_transaction.append('payment_entries', {
-				'payment_document': payment.get("doctype"),
-				'payment_entry': payment.get("name"),
-				'allocated_amount': min(abs(payment.get("unreconciled_amount")), abs(bank_transaction.unallocated_amount)),
-				'party': payment.get(PARTY_FIELD.get(payment.get("doctype"))),
-				'date': getdate(date_value)
-			})
+			bank_transaction.append(
+				"payment_entries",
+				{
+					"payment_document": payment.get("doctype"),
+					"payment_entry": payment.get("name"),
+					"allocated_amount": min(
+						abs(payment.get("unreconciled_amount")), abs(bank_transaction.unallocated_amount)
+					),
+					"party": payment.get(PARTY_FIELD.get(payment.get("doctype"))),
+					"date": getdate(date_value),
+				},
+			)
 
 			bank_transaction.save()
 
@@ -167,8 +193,9 @@ class BankReconciliation:
 		party_account_currency = get_account_currency(self.party_account)
 
 		# payment type
-		if (self.reconciliation_doctype == "Sales Invoice" and transaction.get("amount") > 0) \
-			or (self.reconciliation_doctype == "Purchase Invoice" and transaction.get("amount") > 0):
+		if (self.reconciliation_doctype == "Sales Invoice" and transaction.get("amount") > 0) or (
+			self.reconciliation_doctype == "Purchase Invoice" and transaction.get("amount") > 0
+		):
 			payment_type = "Receive"
 		else:
 			payment_type = "Pay"
@@ -178,16 +205,23 @@ class BankReconciliation:
 		if self.reconciliation_doctype in ("Sales Invoice", "Purchase Invoice"):
 			total_outstanding_amount = sum([x.get("outstanding_amount") for x in self.documents])
 		elif self.reconciliation_doctype in ("Expense Claim"):
-			total_outstanding_amount = sum([(flt(x.get("grand_total"))-flt(x.get("total_amount_reimbursed"))) for x in self.documents])
+			total_outstanding_amount = sum(
+				[(flt(x.get("grand_total")) - flt(x.get("total_amount_reimbursed"))) for x in self.documents]
+			)
 		elif self.reconciliation_doctype == "Employee Advance":
-			total_outstanding_amount = sum([(flt(x.get("advance_amount"))-flt(x.get("paid_amount"))) for x in self.documents])
+			total_outstanding_amount = sum(
+				[(flt(x.get("advance_amount")) - flt(x.get("paid_amount"))) for x in self.documents]
+			)
 
 		bank_account = frappe.get_doc("Bank Account", transaction.get("bank_account"))
 		account_currency = frappe.db.get_value("Account", bank_account.account, "account_currency")
 
 		paid_amount = received_amount = 0
-		amount_to_pay_or_receive = abs(transaction.get("unallocated_amount")) \
-				if abs(transaction.get("unallocated_amount")) <= total_outstanding_amount else total_outstanding_amount
+		amount_to_pay_or_receive = (
+			abs(transaction.get("unallocated_amount"))
+			if abs(transaction.get("unallocated_amount")) <= total_outstanding_amount
+			else total_outstanding_amount
+		)
 		if party_account_currency == account_currency:
 			paid_amount = received_amount = amount_to_pay_or_receive
 		elif payment_type == "Receive":
@@ -209,14 +243,19 @@ class BankReconciliation:
 		pe.party = self.party
 		contacts = [x.get("contact_person") for x in self.documents]
 		pe.contact_person = contacts[0] if contacts else None
-		pe.contact_email = " ,".join([x.get("contact_email") for x in self.documents if x.get("contact_email")])
+		pe.contact_email = " ,".join(
+			[x.get("contact_email") for x in self.documents if x.get("contact_email")]
+		)
 		pe.ensure_supplier_is_not_blocked()
 
 		pe.paid_from = self.party_account if payment_type == "Receive" else bank_account.account
 		pe.paid_to = self.party_account if payment_type == "Pay" else bank_account.account
-		pe.paid_from_account_currency = party_account_currency \
-			if payment_type == "Receive" else account_currency
-		pe.paid_to_account_currency = party_account_currency if payment_type == "Pay" else account_currency
+		pe.paid_from_account_currency = (
+			party_account_currency if payment_type == "Receive" else account_currency
+		)
+		pe.paid_to_account_currency = (
+			party_account_currency if payment_type == "Pay" else account_currency
+		)
 		pe.paid_amount = paid_amount
 		pe.received_amount = received_amount
 		letter_heads = [x.get("letter_head") for x in self.documents]
@@ -236,7 +275,7 @@ class BankReconciliation:
 			if doc.get("doctype") == "Purchase Invoice":
 				pi = frappe.get_doc("Purchase Invoice", doc.get("name"))
 				if pi.invoice_is_blocked():
-					frappe.throw(_('{0} is on hold till {1}'.format(pi.name, pi.release_date)))
+					frappe.throw(_("{0} is on hold till {1}".format(pi.name, pi.release_date)))
 
 			# amounts
 			grand_total = outstanding_amount = 0
@@ -259,17 +298,23 @@ class BankReconciliation:
 					grand_total = flt(doc.get("rounded_total") or doc.get("grand_total"))
 				outstanding_amount = grand_total - flt(doc.get("advance_paid"))
 
-			allocated_amount = min(outstanding_amount, flt(abs(transaction.get("unallocated_amount"))) - flt(total_allocated_amount))
+			allocated_amount = min(
+				outstanding_amount,
+				flt(abs(transaction.get("unallocated_amount"))) - flt(total_allocated_amount),
+			)
 
-			pe.append("references", {
-				'reference_doctype': doc.get("doctype"),
-				'reference_name': doc.get("name"),
-				"bill_no": doc.get("bill_no"),
-				"due_date": doc.get("due_date"),
-				'total_amount': grand_total,
-				'outstanding_amount': outstanding_amount,
-				'allocated_amount': allocated_amount
-			})
+			pe.append(
+				"references",
+				{
+					"reference_doctype": doc.get("doctype"),
+					"reference_name": doc.get("name"),
+					"bill_no": doc.get("bill_no"),
+					"due_date": doc.get("due_date"),
+					"total_amount": grand_total,
+					"outstanding_amount": outstanding_amount,
+					"allocated_amount": allocated_amount,
+				},
+			)
 
 			total_allocated_amount += allocated_amount
 

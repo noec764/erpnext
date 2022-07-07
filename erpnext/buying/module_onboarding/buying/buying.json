@@ -19,7 +19,8 @@
  "documentation_url": "https://doc.dokos.io/dokos/buying/",
  "idx": 0,
  "is_complete": 0,
- "modified": "2020-06-01 12:55:09.234944",
+ "language": "en",
+ "modified": "2022-05-19 18:50:10.135753",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
@@ -49,6 +50,5 @@
  ],
  "subtitle": "Products, Purchases, Analysis and more.",
  "success_message": "The buying module is all set up!",
- "title": "Let's set up the Buying module.",
- "user_can_dismiss": 1
+ "title": "Let's set up the Buying module."
 }
