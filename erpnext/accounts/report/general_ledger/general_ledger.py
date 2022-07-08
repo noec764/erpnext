@@ -151,11 +151,43 @@ def get_result(filters, account_details):
 
 	gl_entries = get_gl_entries(filters, accounting_dimensions)
 
+	if filters.get("group_by") == "Group by Against Voucher":
+		gl_entries = cleanup_against_voucher_field(gl_entries)
+
 	data = get_data_with_opening_closing(filters, account_details, accounting_dimensions, gl_entries)
 
 	result = get_result_as_list(data, filters)
 
 	return result
+
+
+def cleanup_against_voucher_field(gl_entries):
+	from collections import defaultdict
+
+	against_documents = frappe.get_all(
+		"GL Entry",
+		filters={"docstatus": 1, "is_cancelled": 0},
+		fields=["against_voucher_type", "against_voucher", "count(against_voucher) as count"],
+		group_by="against_voucher_type, against_voucher",
+	)
+	against_vouchers_by_type = defaultdict(lambda: defaultdict(int))
+	for document in against_documents:
+		against_vouchers_by_type[document.against_voucher_type][
+			document.against_voucher
+		] = document.count
+
+	for gl_entry in gl_entries:
+		if gl_entry["against_voucher_type"] and gl_entry["against_voucher"]:
+			if (
+				against_vouchers_by_type.get(gl_entry["against_voucher_type"], {}).get(
+					gl_entry["against_voucher"], 0
+				)
+				< 2
+			):
+				gl_entry["against_voucher_type"] = ""
+				gl_entry["against_voucher"] = ""
+
+	return gl_entries
 
 
 def get_gl_entries(filters, accounting_dimensions):
@@ -229,6 +261,9 @@ def get_conditions(filters):
 
 	if filters.get("voucher_no"):
 		conditions.append("voucher_no=%(voucher_no)s")
+
+	if filters.get("against_voucher"):
+		conditions.append("against_voucher=%(against_voucher)s")
 
 	if filters.get("group_by") == "Group by Party" and not filters.get("party_type"):
 		conditions.append("party_type in ('Customer', 'Supplier')")
@@ -607,6 +642,11 @@ def get_columns(filters):
 				"options": "party_type",
 				"width": 100,
 			},
+		]
+	)
+
+	if filters.get("include_dimensions"):
+		columns.append(
 			{
 				"label": _("Project"),
 				"options": "Project",
@@ -615,25 +655,23 @@ def get_columns(filters):
 				"options": "Project",
 				"width": 100,
 			},
-		]
-	)
+		)
 
-	if filters.get("include_dimensions"):
 		for dim in get_accounting_dimensions(as_list=False):
 			columns.append(
 				{"label": _(dim.label), "options": dim.label, "fieldname": dim.fieldname, "width": 100}
 			)
 
-	columns.append(
-		{
-			"label": _("Cost Center"),
-			"options": "Cost Center",
-			"fieldname": "cost_center",
-			"fieldtype": "Link",
-			"options": "Cost Center",
-			"width": 100,
-		}
-	)
+		columns.append(
+			{
+				"label": _("Cost Center"),
+				"options": "Cost Center",
+				"fieldname": "cost_center",
+				"fieldtype": "Link",
+				"options": "Cost Center",
+				"width": 100,
+			}
+		)
 
 	columns.extend(
 		[
