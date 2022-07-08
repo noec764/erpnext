@@ -5,6 +5,10 @@ import frappe
 
 
 def get_context(context):
+	if not frappe.form_dict.project:
+		frappe.local.flags.redirect_location = "project"
+		raise frappe.Redirect
+
 	project_user = frappe.db.get_value(
 		"Project User",
 		{"parent": frappe.form_dict.project, "user": frappe.session.user},
