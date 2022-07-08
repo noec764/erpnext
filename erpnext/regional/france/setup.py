@@ -20,7 +20,43 @@ def setup_company_independent_fixtures():
 	add_custom_roles_for_reports()
 
 
-def make_custom_fields():
+def make_custom_fields(update=True):
+	invoice_item_fields = [
+		dict(
+			fieldname="tax_details_section",
+			label="Tax Details",
+			fieldtype="Section Break",
+			insert_after="delivered_by_supplier",
+			print_hide=1,
+		),
+		dict(
+			fieldname="tax_rate",
+			label="Tax Rate",
+			fieldtype="Float",
+			insert_after="description",
+			print_hide=1,
+			read_only=1,
+		),
+		dict(
+			fieldname="tax_amount",
+			label="Tax Amount",
+			fieldtype="Currency",
+			insert_after="tax_rate",
+			print_hide=1,
+			read_only=1,
+			options="currency",
+		),
+		dict(
+			fieldname="total_amount",
+			label="Total Amount",
+			fieldtype="Currency",
+			insert_after="tax_amount",
+			print_hide=1,
+			read_only=1,
+			options="currency",
+		),
+	]
+
 	custom_fields = {
 		"Company": [
 			dict(fieldname="siren_number", label="SIREN Number", fieldtype="Data", insert_after="website")
@@ -43,9 +79,17 @@ def make_custom_fields():
 				depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group',
 			),
 		],
+		"Purchase Invoice Item": invoice_item_fields,
+		"Sales Order Item": invoice_item_fields,
+		"Delivery Note Item": invoice_item_fields,
+		"Sales Invoice Item": invoice_item_fields,
+		"Quotation Item": invoice_item_fields,
+		"Purchase Order Item": invoice_item_fields,
+		"Purchase Receipt Item": invoice_item_fields,
+		"Supplier Quotation Item": invoice_item_fields,
 	}
 
-	create_custom_fields(custom_fields, ignore_validate=True)
+	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
 
 
 def add_custom_roles_for_reports():

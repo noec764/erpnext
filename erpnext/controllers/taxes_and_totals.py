@@ -957,7 +957,7 @@ def get_itemised_tax_breakup_data(doc):
 	return itemised_tax, itemised_taxable_amount
 
 
-def get_itemised_tax(taxes, with_tax_account=False):
+def get_itemised_tax(taxes, with_tax_account=False, with_form_rate=False):
 	itemised_tax = {}
 	for tax in taxes:
 		if getattr(tax, "category", None) and tax.category == "Valuation":
@@ -986,6 +986,9 @@ def get_itemised_tax(taxes, with_tax_account=False):
 
 				if with_tax_account:
 					itemised_tax[item_code][tax.description].tax_account = tax.account_head
+
+				if with_form_rate:
+					itemised_tax[item_code][tax.description].form_rate = tax.rate
 
 	return itemised_tax
 

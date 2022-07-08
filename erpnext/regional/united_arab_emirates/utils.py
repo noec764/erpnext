@@ -22,8 +22,8 @@ def update_itemised_tax_data(doc):
 		# First check if tax rate is present
 		# If not then look up in item_wise_tax_detail
 		if item_tax_rate:
-			for account, rate in item_tax_rate.items():
-				tax_rate += rate
+			for tax in item_tax_rate:
+				tax_rate += tax.get("rate")
 		elif row.item_code and itemised_tax.get(row.item_code):
 			tax_rate = sum([tax.get("tax_rate", 0) for d, tax in itemised_tax.get(row.item_code).items()])
 
