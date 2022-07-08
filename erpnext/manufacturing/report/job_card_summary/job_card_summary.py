@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate
+from frappe.utils import getdate
 
 from erpnext.stock.report.stock_analytics.stock_analytics import get_period, get_period_date_ranges
 
@@ -36,7 +36,7 @@ def get_data(filters):
 		"total_time_in_mins",
 	]
 
-	for field in ["work_order", "workstation", "operation", "company"]:
+	for field in ["work_order", "workstation", "operation", "status", "company"]:
 		if filters.get(field):
 			query_filters[field] = ("in", filters.get(field))
 
