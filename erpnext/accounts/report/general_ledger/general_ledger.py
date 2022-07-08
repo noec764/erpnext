@@ -171,6 +171,9 @@ def get_gl_entries(filters, accounting_dimensions):
 	if filters.get("group_by") == "Group by Voucher":
 		order_by_statement = "order by posting_date, voucher_type, voucher_no"
 
+	if filters.get("group_by") == "Group by Against Voucher":
+		order_by_statement = "order by against_voucher_type, against_voucher, posting_date, creation"
+
 	if filters.get("group_by") == "Group by Account":
 		order_by_statement = "order by account, posting_date, creation"
 
@@ -239,7 +242,8 @@ def get_conditions(filters):
 	if not (
 		filters.get("account")
 		or filters.get("party")
-		or filters.get("group_by") in ["Group by Account", "Group by Party"]
+		or filters.get("group_by")
+		in ["Group by Account", "Group by Party", "Group by Against Voucher Type"]
 	):
 		conditions.append("posting_date >=%(from_date)s")
 
@@ -311,7 +315,7 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 	# Opening for filtered account
 	data.append(totals.opening)
 
-	if filters.get("group_by") == "Group by Account":
+	if filters.get("group_by") in ("Group by Account", "Group by Against Voucher"):
 		gle_map = OrderedDict(sorted(gle_map.items()))
 
 	if filters.get("group_by") != "Group by Voucher (Consolidated)":
@@ -364,7 +368,11 @@ def get_totals_dict():
 def group_by_field(group_by):
 	if group_by == "Group by Party":
 		return "party"
-	elif group_by in ["Group by Voucher (Consolidated)", "Group by Account"]:
+	elif group_by in [
+		"Group by Voucher (Consolidated)",
+		"Group by Account",
+		"Group by Against Voucher",
+	]:
 		return "account"
 	else:
 		return "voucher_no"

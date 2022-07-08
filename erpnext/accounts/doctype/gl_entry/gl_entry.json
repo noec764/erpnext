@@ -49,7 +49,6 @@
   {
    "fieldname": "transaction_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Transaction Date",
    "oldfieldname": "transaction_date",
    "oldfieldtype": "Date"
@@ -156,6 +155,8 @@
    "fieldname": "voucher_type",
    "fieldtype": "Link",
    "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Voucher Type",
    "oldfieldname": "voucher_type",
    "oldfieldtype": "Select",
@@ -166,6 +167,7 @@
    "fieldname": "voucher_no",
    "fieldtype": "Dynamic Link",
    "in_filter": 1,
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Voucher No",
    "oldfieldname": "voucher_no",
@@ -245,6 +247,7 @@
    "default": "0",
    "fieldname": "is_cancelled",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Is Cancelled"
   },
   {
@@ -264,10 +267,11 @@
  "idx": 1,
  "in_create": 1,
  "links": [],
- "modified": "2022-04-11 16:10:09.713510",
+ "modified": "2022-07-08 18:08:43.877191",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "GL Entry",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -296,5 +300,6 @@
  "quick_entry": 1,
  "search_fields": "voucher_no,account,posting_date,against_voucher",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

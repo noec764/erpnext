@@ -60,6 +60,19 @@ class GLEntry(Document):
 					and self.flags.update_outstanding == "Yes"
 					and not frappe.flags.is_reverse_depr_entry
 				):
+					# Update Againt voucher in original entry to facilitate accounting reports
+					frappe.db.set_value(
+						"GL Entry",
+						dict(
+							account=self.account,
+							voucher_type=self.against_voucher_type,
+							voucher_no=self.against_voucher,
+						),
+						{
+							"against_voucher_type": self.against_voucher_type if not self.is_cancelled else None,
+							"against_voucher": self.against_voucher if not self.is_cancelled else None,
+						},
+					)
 					update_outstanding_amt(
 						self.account, self.party_type, self.party, self.against_voucher_type, self.against_voucher
 					)
@@ -323,6 +336,7 @@ def update_outstanding_amt(
 		select sum(debit_in_account_currency) - sum(credit_in_account_currency)
 		from `tabGL Entry`
 		where against_voucher_type=%s and against_voucher=%s
+		and is_cancelled = 0
 		and voucher_type != 'Invoice Discounting'
 		{0} {1}""".format(
 				party_condition, account_condition
@@ -340,11 +354,12 @@ def update_outstanding_amt(
 				"""
 			select sum(debit_in_account_currency) - sum(credit_in_account_currency)
 			from `tabGL Entry` where voucher_type = 'Journal Entry' and voucher_no = %s
-			and account = %s and (against_voucher is null or against_voucher='') {0}""".format(
+			and is_cancelled = 0
+			and account = %s and (against_voucher is null or against_voucher='' or against_voucher=%s) {0}""".format(
 					party_condition
 				),
-				(against_voucher, account),
-			)[0][0]
+				(against_voucher, account, against_voucher),
+			)[0][0],
 		)
 
 		if not against_voucher_amount:

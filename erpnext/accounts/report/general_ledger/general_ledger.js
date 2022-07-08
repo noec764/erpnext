@@ -59,6 +59,14 @@ frappe.query_reports["General Ledger"] = {
 			}
 		},
 		{
+			"fieldname":"against_voucher",
+			"label": __("Against Voucher No"),
+			"fieldtype": "Data",
+			on_change: function() {
+				frappe.query_report.set_filter_value('group_by', "Group by Against Voucher");
+			}
+		},
+		{
 			"fieldtype": "Break",
 		},
 		{
@@ -133,6 +141,10 @@ frappe.query_reports["General Ledger"] = {
 				{
 					label: __("Group by Party"),
 					value: "Group by Party",
+				},
+				{
+					label: __("Group by Against Voucher"),
+					value: "Group by Against Voucher",
 				},
 			],
 			"default": "Group by Voucher (Consolidated)"
