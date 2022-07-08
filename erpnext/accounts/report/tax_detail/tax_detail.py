@@ -257,17 +257,18 @@ def modify_report_data(data):
 				new_data += [line]
 				if line.item_tax_rate:
 					tax_rates = json.loads(line.item_tax_rate)
-					for account, rate in tax_rates.items():
-						tax_line = line.copy()
-						tax_line.account_type = "Tax"
-						tax_line.account = account
-						if line.voucher_type == "Sales Invoice":
-							line.amount = line.base_net_amount
-							tax_line.amount = line.base_net_amount * (rate / 100)
-						if line.voucher_type == "Purchase Invoice":
-							line.amount = -line.base_net_amount
-							tax_line.amount = -line.base_net_amount * (rate / 100)
-						new_data += [tax_line]
+					for tax_rate in tax_rates:
+						for account, rate in tax_rate.items():
+							tax_line = line.copy()
+							tax_line.account_type = "Tax"
+							tax_line.account = account
+							if line.voucher_type == "Sales Invoice":
+								line.amount = line.base_net_amount
+								tax_line.amount = line.base_net_amount * (rate / 100)
+							if line.voucher_type == "Purchase Invoice":
+								line.amount = -line.base_net_amount
+								tax_line.amount = -line.base_net_amount * (rate / 100)
+							new_data += [tax_line]
 		else:
 			new_data += [line]
 	return new_data
