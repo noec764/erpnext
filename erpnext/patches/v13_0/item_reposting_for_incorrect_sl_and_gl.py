@@ -1,5 +1,4 @@
 import frappe
-from frappe import _
 from frappe.utils import get_time, getdate, today
 
 from erpnext.accounts.utils import update_gl_entries_after
@@ -16,6 +15,8 @@ def execute():
 		("accounts", "sales_invoice_item"),
 		("accounts", "purchase_invoice_item"),
 		("buying", "purchase_receipt_item_supplied"),
+		("subcontracting", "subcontracting_receipt_item"),
+		("subcontracting", "subcontracting_receipt_supplied_item"),
 	]
 
 	for module, doctype in doctypes_to_reload:

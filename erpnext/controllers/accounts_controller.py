@@ -1638,7 +1638,12 @@ class AccountsController(TransactionBase):
 			# Quotation doctype is excluded because the addition of a dummy payment term with a due_date set as the
 			# posting date causes an error when creating a sales order from it
 			elif self.doctype not in ["Purchase Receipt", "Quotation"]:
-				data = dict(due_date=due_date, invoice_portion=100, payment_amount=grand_total, base_payment_amount=base_grand_total)
+				data = dict(
+					due_date=due_date,
+					invoice_portion=100,
+					payment_amount=grand_total,
+					base_payment_amount=base_grand_total,
+				)
 				self.append("payment_schedule", data)
 
 		for d in self.get("payment_schedule"):
@@ -2766,10 +2771,10 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 		parent.update_ordered_qty()
 		parent.update_ordered_and_reserved_qty()
 		parent.update_receiving_percentage()
-		if parent.is_subcontracted:
+		if parent.is_old_subcontracting_flow:
 			if should_update_supplied_items(parent):
 				parent.update_reserved_qty_for_subcontract()
-				parent.create_raw_materials_supplied("supplied_items")
+				parent.create_raw_materials_supplied()
 			parent.save()
 	else:  # Sales Order
 		parent.validate_warehouse()
