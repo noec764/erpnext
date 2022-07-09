@@ -136,9 +136,14 @@ def repost(doc):
 		doc.set_status("Completed")
 
 	except Exception as e:
+		if frappe.flags.in_test:
+			# Don't silently fail in tests,
+			# there is no reason for reposts to fail in CI
+			raise
+
 		frappe.db.rollback()
 		traceback = frappe.get_traceback()
-		frappe.log_error(_("Unable to setup regional tax settings"))
+		doc.log_error(_("Unable to repost item valuation"))
 
 		message = frappe.message_log.pop() if frappe.message_log else ""
 		if traceback:
