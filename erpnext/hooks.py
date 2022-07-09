@@ -599,6 +599,10 @@ regional_overrides = {
 	"Switzerland": {
 		"erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation.regional_reconciliation": "erpnext.regional.switzerland.utils.regional_reconciliation"
 	},
+	"Algeria": {
+		"erpnext.accounts.report.balance_sheet.balance_sheet.execute": "erpnext.regional.france.report.balance_sheet.balance_sheet.execute",
+		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.france.taxes.update_itemised_tax_data",
+	},
 }
 user_privacy_documents = [
 	{
