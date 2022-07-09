@@ -11,6 +11,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 def setup(company=None, patch=True):
 	setup_company_independent_fixtures()
 	setup_default_leaves()
+	set_accounting_journal_as_mandatory()
 	if not patch:
 		make_fixtures(company)
 
@@ -207,3 +208,7 @@ def setup_default_leaves():
 
 	doc = frappe.get_doc(policy)
 	doc.insert(ignore_permissions=True, ignore_if_duplicate=True)
+
+
+def set_accounting_journal_as_mandatory():
+	frappe.db.set_single_value("Accounts Settings", "mandatory_accounting_journal", 1)

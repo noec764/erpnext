@@ -8,6 +8,7 @@
   "engine": "InnoDB",
   "field_order": [
    "invoice_and_billing_tab",
+   "mandatory_accounting_journal",
    "enable_features_section",
    "unlink_payment_on_cancellation_of_invoice",
    "unlink_advance_payment_on_cancelation_of_order",
@@ -340,6 +341,12 @@
     "fieldname": "default_payment_days",
     "fieldtype": "Int",
     "label": "Default Payment Days for Invoices"
+   },
+   {
+    "default": "0",
+    "fieldname": "mandatory_accounting_journal",
+    "fieldtype": "Check",
+    "label": "Record all transactions against an accounting journal"
    }
   ],
   "icon": "icon-cog",
@@ -347,7 +354,7 @@
   "index_web_pages_for_search": 1,
   "issingle": 1,
   "links": [],
-  "modified": "2022-04-08 14:45:06.796418",
+  "modified": "2022-05-08 14:45:06.796418",
   "modified_by": "Administrator",
   "module": "Accounts",
   "name": "Accounts Settings",
