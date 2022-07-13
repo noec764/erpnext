@@ -524,21 +524,28 @@ def _make_delivery_note(woocommerce_order, sales_order):
 def refund_sales_order(settings, woocommerce_order, sales_order):
 	sales_invoices = frappe.get_all("Sales Invoice Item",
 		filters={"sales_order": sales_order.name},
-		pluck="parent"
+		pluck="parent",
+		distinct=True
 	)
 
-	for sales_invoice in sales_invoices:
-		cn = make_sales_return(sales_invoice)
-		cn.flags.ignore_permissions = True
-		cn.insert()
-		cn.submit()
-
-		payment_entry = get_payment_entry("Sales Invoice", cn.name)
+	def make_return_payment(sales_invoice):
+		payment_entry = get_payment_entry("Sales Invoice", sales_invoice)
 		if payment_entry.paid_amount:
 			payment_entry.reference_no = woocommerce_order.get("transaction_id") or woocommerce_order.get("payment_method_title") or "WooCommerce Order"
 			payment_entry.reference_date = woocommerce_order.get("date_paid")
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
+
+	for sales_invoice in sales_invoices:
+		has_return = frappe.db.exists("Sales Invoice", dict(docstatus=1, is_return=1, return_against=sales_invoice))
+		if not has_return:
+			cn = make_sales_return(sales_invoice)
+			cn.flags.ignore_permissions = True
+			cn.insert()
+			cn.submit()
+
+		if frappe.db.get_value("Sales Invoice", sales_invoice, "outstanding_amount"):
+			make_return_payment(sales_invoice)
 
 	else:
 		frappe.db.set_value("Sales Order", sales_order.name, "status", "Closed")
