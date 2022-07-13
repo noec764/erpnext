@@ -9,15 +9,15 @@
  "docstatus": 0,
  "doctype": "Website Theme",
  "font_properties": "wght@300;400;500;600;700;800",
- "google_font": "Varela Round",
+ "google_font": "Poppins",
  "idx": 0,
  "ignored_apps": [],
- "modified": "2022-07-12 17:00:24.586594",
+ "modified": "2022-05-25 13:47:46.070683",
  "modified_by": "Administrator",
  "module": "Portal",
  "name": "Dokos",
  "owner": "Administrator",
  "theme": "Dokos",
- "theme_scss": "\n@import url(\"https://fonts.googleapis.com/css2?family=Varela+Round:wght@300;400;500;600;700;800&display=swap\");\n$font-family-sans-serif: \"Varela Round\", -apple-system, BlinkMacSystemFont,\n\t\"Segoe UI\", \"Roboto\", \"Oxygen\", \"Ubuntu\", \"Cantarell\", \"Fira Sans\",\n\t\"Droid Sans\", \"Helvetica Neue\", sans-serif;\n$enable-shadows: false;\n$enable-gradients: false;\n$enable-rounded: true;\n\n// Bootstrap Variable Overrides\n\n\n// Import themes from installed apps\n@import \"frappe/public/scss/website.bundle\";\n@import \"erpnext/public/scss/website\";\n\n\n\n// Custom Theme\n\n\n:root {\n\t}",
+ "theme_scss": "\n@import url(\"https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap\");\n$font-family-sans-serif: \"Poppins\", -apple-system, BlinkMacSystemFont,\n\t\"Segoe UI\", \"Roboto\", \"Oxygen\", \"Ubuntu\", \"Cantarell\", \"Fira Sans\",\n\t\"Droid Sans\", \"Helvetica Neue\", sans-serif;\n$enable-shadows: false;\n$enable-gradients: false;\n$enable-rounded: true;\n\n// Bootstrap Variable Overrides\n\n\n// Import themes from installed apps\n@import \"frappe/public/scss/website.bundle\";\n@import \"erpnext/public/scss/website\";\n\n\n\n// Custom Theme\n\n\n:root {\n\t}",
  "theme_url": "/files/website_theme/dokos_style.css"
 }
