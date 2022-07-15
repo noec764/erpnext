@@ -3,6 +3,22 @@ import frappe
 
 
 def execute():
+	if "india_compliance" in frappe.get_installed_apps():
+		return
+
+	delete_docs()
+	unlink_custom_fields()
+
+
+def unlink_custom_fields():
+	frappe.db.set_value(
+		"Custom Field",
+		{"dt": "Item", "fieldname": "gst_hsn_code"},
+		{"fieldtype": "Data", "options": ""},
+	)
+
+
+def delete_docs():
 	to_delete = {
 		"DocType": [
 			"C-Form",
@@ -12,6 +28,7 @@ def execute():
 			"E Invoice Settings",
 			"E Invoice User",
 			"GST HSN Code",
+			"HSN Tax Rate",
 			"GST Settings",
 			"GSTR 3B Report",
 		],
@@ -43,7 +60,10 @@ def execute():
 			ignore_missing=True,
 		)
 
-	if not frappe.db.exists("Company", {"country": "India"}):
+	if (
+		not frappe.db.exists("Company", {"country": "India"})
+		or "india_compliance" in frappe.get_installed_apps()
+	):
 		return
 
 	click.secho(
