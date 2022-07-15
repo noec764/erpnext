@@ -111,7 +111,7 @@ class PaymentRequest(Document):
 					if hasattr(gateway_controller, "validate_payment_request"):
 						try:
 							gateway_controller.validate_payment_request(self)
-						except Exception as e:
+						except Exception:
 							if frappe.flags.mute_gateways_validation:
 								self.payment_gateways = [
 									x for x in self.payment_gateways if x.payment_gateway != gateway.name
