@@ -557,7 +557,7 @@ class Asset(AccountsController):
 
 			depreciation_rate = math.pow(value, 1.0 / flt(args.get("total_number_of_depreciations"), 2))
 
-			return 100 * (1 - flt(depreciation_rate, float_precision))
+			return flt((100 * (1 - depreciation_rate)), float_precision)
 
 
 def update_maintenance_status():
@@ -818,12 +818,9 @@ class DepreciationRow:
 		self.start_date = self.booking_date = None
 
 	def create(self):
-		if self.asset.allow_monthly_depreciation:
-			self.create_monthly_depreciation()
-		else:
-			self.create_yearly_depreciation()
+		self.create_depreciation()
 
-	def create_yearly_depreciation(self):
+	def create_depreciation(self):
 		self.asset.append(
 			"schedules",
 			{
@@ -834,53 +831,6 @@ class DepreciationRow:
 				"finance_book_id": self.schedule.finance_book.idx,
 			},
 		)
-
-	def create_monthly_depreciation(self):
-		self.months = abs(month_diff(self.schedule.booking_end_date, self.schedule.booking_start_date))
-		for month in range(self.months):
-			self.get_start_end_date(month)
-			self.get_monthly_amount()
-
-			self.asset.append(
-				"schedules",
-				{
-					"schedule_date": self.booking_date,
-					"depreciation_amount": self.monthly_depreciation_amount,
-					"depreciation_method": self.schedule.method,
-					"finance_book": self.schedule.finance_book.finance_book,
-					"finance_book_id": self.schedule.finance_book.idx,
-				},
-			)
-
-	def get_start_end_date(self, month):
-		self.start_date = add_months(self.schedule.booking_start_date, month)
-
-		if month == 0:
-			self.booking_date = get_last_day(add_months(self.start_date, month))
-		else:
-			self.booking_date = add_months(self.booking_date, 1)
-
-	def get_monthly_amount(self, month=None):
-		self.monthly_depreciation_amount = self.schedule.depreciation_amount / self.months
-
-		if month and month == 0:
-			self.monthly_depreciation_amount = (
-				self.monthly_depreciation_amount * self.get_pro_rata_coefficient()
-			)
-		elif month and month == (self.months - 1):
-			self.monthly_depreciation_amount = (
-				self.monthly_depreciation_amount * self.get_pro_rata_coefficient()
-			)
-
-	def get_pro_rata_coefficient(self):
-		if self.schedule.method == "Prorated Straight Line (360 Days)":
-			days = min((31 - cint(self.start_date.day)), 30) + min(cint(self.booking_date.day), 30)
-			total_days = 30
-		else:
-			total_days = monthrange(self.booking_date.year, self.booking_date.month)[0]
-			days = date_diff(add_days(self.booking_date, 1), self.start_date)
-
-		self.coefficient = min(flt(abs(days)) / flt(total_days), 1)
 
 
 class DepreciationSchedule:

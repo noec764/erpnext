@@ -36,7 +36,6 @@
   "available_for_use_date",
   "column_break_18",
   "calculate_depreciation",
-  "allow_monthly_depreciation",
   "opening_accumulated_depreciation",
   "number_of_depreciations_booked",
   "section_break_23",
@@ -467,13 +466,6 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "depends_on": "calculate_depreciation",
-   "fieldname": "allow_monthly_depreciation",
-   "fieldtype": "Check",
-   "label": "Allow Monthly Depreciation"
   }
  ],
  "idx": 72,
@@ -496,7 +488,7 @@
      "link_fieldname": "asset"
     }
    ],
- "modified": "2022-04-30 20:19:24.680027",
+ "modified": "2022-07-20 10:15:12.887372",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset",
