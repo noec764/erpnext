@@ -95,3 +95,5 @@ frappe.query_reports["Stock Ledger"] = {
 		return value;
 	}
 }
+
+erpnext.utils.add_inventory_dimensions('Stock Ledger', 10);
