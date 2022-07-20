@@ -75,9 +75,6 @@
 	"js/bank-reconciliation.min.js": [
 		"accounts/page/bank_reconciliation/bank_reconciliation_page/bank_reconciliation.js"
 	],
-	"js/resource-calendar.min.js": [
-		"hr/page/resource_planning_view/resource_calendar.js"
-	],
 	"js/e-commerce.min.js": [
 		"e_commerce/product_ui/views.js",
 		"e_commerce/product_ui/grid.js",

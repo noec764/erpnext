@@ -178,6 +178,11 @@ class TransactionBase(StatusUpdater):
 				)
 
 
+def delete_events(ref_type, ref_name):
+	# TODO: Implement this method for new event links behavior
+	pass
+
+
 def validate_uom_is_integer(doc, uom_field, qty_fields, child_dt=None):
 	if isinstance(qty_fields, str):
 		qty_fields = [qty_fields]

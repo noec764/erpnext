@@ -111,6 +111,7 @@
      {
       "depends_on": "employee",
       "fetch_from": "employee.employee_name",
+      "fieldname": "employee_name",
       "fieldtype": "Data",
       "in_global_search": 1,
       "label": "Employee Name",
