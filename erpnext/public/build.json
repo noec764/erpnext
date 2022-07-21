@@ -3,8 +3,7 @@
 		"public/less/erpnext.less",
 		"public/scss/call_popup.scss",
 		"public/scss/point-of-sale.scss",
-		"public/scss/hierarchy_chart.scss",
-		"public/scss/calendar_timeline.scss"
+		"public/scss/hierarchy_chart.scss"
 	],
 	"js/erpnext-web.min.js": [
 		"public/js/website_utils.js",

@@ -64,17 +64,18 @@ def execute():
 			else flt(purchase_invoice.base_paid_amount),
 		)
 
-	for expense_claim in frappe.get_all(
-		"Expense Claim",
-		filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]},
-		fields=["total_claimed_amount", "name"],
-	):
-		frappe.db.set_value(
+	if frappe.db.exists("DocType", "Expense Claim"):
+		for expense_claim in frappe.get_all(
 			"Expense Claim",
-			expense_claim.name,
-			"unreconciled_amount",
-			flt(expense_claim.total_claimed_amount),
-		)
+			filters={"docstatus": 1, "clearance_date": ["is", "not set"], "mode_of_payment": ["is", "set"]},
+			fields=["total_claimed_amount", "name"],
+		):
+			frappe.db.set_value(
+				"Expense Claim",
+				expense_claim.name,
+				"unreconciled_amount",
+				flt(expense_claim.total_claimed_amount),
+			)
 
 	for journal_entry in frappe.get_all(
 		"Journal Entry", filters={"docstatus": 1, "clearance_date": ["is", "not set"]}

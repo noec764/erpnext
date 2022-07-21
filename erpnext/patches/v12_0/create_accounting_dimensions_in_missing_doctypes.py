@@ -28,7 +28,6 @@ def execute():
 			"Subscription",
 			"Opening Invoice Creation Tool",
 			"Opening Invoice Creation Tool Item",
-			"Expense Claim Detail",
 			"Expense Taxes and Charges",
 		]:
 

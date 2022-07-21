@@ -18,7 +18,6 @@ doctype_series_map = {
 	"Driver": "HR-DRI-.YYYY.-",
 	"Employee": "HR-EMP-",
 	"Employee Advance": "HR-EAD-.YYYY.-",
-	"Expense Claim": "HR-EXP-.YYYY.-",
 	"Installation Note": "MAT-INS-.YYYY.-",
 	"Issue": "ISS-.YYYY.-",
 	"Journal Entry": "ACC-JV-.YYYY.-",
