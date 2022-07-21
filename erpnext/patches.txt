@@ -234,6 +234,7 @@ erpnext.patches.v13_0.disable_ksa_print_format_for_others # 16-12-2021
 erpnext.patches.v13_0.update_asset_quantity_field
 erpnext.patches.v13_0.enable_provisional_accounting
 erpnext.patches.v13_0.enable_ksa_vat_docs
+erpnext.patches.v13_0.reset_corrupt_defaults
 
 
 # Dokos
