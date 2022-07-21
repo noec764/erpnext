@@ -4,9 +4,10 @@
 frappe.ui.form.on('Bank Transaction', {
 	onload(frm) {
 		frm.set_query('payment_document', 'payment_entries', function() {
+			const payment_doctypes = frm.events.get_payment_doctypes(frm);
 			return {
-				"filters": {
-					"name": ["in", ["Payment Entry", "Journal Entry", "Sales Invoice", "Purchase Invoice", "Expense Claim"]]
+				filters: {
+					name: ["in", payment_doctypes],
 				}
 			};
 		});
@@ -69,6 +70,15 @@ frappe.ui.form.on('Bank Transaction', {
 	},
 	account_do_not_exist() {
 		frappe.throw(__("This bank account could not be found on the selected payment document"))
+	},
+	get_payment_doctypes() {
+		// get payment doctypes from all the apps
+		return [
+			"Payment Entry",
+			"Journal Entry",
+			"Sales Invoice",
+			"Purchase Invoice",
+		];
 	}
 });
 

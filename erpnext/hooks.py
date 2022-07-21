@@ -540,8 +540,6 @@ bank_reconciliation_doctypes = [
 	"Journal Entry",
 	"Purchase Invoice",
 	"Sales Invoice",
-	"Loan Repayment",
-	"Loan Disbursement",
 ]
 
 accounting_dimension_doctypes = [

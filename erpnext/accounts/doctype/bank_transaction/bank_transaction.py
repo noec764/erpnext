@@ -216,12 +216,7 @@ class BankTransaction(StatusUpdater):
 
 	def set_payment_entries_clearance_date(self, clear=False):
 		for payment_entry in self.payment_entries:
-			if payment_entry.payment_document in [
-				"Payment Entry",
-				"Journal Entry",
-				"Purchase Invoice",
-				"Expense Claim",
-			]:
+			if payment_entry.payment_document in get_doctypes_for_bank_reconciliation():
 				self.set_header_clearance_date(payment_entry, clear)
 
 			elif payment_entry.payment_document == "Sales Invoice":
@@ -245,6 +240,8 @@ class BankTransaction(StatusUpdater):
 
 	def check_payment_types(self):
 		for payment in self.payment_entries:
+			# Keep this for Expense claims unless we create a new hook
+			payment.payment_type = "Credit"
 			if payment.payment_document == "Sales Invoice":
 				payment.payment_type = (
 					"Debit"
@@ -275,8 +272,6 @@ class BankTransaction(StatusUpdater):
 					"debit_in_account_currency",
 				)
 				payment.payment_type = "Debit" if flt(debit_in_account_currency) > 0 else "Credit"
-			if payment.payment_document == "Expense Claim":
-				payment.payment_type = "Credit"
 
 	def calculate_totals(self):
 		self.total_debit = sum(
@@ -365,3 +360,9 @@ def make_payment_entry(transactions=None):
 			payment_entry.paid_from_account_currency = transactions[0]["currency"]
 
 		return payment_entry
+
+
+@frappe.whitelist()
+def get_doctypes_for_bank_reconciliation():
+	"""Get Bank Reconciliation doctypes from all the apps"""
+	return frappe.get_hooks("bank_reconciliation_doctypes")

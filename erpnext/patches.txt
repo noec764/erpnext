@@ -37,7 +37,6 @@ erpnext.patches.v11_0.move_item_defaults_to_child_table_for_multicompany #19-06-
 erpnext.patches.v11_0.rename_overproduction_percent_field
 erpnext.patches.v11_0.update_backflush_subcontract_rm_based_on_bom
 erpnext.patches.v11_0.rename_members_with_naming_series #04-06-2018
-erpnext.patches.v11_0.set_update_field_and_value_in_workflow_state
 erpnext.patches.v11_0.update_total_qty_field
 erpnext.patches.v11_0.update_sales_partner_type
 erpnext.patches.v11_0.rename_asset_adjustment_doctype
@@ -118,7 +117,6 @@ erpnext.patches.v12_0.update_price_or_product_discount
 erpnext.patches.v12_0.set_employee_preferred_emails
 erpnext.patches.v12_0.set_production_capacity_in_workstation
 erpnext.patches.v12_0.set_against_blanket_order_in_sales_and_purchase_order
-erpnext.patches.v12_0.set_cost_center_in_child_table_of_expense_claim
 erpnext.patches.v12_0.set_lead_title_field
 erpnext.patches.v12_0.set_permission_einvoicing
 erpnext.patches.v12_0.create_irs_1099_field_united_states

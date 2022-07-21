@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate, nowdate
+from frappe.utils import flt, getdate
 from frappe.utils.dateutils import parse_date
 
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
