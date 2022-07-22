@@ -2,7 +2,7 @@ stages:
   - Unit Tests
 
 unittests:
-  image: "python:3.9-buster"
+  image: "python:3.10-buster"
 
   stage: Unit Tests
 
@@ -26,7 +26,7 @@ unittests:
     - dpkg -i wkhtmltox_0.12.5-1.buster_i386.deb && rm wkhtmltox_0.12.5-1.buster_i386.deb
     - rm -rf /var/lib/apt/lists/*
     - rm -rf /etc/apt/sources.list.d/*
-    - curl -sL https://deb.nodesource.com/setup_14.x | bash
+    - curl -sL https://deb.nodesource.com/setup_16.x | bash
     - apt-get install -y nodejs
     - npm install --global yarn
     - mkdir -p apps
