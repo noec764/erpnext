@@ -558,7 +558,7 @@ def check_credit_limit(customer, company, ignore_outstanding_sales_order=False, 
 			)
 
 			message = _(
-				_("Please contact any of the following users to extend the credit limits for {0}: {1}")
+				"Please contact any of the following users to extend the credit limits for {0}: {1}"
 			).format(customer, user_list)
 
 			# if the current user does not have permissions to override credit limit,
