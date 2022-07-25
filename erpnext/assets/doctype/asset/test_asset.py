@@ -133,7 +133,7 @@ class TestAsset(AssetSetup):
 			order by account""",
 			pi.name,
 		)
-		self.assertEqual(gle, expected_gle)
+		self.assertSequenceEqual(gle, expected_gle)
 
 		pi.cancel()
 		asset.cancel()
@@ -208,7 +208,7 @@ class TestAsset(AssetSetup):
 			order by account""",
 			asset.journal_entry_for_scrap,
 		)
-		self.assertEqual(gle, expected_gle)
+		self.assertSequenceEqual(gle, expected_gle)
 
 		restore_asset(asset.name)
 
@@ -253,7 +253,7 @@ class TestAsset(AssetSetup):
 			si.name,
 		)
 
-		self.assertEqual(gle, expected_gle)
+		self.assertSequenceEqual(gle, expected_gle)
 
 		si.cancel()
 		self.assertEqual(frappe.db.get_value("Asset", asset.name, "status"), "Partially Depreciated")
@@ -330,7 +330,7 @@ class TestAsset(AssetSetup):
 			pi.name,
 		)
 
-		self.assertEqual(pi_gle, expected_gle)
+		self.assertSequenceEqual(pi_gle, expected_gle)
 
 		asset = frappe.db.get_value("Asset", {"purchase_receipt": pr.name, "docstatus": 0}, "name")
 
@@ -363,7 +363,7 @@ class TestAsset(AssetSetup):
 			asset_doc.name,
 		)
 
-		self.assertEqual(gle, expected_gle)
+		self.assertSequenceEqual(gle, expected_gle)
 
 	def test_asset_cwip_toggling_cases(self):
 		cwip = frappe.db.get_value("Asset Category", "Computers", "enable_cwip_accounting")
@@ -1237,7 +1237,7 @@ class TestDepreciationBasics(AssetSetup):
 			asset.name,
 		)
 
-		self.assertEqual(gle, expected_gle)
+		self.assertSequenceEqual(gle, expected_gle)
 		self.assertEqual(asset.get("value_after_depreciation"), 0)
 
 	def test_expected_value_change(self):
