@@ -375,11 +375,6 @@ frappe.tour["Company"] = [
 		description: __("Default account for payable entries. Will be associated with auxiliary accounts.")
 	},
 	{
-		fieldname: "default_employee_advance_account",
-		title: __("Default Employee Advance Account"),
-		description: __("Default account for advances to employees.")
-	},
-	{
 		fieldname: "default_expense_account",
 		title: __("Default Cost of Goods Sold Account"),
 		description: __("Default account for expenses booking. Should be overriden at item group or item level.")

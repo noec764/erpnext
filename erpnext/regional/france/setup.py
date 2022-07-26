@@ -125,7 +125,6 @@ def default_accounts_mapping(accounts, company):
 		"exchange_gain_loss_account": 666,
 		"unrealized_exchange_gain_loss_account": 686,
 		"default_payable_account": 401,
-		"default_employee_advance_account": 425,
 		"default_expense_account": 600,
 		"default_income_account": 706 if company.domain == "Services" else 701,
 		"default_deferred_revenue_account": 487,
