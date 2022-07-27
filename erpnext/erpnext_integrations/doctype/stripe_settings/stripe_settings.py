@@ -7,8 +7,9 @@ from urllib.parse import urlencode
 import frappe
 import stripe
 from frappe import _
-from frappe.integrations.utils import PaymentGatewayController, create_payment_gateway
+from frappe.integrations.utils import PaymentGatewayController
 from frappe.utils import call_hook_method, cint, flt, get_url, getdate, nowdate
+from payments.utils import create_payment_gateway
 
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 from erpnext.erpnext_integrations.doctype.stripe_settings.api import (
