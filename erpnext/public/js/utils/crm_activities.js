@@ -143,7 +143,8 @@ erpnext.utils.CRMNotes = class CRMNotes {
 						"label": "Note",
 						"fieldname": "note",
 						"fieldtype": "Text Editor",
-						"reqd": 1
+						"reqd": 1,
+						"enable_mentions": true,
 					}
 				],
 				primary_action: function() {
@@ -184,7 +185,8 @@ erpnext.utils.CRMNotes = class CRMNotes {
 						"label": "Note",
 						"fieldname": "note",
 						"fieldtype": "Text Editor",
-						"default": row_content
+						"default": row_content,
+						"enable_mentions": true,
 					}
 				],
 				primary_action: function() {
