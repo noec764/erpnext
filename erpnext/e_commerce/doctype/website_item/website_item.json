@@ -23,7 +23,6 @@
   "column_break_11",
   "description",
   "brand",
-  "image",
   "item_booking_section",
   "enabled_booking_uom",
   "display_section",
@@ -116,8 +115,11 @@
   {
    "description": "Item Image (if not slideshow)",
    "fieldname": "website_image",
-   "fieldtype": "Attach",
-   "label": "Website Image"
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "in_preview": 1,
+   "label": "Website Image",
+   "print_hide": 1
   },
   {
    "description": "Image Alternative Text",
@@ -190,14 +192,6 @@
    "label": "Item Group",
    "options": "Item Group",
    "read_only": 1
-  },
-  {
-   "fieldname": "image",
-   "fieldtype": "Attach Image",
-   "hidden": 1,
-   "in_preview": 1,
-   "label": "Image",
-   "print_hide": 1
   },
   {
    "default": "1",
@@ -373,10 +367,10 @@
   }
  ],
  "has_web_view": 1,
- "image_field": "image",
+ "image_field": "website_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-18 09:26:00.768112",
+ "modified": "2022-06-28 17:10:30.613251",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "Website Item",

@@ -36,10 +36,6 @@ frappe.ui.form.on('Website Item', {
 		}, __("View"));
 	},
 
-	image: () => {
-		refresh_field("image_view");
-	},
-
 	copy_from_item_group: (frm) => {
 		return frm.call({
 			doc: frm.doc,
