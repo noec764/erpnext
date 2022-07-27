@@ -7,9 +7,10 @@ from urllib.parse import urlencode
 import frappe
 import gocardless_pro
 from frappe import _
-from frappe.integrations.utils import PaymentGatewayController, create_payment_gateway
+from frappe.integrations.utils import PaymentGatewayController
 from frappe.utils import call_hook_method, cint, flt, get_url
 from gocardless_pro import errors
+from payments.utils import create_payment_gateway
 
 from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (
 	GoCardlessCustomers,
