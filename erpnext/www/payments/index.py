@@ -4,7 +4,6 @@
 
 import frappe
 from frappe import _
-from frappe.integrations.utils import get_payment_gateway_controller
 from frappe.utils import flt, fmt_money
 
 import erpnext

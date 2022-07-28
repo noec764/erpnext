@@ -144,7 +144,7 @@ class StripeSettings(PaymentGatewayController):
 					)
 				)
 			return stripe_plan
-		except stripe.error.InvalidRequestError as e:
+		except stripe.error.InvalidRequestError:
 			frappe.throw(_("Invalid Stripe plan or currency: {0} - {1}").format(plan, currency))
 
 	def get_stripe_invoice_item(self, item, currency):
@@ -157,7 +157,7 @@ class StripeSettings(PaymentGatewayController):
 					)
 				)
 			return invoice_item
-		except stripe.error.InvalidRequestError as e:
+		except stripe.error.InvalidRequestError:
 			frappe.throw(_("Invalid currency for invoice item: {0} - {1}").format(item, currency))
 
 	def validate_next_invoice_date(self, subscription):

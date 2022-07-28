@@ -76,8 +76,8 @@ def get_context(context):
 			)
 			else 0
 		)
-		context.payment_success_redirect = gateway_controller.redirect_url or "payment-success"
-		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "payment-failed"
+		context.payment_success_redirect = gateway_controller.redirect_url or "/payment-success"
+		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "/payment-failed"
 
 	elif not (set(expected_keys) - set(list(frappe.form_dict))):
 		for key in expected_keys:
@@ -89,8 +89,8 @@ def get_context(context):
 		context.publishable_key = get_api_key(gateway_controller)
 		context.image = gateway_controller.header_img
 		context.is_subscription = 0
-		context.payment_success_redirect = gateway_controller.redirect_url or "payment-success"
-		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "payment-failed"
+		context.payment_success_redirect = gateway_controller.redirect_url or "/payment-success"
+		context.payment_failure_redirect = gateway_controller.failure_redirect_url or "/payment-failed"
 		context.grand_total = context["amount"]
 		context.amount = fmt_money(amount=context["amount"], currency=context["currency"])
 

@@ -59,7 +59,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "payment-success",
+   "default": "/payment-success",
    "fieldname": "redirect_url",
    "fieldtype": "Data",
    "label": "Success redirect URL"
