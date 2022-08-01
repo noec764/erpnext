@@ -619,7 +619,6 @@ user_privacy_documents = [
 ]
 
 webhooks_handler = {
-	"Stripe": "erpnext.erpnext_integrations.doctype.stripe_settings.stripe_settings.handle_webhooks",
 	"GoCardless": "erpnext.erpnext_integrations.doctype.gocardless_settings.gocardless_settings.handle_webhooks",
 }
 

@@ -199,7 +199,7 @@ class Subscription(Document):
 
 	@frappe.whitelist()
 	def create_stripe_invoice_item(self, plan_details):
-		from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripeInvoiceItem
+		from payments.payment_gateways.doctype.stripe_settings.api import StripeInvoiceItem
 
 		plan = frappe.parse_json(plan_details)
 

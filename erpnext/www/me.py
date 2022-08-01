@@ -4,10 +4,10 @@
 import frappe
 import frappe.www.list
 from frappe import _
+from payments.payment_gateways.doctype.stripe_settings.api import StripePaymentMethod
+from payments.templates.pages.stripe_checkout import get_api_key
 
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
-from erpnext.erpnext_integrations.doctype.stripe_settings.api import StripePaymentMethod
-from erpnext.templates.pages.integrations.stripe_checkout import get_api_key
 from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
 
 no_cache = 1

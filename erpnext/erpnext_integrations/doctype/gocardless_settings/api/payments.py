@@ -1,6 +1,7 @@
-import frappe
-
-from erpnext.erpnext_integrations.idempotency import IdempotencyKey, handle_idempotency
+from payments.payment_gateways.doctype.stripe_settings.idempotency import (
+	IdempotencyKey,
+	handle_idempotency,
+)
 
 
 class GoCardlessPayments:

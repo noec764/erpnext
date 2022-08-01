@@ -1,10 +1,8 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
 import arrow
 import frappe
-from frappe import _
 from frappe.utils import getdate
 
 from erpnext.accounts.page.bank_reconciliation.bank_reconciliation import BankReconciliation
