@@ -748,7 +748,7 @@ def make_address(args, is_primary_address=1):
 	reqd_fields = []
 	for field in ["city", "country"]:
 		if not args.get(field):
-			reqd_fields.append("<li>" + field.title() + "</li>")
+			reqd_fields.append("<li>" + _(field.title()) + "</li>")
 
 	if reqd_fields:
 		msg = _("Following fields are mandatory to create address:")
