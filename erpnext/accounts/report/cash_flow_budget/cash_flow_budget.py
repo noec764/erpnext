@@ -68,7 +68,11 @@ class CashFlowBudget:
 		self.result.append({})
 		self.get_unreconciled_payment_entries()
 
+		# Journal Entries
+		self.get_repeated_journal_entries()
+
 		# Salaries
+		# TODO: Link with payroll
 
 		self.get_balances()
 		self.get_chart_data()
@@ -88,6 +92,7 @@ class CashFlowBudget:
 		self.receivables_report.get_data()
 		data = self.receivables_report.data
 		self.receivables = {"label": _("Receivables")}
+		details = []
 
 		self.voucher_dict = defaultdict(str)
 		for ple in self.receivables_report.ple_entries:
@@ -101,13 +106,17 @@ class CashFlowBudget:
 					d.get("due_date") or d.get("posting_date"),
 					self.get_average_payment_age(d.party, self.receivables_report),
 				)
+
 				if flt(d.outstanding) > 0:  # TODO: Maybe add a filter for this condition ?
 					if period.to_date >= getdate(due_date) >= period.from_date:
 						self.receivables[period.key] += flt(d.outstanding)
+						self.add_details(details, d.party, d.voucher_no, d.outstanding, period.key)
 					elif index == 0 and getdate(due_date) <= period.from_date:
 						self.receivables[period.key] += flt(d.outstanding)
+						self.add_details(details, d.party, d.voucher_no, d.outstanding, period.key)
 
 		self.result.append(self.receivables)
+		self.append_details_to_results(details)
 
 	def get_current_payables(self):
 		# get all the GL entries filtered by the given filters
@@ -122,6 +131,7 @@ class CashFlowBudget:
 		self.payables_report.get_data()
 		data = self.payables_report.data
 		self.payables = {"label": _("Payables")}
+		details = []
 
 		if not self.voucher_dict:
 			self.voucher_dict = defaultdict(str)
@@ -139,16 +149,56 @@ class CashFlowBudget:
 				if flt(d.outstanding) > 0:  # TODO: Maybe add a filter for this condition ?
 					if period.to_date >= getdate(due_date) >= period.from_date:
 						self.payables[period.key] -= flt(d.outstanding)
+						self.add_details(details, d.party, d.voucher_no, d.outstanding, period.key)
 					elif index == 0 and getdate(due_date) <= period.from_date:
 						self.payables[period.key] -= flt(d.outstanding)
+						self.add_details(details, d.party, d.voucher_no, d.outstanding, period.key)
 
 		self.result.append(self.payables)
+		self.append_details_to_results(details)
+
+	def add_details(self, details, party, voucher, amount, key):
+		details.append(
+			frappe._dict(
+				{
+					"party": party,
+					"voucher": voucher,
+					"indent": 1,
+					"details": 1,
+					key: flt(amount),
+				}
+			)
+		)
+
+	def append_details_to_results(self, details):
+		sorted_details = defaultdict(lambda: defaultdict())
+		for detail in sorted(details, key=lambda x: x["party"]):
+			for key, value in detail.items():
+				if key == "voucher" and value:
+					sorted_details[detail.party].setdefault("voucher", set()).add(value)
+				elif key not in ("voucher", "party", "indent", "details"):
+					sorted_details[detail.party].setdefault(key, 0.0)
+					sorted_details[detail.party][key] += flt(value)
+
+			sorted_details[detail.party]["indent"] = 1
+			sorted_details[detail.party]["details"] = 1
+
+		for party_detail, row in sorted_details.items():
+			vouchers = list(row.get("voucher", []))
+			voucher_name = (
+				f"<span class='text-muted small'>| {', '.join(vouchers)}</span>" if vouchers else ""
+			)
+			row["label"] = f"{party_detail} {voucher_name}"
+			self.result.append(row)
 
 	def get_average_payment_age(self, party, report):
 		ages = []
 		for ple in report.ple_entries:
 			if ple.voucher_type in ("Payment Entry", "Journal Entry") and ple.party == party:
-				ages.append(date_diff(ple.posting_date, self.voucher_dict.get(ple.against_voucher_no)))
+				# If no due date, consider the posting date as due date
+				ages.append(
+					date_diff(ple.posting_date, self.voucher_dict.get(ple.against_voucher_no) or ple.posting_date)
+				)
 
 		return sum(ages) / len(ages) if ages else 0
 
@@ -167,6 +217,7 @@ class CashFlowBudget:
 				"current_invoice_end",
 			],
 		)
+		details = []
 
 		self.subscriptions = {"label": _("Subscriptions")}
 		for subscription in subscriptions:
@@ -181,6 +232,9 @@ class CashFlowBudget:
 				)
 				if getdate(period.to_date) >= invoicing_date_with_delay >= getdate(period.from_date):
 					self.subscriptions[period.key] += flt(subscription.total)
+					self.add_details(
+						details, subscription.customer, subscription.name, flt(subscription.total), period.key
+					)
 
 				if getdate(period.to_date) >= next_invoicing_date >= getdate(period.from_date):
 					next_invoicing_date = add_to_date(
@@ -188,11 +242,13 @@ class CashFlowBudget:
 						**self.get_billing_cycle_data(
 							subscription.billing_interval,
 							subscription.billing_interval_count,
-						)
+						),
 					)
 
 		if len(self.subscriptions.keys()) > 1:
 			self.result.append(self.subscriptions)
+
+		self.append_details_to_results(details)
 
 	def get_billing_cycle_data(self, interval, interval_count):
 		data = {}
@@ -213,7 +269,6 @@ class CashFlowBudget:
 
 		return data
 
-
 	def get_revenue_from_auto_repeat(self):
 		self.get_data_from_auto_repeat("Sales Invoice")
 
@@ -222,15 +277,30 @@ class CashFlowBudget:
 
 	def get_data_from_auto_repeat(self, reference_doctype):
 		# TODO: Improve accuracy while taking performance into account
-		auto_repeat = frappe.get_all("Auto Repeat",
+		auto_repeat = frappe.get_all(
+			"Auto Repeat",
 			filters={"reference_doctype": reference_doctype, "disabled": 0},
-			fields=["reference_document", "next_schedule_date", "frequency", "repeat_on_day", "repeat_on_last_day"]
+			fields=[
+				"reference_document",
+				"next_schedule_date",
+				"frequency",
+				"repeat_on_day",
+				"repeat_on_last_day",
+			],
 		)
+		details = []
 
 		auto_repeat_data = {"label": _("Repeated Invoices")}
 		for doc in auto_repeat:
-			invoice = frappe.db.get_value(reference_doctype, doc.reference_document,
-				["supplier as party" if reference_doctype == "Purchase Invoice" else "customer as party", "base_grand_total"], as_dict=True)
+			invoice = frappe.db.get_value(
+				reference_doctype,
+				doc.reference_document,
+				[
+					"supplier as party" if reference_doctype == "Purchase Invoice" else "customer as party",
+					"base_grand_total",
+				],
+				as_dict=True,
+			)
 			next_schedule_date = doc.next_schedule_date
 			for period in self.period_list:
 				if period.key not in auto_repeat_data:
@@ -238,11 +308,17 @@ class CashFlowBudget:
 
 				invoicing_date_with_delay = add_days(
 					next_schedule_date,
-					self.get_average_payment_age(invoice.party, self.payables_report if reference_doctype == "Purchase Invoice" else self.receivables_report),
+					self.get_average_payment_age(
+						invoice.party,
+						self.payables_report if reference_doctype == "Purchase Invoice" else self.receivables_report,
+					),
 				)
 
 				if getdate(period.to_date) >= getdate(invoicing_date_with_delay) >= getdate(period.from_date):
 					auto_repeat_data[period.key] += flt(invoice.base_grand_total) * -1
+					self.add_details(
+						details, invoice.party, invoice.name, flt(invoice.base_grand_total), period.key
+					)
 
 				if getdate(period.to_date) >= getdate(next_schedule_date) >= getdate(period.from_date):
 					next_schedule_date = add_to_date(
@@ -250,11 +326,75 @@ class CashFlowBudget:
 						**self.get_billing_cycle_data(
 							doc.frequency,
 							1,
-						)
+						),
 					)
 
 		if len(auto_repeat_data.keys()) > 1:
 			self.result.append(auto_repeat_data)
+
+		self.append_details_to_results(details)
+
+	def get_repeated_journal_entries(self):
+		reference_doctype = "Journal Entry"
+		auto_repeat = frappe.get_all(
+			"Auto Repeat",
+			filters={"reference_doctype": reference_doctype, "disabled": 0},
+			fields=[
+				"reference_document",
+				"next_schedule_date",
+				"frequency",
+				"repeat_on_day",
+				"repeat_on_last_day",
+			],
+		)
+		details = []
+
+		party_types = {
+			p.name: p.account_type for p in frappe.get_all("Party Type", fields=["name", "account_type"])
+		}
+
+		auto_repeat_data = {"label": _("Repeated Journal Entries")}
+		for doc in auto_repeat:
+			je = frappe.get_doc(reference_doctype, doc.reference_document)
+			next_schedule_date = doc.next_schedule_date
+			for period in self.period_list:
+				if period.key not in auto_repeat_data:
+					auto_repeat_data[period.key] = 0.0
+
+				for line in je.accounts:
+					if line.party_type:
+						party_type = party_types.get(line.party_type)
+						invoicing_date_with_delay = add_days(
+							next_schedule_date,
+							self.get_average_payment_age(
+								line.party, self.payables_report if party_type == "Payable" else self.receivables_report
+							),
+						)
+
+						if (
+							getdate(period.to_date) >= getdate(invoicing_date_with_delay) >= getdate(period.from_date)
+						):
+							amount = flt(
+								line.credit_in_account_currency
+								if party_type == "Payable"
+								else line.debit_in_account_currency
+							)
+							auto_repeat_data[period.key] += amount * (-1 if party_type == "Payable" else 1)
+							self.add_details(details, line.party, doc.name, amount, period.key)
+
+				if getdate(period.to_date) >= getdate(next_schedule_date) >= getdate(period.from_date):
+					next_schedule_date = add_to_date(
+						next_schedule_date,
+						**self.get_billing_cycle_data(
+							doc.frequency,
+							1,
+						),
+					)
+
+		if len(auto_repeat_data.keys()) > 1:
+			self.result.append(auto_repeat_data)
+
+		self.append_details_to_results(details)
 
 	def get_unpaid_expense_claims(self):
 		ec = DocType("Expense Claim")
@@ -263,20 +403,23 @@ class CashFlowBudget:
 			frappe.qb.from_(gle)
 			.from_(ec)
 			.select(
+				ec.name,
+				ec.employee,
 				(functions.Sum(gle.credit) - functions.Sum(gle.debit)).as_("outstanding_amt"),
-				ec.posting_date
+				ec.posting_date,
 			)
 			.where(
 				(gle.party.isnotnull())
-				&(gle.against_voucher_type == "Expense Claim")
-				&(gle.against_voucher == ec.name)
-				&(ec.docstatus == 1)
-				&(ec.is_paid == 0)
+				& (gle.against_voucher_type == "Expense Claim")
+				& (gle.against_voucher == ec.name)
+				& (ec.docstatus == 1)
+				& (ec.is_paid == 0)
 			)
 			.groupby(ec.name)
 			.having(functions.Sum(gle.credit) - functions.Sum(gle.debit) > 0)
 			.run(as_dict=True)
 		)
+		details = []
 
 		self.expense_claims = {"label": _("Expense Claims")}
 		for expense_claim in unpaid_exp_claims:
@@ -284,19 +427,32 @@ class CashFlowBudget:
 				if period.key not in self.expense_claims:
 					self.expense_claims[period.key] = 0.0
 
-				if getdate(expense_claim.posting_date) < getdate(period.from_date) or getdate(period.to_date) >= getdate(expense_claim.posting_date) >= getdate(period.from_date):
+				if getdate(expense_claim.posting_date) < getdate(period.from_date) or getdate(
+					period.to_date
+				) >= getdate(expense_claim.posting_date) >= getdate(period.from_date):
 					self.expense_claims[period.key] += flt(expense_claim.outstanding_amt) * -1
+					self.add_details(
+						details,
+						expense_claim.employee,
+						expense_claim.name,
+						flt(expense_claim.outstanding_amt),
+						period.key,
+					)
 					break
 
 		if len(self.expense_claims.keys()) > 1:
 			self.result.append(self.expense_claims)
 
+		self.append_details_to_results(details)
+
 	def get_unreconciled_payment_entries(self):
 		# TODO: Take into account a delay by payment method
-		payments = frappe.get_all("Payment Entry",
+		payments = frappe.get_all(
+			"Payment Entry",
 			filters={"unreconciled_amount": (">=", 0.0), "docstatus": 1},
-			fields=["posting_date", "unreconciled_amount", "payment_type"]
+			fields=["posting_date", "unreconciled_amount", "payment_type", "party", "name"],
 		)
+		details = []
 
 		self.unreconciled_payments = {"label": _("Unreconciled Payments")}
 		for payment in payments:
@@ -304,12 +460,22 @@ class CashFlowBudget:
 				if period.key not in self.unreconciled_payments:
 					self.unreconciled_payments[period.key] = 0.0
 
-				if getdate(payment.posting_date) < getdate(period.from_date) or getdate(period.to_date) >= getdate(payment.posting_date) >= getdate(period.from_date):
-					self.unreconciled_payments[period.key] += flt(payment.unreconciled_amount) * (-1 if payment.payment_type == "Pay" else 1)
-					break
+				if getdate(payment.posting_date) < getdate(period.from_date) or getdate(
+					period.to_date
+				) >= getdate(payment.posting_date) >= getdate(period.from_date):
+					if flt(payment.unreconciled_amount) > 0:
+						self.unreconciled_payments[period.key] += flt(payment.unreconciled_amount) * (
+							-1 if payment.payment_type == "Pay" else 1
+						)
+						self.add_details(
+							details, payment.party, payment.name, flt(payment.unreconciled_amount), period.key
+						)
+						break
 
 		if len(self.unreconciled_payments.keys()) > 1:
 			self.result.append(self.unreconciled_payments)
+
+		self.append_details_to_results(details)
 
 	def get_initial_bank_balance(self):
 		bt = DocType("Bank Transaction")
@@ -334,7 +500,7 @@ class CashFlowBudget:
 		initial_balance = self.result[0]
 		balance_row = {"label": _("Balance")}
 
-		for row in self.result:
+		for row in [r for r in self.result if not r.get("details")]:
 			for period in self.period_list:
 				if period.key not in balance_row:
 					balance_row[period.key] = 0.0

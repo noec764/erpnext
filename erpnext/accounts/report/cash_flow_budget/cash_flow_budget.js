@@ -3,9 +3,10 @@
 /* eslint-disable */
 
 frappe.query_reports["Cash Flow Budget"] = {
+	"collapse_all_rows": 1,
 	"filters": [
 		{
-			"fieldname":"company",
+			"fieldname": "company",
 			"label": __("Company"),
 			"fieldtype": "Link",
 			"options": "Company",
@@ -13,12 +14,12 @@ frappe.query_reports["Cash Flow Budget"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname":"bank_account",
+			"fieldname": "bank_account",
 			"label": __("Bank Account"),
 			"fieldtype": "Link",
 			"options": "Bank Account",
 			"default": frappe.boot.sysdefaults.default_bank_account_name,
-			"get_query": function() {
+			"get_query": function () {
 				var company = frappe.query_report.get_filter_value('company')
 				return {
 					filters: {
@@ -29,29 +30,15 @@ frappe.query_reports["Cash Flow Budget"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname":"period_end_date",
+			"fieldname": "period_end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",
-			"default": frappe.datetime.add_days(frappe.datetime.add_months(frappe.datetime.month_start(), 3), -1),
+			"default": frappe.datetime.add_days(frappe.datetime.add_months(frappe.datetime.month_start(), 6), -1),
 			"reqd": 1,
 			"min_date": frappe.datetime.now_date(true)
 		},
-		// {
-		// 	"fieldname": "periodicity",
-		// 	"label": __("Periodicity"),
-		// 	"fieldtype": "Select",
-		// 	"options": [
-		// 		{ "value": "Monthly", "label": __("Monthly") },
-		// 		{ "value": "Quarterly", "label": __("Quarterly") },
-		// 		{ "value": "Half-Yearly", "label": __("Half-Yearly") },
-		// 		{ "value": "Yearly", "label": __("Yearly") }
-		// 	],
-		// 	"default": "Monthly",
-		// 	"reqd": 1,
-		// 	"hidden": 1
-		// },
 	],
-	"formatter": function(value, row, column, data, default_formatter) {
+	"formatter": function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 
 		if (column && column.fieldname == "label") {
@@ -63,5 +50,5 @@ frappe.query_reports["Cash Flow Budget"] = {
 		}
 
 		return value;
-	},
+	}
 };
