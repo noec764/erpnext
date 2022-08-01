@@ -33,34 +33,6 @@ def execute():
 				options="Salary Component",
 				insert_after="hra_column_break",
 			),
-			dict(
-				fieldname="non_profit_section",
-				label="Non Profit Settings",
-				fieldtype="Section Break",
-				insert_after="arrear_component",
-				collapsible=1,
-			),
-			dict(
-				fieldname="company_80g_number",
-				label="80G Number",
-				fieldtype="Data",
-				insert_after="non_profit_section",
-			),
-			dict(
-				fieldname="with_effect_from",
-				label="80G With Effect From",
-				fieldtype="Date",
-				insert_after="company_80g_number",
-			),
-			dict(
-				fieldname="non_profit_column_break", fieldtype="Column Break", insert_after="with_effect_from"
-			),
-			dict(
-				fieldname="pan_details",
-				label="PAN Number",
-				fieldtype="Data",
-				insert_after="non_profit_column_break",
-			),
 		]
 	}
 
