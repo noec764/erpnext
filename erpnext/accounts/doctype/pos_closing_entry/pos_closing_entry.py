@@ -1,9 +1,6 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
-import json
-
 import frappe
 from frappe import _
 from frappe.utils import flt, get_datetime
@@ -13,7 +10,6 @@ from erpnext.accounts.doctype.pos_invoice_merge_log.pos_invoice_merge_log import
 	unconsolidate_pos_invoices,
 )
 from erpnext.controllers.status_updater import StatusUpdater
-from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
 
 
 class POSClosingEntry(StatusUpdater):

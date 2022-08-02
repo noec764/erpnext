@@ -38,7 +38,7 @@ def update_itemised_tax_data(doc):
 	if not doc.taxes:
 		return
 
-	itemised_tax = get_itemised_tax(doc.taxes, True, True)
+	itemised_tax = get_itemised_tax(doc.taxes, True)
 
 	# Remove non tax fees
 	tax_accounts = set(
@@ -55,11 +55,9 @@ def update_itemised_tax_data(doc):
 				valid_itemised_tax[item][tax] = itemised_tax[item][tax]
 
 	for row in doc.items:
-		if row.tax_rate:
-			continue
-
 		tax_rate = 0.0
 		item_tax_rate = 0.0
+		item_specific_rates = []
 
 		if row.item_tax_rate:
 			item_tax_rate = frappe.parse_json(row.item_tax_rate)
@@ -81,17 +79,27 @@ def update_itemised_tax_data(doc):
 					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
 				]
 			)
-			item_tax_rate = json.dumps(
-				[
-					{"account": tax.get("tax_account"), "rate": tax.get("tax_rate", 0)}
-					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
-				]
-			)
-			frappe.db.set_value(row.doctype, row.name, "item_tax_rate", item_tax_rate)
 
 		row_tax_rate = flt(tax_rate, row.precision("tax_rate"))
+		row.tax_rate = row_tax_rate
 		frappe.db.set_value(row.doctype, row.name, "tax_rate", row_tax_rate)
-		row_tax_amount = flt((row.net_amount * tax_rate) / 100, row.precision("net_amount"))
+		row_tax_amount = flt((row.base_net_amount * tax_rate) / 100, row.precision("base_net_amount"))
+		row.tax_amount = row_tax_amount
 		frappe.db.set_value(row.doctype, row.name, "tax_amount", row_tax_amount)
-		row_total_amount = flt((row.net_amount + row.tax_amount), row.precision("total_amount"))
+		row_total_amount = flt((row.base_net_amount + row.tax_amount), row.precision("total_amount"))
+		row.total_amount = row_total_amount
 		frappe.db.set_value(row.doctype, row.name, "total_amount", row_total_amount)
+
+		item_tax_rate = json.dumps(
+			[
+				{
+					"account": tax.get("tax_account"),
+					"rate": tax.get("tax_rate", 0),
+					"taxable_amount": row.get("base_net_amount"),
+					"tax_amount": row.get("tax_amount"),
+				}
+				for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
+			]
+		)
+		row.item_tax_rate = item_tax_rate
+		frappe.db.set_value(row.doctype, row.name, "item_tax_rate", item_tax_rate)

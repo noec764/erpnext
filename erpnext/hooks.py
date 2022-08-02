@@ -585,6 +585,7 @@ regional_overrides = {
 	"France": {
 		"erpnext.accounts.report.balance_sheet.balance_sheet.execute": "erpnext.regional.france.report.balance_sheet.balance_sheet.execute",
 		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.france.taxes.update_itemised_tax_data",
+		"erpnext.controllers.taxes_and_totals.get_itemised_tax": "erpnext.regional.france.taxes.get_itemised_tax",
 	},
 	"United Arab Emirates": {
 		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data",

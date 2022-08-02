@@ -3,14 +3,12 @@ import json
 import frappe
 from frappe.utils import flt
 
-from erpnext.controllers.taxes_and_totals import get_itemised_tax
-
 
 def update_itemised_tax_data(doc):
 	if not doc.taxes:
 		return
 
-	itemised_tax = get_itemised_tax(doc.taxes, True, True)
+	itemised_tax = get_itemised_tax(doc.taxes, True)
 
 	# Remove non tax fees
 	tax_accounts = set(
@@ -44,22 +42,66 @@ def update_itemised_tax_data(doc):
 				for tax in valid_itemised_tax.get(row.item_code).items()
 				if flt(tax[1].get("form_rate", 0)) != 0.0
 			]
+
 			tax_rate = sum(
 				[
 					tax.get("tax_rate", 0)
 					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
 				]
 			)
-			row.item_tax_rate = json.dumps(
-				[
-					{"account": tax.get("tax_account"), "rate": tax.get("tax_rate", 0)}
-					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
-				]
-			)
 
 		meta = frappe.get_meta(row.doctype)
-
 		if meta.has_field("tax_rate"):
 			row.tax_rate = flt(tax_rate, row.precision("tax_rate"))
-			row.tax_amount = flt((row.net_amount * tax_rate) / 100, row.precision("net_amount"))
-			row.total_amount = flt((row.net_amount + row.tax_amount), row.precision("total_amount"))
+			row.tax_amount = flt((row.base_net_amount * tax_rate) / 100, row.precision("base_net_amount"))
+			row.total_amount = flt((row.base_net_amount + row.tax_amount), row.precision("total_amount"))
+
+		row.item_tax_rate = json.dumps(
+			[
+				{
+					"account": tax.get("tax_account"),
+					"rate": tax.get("tax_rate", 0),
+					"taxable_amount": row.get("base_net_amount"),
+					"tax_amount": row.get("tax_amount"),
+				}
+				for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
+			]
+		)
+
+
+def get_itemised_tax(taxes, with_tax_account=False):
+	itemised_tax = {}
+	for tax in taxes:
+		if getattr(tax, "category", None) and tax.category == "Valuation":
+			continue
+
+		item_tax_map = json.loads(tax.item_wise_tax_detail) if tax.item_wise_tax_detail else {}
+		if item_tax_map:
+			for item_code, tax_data in item_tax_map.items():
+				itemised_tax.setdefault(item_code, frappe._dict())
+
+				tax_rate = 0.0
+				tax_amount = 0.0
+
+				if isinstance(tax_data, list):
+					tax_rate = flt(tax_data[0])
+					tax_amount = flt(tax_data[1])
+				else:
+					tax_rate = flt(tax_data)
+
+				if not tax_rate and tax_amount:
+					tax_rate = flt(frappe.db.get_value("Account", tax.account_head, "tax_rate"))
+
+				itemised_tax[item_code][tax.description] = frappe._dict(
+					dict(
+						tax_rate=tax_rate,
+						tax_amount=tax_amount,
+						add_deduct_tax=tax.get("add_deduct_tax"),
+						form_rate=tax.rate,
+					)
+				)
+
+				if with_tax_account:
+					itemised_tax[item_code][tax.description].tax_account = tax.account_head
+
+	return itemised_tax

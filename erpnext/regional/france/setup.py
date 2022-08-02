@@ -24,7 +24,7 @@ def make_custom_fields(update=True):
 			fieldname="tax_details_section",
 			label="Tax Details",
 			fieldtype="Section Break",
-			insert_after="delivered_by_supplier",
+			insert_after="cost_center",
 			print_hide=1,
 		),
 		dict(
@@ -42,7 +42,7 @@ def make_custom_fields(update=True):
 			insert_after="tax_rate",
 			print_hide=1,
 			read_only=1,
-			options="currency",
+			options="Company:company:default_currency",
 		),
 		dict(
 			fieldname="total_amount",
@@ -51,7 +51,7 @@ def make_custom_fields(update=True):
 			insert_after="tax_amount",
 			print_hide=1,
 			read_only=1,
-			options="currency",
+			options="Company:company:default_currency",
 		),
 	]
 

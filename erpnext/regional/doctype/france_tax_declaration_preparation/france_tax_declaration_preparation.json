@@ -1,0 +1,233 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "beta": 1,
+ "creation": "2022-08-01 16:21:17.832372",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "company",
+  "column_break_2",
+  "date",
+  "deductible_vat_section",
+  "get_deductible_vat",
+  "deductible_vat",
+  "section_break_7",
+  "deductible_taxable_amount",
+  "column_break_9",
+  "deductible_tax_amount",
+  "section_break_11",
+  "deductible_tax_details",
+  "deductible_details",
+  "collected_vat_section",
+  "get_collected_vat",
+  "collected_vat",
+  "section_break_16",
+  "collected_taxable_amount",
+  "column_break_18",
+  "collected_tax_amount",
+  "section_break_20",
+  "collected_tax_details",
+  "collected_details",
+  "summary_tab",
+  "summary",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "France Tax Declaration Preparation",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "deductible_vat_section",
+   "fieldtype": "Tab Break",
+   "label": "Deductible VAT "
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "collected_vat_section",
+   "fieldtype": "Tab Break",
+   "label": "Collected VAT"
+  },
+  {
+   "fieldname": "get_deductible_vat",
+   "fieldtype": "Button",
+   "label": "Get Deductible VAT"
+  },
+  {
+   "fieldname": "deductible_vat",
+   "fieldtype": "Table",
+   "label": "Deductible VAT",
+   "options": "France Tax Declaration Preparation Details"
+  },
+  {
+   "fieldname": "get_collected_vat",
+   "fieldtype": "Button",
+   "label": "Get Collected VAT"
+  },
+  {
+   "fieldname": "collected_vat",
+   "fieldtype": "Table",
+   "label": "Collected VAT Data",
+   "options": "France Tax Declaration Preparation Details"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Maximum Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "fieldname": "deductible_taxable_amount",
+   "fieldtype": "Currency",
+   "label": "Taxable Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "deductible_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Tax Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "deductible_details",
+   "fieldtype": "HTML",
+   "label": "Details"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "default": "TVA-.YYYY.-.MM.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "TVA-.YYYY.-.MM.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "summary_tab",
+   "fieldtype": "Tab Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "deductible_tax_details",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "label": "Tax Details"
+  },
+  {
+   "fieldname": "collected_taxable_amount",
+   "fieldtype": "Currency",
+   "label": "Taxable Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "collected_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Tax Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "collected_tax_details",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "label": "Tax Details"
+  },
+  {
+   "fieldname": "collected_details",
+   "fieldtype": "HTML",
+   "label": "Details"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "HTML"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2022-08-02 15:49:31.646644",
+ "modified_by": "Administrator",
+ "module": "Regional",
+ "name": "France Tax Declaration Preparation",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title"
+}
