@@ -41,9 +41,6 @@ class LoanDisbursement(AccountsController):
 		if not self.posting_date:
 			self.posting_date = self.disbursement_date or nowdate()
 
-		if not self.bank_account and self.applicant_type == "Customer":
-			self.bank_account = frappe.db.get_value("Customer", self.applicant, "default_bank_account")
-
 	def validate_disbursal_amount(self):
 		possible_disbursal_amount = get_disbursal_amount(self.against_loan)
 
@@ -134,13 +131,12 @@ class LoanDisbursement(AccountsController):
 
 	def make_gl_entries(self, cancel=0, adv_adj=0):
 		gle_map = []
-		loan_details = frappe.get_doc("Loan", self.against_loan)
 
 		gle_map.append(
 			self.get_gl_dict(
 				{
-					"account": loan_details.loan_account,
-					"against": loan_details.disbursement_account,
+					"account": self.loan_account,
+					"against": self.disbursement_account,
 					"debit": self.disbursed_amount,
 					"debit_in_account_currency": self.disbursed_amount,
 					"against_voucher_type": "Loan",
@@ -157,8 +153,8 @@ class LoanDisbursement(AccountsController):
 		gle_map.append(
 			self.get_gl_dict(
 				{
-					"account": loan_details.disbursement_account,
-					"against": loan_details.loan_account,
+					"account": self.disbursement_account,
+					"against": self.loan_account,
 					"credit": self.disbursed_amount,
 					"credit_in_account_currency": self.disbursed_amount,
 					"against_voucher_type": "Loan",
@@ -213,6 +209,9 @@ def get_disbursal_amount(loan, on_current_security_price=0):
 			"loan_amount",
 			"disbursed_amount",
 			"total_payment",
+			"debit_adjustment_amount",
+			"credit_adjustment_amount",
+			"refund_amount",
 			"total_principal_paid",
 			"total_interest_payable",
 			"status",
