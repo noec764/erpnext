@@ -843,7 +843,13 @@ def get_held_invoices(party_type, party):
 
 
 def get_outstanding_invoices(
-	party_type, party, account, common_filter=None, min_outstanding=None, max_outstanding=None
+	party_type,
+	party,
+	account,
+	common_filter=None,
+	posting_date=None,
+	min_outstanding=None,
+	max_outstanding=None,
 ):
 
 	ple = qb.DocType("Payment Ledger Entry")
@@ -870,6 +876,7 @@ def get_outstanding_invoices(
 	ple_query = QueryPaymentLedger()
 	invoice_list = ple_query.get_voucher_outstandings(
 		common_filter=common_filter,
+		posting_date=posting_date,
 		min_outstanding=min_outstanding,
 		max_outstanding=max_outstanding,
 		get_invoices=True,
@@ -1536,6 +1543,7 @@ class QueryPaymentLedger(object):
 		# query filters
 		self.vouchers = []
 		self.common_filter = []
+		self.voucher_posting_date = []
 		self.min_outstanding = None
 		self.max_outstanding = None
 
@@ -1606,6 +1614,7 @@ class QueryPaymentLedger(object):
 			.where(ple.delinked == 0)
 			.where(Criterion.all(filter_on_voucher_no))
 			.where(Criterion.all(self.common_filter))
+			.where(Criterion.all(self.voucher_posting_date))
 			.groupby(ple.voucher_type, ple.voucher_no, ple.party_type, ple.party)
 		)
 
@@ -1687,6 +1696,7 @@ class QueryPaymentLedger(object):
 		self,
 		vouchers=None,
 		common_filter=None,
+		posting_date=None,
 		min_outstanding=None,
 		max_outstanding=None,
 		get_payments=False,
@@ -1705,6 +1715,7 @@ class QueryPaymentLedger(object):
 		self.reset()
 		self.vouchers = vouchers
 		self.common_filter = common_filter or []
+		self.voucher_posting_date = posting_date or []
 		self.min_outstanding = min_outstanding
 		self.max_outstanding = max_outstanding
 		self.get_payments = get_payments
