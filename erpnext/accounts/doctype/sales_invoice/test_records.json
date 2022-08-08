@@ -406,6 +406,7 @@
     "customer": "_Test Customer",
     "customer_name": "_Test Customer",
     "doctype": "Sales Invoice",
+    "debit_to": "_Test Down Payment - _TC",
     "is_down_payment_invoice": 1,
     "items": [
      {

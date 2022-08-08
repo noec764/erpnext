@@ -10,7 +10,6 @@ from frappe.model.document import Document
 from frappe.utils import add_days, flt, get_datetime, get_time, get_url, nowtime, today
 
 from erpnext import get_default_company
-from erpnext.controllers.employee_boarding_controller import update_employee_boarding_status
 from erpnext.controllers.queries import get_filters_cond
 from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
 
@@ -43,7 +42,6 @@ class Project(Document):
 		self.send_welcome_email()
 		self.update_costing()
 		self.update_percent_complete()
-		update_employee_boarding_status(self)
 
 	def copy_from_template(self):
 		"""
@@ -106,7 +104,7 @@ class Project(Document):
 
 	def dependency_mapping(self, template_tasks, project_tasks):
 		for template_task in template_tasks:
-			project_task = list(filter(lambda x: x.subject == template_task.subject, project_tasks))[0]
+			project_task = [x for x in project_tasks if x.subject == template_task.subject][0]
 			project_task = frappe.get_doc("Task", project_task.name)
 			self.check_depends_on_value(template_task, project_task, project_tasks)
 			self.check_for_parent_tasks(template_task, project_task, project_tasks)
@@ -115,9 +113,7 @@ class Project(Document):
 		if template_task.get("depends_on") and not project_task.get("depends_on"):
 			for child_task in template_task.get("depends_on"):
 				child_task_subject = frappe.db.get_value("Task", child_task.task, "subject")
-				corresponding_project_task = list(
-					filter(lambda x: x.subject == child_task_subject, project_tasks)
-				)
+				corresponding_project_task = [x for x in project_tasks if x.subject == child_task_subject]
 				if len(corresponding_project_task):
 					project_task.append("depends_on", {"task": corresponding_project_task[0].name})
 					project_task.save()
@@ -125,9 +121,7 @@ class Project(Document):
 	def check_for_parent_tasks(self, template_task, project_task, project_tasks):
 		if template_task.get("parent_task") and not project_task.get("parent_task"):
 			parent_task_subject = frappe.db.get_value("Task", template_task.get("parent_task"), "subject")
-			corresponding_project_task = list(
-				filter(lambda x: x.subject == parent_task_subject, project_tasks)
-			)
+			corresponding_project_task = [x for x in project_tasks if x.subject == parent_task_subject]
 			if len(corresponding_project_task):
 				project_task.parent_task = corresponding_project_task[0].name
 				project_task.save()
@@ -145,7 +139,6 @@ class Project(Document):
 	def update_project(self):
 		"""Called externally by Task"""
 		self.update_percent_complete()
-		update_employee_boarding_status(self)
 		self.update_costing()
 		self.db_update()
 
