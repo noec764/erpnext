@@ -29,16 +29,16 @@ class TestFiscalYear(unittest.TestCase):
 
 
 def test_record_generator():
-	test_records = [
-		{
-			"doctype": "Fiscal Year",
-			"year": "_Test Short Fiscal Year 2011",
-			"is_short_year": 1,
-			"year_end_date": "2011-04-01",
-			"year_start_date": "2011-12-31",
-		}
-	]
-
+	# test_records = [
+	# 	{
+	# 		"doctype": "Fiscal Year",
+	# 		"year": "_Test Short Fiscal Year 2011",
+	# 		"is_short_year": 1,
+	# 		"year_end_date": "2011-04-01",
+	# 		"year_start_date": "2011-12-31",
+	# 	}
+	# ]
+	test_records = []
 	start = 2012
 	end = now_datetime().year + 5
 	for year in range(start, end):
