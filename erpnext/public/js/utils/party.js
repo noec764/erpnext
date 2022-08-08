@@ -41,6 +41,7 @@ erpnext.utils.get_party_details = function(frm, method, args, callback) {
 					party_type: 'Customer'
 				};
 			}
+
 			if (in_list(PURCHASE_DOCTYPES, frm.doc.doctype)) {
 				args = {
 					party: frm.doc.supplier,
@@ -49,15 +50,7 @@ erpnext.utils.get_party_details = function(frm, method, args, callback) {
 			}
 		}
 
-		if (in_list(['Purchase Invoice', 'Purchase Order', 'Purchase Receipt'], frm.doc.doctype)) {
-			if (!args) {
-				args = {
-					party: frm.doc.supplier,
-					party_type: 'Supplier'
-				}
-			}
-
-			if (!args || !args.party) return;
+		if (!args || !args.party) return;
 
 		args.posting_date = frm.doc.posting_date || frm.doc.transaction_date;
 		args.fetch_payment_terms_template = cint(!frm.doc.ignore_default_payment_terms_template);
@@ -78,6 +71,7 @@ erpnext.utils.get_party_details = function(frm, method, args, callback) {
 			args.shipping_address = frm.doc.shipping_address;
 		}
 	}
+
 
 	if (frappe.meta.get_docfield(frm.doc.doctype, "taxes")) {
 		if (!erpnext.utils.validate_mandatory(frm, "Posting / Transaction Date",
