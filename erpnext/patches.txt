@@ -233,6 +233,7 @@ erpnext.patches.v13_0.update_asset_quantity_field
 erpnext.patches.v13_0.enable_provisional_accounting
 erpnext.patches.v13_0.enable_ksa_vat_docs
 erpnext.patches.v13_0.reset_corrupt_defaults
+erpnext.patches.v13_0.create_accounting_dimensions_for_asset_repair
 
 
 # Dokos
