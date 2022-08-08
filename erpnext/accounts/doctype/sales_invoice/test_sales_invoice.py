@@ -50,6 +50,7 @@ class TestSalesInvoice(unittest.TestCase):
 	@classmethod
 	def tearDownClass(self):
 		unlink_payment_on_cancel_of_invoice(0)
+		frappe.db.set_value("Accounts Settings", None, "acc_frozen_upto", None)
 
 	def test_timestamp_change(self):
 		w = frappe.copy_doc(test_records[0])

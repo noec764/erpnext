@@ -1,9 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
 import frappe
-from dateutil.parser import parse
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import (
@@ -102,7 +100,7 @@ def get_default_holiday_list():
 def check_if_within_operating_hours(workstation, operation, from_datetime, to_datetime):
 	if from_datetime and to_datetime:
 		if not cint(
-			frappe.db.get_value("Manufacturing Settings", "None", "allow_production_on_holidays")
+			frappe.db.get_single_value("Manufacturing Settings", "allow_production_on_holidays")
 		):
 			check_workstation_for_holiday(workstation, from_datetime, to_datetime)
 
