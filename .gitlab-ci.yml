@@ -20,35 +20,36 @@ unittests:
     MYSQL_DATABASE: "test_dodock"
     MYSQL_ROOT_PASSWORD: "test_dodock"
 
-  script:
+  before_script:
     - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-suggests --no-install-recommends mariadb-client
-    - wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_i386.deb
+    - export LANG=C.UTF-8
+    - export LC_ALL=C.UTF-8
+    - export LANGUAGE=en_US.UTF-8
     - dpkg -i wkhtmltox_0.12.5-1.buster_i386.deb && rm wkhtmltox_0.12.5-1.buster_i386.deb
     - rm -rf /var/lib/apt/lists/*
     - rm -rf /etc/apt/sources.list.d/*
     - curl -sL https://deb.nodesource.com/setup_16.x | bash
     - apt-get install -y nodejs
     - npm install --global yarn
-    - mkdir -p apps
-    - mkdir -p apps/frappe
-    - git clone -b $CI_COMMIT_REF_NAME --depth 1 https://gitlab.com/dokos/dodock apps/frappe || git clone -b ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master} --depth 1 https://gitlab.com/dokos/dodock apps/frappe
-    - mkdir -p apps/erpnext
-    - mv -f * apps/erpnext/ || true
-    - mkdir -p sites logs && echo "frappe" > sites/apps.txt && echo "erpnext" >> sites/apps.txt
-    - mkdir -p ../logs
-    - mkdir sites/test_site
-    - cp -r apps/frappe/test_sites/test_site/site_config.json sites/test_site/
-    - mkdir -p test_site/logs
-    - mkdir -p sites/assets
-    - python -m venv env
-    - . env/bin/activate
-    - pip3 install --upgrade pip
-    - pip3 install --no-cache-dir -e apps/frappe/
-    - pip3 install --no-cache-dir -e apps/erpnext/
-    - cd apps/frappe
-    - yarn install
-    - cd ../erpnext
-    - yarn install
-    - cd ../../
-    - python apps/frappe/test_sites/test_installer.py || true
-    - python apps/frappe/test_sites/test_runner.py
+    - export PATH=$PATH:/home/dokotest/.local/bin
+    - adduser --disabled-password --gecos "" dokotest
+    - usermod -aG sudo dokotest
+    - echo 'dokotest ALL=(ALL)  NOPASSWD:ALL' >> /etc/sudoers
+    - su -c "pip install dokos-cli" dokotest
+    - su -c "cd /home/dokotest && bench init dokos-bench --no-backups --skip-redis-config-generation --skip-assets" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench get-app https://gitlab.com/dokos/payments.git" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench get-app /builds/dokos/dokos/" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench config set-common-config -c redis_queue redis://redis_queue:6379 -c redis_cache redis://redis_cache:6379 -c redis_socketio redis://redis_socketio:6379" dokotest
+    - su -c "cp -r /home/dokotest/dokos-bench/apps/frappe/test_sites/test_site /home/dokotest/dokos-bench/sites/" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^watch:/# watch:/g' Procfile"
+    - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^schedule:/# schedule:/g' Procfile"
+    - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^socketio:/# socketio:/g' Procfile"
+    - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^redis_socketio:/# redis_socketio:/g' Procfile"
+    - su -c "cd /home/dokotest/dokos-bench && cat Procfile"
+    - su -c "cd /home/dokotest/dokos-bench && bench start &> bench_start.log &" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site reinstall --yes --mariadb-root-password test_dodock" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site install-app erpnext" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench build --app erpnext" dokotest
+
+  script:
+    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-tests --app erpnext" dokotest
