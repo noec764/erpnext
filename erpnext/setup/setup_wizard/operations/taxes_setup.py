@@ -2,7 +2,10 @@
 # License: GNU General Public License v3. See license.txt
 
 
-import frappe, copy, os, json
+import frappe
+import copy
+import os
+import json
 from frappe.utils import flt
 from erpnext.accounts.doctype.account.account import RootNotEditable
 
@@ -12,6 +15,8 @@ def create_sales_tax(args):
 	if country_wise_tax and len(country_wise_tax) > 0:
 		for sales_tax, tax_data in country_wise_tax.items():
 			make_tax_account_and_template(args.get("company_name"), tax_data, sales_tax)
+
+	update_regional_tax_settings(args.get("country"), args.get("company_name"))
 
 
 def make_tax_account_and_template(company, tax_data, template_name=None):
@@ -79,6 +84,7 @@ def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None)
 				{
 					"category": "Total",
 					"charge_type": "On Net Total",
+					"cost_center": frappe.db.get_value("Company", company, "cost_center"),
 					"account_head": tax_details.get("tax_account", {}).get("name"),
 					"description": tax_details.get("description") or tax_details.get("account_name"),
 				}
@@ -156,3 +162,17 @@ def get_country_wise_tax(country):
 		data = json.load(countrywise_tax).get(country)
 
 	return data
+
+
+def update_regional_tax_settings(country, company):
+	path = frappe.get_app_path("erpnext", "regional", frappe.scrub(country))
+	if os.path.exists(path.encode("utf-8")):
+		try:
+			module_name = "erpnext.regional.{0}.setup.update_regional_tax_settings".format(
+				frappe.scrub(country)
+			)
+			frappe.get_attr(module_name)(country, company)
+		except Exception:
+			# Log error and ignore if failed to setup regional tax settings
+			frappe.log_error("Unable to setup regional tax settings")
+			pass
