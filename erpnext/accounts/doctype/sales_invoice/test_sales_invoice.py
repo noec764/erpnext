@@ -2,12 +2,11 @@
 # License: GNU General Public License v3. See license.txt
 
 import copy
-import unittest
 
 import frappe
 from frappe.model.dynamic_links import get_dynamic_link_map
 from frappe.model.naming import make_autoname
-from frappe.tests.utils import change_settings
+from frappe.tests.utils import FrappeTestCase, change_settings
 from frappe.utils import add_days, flt, getdate, nowdate
 
 import erpnext
@@ -35,7 +34,7 @@ from erpnext.stock.doctype.stock_entry.test_stock_entry import (
 from erpnext.stock.utils import get_incoming_rate
 
 
-class TestSalesInvoice(unittest.TestCase):
+class TestSalesInvoice(FrappeTestCase):
 	def make(self):
 		w = frappe.copy_doc(test_records[0])
 		w.is_pos = 0
