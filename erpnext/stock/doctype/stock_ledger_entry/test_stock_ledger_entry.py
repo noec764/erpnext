@@ -1499,18 +1499,6 @@ class TestDeferredNaming(FrappeTestCase):
 		sle = set(frappe.get_list("Stock Ledger Entry", filters, pluck="name"))
 		return gle, sle
 
-	def test_deferred_naming(self):
-		se = make_stock_entry(
-			item_code=self.item, to_warehouse=self.warehouse, qty=10, rate=100, company=self.company
-		)
-
-		gle, sle = self.get_gle_sles(se)
-		renamed_gle, renamed_sle = self.get_gle_sles(se)
-
-		self.assertFalse(gle & renamed_gle, msg="GLEs not renamed")
-		self.assertFalse(sle & renamed_sle, msg="SLEs not renamed")
-		se.cancel()
-
 	def test_hash_naming(self):
 		# disable naming series
 		for doctype in ("GL Entry", "Stock Ledger Entry"):
