@@ -190,16 +190,24 @@ class TestItem(FrappeTestCase):
 		]
 
 		expected_item_tax_map = {
-			None: {},
-			"_Test Account Excise Duty @ 10 - _TC": {"_Test Account Excise Duty - _TC": 10},
-			"_Test Account Excise Duty @ 12 - _TC": {"_Test Account Excise Duty - _TC": 12},
-			"_Test Account Excise Duty @ 15 - _TC": {"_Test Account Excise Duty - _TC": 15},
-			"_Test Account Excise Duty @ 20 - _TC": {"_Test Account Excise Duty - _TC": 20},
-			"_Test Item Tax Template 1 - _TC": {
-				"_Test Account Excise Duty - _TC": 5,
-				"_Test Account Education Cess - _TC": 10,
-				"_Test Account S&H Education Cess - _TC": 15,
-			},
+			None: [],
+			"_Test Account Excise Duty @ 10 - _TC": [
+				{"account": "_Test Account Excise Duty - _TC", "rate": 10.0, "description": None}
+			],
+			"_Test Account Excise Duty @ 12 - _TC": [
+				{"account": "_Test Account Excise Duty - _TC", "rate": 12.0, "description": None}
+			],
+			"_Test Account Excise Duty @ 15 - _TC": [
+				{"account": "_Test Account Excise Duty - _TC", "rate": 15.0, "description": None}
+			],
+			"_Test Account Excise Duty @ 20 - _TC": [
+				{"account": "_Test Account Excise Duty - _TC", "rate": 20.0, "description": None}
+			],
+			"_Test Item Tax Template 1 - _TC": [
+				{"account": "_Test Account Excise Duty - _TC", "rate": 5.0, "description": None},
+				{"account": "_Test Account Education Cess - _TC", "rate": 10.0, "description": None},
+				{"account": "_Test Account S&H Education Cess - _TC", "rate": 15.0, "description": None},
+			],
 		}
 
 		for data in expected_item_tax_template:
