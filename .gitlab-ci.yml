@@ -46,11 +46,11 @@ unittests:
     - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^socketio:/# socketio:/g' Procfile"
     - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^redis_socketio:/# redis_socketio:/g' Procfile"
     - su -c "cd /home/dokotest/dokos-bench && cat Procfile"
-    - su -c "cd /home/dokotest/dokos-bench && /home/dokotest/dokos-bench/env/bin/python -m pip install --quiet hypothesis"
+    - su -c "cd /home/dokotest/dokos-bench && /home/dokotest/dokos-bench/env/bin/python -m pip install --quiet hypothesis unittest-xml-reporting"
     - su -c "cd /home/dokotest/dokos-bench && bench start &> bench_start.log &" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench --site test_site reinstall --yes --mariadb-root-password test_dodock" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench --site test_site install-app erpnext" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench build --app erpnext" dokotest
 
   script:
-    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-tests --app erpnext" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-tests --app erpnext --junit-xml-output /home/dokotest/rspec.xml" dokotest
