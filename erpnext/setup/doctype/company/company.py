@@ -387,18 +387,12 @@ class Company(NestedSet):
 			"capital_work_in_progress_account": "Capital Work in Progress",
 			"asset_received_but_not_billed": "Asset Received But Not Billed",
 			"expenses_included_in_asset_valuation": "Expenses Included In Asset Valuation",
+			"stock_received_but_not_billed": "Stock Received But Not Billed",
+			"default_inventory_account": "Stock",
+			"stock_adjustment_account": "Stock Adjustment",
+			"expenses_included_in_valuation": "Expenses Included In Valuation",
+			"expenses_included_in_valuation": "Expenses Included In Valuation",
 		}
-
-		if self.enable_perpetual_inventory:
-			default_accounts.update(
-				{
-					"stock_received_but_not_billed": "Stock Received But Not Billed",
-					"default_inventory_account": "Stock",
-					"stock_adjustment_account": "Stock Adjustment",
-					"expenses_included_in_valuation": "Expenses Included In Valuation",
-					"expenses_included_in_valuation": "Expenses Included In Valuation",
-				}
-			)
 
 		if self.update_default_account:
 			for default_account in default_accounts:
