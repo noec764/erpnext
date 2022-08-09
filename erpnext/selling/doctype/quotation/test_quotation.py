@@ -16,7 +16,7 @@ class TestQuotation(FrappeTestCase):
 
 		quotation.insert()
 
-		self.assertTrue(quotation.payment_schedule)
+		self.assertFalse(quotation.get("payment_schedule"))
 
 	def test_make_sales_order_terms_not_copied(self):
 		from erpnext.selling.doctype.quotation.quotation import make_sales_order
@@ -113,10 +113,10 @@ class TestQuotation(FrappeTestCase):
 		sales_order.save()
 
 		self.assertEqual(sales_order.payment_schedule[0].payment_amount, 8906.00)
-		self.assertEqual(sales_order.payment_schedule[0].due_date, quotation.transaction_date)
+		self.assertEqual(sales_order.payment_schedule[0].due_date, getdate(quotation.transaction_date))
 		self.assertEqual(sales_order.payment_schedule[1].payment_amount, 8906.00)
 		self.assertEqual(
-			sales_order.payment_schedule[1].due_date, add_days(quotation.transaction_date, 30)
+			sales_order.payment_schedule[1].due_date, getdate(add_days(quotation.transaction_date, 30))
 		)
 
 	def test_valid_till(self):
