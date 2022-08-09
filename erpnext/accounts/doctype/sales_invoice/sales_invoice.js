@@ -1096,7 +1096,7 @@ var select_loyalty_program = function(frm, loyalty_programs) {
 		]
 	});
 
-	dialog.set_primary_action(__("Set"), function() {
+	dialog.set_primary_action(__("Set Loyalty Program"), function() {
 		dialog.hide();
 		return frappe.call({
 			method: "frappe.client.set_value",
