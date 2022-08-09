@@ -145,8 +145,6 @@ class TransactionBase(StatusUpdater):
 			"Sales Invoice",
 			"Payment Entry",
 		):
-			from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
-
 			subscription = frappe.get_doc("Subscription", self.subscription)
 			existing_event = frappe.db.get_value(
 				"Subscription Event",
@@ -156,12 +154,6 @@ class TransactionBase(StatusUpdater):
 				getattr(self, "from_date", None) or subscription.current_invoice_start or subscription.start
 			)
 			end = getattr(self, "to_date", None) or subscription.current_invoice_end
-
-			if not subscription.generate_invoice_at_period_start:
-				previous_period = SubscriptionPeriod(subscription, start=start, end=end).get_previous_period()
-				if previous_period:
-					start = previous_period[0].period_start
-					end = previous_period[0].period_end
 
 			if existing_event:
 				for key, value in (("period_start", start), ("period_end", end)):

@@ -310,7 +310,7 @@ class Subscription(Document):
 		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
 	def set_customer_status(self):
-		frappe.get_doc("Customer", self.customer).set_status(update=True)
+		frappe.get_doc("Customer", self.customer).set_status(update=True, update_modified=False)
 
 	def get_billing_contact(self):
 		if self.customer and not self.contact_person:

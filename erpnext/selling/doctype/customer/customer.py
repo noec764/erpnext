@@ -52,7 +52,7 @@ class Customer(TransactionBase):
 		if frappe.db.get_value("Customer", self.customer_name) and not frappe.flags.in_import:
 			count = frappe.db.sql(
 				"""select ifnull(MAX(CAST(SUBSTRING_INDEX(name, ' ', -1) AS UNSIGNED)), 0) from tabCustomer
-				 where name like %s""",
+				where name like %s""",
 				"%{0} - %".format(self.customer_name),
 				as_list=1,
 			)[0][0]
