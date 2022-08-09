@@ -422,17 +422,17 @@ def get_party_account_currency(party_type, party, company):
 
 def get_party_gle_currency(party_type, party, company):
 	def generator():
-		existing_gle_account = frappe.db.sql(
-			"""select account from `tabGL Entry`
+		existing_gle_currency = frappe.db.sql(
+			"""select account_currency from `tabGL Entry`
 			where docstatus=1 and company=%(company)s and party_type=%(party_type)s and party=%(party)s
 			limit 1""",
 			{"company": company, "party_type": party_type, "party": party},
 		)
 
-		return existing_gle_account[0][0] if existing_gle_account else None
+		return existing_gle_currency[0][0] if existing_gle_currency else None
 
 	return frappe.local_cache(
-		"party_gle_account", (party_type, party, company), generator, regenerate_if_none=True
+		"party_gle_currency", (party_type, party, company), generator, regenerate_if_none=True
 	)
 
 
