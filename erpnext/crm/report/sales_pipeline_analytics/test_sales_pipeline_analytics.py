@@ -187,6 +187,7 @@ def create_opportunity():
 		doc = frappe.new_doc("Opportunity")
 		doc.opportunity_from = "Customer"
 		customer_name = frappe.db.get_value("Customer", {"customer_name": "_Test NC"}, ["customer_name"])
+		doc.sales_stage = "Prospecting"
 		doc.party_name = customer_name
 		doc.opportunity_amount = 150000
 		doc.source = "Cold Calling"

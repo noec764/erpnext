@@ -151,6 +151,11 @@ def set_defaults_for_tests():
 		frappe.db.set_default(key, value)
 	frappe.db.set_single_value("Stock Settings", "auto_insert_price_list_rate_if_missing", 0)
 
+	system_settings = frappe.get_single("System Settings")
+	system_settings.float_precision = 2
+	system_settings.currency_precision = 2
+	system_settings.save()
+
 
 def insert_record(records):
 	from frappe.desk.page.setup_wizard.setup_wizard import make_records
