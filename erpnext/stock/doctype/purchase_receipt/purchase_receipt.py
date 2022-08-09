@@ -290,6 +290,7 @@ class PurchaseReceipt(BuyingController):
 		)
 
 		stock_rbnb = None
+		expenses_included_in_valuation = None
 		if erpnext.is_perpetual_inventory_enabled(self.company):
 			stock_rbnb = self.get_company_default("stock_received_but_not_billed")
 			landed_cost_entries = get_item_account_wise_additional_cost(self.name)
@@ -563,6 +564,7 @@ class PurchaseReceipt(BuyingController):
 		)
 
 	def make_tax_gl_entries(self, gl_entries):
+		expenses_included_in_valuation = None
 		if erpnext.is_perpetual_inventory_enabled(self.company):
 			expenses_included_in_valuation = self.get_company_default("expenses_included_in_valuation")
 

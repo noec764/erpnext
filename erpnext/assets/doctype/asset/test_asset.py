@@ -797,41 +797,6 @@ class TestDepreciationBasics(AssetSetup):
 		for i, schedule in enumerate(asset.schedules):
 			self.assertEqual(expected_values[i], schedule.accumulated_depreciation_amount)
 
-	def test_check_is_pro_rata(self):
-		"""Tests if check_is_pro_rata() returns the right value(i.e. checks if has_pro_rata is accurate)."""
-
-		asset = create_asset(item_code="Macbook Pro", available_for_use_date="2019-12-31", do_not_save=1)
-
-		asset.calculate_depreciation = 1
-		asset.append(
-			"finance_books",
-			{
-				"depreciation_method": "Straight Line",
-				"frequency_of_depreciation": 12,
-				"total_number_of_depreciations": 3,
-				"expected_value_after_useful_life": 10000,
-				"depreciation_start_date": "2020-12-31",
-			},
-		)
-
-		has_pro_rata = asset.check_is_pro_rata(asset.finance_books[0])
-		self.assertFalse(has_pro_rata)
-
-		asset.finance_books = []
-		asset.append(
-			"finance_books",
-			{
-				"depreciation_method": "Straight Line",
-				"frequency_of_depreciation": 12,
-				"total_number_of_depreciations": 3,
-				"expected_value_after_useful_life": 10000,
-				"depreciation_start_date": "2020-07-01",
-			},
-		)
-
-		has_pro_rata = asset.check_is_pro_rata(asset.finance_books[0])
-		self.assertTrue(has_pro_rata)
-
 	def test_expected_value_after_useful_life_greater_than_purchase_amount(self):
 		"""Tests if an error is raised when expected_value_after_useful_life(110,000) > gross_purchase_amount(100,000)."""
 
@@ -1049,76 +1014,6 @@ class TestDepreciationBasics(AssetSetup):
 		depr_expense_account.root_type = "Expense"
 		depr_expense_account.parent_account = "Expenses - _TC"
 		depr_expense_account.save()
-
-	def test_clear_depreciation_schedule(self):
-		"""Tests if clear_depreciation_schedule() works as expected."""
-
-		asset = create_asset(
-			item_code="Macbook Pro",
-			calculate_depreciation=1,
-			available_for_use_date="2019-12-31",
-			depreciation_start_date="2020-12-31",
-			frequency_of_depreciation=12,
-			total_number_of_depreciations=3,
-			expected_value_after_useful_life=10000,
-			submit=1,
-		)
-
-		post_depreciation_entries(date="2021-06-01")
-		asset.load_from_db()
-
-		asset.clear_depreciation_schedule()
-
-		self.assertEqual(len(asset.schedules), 1)
-
-	def test_clear_depreciation_schedule_for_multiple_finance_books(self):
-		asset = create_asset(item_code="Macbook Pro", available_for_use_date="2019-12-31", do_not_save=1)
-
-		asset.calculate_depreciation = 1
-		asset.append(
-			"finance_books",
-			{
-				"depreciation_method": "Straight Line",
-				"frequency_of_depreciation": 1,
-				"total_number_of_depreciations": 3,
-				"expected_value_after_useful_life": 10000,
-				"depreciation_start_date": "2020-01-31",
-			},
-		)
-		asset.append(
-			"finance_books",
-			{
-				"depreciation_method": "Straight Line",
-				"frequency_of_depreciation": 1,
-				"total_number_of_depreciations": 6,
-				"expected_value_after_useful_life": 10000,
-				"depreciation_start_date": "2020-01-31",
-			},
-		)
-		asset.append(
-			"finance_books",
-			{
-				"depreciation_method": "Straight Line",
-				"frequency_of_depreciation": 12,
-				"total_number_of_depreciations": 3,
-				"expected_value_after_useful_life": 10000,
-				"depreciation_start_date": "2020-12-31",
-			},
-		)
-		asset.submit()
-
-		post_depreciation_entries(date="2020-04-01")
-		asset.load_from_db()
-
-		asset.clear_depreciation_schedule()
-
-		self.assertEqual(len(asset.schedules), 6)
-
-		for schedule in asset.schedules:
-			if schedule.idx <= 3:
-				self.assertEqual(schedule.finance_book_id, "1")
-			else:
-				self.assertEqual(schedule.finance_book_id, "2")
 
 	def test_depreciation_schedules_are_set_up_for_multiple_finance_books(self):
 		asset = create_asset(item_code="Macbook Pro", available_for_use_date="2019-12-31", do_not_save=1)
