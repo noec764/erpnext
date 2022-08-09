@@ -134,8 +134,9 @@ class Issue(Document):
 		self.db_set("resolution_time", None)
 		self.db_set("user_resolution_time", None)
 
-	def handle_hold_time(self):
-		self.db_set("status", "Open")
+	def handle_hold_time(self, status):
+		if status == "Replied":
+			self.db_set("status", "Open")
 
 
 def get_list_context(context=None):
