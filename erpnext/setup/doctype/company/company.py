@@ -391,8 +391,12 @@ class Company(NestedSet):
 			"default_inventory_account": "Stock",
 			"stock_adjustment_account": "Stock Adjustment",
 			"expenses_included_in_valuation": "Expenses Included In Valuation",
-			"expenses_included_in_valuation": "Expenses Included In Valuation",
 		}
+
+		if frappe.flags.in_test:
+			default_accounts.update(
+				{"default_expense_account": "Expense Account", "default_income_account": "Income Account"}
+			)
 
 		if self.update_default_account:
 			for default_account in default_accounts:
