@@ -1,10 +1,8 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-
-import unittest
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
@@ -12,7 +10,7 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 test_dependencies = ["Cost Center", "Location", "Warehouse", "Department"]
 
 
-class TestAccountingDimension(unittest.TestCase):
+class TestAccountingDimension(FrappeTestCase):
 	def setUp(self):
 		create_dimension()
 

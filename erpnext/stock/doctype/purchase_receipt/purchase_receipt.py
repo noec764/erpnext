@@ -289,6 +289,7 @@ class PurchaseReceipt(BuyingController):
 			get_purchase_document_details,
 		)
 
+		stock_rbnb = None
 		if erpnext.is_perpetual_inventory_enabled(self.company):
 			stock_rbnb = self.get_company_default("stock_received_but_not_billed")
 			landed_cost_entries = get_item_account_wise_additional_cost(self.name)
