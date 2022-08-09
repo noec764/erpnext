@@ -28,7 +28,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Depreciation Method",
-   "options": "\nStraight Line\nProrated Straight Line (360 Days)\nDouble Declining Balance\nWritten Down Value\nManual",
+   "options": "\nStraight Line\nDouble Declining Balance\nWritten Down Value\nManual",
    "reqd": 1
   },
   {

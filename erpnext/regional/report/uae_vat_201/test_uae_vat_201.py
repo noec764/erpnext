@@ -1,9 +1,7 @@
 # coding=utf-8
 
-
-from unittest import TestCase
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 import erpnext
 from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
@@ -22,7 +20,7 @@ from erpnext.stock.doctype.warehouse.test_warehouse import get_warehouse_account
 test_dependencies = ["Territory", "Customer Group", "Supplier Group", "Item"]
 
 
-class TestUaeVat201(TestCase):
+class TestUaeVat201(FrappeTestCase):
 	def setUp(self):
 		frappe.set_user("Administrator")
 

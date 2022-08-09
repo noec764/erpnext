@@ -108,6 +108,10 @@ frappe.ui.form.on('Asset', {
 				frm.trigger("create_asset_repair");
 			}, __("Manage"));
 
+			frm.add_custom_button(__("Split Asset"), function() {
+				frm.trigger("split_asset");
+			}, __("Manage"));
+
 			if (frm.doc.status != 'Fully Depreciated') {
 				frm.add_custom_button(__("Adjust Asset Value"), function() {
 					frm.trigger("create_asset_value_adjustment");
@@ -143,9 +147,9 @@ frappe.ui.form.on('Asset', {
 
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {
-				frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
-					new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
-				});
+					frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
+							new erpnext.journalAdjustment({doctype: frm.doctype, docnames: [frm.docname]})
+					});
 			}, __('Create'), true);
 		}
 	},
@@ -197,14 +201,14 @@ frappe.ui.form.on('Asset', {
 		var asset_values = [frm.doc.gross_purchase_amount];
 		var last_depreciation_date = frm.doc.purchase_date;
 
-		// if(frm.doc.opening_accumulated_depreciation) {
-		// 	last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
-		// 		-1*frm.doc.frequency_of_depreciation);
+		if(frm.doc.opening_accumulated_depreciation) {
+			last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
+				-1*frm.doc.frequency_of_depreciation);
 
-		// 	x_intervals.push(last_depreciation_date);
-		// 	asset_values.push(flt(frm.doc.gross_purchase_amount) -
-		// 		flt(frm.doc.opening_accumulated_depreciation));
-		// }
+			x_intervals.push(last_depreciation_date);
+			asset_values.push(flt(frm.doc.gross_purchase_amount) -
+				flt(frm.doc.opening_accumulated_depreciation));
+		}
 
 		$.each(frm.doc.schedules || [], function(i, v) {
 			x_intervals.push(v.schedule_date);
@@ -233,12 +237,9 @@ frappe.ui.form.on('Asset', {
 				labels: x_intervals,
 				datasets: [{
 					color: 'green',
-					name: frm.doc.asset_name,
-					values: asset_values
+					values: asset_values,
+					formatted: asset_values.map(d => d.toFixed(2))
 				}]
-			},
-			tooltipOptions: {
-				formatTooltipY: d => format_currency(d, frm.doc.currency),
 			},
 			type: 'line'
 		});
@@ -331,6 +332,43 @@ frappe.ui.form.on('Asset', {
 				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 			}
 		});
+	},
+
+	split_asset: function(frm) {
+		const title = __('Split Asset');
+
+		const fields = [
+			{
+				fieldname: 'split_qty',
+				fieldtype: 'Int',
+				label: __('Split Qty'),
+				reqd: 1
+			}
+		];
+
+		let dialog = new frappe.ui.Dialog({
+			title: title,
+			fields: fields
+		});
+
+		dialog.set_primary_action(__('Split'), function() {
+			const dialog_data = dialog.get_values();
+			frappe.call({
+				args: {
+					"asset_name": frm.doc.name,
+					"split_qty": cint(dialog_data.split_qty)
+				},
+				method: "erpnext.assets.doctype.asset.asset.split_asset",
+				callback: function(r) {
+					let doclist = frappe.model.sync(r.message);
+					frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+				}
+			});
+
+			dialog.hide();
+		});
+
+		dialog.show();
 	},
 
 	create_asset_value_adjustment: function(frm) {
@@ -428,31 +466,14 @@ frappe.ui.form.on('Asset', {
 				}
 			});
 		}
-	},
-	company: function(frm) {
-		if (frm.get_field("cost_center")) {
-			frappe.call({
-				method: "frappe.client.get_value",
-				args: {
-					doctype: "Company",
-					filters: {"name": frm.doc.company},
-					fieldname: "cost_center"
-				}
-			}).then(r => {
-				r&&r.message&&frm.set_value("cost_center", r.message.cost_center);
-			})
-		}
-	},
+	}
 });
 
 frappe.ui.form.on('Asset Finance Book', {
 	depreciation_method: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
+		frm.events.set_depreciation_rate(frm, row);
 		frm.events.make_schedules_editable(frm);
-		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
-		if (row.depreciation_method == "Prorated Straight Line (360 Days)") {
-			frappe.model.set_value(cdt, cdn, "frequency_of_depreciation", 12);
-		}
 	},
 
 	expected_value_after_useful_life: function(frm, cdt, cdn) {
@@ -462,12 +483,12 @@ frappe.ui.form.on('Asset Finance Book', {
 
 	frequency_of_depreciation: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
+		frm.events.set_depreciation_rate(frm, row);
 	},
 
 	total_number_of_depreciations: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "expected_value_after_useful_life", 0);
+		frm.events.set_depreciation_rate(frm, row);
 	},
 
 	rate_of_depreciation: function(frm, cdt, cdn) {

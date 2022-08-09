@@ -1,10 +1,8 @@
 # Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
-from unittest import TestCase
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 from frappe.utils import today
 
 from erpnext.accounts.doctype.account.test_account import create_account
@@ -13,7 +11,7 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 from erpnext.regional.report.vat_audit_report.vat_audit_report import execute
 
 
-class TestVATAuditReport(TestCase):
+class TestVATAuditReport(FrappeTestCase):
 	def setUp(self):
 		frappe.set_user("Administrator")
 		make_company("_Test Company SA VAT", "_TCSV")
