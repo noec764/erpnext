@@ -36,16 +36,14 @@ class TestIssue(TestSetUp):
 		self.assertEqual(issue.resolution_by, get_datetime("2019-03-04 15:00"))
 
 		# make issue with customer_group specific SLA
-		customer = create_customer("__Test Customer", "_Test SLA Customer Group", "__Test SLA Territory")
+		create_customer("__Test Customer", "_Test SLA Customer Group", "__Test SLA Territory")
 		issue = make_issue(creation, "__Test Customer", 2)
 
 		self.assertEqual(issue.response_by, get_datetime("2019-03-04 14:00"))
 		self.assertEqual(issue.resolution_by, get_datetime("2019-03-04 15:00"))
 
 		# make issue with territory specific SLA
-		customer = create_customer(
-			"___Test Customer", "__Test SLA Customer Group", "_Test SLA Territory"
-		)
+		create_customer("___Test Customer", "__Test SLA Customer Group", "_Test SLA Territory")
 		issue = make_issue(creation, "___Test Customer", 3)
 
 		self.assertEqual(issue.response_by, get_datetime("2019-03-04 14:00"))
