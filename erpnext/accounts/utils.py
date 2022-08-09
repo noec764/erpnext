@@ -510,7 +510,7 @@ def check_if_advance_entry_modified(args):
 					t1.name = t2.parent and t1.docstatus = 1
 					and t1.name = %(voucher_no)s and t2.name = %(voucher_detail_no)s
 					and t1.party_type = %(party_type)s and t1.party = %(party)s and t1.{0} = %(account)s
-					aand t2.reference_doctype in ('', 'Sales Order', 'Purchase Order')
+					and t2.reference_doctype in ('', 'Sales Order', 'Purchase Order')
 					and t2.allocated_amount = %(unreconciled_amount)s
 			""".format(
 					party_account_field
