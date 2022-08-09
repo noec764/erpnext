@@ -820,8 +820,9 @@ class Asset(AccountsController):
 			return flt((100 * (1 - depreciation_rate)), float_precision)
 
 	def get_pro_rata_amt(self, row, depreciation_amount, from_date, to_date):
-		days = date_diff(to_date, from_date)
+		days = date_difference(to_date, from_date)
 		months = month_diff(to_date, from_date)
+
 		total_days = get_total_days(to_date, row.frequency_of_depreciation)
 
 		return (depreciation_amount * flt(days)) / flt(total_days), days, months
@@ -1061,6 +1062,7 @@ def is_cwip_accounting_enabled(asset_category):
 	return cint(frappe.db.get_value("Asset Category", asset_category, "enable_cwip_accounting"))
 
 
+@erpnext.allow_regional
 def get_total_days(date, frequency):
 	period_start_date = add_months(date, cint(frequency) * -1)
 
@@ -1068,6 +1070,11 @@ def get_total_days(date, frequency):
 		period_start_date = get_last_day(period_start_date)
 
 	return date_diff(date, period_start_date)
+
+
+@erpnext.allow_regional
+def date_difference(to_date, from_date):
+	return date_diff(to_date, from_date)
 
 
 def is_last_day_of_the_month(date):

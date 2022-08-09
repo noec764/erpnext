@@ -583,10 +583,13 @@ accounting_dimension_doctypes = [
 
 regional_overrides = {
 	"France": {
+		"erpnext.tests.test_regional.test_method": "erpnext.regional.france.utils.test_method",
 		"erpnext.accounts.report.balance_sheet.balance_sheet.execute": "erpnext.regional.france.report.balance_sheet.balance_sheet.execute",
 		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.france.taxes.update_itemised_tax_data",
 		"erpnext.controllers.taxes_and_totals.get_itemised_tax": "erpnext.regional.france.taxes.get_itemised_tax",
-		"erpnext.tests.test_regional.test_method": "erpnext.regional.france.utils.test_method",
+		"erpnext.assets.doctype.asset.asset.get_depreciation_amount": "erpnext.regional.france.assets.get_depreciation_amount",
+		"erpnext.assets.doctype.asset.asset.get_total_days": "erpnext.regional.france.assets.get_total_days",
+		"erpnext.assets.doctype.asset.asset.date_difference": "erpnext.regional.france.assets.date_difference",
 	},
 	"United Arab Emirates": {
 		"erpnext.controllers.taxes_and_totals.update_itemised_tax_data": "erpnext.regional.united_arab_emirates.utils.update_itemised_tax_data",
