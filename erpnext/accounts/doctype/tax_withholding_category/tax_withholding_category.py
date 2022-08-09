@@ -269,11 +269,8 @@ def get_invoice_vouchers(parties, tax_details, company, party_type="Supplier"):
 	doctype = "Purchase Invoice" if party_type == "Supplier" else "Sales Invoice"
 
 	filters = {
-		dr_or_cr: [">", 0],
 		"company": company,
 		frappe.scrub(party_type): ["in", parties],
-		"party_type": party_type,
-		"party": ["in", parties],
 		"posting_date": ["between", (tax_details.from_date, tax_details.to_date)],
 		"is_opening": "No",
 		"docstatus": 1,
