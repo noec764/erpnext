@@ -116,7 +116,7 @@ class TestVariantSelector(FrappeTestCase):
 		next_values = get_next_attribute_and_values(
 			"Test-Tshirt-Temp", selected_attributes={"Test Size": "Small", "Test Colour": "Red"}
 		)
-		print(">>>>", next_values)
+		# print(">>>>", next_values)
 		price_info = next_values["product_info"]["price"]
 
 		self.assertEqual(next_values["exact_match"][0], "Test-Tshirt-Temp-S-R")

@@ -31,6 +31,7 @@ class SerialNoExistsInFutureTransaction(frappe.ValidationError):
 
 def make_sl_entries(sl_entries, allow_negative_stock=False, via_landed_cost_voucher=False):
 	"""Create SL entries from SL entry dicts
+
 	args:
 	        - allow_negative_stock: disable negative stock valiations if true
 	        - via_landed_cost_voucher: landed cost voucher cancels and reposts
@@ -468,7 +469,9 @@ class update_entries_after(object):
 			where
 				item_code = %(item_code)s
 				and warehouse = %(warehouse)s
+				and is_cancelled = 0
 				and timestamp(posting_date, time_format(posting_time, %(time_format)s)) = timestamp(%(posting_date)s, time_format(%(posting_time)s, %(time_format)s))
+
 			order by
 				creation ASC
 			for update
