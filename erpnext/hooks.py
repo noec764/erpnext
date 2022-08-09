@@ -367,7 +367,6 @@ doc_events = {
 			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction",
 			"erpnext.regional.saudi_arabia.utils.delete_qr_code_file",
 		],
-		"on_trash": "erpnext.regional.check_deletion_permission",
 	},
 	"POS Invoice": {"on_submit": ["erpnext.regional.saudi_arabia.utils.create_qr_code"]},
 	"Purchase Invoice": {
