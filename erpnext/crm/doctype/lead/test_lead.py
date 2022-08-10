@@ -19,7 +19,8 @@ class TestLead(unittest.TestCase):
 
 		frappe.delete_doc_if_exists("Customer", "_Test Lead")
 
-		customer = make_customer("_T-Lead-00001")
+		lead = frappe.db.get_value("Lead", dict(lead_name="_T-Lead-00001"))
+		customer = make_customer(lead)
 		self.assertEqual(customer.doctype, "Customer")
 		self.assertEqual(customer.lead_name, "_T-Lead-00001")
 
@@ -45,7 +46,8 @@ class TestLead(unittest.TestCase):
 	def test_make_customer_from_organization(self):
 		from erpnext.crm.doctype.lead.lead import make_customer
 
-		customer = make_customer("_T-Lead-00002")
+		lead = frappe.db.get_value("Lead", dict(lead_name="_T-Lead-00001"))
+		customer = make_customer(lead)
 		self.assertEqual(customer.doctype, "Customer")
 		self.assertEqual(customer.lead_name, "_T-Lead-00002")
 
@@ -105,8 +107,8 @@ class TestLead(unittest.TestCase):
 		self.assertEqual(prospect, "Prospect Company")
 
 		event.reload()
-		self.assertEqual(event.event_participants[1].reference_doctype, "Prospect")
-		self.assertEqual(event.event_participants[1].reference_docname, prospect)
+		self.assertEqual(event.event_references[1].reference_doctype, "Prospect")
+		self.assertEqual(event.event_references[1].reference_docname, prospect)
 
 	def test_opportunity_from_lead(self):
 		frappe.db.sql("delete from `tabLead` where lead_name='Rahul Tripathi'")
@@ -130,8 +132,8 @@ class TestLead(unittest.TestCase):
 		self.assertEqual(opportunity.notes[0].note, "test note")
 
 		event.reload()
-		self.assertEqual(event.event_participants[1].reference_doctype, "Opportunity")
-		self.assertEqual(event.event_participants[1].reference_docname, opportunity.name)
+		self.assertEqual(event.event_references[1].reference_doctype, "Opportunity")
+		self.assertEqual(event.event_references[1].reference_docname, opportunity.name)
 
 		self.assertTrue(
 			frappe.db.get_value(
@@ -155,9 +157,9 @@ class TestLead(unittest.TestCase):
 
 		event = create_event("Meeting", today(), "Lead", lead.name)
 
-		self.assertEqual(len(event.event_participants), 2)
-		self.assertEqual(event.event_participants[1].reference_doctype, "Prospect")
-		self.assertEqual(event.event_participants[1].reference_docname, prospect)
+		self.assertEqual(len(event.event_references), 2)
+		self.assertEqual(event.event_references[1].reference_doctype, "Prospect")
+		self.assertEqual(event.event_references[1].reference_docname, prospect)
 
 
 def create_event(subject, starts_on, reference_type, reference_name):
@@ -168,10 +170,8 @@ def create_event(subject, starts_on, reference_type, reference_name):
 	event.all_day = 1
 	event.owner = "Administrator"
 	event.append(
-		"event_participants", {"reference_doctype": reference_type, "reference_docname": reference_name}
+		"event_references", {"reference_doctype": reference_type, "reference_docname": reference_name}
 	)
-	event.reference_type = reference_type
-	event.reference_name = reference_name
 	event.insert()
 	return event
 
