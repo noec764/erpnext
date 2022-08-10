@@ -21,6 +21,7 @@ class TestDownPayment(FrappeTestCase):
 		test_record = [r for r in test_records if r.get("title") == "Down Payment Invoice"]
 		dp_invoice = frappe.copy_doc(test_record[0])
 		dp_invoice.is_pos = 0
+		dp_invoice.is_down_payment_invoice = 1
 		if is_return:
 			dp_invoice.is_return = True
 			dp_invoice.return_against = return_against

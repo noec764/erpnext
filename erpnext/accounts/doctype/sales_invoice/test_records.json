@@ -407,7 +407,6 @@
     "customer_name": "_Test Customer",
     "doctype": "Sales Invoice",
     "debit_to": "_Test Receivable - _TC",
-    "is_down_payment_invoice": 1,
     "items": [
      {
       "amount": 500.0,
