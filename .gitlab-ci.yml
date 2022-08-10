@@ -31,7 +31,7 @@ unittests:
     - export LANG=C.UTF-8
     - export LC_ALL=C.UTF-8
     - export LANGUAGE=en_US.UTF-8
-    - dpkg -i wkhtmltox_0.12.5-1.buster_i386.deb && rm wkhtmltox_0.12.5-1.buster_i386.deb
+    - dpkg -i wkhtmltox_0.12.6-1.buster_i386.deb && rm wkhtmltox_0.12.6-1.buster_i386.deb
     - rm -rf /var/lib/apt/lists/*
     - rm -rf /etc/apt/sources.list.d/*
     - curl -sL https://deb.nodesource.com/setup_16.x | bash
