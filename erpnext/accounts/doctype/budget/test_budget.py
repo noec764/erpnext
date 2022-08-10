@@ -257,6 +257,7 @@ class TestBudget(unittest.TestCase):
 		if month > 9:
 			month = 9
 
+		project = frappe.get_value("Project", {"project_name": "_Test Project"})
 		for i in range(month + 1):
 			jv = make_journal_entry(
 				"_Test Account Cost for Goods Sold - _TC",
@@ -265,7 +266,7 @@ class TestBudget(unittest.TestCase):
 				"_Test Cost Center - _TC",
 				posting_date=nowdate(),
 				submit=True,
-				project="_Test Project",
+				project=project,
 			)
 
 			self.assertTrue(
