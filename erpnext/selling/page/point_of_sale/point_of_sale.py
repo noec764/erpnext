@@ -258,6 +258,7 @@ def get_past_order_list(search_term, status, limit=20):
 				"docstatus": ("!=", 2),
 			},
 			fields=fields,
+			page_length=limit,
 		)
 		invoices_by_name = frappe.db.get_all(
 			"POS Invoice",
@@ -267,12 +268,16 @@ def get_past_order_list(search_term, status, limit=20):
 				"docstatus": ("!=", 2),
 			},
 			fields=fields,
+			page_length=limit,
 		)
 
 		invoice_list = invoices_by_customer + invoices_by_name
 	elif status:
 		invoice_list = frappe.db.get_all(
-			"POS Invoice", filters={"status": status, "docstatus": ("!=", 2)}, fields=fields
+			"POS Invoice",
+			filters={"status": status, "docstatus": ("!=", 2)},
+			fields=fields,
+			page_length=limit,
 		)
 
 	return invoice_list
