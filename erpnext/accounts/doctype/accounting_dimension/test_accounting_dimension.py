@@ -11,7 +11,8 @@ test_dependencies = ["Cost Center", "Location", "Warehouse", "Department"]
 
 
 class TestAccountingDimension(FrappeTestCase):
-	def setUp(self):
+	@classmethod
+	def setUpClass(cls):
 		create_dimension()
 
 	def test_dimension_against_sales_invoice(self):
@@ -75,7 +76,8 @@ class TestAccountingDimension(FrappeTestCase):
 		si.save()
 		self.assertRaises(frappe.ValidationError, si.submit)
 
-	def tearDown(self):
+	@classmethod
+	def tearDownClass(cls):
 		disable_dimension()
 
 

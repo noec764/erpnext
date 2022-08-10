@@ -21,7 +21,8 @@ class TestPOSInvoice(FrappeTestCase):
 		make_stock_entry(target="_Test Warehouse - _TC", item_code="_Test Item", qty=800, basic_rate=100)
 		frappe.db.sql("delete from `tabTax Rule`")
 
-	def tearDown(self):
+	@classmethod
+	def tearDownClass(cls):
 		if frappe.session.user != "Administrator":
 			frappe.set_user("Administrator")
 
@@ -683,6 +684,8 @@ class TestPOSInvoice(FrappeTestCase):
 			"Sales Invoice", pos_inv2.consolidated_invoice, "rounded_total"
 		)
 		self.assertEqual(rounded_total, 400)
+
+		frappe.db.set_value("Selling Settings", "Selling Settings", "validate_selling_price", 0)
 
 	def test_pos_batch_item_qty_validation(self):
 		from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import (
