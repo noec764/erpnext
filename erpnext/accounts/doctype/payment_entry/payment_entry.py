@@ -958,8 +958,8 @@ class PaymentEntry(AccountsController):
 					{
 						"account": d.account_head,
 						"against": against,
-						rev_dr_or_cr: tax_amount,
-						rev_dr_or_cr + "_in_account_currency": -1 * base_tax_amount
+						dr_or_cr: tax_amount,
+						dr_or_cr + "_in_account_currency": base_tax_amount
 						if account_currency == self.company_currency
 						else d.tax_amount,
 						"cost_center": d.cost_center,
@@ -970,15 +970,14 @@ class PaymentEntry(AccountsController):
 				)
 			)
 
-			# Intentionally use -1 to get net values in party account
 			if not d.included_in_paid_amount:
 				gl_entries.append(
 					self.get_gl_dict(
 						{
 							"account": payment_account,
 							"against": against,
-							dr_or_cr: -1 * tax_amount,
-							dr_or_cr + "_in_account_currency": base_tax_amount
+							rev_dr_or_cr: tax_amount,
+							rev_dr_or_cr + "_in_account_currency": base_tax_amount
 							if account_currency == self.company_currency
 							else d.tax_amount,
 							"cost_center": self.cost_center,
@@ -1123,7 +1122,7 @@ class PaymentEntry(AccountsController):
 		self.paid_amount_after_tax = self.paid_amount
 
 	def determine_exclusive_rate(self):
-		if not any((cint(tax.included_in_paid_amount) for tax in self.get("taxes"))):
+		if not any(cint(tax.included_in_paid_amount) for tax in self.get("taxes")):
 			return
 
 		cumulated_tax_fraction = 0
@@ -1299,8 +1298,8 @@ def get_outstanding_reference_documents(args):
 		condition = " and voucher_type={0} and voucher_no={1}".format(
 			frappe.db.escape(args["voucher_type"]), frappe.db.escape(args["voucher_no"])
 		)
-	common_filter.append(ple.voucher_type == args["voucher_type"])
-	common_filter.append(ple.voucher_no == args["voucher_no"])
+		common_filter.append(ple.voucher_type == args["voucher_type"])
+		common_filter.append(ple.voucher_no == args["voucher_no"])
 
 	# Add cost center condition
 	if args.get("cost_center"):
@@ -1674,7 +1673,7 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 	)
 
 	if reference_doctype == "Dunning":
-		total_amount = ref_doc.get("dunning_amount")
+		total_amount = outstanding_amount = ref_doc.get("dunning_amount")
 		exchange_rate = 1
 
 	elif reference_doctype == "Journal Entry" and ref_doc.docstatus == 1:

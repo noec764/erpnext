@@ -393,7 +393,9 @@ def get_tds_amount(ldc, parties, inv, tax_details, tax_deducted, vouchers):
 	)
 
 	supp_credit_amt += supp_jv_credit_amt
-	supp_credit_amt += inv.net_total
+
+	# TODO: Redundant amount; make additional test cases
+	# supp_credit_amt += inv.net_total
 
 	debit_note_amount = get_debit_note_amount(
 		parties, tax_details.from_date, tax_details.to_date, inv.company

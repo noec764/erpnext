@@ -615,12 +615,14 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 			existing_purchase_cost + 15500,
 		)
 
+		pi1.reload()
 		pi1.cancel()
 		self.assertEqual(
 			frappe.db.get_value("Project", project.name, "total_purchase_cost"),
 			existing_purchase_cost + 15000,
 		)
 
+		pi.reload()
 		pi.cancel()
 		self.assertEqual(
 			frappe.db.get_value("Project", project.name, "total_purchase_cost"), existing_purchase_cost
@@ -792,6 +794,7 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 		self.assertRaises(InvalidCurrency, pi1.save)
 
 		# cancel
+		pi.reload()
 		pi.cancel()
 
 		gle = frappe.db.sql(
@@ -1215,6 +1218,7 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 		item = create_item("_Test Item for Deferred Accounting", is_purchase_item=True)
 		item.enable_deferred_expense = 1
 		item.deferred_expense_account = deferred_account
+		item.deferred_revenue_account = None
 		item.save()
 
 		pi = make_purchase_invoice(item=item.name, qty=1, rate=100, do_not_save=True)
@@ -1513,6 +1517,7 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 		payment_entry.load_from_db()
 		self.assertEqual(payment_entry.taxes[0].allocated_amount, 3000)
 
+		purchase_invoice.reload()
 		purchase_invoice.cancel()
 
 		payment_entry.load_from_db()
@@ -1562,6 +1567,7 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 		check_gl_entries(self, pr.name, expected_gle_for_purchase_receipt, pr.posting_date)
 
 		# Cancel purchase invoice to check reverse provisional entry cancellation
+		pi.reload()
 		pi.cancel()
 
 		expected_gle_for_purchase_receipt_post_pi_cancel = [

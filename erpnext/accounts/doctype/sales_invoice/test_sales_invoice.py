@@ -1852,8 +1852,10 @@ class TestSalesInvoice(FrappeTestCase):
 		itemised_tax, itemised_taxable_amount = get_itemised_tax_breakup_data(si)
 
 		expected_itemised_tax = {
-			"_Test Item": {"Service Tax": {"tax_rate": 10.0, "tax_amount": 1000.0}},
-			"_Test Item 2": {"Service Tax": {"tax_rate": 10.0, "tax_amount": 500.0}},
+			"_Test Item": {"Service Tax": {"tax_rate": 10.0, "tax_amount": 1000.0, "add_deduct_tax": None}},
+			"_Test Item 2": {
+				"Service Tax": {"tax_rate": 10.0, "tax_amount": 500.0, "add_deduct_tax": None}
+			},
 		}
 		expected_itemised_taxable_amount = {"_Test Item": 10000.0, "_Test Item 2": 5000.0}
 
