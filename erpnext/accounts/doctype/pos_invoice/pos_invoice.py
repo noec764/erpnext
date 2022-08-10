@@ -662,7 +662,6 @@ def get_bin_qty(item_code, warehouse):
 	bin_qty = frappe.db.sql(
 		"""select actual_qty from `tabBin`
 		where item_code = %s and warehouse = %s
-		order by posting_date desc, posting_time desc
 		limit 1""",
 		(item_code, warehouse),
 		as_dict=1,
