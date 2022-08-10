@@ -268,8 +268,8 @@ def new_bank_transaction(transaction):
 
 			result.append(new_transaction.name)
 
-		except Exception:
-			frappe.throw(title=_("Bank transaction creation error"))
+		except Exception as e:
+			frappe.throw(title=_("Bank transaction creation error"), msg=str(e))
 
 	return result
 

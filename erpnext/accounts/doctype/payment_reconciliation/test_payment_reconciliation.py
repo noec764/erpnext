@@ -58,6 +58,7 @@ class TestPaymentReconciliation(FrappeTestCase):
 					"account_name": "HDFC",
 					"parent_account": "Bank Accounts - _PR",
 					"company": self.company,
+					"account_type": "Bank",
 				}
 			)
 			bank_acc.save()
