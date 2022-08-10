@@ -561,6 +561,7 @@ class TestPaymentReconciliation(FrappeTestCase):
 		self.assertEqual(pr.payments[0].amount, amount)
 		self.assertEqual(pr.payments[0].currency, "EUR")
 
+		cr_note.reload()
 		cr_note.cancel()
 
 		pay = self.create_payment_entry(

@@ -82,6 +82,7 @@ class TestPaymentRequest(unittest.TestCase):
 			mute_email=1,
 			submit_doc=1,
 			return_doc=1,
+			payment_gateway="_Test Gateway",
 		)
 		pe = pr.set_as_paid()
 
@@ -141,6 +142,7 @@ class TestPaymentRequest(unittest.TestCase):
 		pr1 = make_payment_request(
 			dt="Sales Order", dn=so.name, recipient_id="hello@dokos.io", return_doc=1
 		)
+		pr1.payment_gateway = "_Test Gateway"
 		pr1.grand_total = 200
 		pr1.submit()
 
@@ -153,4 +155,5 @@ class TestPaymentRequest(unittest.TestCase):
 
 		# Try to make Payment Request more than SO amount, should give validation
 		pr2.grand_total = 900
+		pr2.payment_gateway = "_Test Gateway"
 		self.assertRaises(frappe.ValidationError, pr2.save)

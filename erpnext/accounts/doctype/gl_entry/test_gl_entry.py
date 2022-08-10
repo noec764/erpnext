@@ -5,7 +5,6 @@
 import unittest
 
 import frappe
-from frappe.model.naming import parse_naming_series
 
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
 
@@ -38,40 +37,3 @@ class TestGLEntry(unittest.TestCase):
 		)
 
 		self.assertTrue(round_off_entry)
-
-	def test_rename_entries(self):
-		je = make_journal_entry(
-			"_Test Account Cost for Goods Sold - _TC", "_Test Bank - _TC", 100, submit=True
-		)
-		naming_series = parse_naming_series(parts=frappe.get_meta("GL Entry").autoname.split(".")[:-1])
-
-		je = make_journal_entry(
-			"_Test Account Cost for Goods Sold - _TC", "_Test Bank - _TC", 100, submit=True
-		)
-
-		gl_entries = frappe.get_all(
-			"GL Entry",
-			fields=["name", "to_rename"],
-			filters={"voucher_type": "Journal Entry", "voucher_no": je.name},
-			order_by="creation",
-		)
-
-		self.assertTrue(all(entry.to_rename == 1 for entry in gl_entries))
-		old_naming_series_current_value = frappe.db.sql(
-			"SELECT current from tabSeries where name = %s", naming_series
-		)[0][0]
-
-		new_gl_entries = frappe.get_all(
-			"GL Entry",
-			fields=["name", "to_rename"],
-			filters={"voucher_type": "Journal Entry", "voucher_no": je.name},
-			order_by="creation",
-		)
-		self.assertTrue(all(entry.to_rename == 0 for entry in new_gl_entries))
-
-		self.assertTrue(all(new.name != old.name for new, old in zip(gl_entries, new_gl_entries)))
-
-		new_naming_series_current_value = frappe.db.sql(
-			"SELECT current from tabSeries where name = %s", naming_series
-		)[0][0]
-		self.assertEqual(old_naming_series_current_value + 2, new_naming_series_current_value)

@@ -181,7 +181,10 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 
 		# full payment using PE
 		si1 = self.create_sales_invoice(qty=1, rate=amount, posting_date=transaction_date)
-		pe1 = get_payment_entry(si1.doctype, si1.name).save().submit()
+		pe1 = get_payment_entry(si1.doctype, si1.name)
+		pe1.reference_date = nowdate()
+		pe1.reference_no = "Test"
+		pe1.save().submit()
 
 		pl_entries = (
 			qb.from_(ple)
@@ -229,6 +232,8 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		pe2 = get_payment_entry(si2.doctype, si2.name)
 		pe2.get("references")[0].allocated_amount = 50
 		pe2.get("references")[0].outstanding_amount = 50
+		pe2.reference_date = nowdate()
+		pe2.reference_no = "Test"
 		pe2 = pe2.save().submit()
 
 		pl_entries = (
