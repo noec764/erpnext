@@ -112,6 +112,7 @@ frappe.ui.form.on('Payment Entry', {
 	}
 })
 
+// TODO: Move to HRMS
 frappe.ui.form.on('Salary Structure', {
 	mode_of_payment: function(frm) {
 		get_payment_mode_account(frm, frm.doc.mode_of_payment, function(account){

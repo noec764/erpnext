@@ -148,28 +148,6 @@
    "type": "Link"
   },
   {
-   "dependencies": "Employee",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Employee Attendance Tool",
-   "link_count": 0,
-   "link_to": "Employee Attendance Tool",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Salary Structure",
-   "link_count": 0,
-   "link_to": "Salary Structure",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "CRM",
@@ -274,7 +252,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-21 10:42:08.317790",
+ "modified": "2022-06-21 10:42:08.317790",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Home",
