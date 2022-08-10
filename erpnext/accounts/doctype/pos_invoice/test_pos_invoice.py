@@ -1,12 +1,11 @@
 # Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-
 import copy
 import time
-import unittest
 
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext.accounts.doctype.pos_invoice.pos_invoice import make_sales_return
 from erpnext.accounts.doctype.pos_profile.test_pos_profile import make_pos_profile
@@ -16,7 +15,7 @@ from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_pu
 from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
 
 
-class TestPOSInvoice(unittest.TestCase):
+class TestPOSInvoice(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		make_stock_entry(target="_Test Warehouse - _TC", item_code="_Test Item", qty=800, basic_rate=100)
@@ -36,12 +35,8 @@ class TestPOSInvoice(unittest.TestCase):
 
 		w2 = frappe.get_doc(w.doctype, w.name)
 
-		import time
-
 		time.sleep(1)
 		w.save()
-
-		import time
 
 		time.sleep(1)
 		self.assertRaises(frappe.TimestampMismatchError, w2.save)
