@@ -1,9 +1,8 @@
 # Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-import unittest
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_months, getdate
 
 from erpnext.accounts.doctype.payment_entry.test_payment_entry import get_payment_entry
@@ -17,7 +16,7 @@ from erpnext.loan_management.doctype.loan.test_loan import (
 )
 
 
-class TestBankClearance(unittest.TestCase):
+class TestBankClearance(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		make_bank_account()
@@ -33,6 +32,7 @@ class TestBankClearance(unittest.TestCase):
 		bank_clearance.from_date = add_months(getdate(), -1)
 		bank_clearance.to_date = getdate()
 		bank_clearance.get_payment_entries()
+		print(bank_clearance.payment_entries)
 		self.assertEqual(len(bank_clearance.payment_entries), 3)
 
 

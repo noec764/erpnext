@@ -17,14 +17,14 @@ test_dependencies = ["Item"]
 class TestAccountingPeriod(unittest.TestCase):
 	def test_overlap(self):
 		ap1 = create_accounting_period(
-			start_date="2018-04-01", end_date="2018-06-30", company="Wind Power LLC"
+			start_date="2018-04-01", end_date="2018-06-30", company="Wind Power"
 		)
 		ap1.save()
 
 		ap2 = create_accounting_period(
 			start_date="2018-06-30",
 			end_date="2018-07-10",
-			company="Wind Power LLC",
+			company="Wind Power",
 			period_name="Test Accounting Period 1",
 		)
 		self.assertRaises(OverlapError, ap2.save)

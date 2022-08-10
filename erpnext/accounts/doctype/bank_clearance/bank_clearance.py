@@ -118,11 +118,10 @@ class BankClearance(Document):
 			)
 			.where(loan_repayment.docstatus == 1)
 			.where(loan_repayment.clearance_date.isnull())
-			.where(loan_repayment.repay_from_salary == 0)
 			.where(loan_repayment.posting_date >= self.from_date)
 			.where(loan_repayment.posting_date <= self.to_date)
 			.where(loan_repayment.payment_account.isin([self.bank_account, self.account]))
-		).run(as_dict=1)
+		)
 
 		if frappe.db.has_column("Loan Repayment", "repay_from_salary"):
 			query = query.where((loan_repayment.repay_from_salary == 0))
