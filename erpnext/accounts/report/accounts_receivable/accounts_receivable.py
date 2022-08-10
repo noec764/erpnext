@@ -691,7 +691,7 @@ class ReceivablePayableReport(object):
 				ple.amount,
 				ple.amount_in_account_currency,
 			)
-			.where(ple.delinked == 0)
+			.where(ple.delinked == 0 and ple.is_advance == 0)
 			.where(Criterion.all(self.qb_selection_filter))
 		)
 

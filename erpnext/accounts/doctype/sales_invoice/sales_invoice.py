@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
 import frappe
 import frappe.defaults
 from frappe import _, msgprint, throw
@@ -33,7 +32,11 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import (
 	get_party_tax_withholding_details,
 )
-from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
+from erpnext.accounts.general_ledger import (
+	get_round_off_account_and_cost_center,
+	make_gl_entries,
+	make_reverse_gl_entries,
+)
 from erpnext.accounts.party import get_due_date, get_party_account, get_party_details
 from erpnext.accounts.utils import get_account_currency
 from erpnext.assets.doctype.asset.depreciation import (
@@ -119,7 +122,9 @@ class SalesInvoice(SellingController):
 		self.validate_write_off_account()
 		self.validate_account_for_change_amount()
 		self.validate_fixed_asset()
+		self.validate_down_payment_advances()
 		self.set_income_account_for_fixed_assets()
+		self.set_income_account_for_down_payments()
 		self.validate_item_cost_centers()
 		self.validate_income_account()
 		self.check_conversion_rate()
@@ -203,6 +208,15 @@ class SalesInvoice(SellingController):
 							)
 						)
 
+	def validate_down_payment_advances(self):
+		for advance in self.get("advances"):
+			if (
+				flt(advance.allocated_amount) <= flt(advance.advance_amount)
+				and advance.reference_type == "Payment Entry"
+				and cint(advance.is_down_payment)
+			):
+				advance.allocated_amount = advance.advance_amount
+
 	def validate_item_cost_centers(self):
 		for item in self.items:
 			cost_center_company = frappe.get_cached_value("Cost Center", item.cost_center, "company")
@@ -270,23 +284,20 @@ class SalesInvoice(SellingController):
 		self.update_billing_status_in_dn()
 		self.clear_unallocated_mode_of_payments()
 
-		if not self.is_down_payment_invoice:
-			# Updating stock ledger should always be called after updating prevdoc status,
-			# because updating reserved qty in bin depends upon updated delivered qty in SO
-			if self.update_stock == 1:
-				self.update_stock_ledger()
-			if self.is_return and self.update_stock:
-				update_serial_nos_after_submit(self, "items")
+		# Updating stock ledger should always be called after updating prevdoc status,
+		# because updating reserved qty in bin depends upon updated delivered qty in SO
+		if self.update_stock == 1:
+			self.update_stock_ledger()
+		if self.is_return and self.update_stock:
+			update_serial_nos_after_submit(self, "items")
 
-			# this sequence because outstanding may get -ve
-			self.make_gl_entries()
+		# this sequence because outstanding may get -ve
+		self.make_gl_entries()
 
-		if self.is_return and self.is_down_payment_invoice:
-			update_outstanding_amt(
-				self.debit_to, "Customer", self.customer, self.doctype, self.return_against
-			)
+		if self.update_stock == 1:
+			self.repost_future_sle_and_gle()
 
-		if not self.is_return and not self.is_down_payment_invoice:
+		if not self.is_return:
 			self.update_billing_status_for_zero_amount_refdoc("Delivery Note")
 			self.update_billing_status_for_zero_amount_refdoc("Sales Order")
 			self.check_credit_limit()
@@ -495,9 +506,7 @@ class SalesInvoice(SellingController):
 		pos = self.set_pos_fields(for_validate)
 
 		if not self.debit_to:
-			self.debit_to = get_party_account(
-				"Customer", self.customer, self.company, self.is_down_payment_invoice
-			)
+			self.debit_to = get_party_account("Customer", self.customer, self.company)
 			self.party_account_currency = frappe.db.get_value(
 				"Account", self.debit_to, "account_currency", cache=True
 			)
@@ -943,6 +952,14 @@ class SalesInvoice(SellingController):
 				if not d.cost_center:
 					d.cost_center = depreciation_cost_center
 
+	def set_income_account_for_down_payments(self):
+		if self.is_down_payment_invoice:
+			debit_to = get_party_account(
+				"Customer", self.customer, self.company, self.is_down_payment_invoice
+			)
+			for d in self.get("items"):
+				d.income_account = debit_to
+
 	def check_prev_docstatus(self):
 		for d in self.get("items"):
 			if d.sales_order and frappe.db.get_value("Sales Order", d.sales_order, "docstatus") != 1:
@@ -952,8 +969,6 @@ class SalesInvoice(SellingController):
 				throw(_("Delivery Note {0} is not submitted").format(d.delivery_note))
 
 	def make_gl_entries(self, gl_entries=None, from_repost=False):
-		from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_entries
-
 		auto_accounting_for_stock = erpnext.is_perpetual_inventory_enabled(self.company)
 		if not gl_entries:
 			gl_entries = self.get_gl_entries()
@@ -1001,6 +1016,8 @@ class SalesInvoice(SellingController):
 
 		self.make_item_gl_entries(gl_entries)
 		self.make_discount_gl_entries(gl_entries)
+
+		self.make_down_payment_final_invoice_entries(gl_entries)
 
 		# merge gl entries before adding pos entries
 		gl_entries = merge_similar_entries(gl_entries)
@@ -1067,6 +1084,57 @@ class SalesInvoice(SellingController):
 					item=self,
 				)
 			)
+
+	def make_down_payment_final_invoice_entries(self, gl_entries):
+		for d in self.get("advances"):
+			if (
+				flt(d.allocated_amount) > 0 and d.reference_type == "Payment Entry" and cint(d.is_down_payment)
+			):
+				payment_entry = frappe.get_doc(d.reference_type, d.reference_name)
+				down_payment_entries = []
+				gl_entry = frappe.qb.DocType("GL Entry")
+				for ref in payment_entry.references:
+					down_payment_entries.extend(
+						(
+							frappe.qb.from_(gl_entry)
+							.select("*")
+							.where(gl_entry.voucher_type == ref.reference_doctype)
+							.where(gl_entry.voucher_no == ref.reference_name)
+							.where(gl_entry.is_cancelled == 0)
+							.for_update()
+						).run(as_dict=1)
+					)
+
+				down_payment_accounts = [
+					entry["against"] for entry in down_payment_entries if entry["account"] == self.debit_to
+				]
+				for down_payment_entry in down_payment_entries:
+					if down_payment_entry["account"] in down_payment_accounts and not [
+						x for x in gl_entries if x["account"] == down_payment_entry["account"]
+					]:
+						gl_entries.append(
+							self.get_gl_dict(
+								{
+									"account": down_payment_entry["account"],
+									"against": down_payment_entry["account"],
+									"party_type": "Customer",
+									"party": self.customer,
+								},
+								self.currency,
+							)
+						)
+
+				for down_payment_entry in down_payment_entries:
+					for gl_entry in gl_entries:
+						if gl_entry["account"] == down_payment_entry["account"]:
+							if gl_entry["account"] not in down_payment_accounts:
+								gl_entry["debit"] -= down_payment_entry["debit"]
+								gl_entry["debit_in_account_currency"] -= down_payment_entry["debit_in_account_currency"]
+								gl_entry["credit"] -= down_payment_entry["credit"]
+								gl_entry["credit_in_account_currency"] -= down_payment_entry["credit_in_account_currency"]
+							else:
+								gl_entry["debit"] += down_payment_entry["credit"]
+								gl_entry["debit_in_account_currency"] += down_payment_entry["credit_in_account_currency"]
 
 	def make_tax_gl_entries(self, gl_entries):
 		enable_discount_accounting = cint(
@@ -1154,29 +1222,32 @@ class SalesInvoice(SellingController):
 					if not self.is_internal_transfer():
 						income_account = (
 							item.income_account
-							if (not item.enable_deferred_revenue or self.is_return)
+							if (not item.enable_deferred_revenue or self.is_return or self.is_down_payment_invoice)
 							else item.deferred_revenue_account
 						)
 						amount, base_amount = self.get_amount_and_base_amount(item, enable_discount_accounting)
 
 						account_currency = get_account_currency(income_account)
-						gl_entries.append(
-							self.get_gl_dict(
-								{
-									"account": income_account,
-									"against": self.customer,
-									"credit": flt(base_amount, item.precision("base_net_amount")),
-									"credit_in_account_currency": (
-										flt(base_amount, item.precision("base_net_amount"))
-										if account_currency == self.company_currency
-										else flt(amount, item.precision("net_amount"))
-									),
-									"cost_center": item.cost_center,
-								},
-								account_currency,
-								item=item,
-							)
+						gl_dict = self.get_gl_dict(
+							{
+								"account": income_account,
+								"against": self.customer,
+								"credit": flt(base_amount, item.precision("base_net_amount")),
+								"credit_in_account_currency": (
+									flt(base_amount, item.precision("base_net_amount"))
+									if account_currency == self.company_currency
+									else flt(amount, item.precision("net_amount"))
+								),
+								"cost_center": item.cost_center,
+							},
+							account_currency,
+							item=item,
 						)
+
+						if self.is_down_payment_invoice:
+							gl_dict.update({"party_type": "Customer", "party": self.customer})
+
+						gl_entries.append(gl_dict)
 
 		# expense account gl entries
 		if cint(self.update_stock) and erpnext.is_perpetual_inventory_enabled(self.company):

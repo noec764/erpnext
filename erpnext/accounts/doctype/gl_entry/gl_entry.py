@@ -382,12 +382,6 @@ def update_outstanding_amt(
 	if against_voucher_type in ["Sales Invoice", "Purchase Invoice"]:
 		ref_doc = frappe.get_doc(against_voucher_type, against_voucher)
 
-		# Down payment invoices have no GL entries attached, therefore initial balance is 0
-		# On payment relink, they should not be updated
-		if ref_doc.get("is_down_payment_invoice") and flt(bal) != 0.0:
-			if flt(ref_doc.outstanding_amount):
-				bal += flt(ref_doc.outstanding_amount)
-
 		# Didn't use db_set for optimisation purpose
 		ref_doc.outstanding_amount = bal
 		frappe.db.set_value(against_voucher_type, against_voucher, "outstanding_amount", bal)

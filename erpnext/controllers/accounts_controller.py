@@ -348,9 +348,9 @@ class AccountsController(TransactionBase):
 				frappe.throw(
 					_("Row {0}: {1} {2} cannot be same as {3} (Party Account) {4}").format(
 						item.idx,
-						frappe.bold(frappe.unscrub(item_field)),
+						frappe.bold(_(frappe.unscrub(item_field))),
 						item.get(item_field),
-						frappe.bold(frappe.unscrub(party_account_field)),
+						frappe.bold(_(frappe.unscrub(party_account_field))),
 						self.get(party_account_field),
 					)
 				)
@@ -803,6 +803,7 @@ class AccountsController(TransactionBase):
 				"advance_amount": flt(d.amount),
 				"allocated_amount": allocated_amount,
 				"ref_exchange_rate": flt(d.exchange_rate),  # exchange_rate of advance entry
+				"is_down_payment": d.get("down_payment"),
 			}
 
 			self.append("advances", advance_row)
@@ -838,7 +839,7 @@ class AccountsController(TransactionBase):
 		if self.doctype == "Sales Invoice" and order_list:
 			party_type = "Customer"
 			party = self.customer
-			party_account = get_party_account(party_type, party, self.company, True)
+			party_account = get_party_account(party_type, party, self.company)
 			amount_field = "credit_in_account_currency"
 			order_doctype = "Sales Invoice"
 
@@ -1015,9 +1016,7 @@ class AccountsController(TransactionBase):
 						"voucher_detail_no": d.reference_row,
 						"against_voucher_type": self.doctype,
 						"against_voucher": self.name,
-						"account": get_party_account(party_type, party, self.company, True)
-						if down_payment
-						else party_account,
+						"account": party_account,
 						"party_type": party_type,
 						"party": party,
 						"is_advance": "Yes",
@@ -1040,7 +1039,8 @@ class AccountsController(TransactionBase):
 						"exchange_gain_loss": flt(d.get("exchange_gain_loss")),
 					}
 				)
-				lst.append(args)
+				if not down_payment:
+					lst.append(args)
 
 		if lst:
 			from erpnext.accounts.utils import reconcile_against_document
@@ -2187,7 +2187,8 @@ def get_advance_payment_entries(
 				t1.remarks, t2.allocated_amount as amount, t2.name as reference_row,
 				t2.reference_doctype as against_order_type,
 				t2.reference_name as against_order, t1.posting_date,
-				t1.{0} as currency, t1.{4} as exchange_rate
+				t1.{0} as currency, t1.{4} as exchange_rate,
+				t1.down_payment
 			from `tabPayment Entry` t1, `tabPayment Entry Reference` t2
 			where
 				t1.name = t2.parent and t1.{1} = %s and t1.payment_type = %s

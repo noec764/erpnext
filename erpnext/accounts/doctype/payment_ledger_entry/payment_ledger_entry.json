@@ -22,7 +22,8 @@
   "amount",
   "account_currency",
   "amount_in_account_currency",
-  "delinked"
+  "delinked",
+  "is_advance"
  ],
  "fields": [
   {
@@ -136,12 +137,18 @@
    "fieldtype": "Link",
    "label": "Finance Book",
    "options": "Finance Book"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_advance",
+   "fieldtype": "Check",
+   "label": "Is Advance"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-11 09:13:54.379168",
+ "modified": "2022-08-10 08:46:38.065338",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Ledger Entry",

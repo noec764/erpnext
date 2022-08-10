@@ -1452,6 +1452,7 @@ def create_payment_ledger_entry(
 						"amount": dr_or_cr,
 						"amount_in_account_currency": dr_or_cr_account_currency,
 						"delinked": True if cancel else False,
+						"is_advance": bool([gl for gl in gl_entries if gl.against == gle.account]),
 					}
 				)
 
@@ -1489,13 +1490,8 @@ def update_voucher_outstanding(voucher_type, voucher_no, account, party_type, pa
 	if voucher_type in ["Sales Invoice", "Purchase Invoice"] and voucher_outstanding:
 		outstanding = voucher_outstanding[0]
 		ref_doc = frappe.get_doc(voucher_type, voucher_no)
-
-		if (
-			ref_doc.get("is_down_payment_invoice")
-			and flt(outstanding["outstanding_in_account_currency"]) != 0.0
-		):
-			if flt(ref_doc.outstanding_amount):
-				outstanding["outstanding_in_account_currency"] += flt(ref_doc.outstanding_amount)
+		if outstanding.get("is_advance"):
+			return
 
 		# Didn't use db_set for optimisation purpose
 		ref_doc.outstanding_amount = outstanding["outstanding_in_account_currency"]
@@ -1608,6 +1604,7 @@ class QueryPaymentLedger(object):
 				ple.posting_date,
 				ple.due_date,
 				ple.account_currency.as_("currency"),
+				ple.is_advance,
 				Sum(ple.amount).as_("amount"),
 				Sum(ple.amount_in_account_currency).as_("amount_in_account_currency"),
 			)
@@ -1669,6 +1666,7 @@ class QueryPaymentLedger(object):
 				).as_("paid_amount_in_account_currency"),
 				Table("vouchers").due_date,
 				Table("vouchers").currency,
+				Table("vouchers").is_advance,
 			)
 			.where(Criterion.all(filter_on_outstanding_amount))
 		)

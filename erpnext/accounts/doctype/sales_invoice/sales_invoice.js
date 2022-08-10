@@ -1023,15 +1023,6 @@ frappe.ui.form.on('Sales Invoice', {
 				}
 			})
 		}
-
-		frappe.xcall("erpnext.accounts.party.get_party_account", {
-			party_type: "Customer",
-			party: frm.doc.customer,
-			company: frm.doc.company,
-			down_payment: frm.doc.is_down_payment_invoice
-		}).then(r => {
-			frm.set_value("debit_to", r);
-		})
 	},
 
 	create_dunning: function(frm) {
