@@ -81,19 +81,20 @@ class TestPricingRule(unittest.TestCase):
 		details = get_item_details(args)
 		self.assertEqual(details.get("discount_percentage"), 10)
 
+		campaign = frappe.db.get_value("Campaign", dict(campaign_name="_Test Campaign"))
 		prule = frappe.get_doc(test_record.copy())
 		prule.applicable_for = "Campaign"
-		prule.campaign = "_Test Campaign"
+		prule.campaign = campaign
 		prule.title = "_Test Pricing Rule for Campaign"
 		prule.discount_percentage = 5
 		prule.priority = 8
 		prule.insert()
 
-		args.campaign = "_Test Campaign"
+		args.campaign = campaign
 		details = get_item_details(args)
 		self.assertEqual(details.get("discount_percentage"), 5)
 
-		frappe.db.sql("update `tabPricing Rule` set priority=NULL where campaign='_Test Campaign'")
+		frappe.db.sql(f"update `tabPricing Rule` set priority=NULL where campaign='{campaign}'")
 		from erpnext.accounts.doctype.pricing_rule.utils import MultiplePricingRuleConflict
 
 		self.assertRaises(MultiplePricingRuleConflict, get_item_details, args)
@@ -822,10 +823,9 @@ def make_pricing_rule(**args):
 
 
 def setup_pricing_rule_data():
-	if not frappe.db.exists("Campaign", "_Test Campaign"):
-		frappe.get_doc(
-			{"doctype": "Campaign", "campaign_name": "_Test Campaign", "name": "_Test Campaign"}
-		).insert()
+	frappe.get_doc(
+		{"doctype": "Campaign", "campaign_name": "_Test Campaign", "name": "_Test Campaign"}
+	).insert(ignore_if_duplicate=True)
 
 
 def delete_existing_pricing_rules():

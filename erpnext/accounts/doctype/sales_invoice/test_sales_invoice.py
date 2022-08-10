@@ -455,6 +455,7 @@ class TestSalesInvoice(FrappeTestCase):
 			self.assertEqual(expected_values[gle.account][2], gle.credit)
 
 		# cancel
+		si.reload()
 		si.cancel()
 
 		gle = frappe.db.sql(
@@ -870,6 +871,7 @@ class TestSalesInvoice(FrappeTestCase):
 			self.assertEqual(expected_values[gle.account][2], gle.credit)
 
 		# cancel
+		si.reload()
 		si.cancel()
 
 		gle = frappe.db.sql(
@@ -890,7 +892,7 @@ class TestSalesInvoice(FrappeTestCase):
 			write_off_account="_Test Write Off - TCP1",
 		)
 
-		pr = make_purchase_receipt(
+		make_purchase_receipt(
 			company="_Test Company with perpetual inventory",
 			item_code="_Test FG Item",
 			warehouse="Stores - TCP1",
@@ -1144,6 +1146,7 @@ class TestSalesInvoice(FrappeTestCase):
 			self.assertEqual(expected_gl_entries[i][1], gle.debit)
 			self.assertEqual(expected_gl_entries[i][2], gle.credit)
 
+		si.reload()
 		si.cancel()
 		gle = frappe.db.sql(
 			"""select * from `tabGL Entry`
@@ -1620,6 +1623,7 @@ class TestSalesInvoice(FrappeTestCase):
 				self.assertEqual(expected_values[gle.account][field], gle[field])
 
 		# cancel
+		si.reload()
 		si.cancel()
 
 		gle = frappe.db.sql(
@@ -1683,6 +1687,7 @@ class TestSalesInvoice(FrappeTestCase):
 
 		# Party Account currency must be in USD, force customer currency as there is no GLE
 
+		si3.reload()
 		si3.cancel()
 		si5 = create_sales_invoice(
 			customer="_Test Customer USD",
@@ -1913,6 +1918,7 @@ class TestSalesInvoice(FrappeTestCase):
 		current_month_sales = frappe.get_cached_value("Company", "_Test Company", "total_monthly_sales")
 		self.assertEqual(current_month_sales, existing_current_month_sales + si.base_grand_total)
 
+		si.reload()
 		si.cancel()
 		current_month_sales = frappe.get_cached_value("Company", "_Test Company", "total_monthly_sales")
 		self.assertEqual(current_month_sales, existing_current_month_sales)
@@ -2374,7 +2380,7 @@ class TestSalesInvoice(FrappeTestCase):
 		create_internal_customer(
 			customer_name="_Test Internal Customer",
 			represents_company="_Test Company 1",
-			allowed_to_interact_with="Wind Power LLC",
+			allowed_to_interact_with="Wind Power",
 		)
 
 		if not frappe.db.exists("Supplier", "_Test Internal Supplier"):
@@ -2384,7 +2390,7 @@ class TestSalesInvoice(FrappeTestCase):
 					"supplier_name": "_Test Internal Supplier",
 					"doctype": "Supplier",
 					"is_internal_supplier": 1,
-					"represents_company": "Wind Power LLC",
+					"represents_company": "Wind Power",
 				}
 			)
 
@@ -2393,7 +2399,7 @@ class TestSalesInvoice(FrappeTestCase):
 			supplier.insert()
 
 		si = create_sales_invoice(
-			company="Wind Power LLC",
+			company="Wind Power",
 			customer="_Test Internal Customer",
 			debit_to="Debtors - WP",
 			warehouse="Stores - WP",
@@ -2455,7 +2461,7 @@ class TestSalesInvoice(FrappeTestCase):
 				}
 			)
 
-			customer.append("companies", {"company": "Wind Power LLC"})
+			customer.append("companies", {"company": "Wind Power"})
 
 			customer.insert()
 
@@ -2466,7 +2472,7 @@ class TestSalesInvoice(FrappeTestCase):
 					"supplier_name": "_Test Internal Supplier",
 					"doctype": "Supplier",
 					"is_internal_supplier": 1,
-					"represents_company": "Wind Power LLC",
+					"represents_company": "Wind Power",
 				}
 			)
 
@@ -2476,7 +2482,7 @@ class TestSalesInvoice(FrappeTestCase):
 
 		# begin test
 		si = create_sales_invoice(
-			company="Wind Power LLC",
+			company="Wind Power",
 			customer="_Test Internal Customer",
 			debit_to="Debtors - WP",
 			warehouse="Stores - WP",
@@ -2984,6 +2990,7 @@ class TestSalesInvoice(FrappeTestCase):
 		si.save()
 
 		self.assertRaises(frappe.ValidationError, si.submit)
+		si.reload()
 		si.posting_date = getdate()
 		si.submit()
 
