@@ -42,6 +42,13 @@
   "territory": "_Test Territory"
  },
  {
+    "customer_group": "_Test Customer Group",
+    "customer_name": "_Test Customer 4",
+    "customer_type": "Individual",
+    "doctype": "Customer",
+    "territory": "_Test Territory"
+   },
+ {
   "customer_group": "_Test Customer Group",
   "customer_name": "_Test Customer USD",
   "customer_type": "Individual",

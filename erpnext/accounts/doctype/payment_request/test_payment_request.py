@@ -55,7 +55,12 @@ class TestPaymentRequest(unittest.TestCase):
 
 		conversion_rate = get_exchange_rate("USD", "INR")
 
-		si_usd = create_sales_invoice(currency="USD", conversion_rate=conversion_rate)
+		si_usd = create_sales_invoice(
+			currency="USD",
+			conversion_rate=conversion_rate,
+			customer="_Test Customer 4",
+			debit_to="_Test Receivable USD - _TC",
+		)
 		pr = make_payment_request(dt="Sales Invoice", dn=si_usd.name, recipient_id="hello@dokos.io")
 
 		self.assertEqual(pr.reference_doctype, "Sales Invoice")
