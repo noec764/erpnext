@@ -1,5 +1,6 @@
 import unittest
 
+import frappe
 from frappe.test_runner import make_test_objects
 
 from erpnext.accounts.party import get_party_shipping_address
@@ -18,6 +19,7 @@ class TestUtils(unittest.TestCase):
 	def setUpClass(cls):
 		super(TestUtils, cls).setUpClass()
 		make_test_objects("Address", ADDRESS_RECORDS)
+		frappe.db.delete("Stock Ledger Entry")
 
 	def test_get_party_shipping_address(self):
 		address = get_party_shipping_address("Customer", "_Test Customer 1")
