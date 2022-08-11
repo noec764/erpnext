@@ -135,6 +135,7 @@ class TestAsset(AssetSetup):
 		)
 		self.assertSequenceEqual(gle, expected_gle)
 
+		pi.reload()
 		pi.cancel()
 		asset.cancel()
 		asset.load_from_db()
@@ -576,9 +577,9 @@ class TestDepreciationMethods(AssetSetup):
 		self.assertEqual(asset.status, "Draft")
 
 		expected_schedules = [
-			["2030-12-31", 66667.00, 66667.00],
-			["2031-12-31", 22222.11, 88889.11],
-			["2032-12-31", 1110.89, 90000.0],
+			["2030-12-31", 66666.7, 66666.7],
+			["2031-12-31", 22222.21, 88888.91],
+			["2032-12-31", 1111.09, 90000.0],
 		]
 
 		schedules = [
@@ -604,7 +605,7 @@ class TestDepreciationMethods(AssetSetup):
 
 		self.assertEqual(asset.status, "Draft")
 
-		expected_schedules = [["2030-12-31", 33333.50, 83333.50], ["2031-12-31", 6666.50, 90000.0]]
+		expected_schedules = [["2030-12-31", 33333.35, 83333.35], ["2031-12-31", 6666.65, 90000.0]]
 
 		schedules = [
 			[cstr(d.schedule_date), d.depreciation_amount, d.accumulated_depreciation_amount]
@@ -722,12 +723,12 @@ class TestDepreciationMethods(AssetSetup):
 		)
 
 		expected_schedules = [
-			["2022-02-28", 647.25, 647.25],
-			["2022-03-31", 1210.71, 1857.96],
-			["2022-04-30", 1053.99, 2911.95],
-			["2022-05-31", 917.55, 3829.5],
-			["2022-06-30", 798.77, 4628.27],
-			["2022-07-15", 371.73, 5000.0],
+			["2022-02-28", 647.0, 647.0],
+			["2022-03-31", 1210.28, 1857.28],
+			["2022-04-30", 1053.67, 2910.95],
+			["2022-05-31", 917.32, 3828.27],
+			["2022-06-30", 798.62, 4626.89],
+			["2022-07-15", 373.11, 5000.0],
 		]
 
 		schedules = [
@@ -738,6 +739,7 @@ class TestDepreciationMethods(AssetSetup):
 			]
 			for d in asset.get("schedules")
 		]
+
 		self.assertEqual(schedules, expected_schedules)
 
 

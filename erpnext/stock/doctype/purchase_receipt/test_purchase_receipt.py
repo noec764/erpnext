@@ -1297,7 +1297,7 @@ def make_purchase_receipt(**args):
 			"rejected_warehouse": args.rejected_warehouse or "_Test Rejected Warehouse - _TC"
 			if rejected_qty != 0
 			else "",
-			"rate": args.rate if args.rate is None else 50,
+			"rate": args.rate if args.rate is not None else 50,
 			"conversion_factor": args.conversion_factor or 1.0,
 			"stock_qty": flt(qty) * (flt(args.conversion_factor) or 1.0),
 			"serial_no": args.serial_no,

@@ -269,10 +269,6 @@ class Asset(AccountsController):
 				if should_get_last_day:
 					schedule_date = get_last_day(schedule_date)
 
-				# schedule date will be a year later from start date
-				# so monthly schedule date is calculated by removing 11 months from it
-				monthly_schedule_date = add_months(schedule_date, -finance_book.frequency_of_depreciation + 1)
-
 			# if asset is being sold
 			if date_of_sale:
 				from_date = self.get_from_date(finance_book.finance_book)
@@ -300,10 +296,6 @@ class Asset(AccountsController):
 					finance_book, depreciation_amount, from_date, finance_book.depreciation_start_date
 				)
 
-				# For first depr schedule date will be the start date
-				# so monthly schedule date is calculated by removing month difference between use date and start date
-				monthly_schedule_date = add_months(finance_book.depreciation_start_date, -months + 1)
-
 			# For last row
 			elif has_pro_rata and n == cint(number_of_pending_depreciations) - 1:
 				if not self.flags.increase_in_asset_life:
@@ -323,9 +315,7 @@ class Asset(AccountsController):
 					depreciation_amount_without_pro_rata, depreciation_amount, finance_book.finance_book
 				)
 
-				monthly_schedule_date = add_months(schedule_date, 1)
 				schedule_date = add_days(schedule_date, days)
-				last_schedule_date = schedule_date
 
 			if not depreciation_amount:
 				continue
