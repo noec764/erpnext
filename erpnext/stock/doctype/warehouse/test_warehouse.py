@@ -42,7 +42,8 @@ class TestWarehouse(FrappeTestCase):
 		company = "Wind Power"
 		warehouse_name = "Named Warehouse - WP"
 		wh = frappe.get_doc(doctype="Warehouse", warehouse_name=warehouse_name, company=company).insert()
-		self.assertEqual(wh.name, warehouse_name)
+		self.assertNotEqual(wh.name, warehouse_name)
+		self.assertEqual(wh.warehouse_name, warehouse_name)
 
 		warehouse_name = "Unnamed Warehouse"
 		wh = frappe.get_doc(doctype="Warehouse", warehouse_name=warehouse_name, company=company).insert()
