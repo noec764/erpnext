@@ -1054,7 +1054,7 @@ def make_purchase_order_for_default_supplier(source_name, selected_items=None, t
 					],
 					"postprocess": update_item,
 					"condition": lambda doc: doc.ordered_qty < doc.stock_qty
-					and doc.supplier == supplier
+					and doc.supplier == supplier  # noqa
 					and doc.item_code in items_to_map,
 				},
 			},
@@ -1126,7 +1126,6 @@ def make_purchase_order(source_name, selected_items=None, target_doc=None):
 			"Sales Order Item": {
 				"doctype": "Purchase Order Item",
 				"field_map": [
-					["name", "sales_order_packed_item"],
 					["name", "sales_order_item"],
 					["parent", "sales_order"],
 					["stock_uom", "stock_uom"],
@@ -1151,6 +1150,7 @@ def make_purchase_order(source_name, selected_items=None, target_doc=None):
 			"Packed Item": {
 				"doctype": "Purchase Order Item",
 				"field_map": [
+					["name", "sales_order_packed_item"],
 					["parent", "sales_order"],
 					["uom", "uom"],
 					["conversion_factor", "conversion_factor"],
