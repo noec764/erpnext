@@ -28,6 +28,9 @@ WEBITEM_PRICE_TESTS = (
 class TestWebsiteItem(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
+		if frappe.session.user != "Administrator":
+			frappe.set_user("Administrator")
+
 		setup_e_commerce_settings(
 			{
 				"company": "_Test Company",

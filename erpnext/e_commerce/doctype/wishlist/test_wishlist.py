@@ -12,6 +12,10 @@ from erpnext.stock.doctype.item.test_item import make_item
 
 
 class TestWishlist(unittest.TestCase):
+	def setUpClass(self):
+		if frappe.session.user != "Administrator":
+			frappe.set_user("Administrator")
+
 	def setUp(self):
 		item = make_item("Test Phone Series X")
 		if not frappe.db.exists("Website Item", {"item_code": "Test Phone Series X"}):
