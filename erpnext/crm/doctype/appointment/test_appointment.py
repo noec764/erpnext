@@ -11,7 +11,7 @@ import frappe
 def create_test_lead():
 	test_lead = frappe.db.get_value("Lead", {"email_id": "test@example.com"})
 	if test_lead:
-		return frappe.get_doc("Lead", test_lead[0][0])
+		return frappe.get_doc("Lead", test_lead)
 	test_lead = frappe.get_doc(
 		{"doctype": "Lead", "lead_name": "Test Lead", "email_id": "test@example.com"}
 	)
