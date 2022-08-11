@@ -260,13 +260,14 @@ def modify_report_data(data):
 					for tax_rate in tax_rates:
 						tax_line = line.copy()
 						tax_line.account_type = "Tax"
-						tax_line.account = tax_rate.get("account")
+						tax_line.account = tax_rate if isinstance(tax_rate, str) else tax_rate.get("account")
+						rate = tax_rates.get(tax_rate) if isinstance(tax_rate, str) else tax_rate.get("rate")
 						if line.voucher_type == "Sales Invoice":
 							line.amount = line.base_net_amount
-							tax_line.amount = line.base_net_amount * (tax_rate.get("rate") / 100)
+							tax_line.amount = line.base_net_amount * (rate / 100)
 						if line.voucher_type == "Purchase Invoice":
 							line.amount = -line.base_net_amount
-							tax_line.amount = -line.base_net_amount * (tax_rate.get("rate") / 100)
+							tax_line.amount = -line.base_net_amount * (rate / 100)
 						new_data += [tax_line]
 		else:
 			new_data += [line]

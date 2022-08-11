@@ -1318,6 +1318,7 @@ class TestSalesInvoice(FrappeTestCase):
 		from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 
 		si = self.test_serialized()
+		si.reload()
 		si.cancel()
 
 		serial_nos = get_serial_nos(si.get("items")[0].serial_no)
@@ -2545,11 +2546,13 @@ class TestSalesInvoice(FrappeTestCase):
 		self.assertEqual(sum(d.actual_qty for d in sles), 0.0)
 
 		# tear down
+		si.reload()
 		si.cancel()
+		se.reload()
 		se.cancel()
 
 	def test_internal_transfer_gl_entry(self):
-		## Create internal transfer account
+		# Create internal transfer account
 		from erpnext.selling.doctype.customer.test_customer import create_internal_customer
 
 		account = create_account(
