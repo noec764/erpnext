@@ -76,6 +76,8 @@ class TestShoppingCart(unittest.TestCase):
 		self.login_as_customer()
 		quotation = validate_quotation()
 
+		return quotation
+
 	def test_add_to_cart(self):
 		self.login_as_customer()
 

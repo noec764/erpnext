@@ -71,8 +71,7 @@
    "in_preview": 1,
    "label": "Project Name",
    "oldfieldtype": "Data",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "default": "Open",
@@ -461,7 +460,7 @@
  "idx": 29,
  "links": [],
  "max_attachments": 4,
- "modified": "2022-06-23 16:45:06.108499",
+ "modified": "2022-08-11 16:45:06.108499",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",

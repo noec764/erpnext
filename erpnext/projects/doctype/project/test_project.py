@@ -1,10 +1,8 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import unittest
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days, getdate, nowdate
 
 from erpnext.projects.doctype.project_template.test_project_template import make_project_template
@@ -16,7 +14,7 @@ test_records = frappe.get_test_records("Project")
 test_ignore = ["Sales Order"]
 
 
-class TestProject(unittest.TestCase):
+class TestProject(FrappeTestCase):
 	def test_project_with_template_having_no_parent_and_depend_tasks(self):
 		project_name = "Test Project with Template - No Parent and Dependend Tasks"
 		frappe.db.sql(""" delete from tabTask where project = %s """, project_name)
@@ -168,7 +166,7 @@ def get_project(name, template):
 			expected_start_date=nowdate(),
 			company="_Test Company",
 		)
-	).insert()
+	).insert(ignore_if_duplicate=True)
 
 	return project
 

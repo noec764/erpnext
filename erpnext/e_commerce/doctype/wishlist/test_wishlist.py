@@ -12,7 +12,8 @@ from erpnext.stock.doctype.item.test_item import make_item
 
 
 class TestWishlist(unittest.TestCase):
-	def setUpClass(self):
+	@classmethod
+	def setUpClass(cls):
 		if frappe.session.user != "Administrator":
 			frappe.set_user("Administrator")
 

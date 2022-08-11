@@ -906,6 +906,7 @@ class TestPurchaseReceipt(FrappeTestCase):
 		self.assertEqual(pi2.items[1].qty, 1)
 
 		pr2.cancel()
+		pi1.reload()
 		pi1.cancel()
 		pr1.reload()
 		pr1.cancel()
