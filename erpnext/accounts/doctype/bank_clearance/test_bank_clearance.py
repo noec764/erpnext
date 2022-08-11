@@ -32,7 +32,6 @@ class TestBankClearance(FrappeTestCase):
 		bank_clearance.from_date = add_months(getdate(), -1)
 		bank_clearance.to_date = getdate()
 		bank_clearance.get_payment_entries()
-		print(bank_clearance.payment_entries)
 		self.assertEqual(len(bank_clearance.payment_entries), 3)
 
 
