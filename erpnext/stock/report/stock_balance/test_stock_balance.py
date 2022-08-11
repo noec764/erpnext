@@ -80,7 +80,7 @@ class TestStockBalance(FrappeTestCase):
 			# valuation rate
 			if not row.bal_qty:
 				continue
-			self.assertAlmostEqual(row.val_rate, row.bal_val / row.bal_qty, 3, msg)
+			self.assertAlmostEqual(row.val_rate, frappe.utils.flt(row.bal_val / row.bal_qty, 2), 3, msg)
 
 	# ----------- tests
 
