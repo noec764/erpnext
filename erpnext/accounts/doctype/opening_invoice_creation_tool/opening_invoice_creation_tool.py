@@ -235,8 +235,9 @@ def start_import(invoices):
 				invoice_number = d.invoice_number
 			publish(idx, len(invoices), d.doctype)
 			doc = frappe.get_doc(d)
-			doc.insert()
+			doc.flags.ignore_mandatory = True
 			doc.insert(set_name=invoice_number)
+			doc.submit()
 			frappe.db.commit()
 			names.append(doc.name)
 		except Exception:

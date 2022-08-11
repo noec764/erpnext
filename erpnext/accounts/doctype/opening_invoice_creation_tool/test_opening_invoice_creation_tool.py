@@ -134,6 +134,7 @@ class TestOpeningInvoiceCreationTool(FrappeTestCase):
 
 		sales_inv1 = frappe.get_all("Sales Invoice", filters={"customer": "Customer A"})[0].get("name")
 		sales_inv2 = frappe.get_all("Sales Invoice", filters={"customer": "Customer B"})[0].get("name")
+
 		self.assertEqual(sales_inv1, "TEST-NEW-INV-11")
 
 		# teardown
