@@ -28,9 +28,6 @@ WEBITEM_PRICE_TESTS = (
 class TestWebsiteItem(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
-		if frappe.session.user != "Administrator":
-			frappe.set_user("Administrator")
-
 		setup_e_commerce_settings(
 			{
 				"company": "_Test Company",
@@ -45,6 +42,9 @@ class TestWebsiteItem(unittest.TestCase):
 		frappe.db.rollback()
 
 	def setUp(self):
+		if frappe.session.user != "Administrator":
+			frappe.set_user("Administrator")
+
 		if self._testMethodName in WEBITEM_DESK_TESTS:
 			make_item(
 				"Test Web Item",

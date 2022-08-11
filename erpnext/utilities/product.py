@@ -92,7 +92,7 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
 		}
 		if uom:
-			filters["uom"] = uom
+			filters["uom"] = ("in", ("", None, uom))
 		elif stock_uom:
 			filters["uom"] = ("in", ("", None, stock_uom))
 
