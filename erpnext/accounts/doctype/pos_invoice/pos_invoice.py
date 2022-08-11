@@ -208,6 +208,7 @@ class POSInvoice(SalesInvoice):
 			error_msg.append(msg)
 
 		if error_msg:
+			print(error_msg)
 			frappe.throw(error_msg, title=_("Invalid Item"), as_list=True)
 
 	def validate_stock_availablility(self):

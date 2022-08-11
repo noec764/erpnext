@@ -81,6 +81,7 @@ class TestPurchaseOrder(FrappeTestCase):
 		po.load_from_db()
 		self.assertEqual(po.get("items")[0].received_qty, 12)
 
+		pi.reload()
 		pi.cancel()
 		self.assertEqual(get_ordered_qty(), existing_ordered_qty + 10)
 

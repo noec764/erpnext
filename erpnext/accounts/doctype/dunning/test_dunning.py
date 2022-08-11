@@ -1,10 +1,8 @@
 # Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
-
-import unittest
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days, nowdate, today
 
 from erpnext.accounts.doctype.dunning.dunning import calculate_interest_and_amount
@@ -17,7 +15,7 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import (
 )
 
 
-class TestDunning(unittest.TestCase):
+class TestDunning(FrappeTestCase):
 	@classmethod
 	def setUpClass(self):
 		create_dunning_type()
@@ -58,7 +56,11 @@ class TestDunning(unittest.TestCase):
 		)
 		self.assertTrue(gl_entries)
 		expected_values = dict(
-			(d[0], d) for d in [["Debtors - _TC", 20.44, 0.0], ["Sales - _TC", 0.0, 20.44]]
+			(d[0], d)
+			for d in [
+				["Debtors - _TC", 20.44, 0.0],
+				[frappe.db.get_value("Company", "_Test Company", "default_income_account"), 0.0, 20.44],
+			]
 		)
 		for gle in gl_entries:
 			self.assertEqual(expected_values[gle.account][0], gle.account)
