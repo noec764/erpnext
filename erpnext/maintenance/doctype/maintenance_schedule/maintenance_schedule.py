@@ -9,7 +9,7 @@ from frappe.utils import add_days, cint, cstr, date_diff, formatdate, getdate
 from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 from erpnext.stock.utils import get_valid_serial_nos
-from erpnext.utilities.transaction_base import TransactionBase
+from erpnext.utilities.transaction_base import TransactionBase, delete_events
 
 
 class MaintenanceSchedule(TransactionBase):
@@ -117,6 +117,7 @@ class MaintenanceSchedule(TransactionBase):
 						"event_type": "Private",
 					}
 				)
+				event.add_reference(self.doctype, self.name)
 				event.insert(ignore_permissions=1)
 
 		frappe.db.set(self, "status", "Submitted")
@@ -345,6 +346,7 @@ class MaintenanceSchedule(TransactionBase):
 				serial_nos = get_valid_serial_nos(d.serial_no)
 				self.update_amc_date(serial_nos)
 		frappe.db.set(self, "status", "Cancelled")
+		delete_events(self.doctype, self.name)
 
 	@frappe.whitelist()
 	def get_pending_data(self, data_type, s_date=None, item_name=None):

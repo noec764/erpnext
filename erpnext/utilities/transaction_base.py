@@ -171,8 +171,24 @@ class TransactionBase(StatusUpdater):
 
 
 def delete_events(ref_type, ref_name):
-	# TODO: Implement this method for new event links behavior
-	pass
+	events = (
+		frappe.db.sql_list(
+			""" SELECT
+			distinct `tabEvent`.name
+		from
+			`tabEvent`, `tabEvent Reference`
+		where
+			`tabEvent`.name = `tabEvent Reference`.parent
+			and `tabEvent Reference`.reference_doctype = %s
+			and `tabEvent Reference`.reference_docname = %s
+		""",
+			(ref_type, ref_name),
+		)
+		or []
+	)
+
+	if events:
+		frappe.delete_doc("Event", events, for_reload=True)
 
 
 def validate_uom_is_integer(doc, uom_field, qty_fields, child_dt=None):

@@ -167,7 +167,7 @@ def make_serial_item_with_serial(item_code):
 
 def get_events(ms):
 	return frappe.get_all(
-		"Event Participants",
+		"Event Reference",
 		filters={"reference_doctype": ms.doctype, "reference_docname": ms.name, "parenttype": "Event"},
 	)
 
