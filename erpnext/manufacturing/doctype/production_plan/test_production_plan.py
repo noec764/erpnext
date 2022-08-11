@@ -553,6 +553,11 @@ class TestProductionPlan(FrappeTestCase):
 		# All the created Work Orders
 		wo_list = []
 
+		# Create and Submit 1st Work Order for 3 qty
+		create_work_order(item, pln, 3)
+		pln.reload()
+		self.assertEqual(pln.po_items[0].ordered_qty, 3)
+
 		# Create and Submit 2nd Work Order for 2 qty
 		create_work_order(item, pln, 2)
 		pln.reload()
