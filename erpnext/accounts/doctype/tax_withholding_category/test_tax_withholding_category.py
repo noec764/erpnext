@@ -215,6 +215,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in invoices:
+			d.reload()
 			d.cancel()
 
 
