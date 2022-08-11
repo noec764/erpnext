@@ -1,16 +1,19 @@
 stages:
   - Unit Tests
 
+variables:
+  BASE_BRANCH: "develop"
+
 unittests:
   image: "python:3.10-buster"
 
   stage: Unit Tests
 
-  only:
-    - branches
-
-  except:
-    - tags
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+      variables:
+        BASE_BRANCH: "master"
+    - if: $CI_COMMIT_TAG == null
 
   services:
     - name: mariadb
@@ -43,8 +46,8 @@ unittests:
     - usermod -aG sudo dokotest
     - echo 'dokotest ALL=(ALL)  NOPASSWD:ALL' >> /etc/sudoers
     - su -c "pip install dokos-cli" dokotest
-    - su -c "cd /home/dokotest && bench init dokos-bench --no-backups --skip-redis-config-generation --skip-assets --frappe-branch $CI_COMMIT_REF_NAME" dokotest
-    - su -c "cd /home/dokotest/dokos-bench && bench get-app https://gitlab.com/dokos/payments.git --branch $CI_COMMIT_REF_NAME" dokotest
+    - su -c "cd /home/dokotest && bench init dokos-bench --no-backups --skip-redis-config-generation --skip-assets --frappe-branch $BASE_BRANCH" dokotest
+    - su -c "cd /home/dokotest/dokos-bench && bench get-app https://gitlab.com/dokos/payments.git --branch $BASE_BRANCH" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench get-app /builds/dokos/dokos/" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench config set-common-config -c redis_queue redis://redis_queue:6379 -c redis_cache redis://redis_cache:6379 -c redis_socketio redis://redis_socketio:6379" dokotest
     - su -c "cp -r /home/dokotest/dokos-bench/apps/frappe/test_sites/test_site /home/dokotest/dokos-bench/sites/" dokotest
