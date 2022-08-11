@@ -781,6 +781,7 @@ class TestItem(FrappeTestCase):
 			item.has_batch_no = 1
 			self.assertRaises(frappe.ValidationError, item.save)
 
+			transaction.reload()
 			transaction.cancel()
 			# should be allowed now
 			item.reload()
