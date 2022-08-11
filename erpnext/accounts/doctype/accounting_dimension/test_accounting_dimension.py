@@ -14,6 +14,7 @@ class TestAccountingDimension(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		create_dimension()
+		enable_dimension()
 
 	def test_dimension_against_sales_invoice(self):
 		si = create_sales_invoice(do_not_save=1)
@@ -93,7 +94,7 @@ def create_dimension():
 		).insert()
 	else:
 		dimension = frappe.get_doc("Accounting Dimension", "Department")
-		dimension.disabled = 0
+		dimension.disabled = 1
 		dimension.save()
 
 	if not frappe.db.exists("Accounting Dimension", {"document_type": "Location"}):
@@ -118,8 +119,18 @@ def create_dimension():
 		dimension1.save()
 	else:
 		dimension1 = frappe.get_doc("Accounting Dimension", "Location")
-		dimension1.disabled = 0
+		dimension1.disabled = 1
 		dimension1.save()
+
+
+def enable_dimension():
+	dimension1 = frappe.get_doc("Accounting Dimension", "Department")
+	dimension1.disabled = 0
+	dimension1.save()
+
+	dimension2 = frappe.get_doc("Accounting Dimension", "Location")
+	dimension2.disabled = 0
+	dimension2.save()
 
 
 def disable_dimension():
