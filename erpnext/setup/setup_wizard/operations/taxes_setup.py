@@ -37,7 +37,6 @@ def make_tax_account_and_template(company, tax_data, template_name=None):
 
 def make_tax_account(company, account_name, tax_rate, account_number=None):
 	tax_group = get_tax_account_group(company, account_number)
-
 	if tax_group:
 		try:
 			return frappe.get_doc(
@@ -91,6 +90,9 @@ def make_sales_and_purchase_tax_templates(company, tax_data, template_name=None)
 			)
 			sales_tax_template["taxes"].append(tax_details)
 
+	if not sales_tax_template.get("taxes"):
+		return
+
 	# Sales
 	if not tax_data.get("purchase_tax"):
 		frappe.get_doc(copy.deepcopy(sales_tax_template)).insert(ignore_permissions=True)
@@ -123,6 +125,9 @@ def make_item_tax_templates(company, tax_data, template_name=None):
 					"tax_rate": tax_details.get("rate", 0),
 				}
 			)
+
+	if not item_tax_template.get("taxes"):
+		return
 
 	# Items
 	frappe.get_doc(copy.deepcopy(item_tax_template)).insert(ignore_permissions=True)

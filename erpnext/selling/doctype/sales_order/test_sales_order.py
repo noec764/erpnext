@@ -271,6 +271,7 @@ class TestSalesOrder(FrappeTestCase):
 		self.assertEqual(so.get("items")[0].delivered_qty, 12)
 		self.assertEqual(so.per_delivered, 100)
 
+		si.reload()
 		si.cancel()
 		self.assertEqual(get_reserved_qty(), existing_reserved_qty + 10)
 
