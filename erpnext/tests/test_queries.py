@@ -27,7 +27,6 @@ class TestQueries(unittest.TestCase):
 
 	def test_lead_query(self):
 		query = add_default_params(queries.lead_query, "Lead")
-
 		self.assertGreaterEqual(len(query(txt="_Test Lead")), 4)
 		self.assertEqual(len(query(txt="_Test Lead 4")), 1)
 

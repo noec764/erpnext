@@ -104,8 +104,8 @@ def get():
 		},
 		_("Income"): {
 			_("Direct Income"): {
-				_("Sales"): {"account_number": "4110"},
-				_("Service"): {"account_number": "4120"},
+				_("Sales"): {"account_type": "Income Account", "account_number": "4110"},
+				_("Service"): {"account_type": "Income Account", "account_number": "4120"},
 				"account_number": "4100",
 			},
 			_("Indirect Income"): {"is_group": 1, "account_number": "4200"},
