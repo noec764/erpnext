@@ -1,8 +1,9 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
+import unittest
+
 import frappe
-from frappe.tests.utils import FrappeTestCase
 
 from erpnext.accounts.doctype.journal_entry.test_journal_entry import make_journal_entry
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
@@ -10,7 +11,7 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 test_dependencies = ["Cost Center", "Location", "Warehouse", "Department"]
 
 
-class TestAccountingDimension(FrappeTestCase):
+class TestAccountingDimension(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		create_dimension()
@@ -141,3 +142,5 @@ def disable_dimension():
 	dimension2 = frappe.get_doc("Accounting Dimension", "Location")
 	dimension2.disabled = 1
 	dimension2.save()
+
+	frappe.db.commit()
