@@ -119,7 +119,7 @@ class TestPlaidSettings(unittest.TestCase):
 		transactions = {
 			"account_owner": None,
 			"category": ["Food and Drink", "Restaurants"],
-			"account_id": "b4Jkp1LJDZiPgojpr1ansXJrj5Q6w9fVmv6ov",
+			"account_id": "6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK",
 			"pending_transaction_id": None,
 			"transaction_id": "x374xPa7DvUewqlR5mjNIeGK8r8rl3Sn647LM",
 			"unofficial_currency_code": None,
