@@ -1,16 +1,14 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import unittest
-
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext.accounts.doctype.account.account import merge_account, update_account_number
 from erpnext.stock import get_company_default_inventory_account, get_warehouse_account
 
 
-class TestAccount(unittest.TestCase):
+class TestAccount(FrappeTestCase):
 	def test_rename_account(self):
 		if not frappe.db.exists("Account", "1210 - Debtors - _TC"):
 			acc = frappe.new_doc("Account")
@@ -30,10 +28,9 @@ class TestAccount(unittest.TestCase):
 		new_account_name = "Debtors 1 - Test - "
 
 		update_account_number("1210 - Debtors - _TC", new_account_name, new_account_number)
-
 		new_acc = frappe.db.get_value(
 			"Account",
-			"1211-11-4 - 6 - - Debtors 1 - Test - - _TC",
+			"1211-11-4 - 6 - - Debtors 1 - Test - - Asset - _TC",
 			["account_name", "account_number"],
 			as_dict=1,
 		)
