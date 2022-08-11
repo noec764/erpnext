@@ -725,9 +725,9 @@ class TestPOSInvoice(FrappeTestCase):
 		# teardown
 		pos_inv1.reload()
 		pos_inv1.cancel()
-		pos_inv2.reload()
-		pos_inv2.cancel()
-		se.cancel()
+
+		pos_inv2.delete()
+
 		se.cancel()
 		batch.reload()
 		batch.cancel()
