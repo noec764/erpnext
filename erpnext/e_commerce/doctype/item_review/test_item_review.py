@@ -25,12 +25,12 @@ class TestItemReview(unittest.TestCase):
 		if not frappe.db.exists("Website Item", {"item_code": "Test Mobile Phone"}):
 			make_website_item(item, save=True)
 
-		setup_e_commerce_settings({"enable_reviews": 1})
+		setup_e_commerce_settings({"enable_reviews": 1, "enabled": 1})
 		frappe.local.shopping_cart_settings = None
 
 	def tearDown(self):
 		frappe.get_cached_doc("Website Item", {"item_code": "Test Mobile Phone"}).delete()
-		setup_e_commerce_settings({"enable_reviews": 0})
+		setup_e_commerce_settings({"enable_reviews": 0, "enabled": 0})
 
 	def test_add_and_get_item_reviews_from_customer(self):
 		"Add / Get Reviews from a User that is a valid customer (has added to cart or purchased in the past)"
