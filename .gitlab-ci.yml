@@ -27,11 +27,12 @@ unittests:
     MYSQL_ROOT_PASSWORD: "test_dodock"
 
   before_script:
-    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-suggests --no-install-recommends mariadb-client
+    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-suggests --no-install-recommends mariadb-client xfonts-75dpi xfonts-base
     - export LANG=C.UTF-8
     - export LC_ALL=C.UTF-8
     - export LANGUAGE=en_US.UTF-8
-    - dpkg -i wkhtmltox_0.12.6-1.buster_i386.deb && rm wkhtmltox_0.12.6-1.buster_i386.deb
+    - wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb
+    - dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb && rm wkhtmltox_0.12.6-1.buster_amd64.deb
     - rm -rf /var/lib/apt/lists/*
     - rm -rf /etc/apt/sources.list.d/*
     - curl -sL https://deb.nodesource.com/setup_16.x | bash
