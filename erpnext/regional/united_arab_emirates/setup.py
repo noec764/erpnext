@@ -15,7 +15,7 @@ def setup(company=None, patch=True):
 	add_permissions()
 
 	if company:
-		create_sales_tax(company)
+		create_sales_tax({"country": "United Arab Emirates", "company_name": company})
 
 
 def make_custom_fields():
