@@ -725,13 +725,12 @@ class TestPOSInvoice(FrappeTestCase):
 		# teardown
 		pos_inv1.reload()
 		pos_inv1.cancel()
-		pos_inv1.delete()
 		pos_inv2.reload()
-		pos_inv2.delete()
+		pos_inv2.cancel()
+		se.cancel()
 		se.cancel()
 		batch.reload()
 		batch.cancel()
-		batch.delete()
 
 	def test_ignore_pricing_rule(self):
 		from erpnext.accounts.doctype.pricing_rule.test_pricing_rule import make_pricing_rule
