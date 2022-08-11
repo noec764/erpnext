@@ -849,10 +849,12 @@ class TestWorkOrder(FrappeTestCase):
 
 		se = frappe.get_doc(make_stock_entry(wo.name, "Material Transfer for Manufacture", qty))
 		se.get("items")[0].s_warehouse = "Stores - _TC"
+		se.get("items")[0].t_warehouse = "_Test Warehouse - _TC"
 		se.insert()
 		se.submit()
 
 		se = frappe.get_doc(make_stock_entry(wo.name, "Manufacture", qty))
+		se.get("items")[0].t_warehouse = "_Test Warehouse 1 - _TC"
 		se.insert()
 		se.submit()
 

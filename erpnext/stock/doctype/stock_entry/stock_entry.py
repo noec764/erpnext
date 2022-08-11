@@ -6,7 +6,6 @@ import json
 from collections import defaultdict
 
 import frappe
-import frappe.defaults
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder.functions import Sum
@@ -698,6 +697,7 @@ class StockEntry(StockController):
 				d.basic_amount = flt(flt(d.transfer_qty) * flt(d.basic_rate), d.precision("basic_amount"))
 				if not d.t_warehouse:
 					outgoing_items_cost += flt(d.basic_amount)
+
 		return outgoing_items_cost
 
 	def get_args_for_incoming_rate(self, item):
@@ -869,7 +869,7 @@ class StockEntry(StockController):
 					frappe.throw(
 						_("Item {0} not found in 'Raw Materials Supplied' table in {1} {2}").format(
 							se_item.item_code,
-							self.subcontract_data.order_doctype,
+							_(self.subcontract_data.order_doctype),
 							self.get(self.subcontract_data.order_field),
 						)
 					)
@@ -1533,9 +1533,12 @@ class StockEntry(StockController):
 		from erpnext.manufacturing.doctype.bom.bom import get_bom_items_as_dict
 
 		# item dict = { item_code: {qty, description, stock_uom} }
-		item_dict = (
-			get_bom_items_as_dict(self.bom_no, self.company, qty=qty, fetch_exploded=0, fetch_scrap_items=1)
-			or {}
+		item_dict = get_bom_items_as_dict(
+			self.bom_no,
+			self.company,
+			qty=qty,
+			fetch_exploded=self.use_multi_level_bom,
+			fetch_qty_in_stock_uom=False,
 		)
 
 		used_alternative_items = get_used_alternative_items(
@@ -1557,6 +1560,21 @@ class StockEntry(StockController):
 				item.uom = alternative_item_data.uom
 				item.conversion_factor = alternative_item_data.conversion_factor
 				item.description = alternative_item_data.description
+
+		return item_dict
+
+	def get_bom_scrap_material(self, qty):
+		from erpnext.manufacturing.doctype.bom.bom import get_bom_items_as_dict
+
+		# item dict = { item_code: {qty, description, stock_uom} }
+		item_dict = (
+			get_bom_items_as_dict(self.bom_no, self.company, qty=qty, fetch_exploded=0, fetch_scrap_items=1)
+			or {}
+		)
+
+		for item in item_dict.values():
+			item.from_warehouse = ""
+			item.is_scrap_item = 1
 
 		for row in self.get_scrap_items_from_job_card():
 			if row.stock_qty <= 0:
@@ -1581,19 +1599,6 @@ class StockEntry(StockController):
 
 			item_dict[row.item_code] = item_row
 
-		return item_dict
-
-	def get_bom_scrap_material(self, qty):
-		from erpnext.manufacturing.doctype.bom.bom import get_bom_items_as_dict
-
-		# item dict = { item_code: {qty, description, stock_uom} }
-		item_dict = get_bom_items_as_dict(
-			self.bom_no, self.company, qty=qty, fetch_exploded=0, fetch_scrap_items=1
-		)
-
-		for item in item_dict.values():
-			item.from_warehouse = ""
-			item.is_scrap_item = 1
 		return item_dict
 
 	def get_scrap_items_from_job_card(self):
