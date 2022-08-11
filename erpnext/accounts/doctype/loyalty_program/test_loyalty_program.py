@@ -67,6 +67,7 @@ class TestLoyaltyProgram(unittest.TestCase):
 
 		# cancel and delete
 		for d in [si_redeem, si_original]:
+			d.reload()
 			d.cancel()
 
 	def test_loyalty_points_earned_multiple_tier(self):
@@ -125,6 +126,7 @@ class TestLoyaltyProgram(unittest.TestCase):
 
 		# cancel and delete
 		for d in [si_redeem, si_original]:
+			d.reload()
 			d.cancel()
 
 	def test_cancel_sales_invoice(self):
@@ -144,6 +146,7 @@ class TestLoyaltyProgram(unittest.TestCase):
 		self.assertEqual(True, not (lpe is None))
 
 		# cancelling sales invoice
+		si.reload()
 		si.cancel()
 		lpe = frappe.db.exists("Loyalty Point Entry", lpe.name)
 		self.assertEqual(True, (lpe is None))
@@ -195,6 +198,7 @@ class TestLoyaltyProgram(unittest.TestCase):
 		# cancel and delete
 		for d in [si_return, si_original]:
 			try:
+				d.reload()
 				d.cancel()
 			except frappe.TimestampMismatchError:
 				frappe.get_doc("Sales Invoice", d.name).cancel()

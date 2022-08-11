@@ -102,7 +102,7 @@ class TestPaymentRequest(unittest.TestCase):
 			dn=si_usd.name,
 			recipient_id="hello@dokos.io",
 			mute_email=1,
-			payment_gateway="_Test Gateway - USD",
+			payment_gateway="_Test Gateway",
 			submit_doc=1,
 			return_doc=1,
 		)
@@ -113,7 +113,7 @@ class TestPaymentRequest(unittest.TestCase):
 			(d[0], d)
 			for d in [
 				["_Test Receivable USD - _TC", 0, 5000, si_usd.name],
-				[pr.payment_account, 6290.0, 0, None],
+				[pe.paid_to, 6290.0, 0, None],
 				["_Test Exchange Gain/Loss - _TC", 0, 1290, None],
 			]
 		)

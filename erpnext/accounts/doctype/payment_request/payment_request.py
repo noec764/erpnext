@@ -318,12 +318,13 @@ class PaymentRequest(Document):
 			}
 		)
 
-		if self.exchange_rate:
-			payment_entry.update(
-				{
-					"target_exchange_rate": self.exchange_rate,
-				}
-			)
+		# TODO: Refactor
+		# if self.exchange_rate:
+		# 	payment_entry.update(
+		# 		{
+		# 			"target_exchange_rate": self.exchange_rate,
+		# 		}
+		# 	)
 
 		if (
 			self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center")
@@ -516,7 +517,6 @@ class PaymentRequest(Document):
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(*args, **kwargs):
 	"""Make payment request"""
-
 	args = frappe._dict(kwargs)
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	grand_total = args.grand_total or get_amount(ref_doc)
