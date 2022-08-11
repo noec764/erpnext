@@ -151,7 +151,7 @@ class TestProject(unittest.TestCase):
 		so.reload()
 		self.assertEqual(so.project, project.name)
 
-		project.delete()
+		project.delete(force=True)
 
 		so.reload()
 		self.assertFalse(so.project)
