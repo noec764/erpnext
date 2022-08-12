@@ -7,6 +7,7 @@ from frappe.tests.utils import FrappeTestCase
 from erpnext.accounts.doctype.accounting_dimension.test_accounting_dimension import (
 	create_dimension,
 	disable_dimension,
+	enable_dimension,
 )
 from erpnext.accounts.doctype.opening_invoice_creation_tool.opening_invoice_creation_tool import (
 	get_temporary_opening_account,
@@ -21,6 +22,7 @@ class TestOpeningInvoiceCreationTool(FrappeTestCase):
 		if not frappe.db.exists("Company", "_Test Opening Invoice Company"):
 			make_company()
 		create_dimension()
+		enable_dimension()
 		return super().setUpClass()
 
 	def make_invoices(
