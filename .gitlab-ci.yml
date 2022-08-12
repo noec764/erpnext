@@ -66,11 +66,4 @@ unittests:
     - su -c "cd /home/dokotest/dokos-bench && bench build --app erpnext" dokotest
 
   script:
-    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-tests --app erpnext --junit-xml-output /builds/dokos/dokos/rspec.xml" dokotest
-
-  artifacts:
-    when: always
-    paths:
-      - rspec.xml
-    reports:
-      junit: rspec.xml
+    - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-parallel-tests --app erpnext" dokotest
