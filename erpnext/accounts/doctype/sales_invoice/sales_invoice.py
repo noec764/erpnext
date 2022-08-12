@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 import frappe
-import frappe.defaults
 from frappe import _, msgprint, throw
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.mapper import get_mapped_doc
@@ -84,7 +83,7 @@ class SalesInvoice(SellingController):
 		"""Set indicator for portal"""
 		if self.outstanding_amount < 0:
 			self.indicator_title = _("Credit Note Issued")
-			self.indicator_color = "darkgray"
+			self.indicator_color = "gray"
 		elif self.outstanding_amount > 0 and getdate(self.due_date) >= getdate(nowdate()):
 			self.indicator_color = "orange"
 			self.indicator_title = _("Unpaid")
@@ -93,7 +92,7 @@ class SalesInvoice(SellingController):
 			self.indicator_title = _("Overdue")
 		elif cint(self.is_return) == 1:
 			self.indicator_title = _("Return")
-			self.indicator_color = "darkgray"
+			self.indicator_color = "gray"
 		else:
 			self.indicator_color = "green"
 			self.indicator_title = _("Paid")
@@ -367,6 +366,8 @@ class SalesInvoice(SellingController):
 
 	def before_cancel(self):
 		self.check_if_consolidated_invoice()
+
+		super(SalesInvoice, self).before_cancel()
 		self.update_time_sheet(None)
 
 	def on_cancel(self):
@@ -640,11 +641,11 @@ class SalesInvoice(SellingController):
 				selling_price_list = (
 					customer_price_list or customer_group_price_list or pos.get("selling_price_list")
 				)
-
-				if selling_price_list:
-					self.set("selling_price_list", selling_price_list)
 			else:
 				selling_price_list = pos.get("selling_price_list")
+
+			if selling_price_list:
+				self.set("selling_price_list", selling_price_list)
 
 			if not for_validate:
 				self.update_stock = cint(pos.get("update_stock"))
@@ -804,7 +805,8 @@ class SalesInvoice(SellingController):
 
 	def validate_pos(self):
 		if self.is_return:
-			if flt(self.paid_amount) + flt(self.write_off_amount) - flt(self.grand_total) > 1.0 / (
+			invoice_total = self.rounded_total or self.grand_total
+			if flt(self.paid_amount) + flt(self.write_off_amount) - flt(invoice_total) > 1.0 / (
 				10.0 ** (self.precision("grand_total") + 1.0)
 			):
 				frappe.throw(_("Paid amount + Write Off Amount can not be greater than Grand Total"))
@@ -874,6 +876,8 @@ class SalesInvoice(SellingController):
 			from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
 			make_packing_list(self)
+		else:
+			self.set("packed_items", [])
 
 	def set_billing_hours_and_amount(self):
 		if not self.project:
@@ -1158,7 +1162,6 @@ class SalesInvoice(SellingController):
 								else flt(amount, tax.precision("tax_amount_after_discount_amount"))
 							),
 							"cost_center": tax.cost_center,
-							"project": self.project,
 						},
 						account_currency,
 						item=tax,
@@ -1239,6 +1242,7 @@ class SalesInvoice(SellingController):
 									else flt(amount, item.precision("net_amount"))
 								),
 								"cost_center": item.cost_center,
+								"project": item.project or self.project,
 							},
 							account_currency,
 							item=item,
@@ -1390,6 +1394,7 @@ class SalesInvoice(SellingController):
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
+						"project": self.project,
 					},
 					item=self,
 				)
@@ -1434,7 +1439,6 @@ class SalesInvoice(SellingController):
 								else self.name,
 								"against_voucher_type": self.doctype,
 								"cost_center": self.cost_center,
-								"project": self.project,
 							},
 							self.party_account_currency,
 							item=self,
@@ -1452,15 +1456,14 @@ class SalesInvoice(SellingController):
 								if payment_mode_account_currency == self.company_currency
 								else payment_mode.amount,
 								"cost_center": self.cost_center,
-								"project": self.project,
 							},
 							payment_mode_account_currency,
 							item=self,
 						)
 					)
 
-				if not skip_change_gl_entries:
-					self.make_gle_for_change_amount(gl_entries)
+			if not skip_change_gl_entries:
+				self.make_gle_for_change_amount(gl_entries)
 
 	def make_gle_for_change_amount(self, gl_entries):
 		if self.change_amount:
@@ -1481,6 +1484,7 @@ class SalesInvoice(SellingController):
 							else self.name,
 							"against_voucher_type": self.doctype,
 							"cost_center": self.cost_center,
+							"project": self.project,
 						},
 						self.party_account_currency,
 						item=self,
