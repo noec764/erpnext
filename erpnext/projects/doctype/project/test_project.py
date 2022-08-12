@@ -109,7 +109,8 @@ class TestProject(FrappeTestCase):
 			""" delete from tabTask where project = %s or subject in ('Test Template Task for Dependency', 'Test Template Task with Dependency')""",
 			project_name,
 		)
-		frappe.delete_doc("Project", project_name)
+		project_id = frappe.db.get_value("Project", dict(project_name=project_name))
+		frappe.delete_doc("Project", project_id)
 
 		task1 = task_exists("Test Template Task for Dependency")
 		if not task1:
