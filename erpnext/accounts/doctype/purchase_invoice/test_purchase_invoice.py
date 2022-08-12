@@ -737,7 +737,7 @@ class TestPurchaseInvoice(unittest.TestCase, StockTestMixin):
 		self.assertGLEs(
 			return_pi,
 			[{"credit": 0, "debit": 100}],
-			gle_filters={"account": "Cost of Goods Sold - TCP1"},
+			gle_filters={"account": return_pi.get_company_default("default_expense_account")},
 		)
 
 	def test_multi_currency_gle(self):

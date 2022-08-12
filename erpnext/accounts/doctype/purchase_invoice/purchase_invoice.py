@@ -3,7 +3,6 @@
 
 
 import frappe
-import frappe.defaults
 from frappe import _, throw
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import cint, cstr, flt, formatdate, get_link_to_form, getdate, nowdate
@@ -307,7 +306,6 @@ class PurchaseInvoice(BuyingController):
 							frappe.bold(item.warehouse),
 						)
 						frappe.msgprint(msg, title=_("Expense Head Changed"))
-
 					item.expense_account = warehouse_account[item.warehouse]["account"]
 				else:
 					# check if 'Stock Received But Not Billed' account is credited in Purchase receipt or not
@@ -350,9 +348,16 @@ class PurchaseInvoice(BuyingController):
 						item.expense_account = stock_not_billed_account
 
 			elif item.is_fixed_asset and not is_cwip_accounting_enabled(asset_category):
-				item.expense_account = get_asset_category_account(
+				asset_category_account = get_asset_category_account(
 					"fixed_asset_account", item=item.item_code, company=self.company
 				)
+				if not asset_category_account:
+					form_link = get_link_to_form("Asset Category", asset_category)
+					throw(
+						_("Please set Fixed Asset Account in {} against {}.").format(form_link, self.company),
+						title=_("Missing Account"),
+					)
+				item.expense_account = asset_category_account
 			elif item.is_fixed_asset and item.pr_detail:
 				item.expense_account = asset_received_but_not_billed
 			elif not item.expense_account and for_validate:
@@ -374,6 +379,7 @@ class PurchaseInvoice(BuyingController):
 
 	def po_required(self):
 		if frappe.db.get_value("Buying Settings", None, "po_required") == "Yes":
+
 			if frappe.get_value(
 				"Supplier", self.supplier, "allow_purchase_invoice_creation_without_purchase_order"
 			):
@@ -393,6 +399,7 @@ class PurchaseInvoice(BuyingController):
 	def pr_required(self):
 		stock_items = self.get_stock_items()
 		if frappe.db.get_value("Buying Settings", None, "pr_required") == "Yes":
+
 			if frappe.get_value(
 				"Supplier", self.supplier, "allow_purchase_invoice_creation_without_purchase_receipt"
 			):
@@ -579,9 +586,9 @@ class PurchaseInvoice(BuyingController):
 		self.make_exchange_gain_loss_gl_entries(gl_entries)
 		self.make_internal_transfer_gl_entries(gl_entries)
 
-		gl_entries = merge_similar_entries(gl_entries)
-
 		gl_entries = make_regional_gl_entries(gl_entries, self)
+
+		gl_entries = merge_similar_entries(gl_entries)
 
 		self.make_payment_gl_entries(gl_entries)
 		self.make_write_off_gl_entry(gl_entries)
@@ -627,8 +634,8 @@ class PurchaseInvoice(BuyingController):
 						"against_voucher": self.return_against
 						if cint(self.is_return) and self.return_against
 						else self.name,
-						"project": self.project,
 						"against_voucher_type": self.doctype,
+						"project": self.project,
 						"cost_center": self.cost_center,
 					},
 					self.party_account_currency,
@@ -689,7 +696,6 @@ class PurchaseInvoice(BuyingController):
 					)
 
 					if item.from_warehouse:
-
 						gl_entries.append(
 							self.get_gl_dict(
 								{
@@ -767,6 +773,7 @@ class PurchaseInvoice(BuyingController):
 										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 										"credit": flt(amount["base_amount"]),
 										"credit_in_account_currency": flt(amount["amount"]),
+										"project": item.project or self.project,
 									},
 									item=item,
 								)
@@ -805,9 +812,6 @@ class PurchaseInvoice(BuyingController):
 						dummy, amount = self.get_amount_and_base_amount(item, enable_discount_accounting)
 					else:
 						amount = flt(item.base_net_amount + item.item_tax_amount, item.precision("base_net_amount"))
-						self.negative_expense_to_be_booked += flt(
-							item.item_tax_amount, item.precision("item_tax_amount")
-						)
 
 					if provisional_accounting_for_non_stock_items:
 						if item.purchase_receipt:
@@ -819,6 +823,7 @@ class PurchaseInvoice(BuyingController):
 							if not purchase_receipt_doc:
 								purchase_receipt_doc = frappe.get_doc("Purchase Receipt", item.purchase_receipt)
 								purchase_receipt_doc_map[item.purchase_receipt] = purchase_receipt_doc
+
 							# Post reverse entry for Stock-Received-But-Not-Billed if it is booked in Purchase Receipt
 							expense_booked_in_pr = frappe.db.get_value(
 								"GL Entry",
@@ -893,7 +898,7 @@ class PurchaseInvoice(BuyingController):
 								)
 
 					# If asset is bought through this document and not linked to PR
-					if item.is_fixed_asset and self.update_stock and item.landed_cost_voucher_amount:
+					if self.update_stock and item.landed_cost_voucher_amount:
 						expenses_included_in_asset_valuation = self.get_company_default(
 							"expenses_included_in_asset_valuation"
 						)
@@ -1340,6 +1345,7 @@ class PurchaseInvoice(BuyingController):
 						else self.name,
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
+						"project": self.project,
 					},
 					self.party_account_currency,
 					item=self,
@@ -1612,7 +1618,7 @@ class PurchaseInvoice(BuyingController):
 					self.status = "Unpaid"
 				# Check if outstanding amount is 0 due to debit note issued against invoice
 				elif (
-					outstanding_amount < 0
+					outstanding_amount <= 0
 					and self.is_return == 0
 					and frappe.db.get_value(
 						"Purchase Invoice", {"is_return": 1, "return_against": self.name, "docstatus": 1}
