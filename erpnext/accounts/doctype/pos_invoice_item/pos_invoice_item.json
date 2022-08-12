@@ -422,7 +422,6 @@
    "fieldtype": "Currency",
    "label": "Net Amount",
    "options": "currency",
-   "precision": "4",
    "print_hide": 1,
    "read_only": 1
   },
