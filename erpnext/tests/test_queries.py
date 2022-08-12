@@ -2,6 +2,7 @@ import unittest
 from functools import partial
 
 import frappe
+from frappe.test_runner import make_test_records_for_doctype
 
 from erpnext.controllers import queries
 
@@ -15,6 +16,10 @@ def add_default_params(func, doctype):
 class TestQueries(unittest.TestCase):
 
 	# All tests are based on doctype/test_records.json
+	@classmethod
+	def setUpClass(cls):
+		# Reload in case data are missing because of other tests
+		make_test_records_for_doctype("Lead", force=True)
 
 	def assert_nested_in(self, item, container):
 		self.assertIn(item, [vals for tuples in container for vals in tuples])
