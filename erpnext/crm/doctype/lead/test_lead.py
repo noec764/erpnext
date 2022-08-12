@@ -2,6 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 import frappe
+from frappe.test_runner import make_test_records_for_doctype
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import random_string, today
 
@@ -12,6 +13,10 @@ test_records = frappe.get_test_records("Lead")
 
 
 class TestLead(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		make_test_records_for_doctype("Lead", force=True)
+
 	def test_make_customer(self):
 		from erpnext.crm.doctype.lead.lead import make_customer
 
@@ -20,7 +25,7 @@ class TestLead(FrappeTestCase):
 		lead = frappe.db.get_value("Lead", dict(lead_name="_T-Lead-00001"))
 		customer = make_customer(lead)
 		self.assertEqual(customer.doctype, "Customer")
-		self.assertEqual(customer.lead_name, "_T-Lead-00001")
+		self.assertEqual(customer.lead_name, lead)
 
 		customer.company = "_Test Company"
 		customer.customer_group = "_Test Customer Group"
@@ -47,7 +52,7 @@ class TestLead(FrappeTestCase):
 		lead = frappe.db.get_value("Lead", dict(lead_name="_T-Lead-00001"))
 		customer = make_customer(lead)
 		self.assertEqual(customer.doctype, "Customer")
-		self.assertEqual(customer.lead_name, "_T-Lead-00002")
+		self.assertEqual(customer.lead_name, lead)
 
 		customer.company = "_Test Company"
 		customer.customer_group = "_Test Customer Group"
