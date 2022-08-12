@@ -149,7 +149,11 @@ class calculate_taxes_and_totals(object):
 						item.rate = flt(
 							item.rate_with_margin * (1.0 - (item.discount_percentage / 100.0)), item.precision("rate")
 						)
-						item.discount_amount = item.rate_with_margin - item.rate
+
+						if item.discount_amount and not item.discount_percentage:
+							item.rate = item.rate_with_margin - item.discount_amount
+						else:
+							item.discount_amount = item.rate_with_margin - item.rate
 
 					elif flt(item.price_list_rate) > 0:
 						item.discount_amount = item.price_list_rate - item.rate
@@ -210,7 +214,7 @@ class calculate_taxes_and_totals(object):
 			self.doc.round_floats_in(tax)
 
 	def determine_exclusive_rate(self):
-		if not any((cint(tax.included_in_print_rate) for tax in self.doc.get("taxes"))):
+		if not any(cint(tax.included_in_print_rate) for tax in self.doc.get("taxes")):
 			return
 
 		for item in self.doc.get("items"):
@@ -240,6 +244,7 @@ class calculate_taxes_and_totals(object):
 				and (cumulated_tax_fraction or total_inclusive_tax_amount_per_qty)
 			):
 				amount = flt(item.amount) - total_inclusive_tax_amount_per_qty
+
 				item.net_amount = flt(amount / (1 + cumulated_tax_fraction))
 				item.net_rate = flt(item.net_amount / item.qty, item.precision("net_rate"))
 				item.discount_percentage = flt(item.discount_percentage, item.precision("discount_percentage"))
@@ -285,8 +290,7 @@ class calculate_taxes_and_totals(object):
 	def _get_tax_rate(self, tax, item_tax_map):
 		for tax_map in item_tax_map:
 			if isinstance(tax_map, str):
-				return item_tax_map.get(tax_map)
-
+				return flt(item_tax_map.get(tax_map), self.doc.precision("rate", tax))
 			if tax_map.get("account") == tax.account_head:
 				return flt(tax_map.get("rate"), self.doc.precision("rate", tax))
 		else:
@@ -808,15 +812,12 @@ class calculate_taxes_and_totals(object):
 			and not self.doc.is_return
 			and any(d.type == "Cash" for d in self.doc.payments)
 		):
-
 			self.doc.change_amount = flt(
-				self.doc.paid_amount - grand_total + self.doc.paid_amount - grand_total,
-				self.doc.precision("change_amount"),
+				self.doc.paid_amount - grand_total, self.doc.precision("change_amount")
 			)
 
 			self.doc.base_change_amount = flt(
-				self.doc.base_paid_amount - base_grand_total + self.doc.base_paid_amount - base_grand_total,
-				self.doc.precision("base_change_amount"),
+				self.doc.base_paid_amount - base_grand_total, self.doc.precision("base_change_amount")
 			)
 
 	def calculate_write_off_amount(self):
@@ -851,9 +852,9 @@ class calculate_taxes_and_totals(object):
 						item.margin_rate_or_amount = pricing_rule.margin_rate_or_amount
 						has_margin = True
 
-					if not has_margin:
-						item.margin_type = None
-						item.margin_rate_or_amount = 0.0
+				if not has_margin:
+					item.margin_type = None
+					item.margin_rate_or_amount = 0.0
 
 			if not item.pricing_rules and flt(item.rate) > flt(item.price_list_rate):
 				item.margin_type = "Amount"
