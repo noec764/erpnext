@@ -47,7 +47,10 @@ class TestProject(FrappeTestCase):
 		if frappe.db.get_value("Project", {"project_name": project_name}, "name"):
 			project_name = frappe.db.get_value("Project", {"project_name": project_name}, "name")
 
-		frappe.db.sql(""" delete from tabTask where project = %s """, project_name)
+		frappe.db.sql(
+			""" delete from tabTask where project = %s or subject in ('Test Template Task Parent', 'Test Template Task Child 1')""",
+			project_name,
+		)
 		frappe.delete_doc("Project", project_name)
 
 		task1 = task_exists("Test Template Task Parent")
@@ -102,7 +105,10 @@ class TestProject(FrappeTestCase):
 
 	def test_project_template_having_dependent_tasks(self):
 		project_name = "Test Project with Template - Dependent Tasks"
-		frappe.db.sql(""" delete from tabTask where project = %s  """, project_name)
+		frappe.db.sql(
+			""" delete from tabTask where project = %s or subject in ('Test Template Task Parent', 'Test Template Task Child 1')""",
+			project_name,
+		)
 		frappe.delete_doc("Project", project_name)
 
 		task1 = task_exists("Test Template Task for Dependency")
