@@ -2028,9 +2028,11 @@ class TestSalesInvoice(FrappeTestCase):
 		from erpnext.accounts.doctype.accounting_dimension.test_accounting_dimension import (
 			create_dimension,
 			disable_dimension,
+			enable_dimension,
 		)
 
 		create_dimension()
+		enable_dimension()
 
 		si = create_sales_invoice(do_not_save=True)
 		si.items = []
