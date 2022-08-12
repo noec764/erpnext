@@ -106,7 +106,7 @@ class TestProject(FrappeTestCase):
 	def test_project_template_having_dependent_tasks(self):
 		project_name = "Test Project with Template - Dependent Tasks"
 		frappe.db.sql(
-			""" delete from tabTask where project = %s or subject in ('Test Template Task Parent', 'Test Template Task Child 1')""",
+			""" delete from tabTask where project = %s or subject in ('Test Template Task for Dependency', 'Test Template Task with Dependency')""",
 			project_name,
 		)
 		frappe.delete_doc("Project", project_name)
