@@ -409,9 +409,6 @@ doc_events = {
 			"erpnext.regional.saudi_arabia.utils.delete_vat_settings_for_company",
 		]
 	},
-	"Bin": {
-		"on_update": "erpnext.erpnext_integrations.doctype.woocommerce_settings.api.products.update_stock"
-	},
 	"Sales Order": {
 		"on_submit": "erpnext.accounts.doctype.subscription_template.subscription_template.make_subscription_from_sales_order_item"
 	},
@@ -456,7 +453,6 @@ scheduler_events = {
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
 	],
 	"hourly_long": [
-		"erpnext.erpnext_integrations.doctype.woocommerce_settings.woocommerce_settings.sync_woocommerce",
 		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries",
 		"erpnext.bulk_transaction.doctype.bulk_transaction_log.bulk_transaction_log.retry_failing_transaction",
 	],

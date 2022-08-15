@@ -274,7 +274,6 @@ erpnext.patches.dokos.v2_0.venue_module
 erpnext.patches.dokos.v2_0.subscription_cycle_on_stripe
 erpnext.patches.dokos.v2_0.correct_unreconciled_amount_for_internal_transfers
 erpnext.patches.dokos.v2_0.update_website_settings
-erpnext.patches.dokos.v2_0.cancel_duplicate_woocommerce_invoices
 erpnext.patches.dokos.v2_0.delete_subscription_portal
 erpnext.patches.dokos.v3_0.rename_policy_title_field
 erpnext.patches.dokos.v2_0.relink_payment_requests_with_subscriptions

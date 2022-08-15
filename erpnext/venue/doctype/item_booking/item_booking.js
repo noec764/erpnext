@@ -96,7 +96,6 @@ frappe.ui.form.on('Item Booking', {
 					if (delay > 0) {
 						frm.set_intro(__("This document will be automatically deleted in {0} minutes if not validated.", [delay]))
 					}
-					frm.trigger('set_woocommerce_info')
 				}, 10000 )
 			}
 		} )
@@ -171,7 +170,6 @@ frappe.ui.form.on('Item Booking', {
 			}
 			frm.set_intro()
 			frm.set_intro(message)
-			frm.trigger('set_woocommerce_info')
 		});
 	},
 	starts_on: function(frm) {
@@ -180,15 +178,6 @@ frappe.ui.form.on('Item Booking', {
 	ends_on: function(frm) {
 		frm.trigger('get_booking_count')
 	},
-	set_woocommerce_info: async function(frm) {
-		if (frm.doc.woocommerce_id) {
-			const url = await frappe.db.get_single_value("WooCommerce Settings", "woocommerce_server_url")
-			const full_url = `${url}/wp-admin/post.php?post=${frm.doc.woocommerce_id}&action=edit`
-			let msg = __("This booking has been created in WooCommerce Booking.<br>")
-			msg += __("Any date modification needs to be done at <a href='{}' target='_blank'>this address</a>.", [full_url])
-			frm.set_intro(msg)
-		}
-	}
 });
 
 const add_to_transaction = (frm, transaction_type) => {
