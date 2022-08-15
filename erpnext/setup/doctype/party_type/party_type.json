@@ -30,7 +30,7 @@
  ],
  "in_create": 1,
  "links": [],
- "modified": "2022-08-03 15:51:04.612541",
+ "modified": "2022-08-04 15:51:04.612541",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Party Type",
@@ -68,5 +68,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 1
+ "track_changes": 1,
+ "translated_doctype": 1
 }
