@@ -231,7 +231,7 @@ class RequestforQuotation(BuyingController):
 
 	def update_rfq_supplier_status(self, sup_name=None):
 		for supplier in self.suppliers:
-			if sup_name == None or supplier.supplier == sup_name:
+			if sup_name is None or supplier.supplier == sup_name:
 				quote_status = _("Received")
 				for item in self.items:
 					sqi_count = frappe.db.sql(
@@ -285,18 +285,6 @@ def get_list_context(context=None):
 		}
 	)
 	return list_context
-
-
-@frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
-def get_supplier_contacts(doctype, txt, searchfield, start, page_len, filters):
-	return frappe.db.sql(
-		"""select `tabContact`.name from `tabContact`, `tabDynamic Link`
-		where `tabDynamic Link`.link_doctype = 'Supplier' and (`tabDynamic Link`.link_name=%(name)s
-		and `tabDynamic Link`.link_name like %(txt)s) and `tabContact`.name = `tabDynamic Link`.parent
-		limit %(page_len)s offset %(start)s""",
-		{"start": start, "page_len": page_len, "txt": "%%%s%%" % txt, "name": filters.get("supplier")},
-	)
 
 
 @frappe.whitelist()
@@ -456,7 +444,7 @@ def get_item_from_material_requests_based_on_supplier(source_name, target_doc=No
 				},
 				"Material Request Item": {
 					"doctype": "Request for Quotation Item",
-					"condition": lambda row: row.item_code in items,
+					"condition": [row.item_code for row in items],
 					"field_map": [
 						["name", "material_request_item"],
 						["parent", "material_request"],
