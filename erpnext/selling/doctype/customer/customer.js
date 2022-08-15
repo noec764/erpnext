@@ -158,8 +158,9 @@ frappe.ui.form.on("Customer", {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
 
 	},
-	booking_credits_dashboard: function(frm) {
-		if (frappe.boot.active_domains.includes("Venue") && !frm.is_new() && !frm.get_balance) {
+	booking_credits_dashboard: async function(frm) {
+		const credits = await frappe.db.get_list("Booking Credit", {filters: {customer: frm.doc.name}, limit: 1})
+		if (credits.length && !frm.is_new() && !frm.get_balance) {
 			frm.get_balance = true
 			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
 				customer: frm.doc.name
