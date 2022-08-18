@@ -572,6 +572,13 @@ accounting_dimension_doctypes = [
 	"Subscription Plan",
 	"POS Invoice",
 	"POS Invoice Item",
+	"Purchase Order",
+	"Purchase Receipt",
+	"Sales Order",
+	"Subcontracting Order",
+	"Subcontracting Order Item",
+	"Subcontracting Receipt",
+	"Subcontracting Receipt Item",
 ]
 
 # get matching queries for Bank Reconciliation
