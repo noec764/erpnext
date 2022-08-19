@@ -6,7 +6,7 @@ def execute():
 		sla.document_type for sla in frappe.get_all("Service Level Agreement", fields=["document_type"])
 	]
 
-	for doctype in active_sla_documents:
+	for doctype in active_sla_documents or ["Issue"]:
 		doctype = frappe.qb.DocType(doctype)
 		try:
 			frappe.qb.update(doctype).set(doctype.agreement_status, "First Response Due").where(
