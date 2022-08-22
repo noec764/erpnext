@@ -239,7 +239,7 @@ frappe.ui.form.on("Timesheet Detail", {
 		if(frm._setting_hours) return;
 
 		var hours = moment(child.to_time).diff(moment(child.from_time), "seconds") / 3600;
-		frappe.model.set_value(cdt, cdn, "hours", hours);
+		frappe.model.set_value(cdt, cdn, "hours", isNaN(hours) ? 0 : hours);
 	},
 
 	time_logs_add: function(frm, cdt, cdn) {
