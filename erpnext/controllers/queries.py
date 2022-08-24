@@ -830,11 +830,12 @@ def get_uoms(doctype, txt, searchfield, start, page_len, filters):
 			.right_join(UOM)
 			.on(UOM_Conversion_Detail.uom == UOM.uom_name)
 			.select(UOM_Conversion_Detail.uom, UOM.must_be_whole_number)
+			.distinct()
 			.where(UOM_Conversion_Detail.parent == filters.get("item_code"))
 			.orderby(UOM_Conversion_Detail.uom, order=frappe.qb.desc)
 		).run()
 
-	if not (filters and filters.get("item_code")) or not uom_list:
+	if not (filters and filters.get("item_code")) or len(uom_list) < 2:
 		uom_list = frappe.get_list("UOM", fields=["uom_name", "must_be_whole_number"], as_list=True)
 
 	return tuple(
