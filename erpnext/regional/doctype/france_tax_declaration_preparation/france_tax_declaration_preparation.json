@@ -62,7 +62,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "deductible_vat_section",
    "fieldtype": "Tab Break",
-   "label": "Deductible VAT "
+   "label": "Deductible VAT"
   },
   {
    "depends_on": "eval:!doc.__islocal",

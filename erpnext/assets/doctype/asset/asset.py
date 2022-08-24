@@ -1099,7 +1099,7 @@ def split_asset(asset_name, split_qty):
 	split_qty = cint(split_qty)
 
 	if split_qty >= asset.asset_quantity:
-		frappe.throw(_("Split qty cannot be grater than or equal to asset qty"))
+		frappe.throw(_("Split qty cannot be greater than or equal to asset qty"))
 
 	remaining_qty = asset.asset_quantity - split_qty
 

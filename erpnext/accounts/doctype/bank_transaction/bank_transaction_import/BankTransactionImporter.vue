@@ -120,7 +120,7 @@ export default {
 					if (result.status == "Missing header map") {
 						this.show_spinner = false
 						const bank_account = this.bank_accounts.filter(f => f.name == (this.selectedBankAccount || this.bank_accounts[0].name))
-						this.text_msg = __(`Please setup a <a href="/app/bank/${bank_account[0].bank}">header mapping for this bank</a> before uploading a csv/xlx file.`)
+						this.text_msg = __(`Please setup a <a href="/app/bank/${bank_account[0].bank}">header mapping for this bank</a> before uploading a csv/xlsx file.`)
 					} else {
 						if (result.success !== 0) {
 							frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
