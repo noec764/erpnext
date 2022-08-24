@@ -40,7 +40,7 @@ def get_default_energy_point_rules():
 			"reference_doctype": doctype,
 			"for_doc_event": rule.get("for_doc_event") or "Custom",
 			"condition": rule.get("condition"),
-			"rule_name": rule.get("rule_name") or _("On {0} Creation").format(doctype),
+			"rule_name": rule.get("rule_name") or _("On {0} Creation").format(_(doctype)),
 			"points": rule.get("points"),
 			"user_field": rule.get("user_field") or "owner",
 		}
