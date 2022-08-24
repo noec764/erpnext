@@ -98,7 +98,7 @@ def update_itemised_tax_data(doc):
 					"taxable_amount": row.get("base_net_amount"),
 					"tax_amount": row.get("tax_amount"),
 				}
-				for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
+				for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code, {}).items())
 			]
 		)
 		row.item_tax_rate = item_tax_rate

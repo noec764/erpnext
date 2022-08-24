@@ -307,6 +307,11 @@ erpnext.accounts.JournalEntry = class JournalEntry extends frappe.ui.form.Contro
 				if (party_field) {
 					out.filters.push([jvd.reference_type, party_field, "=", jvd.party]);
 				}
+
+				if(jvd.reference_type == "Payment Entry") {
+					out.filters.push([jvd.reference_type, "party_type", "=", jvd.party_type]);
+					out.filters.push([jvd.reference_type, "party", "=", jvd.party]);
+				}
 			}
 
 			return out;
