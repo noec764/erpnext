@@ -27,6 +27,7 @@ def update_itemised_tax_data(doc):
 	for row in doc.items:
 		tax_rate = 0.0
 		item_tax_rate = 0.0
+		item_specific_rates = []
 
 		if row.item_tax_rate:
 			item_tax_rate = frappe.parse_json(row.item_tax_rate)
