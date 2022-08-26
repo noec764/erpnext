@@ -71,18 +71,20 @@ class TestSubscription(FrappeTestCase):
 				self.assertEqual(subscription.current_invoice_start, None)
 				self.assertEqual(subscription.current_invoice_end, None)
 				self.assertEqual(subscription.status, "Trial")
-			elif i in range(6, one_month + 6):
+			elif i in range(6, one_month + 5):
 				self.assertEqual(subscription.current_invoice_start, getdate(add_days(current_date, 6)))
 				self.assertEqual(
-					subscription.current_invoice_end, getdate(add_days(current_date, one_month + 5))
+					subscription.current_invoice_end,
+					add_days(add_months(subscription.current_invoice_start, 1), -1),
 				)
 				self.assertEqual(subscription.status, "Payable")
 			else:
 				self.assertEqual(
-					subscription.current_invoice_start, getdate(add_days(current_date, one_month + 6))
+					subscription.current_invoice_start, getdate(add_days(current_date, one_month + 5))
 				)
 				self.assertEqual(
-					subscription.current_invoice_end, getdate(add_days(current_date, two_months + 5))
+					subscription.current_invoice_end,
+					add_days(add_months(subscription.current_invoice_start, 1), -1),
 				)
 				self.assertEqual(subscription.status, "Payable")
 
