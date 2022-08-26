@@ -16,7 +16,7 @@ dependencies = [
 
     # integration dependencies
     "gocardless-pro~=1.27.0",
-    "googlemaps",
+    "googlemaps~=4.6.0",
     "ofxtools==0.8.16",
     "plaid-python~=7.2.1",
     "python-youtube~=0.8.0",
