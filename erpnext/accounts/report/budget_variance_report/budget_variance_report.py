@@ -64,6 +64,10 @@ def get_final_data(dimension, dimension_items, filters, period_month_ranges, dat
 		totals[2] = totals[0] - totals[1]
 		if filters["period"] != "Yearly":
 			row += totals
+
+		if filters.get("show_unbudgeted_entries") and not any(totals):
+			continue
+
 		data.append(row)
 
 	return data
@@ -173,7 +177,7 @@ def get_dimension_target_details(filters):
 			["%s"] * len(filters.get("budget_against_filter"))
 		)
 
-	return frappe.db.sql(
+	details = frappe.db.sql(
 		"""
 			select
 				b.{budget_against} as budget_against,
@@ -208,6 +212,40 @@ def get_dimension_target_details(filters):
 		),
 		as_dict=True,
 	)
+
+	if filters.get("show_unbudgeted_entries"):
+		budget_against_values = list(set([d.get("budget_against") for d in details]))
+		budgeted_accounts = list(set([d.get("account") for d in details]))
+		fiscal_years = list(set([d.get("fiscal_year") for d in details]))
+		for budget_against_value in budget_against_values:
+			gl_entry = frappe.qb.DocType("GL Entry")
+			account = frappe.qb.DocType("Account")
+			unbudgeted_accounts = (
+				frappe.qb.from_(gl_entry)
+				.select(gl_entry.account)
+				.distinct()
+				.right_join(account)
+				.on(account.name == gl_entry.account)
+				.where(gl_entry.account.notin(budgeted_accounts))
+				.where(gl_entry[frappe.scrub(filters.get("budget_against"))] == budget_against_value)
+				.where(account.root_type.isin(("Expense", "Asset")))
+			).run(as_dict=True)
+
+			for unbudgeted_account in unbudgeted_accounts:
+				for fiscal_year in fiscal_years:
+					details.append(
+						frappe._dict(
+							{
+								"budget_against": budget_against_value,
+								"monthly_distribution": None,
+								"account": unbudgeted_account.account,
+								"budget_amount": 0.0,
+								"fiscal_year": fiscal_year,
+							}
+						)
+					)
+
+	return details
 
 
 # Get target distribution details of accounts of cost center
@@ -250,6 +288,10 @@ def get_actual_details(name, filters):
 			lft=cc_lft, rgt=cc_rgt
 		)
 
+	account_condition = ""
+	if not filters.get("show_unbudgeted_entries"):
+		account_condition = "and ba.account=gl.account"
+
 	ac_details = frappe.db.sql(
 		"""
 			select
@@ -266,7 +308,7 @@ def get_actual_details(name, filters):
 			where
 				b.name = ba.parent
 				and b.docstatus = 1
-				and ba.account=gl.account
+				{account_condition}
 				and b.{budget_against} = gl.{budget_against}
 				and gl.fiscal_year between %s and %s
 				and exists(
@@ -282,7 +324,10 @@ def get_actual_details(name, filters):
 					gl.name
 				order by gl.fiscal_year
 		""".format(
-			tab=filters.budget_against, budget_against=budget_against, cond=cond
+			tab=filters.budget_against,
+			budget_against=budget_against,
+			cond=cond,
+			account_condition=account_condition,
 		),
 		(filters.from_fiscal_year, filters.to_fiscal_year),
 		as_dict=1,

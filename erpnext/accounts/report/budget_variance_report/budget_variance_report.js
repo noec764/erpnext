@@ -71,6 +71,12 @@ frappe.query_reports["Budget Variance Report"] = {
 			fieldtype: "Check",
 			default: 0,
 		},
+		{
+			fieldname:"show_unbudgeted_entries",
+			label: __("Show Unbudgeted Entries"),
+			fieldtype: "Check",
+			default: 0,
+		},
 	],
 	"formatter": function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
