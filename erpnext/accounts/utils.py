@@ -1453,6 +1453,7 @@ def create_payment_ledger_entry(
 						"amount_in_account_currency": dr_or_cr_account_currency,
 						"delinked": True if cancel else False,
 						"is_advance": bool([gl for gl in gl_entries if gl.against == gle.account]),
+						"remarks": gle.remarks,
 					}
 				)
 

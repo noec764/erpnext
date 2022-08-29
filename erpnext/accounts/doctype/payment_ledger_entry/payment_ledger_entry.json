@@ -23,7 +23,8 @@
   "account_currency",
   "amount_in_account_currency",
   "delinked",
-  "is_advance"
+  "is_advance",
+  "remarks"
  ],
  "fields": [
   {
@@ -143,12 +144,17 @@
    "fieldname": "is_advance",
    "fieldtype": "Check",
    "label": "Is Advance"
+},
+{
+ "fieldname": "remarks",
+ "fieldtype": "Text",
+ "label": "Remarks"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-10 08:46:38.065338",
+ "modified": "2022-08-22 15:32:56.629430",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Ledger Entry",
