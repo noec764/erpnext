@@ -111,7 +111,10 @@ class SalesPipelineAnalytics(object):
 
 			self.grouped_data = []
 
-			grouping_key = lambda o: (o.get(self.pipeline_by) or "Not Assigned", o[self.period_by])  # noqa
+			grouping_key = lambda o: (  # noqa
+				o.get(self.pipeline_by) or _("Not Assigned"),
+				o[self.period_by],
+			)  # noqa
 			for (pipeline_by, period_by), rows in groupby(self.query_result, grouping_key):
 				self.grouped_data.append(
 					{
@@ -183,8 +186,8 @@ class SalesPipelineAnalytics(object):
 			count_or_amount = info.get(based_on)
 
 			if self.filters.get("pipeline_by") == "Owner":
-				if value == "Not Assigned" or value == "[]" or value is None:
-					assigned_to = ["Not Assigned"]
+				if value == _("Not Assigned") or value == "[]" or value is None:
+					assigned_to = [_("Not Assigned")]
 				else:
 					assigned_to = json.loads(value)
 				self.check_for_assigned_to(period, value, count_or_amount, assigned_to, info)

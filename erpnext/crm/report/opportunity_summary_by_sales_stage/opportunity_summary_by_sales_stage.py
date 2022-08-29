@@ -103,7 +103,7 @@ class OpportunitySummaryBySalesStage(object):
 
 			for row in self.query_result:
 				if not row.get(based_on):
-					row[based_on] = "Not Assigned"
+					row[based_on] = _("Not Assigned")
 
 			self.grouped_data = []
 
@@ -151,8 +151,8 @@ class OpportunitySummaryBySalesStage(object):
 			}[self.filters.get("based_on")]
 
 			if self.filters.get("based_on") == "Opportunity Owner":
-				if d.get(based_on) == "[]" or d.get(based_on) is None or d.get(based_on) == "Not Assigned":
-					assignments = ["Not Assigned"]
+				if d.get(based_on) == "[]" or d.get(based_on) is None or d.get(based_on) == _("Not Assigned"):
+					assignments = [_("Not Assigned")]
 				else:
 					assignments = json.loads(d.get(based_on))
 
