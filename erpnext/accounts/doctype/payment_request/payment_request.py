@@ -214,7 +214,8 @@ class PaymentRequest(Document):
 		self.db_set("payment_key", self.payment_key)
 
 	def get_customer(self):
-		return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
+		if frappe.db.has_column(self.reference_doctype, "customer"):
+			return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
 
 	def get_payment_url(self, payment_gateway):
 		data = frappe.db.get_value(

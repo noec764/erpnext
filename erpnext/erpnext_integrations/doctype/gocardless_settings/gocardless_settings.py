@@ -52,7 +52,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		call_hook_method("payment_gateway_enabled", gateway="GoCardless-" + self.gateway_name)
 
 	def can_make_immediate_payment(self, payment_request):
-		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
+		return bool(self.check_mandate_validity(payment_request.get_customer(), {}).get("mandate"))
 
 	def immediate_payment_processing(self, payment_request):
 		if not self.can_make_immediate_payment(payment_request):
@@ -131,6 +131,8 @@ class GoCardlessSettings(PaymentGatewayController):
 
 	def handle_redirect_flow(self, redirect_flow, payment_request):
 		customer = payment_request.get_customer()
+		if not customer:
+			return
 		GoCardlessMandates(self).register(redirect_flow.links.mandate, customer)
 
 		GoCardlessCustomers(self).register(redirect_flow.links.customer, customer)
