@@ -227,7 +227,7 @@ def get_list_context(context=None):
 
 def set_expired_status():
 	# filter out submitted non expired quotations whose validity has been ended
-	cond = "`tabQuotation`.docstatus = 1 and `tabQuotation`.status != 'Expired' and `tabQuotation`.valid_till < %s"
+	cond = "`tabQuotation`.docstatus = 1 and `tabQuotation`.status NOT IN ('Expired', 'Lost') and `tabQuotation`.valid_till < %s"
 	# check if those QUO have SO against it
 	so_against_quo = """
 		SELECT
