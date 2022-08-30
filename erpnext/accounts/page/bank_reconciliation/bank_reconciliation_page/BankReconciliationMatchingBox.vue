@@ -140,6 +140,10 @@ export default {
 				{bank_transactions: this.transactions, document_type: this.document_type, match: match}
 			).then((result) => {
 				this.matching_documents[this.document_type] = result;
+				// Force refresh because matching_documents is an object
+				const dt = this.document_type;
+				this.document_type = "";
+				this.document_type = dt;
 			})
 		},
 		formatAmount(value) {
