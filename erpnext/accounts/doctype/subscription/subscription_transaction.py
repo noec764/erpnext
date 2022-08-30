@@ -296,7 +296,8 @@ class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
 		)
 		sales_order = self.set_subscription_invoicing_details(sales_order)
 		sales_order.currency = self.subscription.currency
-		sales_order.order_type = "Maintenance"
+		sales_order.order_type = "Sales"
+		sales_order.skip_delivery_note = self.subscription.skip_delivery_note
 
 		sales_order.flags.ignore_mandatory = True
 		sales_order.set_missing_values()
