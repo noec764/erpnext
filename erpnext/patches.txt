@@ -323,3 +323,4 @@ erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
+erpnext.patches.dokos.v3_0.move_lead_notes_to_child_table
