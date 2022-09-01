@@ -52,7 +52,7 @@ class GoCardlessSettings(PaymentGatewayController):
 		call_hook_method("payment_gateway_enabled", gateway="GoCardless-" + self.gateway_name)
 
 	def can_make_immediate_payment(self, payment_request):
-		return bool(self.check_mandate_validity(payment_request.get_customer(), {}).get("mandate"))
+		return bool(self.check_mandate_validity(payment_request.get_customer()).get("mandate"))
 
 	def immediate_payment_processing(self, payment_request):
 		if not self.can_make_immediate_payment(payment_request):
@@ -86,8 +86,8 @@ class GoCardlessSettings(PaymentGatewayController):
 				_("GoCardless direct processing failed for {0}".format(payment_request.name)),
 			)
 
-	def check_mandate_validity(self, customer):
-		if frappe.db.exists(
+	def check_mandate_validity(self, customer=None):
+		if customer and frappe.db.exists(
 			"Sepa Mandate", dict(customer=customer, status=["not in", ["Cancelled", "Expired", "Failed"]])
 		):
 			registered_mandate = frappe.db.get_value(
