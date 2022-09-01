@@ -6,7 +6,7 @@
 
 erpnext.buying.SupplierQuotationController = class SupplierQuotationController extends erpnext.buying.BuyingController {
 	setup() {
-		frm.custom_make_buttons = {
+		this.frm.custom_make_buttons = {
 			'Purchase Order': 'Purchase Order',
 			'Quotation': 'Quotation'
 		}
