@@ -66,6 +66,7 @@ class TestTaxRule(unittest.TestCase):
 			sales_tax_template="_Test Sales Taxes and Charges Template - _TC",
 			priority=1,
 			from_date="2015-01-01",
+			use_for_shopping_cart=1,
 		)
 		tax_rule1.save()
 		self.assertEqual(
@@ -276,7 +277,6 @@ class TestTaxRule(unittest.TestCase):
 			billing_city="_Test City",
 			sales_tax_template="_Test Sales Taxes and Charges Template - _TC",
 			save=1,
-			use_for_shopping_cart=0,
 		)
 
 		# create opportunity for customer
