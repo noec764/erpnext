@@ -58,20 +58,18 @@ class TestSubscription(FrappeTestCase):
 		subscription.billing_interval = "Month"
 		subscription.save()
 		frappe.flags.current_date = current_date
-		two_months = date_diff(add_months(getdate(current_date), 2), current_date)
-		one_month = date_diff(add_months(getdate(current_date), 1), current_date)
 
-		for i in range(1, two_months):
+		for i in range(1, date_diff(add_months(getdate(current_date), 2), current_date)):
 			frappe.flags.current_date = add_days(nowdate(), 1)
 			subscription.process()
 
 			self.assertEqual(subscription.trial_period_start, getdate(current_date))
 			self.assertEqual(subscription.trial_period_end, getdate(add_days(current_date, 5)))
-			if i in range(1, 6):
+			if getdate(frappe.flags.current_date) <= subscription.trial_period_end:
 				self.assertEqual(subscription.current_invoice_start, None)
 				self.assertEqual(subscription.current_invoice_end, None)
 				self.assertEqual(subscription.status, "Trial")
-			elif i in range(6, one_month + 5):
+			elif getdate(frappe.flags.current_date) <= add_months(subscription.trial_period_end, 1):
 				self.assertEqual(subscription.current_invoice_start, getdate(add_days(current_date, 6)))
 				self.assertEqual(
 					subscription.current_invoice_end,
@@ -80,7 +78,7 @@ class TestSubscription(FrappeTestCase):
 				self.assertEqual(subscription.status, "Payable")
 			else:
 				self.assertEqual(
-					subscription.current_invoice_start, getdate(add_days(current_date, one_month + 5))
+					subscription.current_invoice_start, add_days(add_months(subscription.trial_period_end, 1), 1)
 				)
 				self.assertEqual(
 					subscription.current_invoice_end,
@@ -109,14 +107,12 @@ class TestSubscription(FrappeTestCase):
 
 		subscription.billing_interval = "Month"
 		subscription.save()
-		two_months = date_diff(add_months(getdate(current_date), 2), current_date)
-		one_month = date_diff(add_months(getdate(current_date), 1), current_date)
 		expected_start = add_days(getdate(current_date), 11)
 
-		for i in range(1, two_months):
+		for i in range(1, date_diff(add_months(getdate(current_date), 2), current_date)):
 			frappe.flags.current_date = add_days(nowdate(), 1)
 			subscription.process()
-			if i in range(1, one_month):
+			if getdate(frappe.flags.current_date) < add_months(expected_start, 1):
 				self.assertEqual(subscription.current_invoice_start, expected_start)
 				self.assertEqual(
 					subscription.current_invoice_end,
