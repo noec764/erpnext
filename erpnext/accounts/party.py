@@ -654,8 +654,7 @@ def set_taxes(
 	else:
 		args.update({"tax_type": "Purchase"})
 
-	if use_for_shopping_cart:
-		args.update({"use_for_shopping_cart": use_for_shopping_cart})
+	args.update({"use_for_shopping_cart": bool(use_for_shopping_cart)})
 
 	# 1. Check if a tax rule exists
 	tax_template = get_tax_template(posting_date, args)
