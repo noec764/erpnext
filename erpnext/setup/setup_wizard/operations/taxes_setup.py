@@ -115,6 +115,9 @@ def make_item_tax_templates(company, tax_data, template_name=None):
 		"title": template_name,
 		"company": company,
 		"taxes": [],
+		"applicable_for": "Sales"
+		if tax_data.get("sales_tax")
+		else ("Purchases" if tax_data.get("purchase_tax") else None),
 	}
 
 	for tax_details in tax_data.get("taxes"):
@@ -123,6 +126,7 @@ def make_item_tax_templates(company, tax_data, template_name=None):
 				{
 					"tax_type": tax_details.get("tax_account", {}).get("name"),
 					"tax_rate": tax_details.get("rate", 0),
+					"description": tax_details.get("description"),
 				}
 			)
 

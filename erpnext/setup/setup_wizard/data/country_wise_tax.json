@@ -784,6 +784,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 20%",
+					"description": "TVA 20%",
 					"account_number": "445710",
 					"rate": 20
 				}
@@ -795,6 +796,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 10%",
+					"description": "TVA 10%",
 					"account_number": "445720",
 					"rate": 10
 				}
@@ -806,6 +808,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 5.5%",
+					"description": "TVA 5.5%",
 					"account_number": "445730",
 					"rate": 5.5
 				}
