@@ -276,6 +276,7 @@ class TestTaxRule(unittest.TestCase):
 			billing_city="_Test City",
 			sales_tax_template="_Test Sales Taxes and Charges Template - _TC",
 			save=1,
+			use_for_shopping_cart=0,
 		)
 
 		# create opportunity for customer
