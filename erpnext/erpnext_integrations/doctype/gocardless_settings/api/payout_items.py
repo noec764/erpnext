@@ -1,6 +1,3 @@
-import frappe
-
-
 class GoCardlessPayoutItems:
 	def __init__(self, gateway):
 		self.gateway = gateway
