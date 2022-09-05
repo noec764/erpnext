@@ -1,16 +1,13 @@
 # Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
-import urllib
 from collections import Counter
-from datetime import timedelta
 
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import get_url, getdate
-from frappe.utils.verified_command import get_signed_params, verify_request
+from frappe.utils import get_url, getdate, now
+from frappe.utils.verified_command import get_signed_params
 
 
 class Appointment(Document):
@@ -111,11 +108,22 @@ class Appointment(Document):
 				"doctype": "Lead",
 				"lead_name": self.customer_name,
 				"email_id": self.customer_email,
-				"notes": self.customer_details,
 				"phone": self.customer_phone_number,
 			}
 		)
+
+		if self.customer_details:
+			lead.append(
+				"notes",
+				{
+					"note": self.customer_details,
+					"added_by": frappe.session.user,
+					"added_on": now(),
+				},
+			)
+
 		lead.insert(ignore_permissions=True)
+
 		# Link lead
 		self.party = lead.name
 
