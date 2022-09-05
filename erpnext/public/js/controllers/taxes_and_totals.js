@@ -303,7 +303,7 @@ erpnext.taxes_and_totals = class TaxesAndTotals extends erpnext.payments {
 			if (typeof (item_tax_map) == "string") {
 				item_tax_map = JSON.parse(item_tax_map);
 			}
-			console.log(item_tax_map)
+
 			item_tax_map.forEach((tax) => {
 				let found = (me.frm.doc.taxes || []).find(d => d.account_head === tax.account);
 				if (!found) {
