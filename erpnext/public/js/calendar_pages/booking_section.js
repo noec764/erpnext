@@ -82,11 +82,11 @@ class BookingCalendar {
 	}
 
 	getSelectAllow(selectInfo) {
-		return moment().diff(selectInfo.start) <= 0
+		return momentjs().diff(selectInfo.start) <= 0
 	}
 
 	getValidRange() {
-		return { start: moment().add(1,'d').format("YYYY-MM-DD") }
+		return { start: momentjs().add(1,'d').format("YYYY-MM-DD") }
 	}
 
 	set_loading_state(state) {
@@ -117,7 +117,7 @@ class BookingCalendar {
 			showNonCurrentDates: false,
 			locale: this.locale,
 			timeZone: frappe.boot.timeZone || 'UTC',
-			initialDate: this.parent.date ? moment(this.parent.date).format("YYYY-MM-DD") : moment().add(1,'d').format("YYYY-MM-DD"),
+			initialDate: this.parent.date ? momentjs(this.parent.date).format("YYYY-MM-DD") : momentjs().add(1,'d').format("YYYY-MM-DD"),
 			noEventsContent: __("No slot available"),
 			selectAllow: this.getSelectAllow,
 			validRange: this.getValidRange,
@@ -134,8 +134,8 @@ class BookingCalendar {
 			},
 			events: function(info, callback) {
 				frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_availabilities", {
-					start: moment(info.start).format("YYYY-MM-DD"),
-					end: moment(info.end).format("YYYY-MM-DD"),
+					start: momentjs(info.start).format("YYYY-MM-DD"),
+					end: momentjs(info.end).format("YYYY-MM-DD"),
 					item: me.parent.item,
 					uom: me.parent.uom
 				}).then(result => {
@@ -183,7 +183,7 @@ class BookingSelector {
 				<button class="btn btn-outline-secondary ${s.status}" type="button">
 					<div class="d-flex justify-content-center">
 						<div class="mx-auto">
-							${moment(s.start).locale(this.parent.locale).format('LT')} - ${moment(s.end).locale(this.parent.locale).format('LT')}
+							${momentjs(s.start).locale(this.parent.locale).format('LT')} - ${momentjs(s.end).locale(this.parent.locale).format('LT')}
 						</div>
 						${number_indicator}
 					</div>
@@ -192,7 +192,7 @@ class BookingSelector {
 		}): [];
 
 		this.$content = $(`<div>
-			<h2 class="timeslot-options-title mb-4">${this.date_info.date ? moment(this.date_info.date).locale(this.parent.locale).format('LL') : ""}</h2>
+			<h2 class="timeslot-options-title mb-4">${this.date_info.date ? momentjs(this.date_info.date).locale(this.parent.locale).format('LL') : ""}</h2>
 			${slots_div.join('')}
 		</div>`)
 
