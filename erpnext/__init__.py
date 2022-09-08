@@ -2,7 +2,7 @@ import inspect
 
 import frappe
 
-__version__ = "3.0.0-dev"
+__version__ = "2.18.5"
 
 
 def get_default_company(user=None):
@@ -35,7 +35,7 @@ def get_default_cost_center(company):
 
 	if not frappe.flags.company_cost_center:
 		frappe.flags.company_cost_center = {}
-	if not company in frappe.flags.company_cost_center:
+	if company not in frappe.flags.company_cost_center:
 		frappe.flags.company_cost_center[company] = frappe.get_cached_value(
 			"Company", company, "cost_center"
 		)
