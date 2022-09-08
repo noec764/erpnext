@@ -192,7 +192,7 @@ class BookingSelector {
 		}): [];
 
 		this.$content = $(`<div>
-			<h2 class="timeslot-options-title mb-4">${this.date_info.date ? momentjs(this.date_info.date).locale(this.parent.locale).format('LL') : ""}</h2>
+			<h2 class="timeslot-options-title text-muted mb-4">${this.date_info.date ? momentjs(this.date_info.date).locale(this.parent.locale).format('LL') : ""}</h2>
 			${slots_div.join('')}
 		</div>`)
 

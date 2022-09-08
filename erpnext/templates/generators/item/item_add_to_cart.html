@@ -34,7 +34,7 @@
 			</div>
 			{% endif %}
 		{% else %}
-			{{ _("UOM") }} : {{ product_info.uom }}
+			<div class="uom-information">{{ _("UOM") }} : {{ product_info.uom }}</div>
 		{% endif %}
 
 		{% if cart_settings.show_stock_availability and not doc.enable_item_booking %}
@@ -212,6 +212,7 @@
 			}
 
 			$('.page_content').find('.product-price').html(html_content)
+			$('.page_content').find('.uom-information').html(`${__("UOM")} : ${uom}`)
 
 			erpnext.booking_section_update.trigger("update_calendar", uom)
 
