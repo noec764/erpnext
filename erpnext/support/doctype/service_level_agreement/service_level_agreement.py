@@ -150,7 +150,7 @@ class ServiceLevelAgreement(Document):
 				"name": ["not in", invalid_doctypes],
 				"module": [
 					"not in",
-					["Email", "Core", "Custom", "Event Streaming", "Social", "Geo", "Desk"],
+					["Email", "Core", "Custom", "Event Streaming", "Social", "Data Migration", "Geo", "Desk"],
 				],
 			},
 			pluck="name",
@@ -589,6 +589,9 @@ def get_hold_statuses(service_level_agreement):
 
 
 def update_response_and_resolution_metrics(doc, apply_sla_for_resolution):
+	if not doc.service_level_agreement:
+		return
+
 	priority = get_response_and_resolution_duration(doc)
 	start_date_time = get_datetime(doc.get("service_level_agreement_creation") or doc.creation)
 	set_response_by(doc, start_date_time, priority)
