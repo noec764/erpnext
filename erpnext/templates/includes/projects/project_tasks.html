@@ -1,28 +1,5 @@
 {% for task in doc.tasks %}
-<a class="task no-decoration web-list-item task-link {{ task.css_seen }} project-item" href="/tasks?name={{ task.name }}">
-	<div class='col-9'>
-		<span class="indicator {{ "red" if task.status=="Open" else "green" if task.status=="Closed" else "darkgray" }}" title="{{ task.status }}"  > {{ task.subject }}</span>
-			<div class="small text-muted item-timestamp"
-				title="{{ frappe.utils.pretty_date(task.modified) }}">
-				{{ _("modified") }} {{ frappe.utils.pretty_date(task.modified) }}
-			</div>
-	</div>
-	<div class='col-1'>{% if task.todo %}
-			{% if task.todo.user_image %}
-				<span class="avatar avatar-small" title="{{ task.todo.owner }}">
-					<img src="{{ task.todo.user_image }}">
-				</span>
-			{% else %}
-				<span class="avatar avatar-small standard-image" title="Assigned to {{ task.todo.owner }}">
-
-				</span>
-			{% endif %}
-		{% endif %}	 </div>
-	<div class='col-2'>
-		<span class="pull-right list-comment-count small {{ "text-extra-muted" if task.progress==0 else "text-muted" }}">
-			<i class="octicon octicon-comment-discussion"></i>
-				{{ task.progress }} %
-		</span>
-	</div>
-</a>
+<div class="web-list-item transaction-list-item">
+	{{ task_row(task, 0) }}
+</div>
 {% endfor %}

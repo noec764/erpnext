@@ -214,7 +214,7 @@ class ItemConfigure {
 			? `<div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
 				<div><div>
 					${one_item}
-					${product_info && product_info.price
+					${product_info && product_info.price && !$.isEmptyObject(product_info.price)
 						? '(' + product_info.price.formatted_price_sales_uom + ')'
 						: ''
 					}
@@ -247,7 +247,7 @@ class ItemConfigure {
 		const additional_notes = Object.keys(this.range_values || {}).map(attribute => {
 			return `${attribute}: ${this.range_values[attribute]}`;
 		}).join('\n');
-		erpnext.shopping_cart.update_cart({
+		erpnext.e_commerce.shopping_cart.update_cart({
 			item_code,
 			additional_notes,
 			qty: 1
@@ -280,14 +280,14 @@ class ItemConfigure {
 	}
 
 	get_next_attribute_and_values(selected_attributes) {
-		return this.call('erpnext.portal.product_configurator.utils.get_next_attribute_and_values', {
+		return this.call('erpnext.e_commerce.variant_selector.utils.get_next_attribute_and_values', {
 			item_code: this.item_code,
 			selected_attributes
 		});
 	}
 
 	get_attributes_and_values() {
-		return this.call('erpnext.portal.product_configurator.utils.get_attributes_and_values', {
+		return this.call('erpnext.e_commerce.variant_selector.utils.get_attributes_and_values', {
 			item_code: this.item_code
 		});
 	}
@@ -311,7 +311,7 @@ function set_continue_configuration() {
 	const { itemCode } = $btn_configure.data();
 
 	if (localStorage.getItem(`configure:${itemCode}`)) {
-		$btn_configure.text(__('Continue Configuration'));
+		$btn_configure.text(__('Continue Selection'));
 	} else {
 		$btn_configure.text(__('Configure'));
 	}

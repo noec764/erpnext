@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import frappe
 
 
@@ -10,8 +9,6 @@ def execute():
 	):
 		return
 
-	global_search_settings.append(
-		"allowed_in_global_search", {"document_type": "Purchase Order"}
-	)
+	global_search_settings.append("allowed_in_global_search", {"document_type": "Purchase Order"})
 
 	global_search_settings.save(ignore_permissions=True)

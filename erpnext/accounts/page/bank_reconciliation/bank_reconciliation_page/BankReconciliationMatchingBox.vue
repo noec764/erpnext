@@ -92,13 +92,6 @@ export default {
 	data() {
 		return {
 			document_type: 'Payment Entry',
-			matching_documents: {
-				'Payment Entry': [],
-				'Journal Entry': [],
-				'Sales Invoice': [],
-				'Purchase Invoice': [],
-				'Expense Claim': []
-			},
 			columns: [
 				{field: 'name', hidden: true},
 				{label:__('Date'), field:'date', type: "date", dateInputFormat: 'yyyy-MM-dd', dateOutputFormat: frappe.datetime.get_user_date_fmt().replace(/m/g, 'M')},
@@ -117,7 +110,20 @@ export default {
 				doctype: this.document_type,
 				link: `/app/Form/${this.document_type}/${document.name}`
 			}))
-		}
+		},
+		matching_documents: function() {
+			let documents = {
+				'Payment Entry': [],
+				'Journal Entry': [],
+				'Sales Invoice': [],
+				'Purchase Invoice': []
+			}
+			// Todo: extend this with a hook
+			if (Object.keys(frappe.boot.module_app).filter(f => f == "hr").length) {
+				documents['Expense Claim'] = []
+			}
+			return documents
+		},
 	},
 	watch: {
 		transactions: function() {
@@ -134,6 +140,10 @@ export default {
 				{bank_transactions: this.transactions, document_type: this.document_type, match: match}
 			).then((result) => {
 				this.matching_documents[this.document_type] = result;
+				// Force refresh because matching_documents is an object
+				const dt = this.document_type;
+				this.document_type = "";
+				this.document_type = dt;
 			})
 		},
 		formatAmount(value) {

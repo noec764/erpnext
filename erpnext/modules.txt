@@ -4,12 +4,10 @@ Buying
 Projects
 Selling
 Setup
-HR
 Manufacturing
 Stock
 Support
 Utilities
-Shopping Cart
 Assets
 Portal
 Maintenance
@@ -18,6 +16,8 @@ ERPNext Integrations
 Quality Management
 Communication
 Loan Management
-Payroll
 Venue
 Telephony
+Bulk Transaction
+E-commerce
+Subcontracting

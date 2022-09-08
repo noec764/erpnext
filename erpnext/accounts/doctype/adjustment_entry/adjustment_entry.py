@@ -1,26 +1,27 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2021, Dokos SAS and contributors
 # For license information, please see license.txt
 
-from collections import defaultdict
 import datetime
+from collections import defaultdict
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import date_diff, add_days, month_diff, getdate, flt, nowdate, format_date
+from frappe.utils import add_days, date_diff, flt, format_date, getdate, month_diff, nowdate
+
+from erpnext.accounts.general_ledger import (
+	check_freezing_date,
+	get_accounting_journal,
+	make_entry,
+	make_reverse_gl_entries,
+	validate_accounting_period,
+)
 from erpnext.accounts.utils import get_fiscal_years
-from erpnext.accounts.general_ledger import (validate_accounting_period, check_freezing_date,
-	get_accounting_journal, make_entry, make_reverse_gl_entries)
 
-ENTRYTYPES = {
-	"Deferred charges": "Purchase Invoice",
-	"Deferred income": "Sales Invoice"
-}
+ENTRYTYPES = {"Deferred charges": "Purchase Invoice", "Deferred income": "Sales Invoice"}
 
-ACCOUNTTYPE = {
-	"Purchase Invoice": "expense_account",
-	"Sales Invoice": "income_account"
-}
+ACCOUNTTYPE = {"Purchase Invoice": "expense_account", "Sales Invoice": "income_account"}
+
 
 class AdjustmentEntry(Document):
 	def on_submit(self):
@@ -28,7 +29,7 @@ class AdjustmentEntry(Document):
 		self.set_status()
 
 	def on_cancel(self):
-		self.ignore_linked_doctypes = ('GL Entry')
+		self.ignore_linked_doctypes = "GL Entry"
 		make_reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 		self.set_status()
 
@@ -44,39 +45,37 @@ class AdjustmentEntry(Document):
 			self.db_set("status", status)
 
 	def reverse_gl_entries(self, date=None):
-		gl_entries = frappe.get_all("GL Entry",
-			fields = ["*"],
-			filters = {
-				"voucher_type": self.doctype,
-				"voucher_no": self.name,
-				"is_cancelled": 0
-			})
+		gl_entries = frappe.get_all(
+			"GL Entry",
+			fields=["*"],
+			filters={"voucher_type": self.doctype, "voucher_no": self.name, "is_cancelled": 0},
+		)
 
 		if gl_entries:
 			validate_accounting_period(gl_entries)
 			check_freezing_date(gl_entries[0]["posting_date"], False)
 
 			for entry in gl_entries:
-				name = entry['name']
-				entry['name'] = None
+				name = entry["name"]
+				entry["name"] = None
 				if date:
-					entry['posting_date'] = date
-				debit = entry.get('debit', 0)
-				credit = entry.get('credit', 0)
+					entry["posting_date"] = date
+				debit = entry.get("debit", 0)
+				credit = entry.get("credit", 0)
 
-				debit_in_account_currency = entry.get('debit_in_account_currency', 0)
-				credit_in_account_currency = entry.get('credit_in_account_currency', 0)
+				debit_in_account_currency = entry.get("debit_in_account_currency", 0)
+				credit_in_account_currency = entry.get("credit_in_account_currency", 0)
 
-				entry['debit'] = credit
-				entry['credit'] = debit
-				entry['debit_in_account_currency'] = credit_in_account_currency
-				entry['credit_in_account_currency'] = debit_in_account_currency
-				entry['against'] = name
+				entry["debit"] = credit
+				entry["credit"] = debit
+				entry["debit_in_account_currency"] = credit_in_account_currency
+				entry["credit_in_account_currency"] = debit_in_account_currency
+				entry["against"] = name
 
 				if not entry.get("accounting_journal"):
 					get_accounting_journal(entry)
 
-				if entry['debit'] or entry['credit']:
+				if entry["debit"] or entry["credit"]:
 					make_entry(entry, False, "Yes")
 
 	def _make_gl_entries(self):
@@ -87,57 +86,65 @@ class AdjustmentEntry(Document):
 
 		fiscal_years = get_fiscal_years(self.posting_date, company=self.company)
 		if len(fiscal_years) > 1:
-			frappe.throw(_("Multiple fiscal years exist for the date {0}. Please set company in Fiscal Year").format(
-				format_date(self.posting_date)))
+			frappe.throw(
+				_("Multiple fiscal years exist for the date {0}. Please set company in Fiscal Year").format(
+					format_date(self.posting_date)
+				)
+			)
 		else:
 			fiscal_year = fiscal_years[0][0]
 
 		gl_entries = []
 		for d in self.details:
 			gl_entries.append(
-				frappe._dict({
-					"company": self.company,
-					"fiscal_year": fiscal_year,
-					"account": d.account,
-					"against": d.document_name,
-					"credit": d.debit,
-					"debit": d.credit,
-					"against_voucher_type": d.document_type,
-					"against_voucher": d.document_name,
-					'posting_date': self.posting_date,
-					'voucher_type': self.doctype,
-					'voucher_no': self.name,
-					"cost_center": d.cost_center,
-					"accounting_journal": self.accounting_journal
-				})
+				frappe._dict(
+					{
+						"company": self.company,
+						"fiscal_year": fiscal_year,
+						"account": d.account,
+						"against": d.document_name,
+						"credit": d.debit,
+						"debit": d.credit,
+						"against_voucher_type": d.document_type,
+						"against_voucher": d.document_name,
+						"posting_date": self.posting_date,
+						"voucher_type": self.doctype,
+						"voucher_no": self.name,
+						"cost_center": d.cost_center,
+						"accounting_journal": self.accounting_journal,
+					}
+				)
 			)
 
 			gl_entries.append(
-				frappe._dict({
-					"company": self.company,
-					"fiscal_year": fiscal_year,
-					"account": self.adjustment_account,
-					"against": d.document_name,
-					"credit": d.credit,
-					"debit": d.debit,
-					"against_voucher_type": d.document_type,
-					"against_voucher": d.document_name,
-					'posting_date': self.posting_date,
-					'voucher_type': self.doctype,
-					'voucher_no': self.name,
-					"cost_center": d.cost_center,
-					"accounting_journal": self.accounting_journal
-				})
+				frappe._dict(
+					{
+						"company": self.company,
+						"fiscal_year": fiscal_year,
+						"account": self.adjustment_account,
+						"against": d.document_name,
+						"credit": d.credit,
+						"debit": d.debit,
+						"against_voucher_type": d.document_type,
+						"against_voucher": d.document_name,
+						"posting_date": self.posting_date,
+						"voucher_type": self.doctype,
+						"voucher_no": self.name,
+						"cost_center": d.cost_center,
+						"accounting_journal": self.accounting_journal,
+					}
+				)
 			)
 
 		if gl_entries:
 			try:
 				make_gl_entries(gl_entries, cancel=(self.docstatus == 2), merge_entries=True)
 				frappe.db.commit()
-			except:
+			except Exception:
 				frappe.db.rollback()
 				traceback = frappe.get_traceback()
 				frappe.throw(traceback)
+
 
 @frappe.whitelist()
 def get_documents(entry_type, date, company):
@@ -148,7 +155,8 @@ def get_documents(entry_type, date, company):
 
 	account_type = ACCOUNTTYPE.get(doctype)
 
-	documents = frappe.db.sql(f"""
+	documents = frappe.db.sql(
+		f"""
 		SELECT dt.name as document_name, dt.from_date, dt.to_date,
 		'{doctype}' as document_type,
 		it.{account_type} as account, it.cost_center
@@ -159,7 +167,9 @@ def get_documents(entry_type, date, company):
 		AND dt.from_date <= {frappe.db.escape(date)}
 		AND dt.to_date > {frappe.db.escape(date)}
 		AND dt.docstatus = 1
-	""", as_dict=True)
+	""",
+		as_dict=True,
+	)
 
 	if not documents:
 		return []
@@ -169,13 +179,16 @@ def get_documents(entry_type, date, company):
 	documents_list = ", ".join([f"{frappe.db.escape(x.document_name)}" for x in documents])
 	account_list = ", ".join([f"{frappe.db.escape(x.account)}" for x in documents])
 
-	gl_entries = frappe.db.sql(f"""
+	gl_entries = frappe.db.sql(
+		f"""
 		SELECT account, debit, credit, voucher_type, voucher_no
 		FROM `tabGL Entry`
 		WHERE voucher_type='{doctype}'
 		AND voucher_no in ({documents_list})
 		AND account in ({account_list})
-	""", as_dict=True)
+	""",
+		as_dict=True,
+	)
 
 	gl_by_document = {gl_entry.voucher_no: defaultdict(list) for gl_entry in gl_entries}
 	for gl_entry in gl_entries:
@@ -199,18 +212,15 @@ def get_documents(entry_type, date, company):
 		posting_amount = get_posting_amount(document.to_date, date, net_amount)
 		total_posting_amount += posting_amount
 
-		document.update({
-			"debit": debit,
-			"credit": credit,
-			"posting_amount": posting_amount
-		})
+		document.update({"debit": debit, "credit": credit, "posting_amount": posting_amount})
 
 	return {
 		"documents": documents,
 		"total_debit": total_debit,
 		"total_credit": total_credit,
-		"total_posting_amount": total_posting_amount
+		"total_posting_amount": total_posting_amount,
 	}
+
 
 def get_posting_amount(to_date, date, net_amount):
 	no_of_days = 0.0
@@ -218,7 +228,9 @@ def get_posting_amount(to_date, date, net_amount):
 
 	for month in range(no_of_months):
 		if month + 1 == no_of_months:
-			no_of_days += min(date_diff(to_date, datetime.date(getdate(to_date).year, getdate(to_date).month, 1)), 30)
+			no_of_days += min(
+				date_diff(to_date, datetime.date(getdate(to_date).year, getdate(to_date).month, 1)), 30
+			)
 		else:
 			no_of_days += 30
 
@@ -228,14 +240,12 @@ def get_posting_amount(to_date, date, net_amount):
 	else:
 		return 0.0
 
+
 def reverse_adjustment_entries():
-	for entry in frappe.get_all("Adjustment Entry",
-		filters={
-			"status": "Submitted",
-			"docstatus": 1,
-			"reversal_date": ("<=", nowdate())
-		},
-		fields=["name", "reversal_date"]
+	for entry in frappe.get_all(
+		"Adjustment Entry",
+		filters={"status": "Submitted", "docstatus": 1, "reversal_date": ("<=", nowdate())},
+		fields=["name", "reversal_date"],
 	):
 		doc = frappe.get_doc("Adjustment Entry", entry.name)
 		doc.reverse_gl_entries(entry.reversal_date)

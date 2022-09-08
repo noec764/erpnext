@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
+
+import json
 
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate, now_datetime, nowdate
-import json
 
 
 class Contract(Document):
@@ -72,27 +71,31 @@ class Contract(Document):
 	def get_fulfilment_progress(self):
 		return len([term for term in self.fulfilment_terms if term.fulfilled])
 
+
 @frappe.whitelist()
 def get_contract_template(template_name, doc):
-	'''Returns the processed HTML of a email template with the given doc'''
+	"""Returns the processed HTML of a email template with the given doc"""
 	if isinstance(doc, str):
 		doc = json.loads(doc)
 
 	contract_template = frappe.get_doc("Contract Template", template_name)
-	return {"contract_terms" : frappe.render_template(contract_template.contract_terms, { "doc": doc }),
-			"requires_fulfilment" : contract_template.requires_fulfilment,
-			"fulfilment_terms": contract_template.fulfilment_terms}
+	return {
+		"contract_terms": frappe.render_template(contract_template.contract_terms, {"doc": doc}),
+		"requires_fulfilment": contract_template.requires_fulfilment,
+		"fulfilment_terms": contract_template.fulfilment_terms,
+	}
+
 
 def get_status(start_date, end_date):
 	"""
 	Get a Contract's status based on the start, current and end dates
 
 	Args:
-		start_date (str): The start date of the contract
-		end_date (str): The end date of the contract
+	        start_date (str): The start date of the contract
+	        end_date (str): The end date of the contract
 
 	Returns:
-		str: 'Active' if within range, otherwise 'Inactive'
+	        str: 'Active' if within range, otherwise 'Inactive'
 	"""
 
 	if not end_date:
@@ -111,13 +114,13 @@ def update_status_for_contracts():
 	and submitted Contracts
 	"""
 
-	contracts = frappe.get_all("Contract",
-								filters={"is_signed": True,
-										"docstatus": 1},
-								fields=["name", "start_date", "end_date"])
+	contracts = frappe.get_all(
+		"Contract",
+		filters={"is_signed": True, "docstatus": 1},
+		fields=["name", "start_date", "end_date"],
+	)
 
 	for contract in contracts:
-		status = get_status(contract.get("start_date"),
-							contract.get("end_date"))
+		status = get_status(contract.get("start_date"), contract.get("end_date"))
 
 		frappe.db.set_value("Contract", contract.get("name"), "status", status)

@@ -1,0 +1,1 @@
+import "../../accounts/doctype/bank_transaction/bank_transaction_import/bank_transaction_import.js"

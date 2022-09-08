@@ -24,6 +24,10 @@
      "apply_putaway_rule",
      "is_return",
      "return_against",
+     "accounting_dimensions_section",
+     "cost_center",
+     "dimension_col_break",
+     "project",
      "section_addresses",
      "supplier_address",
      "contact_person",
@@ -104,10 +108,7 @@
      "terms_section_break",
      "tc_name",
      "terms",
-     "bill_no",
-     "bill_date",
      "more_info",
-     "project",
      "status",
      "amended_from",
      "range",
@@ -132,7 +133,8 @@
      "transporter_name",
      "column_break5",
      "lr_no",
-     "lr_date"
+     "lr_date",
+     "is_old_subcontracting_flow"
     ],
     "fields": [
      {
@@ -437,15 +439,14 @@
      {
       "default": "No",
       "fieldname": "is_subcontracted",
-      "fieldtype": "Select",
-      "label": "Raw Materials Consumed",
+      "fieldtype": "Check",
+      "label": "Is Subcontracted",
       "oldfieldname": "is_subcontracted",
-      "oldfieldtype": "Select",
-      "options": "No\nYes",
-      "print_hide": 1
+      "print_hide": 1,
+      "read_only": 1
      },
      {
-      "depends_on": "eval:doc.is_subcontracted==\"Yes\"",
+      "depends_on": "eval:doc.is_subcontracted",
       "fieldname": "supplier_warehouse",
       "fieldtype": "Link",
       "label": "Supplier Warehouse",
@@ -514,8 +515,7 @@
       "oldfieldname": "pr_raw_material_details",
       "oldfieldtype": "Table",
       "options": "Purchase Receipt Item Supplied",
-      "print_hide": 1,
-      "read_only": 1
+      "print_hide": 1
      },
      {
       "fieldname": "section_break0",
@@ -762,6 +762,7 @@
       "read_only": 1
      },
      {
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "base_rounding_adjustment",
       "fieldtype": "Currency",
       "label": "Rounding Adjustment (Company Currency)",
@@ -805,6 +806,7 @@
       "read_only": 1
      },
      {
+      "depends_on": "eval:!doc.disable_rounded_total",
       "fieldname": "rounding_adjustment",
       "fieldtype": "Currency",
       "label": "Rounding Adjustment",
@@ -863,24 +865,6 @@
       "label": "Terms and Conditions",
       "oldfieldname": "terms",
       "oldfieldtype": "Text Editor"
-     },
-     {
-      "fieldname": "bill_no",
-      "fieldtype": "Data",
-      "hidden": 1,
-      "label": "Bill No",
-      "oldfieldname": "bill_no",
-      "oldfieldtype": "Data",
-      "print_hide": 1
-     },
-     {
-      "fieldname": "bill_date",
-      "fieldtype": "Date",
-      "hidden": 1,
-      "label": "Bill Date",
-      "oldfieldname": "bill_date",
-      "oldfieldtype": "Date",
-      "print_hide": 1
      },
      {
       "collapsible": 1,
@@ -1090,7 +1074,8 @@
        {
          "fieldname": "scan_barcode",
          "fieldtype": "Data",
-         "label": "Scan Barcode"
+         "label": "Scan Barcode",
+         "options": "Barcode"
        },
        {
         "fieldname": "billing_address",
@@ -1137,8 +1122,33 @@
        "fetch_from": "supplier.represents_company",
        "fieldname": "represents_company",
        "fieldtype": "Link",
+       "ignore_user_permissions": 1,
        "label": "Represents Company",
        "options": "Company",
+       "read_only": 1
+      },
+      {
+       "collapsible": 1,
+       "fieldname": "accounting_dimensions_section",
+       "fieldtype": "Section Break",
+       "label": "Accounting Dimensions"
+      },
+      {
+       "fieldname": "cost_center",
+       "fieldtype": "Link",
+       "label": "Cost Center",
+       "options": "Cost Center"
+      },
+      {
+       "fieldname": "dimension_col_break",
+       "fieldtype": "Column Break"
+      },
+      {
+       "default": "0",
+       "fieldname": "is_old_subcontracting_flow",
+       "fieldtype": "Check",
+       "hidden": 1,
+       "label": "Is Old Subcontracting Flow",
        "read_only": 1
        }
     ],
@@ -1146,10 +1156,11 @@
     "idx": 261,
     "is_submittable": 1,
     "links": [],
-    "modified": "2020-12-26 20:49:39.106049",
+    "modified": "2022-06-15 15:43:40.664382",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Purchase Receipt",
+    "naming_rule": "By \"Naming Series\" field",
     "owner": "Administrator",
     "permissions": [
      {
@@ -1210,6 +1221,7 @@
     "show_name_in_global_search": 1,
     "sort_field": "modified",
     "sort_order": "DESC",
+    "states": [],
     "timeline_field": "supplier",
     "title_field": "title",
     "track_changes": 1

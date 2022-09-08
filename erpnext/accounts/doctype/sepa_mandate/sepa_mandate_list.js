@@ -17,5 +17,15 @@ frappe.listview_settings['Sepa Mandate'] = {
 		} else {
 			return [__("Created"), "gray", "status,=,Created"];
 		}
+	},
+
+	onload: function(listview) {
+		listview.page.add_action_item(__("Purchase Order"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Supplier Quotation", "Purchase Order");
+		});
+
+		listview.page.add_action_item(__("Purchase Invoice"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Supplier Quotation", "Purchase Invoice");
+		});
 	}
 };

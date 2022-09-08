@@ -37,7 +37,8 @@
    "tc_name",
    "terms",
    "reference",
-   "job_card"
+   "job_card",
+   "work_order"
   ],
   "fields": [
    {
@@ -133,7 +134,8 @@
    {
     "fieldname": "scan_barcode",
     "fieldtype": "Data",
-    "label": "Scan Barcode"
+    "label": "Scan Barcode",
+    "options": "Barcode"
    },
    {
     "allow_bulk_edit": 1,
@@ -308,16 +310,24 @@
     "label": "Transfer Status",
     "options": "\nNot Started\nIn Transit\nCompleted",
     "read_only": 1
+  },
+  {
+   "fieldname": "work_order",
+   "fieldtype": "Link",
+   "label": "Work Order",
+   "options": "Work Order",
+   "read_only": 1
    }
   ],
   "icon": "fa fa-ticket",
   "idx": 70,
   "is_submittable": 1,
   "links": [],
-  "modified": "2021-03-31 23:52:55.392512",
+  "modified": "2022-08-25 11:49:28.155048",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Material Request",
+  "naming_rule": "By \"Naming Series\" field",
   "owner": "Administrator",
   "permissions": [
    {
@@ -385,5 +395,6 @@
   "show_name_in_global_search": 1,
   "sort_field": "modified",
   "sort_order": "DESC",
+  "states": [],
   "title_field": "title"
  }

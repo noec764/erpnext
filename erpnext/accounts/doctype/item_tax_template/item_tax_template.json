@@ -12,6 +12,7 @@
   "company",
   "column_break_3",
   "applicable_for",
+  "disabled",
   "section_break_5",
   "taxes"
  ],
@@ -53,7 +54,13 @@
    "fieldtype": "Select",
    "label": "Applicable for",
    "options": "\nSales\nPurchases"
-  }
+},
+{
+ "default": "0",
+ "fieldname": "disabled",
+ "fieldtype": "Check",
+ "label": "Disabled"
+}
  ],
  "links": [],
  "modified": "2022-03-15 09:27:46.602422",

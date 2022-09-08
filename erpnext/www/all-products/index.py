@@ -1,41 +1,22 @@
 import frappe
-from frappe import _
+from frappe.utils import cint
 
-from erpnext.portal.product_configurator.utils import get_product_settings
-from erpnext.shopping_cart.filters import ProductFiltersBuilder
-from erpnext.shopping_cart.product_query import ProductQuery
+from erpnext.e_commerce.product_data_engine.filters import ProductFiltersBuilder
 
 sitemap = 1
 
+
 def get_context(context):
-
-	if frappe.form_dict:
-		search = frappe.form_dict.search
-		field_filters = frappe.parse_json(frappe.form_dict.field_filters)
-		attribute_filters = frappe.parse_json(frappe.form_dict.attribute_filters)
-		start = frappe.parse_json(frappe.form_dict.start)
-	else:
-		search = field_filters = attribute_filters = None
-		start = 0
-
-	engine = ProductQuery()
-	context.items = engine.query(attribute_filters, field_filters, search, start)
-
 	# Add homepage as parent
-	context.parents = [{"name": frappe._("Home"), "route":"/"}]
-
-	product_settings = get_product_settings()
-	filter_engine = ProductFiltersBuilder()
-
-	context.field_filters = filter_engine.get_field_filters()
-	context.attribute_filters = filter_engine.get_attribute_fitlers()
-
-	context.product_settings = product_settings
-	context.allow_field_filters = product_settings.enable_field_filters
-	context.allow_attribute_filters = product_settings.enable_attribute_filters
 	context.body_class = "product-page"
-	context.page_length = product_settings.products_per_page or 20
+	context.parents = [{"name": frappe._("Home"), "route": "/"}]
 
-	context.title = _(product_settings.products_page_title or context.title)
+	filter_engine = ProductFiltersBuilder()
+	context.field_filters = filter_engine.get_field_filters()
+	context.attribute_filters = filter_engine.get_attribute_filters()
+
+	context.page_length = (
+		cint(frappe.db.get_single_value("E Commerce Settings", "products_per_page")) or 20
+	)
+
 	context.no_cache = 1
-	context.no_breadcrumbs = not product_settings.show_breadcrumbs

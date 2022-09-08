@@ -32,12 +32,12 @@ frappe.ui.form.on('Booking Credit Rule', {
 		frm.trigger("child_table_fields");
 	},
 	child_table_fields(frm) {
-		if (frm.doc.child_table&&frm.doc.trigger_document) {
+		if (frm.doc.child_table && frm.doc.trigger_document) {
 			frappe.model.with_doctype(frm.doc.trigger_document, () => {
 				const meta = frappe.get_meta(frm.doc.trigger_document).fields.map(v => {
-					return (v.fieldname == frm.doc.child_table)&&v.options ? v : null
+					return (v.fieldname == frm.doc.child_table) && v.options ? v : null
 				}).filter(f => f != null)
-				frm.child_table_name = meta.length&&meta[0].options;
+				frm.child_table_name = meta.length && meta[0].options;
 				frm.trigger("get_fields");
 			})
 		} else {
@@ -68,16 +68,16 @@ frappe.ui.form.on('Booking Credit Rule', {
 					doctype: frm.doc.trigger_document
 				}
 			)
-			.then(r => {
-				if (r.length) {
-					frm.fields_dict.start_time_field.df.options = [''].concat(r);
-					frm.fields_dict.end_time_field.df.options = [''].concat(r);
-					frm.fields_dict.date_field.df.options = [''].concat(r);
-					frm.refresh_field('start_time_field');
-					frm.refresh_field('end_time_field');
-					frm.refresh_field('date_field');
-				}
-			})
+				.then(r => {
+					if (r.length) {
+						frm.fields_dict.start_time_field.df.options = [''].concat(r);
+						frm.fields_dict.end_time_field.df.options = [''].concat(r);
+						frm.fields_dict.date_field.df.options = [''].concat(r);
+						frm.refresh_field('start_time_field');
+						frm.refresh_field('end_time_field');
+						frm.refresh_field('date_field');
+					}
+				})
 		}
 	},
 	setup_status_options(frm) {
@@ -87,10 +87,10 @@ frappe.ui.form.on('Booking Credit Rule', {
 					doctype: frm.doc.trigger_document
 				}
 			)
-			.then(r => {
-				frm.fields_dict.expected_status.df.options = r;
-				frm.refresh_field('expected_status');
-			})
+				.then(r => {
+					frm.fields_dict.expected_status.df.options = r;
+					frm.refresh_field('expected_status');
+				})
 		}
 	},
 	setup_customer_options(frm) {
@@ -100,13 +100,13 @@ frappe.ui.form.on('Booking Credit Rule', {
 		get_link_options(frm, frm.doc.trigger_document, "User", "user_field");
 	},
 	setup_qty_options(frm) {
-		get_fieldtypes_options(frm, frm.doc.use_child_table&&frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, ["Int", "Float"], "qty_field");
+		get_fieldtypes_options(frm, frm.doc.use_child_table && frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, ["Int", "Float"], "qty_field");
 	},
 	setup_uom_options(frm) {
-		get_link_options(frm, frm.doc.use_child_table&&frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, "UOM", "uom_field");
+		get_link_options(frm, frm.doc.use_child_table && frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, "UOM", "uom_field");
 	},
 	setup_item_options(frm) {
-		get_link_options(frm, frm.doc.use_child_table&&frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, "Item", "item_field");
+		get_link_options(frm, frm.doc.use_child_table && frm.child_table_name ? frm.child_table_name : frm.doc.trigger_document, "Item", "item_field");
 	},
 	setup_child_tables(frm) {
 		if (frm.doc.trigger_document) {
@@ -115,10 +115,16 @@ frappe.ui.form.on('Booking Credit Rule', {
 					doctype: frm.doc.trigger_document
 				}
 			)
-			.then(r => {
-				frm.fields_dict.child_table.df.options = r;
-				frm.refresh_field('child_table');
-			})
+				.then(r => {
+					// Check match with existing value in case of prefill via Slide Viewer
+					const existing_value = frm.doc.child_table;
+					frm.fields_dict.child_table.df.options = r;
+					if (r.map(v => v.value).includes(existing_value)) {
+						frm.set_value('child_table', existing_value)
+					}
+
+					frm.refresh_field('child_table');
+				})
 		}
 	},
 	toggle_applicable_rules(frm) {
@@ -135,7 +141,7 @@ frappe.ui.form.on('Booking Credit Rule', {
 		if (frm.doc.trigger_document) {
 			mapping_fields.forEach(f => {
 				const value = document_mapping[frappe.scrub(frm.doc.trigger_document)] ? document_mapping[frappe.scrub(frm.doc.trigger_document)][f] : null;
-				value&&frm.set_value(f, value);
+				value && frm.set_value(f, value);
 			})
 		}
 	}
@@ -163,12 +169,12 @@ const get_link_options = (frm, doctype, link, field) => {
 				link: link
 			}
 		)
-		.then(r => {
-			if (r.length) {
-				frm.fields_dict[field].df.options = [''].concat(r);
-				frm.refresh_field(field);
-			}
-		})
+			.then(r => {
+				if (r.length) {
+					frm.fields_dict[field].df.options = [''].concat(r);
+					frm.refresh_field(field);
+				}
+			})
 	}
 }
 
@@ -179,8 +185,7 @@ const get_fieldtypes_options = (frm, doctype, fieldtypes, field) => {
 				doctype: doctype,
 				fieldtypes: fieldtypes
 			}
-		)
-		.then(r => {
+		).then(r => {
 			if (r.length) {
 				frm.fields_dict[field].df.options = [''].concat(r);
 				frm.refresh_field(field);
@@ -200,7 +205,7 @@ const document_mapping = {
 		"item_field": "item"
 	},
 	sales_order: {
-		"child_table": "Sales Order Item",
+		"child_table": "items",
 		"customer_field": "customer",
 		"item_field": "item_code",
 		"date_field": "transaction_date",
@@ -208,7 +213,7 @@ const document_mapping = {
 		"qty_field": "qty"
 	},
 	sales_invoice: {
-		"child_table": "Sales Invoice Item",
+		"child_table": "items",
 		"customer_field": "customer",
 		"item_field": "item_code",
 		"date_field": "posting_date",

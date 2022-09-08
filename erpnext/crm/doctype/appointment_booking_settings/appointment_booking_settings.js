@@ -7,4 +7,4 @@ function check_times(frm) {
 			frappe.throw(__('In row {0} of Appointment Booking Slots: "To Time" must be later than "From Time".', [i + 1]));
 		}
 	});
-} 
+}

@@ -1,27 +1,29 @@
 <div class="web-list-item transaction-list-item" id="{{ doc.name }}">
-	<div class="col-5" style='margin-top: -3px;'>
-		{% set indicator = "darkgray" if doc.ends_on < frappe.utils.now_datetime() else ("red" if doc.status=="Cancelled" else ("blue" if doc.status=="Confirmed" else "orange")) %}
-		<div class="small">{{ doc.item_name }}</div>
-		<span class="indicator-pill small status-field {{ indicator }}">
-			{{ _(doc.status) }}
-		</span>
-	</div>
-	<div class="col-5 text-muted">
-		<div class="small text-muted transaction-time"
-			title="{{ frappe.utils.format_datetime(doc.starts_on, "medium") }}">
-			{{ frappe.utils.global_date_format(doc.starts_on) }}
+	<div class="row">
+		<div class="col-5" style='margin-top: -3px;'>
+			{% set indicator = "darkgray" if doc.ends_on < frappe.utils.now_datetime() else ("red" if doc.status=="Cancelled" else ("blue" if doc.status=="Confirmed" else "orange")) %}
+			<div class="small">{{ doc.item_name }}</div>
+			<span class="indicator-pill small status-field {{ indicator }}">
+				{{ _(doc.status) }}
+			</span>
 		</div>
-		<div class="small text-muted transaction-time">
-			{{ frappe.utils.get_time(doc.starts_on).strftime("%H:%M") }}-{{  frappe.utils.get_time(doc.ends_on).strftime("%H:%M") }}
+		<div class="col-5 text-muted">
+			<div class="small text-muted transaction-time"
+				title="{{ frappe.utils.format_datetime(doc.starts_on, "medium") }}">
+				{{ frappe.utils.global_date_format(doc.starts_on) }}
+			</div>
+			<div class="small text-muted transaction-time">
+				{{ frappe.utils.get_time(doc.starts_on).strftime("%H:%M") }}-{{  frappe.utils.get_time(doc.ends_on).strftime("%H:%M") }}
+			</div>
+			{% if doc.repeat_this_event %}
+			<div class="small text-muted transaction-time">
+				<i class="uil uil-process">{{ _("Repeated event") }}</i>
+			</div>
+			{% endif %}
 		</div>
-		{% if doc.repeat_this_event %}
-		<div class="small text-muted transaction-time">
-			<i class="uil uil-process">{{ _("Repeated event") }}</i>
+		<div class="col-2">
+			{% if doc.status != "Cancelled" and doc.starts_on > frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=cancellation_delay) and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
 		</div>
-		{% endif %}
-	</div>
-	<div class="col-2">
-		{% if doc.status != "Cancelled" and doc.starts_on > frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=cancellation_delay) and can_cancel %}<button class="btn btn-default cancel-booking">{{ _("Cancel") }}</button>{% endif %}
 	</div>
 </div>
 

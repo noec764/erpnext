@@ -784,6 +784,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 20%",
+					"description": "TVA 20%",
 					"account_number": "445710",
 					"rate": 20
 				}
@@ -795,6 +796,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 10%",
+					"description": "TVA 10%",
 					"account_number": "445720",
 					"rate": 10
 				}
@@ -806,6 +808,7 @@
 			"taxes": [
 				{
 					"account_name": "TVA 5.5%",
+					"description": "TVA 5.5%",
 					"account_number": "445730",
 					"rate": 5.5
 				}
@@ -1000,57 +1003,6 @@
 				{
 					"account_name": "VAT 7.5%",
 					"rate": 7.5
-				}
-			]
-		}
-	},
-	"India": {
-		"In State GST": {
-			"default": 1,
-			"taxes": [
-				{
-					"account_name": "SGST",
-					"rate": 9.0
-				},
-				{
-					"account_name": "CGST",
-					"rate": 9.0
-				}
-			]
-		},
-		"Out of State GST": {
-			"default": 0,
-			"taxes": [
-				{
-					"account_name": "IGST",
-					"rate": 18.0
-				}
-			]
-		},
-		"VAT 5%": {
-			"default": 0,
-			"taxes": [
-				{
-					"account_name": "VAT 5%",
-					"rate": 5.0
-				}
-			]
-		},
-		"VAT 4%": {
-			"default": 0,
-			"taxes": [
-				{
-					"account_name": "VAT 4%",
-					"rate": 4.0
-				}
-			]
-		},
-		"VAT 14%": {
-			"default": 0,
-			"taxes": [
-				{
-					"account_name": "VAT 14%",
-					"rate": 14.0
 				}
 			]
 		}
@@ -1829,14 +1781,18 @@
 		}
 	},
 	"Saudi Arabia": {
-		"KSA VAT 5%": {
+		"KSA VAT 15%": {
 			"default": 0,
 			"taxes": [
 				{
-					"account_name": "VAT 5%",
-					"rate": 5.0
+					"account_name": "VAT 15%",
+					"rate": 15.0
 				}
 			]
+		},
+		"KSA VAT 5%": {
+			"account_name": "VAT 5%",
+			"tax_rate": 5.00
 		},
 		"KSA VAT Zero": {
 			"default": 0,
@@ -1987,7 +1943,7 @@
 			"taxes": [
 				{
 					"account_name": "VAT",
-					"rate": 14.0
+					"rate": 15.0
 				}
 			]
 		}

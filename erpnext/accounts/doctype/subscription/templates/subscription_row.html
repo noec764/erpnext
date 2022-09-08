@@ -1,5 +1,6 @@
-<a href = "{{ route }}/" class="web-list-item transaction-list-item justify-content-between">
-		<div class="text-left">
+<div class="web-list-item transaction-list-item">
+	<div class="row">
+		<div class="col-6">
 			<div class="bold">
 				<span class="indicator-pill small {{ "grey" if doc.status=="Cancelled" else ("orange" if doc.status in ("Unpaid", "Payable") else "green") }}">{{ doc.name }}</span>
 			</div>
@@ -10,14 +11,16 @@
 			{% endif %}
 		</div>
 		{% if doc.status != "Cancelled" %}
-		<div>
+		<div class="col-3">
 			<div>{{ _("Is renewed every") }} {{ _("{0} {1}", context="Subscription renewal in portal list").format(doc.billing_interval_count, _(doc.billing_interval)) }}</div>
 		</div>
 		{% endif %}
-		<div>
+		<div class="col-3">
 			<div class="text-muted text-right"
 				title="{{ frappe.utils.format_date(doc.start, "medium") }}">
 				{{ _("Created") }} {{ frappe.utils.pretty_date(frappe.utils.get_datetime(doc.start)) }}
 			</div>
 		</div>
-</a>
+	</div>
+	<a class="transaction-item-link" href="{{ route }}/">Link</a>
+</div>

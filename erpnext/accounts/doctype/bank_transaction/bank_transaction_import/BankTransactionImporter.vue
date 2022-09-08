@@ -120,7 +120,7 @@ export default {
 					if (result.status == "Missing header map") {
 						this.show_spinner = false
 						const bank_account = this.bank_accounts.filter(f => f.name == (this.selectedBankAccount || this.bank_accounts[0].name))
-						this.text_msg = __(`Please setup a <a href="/desk#Form/Bank/${bank_account[0].bank}">header mapping for this bank</a> before uploading a csv/xlx file.`)
+						this.text_msg = __(`Please setup a <a href="/app/bank/${bank_account[0].bank}">header mapping for this bank</a> before uploading a csv/xlsx file.`)
 					} else {
 						if (result.success !== 0) {
 							frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
@@ -154,7 +154,7 @@ export default {
 			.then((result) => {
 				if (!result || result.exc) {
 					this.show_spinner = false
-					this.text_msg = __(`Please <a href="/desk#Form/Plaid Settings/Plaid Settings">link your bank account with Plaid first</a>`)
+					this.text_msg = __(`Please <a href="/app/plaid-settings">link your bank account with Plaid first</a>`)
 				} else {
 					frappe.show_alert({message:__(`Bank account '${bank_account[0].account_name}' has been synchronized`), indicator:'green'});
 					frappe.show_alert({message:__(`${result.length} bank transaction(s) created`), indicator:'green'});

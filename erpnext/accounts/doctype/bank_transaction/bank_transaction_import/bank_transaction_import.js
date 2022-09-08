@@ -62,7 +62,7 @@ erpnext.accounts.bankTransactionUpload = class bankTransactionUpload {
 				this.dialog.disable_primary_action();
 			})
 		})
-		
+
 		erpnext.bank_transaction.on('close_dialog', () => {
 			this.dialog.hide();
 			frappe.views.ListView.trigger_list_update({doctype: 'Bank Transaction'});

@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2020, Dokos SAS and Contributors
 # See license.txt
-from __future__ import unicode_literals
+
+
+import unittest
 
 import frappe
-import unittest
+
 
 class TestEventSlotBooking(unittest.TestCase):
 	pass

@@ -1,6 +1,5 @@
 {
  "allow_import": 1,
- "allow_rename": 1,
  "creation": "2013-03-07 18:50:32",
  "description": "A logical Warehouse against which stock entries are made.",
  "doctype": "DocType",
@@ -242,7 +241,7 @@
  "icon": "fa fa-building",
  "idx": 1,
  "is_tree": 1,
- "modified": "2021-04-09 19:54:56.263965",
+ "modified": "2022-03-01 02:37:48.034944",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Warehouse",
@@ -299,5 +298,7 @@
  "quick_entry": 1,
  "show_name_in_global_search": 1,
  "sort_order": "DESC",
- "title_field": "warehouse_name"
+ "states": [],
+ "title_field": "warehouse_name",
+ "track_changes": 1
 }

@@ -292,6 +292,7 @@
 							},
 							"account_number": "531"
 						},
+						"account_type": "Cash",
 						"account_number": "53"
 					},
 					"Virements internes": {
@@ -849,7 +850,7 @@
 			"Charge d'exploitation": {
 				"Achats": {
 					"account_number": "600",
-					"account_type": "Expense Account"
+					"account_type": "Cost of Goods Sold"
 				},
 				"Achats stockés - Matières premières (et fourniture)": {
 					"account_number": "601",

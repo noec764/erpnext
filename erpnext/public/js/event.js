@@ -31,11 +31,11 @@ frappe.ui.form.on('Event', {
 								</div>
 							</div>
 						`)
-	
+
 						$card.on("click", () => {
 							frappe.set_route("Form", "Item Booking", d.name)
 						})
-	
+
 						return $card
 					})
 					$(".custom").remove();

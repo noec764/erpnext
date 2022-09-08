@@ -10,7 +10,6 @@
  "name": "bom-comparison-tool",
  "owner": "Administrator",
  "page_name": "BOM Comparison Tool",
- "restrict_to_domain": "Manufacturing",
  "roles": [
   {
    "role": "System Manager"

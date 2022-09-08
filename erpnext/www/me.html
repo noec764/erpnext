@@ -1,3 +1,4 @@
+{% from "frappe/templates/includes/avatar_macro.html" import avatar %}
 {% extends "templates/web.html" %}
 
 {% block head_include %}
@@ -6,103 +7,148 @@
 	{% endif %}
 {% endblock %}
 
-{% block title %}{{ _("My Account") }}{% endblock %}
-{% block header %}<h2>{{ _("My Account") }}</h2>{% endblock %}
 
+{% block title %}
+{{ _("My Account") }}
+{% endblock %}
 {% block page_content %}
-<!-- no-cache -->
-<div class="your-account-info">
-	<div>
-		<ul class="list-unstyled">
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Reset your password") }}</h5>
-						<a href="/update-password" class="btn btn-primary">{{ _("Reset password") }}</a>
-					</div>
-				  </div>
-			</li>
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Edit your user profile") }}</h5>
-						<a href="/update-profile?name={{ user }}" class="btn btn-primary">{{ _("Edit profile") }}</a>
-					</div>
-				</div>
-			</li>
-			{% if third_party_apps %}
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Manage your third party applications") }}</h5>
-						<a href="/third_party_apps" class="btn btn-primary">{{ _("Manage applications") }}</a>
-					</div>
-				</div>
-			</li>
-			{% endif %}
-			{% if credits_balance %}
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Available booking credits") }}</h5>
-						{% for bal in credits_balance %}
-							<ul class="list-unstyled">
-								{% for credits in credits_balance[bal] %}
-									{% if credits["balance"] %}
-									<li>
-										<p class="text-muted mb-0">{{ bal }}</p>
-										<p class="card-text">{{ credits["balance"] or "" }} <span>{{ credits["uom"] or "" }}</span></p>
-									</li>
-									{% endif %}
-								{% endfor %}
-							</ul>
-						{% endfor %}
-					</div>
-				</div>
-			</li>
-			{% endif %}
-			{% if enable_stripe %}
-			<li>
-				<div class="frappe-card">
-					<div class="card-body">
-						<h5 class="card-title">{{ _("Manage your payment methods") }}</h5>
-						{% for details in stripe_payment_methods.data %}
-						<div class="card-body">
-							<h4>{{ details.card.brand or '' }}</h4>
-							<h5>{{ details.card.name or '' }} xxxxx-{{ details.card.last4 or '' }}</h5>
-							<p>{{ _("Expires") }} {{ details.card.exp_month }}/{{ details.card.exp_year }}</p>
-							{% if stripe_payment_methods.data|length > 1 %}
-								<button class="btn btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</button>
-							{% endif %}
-						</div>
-						<hr>
-						{% endfor %}
-						<form method="post" id="card-form" class="d-none">
-							<div class="mt-5 mb-5">
-								<label for="card-element">
-									{{ _("Credit or debit card") }}
-								</label>
-								<div id="card-element">
-								<!-- A Stripe Element will be inserted here. -->
-								</div>
-
-								<!-- Used to display form errors. -->
-								<div id="card-errors" role="alert"></div>
-							</div>
-
-							<button class="btn btn-primary" id="card-submit">{{ _("Add this card") }}</button>
-						</form>
-						<button class="btn btn-primary" id="add-card">{{ _("Add a new card") }}</button>
-					</div>
-				</div>
-			</li>
-			{% endif %}
-		</ul>
+<div class="my-account-container">
+<h3 class="my-account-header">{{_("My Account") }}</h3>
+<div class="row account-info d-flex flex-column">
+	<div class="col d-flex justify-content-between align-items-center">
+		<div>
+			<span class="my-account-avatar">
+				{{avatar(current_user.name)}}
+			</span>
+			<span class="my-account-name ml-4">
+				{{current_user.full_name }}
+			</span>
+		</div>
+		<div>
+			<span class="my-account-item-link">
+				<a href="/update-profile?name={{ user }}">
+					<svg class="edit-profile-icon icon icon-md">
+						<use xlink:href="#icon-edit">
+						</use>
+					</svg>
+					<span class="item-link-text pl-2">
+						{{_("Edit Profile") }}
+					</span>
+				</a>
+			</span>
+		</div>
 	</div>
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{_("Reset Password") }}</div>
+			<div class="my-account-item-desc">{{_("Reset the password for your account") }}</div>
+		</span>
+		<span class="my-account-item-link">
+			<a href="/update-password">
+				<svg class="right-icon icon icon-md">
+					<use xlink:href="#icon-right">
+					</use>
+				</svg>
+				<span class="item-link-text">{{_("Reset Password") }}</span>
+			</a>
+		</span>
+	</div>
+	{% if third_party_apps %}
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{_("Manage third party apps") }}</div>
+			<div class="my-account-item-desc">{{_("To manage your authorized third party apps") }}</div>
+		</span>
+		<span class="my-account-item-link">
+			<a href="/third_party_apps">
+				<svg class="right-icon icon icon-md">
+					<use xlink:href="#icon-right">
+					</use>
+				</svg>
+				<span class="item-link-text">{{_("Manage your apps") }}</span>
+			</a>
+		</span>
+	</div>
+	{% endif %}
+	{% if credits_balance %}
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{_("Available booking credits") }}</div>
+			{% for bal in credits_balance %}
+			{% for credits in credits_balance[bal] %}
+				{% if credits["balance"] %}
+				<div class="my-account-item-desc">{{ bal }}: <span class="muted">{{ credits["balance"] or "" }} {{ credits["uom"] or "" }}</span></div>
+				{% endif %}
+			{% endfor %}
+			{% endfor %}
+		</span>
+	</div>
+	{% endif %}
+	{% if enable_stripe %}
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{ _("Manage your payment methods") }}</div>
+			{% for details in stripe_payment_methods.data %}
+			<div class="my-account-item-desc">{{ details.card.brand or '' }}: {{ details.card.name or '' }} xxxxx-{{ details.card.last4 or '' }} ({{ details.card.exp_month }}/{{ details.card.exp_year }})
+				{% if stripe_payment_methods.data|length > 1 %}
+				<button class="remove-card">
+					<svg class="right-icon icon icon-sm" id="{{ details.id }}">
+						<use xlink:href="#icon-delete">
+						</use>
+					</svg>
+				</button>
+					<!-- <button class="btn btn-xs btn-danger remove-card" id="{{ details.id }}">{{ _("Delete card") }}</button> -->
+				{% endif %}
+			</div>
+			{% endfor %}
+		</span>
+		<span class="my-account-item-link">
+			<button id="add-card">
+				<span class="item-link-text">{{_("Add a new card") }}</span>
+			</button>
+		</span>
+	</div>
+	<div class="d-none" id="card-form">
+		<form method="post">
+			<div class="mt-5 mb-5">
+				<label for="card-element" class="my-account-item">
+					{{ _("Credit or debit card") }}
+				</label>
+				<div id="card-element">
+				<!-- A Stripe Element will be inserted here. -->
+				</div>
+
+				<!-- Used to display form errors. -->
+				<div id="card-errors" role="alert"></div>
+			</div>
+			<div class="text-right">
+				<button class="btn btn-primary" id="card-submit">{{ _("Add this card") }}</button>
+			</div>
+		</form>
+	</div>
+	{% endif %}
+	{% if frappe.db.get_single_value("Website Settings", "show_account_deletion_link") %}
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{_("Request Account Deletion") }}</div>
+			<div class="my-account-item-desc">{{_("Send a request to delete your account") }}</div>
+		</span>
+		<span class="my-account-item-link">
+			<a href="/request-for-account-deletion?new=1">
+				<svg class="right-icon icon icon-md">
+					<use xlink:href="#icon-right">
+					</use>
+				</svg>
+				<span class="item-link-text">{{_("Delete Account") }}</span>
+			</a>
+		</span>
+	</div>
+	{% endif %}
+</div>
 </div>
 <div class="row d-block d-sm-none">
-	<div class="col-12">
-		<ul class="list-group mobile-sidebar">
+	<div class="col-12 side-list">
+		<ul class="list-group">
 			{% for item in sidebar_items -%}
 				<a class="list-group-item" href="{{ item.route }}"
 					{% if item.target %}target="{{ item.target }}"{% endif %}>
@@ -118,6 +164,8 @@
 	<script>
 		{% include "templates/includes/payment_methods.js" %}
 	</script>
+	{{ include_script("dialog.bundle.js") }}
+	{{ include_script("controls.bundle.js") }}
 {% endblock %}
 
 

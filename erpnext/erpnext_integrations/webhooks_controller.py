@@ -1,16 +1,20 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2020, Dokos SAS and contributors
 # For license information, please see license.txt
 
+import json
+
 import frappe
 from frappe import _
-import json
-from frappe.utils import nowdate, getdate, flt
+from frappe.utils import flt, getdate, nowdate
+
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
-from erpnext.accounts.doctype.subscription.subscription_transaction import SubscriptionInvoiceGenerator
+from erpnext.accounts.doctype.subscription.subscription_transaction import (
+	SubscriptionInvoiceGenerator,
+)
 
-class WebhooksController():
+
+class WebhooksController:
 	def __init__(self, **kwargs):
 		self.integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
 		self.integration_request.db_set("error", None)
@@ -35,13 +39,15 @@ class WebhooksController():
 			try:
 				method()
 			except Exception as e:
-				frappe.log_error(frappe.get_traceback(), "Webhook processing error")
+				frappe.log_error(_("Webhook processing error"))
 				self.set_as_failed(e)
 
 	def process_metadata(self):
 		reference_doc = {}
 		if self.metadata.get("reference_doctype"):
-			reference_doc = frappe.get_doc(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
+			reference_doc = frappe.get_doc(
+				self.metadata.get("reference_doctype"), self.metadata.get("reference_name")
+			)
 
 		if not reference_doc:
 			return
@@ -54,7 +60,7 @@ class WebhooksController():
 		if reference_doc.doctype == "Sales Invoice" and not self.sales_invoice:
 			self.sales_invoice = reference_doc
 
-		if reference_doc.doctype =="Sales Order" and not self.sales_order:
+		if reference_doc.doctype == "Sales Order" and not self.sales_order:
 			self.sales_order = reference_doc
 
 	def create_payment(self, reference=None):
@@ -73,20 +79,25 @@ class WebhooksController():
 					self.set_as_completed()
 				except Exception:
 					# Handle exceptions for references other than predefined sales documents (eg. Requests from webforms)
-					self.set_as_failed(_("Payment entry cannot be created from payment request for doctype {0}").format(
-						self.metadata.get("reference_doctype")
+					self.set_as_failed(
+						_("Payment entry cannot be created from payment request for doctype {0}").format(
+							self.metadata.get("reference_doctype")
 						)
 					)
 
 			elif self.metadata.get("reference_doctype") in ("Sales Order", "Sales Invoice"):
 				frappe.flags.ignore_account_permission = True
-				payment_entry = get_payment_entry(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
+				payment_entry = get_payment_entry(
+					self.metadata.get("reference_doctype"), self.metadata.get("reference_name")
+				)
 				frappe.flags.ignore_account_permission = False
 				payment_entry.reference_no = reference
 				payment_entry.reference_date = nowdate()
 				if self.payment_request:
 					payment_entry.payment_request = self.payment_request.name
-					payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment")
+					payment_entry.mode_of_payment = frappe.db.get_value(
+						"Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment"
+					)
 				payment_entry.insert(ignore_permissions=True)
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
@@ -99,7 +110,9 @@ class WebhooksController():
 				payment_entry.insert(ignore_permissions=True, ignore_mandatory=True)
 				if self.payment_request:
 					payment_entry.payment_request = self.payment_request.name
-					payment_entry.mode_of_payment = frappe.db.get_value("Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment")
+					payment_entry.mode_of_payment = frappe.db.get_value(
+						"Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment"
+					)
 					payment_entry.references = []
 					self.add_subscription_references(payment_entry)
 				self.set_references(payment_entry.doctype, payment_entry.name)
@@ -107,16 +120,23 @@ class WebhooksController():
 
 			else:
 				self.set_references(
-					self.metadata.get("reference_doctype"),
-					self.metadata.get("reference_name")
+					self.metadata.get("reference_doctype"), self.metadata.get("reference_name")
 				)
-				self.set_as_failed(_("The reference doctype should be a Payment Request, a Sales Invoice, a Sales Order or a Subscription"))
+				self.set_as_failed(
+					_(
+						"The reference doctype should be a Payment Request, a Sales Invoice, a Sales Order or a Subscription"
+					)
+				)
 		else:
 			payment_entry = frappe.get_doc("Payment Entry", dict(reference_no=reference))
 			self.set_references(payment_entry.doctype, payment_entry.name)
 			self.set_as_completed()
 
-		if self.subscription and self.payment_request and self.payment_request.payment_gateway != self.subscription.payment_gateway:
+		if (
+			self.subscription
+			and self.payment_request
+			and self.payment_request.payment_gateway != self.subscription.payment_gateway
+		):
 			self.subscription.db_set("payment_gateway", self.payment_request.payment_gateway)
 
 	def submit_payment(self, reference=None):
@@ -130,7 +150,7 @@ class WebhooksController():
 			payment_entry.posting_date = posting_date
 			payment_entry.reference_date = posting_date
 
-			if hasattr(self, 'add_fees_before_submission'):
+			if hasattr(self, "add_fees_before_submission"):
 				payment_entry.deductions = []
 				self.add_fees_before_submission(payment_entry)
 
@@ -144,7 +164,11 @@ class WebhooksController():
 					if self.sales_order:
 						self.make_sales_invoice = True
 
-			if payment_entry.references and flt(payment_entry.unallocated_amount) == 0.0 and not payment_entry.difference_amount:
+			if (
+				payment_entry.references
+				and flt(payment_entry.unallocated_amount) == 0.0
+				and not payment_entry.difference_amount
+			):
 				payment_entry.submit()
 				self.set_as_completed()
 			else:
@@ -153,14 +177,13 @@ class WebhooksController():
 
 			self.set_references(payment_entry.doctype, payment_entry.name)
 		elif frappe.db.exists("Payment Entry", dict(reference_no=reference, docstatus=1)):
-			payment_entry_name = frappe.db.get_value("Payment Entry", dict(reference_no=reference, docstatus=1))
+			payment_entry_name = frappe.db.get_value(
+				"Payment Entry", dict(reference_no=reference, docstatus=1)
+			)
 			self.set_references("Payment Entry", payment_entry_name)
 			self.set_as_completed()
 		else:
-			self.set_references(
-				self.metadata.get("reference_doctype"),
-				self.metadata.get("reference_name")
-			)
+			self.set_references(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
 
 	def add_subscription_references(self, payment_entry):
@@ -168,21 +191,26 @@ class WebhooksController():
 		references = self.subscription.get_references_for_payment_request(self.payment_request.name)
 		allocated = 0.0
 		for ref in references:
-			allocation = min(flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount")))
+			allocation = min(
+				flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount"))
+			)
 			allocated += allocation
 			ref = dict(allocated_amount=allocation, **ref)
-			payment_entry.append('references', ref)
+			payment_entry.append("references", ref)
 		payment_entry.save()
 
 	def add_payment_request_references(self, payment_entry):
 		references = self.payment_request.create_payment_entry(submit=False).get("references")
 		for ref in references:
-			payment_entry.append('references', {
-				"reference_doctype": ref.reference_doctype,
-				"reference_name": ref.reference_name,
-				"outstanding_amount": ref.outstanding_amount,
-				"allocated_amount": min(ref.outstanding_amount, payment_entry.get("unallocated_amount"))
-			})
+			payment_entry.append(
+				"references",
+				{
+					"reference_doctype": ref.reference_doctype,
+					"reference_name": ref.reference_name,
+					"outstanding_amount": ref.outstanding_amount,
+					"allocated_amount": min(ref.outstanding_amount, payment_entry.get("unallocated_amount")),
+				},
+			)
 			payment_entry.save()
 
 	def cancel_payment(self, reference=None):
@@ -199,22 +227,20 @@ class WebhooksController():
 				payment_entry.delete()
 			self.set_as_completed()
 		else:
-			self.set_references(
-				self.metadata.get("reference_doctype"),
-				self.metadata.get("reference_name")
-			)
+			self.set_references(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 			self.set_as_failed()
 
 	def get_sales_invoice(self, reference=None, start=None, end=None):
 		invoice = None
 		if reference:
-			invoice = frappe.db.get_value("Sales Invoice", {"external_reference": reference, "docstatus": ("!=", 2)})
+			invoice = frappe.db.get_value(
+				"Sales Invoice", {"external_reference": reference, "docstatus": ("!=", 2)}
+			)
 
 		if not invoice and self.subscription:
-			invoices = SubscriptionPeriod(self.subscription,
-				start=start,
-				end=end
-			).get_current_documents("Sales Invoice")
+			invoices = SubscriptionPeriod(self.subscription, start=start, end=end).get_current_documents(
+				"Sales Invoice"
+			)
 
 			if invoices:
 				frappe.db.set_value("Sales Invoice", invoices[0].name, "external_reference", reference)
@@ -237,12 +263,18 @@ class WebhooksController():
 
 		elif self.sales_order:
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+
 			invoice = make_sales_invoice(self.sales_order.name, ignore_permissions=True)
 			invoice.allocate_advances_automatically = True
 			invoice.insert(ignore_permissions=True)
 
 		if invoice:
-			frappe.db.set_value("Sales Invoice", invoice.name, "external_reference", self.data.get("data", {}).get("object", {}).get("id"))
+			frappe.db.set_value(
+				"Sales Invoice",
+				invoice.name,
+				"external_reference",
+				self.data.get("data", {}).get("object", {}).get("id"),
+			)
 		return invoice
 
 	def submit_sales_invoice(self, reference=None):
@@ -275,7 +307,9 @@ class WebhooksController():
 			self.integration_request.load_from_db()
 
 	def set_as_not_handled(self):
-		self.integration_request.db_set("error", _("This type of event is not handled"), update_modified=False)
+		self.integration_request.db_set(
+			"error", _("This type of event is not handled"), update_modified=False
+		)
 		self.integration_request.load_from_db()
 		self.integration_request.update_status({}, "Not Handled")
 
@@ -299,11 +333,20 @@ class WebhooksController():
 
 	def update_payment_request(self):
 		if self.status_map.get(self.action_type) == "Paid" and self.make_sales_invoice:
-				self.payment_request.run_method("make_invoice")
+			self.payment_request.run_method("make_invoice")
 
-		if self.payment_request and self.status_map.get(self.action_type) and \
-			self.payment_request.status not in (self.status_map.get(self.action_type), 'Paid', 'Completed'):
-			frappe.db.set_value(self.payment_request.doctype, self.payment_request.name, 'status', self.status_map.get(self.action_type))
+		if (
+			self.payment_request
+			and self.status_map.get(self.action_type)
+			and self.payment_request.status
+			not in (self.status_map.get(self.action_type), "Paid", "Completed")
+		):
+			frappe.db.set_value(
+				self.payment_request.doctype,
+				self.payment_request.name,
+				"status",
+				self.status_map.get(self.action_type),
+			)
 
 
 def handle_webhooks(handlers, **kwargs):

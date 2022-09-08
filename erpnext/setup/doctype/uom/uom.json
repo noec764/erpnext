@@ -8,6 +8,7 @@
  "document_type": "Setup",
  "engine": "InnoDB",
  "field_order": [
+  "enabled",
   "uom_name",
   "must_be_whole_number"
  ],
@@ -28,15 +29,22 @@
    "fieldname": "must_be_whole_number",
    "fieldtype": "Check",
    "label": "Must be Whole Number"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
   }
  ],
  "icon": "fa fa-compass",
  "idx": 1,
  "links": [],
- "modified": "2022-05-25 14:08:44.171329",
+ "modified": "2022-07-25 14:47:10.251003",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -77,5 +85,7 @@
  "quick_entry": 1,
  "show_name_in_global_search": 1,
  "sort_field": "modified",
- "sort_order": "ASC"
+ "sort_order": "ASC",
+ "states": [],
+ "translated_doctype": 1
 }

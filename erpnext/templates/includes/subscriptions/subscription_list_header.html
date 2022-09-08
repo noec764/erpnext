@@ -1,0 +1,66 @@
+<div class="pull-right">
+	<button class="btn btn-default btn-sm new-subscription list-view">
+		{{ _("Create a new subscription") }}
+	</button>
+</div>
+
+<script>
+	frappe.ready(function() {
+		document.getElementsByClassName("new-subscription")[0].addEventListener("click", function(e) {
+			e.preventDefault();
+			const dialog  = new frappe.ui.Dialog({
+				title: __("Create a new subscription"),
+				size: "large",
+				fields: [
+					{
+						"fieldtype": "HTML",
+						"fieldname": "content"
+					}
+				],
+			});
+
+			const template_cards = {{ subscription_templates }}.map(template => {
+				const template_card = `
+					<div class="card-body">
+						<h5 class="card-title">${template.name}</h5>
+						<p class="card-text">${template.portal_description || ""}</p>
+						<div class="text-right">
+							<button class="btn btn-primary" id='${frappe.scrub(template.name)}_subscription'>${__("Subscribe")}</button>
+						</div>
+					</div>
+				`
+				let template_image = ''
+				if (template.portal_image) {
+					template_image = `<img class="card-img-top" src="${template.portal_image}" alt="${template.name}">`
+				}
+
+				return `<div class="card" style="width: 18rem;">
+					${template_image}
+					${template_card}
+					</div>`
+			}).join("")
+
+			dialog.get_field("content").wrapper.innerHTML = `<div class="subscription-list">${template_cards}</div>`;
+
+			dialog.show();
+
+			$(document).on('frappe.ui.Dialog:shown', () => {
+				{{ subscription_templates }}.map(template => {
+					document.getElementById(`${frappe.scrub(template.name)}_subscription`).addEventListener("click", function(e) {
+						new frappe.confirm(__('Subscribe to {0} ?', [`${template.name}`]), function() {
+							return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: `${ template.name }`})
+							.then(r => {
+								if (r && r.message) {
+									dialog.hide()
+									frappe.show_alert({message: __("Subscription created"), indicator: "green"})
+									window.location = r.message.payment_link ? r.message.payment_link : `/subscriptions/${r.message.subscription.name}`;
+								}
+							})
+						})
+					})
+				});
+			})
+
+		})
+	});
+</script>

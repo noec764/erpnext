@@ -7,7 +7,7 @@ frappe.ready(function() {
 
 	frappe.call({
 		type: "POST",
-		method: "erpnext.shopping_cart.product_info.get_product_info_for_website",
+		method: "erpnext.e_commerce.shopping_cart.product_info.get_product_info_for_website",
 		args: {
 			item_code: get_item_code()
 		},
@@ -29,16 +29,16 @@ frappe.ready(function() {
 						.html(r.message.product_info.price.formatted_price_sales_uom + "<div style='font-size: small'>\
 							(" + r.message.product_info.price.formatted_price + " / " + r.message.product_info.uom + ")</div>");
 
-					if(r.message.product_info.in_stock==0) {
-						$(".item-stock").html("<div style='color: red'> <i class='fas fa-times'></i> {{ _("Not in stock") }}</div>");
+					if(r.message.product_info.in_stock===0) {
+						$(".item-stock").html("<div style='color: red'> <i class='fa fa-close'></i> {{ _("Not in stock") }}</div>");
 					}
-					else if(r.message.product_info.in_stock==1) {
+					else if(r.message.product_info.in_stock===1 && r.message.cart_settings.show_stock_availability) {
 						var qty_display = "{{ _("In stock") }}";
 						if (r.message.product_info.show_stock_qty) {
 							qty_display += " ("+r.message.product_info.stock_qty+")";
 						}
 						$(".item-stock").html("<div style='color: green'>\
-							<i class='fas fa-check'></i> "+qty_display+"</div>");
+							<i class='fa fa-check'></i> "+qty_display+"</div>");
 					}
 
 					if(r.message.product_info.qty) {
@@ -53,18 +53,19 @@ frappe.ready(function() {
 	})
 
 	$("#item-add-to-cart button").on("click", function() {
-		frappe.provide('erpnext.shopping_cart');
+		frappe.provide('erpnext.e_commerce.shopping_cart');
 
-		erpnext.shopping_cart.update_cart({
+		erpnext.e_commerce.shopping_cart.update_cart({
 			item_code: get_item_code(),
 			qty: $("#item-spinner .cart-qty").val(),
+			callback: function(r) {
+				if(!r.exc) {
+					toggle_update_cart(1);
+					qty = 1;
+				}
+			},
 			btn: this,
-		}).then(r => {
-			if(!r.exc) {
-				toggle_update_cart(1);
-				qty = 1;
-			}
-		})
+		});
 	});
 
 	$("#item-spinner").on('click', '.number-spinner button', function () {
@@ -74,13 +75,13 @@ frappe.ready(function() {
 			newVal = 0;
 
 		if (btn.attr('data-dir') == 'up') {
-			newVal = parseInt(oldValue) + 1;
+			newVal = Number.parseInt(oldValue) + 1;
 		} else if (btn.attr('data-dir') == 'dwn')  {
-			if (parseInt(oldValue) > 1) {
-				newVal = parseInt(oldValue) - 1;
+			if (Number.parseInt(oldValue) > 1) {
+				newVal = Number.parseInt(oldValue) - 1;
 			}
 			else {
-				newVal = parseInt(oldValue);
+				newVal = Number.parseInt(oldValue);
 			}
 		}
 		input.val(newVal);

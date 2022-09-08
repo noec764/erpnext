@@ -56,7 +56,7 @@ erpnext.PointOfSale.Payment = class {
 				);
 				let df_events = {
 					onchange: function() {
-						frm.set_value(this.df.fieldname, this.value);
+						frm.set_value(this.df.fieldname, this.get_value());
 					}
 				};
 				if (df.fieldtype == "Button") {
@@ -161,13 +161,35 @@ erpnext.PointOfSale.Payment = class {
 
 	// 	frappe.ui.form.on('POS Invoice', 'contact_mobile', (frm) => {
 	// 		const contact = frm.doc.contact_mobile;
-	// 		const request_button = $(this.request_for_payment_field.$input[0]);
+	// 		const request_button = $(this.request_for_payment_field?.$input[0]);
 	// 		if (contact) {
 	// 			request_button.removeClass('btn-default').addClass('btn-primary');
 	// 		} else {
 	// 			request_button.removeClass('btn-primary').addClass('btn-default');
     //   }
     // });
+
+		frappe.ui.form.on('POS Invoice', 'coupon_code', (frm) => {
+			if (frm.doc.coupon_code && !frm.applying_pos_coupon_code) {
+				if (!frm.doc.ignore_pricing_rule) {
+					frm.applying_pos_coupon_code = true;
+					frappe.run_serially([
+						() => frm.doc.ignore_pricing_rule=1,
+						() => frm.trigger('ignore_pricing_rule'),
+						() => frm.doc.ignore_pricing_rule=0,
+						() => frm.trigger('apply_pricing_rule'),
+						() => frm.save(),
+						() => this.update_totals_section(frm.doc),
+						() => (frm.applying_pos_coupon_code = false)
+					]);
+				} else if (frm.doc.ignore_pricing_rule) {
+					frappe.show_alert({
+						message: __("Ignore Pricing Rule is enabled. Cannot apply coupon code."),
+						indicator: "orange"
+					});
+				}
+			}
+		});
 
 		this.setup_listener_for_payments();
 
@@ -198,6 +220,7 @@ erpnext.PointOfSale.Payment = class {
 			const is_cash_shortcuts_invisible = !this.$payment_modes.find('.cash-shortcuts').is(':visible');
 			this.attach_cash_shortcuts(frm.doc);
 			!is_cash_shortcuts_invisible && this.$payment_modes.find('.cash-shortcuts').css('display', 'grid');
+			this.render_payment_mode_dom();
 		});
 
 		frappe.ui.form.on('POS Invoice', 'loyalty_amount', (frm) => {
@@ -213,41 +236,6 @@ erpnext.PointOfSale.Payment = class {
 				this[`${mode}_control`].set_value(default_mop.amount);
 			}
 		});
-	}
-
-	setup_listener_for_payments() {
-		frappe.realtime.on("process_phone_payment", (data) => {
-			const doc = this.events.get_frm().doc;
-			const { response, amount, success, failure_message } = data;
-			let message, title;
-
-			if (success) {
-				title = __("Payment Received");
-				if (amount >= doc.grand_total) {
-					frappe.dom.unfreeze();
-					message = __("Payment of {0} received successfully.", [format_currency(amount, doc.currency, 0)]);
-					this.events.submit_invoice();
-					cur_frm.reload_doc();
-
-				} else {
-					message = __("Payment of {0} received successfully. Waiting for other requests to complete...", [format_currency(amount, doc.currency, 0)]);
-				}
-			} else if (failure_message) {
-				message = failure_message;
-				title = __("Payment Failed");
-			}
-
-			frappe.msgprint({ "message": message, "title": title });
-		});
-	}
-
-	auto_set_remaining_amount() {
-		const doc = this.events.get_frm().doc;
-		const remaining_amount = doc.grand_total - doc.paid_amount;
-		const current_value = this.selected_mode ? this.selected_mode.get_value() : undefined;
-		if (!current_value && remaining_amount > 0 && this.selected_mode) {
-			this.selected_mode.set_value(remaining_amount);
-		}
 	}
 
 	attach_shortcuts() {
@@ -294,6 +282,7 @@ erpnext.PointOfSale.Payment = class {
 		this.render_payment_mode_dom();
 		this.make_invoice_fields_control();
 		this.update_totals_section();
+		this.focus_on_default_mop();
 	}
 
 	edit_cart() {
@@ -375,6 +364,18 @@ erpnext.PointOfSale.Payment = class {
 			});
 			this[`${mode}_control`].toggle_label(false);
 			this[`${mode}_control`].set_value(p.amount);
+		});
+
+		this.render_loyalty_points_payment_mode();
+
+		this.attach_cash_shortcuts(doc);
+	}
+
+	focus_on_default_mop() {
+		const doc = this.events.get_frm().doc;
+		const payments = doc.payments;
+		payments.forEach(p => {
+			const mode = p.mode_of_payment.replace(/ +/g, "_").toLowerCase();
 
 			if (p.default) {
 				setTimeout(() => {
@@ -382,10 +383,6 @@ erpnext.PointOfSale.Payment = class {
 				}, 500);
 			}
 		});
-
-		this.render_loyalty_points_payment_mode();
-
-		this.attach_cash_shortcuts(doc);
 	}
 
 	attach_cash_shortcuts(doc) {
@@ -444,7 +441,7 @@ erpnext.PointOfSale.Payment = class {
 		const amount = doc.loyalty_amount > 0 ? format_currency(doc.loyalty_amount, doc.currency) : '';
 		this.$payment_modes.append(
 			`<div class="payment-mode-wrapper">
-				<div class="mode-of-payment" data-mode="loyalty-amount" data-payment-type="loyalty-amount">
+				<div class="mode-of-payment loyalty-card" data-mode="loyalty-amount" data-payment-type="loyalty-amount">
 					Redeem Loyalty Points
 					<div class="loyalty-amount-amount pay-amount">${amount}</div>
 					<div class="loyalty-amount-name">${loyalty_program}</div>

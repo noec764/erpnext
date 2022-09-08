@@ -7,26 +7,21 @@ frappe.provide("erpnext.accounts.dimensions");
 
 frappe.ui.form.on("Purchase Order", {
 	setup: function(frm) {
-		frm.custom_make_buttons = {
-			'Purchase Receipt': 'Purchase Receipt',
-			'Purchase Invoice': 'Purchase Invoice',
-			'Stock Entry': 'Material to Supplier',
-			'Payment Entry': 'Payment'
-		}
 
-		frm.set_query("reserve_warehouse", "supplied_items", function() {
-			return {
-				filters: {
-					"company": frm.doc.company,
-					"name": ['!=', frm.doc.supplier_warehouse],
-					"is_group": 0
+		if (frm.doc.is_old_subcontracting_flow) {
+			frm.set_query("reserve_warehouse", "supplied_items", function() {
+				return {
+					filters: {
+						"company": frm.doc.company,
+						"name": ['!=', frm.doc.supplier_warehouse],
+						"is_group": 0
+					}
 				}
-			}
-		});
+			});
+		}
 
 		frm.set_indicator_formatter('item_code',
 			function(doc) { return (doc.qty<=doc.received_qty) ? "green" : "orange" })
-
 
 		frm.set_query("expense_account", "items", function() {
 			return {
@@ -35,24 +30,65 @@ frappe.ui.form.on("Purchase Order", {
 			}
 		});
 
-	},
-
-	refresh: function(frm) {
-		if(frm.doc.docstatus === 1 && frm.doc.status !== 'Closed'
-			&& flt(frm.doc.per_received) < 100 && flt(frm.doc.per_billed) < 100) {
-			frm.add_custom_button(__('Update Items'), () => {
-				erpnext.utils.update_child_items({
-					frm: frm,
-					child_docname: "items",
-					child_doctype: "Purchase Order Detail",
-					cannot_add_row: false,
-				})
-			});
-		}
+		frm.set_query("fg_item", "items", function() {
+			return {
+				filters: {
+					'is_sub_contracted_item': 1,
+					'default_bom': ['!=', '']
+				}
+			}
+		});
 	},
 
 	company: function(frm) {
 		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
+	},
+
+	refresh: function(frm) {
+		if(frm.doc.is_old_subcontracting_flow) {
+			frm.trigger('get_materials_from_supplier');
+
+			$('a.grey-link').each(function () {
+				var id = $(this).children(':first-child').attr('data-label');
+				if (id == 'Duplicate') {
+					$(this).remove();
+					return false;
+				}
+			});
+		}
+	},
+
+	get_materials_from_supplier: function(frm) {
+		let po_details = [];
+
+		if (frm.doc.supplied_items && (frm.doc.per_received == 100 || frm.doc.status === 'Closed')) {
+			frm.doc.supplied_items.forEach(d => {
+				if (d.total_supplied_qty && d.total_supplied_qty != d.consumed_qty) {
+					po_details.push(d.name)
+				}
+			});
+		}
+
+		if (po_details && po_details.length) {
+			frm.add_custom_button(__('Return of Components'), () => {
+				frm.call({
+					method: 'erpnext.controllers.subcontracting_controller.get_materials_from_supplier',
+					freeze: true,
+					freeze_message: __('Creating Stock Entry'),
+					args: {
+						subcontract_order: frm.doc.name,
+						rm_details: po_details,
+						order_doctype: cur_frm.doc.doctype
+					},
+					callback: function(r) {
+						if (r && r.message) {
+							const doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+			}, __('Create'));
+		}
 	},
 
 	onload: function(frm) {
@@ -64,9 +100,15 @@ frappe.ui.form.on("Purchase Order", {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
 		});
+	},
 
-		erpnext.accounts.dimensions.setup_dimension_filters(frm, frm.doctype);
-	}
+	apply_tds: function(frm) {
+		if (!frm.doc.apply_tds) {
+			frm.set_value("tax_withholding_category", '');
+		} else {
+			frm.set_value("tax_withholding_category", frm.supplier_tds);
+		}
+	},
 });
 
 frappe.ui.form.on("Purchase Order Item", {
@@ -79,13 +121,35 @@ frappe.ui.form.on("Purchase Order Item", {
 				set_schedule_date(frm);
 			}
 		}
+	},
+
+	qty: function(frm, cdt, cdn) {
+		if (frm.doc.is_subcontracted && !frm.doc.is_old_subcontracting_flow) {
+			var row = locals[cdt][cdn];
+
+			if (row.qty) {
+				row.fg_item_qty = row.qty;
+			}
+		}
 	}
 });
 
-erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend({
-	refresh: function(doc, cdt, cdn) {
+erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends erpnext.buying.BuyingController {
+	setup() {
+		this.frm.custom_make_buttons = {
+			'Purchase Receipt': 'Purchase Receipt',
+			'Purchase Invoice': 'Purchase Invoice',
+			'Payment Entry': 'Payment',
+			'Subcontracting Order': 'Subcontracting Order',
+			'Stock Entry': 'Material to Supplier'
+		}
+
+		super.setup();
+	}
+
+	refresh(doc, cdt, cdn) {
 		var me = this;
-		this._super();
+		super.refresh();
 		var allow_receipt = false;
 		var is_drop_ship = false;
 
@@ -111,6 +175,19 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			}
 
 			if(!in_list(["Closed", "Delivered"], doc.status)) {
+				if(this.frm.doc.status !== 'Closed' && flt(this.frm.doc.per_received) < 100 && flt(this.frm.doc.per_billed) < 100) {
+					// Don't add Update Items button if the PO is following the new subcontracting flow.
+					if (!(this.frm.doc.is_subcontracted && !this.frm.doc.is_old_subcontracting_flow)) {
+						this.frm.add_custom_button(__('Update Items'), () => {
+							erpnext.utils.update_child_items({
+								frm: this.frm,
+								child_docname: "items",
+								child_doctype: "Purchase Order Detail",
+								cannot_add_row: false,
+							})
+						});
+					}
+				}
 				if (this.frm.has_perm("submit")) {
 					if(flt(doc.per_billed, 6) < 100 || flt(doc.per_received, 6) < 100) {
 						if (doc.status != "On Hold") {
@@ -137,9 +214,15 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 				if (doc.status != "On Hold") {
 					if(flt(doc.per_received) < 100 && allow_receipt) {
 						cur_frm.add_custom_button(__('Purchase Receipt'), this.make_purchase_receipt, __('Create'));
-						if(doc.is_subcontracted==="Yes" && me.has_unsupplied_items()) {
-							cur_frm.add_custom_button(__('Material to Supplier'),
-								function() { me.make_stock_entry(); }, __("Transfer"));
+						if (doc.is_subcontracted) {
+							if (doc.is_old_subcontracting_flow) {
+								if (me.has_unsupplied_items()) {
+									cur_frm.add_custom_button(__('Material to Supplier'), function() { me.make_stock_entry(); }, __("Transfer"));
+								}
+							}
+							else {
+								cur_frm.add_custom_button(__('Subcontracting Order'), this.make_subcontracting_order, __('Create'));
+							}
 						}
 					}
 					if(flt(doc.per_billed) < 100)
@@ -156,8 +239,8 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 					}
 
 					if(!doc.auto_repeat) {
-						cur_frm.add_custom_button(__('Auto Repeat'), function() {
-							erpnext.utils.make_auto_repeat(doc.doctype, doc.name)
+						cur_frm.add_custom_button(__('Subscription'), function() {
+							erpnext.utils.make_subscription(doc.doctype, doc.name)
 						}, __('Create'))
 					}
 
@@ -172,6 +255,7 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 								me.make_inter_company_order(me.frm);
 							}, __('Create'));
 						}
+
 					}
 				}
 
@@ -180,9 +264,9 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 		} else if(doc.docstatus===0) {
 			cur_frm.cscript.add_from_mappers();
 		}
-	},
+	}
 
-	get_items_from_open_material_requests: function() {
+	get_items_from_open_material_requests() {
 		erpnext.utils.map_current_doc({
 			method: "erpnext.stock.doctype.material_request.material_request.make_purchase_order_based_on_supplier",
 			args: {
@@ -200,17 +284,17 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			},
 			get_query_method: "erpnext.stock.doctype.material_request.material_request.get_material_requests_based_on_supplier"
 		});
-	},
+	}
 
-	validate: function() {
+	validate() {
 		set_schedule_date(this.frm);
-	},
+	}
 
-	has_unsupplied_items: function() {
-		return this.frm.doc['supplied_items'].some(item => item.required_qty != item.supplied_qty)
-	},
+	has_unsupplied_items() {
+		return this.frm.doc['supplied_items'].some(item => item.required_qty > item.supplied_qty);
+	}
 
-	make_stock_entry: function() {
+	make_stock_entry() {
 		var items = $.map(cur_frm.doc.items, function(d) { return d.bom ? d.item_code : false; });
 		var me = this;
 
@@ -311,7 +395,8 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			if(me.values) {
 				me.values.sub_con_rm_items.map((row,i) => {
 					if (!row.item_code || !row.rm_item_code || !row.warehouse || !row.qty || row.qty === 0) {
-						frappe.throw(__("Item Code, warehouse, quantity are required on row {0}", [i+1]));
+						let row_id = i+1;
+						frappe.throw(__("Item Code, warehouse and quantity are required on row {0}", [row_id]));
 					}
 				})
 				me._make_rm_stock_entry(me.dialog.fields_dict.sub_con_rm_items.grid.get_selected_children())
@@ -324,14 +409,15 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			me.dialog.hide();
 		});
 
-	},
+	}
 
-	_make_rm_stock_entry: function(rm_items) {
+	_make_rm_stock_entry(rm_items) {
 		frappe.call({
-			method:"erpnext.buying.doctype.purchase_order.purchase_order.make_rm_stock_entry",
+			method:"erpnext.controllers.subcontracting_controller.make_rm_stock_entry",
 			args: {
-				purchase_order: cur_frm.doc.name,
-				rm_items: rm_items
+				subcontract_order: cur_frm.doc.name,
+				rm_items: rm_items,
+				order_doctype: cur_frm.doc.doctype
 			}
 			,
 			callback: function(r) {
@@ -339,31 +425,39 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 			}
 		});
-	},
+	}
 
-	make_inter_company_order: function(frm) {
+	make_inter_company_order(frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.buying.doctype.purchase_order.purchase_order.make_inter_company_sales_order",
 			frm: frm
 		});
-	},
+	}
 
-	make_purchase_receipt: function() {
+	make_purchase_receipt() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_receipt",
 			frm: cur_frm,
 			freeze_message: __("Creating Purchase Receipt ...")
 		})
-	},
+	}
 
-	make_purchase_invoice: function() {
+	make_purchase_invoice() {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_invoice",
 			frm: cur_frm
 		})
-	},
+	}
 
-	add_from_mappers: function() {
+	make_subcontracting_order() {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.buying.doctype.purchase_order.purchase_order.make_subcontracting_order",
+			frm: cur_frm,
+			freeze_message: __("Creating Subcontracting Order ...")
+		})
+	}
+
+	add_from_mappers() {
 		var me = this;
 		this.frm.add_custom_button(__('Material Request'),
 			function() {
@@ -381,9 +475,12 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 						status: ["!=", "Stopped"],
 						per_ordered: ["<", 100],
 						company: me.frm.doc.company
-					}
+					},
+					allow_child_item_selection: true,
+					child_fieldname: "items",
+					child_columns: ["item_code", "qty"]
 				})
-			}, __("Get items from"));
+			}, __("Get Items From"));
 
 		this.frm.add_custom_button(__('Supplier Quotation'),
 			function() {
@@ -400,9 +497,9 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 						status: ["not in", ["Stopped", "Expired"]],
 					}
 				})
-			}, __("Get items from"));
+			}, __("Get Items From"));
 
-		this.frm.add_custom_button(__('Update rate as per last purchase'),
+		this.frm.add_custom_button(__('Update Rate as per Last Purchase'),
 			function() {
 				frappe.call({
 					"method": "get_last_purchase_rate",
@@ -469,13 +566,13 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 				}
 			});
 		}, __("Tools"));
-	},
+	}
 
-	tc_name: function() {
+	tc_name() {
 		this.get_terms();
-	},
+	}
 
-	items_add: function(doc, cdt, cdn) {
+	items_add(doc, cdt, cdn) {
 		var row = frappe.get_doc(cdt, cdn);
 		if(doc.schedule_date) {
 			row.schedule_date = doc.schedule_date;
@@ -483,13 +580,13 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 		} else {
 			this.frm.script_manager.copy_from_first_row("items", row, ["schedule_date"]);
 		}
-	},
+	}
 
-	unhold_purchase_order: function(){
+	unhold_purchase_order(){
 		cur_frm.cscript.update_status("Resume", "Draft")
-	},
+	}
 
-	hold_purchase_order: function(){
+	hold_purchase_order(){
 		var me = this;
 		var d = new frappe.ui.Dialog({
 			title: __('Reason for Hold'),
@@ -502,12 +599,14 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			],
 			primary_action: function() {
 				var data = d.get_values();
+				let reason_for_hold = 'Reason for hold: ' + data.reason_for_hold;
+
 				frappe.call({
 					method: "frappe.desk.form.utils.add_comment",
 					args: {
 						reference_doctype: me.frm.doctype,
 						reference_name: me.frm.docname,
-						content: __('Reason for hold: ')+data.reason_for_hold,
+						content: __(reason_for_hold),
 						comment_email: frappe.session.user,
 						comment_by: frappe.session.user_fullname
 					},
@@ -521,31 +620,31 @@ erpnext.buying.PurchaseOrderController = erpnext.buying.BuyingController.extend(
 			}
 		});
 		d.show();
-	},
+	}
 
-	unclose_purchase_order: function(){
+	unclose_purchase_order(){
 		cur_frm.cscript.update_status('Re-open', 'Submitted')
-	},
+	}
 
-	close_purchase_order: function(){
+	close_purchase_order(){
 		cur_frm.cscript.update_status('Close', 'Closed')
-	},
+	}
 
-	delivered_by_supplier: function(){
+	delivered_by_supplier(){
 		cur_frm.cscript.update_status('Deliver', 'Delivered')
-	},
+	}
 
-	items_on_form_rendered: function() {
-		set_schedule_date(this.frm);
-	},
-
-	schedule_date: function() {
+	items_on_form_rendered() {
 		set_schedule_date(this.frm);
 	}
-});
+
+	schedule_date() {
+		set_schedule_date(this.frm);
+	}
+};
 
 // for backward compatibility: combine new and previous states
-$.extend(cur_frm.cscript, new erpnext.buying.PurchaseOrderController({frm: cur_frm}));
+extend_cscript(cur_frm.cscript, new erpnext.buying.PurchaseOrderController({frm: cur_frm}));
 
 cur_frm.cscript.update_status= function(label, status){
 	frappe.call({
@@ -566,15 +665,17 @@ cur_frm.fields_dict['items'].grid.get_field('project').get_query = function(doc,
 	}
 }
 
-cur_frm.fields_dict['items'].grid.get_field('bom').get_query = function(doc, cdt, cdn) {
-	var d = locals[cdt][cdn]
-	return {
-		filters: [
-			['BOM', 'item', '=', d.item_code],
-			['BOM', 'is_active', '=', '1'],
-			['BOM', 'docstatus', '=', '1'],
-			['BOM', 'company', '=', doc.company]
-		]
+if (cur_frm.doc.is_old_subcontracting_flow) {
+	cur_frm.fields_dict['items'].grid.get_field('bom').get_query = function(doc, cdt, cdn) {
+		var d = locals[cdt][cdn]
+		return {
+			filters: [
+				['BOM', 'item', '=', d.item_code],
+				['BOM', 'is_active', '=', '1'],
+				['BOM', 'docstatus', '=', '1'],
+				['BOM', 'company', '=', doc.company]
+			]
+		}
 	}
 }
 
@@ -587,7 +688,7 @@ function set_schedule_date(frm) {
 frappe.provide("erpnext.buying");
 
 frappe.ui.form.on("Purchase Order", "is_subcontracted", function(frm) {
-	if (frm.doc.is_subcontracted === "Yes") {
+	if (frm.doc.is_old_subcontracting_flow) {
 		erpnext.buying.get_default_bom(frm);
 	}
 });

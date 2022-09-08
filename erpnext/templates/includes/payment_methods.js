@@ -4,12 +4,7 @@
 $(document).ready(function() {
 	if (typeof Stripe != "undefined") {
 		const stripe = Stripe("{{ publishable_key }}", { locale: "{{ lang }}" });
-		frappe.require([
-			'/assets/js/dialog.min.js',
-			'/assets/js/control.min.js',
-		], () => {
-			new stripe_payment_methods({stripe: stripe});
-		});
+		new stripe_payment_methods({stripe: stripe});
 	}
 });
 
@@ -21,11 +16,11 @@ stripe_payment_methods = class {
 
 	bind_buttons() {
 		const me = this;
-		$("#add-card").click(function(){
+		$("#add-card").on('click',function(){
 			me.add_new_card();
 		})
 
-		$(".remove-card").click(function(event){
+		$(".remove-card").on('click', function(event){
 			event.target.setAttribute("disabled", "disabled");
 			event.target.classList.add("disabled")
 			event.target.innerText = __("Processing...");
@@ -34,7 +29,6 @@ stripe_payment_methods = class {
 	}
 
 	add_new_card() {
-		$("#add-card").addClass('d-none');
 		$("#card-form").addClass('d-block');
 		this.cardElement = this.stripe.elements().create('card', {
 			hidePostalCode: true,
@@ -71,7 +65,7 @@ stripe_payment_methods = class {
 			displayError.textContent = '';
 			}
 		});
-		
+
 		// Handle form submission.
 		const submitButton = document.getElementById('card-submit');
 		submitButton.addEventListener('click', function(event) {

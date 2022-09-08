@@ -16,13 +16,7 @@ erpnext.eventSlotsBookings = class EventSlotsBookings {
 	}
 
 	show() {
-		frappe.require([
-			'/assets/js/moment-bundle.min.js',
-			'/assets/js/control.min.js',
-			'/assets/frappe/js/frappe/utils/datetime.js'
-		], () => {
-			this.build_calendar()
-		});
+		this.build_calendar()
 	}
 
 	build_calendar() {
@@ -118,7 +112,9 @@ class EventsCalendar {
 				me.eventClick(event)
 			},
 			displayEventTime: this.get_time_display(),
-			height: "auto"
+			height: "auto",
+			slotMinTime: '08:00:00',
+			slotMaxTime: '20:00:00'
 		}
 	}
 
