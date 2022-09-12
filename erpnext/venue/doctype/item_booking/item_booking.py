@@ -694,7 +694,7 @@ class ItemBookingAvailabilities:
 def _get_events(start, end, item=None, user=None):
 	conditions = ""
 	if item:
-		conditions += " AND item='{0}' ".format(item.name)
+		conditions += " AND item='{0}' ".format(frappe.db.escape(item.name))
 	if user:
 		conditions += " AND user='{0}' ".format(user)
 
