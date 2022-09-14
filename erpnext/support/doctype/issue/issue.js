@@ -8,13 +8,15 @@ frappe.ui.form.on("Issue", {
 				}
 			};
 		});
+	},
 
+	refresh: function(frm) {
 		frappe.db.get_value("Support Settings", {name: "Support Settings"},
 			["allow_resetting_service_level_agreement", "track_service_level_agreement"], (r) => {
-				if (r && r.track_service_level_agreement == "0") {
+				if (r && (!r.track_service_level_agreement || r.track_service_level_agreement == "0")) {
 					frm.set_df_property("service_level_section", "hidden", 1);
 				}
-				if (r && r.allow_resetting_service_level_agreement == "0") {
+				if (r && (!r.allow_resetting_service_level_agreement || r.allow_resetting_service_level_agreement == "0")) {
 					frm.set_df_property("reset_service_level_agreement", "hidden", 1);
 				}
 			});
