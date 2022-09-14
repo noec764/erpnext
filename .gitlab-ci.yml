@@ -16,6 +16,9 @@ unittests:
     - if: $CI_COMMIT_REF_NAME == "v3.x.x"
       variables:
         BASE_BRANCH: "v3.x.x"
+    - if: $CI_COMMIT_REF_NAME == "v3.x.x-hotfix"
+      variables:
+        BASE_BRANCH: "v3.x.x-hotfix"
     - if: $CI_COMMIT_TAG == null
 
   services:

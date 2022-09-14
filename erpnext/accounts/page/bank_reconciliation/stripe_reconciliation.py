@@ -12,7 +12,7 @@ def reconcile_stripe_payouts(bank_transactions):
 	stripe_transactions = [
 		transaction
 		for transaction in bank_transactions
-		if "stripe" in transaction.get("description").lower()
+		if "stripe" in (transaction.get("description") or "").lower()
 	]
 	if not stripe_transactions:
 		return
