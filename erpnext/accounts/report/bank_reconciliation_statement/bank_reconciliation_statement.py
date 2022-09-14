@@ -18,9 +18,10 @@ def execute(filters=None):
 
 	columns = get_columns()
 
-	if not filters.get("account"):
+	if not filters.get("bank_account"):
 		return columns, []
 
+	filters["account"] = frappe.db.get_value("Bank Account", filters.bank_account, "account")
 	account_currency = frappe.db.get_value("Account", filters.account, "account_currency")
 
 	data = get_entries(filters)
@@ -47,7 +48,7 @@ def execute(filters=None):
 		),
 		{},
 		{
-			"payment_entry": _("Outstanding Cheques and Deposits to clear"),
+			"payment_entry": frappe.bold(_("Outstanding Cheques and Deposits to clear")),
 			"debit": total_debit,
 			"credit": total_credit,
 			"account_currency": account_currency,
@@ -64,7 +65,7 @@ def execute(filters=None):
 
 def get_columns():
 	return [
-		{"fieldname": "posting_date", "label": _("Posting Date"), "fieldtype": "Date", "width": 90},
+		{"fieldname": "posting_date", "label": _("Posting Date"), "fieldtype": "Date", "width": 120},
 		{
 			"fieldname": "payment_document",
 			"label": _("Payment Document Type"),
@@ -76,7 +77,7 @@ def get_columns():
 			"label": _("Payment Document"),
 			"fieldtype": "Dynamic Link",
 			"options": "payment_document",
-			"width": 220,
+			"width": 350,
 		},
 		{
 			"fieldname": "debit",
@@ -99,9 +100,9 @@ def get_columns():
 			"options": "Account",
 			"width": 200,
 		},
-		{"fieldname": "reference_no", "label": _("Reference"), "fieldtype": "Data", "width": 100},
+		{"fieldname": "reference_no", "label": _("Reference"), "fieldtype": "Data", "width": 150},
 		{"fieldname": "ref_date", "label": _("Ref Date"), "fieldtype": "Date", "width": 110},
-		{"fieldname": "clearance_date", "label": _("Clearance Date"), "fieldtype": "Date", "width": 110},
+		{"fieldname": "clearance_date", "label": _("Clearance Date"), "fieldtype": "Date", "width": 150},
 		{
 			"fieldname": "account_currency",
 			"label": _("Currency"),
@@ -293,14 +294,14 @@ def get_loan_amount(filters):
 def get_balance_row(label, amount, account_currency):
 	if amount > 0:
 		return {
-			"payment_entry": label,
+			"payment_entry": frappe.bold(label),
 			"debit": amount,
 			"credit": 0,
 			"account_currency": account_currency,
 		}
 	else:
 		return {
-			"payment_entry": label,
+			"payment_entry": frappe.bold(label),
 			"debit": 0,
 			"credit": abs(amount),
 			"account_currency": account_currency,
