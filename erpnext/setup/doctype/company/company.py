@@ -395,7 +395,7 @@ class Company(NestedSet):
 
 		if frappe.flags.in_test:
 			default_accounts.update(
-				{"default_expense_account": "Expense Account", "default_income_account": "Income Account"}
+				{"default_expense_account": "Cost of Goods Sold", "default_income_account": "Income Account"}
 			)
 
 		if self.update_default_account:
