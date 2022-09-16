@@ -1061,7 +1061,7 @@ def update_cost_center(docname, cost_center_name, cost_center_number, company, m
 
 	frappe.db.set_value("Cost Center", docname, "cost_center_name", cost_center_name.strip())
 
-	new_name = get_autoname_with_number(cost_center_number, cost_center_name, docname, company)
+	new_name = get_autoname_with_number(cost_center_number, cost_center_name, company)
 	if docname != new_name:
 		frappe.rename_doc("Cost Center", docname, new_name, force=1, merge=merge)
 		return new_name
@@ -1085,14 +1085,10 @@ def validate_field_number(doctype_name, docname, number_value, company, field_na
 			)
 
 
-def get_autoname_with_number(number_value, doc_title, name, company, suffix=None):
+def get_autoname_with_number(number_value, doc_title, company, suffix=None):
 	"""append title with prefix as number and suffix as company's abbreviation separated by '-'"""
-	if name:
-		name_split = name.split("-")
-		parts = [doc_title.strip()[:100], name_split[len(name_split) - 1].strip()]
-	else:
-		abbr = frappe.get_cached_value("Company", company, ["abbr"], as_dict=True)
-		parts = [doc_title.strip()[:100], abbr.abbr]
+	company_abbr = frappe.get_cached_value("Company", company, "abbr")
+	parts = [doc_title.strip()[:100], company_abbr.abbr]
 
 	if suffix:
 		parts.insert(-1, suffix)
