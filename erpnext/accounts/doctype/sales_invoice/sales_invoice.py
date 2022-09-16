@@ -2527,7 +2527,6 @@ def create_dunning(source_name, target_doc=None):
 				target.closing_text = letter_text.get("closing_text")
 				target.language = letter_text.get("language")
 			amounts = calculate_interest_and_amount(
-				target.posting_date,
 				target.outstanding_amount,
 				target.rate_of_interest,
 				target.dunning_fee,
