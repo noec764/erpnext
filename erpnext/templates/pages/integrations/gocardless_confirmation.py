@@ -28,10 +28,10 @@ def get_context(context):
 
 			payment_request = frappe.get_doc(context.reference_doctype, context.reference_docname)
 			gateway_controller.handle_redirect_flow(redirect_flow, payment_request)
-			frappe.local.flags.redirect_location = "payment-success"
+			frappe.local.flags.redirect_location = "/payment-success"
 		except Exception:
 			frappe.log_error(_("GoCardless Payment Error"))
-			frappe.local.flags.redirect_location = "payment-failed"
+			frappe.local.flags.redirect_location = "/payment-failed"
 			raise frappe.Redirect
 
 		raise frappe.Redirect
