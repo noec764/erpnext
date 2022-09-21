@@ -16,6 +16,7 @@ def execute():
 
 		for d in records:
 			if strip_html(cstr(d.notes)).strip():
+				frappe.db.set_value(doctype, d.name, "notes", None)
 				doc = frappe.get_doc(doctype, d.name)
 				doc.append("notes", {"note": d.notes, "added_by": d.modified_by, "added_on": d.modified})
 				doc.update_child_table("notes")
