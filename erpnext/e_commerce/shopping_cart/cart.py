@@ -84,6 +84,7 @@ def place_order():
 	cart_settings = frappe.db.get_value(
 		"E Commerce Settings", None, ["company", "allow_items_not_in_stock"], as_dict=1
 	)
+
 	quotation.company = cart_settings.company
 
 	quotation.flags.ignore_permissions = True
@@ -566,12 +567,15 @@ def get_party(user=None):
 
 
 def get_debtors_account(cart_settings):
-	if not cart_settings.payment_gateway_account:
+	if not cart_settings.no_payment_gateway and not cart_settings.payment_gateway_account:
 		frappe.throw(_("Payment Gateway Account not set"), _("Mandatory"))
 
-	payment_gateway_account_currency = frappe.get_doc(
-		"Payment Gateway Account", cart_settings.payment_gateway_account
-	).currency
+	payment_gateway_account_currency = (
+		frappe.db.get_value("Price List", cart_settings.price_list, "currency")
+		if cart_settings.no_payment_gateway else
+		frappe.db.get_value("Payment Gateway Account", cart_settings.payment_gateway_account, "currency")
+	)
+
 
 	account_name = _("Debtors ({0})").format(payment_gateway_account_currency)
 

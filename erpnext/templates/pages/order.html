@@ -108,6 +108,7 @@
 
 	{% if enabled_checkout and ((doc.doctype=="Sales Order" and doc.per_billed <= 0)
 		or (doc.doctype=="Sales Invoice" and doc.outstanding_amount > 0)) %}
+		<hr class="divider">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="row">

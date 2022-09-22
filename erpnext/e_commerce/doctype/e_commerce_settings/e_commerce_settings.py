@@ -77,7 +77,7 @@ class ECommerceSettings(Document):
 		self.hide_variants = 0
 
 	def validate_checkout(self):
-		if self.enable_checkout and not self.payment_gateway_account:
+		if self.enable_checkout and not self.no_payment_gateway and not self.payment_gateway_account:
 			self.enable_checkout = 0
 
 	def validate_search_index_fields(self):
