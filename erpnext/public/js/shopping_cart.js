@@ -168,6 +168,7 @@ $.extend(shopping_cart, {
 					$(".cart-tax-items").html(r.message.total);
 					$(".payment-summary").html(r.message.taxes_and_totals);
 					shopping_cart.set_cart_count();
+					shopping_cart.bind_events();
 
 					if (cart_dropdown != true) {
 						$(".cart-icon").hide();
