@@ -445,7 +445,6 @@ scheduler_events = {
 		"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_after_specific_time",
 	],
 	"hourly": [
-		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
 		"erpnext.projects.doctype.project.project.hourly_reminder",
 		"erpnext.projects.doctype.project.project.collect_project_status",
@@ -453,6 +452,7 @@ scheduler_events = {
 		"erpnext.accounts.doctype.subscription.subscription.update_grand_total",
 	],
 	"hourly_long": [
+		"erpnext.accounts.doctype.subscription.subscription.process_all",
 		"erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.repost_entries",
 		"erpnext.bulk_transaction.doctype.bulk_transaction_log.bulk_transaction_log.retry_failing_transaction",
 	],
