@@ -228,9 +228,9 @@ async function submit() {
 		},
 		callback: (response)=>{
 			if (response.message.status == "Unverified") {
-				frappe.show_alert("Please check your email to confirm the appointment")
+				frappe.show_alert(__("Please check your email to confirm the appointment"))
 			} else {
-				frappe.show_alert("Appointment Created Successfully");
+				frappe.show_alert(__("Appointment Created Successfully"));
 			}
 			setTimeout(()=>{
 				let redirect_url = "/";
