@@ -39,7 +39,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		if (!this.frm.is_new() && doc.__onload && !doc.__onload.is_customer) {
 			this.frm.add_custom_button(__("Customer"), this.make_customer, __("Create"));
 			this.frm.add_custom_button(__("Opportunity"), function() {
-				me.frm.trigger("make_opportunity");
+				me.make_opportunity(me.frm);
 			}, __("Create"));
 			this.frm.add_custom_button(__("Quotation"), this.make_quotation, __("Create"));
 			if (!doc.__onload.linked_prospects.length) {
@@ -147,13 +147,8 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		});
 		crm_activities.refresh();
 	}
-};
 
-
-extend_cscript(cur_frm.cscript, new erpnext.LeadController({ frm: cur_frm }));
-
-frappe.ui.form.on("Lead", {
-	make_opportunity: async function(frm) {
+	async make_opportunity(frm) {
 		let existing_prospect = (await frappe.db.get_value("Prospect Lead",
 			{
 				"lead": frm.doc.name
@@ -231,4 +226,7 @@ frappe.ui.form.on("Lead", {
 			});
 		}
 	}
-});
+};
+
+
+extend_cscript(cur_frm.cscript, new erpnext.LeadController({ frm: cur_frm }));
