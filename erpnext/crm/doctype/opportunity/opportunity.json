@@ -152,7 +152,6 @@
    "no_copy": 1
   },
   {
-   "default": "Sales",
    "fieldname": "opportunity_type",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -600,28 +599,28 @@
    "label": "Notes",
    "no_copy": 1,
    "options": "CRM Note"
-},
-{
- "fieldname": "city",
- "fieldtype": "Data",
- "label": "City"
-},
-{
- "fieldname": "state",
- "fieldtype": "Data",
- "label": "State"
-},
-{
- "fieldname": "country",
- "fieldtype": "Link",
- "label": "Country",
- "options": "Country"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
   }
  ],
  "icon": "fa fa-info-sign",
  "idx": 195,
  "links": [],
- "modified": "2022-08-22 18:26:37.235964",
+ "modified": "2022-10-03 16:53:54.247565",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",

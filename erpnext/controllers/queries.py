@@ -210,21 +210,15 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 	meta = frappe.get_meta(doctype, cached=True)
 	searchfields = meta.get_search_fields()
 
-	# these are handled separately
-	ignored_search_fields = ("item_name", "description")
-	for ignored_field in ignored_search_fields:
-		if ignored_field in searchfields:
-			searchfields.remove(ignored_field)
-
 	columns = ""
-	extra_searchfields = [
-		field
-		for field in searchfields
-		if field not in ["name", "item_group", "description", "item_name"]
-	]
+	extra_searchfields = [field for field in searchfields if not field in ["name", "description"]]
 
 	if extra_searchfields:
-		columns = ", " + ", ".join(extra_searchfields)
+		columns += ", " + ", ".join(extra_searchfields)
+
+	if "description" in searchfields:
+		columns += """, if(length(tabItem.description) > 40, \
+			concat(substr(tabItem.description, 1, 40), "..."), description) as description"""
 
 	searchfields = searchfields + [
 		field
@@ -267,10 +261,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 
 	return frappe.db.sql(
 		"""select
-			tabItem.name, tabItem.item_name, tabItem.item_group,
-		if(length(tabItem.description) > 40, \
-			concat(substr(tabItem.description, 1, 40), "..."), description) as description
-		{columns}
+			tabItem.name {columns}
 		from tabItem
 		where tabItem.docstatus < 2
 			and tabItem.disabled=0

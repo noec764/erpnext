@@ -158,35 +158,45 @@ frappe.ui.form.on("Customer", {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
 
 	},
-	booking_credits_dashboard: async function(frm) {
-		const credits = await frappe.db.get_list("Booking Credit", {filters: {customer: frm.doc.name}, limit: 1})
-		if (credits.length && !frm.is_new() && !frm.get_balance) {
-			frm.get_balance = true
-			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
+	booking_credits_dashboard: function(frm) {
+		return frappe.call({
+			method: "erpnext.venue.doctype.booking_credit.booking_credit.has_booking_credits",
+			args: {
 				customer: frm.doc.name
-			}).then(r => {
-				const credits = Object.keys(r).map(m => {
-					return r[m]
-				}).flat().map(d => {
-					return d.balance
-				});
-				const max_count = Math.max.apply(null, credits) > 0 ? Math.max.apply(null, credits) : Math.min.apply(null, credits);
+			}
+		}).then(r => {
+			if (r.message && !frm.is_new() && !frm.get_balance) {
+				frm.get_balance = true
+				return frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
+					customer: frm.doc.name
+				})
+			}
+		}).then(r => {
+			if (!r) {
+				return
+			}
 
-				frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
-				{
-					balance: Object.keys(r).map(f => {
-						return flatten_credits(r, f)
-					}).flat(),
-					customer: frm.doc.name,
-					date: frappe.datetime.now_date(),
-					max_count: max_count
-				}), __("Booking Credits Balance"));
-				frm.dashboard.show();
-				frm.get_balance = false;
+			const credits = Object.keys(r).map(m => {
+				return r[m]
+			}).flat().map(d => {
+				return d.balance
+			});
+			const max_count = Math.max.apply(null, credits) > 0 ? Math.max.apply(null, credits) : Math.min.apply(null, credits);
 
-				frm.trigger('bind_reconciliation_btns');
-			})
-		}
+			frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
+			{
+				balance: Object.keys(r).map(f => {
+					return flatten_credits(r, f)
+				}).flat(),
+				customer: frm.doc.name,
+				date: frappe.datetime.now_date(),
+				max_count: max_count
+			}), __("Booking Credits Balance"));
+			frm.dashboard.show();
+			frm.get_balance = false;
+
+			frm.trigger('bind_reconciliation_btns');
+		})
 	},
 	bind_reconciliation_btns(frm) {
 		$(frm.dashboard.wrapper).find('.uom-reconciliation-btn').on("click", e => {

@@ -879,7 +879,7 @@ frappe.tour['Item'] = [
 	{
 		fieldname: "valuation_rate",
 		title: "Valuation Rate",
-		description: __("There are two options to maintain valuation of stock. FIFO (first in - first out) and Moving Average. To understand this topic in detail please visit <a href='https://docs.erpnext.com/docs/v13/user/manual/en/stock/articles/item-valuation-fifo-and-moving-average' target='_blank'>Item Valuation, FIFO and Moving Average.</a>")
+		description: __("There are two options to maintain valuation of stock. FIFO (first in - first out) and Moving Average. To understand this topic in detail please visit <a href='https://docs.erpnext.com/docs/v14/user/manual/en/stock/articles/calculation-of-valuation-rate-in-fifo-and-moving-average' target='_blank'>Item Valuation, FIFO and Moving Average.</a>")
 	},
 	{
 		fieldname: "standard_rate",

@@ -213,3 +213,8 @@ def _process_expired_booking_entry(balance_entry):
 	create_ledger_entry(**entry)
 	frappe.db.set_value("Booking Credit", balance_entry.name, "is_expired", 1)
 	frappe.db.set_value("Booking Credit", balance_entry.name, "status", "Expired")
+
+
+@frappe.whitelist()
+def has_booking_credits(customer):
+	return bool(frappe.db.get_all("Booking Credit", filters={"customer": customer}, limit=1))
