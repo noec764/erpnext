@@ -229,6 +229,7 @@ frappe.ui.form.on("Opportunity", {
 		});
 	},
 });
+
 frappe.ui.form.on("Opportunity Item", {
 	calculate: function(frm, cdt, cdn) {
 		let row = frappe.get_doc(cdt, cdn);
@@ -338,11 +339,18 @@ cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 	if (d.item_code) {
 		return frappe.call({
 			method: "erpnext.crm.doctype.opportunity.opportunity.get_item_details",
-			args: {"item_code":d.item_code},
+			args: {
+				"item_code":d.item_code,
+				"qty": d.qty
+			},
 			callback: function(r, rt) {
 				if(r.message) {
 					$.each(r.message, function(k, v) {
 						frappe.model.set_value(cdt, cdn, k, v);
+						if (k == "price") {
+							frappe.model.set_value(cdt, cdn, "rate", v);
+						}
+						refresh_field(k, d.name, 'items');
 					});
 					refresh_field('image_view', d.name, 'items');
 				}
