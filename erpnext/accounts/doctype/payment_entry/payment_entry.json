@@ -521,8 +521,10 @@
   {
    "fetch_from": "bank_account.bank",
    "fieldname": "bank",
-   "fieldtype": "Read Only",
-   "label": "Bank"
+   "fieldtype": "Link",
+   "label": "Bank",
+   "options": "Bank",
+   "read_only": 1
   },
   {
    "fetch_from": "bank_account.bank_account_no",
