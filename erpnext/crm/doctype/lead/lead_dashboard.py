@@ -1,7 +1,11 @@
 def get_data():
 	return {
 		"fieldname": "lead",
-		"non_standard_fieldnames": {"Quotation": "party_name", "Opportunity": "party_name"},
+		"non_standard_fieldnames": {
+			"Quotation": "party_name",
+			"Opportunity": "party_name",
+			"Customer": "lead_name",
+		},
 		"dynamic_links": {
 			"party_name": {
 				"Quotation": ["Lead", "quotation_to"],
@@ -9,6 +13,6 @@ def get_data():
 			}
 		},
 		"transactions": [
-			{"items": ["Opportunity", "Quotation", "Prospect"]},
+			{"items": ["Opportunity", "Quotation", "Prospect", "Customer"]},
 		],
 	}
