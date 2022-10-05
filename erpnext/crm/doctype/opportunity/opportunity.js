@@ -235,7 +235,9 @@ frappe.ui.form.on("Opportunity Item", {
 		let row = frappe.get_doc(cdt, cdn);
 		frappe.model.set_value(cdt, cdn, "amount", flt(row.qty) * flt(row.rate));
 		frappe.model.set_value(cdt, cdn, "base_rate", flt(frm.doc.conversion_rate) * flt(row.rate));
-		frappe.model.set_value(cdt, cdn, "base_amount", flt(frm.doc.conversion_rate) * flt(row.amount));
+		const total_amount = flt(frm.doc.conversion_rate) * flt(row.amount)
+		frappe.model.set_value(cdt, cdn, "base_amount", total_amount);
+		frm.set_value("opportunity_amount", total_amount);
 		frm.trigger("calculate_total");
 	},
 	qty: function(frm, cdt, cdn) {
