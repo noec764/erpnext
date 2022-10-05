@@ -235,7 +235,9 @@ frappe.ui.form.on("Opportunity Item", {
 		let row = frappe.get_doc(cdt, cdn);
 		frappe.model.set_value(cdt, cdn, "amount", flt(row.qty) * flt(row.rate));
 		frappe.model.set_value(cdt, cdn, "base_rate", flt(frm.doc.conversion_rate) * flt(row.rate));
-		frappe.model.set_value(cdt, cdn, "base_amount", flt(frm.doc.conversion_rate) * flt(row.amount));
+		const total_amount = flt(frm.doc.conversion_rate) * flt(row.amount)
+		frappe.model.set_value(cdt, cdn, "base_amount", total_amount);
+		frm.set_value("opportunity_amount", total_amount);
 		frm.trigger("calculate_total");
 	},
 	qty: function(frm, cdt, cdn) {
@@ -243,6 +245,12 @@ frappe.ui.form.on("Opportunity Item", {
 	},
 	rate: function(frm, cdt, cdn) {
 		frm.trigger("calculate", cdt, cdn);
+	},
+	uom: function(frm, cdt, cdn) {
+		get_item_details(frm.doc, cdt, cdn);
+	},
+	item_code: function(frm, cdt, cdn) {
+		get_item_details(frm.doc, cdt, cdn);
 	}
 })
 
@@ -334,14 +342,15 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 
 extend_cscript(cur_frm.cscript, new erpnext.crm.Opportunity({frm: cur_frm}));
 
-cur_frm.cscript.item_code = function(doc, cdt, cdn) {
+const get_item_details = (doc, cdt, cdn) => {
 	var d = locals[cdt][cdn];
 	if (d.item_code) {
 		return frappe.call({
 			method: "erpnext.crm.doctype.opportunity.opportunity.get_item_details",
 			args: {
 				"item_code":d.item_code,
-				"qty": d.qty
+				"qty": d.qty,
+				"uom": d.uom
 			},
 			callback: function(r, rt) {
 				if(r.message) {

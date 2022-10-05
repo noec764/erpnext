@@ -1,3 +1,5 @@
+@import './order-page';
+
 .filter-options {
 	max-height: 300px;
 	overflow: auto;
@@ -31,13 +33,28 @@
 	height: 24px;
 }
 
-.result {
-	border-bottom: 1px solid var(--border-color);
+.website-list {
+	background-color: var(--fg-color);
+	padding: 0 var(--padding-lg);
+	border-radius: var(--border-radius-md);
+
+	@media screen and (max-width: 567px) {
+		margin-left: -2rem;
+	}
+
+	&.result {
+		border-bottom: 1px solid var(--border-color);
+	}
 }
 
 .transaction-list-item {
-	border-top: 1px solid var(--border-color);
+	padding: 1rem 0;
+	border-bottom: 1px solid var(--border-color);
 	position: relative;
+
+	&:only-child, &:last-child {
+		border: 0;
+	}
 
 	a.transaction-item-link {
 		position: absolute;
@@ -53,22 +70,8 @@
 	}
 }
 
-a.transaction-list-item {
-	color: var(--text-light);
-}
-
 .place-order-container {
 	text-align: right;
-}
-
-.order-container {
-	.table {
-		width: unset;
-	}
-}
-
-.order-item-table {
-	border: none;
 }
 
 .kb-card {
@@ -77,17 +80,12 @@ a.transaction-list-item {
 	}
 }
 
-#footer-subscribe-button {
-	box-shadow: none;
+.list-item-name, .item-total {
+	font-size: var(--font-size-sm);
 }
 
-.subscription-list {
-	display: flex;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-auto-rows: auto;
-	grid-gap: 1rem;
+.items-preview {
+	@media screen and (max-width: 567px) {
+		margin-top: 1rem;
+	}
 }
-
-@import "erpnext/public/scss/shopping_cart";
-@import "erpnext/public/scss/portal";
