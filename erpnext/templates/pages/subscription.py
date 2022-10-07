@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import cint, get_url, nowdate
+from frappe.utils import cint, get_url, nowdate, sbool
 
 from erpnext.accounts.doctype.payment_request.payment_request import get_payment_link
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
@@ -118,7 +118,9 @@ def remove_subscription_line(subscription, line):
 
 
 @frappe.whitelist()
-def new_subscription(template):
+def new_subscription(template, process=False):
+	process = sbool(process)
+
 	customer = None
 	customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 	customer = customers[0] if customers else get_party().name
@@ -132,6 +134,13 @@ def new_subscription(template):
 		start_date=nowdate(),
 		ignore_permissions=True,
 	)
+
+	if process:
+		frappe.flags.mute_messages = True
+		subscription.process()
+		frappe.flags.mute_messages = False
+
+
 	payment_key = frappe.db.get_value(
 		"Payment Request",
 		{
