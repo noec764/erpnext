@@ -426,7 +426,6 @@ def get_tds_amount(ldc, parties, inv, tax_details, tax_deducted, vouchers):
 			# Get net total again as TDS is calculated on net total
 			# Grand is used to just check for threshold breach
 			net_total = 0
-
 			if vouchers:
 				net_total = frappe.db.get_value("Purchase Invoice", invoice_filters, "sum(net_total)")
 
