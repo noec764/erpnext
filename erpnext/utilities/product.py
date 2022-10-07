@@ -1,6 +1,5 @@
 # Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
-
 import frappe
 from frappe.utils import cint, flt, fmt_money, getdate, nowdate
 
@@ -91,16 +90,25 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 			"valid_from": ("<=", nowdate()),
 			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
 		}
+
 		if uom:
 			filters["uom"] = ("in", ("", None, uom))
-		elif stock_uom:
-			filters["uom"] = ("in", ("", None, stock_uom))
 
-		price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"], filters=filters)
+		price = frappe.get_all(
+			"Item Price", fields=["price_list_rate", "currency", "uom"], filters=filters
+		)
+
+		if not price and stock_uom:
+			filters["uom"] = ("in", ("", None, stock_uom))
+			price = frappe.get_all(
+				"Item Price", fields=["price_list_rate", "currency", "uom"], filters=filters
+			)
 
 		if template_item_code and not price:
 			filters["item_code"] = template_item_code
-			price = frappe.get_all("Item Price", fields=["price_list_rate", "currency"], filters=filters)
+			price = frappe.get_all(
+				"Item Price", fields=["price_list_rate", "currency", "uom"], filters=filters
+			)
 
 		if price:
 			party = get_party()
@@ -167,8 +175,17 @@ def get_price(item_code, price_list, customer_group, company, qty=1, uom=None):
 				)
 
 				uom_conversion_factor = uom_conversion_factor[0][0] if uom_conversion_factor else 1
+				uom_conversion_precision = (
+					cint(frappe.db.get_default("currency_precision"))
+					or cint(frappe.db.get_default("float_precision"))
+					or None
+				)
+				calculated_price = flt(price_obj["price_list_rate"]) * flt(
+					uom_conversion_factor if uom and price_obj.get("uom") != uom else 1,
+					precision=uom_conversion_precision,
+				)
 				price_obj["formatted_price_sales_uom"] = fmt_money(
-					price_obj["price_list_rate"] * uom_conversion_factor, currency=price_obj["currency"]
+					calculated_price, currency=price_obj["currency"]
 				)
 
 				if not price_obj["price_list_rate"]:
