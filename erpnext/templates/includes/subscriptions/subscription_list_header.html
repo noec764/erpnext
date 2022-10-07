@@ -48,10 +48,10 @@
 				{{ subscription_templates }}.map(template => {
 					document.getElementById(`${frappe.scrub(template.name)}_subscription`).addEventListener("click", function(e) {
 						new frappe.confirm(__('Subscribe to {0} ?', [`${template.name}`]), function() {
+							dialog.hide()
 							return frappe.call("erpnext.templates.pages.subscription.new_subscription", {template: `${ template.name }`, process: true})
 							.then(r => {
 								if (r && r.message) {
-									dialog.hide()
 									frappe.show_alert({message: __("Subscription created"), indicator: "green"})
 									window.location = r.message.payment_link ? r.message.payment_link : `/subscriptions/${r.message.subscription.name}`;
 								}
