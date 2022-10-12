@@ -23,7 +23,7 @@
 		{%- endif -%}
 		{%- for charge in doc.taxes -%}
 			{%- if (charge.tax_amount or print_settings.print_taxes_with_zero_amount) and (not charge.included_in_print_rate or doc.flags.show_inclusive_tax_in_print) -%}
-			{{ render_row(charge.get_formatted("description"), charge.get_formatted('tax_amount', doc)) }}
+			{{ render_row(charge.get_formatted("description", translated=True), charge.get_formatted('tax_amount', doc)) }}
 			{%- endif -%}
 		{%- endfor -%}
 		{%- if doc.apply_discount_on == "Grand Total" -%}
