@@ -165,7 +165,7 @@ erpnext.ProductList = class {
 					</div>
 				</a>
 			`;
-		} else if (settings.enabled && (settings.allow_items_not_in_stock || item.in_stock)) {
+		} else if (settings.enabled && (settings.allow_items_not_in_stock || item.in_stock) && !item.no_add_to_cart) {
 			return `
 				<div id="${ item.name }" class="btn
 					btn-sm btn-primary btn-add-to-cart-list mb-0

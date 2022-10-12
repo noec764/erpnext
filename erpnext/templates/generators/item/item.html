@@ -191,6 +191,7 @@
 
 {% block base_scripts %}
 <!-- js should be loaded in body! -->
+{{ super() }}
 {{ include_script("frappe-web.bundle.js") }}
 {{ include_script("dialog.bundle.js") }}
 {{ include_script("controls.bundle.js") }}

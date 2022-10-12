@@ -120,7 +120,7 @@
 						role="button">
 						{{  _("View in Cart") if cart_settings.enable_checkout else _("View in Quote") }}
 					</a>
-					{% if not doc.enable_item_booking %}
+					{% if not doc.enable_item_booking and not doc.no_add_to_cart %}
 					<button
 						data-item-code="{{item_code}}"
 						class="btn btn-primary btn-add-to-cart mr-2 w-30-40"
