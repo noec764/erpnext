@@ -52,6 +52,7 @@ class BookingCalendar {
 	}
 
 	render() {
+		$(this.parent.wrapper).empty()
 		const calendarEl = $('<div></div>').appendTo($(this.parent.wrapper));
 		this.fullCalendar = new Calendar(
 			calendarEl[0],

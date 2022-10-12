@@ -42,6 +42,7 @@ class ProductQuery:
 			"ranking",
 			"on_backorder",
 			"enable_item_booking",
+			"no_add_to_cart"
 		]
 
 	def query(self, attributes=None, fields=None, search_term=None, start=0, item_group=None):

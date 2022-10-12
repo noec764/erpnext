@@ -15,6 +15,7 @@
   "variant_of",
   "published",
   "enable_item_booking",
+  "no_add_to_cart",
   "column_break_3",
   "item_code",
   "item_name",
@@ -366,6 +367,12 @@
    "fieldtype": "Check",
    "label": "Item Booking Enabled",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "no_add_to_cart",
+   "fieldtype": "Check",
+   "label": "Do not show Add to Cart button"
   }
  ],
  "has_web_view": 1,
@@ -373,7 +380,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2022-09-30 04:01:52.090732",
+ "modified": "2022-10-12 17:27:09.373524",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "Website Item",
