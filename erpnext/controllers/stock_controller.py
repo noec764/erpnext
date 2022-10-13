@@ -142,12 +142,14 @@ class StockController(AccountsController):
 		warehouse_with_no_account = []
 		precision = self.get_debit_field_precision()
 		for item_row in voucher_details:
-
 			sle_list = sle_map.get(item_row.name)
+			sle_rounding_diff = 0.0
 			if sle_list:
 				for sle in sle_list:
 					if warehouse_account.get(sle.warehouse):
 						# from warehouse account
+
+						sle_rounding_diff += flt(sle.stock_value_difference)
 
 						self.check_expense_account(item_row)
 
