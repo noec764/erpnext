@@ -707,7 +707,7 @@ def get_credit_limit(customer, company):
 
 
 def make_contact(args, is_primary_contact=1):
-	names = args.get("customer_name").strip().split(" ")
+	names = (args.get("customer_name") or args.get("supplier_name")).strip().split(" ")
 	if len(names) > 1:
 		first_name, last_name = names[0], " ".join(names[1:])
 	else:
