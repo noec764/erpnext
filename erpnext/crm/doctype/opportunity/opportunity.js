@@ -225,7 +225,8 @@ frappe.ui.form.on("Opportunity", {
 
 		frm.set_value({
 			'total': flt(total),
-			'base_total': flt(base_total)
+			'base_total': flt(base_total),
+			'opportunity_amount': flt(total)
 		});
 	},
 });
@@ -235,9 +236,7 @@ frappe.ui.form.on("Opportunity Item", {
 		let row = frappe.get_doc(cdt, cdn);
 		frappe.model.set_value(cdt, cdn, "amount", flt(row.qty) * flt(row.rate));
 		frappe.model.set_value(cdt, cdn, "base_rate", flt(frm.doc.conversion_rate) * flt(row.rate));
-		const total_amount = flt(frm.doc.conversion_rate) * flt(row.amount)
-		frappe.model.set_value(cdt, cdn, "base_amount", total_amount);
-		frm.set_value("opportunity_amount", total_amount);
+		frappe.model.set_value(cdt, cdn, "base_amount", flt(frm.doc.conversion_rate) * flt(row.amount));
 		frm.trigger("calculate_total");
 	},
 	qty: function(frm, cdt, cdn) {
