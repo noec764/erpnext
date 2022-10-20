@@ -330,7 +330,7 @@ def is_holiday(
 @frappe.whitelist()
 def deactivate_sales_person(status=None, employee=None):
 	if status == "Left":
-		sales_person = frappe.db.get_value("Sales Person", {"Employee": employee})
+		sales_person = frappe.db.get_value("Sales Person", {"employee": employee})
 		if sales_person:
 			frappe.db.set_value("Sales Person", sales_person, "enabled", 0)
 
