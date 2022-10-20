@@ -26,8 +26,8 @@ frappe.listview_settings['Purchase Receipt'] = {
 			);
 		});
 
-		listview.page.add_action_item(__("Purchase Invoice"), ()=>{
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Receipt", "Purchase Invoice");
+		list_view.page.add_action_item(__("Purchase Invoice"), ()=>{
+			erpnext.bulk_transaction_processing.create(list_view, "Purchase Receipt", "Purchase Invoice");
 		});
 	}
 };
