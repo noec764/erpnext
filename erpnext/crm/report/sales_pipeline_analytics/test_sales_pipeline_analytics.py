@@ -194,4 +194,5 @@ def create_opportunity():
 		doc.currency = "INR"
 		doc.expected_closing = "2021-08-31"
 		doc.company = "Best Test"
+		doc.opportunity_type = "Sales"
 		doc.insert()
