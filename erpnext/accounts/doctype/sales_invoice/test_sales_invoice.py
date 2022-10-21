@@ -3242,22 +3242,6 @@ class TestSalesInvoice(FrappeTestCase):
 
 		self.assertTrue(return_si.docstatus == 1)
 
-	def test_sales_invoice_with_payable_tax_account(self):
-		si = create_sales_invoice(do_not_submit=True)
-		si.append(
-			"taxes",
-			{
-				"charge_type": "Actual",
-				"account_head": "Creditors - _TC",
-				"description": "Test",
-				"cost_center": "Main - _TC",
-				"tax_amount": 10,
-				"total": 10,
-				"dont_recompute_tax": 0,
-			},
-		)
-		self.assertRaises(frappe.ValidationError, si.submit)
-
 
 def check_gl_entries(doc, voucher_no, expected_gle, posting_date):
 	gl_entries = frappe.db.sql(
@@ -3434,7 +3418,7 @@ def create_internal_parties():
 	create_internal_customer(
 		customer_name="_Test Internal Customer",
 		represents_company="_Test Company 1",
-		allowed_to_interact_with="Wind Power",
+		allowed_to_interact_with="Wind Power LLC",
 	)
 
 	create_internal_customer(
@@ -3445,7 +3429,7 @@ def create_internal_parties():
 
 	create_internal_supplier(
 		supplier_name="_Test Internal Supplier",
-		represents_company="Wind Power",
+		represents_company="Wind Power LLC",
 		allowed_to_interact_with="_Test Company 1",
 	)
 

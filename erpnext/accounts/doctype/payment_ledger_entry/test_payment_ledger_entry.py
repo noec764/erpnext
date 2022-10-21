@@ -453,6 +453,8 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 			pe = get_payment_entry(si.doctype, si.name)
 			pe.paid_amount = amt
 			pe.get("references")[0].allocated_amount = amt
+			pe.reference_no = "Test"
+			pe.reference_date = transaction_date
 			pe = pe.save().submit()
 
 		si.reload()
@@ -497,10 +499,6 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		)
 		self.assertEqual(entries, [])
 
-		# with references removed, deletion should be possible
-		si.delete()
-		self.assertRaises(frappe.DoesNotExistError, frappe.get_doc, si.doctype, si.name)
-
 	@change_settings(
 		"Accounts Settings",
 		{"unlink_payment_on_cancellation_of_invoice": 1},
@@ -510,7 +508,11 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		amount = 100
 		so = self.create_sales_order(qty=1, rate=amount, posting_date=transaction_date).save().submit()
 
-		pe = get_payment_entry(so.doctype, so.name).save().submit()
+		pe = get_payment_entry(so.doctype, so.name)
+		pe.reference_no = "Test"
+		pe.reference_date = transaction_date
+		pe.save()
+		pe.submit()
 
 		so.reload()
 		so.cancel()
