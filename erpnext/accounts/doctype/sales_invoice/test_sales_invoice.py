@@ -3418,7 +3418,7 @@ def create_internal_parties():
 	create_internal_customer(
 		customer_name="_Test Internal Customer",
 		represents_company="_Test Company 1",
-		allowed_to_interact_with="Wind Power LLC",
+		allowed_to_interact_with="Wind Power",
 	)
 
 	create_internal_customer(
@@ -3429,7 +3429,7 @@ def create_internal_parties():
 
 	create_internal_supplier(
 		supplier_name="_Test Internal Supplier",
-		represents_company="Wind Power LLC",
+		represents_company="Wind Power",
 		allowed_to_interact_with="_Test Company 1",
 	)
 
