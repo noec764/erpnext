@@ -466,10 +466,6 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		)
 		self.assertEqual(entries, [])
 
-		# with references removed, deletion should be possible
-		si.delete()
-		self.assertRaises(frappe.DoesNotExistError, frappe.get_doc, si.doctype, si.name)
-
 	@change_settings(
 		"Accounts Settings",
 		{"unlink_payment_on_cancellation_of_invoice": 1},
