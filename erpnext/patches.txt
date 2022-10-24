@@ -321,6 +321,7 @@ erpnext.patches.v13_0.update_exchange_rate_settings
 erpnext.patches.v14_0.create_accounting_dimensions_in_subcontracting_doctypes
 erpnext.patches.v14_0.fix_subcontracting_receipt_gl_entries
 erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
+erpnext.patches.v13_0.update_schedule_type_in_loans
 
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
