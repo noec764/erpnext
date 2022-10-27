@@ -441,7 +441,7 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 
 	@change_settings(
 		"Accounts Settings",
-		{"unlink_payment_on_cancellation_of_invoice": 1, "delete_linked_ledger_entries": 1},
+		{"unlink_payment_on_cancellation_of_invoice": 1},
 	)
 	def test_multi_payment_unlink_on_invoice_cancellation(self):
 		transaction_date = nowdate()
@@ -453,6 +453,8 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 			pe = get_payment_entry(si.doctype, si.name)
 			pe.paid_amount = amt
 			pe.get("references")[0].allocated_amount = amt
+			pe.reference_no = "Test"
+			pe.reference_date = transaction_date
 			pe = pe.save().submit()
 
 		si.reload()
@@ -464,13 +466,9 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		)
 		self.assertEqual(entries, [])
 
-		# with references removed, deletion should be possible
-		si.delete()
-		self.assertRaises(frappe.DoesNotExistError, frappe.get_doc, si.doctype, si.name)
-
 	@change_settings(
 		"Accounts Settings",
-		{"unlink_payment_on_cancellation_of_invoice": 1, "delete_linked_ledger_entries": 1},
+		{"unlink_payment_on_cancellation_of_invoice": 1},
 	)
 	def test_multi_je_unlink_on_invoice_cancellation(self):
 		transaction_date = nowdate()
@@ -497,20 +495,20 @@ class TestPaymentLedgerEntry(FrappeTestCase):
 		)
 		self.assertEqual(entries, [])
 
-		# with references removed, deletion should be possible
-		si.delete()
-		self.assertRaises(frappe.DoesNotExistError, frappe.get_doc, si.doctype, si.name)
-
 	@change_settings(
 		"Accounts Settings",
-		{"unlink_payment_on_cancellation_of_invoice": 1, "delete_linked_ledger_entries": 1},
+		{"unlink_payment_on_cancellation_of_invoice": 1},
 	)
 	def test_advance_payment_unlink_on_order_cancellation(self):
 		transaction_date = nowdate()
 		amount = 100
 		so = self.create_sales_order(qty=1, rate=amount, posting_date=transaction_date).save().submit()
 
-		pe = get_payment_entry(so.doctype, so.name).save().submit()
+		pe = get_payment_entry(so.doctype, so.name)
+		pe.reference_no = "Test"
+		pe.reference_date = transaction_date
+		pe.save()
+		pe.submit()
 
 		so.reload()
 		so.cancel()

@@ -318,11 +318,7 @@ def guess_territory():
 	if geoip_country:
 		territory = frappe.db.get_value("Territory", geoip_country)
 
-	return (
-		territory
-		or frappe.db.get_value("E Commerce Settings", None, "territory")
-		or get_root_of("Territory")
-	)
+	return territory or get_root_of("Territory")
 
 
 def decorate_quotation_doc(doc):
@@ -572,10 +568,11 @@ def get_debtors_account(cart_settings):
 
 	payment_gateway_account_currency = (
 		frappe.db.get_value("Price List", cart_settings.price_list, "currency")
-		if cart_settings.no_payment_gateway else
-		frappe.db.get_value("Payment Gateway Account", cart_settings.payment_gateway_account, "currency")
+		if cart_settings.no_payment_gateway
+		else frappe.db.get_value(
+			"Payment Gateway Account", cart_settings.payment_gateway_account, "currency"
+		)
 	)
-
 
 	account_name = _("Debtors ({0})").format(payment_gateway_account_currency)
 

@@ -12,7 +12,7 @@ from erpnext import get_default_company
 def boot_session(bootinfo):
 	"""boot session - send website info if guest"""
 
-	bootinfo.custom_css = frappe.db.get_value("Style Settings", None, "custom_css") or ""
+	# bootinfo.custom_css = frappe.db.get_value("Style Settings", None, "custom_css") or ""
 
 	if frappe.session["user"] != "Guest":
 		update_page_info(bootinfo)

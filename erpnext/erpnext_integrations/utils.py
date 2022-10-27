@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 import frappe
 from frappe import _
 
+from erpnext import get_default_company
+
 
 def validate_webhooks_request(doctype, hmac_key, secret_key="secret"):
 	def innerfn(fn):
@@ -72,12 +74,3 @@ def create_mode_of_payment(gateway, payment_type="General"):
 		return mode_of_payment
 	elif mode_of_payment:
 		return frappe.get_doc("Mode of Payment", mode_of_payment)
-
-
-def get_tracking_url(carrier, tracking_number):
-	# Return the formatted Tracking URL.
-	tracking_url = ""
-	url_reference = frappe.get_value("Parcel Service", carrier, "url_reference")
-	if url_reference:
-		tracking_url = frappe.render_template(url_reference, {"tracking_number": tracking_number})
-	return tracking_url

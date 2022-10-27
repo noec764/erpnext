@@ -316,8 +316,6 @@ has_website_permission = {
 	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
 }
 
-dump_report_map = "erpnext.startup.report_data_map.data_map"
-
 before_tests = "erpnext.setup.utils.before_tests"
 
 standard_queries = {"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list"}
