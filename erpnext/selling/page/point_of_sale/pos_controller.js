@@ -732,6 +732,7 @@ erpnext.PointOfSale.Controller = class {
 	async save_and_checkout() {
 		if (this.frm.is_dirty()) {
 			let save_error = false;
+			frappe.ui.form.dont_update_route_after_rename = true;
 			await this.frm.save(null, null, null, () => save_error = true);
 			// only move to payment section if save is successful
 			!save_error && this.payment.checkout();
