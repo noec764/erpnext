@@ -28,9 +28,9 @@ class TestSubscription(FrappeTestCase):
 		subscription.customer = "_Test Customer"
 		subscription.company = "_Test Company"
 		subscription.currency = "INR"
-		subscription.start = nowdate()
+		subscription.start = today()
 		subscription.billing_interval = "Day"
-		subscription.trial_period_start = nowdate()
+		subscription.trial_period_start = today()
 		subscription.trial_period_end = add_days(current_date, 5)
 		subscription.append("plans", PLANS[0])
 		subscription.save()
