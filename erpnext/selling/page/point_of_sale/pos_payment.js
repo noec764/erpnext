@@ -18,11 +18,11 @@ erpnext.PointOfSale.Payment = class {
 	prepare_dom() {
 		this.wrapper.append(
 			`<section class="payment-container">
-				<div class="section-label payment-section">${ __("Payment Method") }</div>
+				<div class="section-label payment-section">${__('Payment Method')}</div>
 				<div class="payment-modes"></div>
 				<div class="fields-numpad-container">
 					<div class="fields-section">
-						<div class="section-label">${ __("Additional Information") }</div>
+						<div class="section-label">${__('Additional Information')}</div>
 						<div class="invoice-fields"></div>
 					</div>
 					<div class="number-pad"></div>
@@ -30,7 +30,7 @@ erpnext.PointOfSale.Payment = class {
 				<div class="totals-section">
 					<div class="totals"></div>
 				</div>
-				<div class="submit-order-btn">${ __("Complete Order") }</div>
+				<div class="submit-order-btn">${__("Complete Order")}</div>
 			</section>`
 		);
 		this.$component = this.wrapper.find('.payment-container');
@@ -159,15 +159,15 @@ erpnext.PointOfSale.Payment = class {
 			}
 		});
 
-	// 	frappe.ui.form.on('POS Invoice', 'contact_mobile', (frm) => {
-	// 		const contact = frm.doc.contact_mobile;
-	// 		const request_button = $(this.request_for_payment_field?.$input[0]);
-	// 		if (contact) {
-	// 			request_button.removeClass('btn-default').addClass('btn-primary');
-	// 		} else {
-	// 			request_button.removeClass('btn-primary').addClass('btn-default');
-    //   }
-    // });
+		frappe.ui.form.on('POS Invoice', 'contact_mobile', (frm) => {
+			const contact = frm.doc.contact_mobile;
+			const request_button = $(this.request_for_payment_field?.$input[0]);
+			if (contact) {
+				request_button.removeClass('btn-default').addClass('btn-primary');
+			} else {
+				request_button.removeClass('btn-primary').addClass('btn-default');
+			}
+		});
 
 		frappe.ui.form.on('POS Invoice', 'coupon_code', (frm) => {
 			if (frm.doc.coupon_code && !frm.applying_pos_coupon_code) {
@@ -236,6 +236,43 @@ erpnext.PointOfSale.Payment = class {
 				this[`${mode}_control`].set_value(default_mop.amount);
 			}
 		});
+	}
+
+	setup_listener_for_payments() {
+		frappe.realtime.on("process_phone_payment", (data) => {
+			const doc = this.events.get_frm().doc;
+			const { response, amount, success, failure_message } = data;
+			let message, title;
+
+			if (success) {
+				title = __("Payment Received");
+				const grand_total = cint(frappe.sys_defaults.disable_rounded_total) ? doc.grand_total : doc.rounded_total;
+				if (amount >= grand_total) {
+					frappe.dom.unfreeze();
+					message = __("Payment of {0} received successfully.", [format_currency(amount, doc.currency, 0)]);
+					this.events.submit_invoice();
+					cur_frm.reload_doc();
+
+				} else {
+					message = __("Payment of {0} received successfully. Waiting for other requests to complete...", [format_currency(amount, doc.currency, 0)]);
+				}
+			} else if (failure_message) {
+				message = failure_message;
+				title = __("Payment Failed");
+			}
+
+			frappe.msgprint({ "message": message, "title": title });
+		});
+	}
+
+	auto_set_remaining_amount() {
+		const doc = this.events.get_frm().doc;
+		const grand_total = cint(frappe.sys_defaults.disable_rounded_total) ? doc.grand_total : doc.rounded_total;
+		const remaining_amount = grand_total - doc.paid_amount;
+		const current_value = this.selected_mode ? this.selected_mode.get_value() : undefined;
+		if (!current_value && remaining_amount > 0 && this.selected_mode) {
+			this.selected_mode.set_value(remaining_amount);
+		}
 	}
 
 	attach_shortcuts() {
@@ -376,7 +413,6 @@ erpnext.PointOfSale.Payment = class {
 		const payments = doc.payments;
 		payments.forEach(p => {
 			const mode = p.mode_of_payment.replace(/ +/g, "_").toLowerCase();
-
 			if (p.default) {
 				setTimeout(() => {
 					this.$payment_modes.find(`.${mode}.mode-of-payment-control`).parent().click();
@@ -504,12 +540,12 @@ erpnext.PointOfSale.Payment = class {
 
 		this.$totals.html(
 			`<div class="col">
-				<div class="total-label">${__("Grand Total")}</div>
+				<div class="total-label">${__('Grand Total')}</div>
 				<div class="value">${format_currency(grand_total, currency)}</div>
 			</div>
 			<div class="seperator-y"></div>
 			<div class="col">
-				<div class="total-label">${__("Paid Amount")}</div>
+				<div class="total-label">${__('Paid Amount')}</div>
 				<div class="value">${format_currency(paid_amount, currency)}</div>
 			</div>
 			<div class="seperator-y"></div>
