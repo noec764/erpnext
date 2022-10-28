@@ -28,10 +28,12 @@ def execute():
 					data.append({"rate": item_tax_rate[tax], "account": tax})
 				frappe.db.set_value(line_dt, line.name, "item_tax_rate", json.dumps(data))
 
+	frappe.db.auto_commit_on_many_writes = 1
 	for dt in ("Sales Invoice", "Purchase Invoice"):
 		for si in frappe.get_all(dt):
 			doc = frappe.get_doc(dt, si.name)
 			update_itemised_tax_data(doc)
+	frappe.db.auto_commit_on_many_writes = 0
 
 
 def update_itemised_tax_data(doc):
