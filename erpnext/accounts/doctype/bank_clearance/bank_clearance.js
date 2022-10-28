@@ -4,6 +4,23 @@
 frappe.ui.form.on("Bank Clearance", {
 	setup: function(frm) {
 		frm.add_fetch("account", "account_currency", "account_currency");
+
+		frm.set_query("account", function() {
+			return {
+				"filters": {
+					"account_type": ["in",["Bank","Cash"]],
+					"is_group": 0,
+				}
+			};
+		});
+
+		frm.set_query("bank_account", function () {
+			return {
+				filters: {
+					'is_company_account': 1
+				},
+			};
+		});
 	},
 
 	onload: function(frm) {
@@ -11,15 +28,6 @@ frappe.ui.form.on("Bank Clearance", {
 		let default_bank_account =  frappe.defaults.get_user_default("Company")?
 			locals[":Company"][frappe.defaults.get_user_default("Company")]["default_bank_account"]: "";
 		frm.set_value("account", default_bank_account);
-
-		frm.set_query("account", function() {
-			return {
-				"filters": {
-					"account_type": ["in",["Bank","Cash"]],
-					"is_group": 0
-				}
-			};
-		});
 
 		frm.set_value("from_date", frappe.datetime.month_start());
 		frm.set_value("to_date", frappe.datetime.month_end());
