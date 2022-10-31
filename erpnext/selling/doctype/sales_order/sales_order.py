@@ -710,6 +710,7 @@ def make_project(source_name, target_doc=None):
 					"base_grand_total": "estimated_costing",
 					"transaction_date": "expected_start_date",
 					"delivery_date": "expected_end_date",
+					"net_total": "total_sales_amount",
 				},
 			},
 		},
