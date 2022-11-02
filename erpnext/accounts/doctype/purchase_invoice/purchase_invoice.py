@@ -71,6 +71,9 @@ class PurchaseInvoice(BuyingController):
 		supplier_tds = frappe.db.get_value("Supplier", self.supplier, "tax_withholding_category")
 		self.set_onload("supplier_tds", supplier_tds)
 
+		if self.is_new():
+			self.set("tax_withheld_vouchers", [])
+
 	def before_save(self):
 		if not self.on_hold:
 			self.release_date = ""
@@ -1431,7 +1434,7 @@ class PurchaseInvoice(BuyingController):
 			"Repost Item Valuation",
 			"Payment Ledger Entry",
 			"Archived Document",
-			"Purchase Invoice",
+			"Tax Withheld Vouchers",
 		)
 		self.update_advance_tax_references(cancel=1)
 

@@ -207,7 +207,7 @@
 			const uom_price = {{ product_info.price_per_uom }}
 
 			let html_content = __("Not Available")
-			if (uom_price[uom].formatted_price_sales_uom) {
+			if (uom_price.length && uom_price[uom].formatted_price_sales_uom) {
 				html_content = `${uom_price[uom].formatted_price_sales_uom} / ${__(uom)}`
 			}
 
