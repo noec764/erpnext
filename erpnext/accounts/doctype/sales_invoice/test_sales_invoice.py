@@ -967,7 +967,8 @@ class TestSalesInvoice(FrappeTestCase):
 		pos_return.insert()
 		pos_return.submit()
 
-		self.assertEqual(pos_return.get("payments")[0].amount, -1000)
+		self.assertEqual(pos_return.get("payments")[0].amount, -500)
+		self.assertEqual(pos_return.get("payments")[1].amount, -500)
 
 	def test_pos_change_amount(self):
 		make_pos_profile(
