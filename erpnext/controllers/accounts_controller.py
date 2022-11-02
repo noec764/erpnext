@@ -6,7 +6,7 @@ import json
 import frappe
 from frappe import _, throw
 from frappe.model.workflow import get_workflow_name, is_transition_condition_satisfied
-from frappe.query_builder.functions import Sum
+from frappe.query_builder.functions import Abs, Sum
 from frappe.utils import (
 	add_days,
 	add_months,
@@ -1359,52 +1359,39 @@ class AccountsController(TransactionBase):
 		return stock_items
 
 	def set_total_advance_paid(self):
-		against_condition = (
-			f"against_voucher_type = '{self.doctype}' and against_voucher = '{self.name}'"
+		ple = frappe.qb.DocType("Payment Ledger Entry")
+		party = self.customer if self.doctype == "Sales Order" else self.supplier
+		advance_query = (
+			frappe.qb.from_(ple)
+			.select(ple.account_currency, Abs(Sum(ple.amount)).as_("amount"))
+			.where((ple.party == party) & (ple.delinked == 0) & (ple.company == self.company))
 		)
+
 		if self.doctype == "Sales Order":
-			dr_or_cr = "credit_in_account_currency"
-			rev_dr_or_cr = "debit_in_account_currency"
-			party = self.customer
-			down_payment_invoices = list(
-				set(
-					frappe.db.sql_list(
-						"""
-				SELECT si.name
-				FROM `tabSales Invoice` si
-				LEFT JOIN `tabSales Invoice Item` sii
-				ON sii.parent = si.name
-				WHERE si.is_down_payment_invoice = 1
-				AND sii.sales_order = %s
-				""",
-						self.name,
+			si = frappe.qb.DocType("Sales Invoice")
+			sii = frappe.qb.DocType("Sales Invoice Item")
+			down_payment_invoices = (
+				frappe.qb.from_(si)
+				.select(si.name)
+				.left_join(sii)
+				.on(sii.parent == si.name)
+				.where((si.is_down_payment_invoice == 1) & (sii.sales_order == self.name))
+				.run(as_list=True)
+			)
+			if down_payment_invoices and down_payment_invoices[0]:
+				advance_query = advance_query.where(
+					((ple.against_voucher_type == self.doctype) & (ple.against_voucher_no == self.name))
+					| (
+						ple.against_voucher_type
+						== "Sales Invoice" & (ple.against_voucher_no.isin(down_payment_invoices[0]))
 					)
 				)
-			)
-			dp_invoices = ",".join([f'"{dpi}"' for dpi in down_payment_invoices])
-			if dp_invoices:
-				against_condition = f"(({against_condition}) or (against_voucher_type = 'Sales Invoice' and against_voucher in ({dp_invoices})))"
-		else:
-			dr_or_cr = "debit_in_account_currency"
-			rev_dr_or_cr = "credit_in_account_currency"
-			party = self.supplier
 
-		advance = frappe.db.sql(
-			"""
-			select
-				account_currency, sum({dr_or_cr}) - sum({rev_dr_cr}) as amount
-			from
-				`tabGL Entry`
-			where
-				{against_condition}
-				and party=%s
-				and docstatus = 1
-		""".format(
-				dr_or_cr=dr_or_cr, rev_dr_cr=rev_dr_or_cr, against_condition=against_condition
-			),
-			(party),
-			as_dict=1,
-		)  # nosec
+		else:
+			advance_query = advance_query.where(
+				(ple.against_voucher_type == self.doctype) & (ple.against_voucher_no == self.name)
+			)
+		advance = advance_query.run(as_dict=True)
 
 		if advance:
 			advance = advance[0]
