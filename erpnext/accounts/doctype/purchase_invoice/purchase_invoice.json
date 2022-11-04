@@ -77,6 +77,8 @@
   "total_net_weight",
   "total",
   "net_total",
+  "tax_withholding_net_total",
+  "base_tax_withholding_net_total",
   "taxes_section",
   "tax_category",
   "column_break_49",
@@ -1475,6 +1477,26 @@
     "no_copy": 1,
     "options": "Tax Withheld Vouchers",
     "read_only": 1
+   },
+   {
+    "default": "0",
+    "fieldname": "tax_withholding_net_total",
+    "fieldtype": "Currency",
+    "hidden": 1,
+    "label": "Tax Withholding Net Total",
+    "no_copy": 1,
+    "options": "currency",
+    "read_only": 1
+   },
+   {
+    "fieldname": "base_tax_withholding_net_total",
+    "fieldtype": "Currency",
+    "hidden": 1,
+    "label": "Base Tax Withholding Net Total",
+    "no_copy": 1,
+    "options": "currency",
+    "print_hide": 1,
+    "read_only": 1
    }
  ],
  "icon": "fa fa-file-text",
@@ -1482,7 +1504,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-10-07 14:19:14.214157",
+ "modified": "2022-11-04 01:02:44.544878",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
