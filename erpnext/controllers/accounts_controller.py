@@ -1386,11 +1386,16 @@ class AccountsController(TransactionBase):
 						== "Sales Invoice" & (ple.against_voucher_no.isin(down_payment_invoices[0]))
 					)
 				)
+			else:
+				advance_query = advance_query.where(
+					(ple.against_voucher_type == self.doctype) & (ple.against_voucher_no == self.name)
+				)
 
 		else:
 			advance_query = advance_query.where(
 				(ple.against_voucher_type == self.doctype) & (ple.against_voucher_no == self.name)
 			)
+
 		advance = advance_query.run(as_dict=True)
 
 		if advance:
