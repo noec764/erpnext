@@ -70,16 +70,19 @@ class SubcontractingController(StockController):
 	def validate_items(self):
 		for item in self.items:
 			if not frappe.get_value("Item", item.item_code, "is_sub_contracted_item"):
-				msg = f"Item {item.item_name} must be a subcontracted item."
+				msg = _("Item {0} must be a subcontracted item.").format(item.item_name)
 				frappe.throw(_(msg))
 			if item.bom:
 				bom = frappe.get_doc("BOM", item.bom)
 				if not bom.is_active:
-					msg = f"Please select an active BOM for Item {item.item_name}."
+					msg = _("Please select an active BOM for Item {0}.").format(item.item_name)
 					frappe.throw(_(msg))
 				if bom.item != item.item_code:
-					msg = f"Please select an valid BOM for Item {item.item_name}."
+					msg = _("Please select an valid BOM for Item {0}.").format(item.item_name)
 					frappe.throw(_(msg))
+			else:
+				msg = _("Please select a BOM for Item {0}.").format(item.item_name)
+				frappe.throw(_(msg))
 
 	def __get_data_before_save(self):
 		item_dict = {}
