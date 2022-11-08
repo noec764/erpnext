@@ -44,7 +44,16 @@ class SubscriptionTransactionBase:
 		document.letter_head = frappe.db.get_value(
 			"Company", self.subscription.company, "default_letter_head"
 		)
+
+		# Keep to update the price list correctly
+		default_price_list = document.selling_price_list
+		document.selling_price_list = None
+
 		document.set_missing_lead_customer_details()
+
+		if not document.selling_price_list:
+			document.selling_price_list = default_price_list
+
 		document.subscription = self.subscription.name
 		document.ignore_pricing_rule = (
 			1
@@ -241,7 +250,6 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 		self.add_advances(invoice)
 		invoice.flags.ignore_mandatory = True
 		invoice.set_missing_values()
-
 		return invoice
 
 	def add_advances(self, invoice):
