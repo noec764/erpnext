@@ -5509,7 +5509,7 @@ Item quantity can not be zero,La quantité d'article ne peut pas être zéro,
 Item taxes updated,Taxes de l'article mises à jour,
 Item to be manufactured or repacked,Article à produire ou à réemballer,
 Item valuation rate is recalculated considering landed cost voucher amount,Le taux de valorisation de l'article est recalculé compte tenu du montant du bon de prix au débarquement,
-Item valuation reposting in progress. Report might show incorrect item valuation.,Nouvelle comptabilisation de la valorisation de l'article en cours. Les rapports peuvent afficher une valorisation incorrected entre-temps.,
+Item valuation reposting in progress. Report might show incorrect item valuation.,Nouvelle comptabilisation de la valorisation de l'article en cours. Les rapports peuvent afficher une valorisation incorrecte entre-temps.,
 Item variant {0} exists with same attributes,La variante de l'article {0} existe avec les mêmes caractéristiques,
 Item will be removed since no serial / batch no selected.,L'article va être supprimé car aucun numéro de série / lot n'a été sélectionné.,
 "Item {0} (Serial No: {1}) cannot be consumed as is reserverd\
