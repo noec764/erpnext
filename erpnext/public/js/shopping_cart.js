@@ -92,7 +92,8 @@ $.extend(shopping_cart, {
 					qty: opts.qty,
 					booking: opts.booking,
 					additional_notes: opts.additional_notes !== undefined ? opts.additional_notes : undefined,
-					with_items: opts.with_items || 0
+					with_items: opts.with_items || 0,
+					uom: opts.uom
 				},
 				btn: opts.btn,
 				callback: function(r) {
@@ -168,7 +169,7 @@ $.extend(shopping_cart, {
 					$(".cart-tax-items").html(r.message.total);
 					$(".payment-summary").html(r.message.taxes_and_totals);
 					shopping_cart.set_cart_count();
-					shopping_cart.bind_events();
+					shopping_cart.bind_events&&shopping_cart.bind_events();
 
 					if (cart_dropdown != true) {
 						$(".cart-icon").hide();
