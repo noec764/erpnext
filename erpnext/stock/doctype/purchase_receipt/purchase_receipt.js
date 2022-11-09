@@ -177,7 +177,7 @@ erpnext.stock.PurchaseReceiptController = class PurchaseReceiptController extend
 								company: me.frm.doc.company
 							}
 						})
-					}, __("Get items from"));
+					}, __("Get items From"));
 			}
 
 			if(this.frm.doc.docstatus == 1 && this.frm.doc.status!="Closed") {

@@ -13,8 +13,9 @@
 .item-booking-card {
 	border-radius: var(--border-radius-md);
 	box-shadow: var(--card-shadow);
-	margin: 0 1rem 1rem 0;
+	margin: 1rem;
 	cursor: pointer;
+	border: 1px solid var(--gray-300);
 }
 
 .item-booking-card .right-body {
@@ -23,6 +24,7 @@
 	border-top-right-radius: var(--border-radius-md);
 	border-bottom-right-radius: var(--border-radius-md);
 	min-width: 100px;
+	border-left: 1px solid var(--gray-300);
 }
 
 .item-booking-card .left-title {

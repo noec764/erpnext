@@ -20,13 +20,18 @@ frappe.ui.form.on('Event', {
 			frappe.db.get_list('Item Booking', {filters: {event: frm.doc.name}, fields: ["name", "item_name", "color", "starts_on", "status"]}).then(data => {
 				if (data.length) {
 					const item_booking_section = data.map(d => {
+						let indicator = frappe.get_indicator(d)
+						let color = (indicator && indicator.length) ? frappe.ui.color.get_color(indicator[1]) : d.color;
+						if (Array.isArray(color)) {
+							color = color[color.length - 1]
+						}
 						const $card = $(`
-							<div class="item-booking-card" style="background-color: ${d.color || "var(--primary)"}">
+							<div class="item-booking-card">
 								<div class="flex align-items-center">
-									<div class="left-title" style="color: ${frappe.ui.color.get_contrast_color(d.color)}">${frappe.datetime.obj_to_user(d.starts_on).replace(new RegExp('[^\.]?' + moment(d.starts_on).format('YYYY') + '.?'), '')}</div>
+									<div class="left-title">${frappe.datetime.obj_to_user(d.starts_on).replace(new RegExp('[^\.]?' + moment(d.starts_on).format('YYYY') + '.?'), '')}</div>
 									<div class="right-body">
-										<div class="text-muted">${d.item_name}</div>
-										<div class="text-color small">${__(d.status)}</div>
+										<div style="color: ${d.color};">${d.item_name}</div>
+										<div class="small" style="color: ${color};">${__(d.status)}</div>
 									</div>
 								</div>
 							</div>
