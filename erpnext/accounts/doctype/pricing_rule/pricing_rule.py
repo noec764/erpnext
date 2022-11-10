@@ -611,15 +611,22 @@ def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
 
 def check_booking_credit_rule(args, doc):
 	from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
-
 	if args.get("customer") and doc:
+		result = False
+		if reference := frappe.db.get_value("Booking Credit Usage Reference",
+			dict(
+				reference_doctype="Item Booking",
+				reference_document=args.get("item_booking")
+			), "booking_credit_usage"
+		):
+			return cint(frappe.db.get_value("Booking Credit Usage", reference, "docstatus")) == 1
+
 		convertible_items = frappe.get_all(
 			"Booking Credit Conversions", fields=["convertible_item", "booking_credits_item"]
 		)
 
 		booking_credit_items = [x.booking_credits_item for x in convertible_items]
 
-		result = False
 		used_qty = defaultdict(lambda: defaultdict(float))
 		for item in doc.items:
 			if item.get("item_booking") and item.item_code in [

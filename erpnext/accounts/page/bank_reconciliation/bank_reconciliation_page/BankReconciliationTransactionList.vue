@@ -179,11 +179,11 @@ export default {
 			this.get_transaction_list(true)
 		},
 		auto_reconciliation: function() {
+			frappe.show_alert({message: __(`Automatic reconciliation in progress`), indicator: "green"})
 			frappe.xcall('erpnext.accounts.page.bank_reconciliation.auto_bank_reconciliation.auto_bank_reconciliation',
 				{bank_transactions: this.mapped_transactions}
-			).then((result) => {
+			).then(() => {
 				this.get_transaction_list(true)
-				frappe.show_alert({message: __(`Automatic reconciliation in progress`), indicator: "green"})
 			})
 		},
 	}

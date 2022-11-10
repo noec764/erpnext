@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import add_days, flt, getdate, nowdate
+from frappe.utils import flt, getdate, nowdate
 
 from erpnext.buying.utils import validate_for_items
 from erpnext.controllers.buying_controller import BuyingController
@@ -30,7 +30,7 @@ class SupplierQuotation(BuyingController):
 		self.validate_valid_till()
 
 	def on_submit(self):
-		frappe.db.set(self, "status", "Submitted")
+		self.db_set("status", "Submitted")
 		self.update_rfq_supplier_status(1)
 
 	def validate_valid_till(self):
@@ -38,7 +38,7 @@ class SupplierQuotation(BuyingController):
 			frappe.throw(_("Valid till Date cannot be before Transaction Date"))
 
 	def on_cancel(self):
-		frappe.db.set(self, "status", "Cancelled")
+		self.db_set("status", "Cancelled")
 		self.update_rfq_supplier_status(0)
 
 	def on_trash(self):

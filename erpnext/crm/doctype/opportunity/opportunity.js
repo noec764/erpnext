@@ -250,6 +250,9 @@ frappe.ui.form.on("Opportunity Item", {
 	},
 	item_code: function(frm, cdt, cdn) {
 		get_item_details(frm.doc, cdt, cdn);
+	},
+	items_remove: function(frm, cdt, cdn) {
+		frm.trigger("calculate_total");
 	}
 })
 
