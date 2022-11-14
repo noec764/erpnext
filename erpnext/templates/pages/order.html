@@ -35,6 +35,8 @@
 			</ul>
 		</div>
 		<div class="form-column col-sm-6">
+			{% if enabled_checkout and doc.grand_total and ((doc.doctype=="Sales Order" and (doc.advance_paid < doc.grand_total or doc.per_billed == 0))
+				or (doc.doctype=="Sales Invoice" and doc.outstanding_amount> 0)) %}
 			<div class="page-header-actions-block" data-html-block="header-actions">
 				<p>
 					<a href="/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn={{ doc.name }}&dt={{ doc.doctype }}&submit_doc=1&order_type=Shopping Cart"
@@ -43,6 +45,7 @@
 					</a>
 				</p>
 			</div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}
