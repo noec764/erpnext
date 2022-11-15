@@ -118,14 +118,14 @@ class Subscription(Document):
 			if self.submit_invoice:
 				invoice.submit()
 			return invoice
-		except Exception:
+		except Exception as e:
 			previous_status = self.status
 			self.db_set("status", "Billing failed")
 			self.add_subscription_event(
 				"Status updated", **{"previous_status": previous_status, "new_status": "Billing failed"}
 			)
 			self.reload()
-			frappe.throw(_("Invoicing error for subscription {0}").format(self.name))
+			frappe.throw(_("Invoicing error for subscription {0}: {1}").format(self.name, e))
 
 	def cancel_subscription(self, **kwargs):
 		self.cancellation_date = kwargs.get("cancellation_date") or self.current_invoice_end

@@ -179,13 +179,18 @@ class SubscriptionTransactionBase:
 		)
 		items = []
 		for plan in plans:
+			rate = (
+				SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date)) * prorata_factor
+			)
 			item = {
 				"item_code": plan.item,
 				"qty": plan.qty,
 				"uom": plan.uom,
-				"rate": SubscriptionPlansManager(self.subscription).get_plan_rate(plan, getdate(date))
-				* prorata_factor,
+				"rate": rate,
 				"description": plan.description,
+				"discount_percentage": 100
+				if (plan.price_determination == "Fixed rate" and not rate)
+				else None,
 			}
 
 			if document.doctype == "Sales Invoice" and not frappe.db.get_value(
