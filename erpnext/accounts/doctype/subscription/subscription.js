@@ -18,14 +18,6 @@ frappe.ui.form.on('Subscription', {
 			}
 		}
 
-		frm.set_query('uom', 'plans', function(doc, cdt, cdn) {
-			const row = locals[cdt][cdn];
-			return {
-				query:"erpnext.accounts.doctype.pricing_rule.pricing_rule.get_item_uoms",
-				filters: {value: row.item, apply_on: 'Item Code'}
-			}
-		});
-
 		frappe.dynamic_link = {doc: frm.doc, fieldname: 'customer', doctype: 'Customer'}
 		frm.set_query('contact_person', erpnext.queries.contact_query)
 
