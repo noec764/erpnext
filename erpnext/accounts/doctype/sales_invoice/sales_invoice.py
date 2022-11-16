@@ -2408,7 +2408,7 @@ def get_loyalty_programs(customer):
 	lp_details = get_loyalty_programs(customer)
 
 	if len(lp_details) == 1:
-		customer.db.set("loyalty_program", lp_details[0])
+		customer.db.set_value("loyalty_program", lp_details[0])
 		return lp_details
 	else:
 		return lp_details
