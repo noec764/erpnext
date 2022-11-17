@@ -6,8 +6,6 @@ import json
 import math
 
 import frappe
-from frappe import _
-from frappe.model.document import Document
 from frappe.utils import flt
 from frappe.utils.nestedset import NestedSet, update_nsm
 
@@ -202,11 +200,11 @@ def get_children(doctype, parent=None, location=None, is_root=False):
 			name as value,
 			is_group as expandable
 		from
-			`tab{doctype}` comp
+			`tabLocation` comp
 		where
 			ifnull(parent_location, "")={parent}
 		""".format(
-			doctype=doctype, parent=frappe.db.escape(parent)
+			parent=frappe.db.escape(parent)
 		),
 		as_dict=1,
 	)

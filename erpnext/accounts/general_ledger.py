@@ -341,9 +341,11 @@ def get_accounting_journal(entry):
 		rule for rule in rules if (rule.account in (entry.account, entry.against, None))
 	]
 	if applicable_rules:
-		applicable_rules = [
-			rule for rule in applicable_rules if rule.document_type in (entry.voucher_type, None)
-		]
+		applicable_rules = sorted(
+			[rule for rule in applicable_rules if rule.document_type in (entry.voucher_type, None)],
+			key=lambda r: r.get("document_type") or "",
+			reverse=True,
+		)
 	else:
 		applicable_rules = [rule for rule in rules if rule.document_type == entry.voucher_type]
 

@@ -148,7 +148,10 @@ class PurchaseInvoice(BuyingController):
 					self.bill_no, formatdate(self.bill_date)
 				)
 			else:
-				self.remarks = _("No Remarks")
+				supplier = self.supplier
+				if self.supplier_name != self.supplier:
+					supplier = f"{self.supplier_name} ({self.supplier})"
+				self.remarks = f'{_("Purchase Invoice")}: {{{{ doc.name }}}} / {_("Supplier")}: {supplier}'
 
 	def set_missing_values(self, for_validate=False):
 		if not self.credit_to:
@@ -516,6 +519,7 @@ class PurchaseInvoice(BuyingController):
 
 			update_serial_nos_after_submit(self, "items")
 
+		self.render_remarks()
 		# this sequence because outstanding may get -negative
 		self.make_gl_entries()
 
@@ -674,9 +678,6 @@ class PurchaseInvoice(BuyingController):
 
 		exchange_rate_map, net_rate_map = get_purchase_document_details(self)
 
-		enable_discount_accounting = cint(
-			frappe.db.get_single_value("Buying Settings", "enable_discount_accounting")
-		)
 		provisional_accounting_for_non_stock_items = cint(
 			frappe.db.get_value(
 				"Company", self.company, "enable_provisional_accounting_for_non_stock_items"
@@ -705,7 +706,8 @@ class PurchaseInvoice(BuyingController):
 									"against": warehouse_account[item.from_warehouse]["account"],
 									"cost_center": item.cost_center,
 									"project": item.project or self.project,
-									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": warehouse_debit_amount,
 								},
 								warehouse_account[item.warehouse]["account_currency"],
@@ -725,7 +727,8 @@ class PurchaseInvoice(BuyingController):
 									"against": warehouse_account[item.warehouse]["account"],
 									"cost_center": item.cost_center,
 									"project": item.project or self.project,
-									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": -1 * flt(credit_amount, item.precision("base_net_amount")),
 								},
 								warehouse_account[item.from_warehouse]["account_currency"],
@@ -741,7 +744,8 @@ class PurchaseInvoice(BuyingController):
 										"account": item.expense_account,
 										"against": self.supplier,
 										"debit": flt(item.base_net_amount, item.precision("base_net_amount")),
-										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+										"remarks": item.get("remarks")
+										or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										"cost_center": item.cost_center,
 										"project": item.project,
 									},
@@ -758,7 +762,8 @@ class PurchaseInvoice(BuyingController):
 										"account": item.expense_account,
 										"against": self.supplier,
 										"debit": warehouse_debit_amount,
-										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+										"remarks": item.get("remarks")
+										or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										"cost_center": item.cost_center,
 										"project": item.project or self.project,
 									},
@@ -776,7 +781,8 @@ class PurchaseInvoice(BuyingController):
 										"account": account,
 										"against": item.expense_account,
 										"cost_center": item.cost_center,
-										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+										"remarks": item.get("remarks")
+										or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										"credit": flt(amount["base_amount"]),
 										"credit_in_account_currency": flt(amount["amount"]),
 										"project": item.project or self.project,
@@ -797,7 +803,8 @@ class PurchaseInvoice(BuyingController):
 									"against": item.expense_account,
 									"cost_center": item.cost_center,
 									"project": item.project or self.project,
-									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"credit": flt(item.rm_supp_cost),
 								},
 								warehouse_account[self.supplier_warehouse]["account_currency"],
@@ -858,6 +865,8 @@ class PurchaseInvoice(BuyingController):
 									"debit": amount,
 									"cost_center": item.cost_center,
 									"project": item.project or self.project,
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 								},
 								account_currency,
 								item=item,
@@ -884,6 +893,8 @@ class PurchaseInvoice(BuyingController):
 											"debit": discrepancy_caused_by_exchange_rate_difference,
 											"cost_center": item.cost_center,
 											"project": item.project or self.project,
+											"remarks": item.get("remarks")
+											or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										},
 										account_currency,
 										item=item,
@@ -897,6 +908,8 @@ class PurchaseInvoice(BuyingController):
 											"credit": discrepancy_caused_by_exchange_rate_difference,
 											"cost_center": item.cost_center,
 											"project": item.project or self.project,
+											"remarks": item.get("remarks")
+											or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										},
 										account_currency,
 										item=item,
@@ -915,7 +928,8 @@ class PurchaseInvoice(BuyingController):
 									"account": expenses_included_in_asset_valuation,
 									"against": expense_account,
 									"cost_center": item.cost_center,
-									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"credit": flt(item.landed_cost_voucher_amount),
 									"project": item.project or self.project,
 								},
@@ -929,7 +943,8 @@ class PurchaseInvoice(BuyingController):
 									"account": expense_account,
 									"against": expenses_included_in_asset_valuation,
 									"cost_center": item.cost_center,
-									"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": flt(item.landed_cost_voucher_amount),
 									"project": item.project or self.project,
 								},
@@ -968,7 +983,8 @@ class PurchaseInvoice(BuyingController):
 									"account": self.stock_received_but_not_billed,
 									"against": self.supplier,
 									"debit": flt(item.item_tax_amount, item.precision("item_tax_amount")),
-									"remarks": self.remarks or _("Accounting Entry for Stock"),
+									"remarks": item.get("remarks")
+									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"cost_center": self.cost_center,
 									"project": item.project or self.project,
 								},
@@ -1186,6 +1202,7 @@ class PurchaseInvoice(BuyingController):
 							if account_currency == self.company_currency
 							else amount,
 							"cost_center": tax.cost_center,
+							"remarks": f'{tax.description} / {_("Supplier")}: {self.supplier}',
 						},
 						account_currency,
 						item=tax,
@@ -1479,6 +1496,7 @@ class PurchaseInvoice(BuyingController):
 
 	def update_billing_status_in_pr(self, update_modified=True):
 		updated_pr = []
+		po_details = []
 		for d in self.get("items"):
 			if d.pr_detail:
 				billed_amt = frappe.db.sql(
@@ -1496,7 +1514,10 @@ class PurchaseInvoice(BuyingController):
 				)
 				updated_pr.append(d.purchase_receipt)
 			elif d.po_detail:
-				updated_pr += update_billed_amount_based_on_po(d.po_detail, update_modified)
+				po_details.append(d.po_detail)
+
+		if po_details:
+			updated_pr += update_billed_amount_based_on_po(po_details, update_modified)
 
 		for pr in set(updated_pr):
 			from erpnext.stock.doctype.purchase_receipt.purchase_receipt import update_billing_percentage

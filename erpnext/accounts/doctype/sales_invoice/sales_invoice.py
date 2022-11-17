@@ -282,6 +282,7 @@ class SalesInvoice(SellingController):
 		if self.is_return and self.update_stock:
 			update_serial_nos_after_submit(self, "items")
 
+		self.render_remarks()
 		# this sequence because outstanding may get -ve
 		self.make_gl_entries()
 
@@ -756,7 +757,10 @@ class SalesInvoice(SellingController):
 					self.po_no, formatdate(self.po_date)
 				)
 			else:
-				self.remarks = _("No Remarks")
+				customer = self.customer
+				if self.customer_name != self.customer:
+					customer = f"{self.customer_name} ({self.customer})"
+				self.remarks = f'{_("Sales Invoice")}: {{{{ doc.name }}}} / {_("Customer")}: {customer}'
 
 	def validate_auto_set_posting_time(self):
 		# Don't auto set the posting date and time if invoice is amended
@@ -1137,6 +1141,7 @@ class SalesInvoice(SellingController):
 								else flt(amount, tax.precision("tax_amount_after_discount_amount"))
 							),
 							"cost_center": tax.cost_center,
+							"remarks": f'{tax.description} / {_("Customer")}: {self.customer}',
 						},
 						account_currency,
 						item=tax,
@@ -1220,6 +1225,8 @@ class SalesInvoice(SellingController):
 								),
 								"cost_center": item.cost_center,
 								"project": item.project or self.project,
+								"remarks": item.get("remarks")
+								or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Customer")}: {self.customer}',
 							},
 							account_currency,
 							item=item,
@@ -1389,7 +1396,11 @@ class SalesInvoice(SellingController):
 
 	def make_write_off_gl_entry(self, gl_entries):
 		# write off entries, applicable if only pos
-		if self.write_off_account and flt(self.write_off_amount, self.precision("write_off_amount")):
+		if (
+			self.is_pos
+			and self.write_off_account
+			and flt(self.write_off_amount, self.precision("write_off_amount"))
+		):
 			write_off_account_currency = get_account_currency(self.write_off_account)
 			default_cost_center = frappe.get_cached_value("Company", self.company, "cost_center")
 
@@ -2404,7 +2415,7 @@ def get_loyalty_programs(customer):
 	lp_details = get_loyalty_programs(customer)
 
 	if len(lp_details) == 1:
-		customer.db.set("loyalty_program", lp_details[0])
+		customer.db_set("loyalty_program", lp_details[0])
 		return lp_details
 	else:
 		return lp_details
