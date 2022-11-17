@@ -172,6 +172,9 @@ class TransactionBase(StatusUpdater):
 					},
 				)
 
+	def render_remarks(self):
+		self.remarks = frappe.render_template(self.remarks, {"doc": self})
+
 
 def delete_events(ref_type, ref_name):
 	events = (
