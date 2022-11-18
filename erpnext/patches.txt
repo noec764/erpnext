@@ -329,3 +329,4 @@ erpnext.patches.v14_0.update_tds_fields
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
+erpnext.patches.dokos.v3_0.update_custom_fields_for_france
