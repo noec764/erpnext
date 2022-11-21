@@ -9913,7 +9913,7 @@ Session is expired. Save doc to login.,La session est expiré. Enregitrez le doc
 "Session not valid, Do you want to login?","La session n'est pas valide, voulez-vous vous connecter ?",
 Set Accepted Warehouse,Définir l'entrepôt de réception,
 Set Address,Définir l'adresse,
-Set Advances and Allocate (FIFO),Set Advances and Allocate (FIFO),
+Set Advances and Allocate (FIFO),Récupérer les avances et les allouer (FIFO),
 Set Basic Rate Manually,Définir le prix unitaire de base manuellement,
 Set Default Supplier,Définir le fournisseur par défaut,
 "Set Default Values like Company, Currency, Current Fiscal Year, etc.","Définir les Valeurs par Défaut comme : Societé, Devise, Exercice Actuel, etc...",
