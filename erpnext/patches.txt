@@ -284,6 +284,7 @@ erpnext.patches.dokos.v3_0.merge_straight_line_depreciation_methods
 erpnext.patches.dokos.v3_0.delete_woocommerce_related_doctypes
 erpnext.patches.dokos.v3_0.migrate_ecommerce_settings
 execute:frappe.delete_doc_if_exists("Report", "Eway Bill")
+erpnext.patches.dokos.v3_0.set_all_leads_as_draft
 
 [post_model_sync]
 execute:frappe.delete_doc_if_exists('Workspace', 'ERPNext Integrations Settings')
