@@ -127,8 +127,6 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 	}
 
 	show_notes() {
-		if (this.frm.doc.docstatus == 1) return;
-
 		const crm_notes = new erpnext.utils.CRMNotes({
 			frm: this.frm,
 			notes_wrapper: $(this.frm.fields_dict.notes_html.wrapper),
@@ -137,8 +135,6 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 	}
 
 	show_activities() {
-		if (this.frm.doc.docstatus == 1) return;
-
 		const crm_activities = new erpnext.utils.CRMActivities({
 			frm: this.frm,
 			open_activities_wrapper: $(this.frm.fields_dict.open_activities_html.wrapper),
