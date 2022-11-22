@@ -1376,8 +1376,8 @@ class AccountsController(TransactionBase):
 		party = self.customer if self.doctype == "Sales Order" else self.supplier
 		advance_query = (
 			frappe.qb.from_(ple)
-			.select(ple.account_currency, Abs(Sum(ple.amount)).as_("amount"))
-			.where((ple.party == party) & (ple.delinked == 0) & (ple.company == self.company))
+			.select(ple.account_currency, Abs(Sum(ple.amount_in_account_currency)).as_("amount"))
+			.where((ple.party == party) & (ple.docstatus == 1) & (ple.company == self.company))
 		)
 
 		if self.doctype == "Sales Order":
