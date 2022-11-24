@@ -11,9 +11,6 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 )
 from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_entries
 from erpnext.controllers.accounts_controller import AccountsController
-from erpnext.loan_management.doctype.loan_interest_accrual.loan_interest_accrual import (
-	days_in_year,
-)
 
 
 class Dunning(AccountsController):
@@ -21,7 +18,7 @@ class Dunning(AccountsController):
 		self.validate_overdue_days()
 		self.validate_amount()
 		if not self.income_account:
-			self.income_account = frappe.db.get_value("Company", self.company, "default_income_account")
+			self.income_account = frappe.get_cached_value("Company", self.company, "default_income_account")
 
 	def validate_overdue_days(self):
 		self.overdue_days = (getdate(self.posting_date) - getdate(self.due_date)).days or 0

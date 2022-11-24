@@ -284,6 +284,7 @@ erpnext.patches.dokos.v3_0.merge_straight_line_depreciation_methods
 erpnext.patches.dokos.v3_0.delete_woocommerce_related_doctypes
 erpnext.patches.dokos.v3_0.migrate_ecommerce_settings
 execute:frappe.delete_doc_if_exists("Report", "Eway Bill")
+erpnext.patches.dokos.v3_0.set_all_leads_as_draft
 
 [post_model_sync]
 execute:frappe.delete_doc_if_exists('Workspace', 'ERPNext Integrations Settings')
@@ -324,8 +325,9 @@ erpnext.patches.v14_0.create_accounting_dimensions_in_subcontracting_doctypes
 erpnext.patches.v14_0.fix_subcontracting_receipt_gl_entries
 erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
 erpnext.patches.v13_0.update_schedule_type_in_loans
-erpnext.patches.v14_0.update_tds_fields
+erpnext.patches.v14_0.update_partial_tds_fields
 
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
+erpnext.patches.dokos.v3_0.update_custom_fields_for_france

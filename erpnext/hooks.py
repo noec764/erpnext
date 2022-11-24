@@ -190,6 +190,7 @@ website_route_rules = [
 		},
 	},
 	{"from_route": "/project", "to_route": "Project"},
+	{"from_route": "/tasks", "to_route": "Task"},
 	{"from_route": "/bookings", "to_route": "Item Booking"},
 	{"from_route": "/subscriptions", "to_route": "Subscription"},
 	{

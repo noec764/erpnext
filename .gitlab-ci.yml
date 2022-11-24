@@ -22,7 +22,7 @@ unittests:
     - if: $CI_COMMIT_TAG == null
 
   services:
-    - name: mariadb
+    - name: mariadb:10.6
       command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--character-set-client-handshake=FALSE', '--innodb_read_only_compressed=OFF']
     - name: redis
       alias: redis_queue

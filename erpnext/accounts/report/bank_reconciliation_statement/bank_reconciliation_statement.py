@@ -22,7 +22,7 @@ def execute(filters=None):
 		return columns, []
 
 	filters["account"] = frappe.db.get_value("Bank Account", filters.bank_account, "account")
-	account_currency = frappe.db.get_value("Account", filters.account, "account_currency")
+	account_currency = frappe.get_cached_value("Account", filters.account, "account_currency")
 
 	data = get_entries(filters)
 

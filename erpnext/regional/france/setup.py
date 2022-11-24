@@ -67,10 +67,11 @@ def make_custom_fields(update=True):
 				insert_after="include_in_gross",
 				depends_on='eval:doc.report_type=="Balance Sheet" && !doc.is_group',
 				description="Balance is debit for asset or credit for liability accounts",
+				default=1,
 			),
 			dict(
 				fieldname="balance_sheet_alternative_category",
-				label="Balance Sheet Other Category",
+				label="Balance Sheet Mirror Category",
 				fieldtype="Link",
 				options="Account",
 				insert_after="negative_in_balance_sheet",

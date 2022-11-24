@@ -261,10 +261,10 @@ def publish(index, total, doctype):
 		dict(
 			title=_("Opening Invoice Creation In Progress"),
 			message=_("Creating {} out of {} {}").format(index + 1, total, _(doctype)),
-			user=frappe.session.user,
 			count=index + 1,
 			total=total,
 		),
+		user=frappe.session.user,
 	)
 
 

@@ -78,7 +78,7 @@ def create_new_integration_log(event, account):
 	integration_request = frappe.get_doc(
 		{
 			"doctype": "Integration Request",
-			"integration_type": "Webhook",
+			"request_description": "Webhook",
 			"integration_request_service": "GoCardless",
 			"service_document": event.attributes.get("resource_type"),
 			"service_status": event.attributes.get("action"),

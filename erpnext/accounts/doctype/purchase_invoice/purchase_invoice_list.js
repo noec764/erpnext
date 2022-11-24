@@ -44,24 +44,24 @@ frappe.listview_settings['Purchase Invoice'] = {
 			];
 		}
 	},
-	onload: function (list_view) {
+	onload: function (listview) {
 		frappe.require("assets/erpnext/js/accounting_journal_adjustment.js", () => {
-			list_view.page.add_actions_menu_item(
+			listview.page.add_actions_menu_item(
 				__("Accounting Journal Adjustment"),
 				() => {
-					const docnames = list_view.get_checked_items(true);
-					new erpnext.journalAdjustment({ doctype: list_view.doctype, docnames: docnames })
+					const docnames = listview.get_checked_items(true);
+					new erpnext.journalAdjustment({ doctype: listview.doctype, docnames: docnames })
 				},
 				true
 			);
 		});
 
-		list_view.page.add_action_item(__("Purchase Receipt"), ()=>{
-			erpnext.bulk_transaction_processing.create(list_view, "Purchase Invoice", "Purchase Receipt");
+		listview.page.add_action_item(__("Purchase Receipt"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Purchase Receipt");
 		});
 
-		list_view.page.add_action_item(__("Payment"), ()=>{
-			erpnext.bulk_transaction_processing.create(list_view, "Purchase Invoice", "Payment");
+		listview.page.add_action_item(__("Payment"), ()=>{
+			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Payment Entry");
 		});
 	}
 };
