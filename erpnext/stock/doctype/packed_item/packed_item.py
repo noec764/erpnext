@@ -44,7 +44,7 @@ def make_packing_list(doc):
 				item_data = get_packed_item_details(bundle_item.item_code, doc.company)
 				update_packed_item_basic_data(item_row, pi_row, bundle_item, item_data)
 				update_packed_item_stock_data(item_row, pi_row, bundle_item, item_data, doc)
-				update_packed_item_price_data(pi_row, item_data, doc)
+				update_packed_item_price_data(pi_row, item_data, doc, bundle_item)
 				update_packed_item_from_cancelled_doc(item_row, bundle_item, pi_row, doc)
 
 				if set_price_from_children:  # create/update bundle item wise price dict
@@ -192,7 +192,7 @@ def update_packed_item_stock_data(main_item_row, pi_row, packing_item, item_data
 	pi_row.projected_qty = flt(bin.get("projected_qty"))
 
 
-def update_packed_item_price_data(pi_row, item_data, doc):
+def update_packed_item_price_data(pi_row, item_data, doc, bundle_item):
 	"Set price as per price list or from the Item master."
 	if pi_row.rate:
 		return
@@ -209,7 +209,7 @@ def update_packed_item_price_data(pi_row, item_data, doc):
 	)
 	rate = get_price_list_rate(row_data, item_doc).get("price_list_rate")
 
-	pi_row.rate = rate or item_data.get("valuation_rate") or 0.0
+	pi_row.rate = (rate or item_data.get("valuation_rate") or 0.0) * flt(bundle_item.qty)
 
 
 def update_packed_item_from_cancelled_doc(main_item_row, packing_item, pi_row, doc):
@@ -259,7 +259,7 @@ def update_product_bundle_rate(parent_items_price, pi_row):
 	if not rate:
 		parent_items_price[key] = 0.0
 
-	parent_items_price[key] += flt(pi_row.rate) * flt(pi_row.qty)
+	parent_items_price[key] += flt(pi_row.rate)
 
 
 def set_product_bundle_rate_amount(doc, parent_items_price):
