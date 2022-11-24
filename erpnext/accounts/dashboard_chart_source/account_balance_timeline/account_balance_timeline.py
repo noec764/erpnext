@@ -1,26 +1,13 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
-import json
-
 import frappe
 from frappe import _
-from frappe.utils import (
-	add_to_date,
-	date_diff,
-	flt,
-	formatdate,
-	get_last_day,
-	get_link_to_form,
-	getdate,
-	nowdate,
-)
+from frappe.utils import add_to_date, flt, formatdate, get_link_to_form, getdate, nowdate
 from frappe.utils.dashboard import cache_source
 from frappe.utils.dateutils import get_from_date_from_timespan, get_period_ending
 from frappe.utils.nestedset import get_descendants_of
 
-from erpnext.accounts.report.general_ledger.general_ledger import execute
 from erpnext.accounts.utils import get_currency_precision
 
 
@@ -87,7 +74,7 @@ def get(
 
 def build_result(account, dates, gl_entries):
 	result = [[getdate(date), 0.0] for date in dates]
-	root_type = frappe.db.get_value("Account", account, "root_type")
+	root_type = frappe.get_cached_value("Account", account, "root_type")
 
 	# start with the first date
 	date_index = 0
