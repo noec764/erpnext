@@ -11,7 +11,7 @@
   "supplier_group_name",
   "parent_supplier_group",
   "is_group",
-  "section_credit_limit",
+  "payment_terms_section",
   "payment_terms",
   "default_payable_account",
   "accounts",
@@ -45,12 +45,6 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Is Group"
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "section_credit_limit",
-   "fieldtype": "Section Break",
-   "label": "Credit Limit"
   },
   {
    "fieldname": "payment_terms",
@@ -101,6 +95,12 @@
    "options": "Supplier Group",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "payment_terms_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Terms"
   }
  ],
  "icon": "fa fa-flag",
@@ -108,10 +108,11 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2022-03-15 09:32:10.901862",
+ "modified": "2022-11-24 18:33:27.115880",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Supplier Group",
+ "naming_rule": "By fieldname",
  "nsm_parent_field": "parent_supplier_group",
  "owner": "Administrator",
  "permissions": [
@@ -173,5 +174,6 @@
  ],
  "show_name_in_global_search": 1,
  "sort_field": "modified",
- "sort_order": "ASC"
+ "sort_order": "ASC",
+ "states": []
 }
