@@ -236,12 +236,6 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			invoice.flags.ignore_permissions = True
 			invoice = self.set_subscription_invoicing_details(invoice)
 
-		invoice.set_posting_time = 1
-		invoice.posting_date = (
-			self.start_date
-			if self.subscription.generate_invoice_at_period_start
-			else self.previous_period.period_end
-		)
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 		invoice.currency = self.subscription.currency
 
