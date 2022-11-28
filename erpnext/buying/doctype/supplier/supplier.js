@@ -244,7 +244,11 @@ frappe.tour["Supplier"] = {
 		{
 			fieldname: "tax_id",
 			description: "Numéro de TVA intra-communautaire du fournisseur. Peut-être utilisé pour enregistrer un autre numéro fiscal pour les fournisseurs hors UE.",
-			previous_step_tab: "__details"
+			previous_step_tab: "details_tab"
+		},
+		{
+			fieldname: "tax_category",
+			description: "Catégorie de taxe à laquelle ce fournisseur est associé.<br> Les catégories de taxe permette de créer des règles de détermination de TVA.",
 		},
 	]
 }
