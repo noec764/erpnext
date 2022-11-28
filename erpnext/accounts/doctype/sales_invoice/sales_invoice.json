@@ -373,7 +373,7 @@
    "search_index": 1
   },
   {
-    "depends_on": "eval:doc.return_against || doc.is_debit_note",
+   "depends_on": "eval:doc.return_against || doc.is_debit_note",
    "fieldname": "return_against",
    "fieldtype": "Link",
    "label": "Return Against",
@@ -630,7 +630,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "packed_items",
+   "depends_on": "packed_items",
    "fieldname": "packing_list",
    "fieldtype": "Section Break",
    "label": "Packing List",
@@ -638,7 +638,7 @@
    "print_hide": 1
   },
   {
-    "depends_on": "packed_items",
+   "depends_on": "packed_items",
    "fieldname": "packed_items",
    "fieldtype": "Table",
    "label": "Packed Items",
@@ -1668,18 +1668,18 @@
    "label": "Is Rate Adjustment Entry (Debit Note)"
   },
   {
-   "default": 0,
+   "default": "0",
    "depends_on": "grand_total",
    "fieldname": "disable_rounded_total",
    "fieldtype": "Check",
    "label": "Disable Rounded Total"
   },
   {
-    "fieldname": "additional_discount_account",
-    "fieldtype": "Link",
-    "label": "Discount Account",
-    "options": "Account"
-   },
+   "fieldname": "additional_discount_account",
+   "fieldtype": "Link",
+   "label": "Discount Account",
+   "options": "Account"
+  },
   {
    "default": "0",
    "fieldname": "ignore_default_payment_terms_template",
@@ -1721,7 +1721,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2022-11-15 09:33:47.870616",
+ "modified": "2022-11-25 18:38:39.372012",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
@@ -1778,5 +1778,6 @@
  "timeline_field": "customer",
  "title_field": "title",
  "track_changes": 1,
+ "track_print": 1,
  "track_seen": 1
 }
