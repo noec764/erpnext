@@ -89,6 +89,7 @@
   "taxes_and_charges",
   "column_break_38",
   "shipping_rule",
+  "incoterm",
   "tax_category",
   "section_break_40",
   "taxes",
@@ -1707,6 +1708,12 @@
    "fieldname": "is_cash_or_non_trade_discount",
    "fieldtype": "Check",
    "label": "Is Cash or Non Trade Discount"
+},
+{
+ "fieldname": "incoterm",
+ "fieldtype": "Link",
+ "label": "Incoterm",
+ "options": "Incoterm"
   }
  ],
  "icon": "fa fa-file-text",
@@ -1721,7 +1728,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2022-11-25 18:38:39.372012",
+ "modified": "2022-11-17 17:17:10.883487",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

@@ -75,6 +75,7 @@
      "tax_category",
      "shipping_col",
      "shipping_rule",
+     "incoterm",
      "taxes_section",
      "taxes_and_charges",
      "taxes",
@@ -1149,13 +1150,19 @@
        "hidden": 1,
        "label": "Is Old Subcontracting Flow",
        "read_only": 1
+      },
+      {
+       "fieldname": "incoterm",
+       "fieldtype": "Link",
+       "label": "Incoterm",
+       "options": "Incoterm"
        }
     ],
     "icon": "fa fa-truck",
     "idx": 261,
     "is_submittable": 1,
     "links": [],
-    "modified": "2022-09-14 15:43:40.664382",
+    "modified": "2022-11-17 17:29:30.067536",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Purchase Receipt",
