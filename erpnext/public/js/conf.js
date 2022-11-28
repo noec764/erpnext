@@ -13,7 +13,8 @@ $.extend(frappe.breadcrumbs.preferred, {
 	"Sales Partner": "Selling",
 	"Brand": "Selling",
 	"Maintenance Schedule": "Support",
-	"Maintenance Visit": "Support"
+	"Maintenance Visit": "Support",
+	"Sales Order": "Selling"
 });
 
 $.extend(frappe.breadcrumbs.module_map, {
@@ -23,5 +24,9 @@ $.extend(frappe.breadcrumbs.module_map, {
 	'Utilities': 'Settings',
 	'E-commerce': 'Website',
 	'Contacts': 'CRM',
-	'Accounts': 'Accounting'
+	'Accounts': 'Accounting',
 });
+
+$.extend(frappe.breadcrumbs.workspace, {
+	'Sales Order': 'Selling'
+})
