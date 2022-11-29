@@ -1,0 +1,40 @@
+{
+ "allow_roles": [
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Stock Manager"
+  },
+  {
+   "role": "Stock User"
+  }
+ ],
+ "creation": "2022-11-29 18:42:57.278761",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "documentation_url": "https://doc.dokos.io/fr/selling",
+ "idx": 0,
+ "is_complete": 0,
+ "language": "fr",
+ "modified": "2022-11-29 19:00:19.814672",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Ventes",
+ "owner": "Administrator",
+ "reference_module_onboarding": "Selling",
+ "steps": [
+  {
+   "step": "Param\u00e8tres des ventes"
+  },
+  {
+   "step": "Clients"
+  }
+ ],
+ "subtitle": "D\u00e9couvrez et configurez le \u00e9l\u00e9ments essentiels pour effectuer des ventes",
+ "success_message": "Vous \u00eates pr\u00eat \u00e0 utiliser le module de vente",
+ "title": "Module de vente"
+}
