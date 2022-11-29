@@ -151,7 +151,10 @@ class SubscriptionTransactionBase:
 		if document.doctype == "Sales Order":
 			end_date = self.end_date
 
-		return add_days(end_date, cint(self.subscription.days_until_due))
+		return max(
+			getdate(document.posting_date),
+			getdate(add_days(end_date, cint(self.subscription.days_until_due))),
+		)
 
 	def add_subscription_dates(self, document):
 		start_date = (
