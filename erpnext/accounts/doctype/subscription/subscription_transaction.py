@@ -151,7 +151,10 @@ class SubscriptionTransactionBase:
 		if document.doctype == "Sales Order":
 			end_date = self.end_date
 
-		return add_days(end_date, cint(self.subscription.days_until_due))
+		return max(
+			getdate(document.posting_date),
+			getdate(add_days(end_date, cint(self.subscription.days_until_due))),
+		)
 
 	def add_subscription_dates(self, document):
 		start_date = (
@@ -236,12 +239,6 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			invoice.flags.ignore_permissions = True
 			invoice = self.set_subscription_invoicing_details(invoice)
 
-		invoice.set_posting_time = 1
-		invoice.posting_date = (
-			self.start_date
-			if self.subscription.generate_invoice_at_period_start
-			else self.previous_period.period_end
-		)
 		invoice.tax_id = frappe.db.get_value("Customer", invoice.customer, "tax_id")
 		invoice.currency = self.subscription.currency
 

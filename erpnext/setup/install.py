@@ -9,6 +9,7 @@ from frappe.utils import cint
 
 from erpnext.accounts.doctype.cash_flow_mapper.default_cash_flow_mapper import DEFAULT_MAPPERS
 from erpnext.setup.default_energy_point_rules import get_default_energy_point_rules
+from erpnext.setup.doctype.incoterm.incoterm import create_incoterms
 
 from .default_success_action import get_default_success_action
 
@@ -24,6 +25,7 @@ def after_install():
 	for role in ["Customer", "Supplier", "Volunteer"]:
 		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
+	create_incoterms()
 	add_company_to_session_defaults()
 	add_standard_navbar_items()
 	add_app_name()

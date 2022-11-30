@@ -72,6 +72,7 @@ class FranceTaxDeclarationPreparation(Document):
 			"erpnext/regional/doctype/france_tax_declaration_preparation/tax_details.html",
 			{"details": output["tax_details"]},
 		)
+		print(self.deductible_details)
 
 		return self.deductible_details
 
@@ -105,9 +106,8 @@ class FranceTaxDeclarationPreparation(Document):
 					for row in frappe.parse_json(item.get("item_tax_rate")):
 						if row.get("account") == gl_entry.account:
 							gl_entry["taxable_amount"] += flt(row.get("taxable_amount"))
-				else:
-					continue
 			else:
+				print(gl_entry)
 				continue
 
 			taxable_amount = flt(gl_entry.get("taxable_amount"))
@@ -157,11 +157,11 @@ class FranceTaxDeclarationPreparation(Document):
 	def get_gl_entries(self, accounts):
 		gl_entry = frappe.qb.DocType("GL Entry")
 		vat_preparation_details = frappe.qb.DocType("France Tax Declaration Preparation Details")
-		subquery = (
-			frappe.qb.from_(vat_preparation_details)
-			.select(vat_preparation_details.gl_entry)
-			.where(vat_preparation_details.parent != self.name)
-		)
+		subquery = frappe.qb.from_(vat_preparation_details).select(vat_preparation_details.gl_entry)
+
+		if self.name:
+			subquery = subquery.where(vat_preparation_details.parent != self.name)
+
 		return (
 			frappe.qb.from_(gl_entry)
 			.where(gl_entry.account.isin(accounts))
@@ -181,7 +181,8 @@ class FranceTaxDeclarationPreparation(Document):
 				gl_entry.account,
 				gl_entry.fiscal_year,
 			)
-		).run(as_dict=True)
+			.orderby(gl_entry.posting_date)
+		).run(as_dict=True, debug=True)
 
 	def get_deductible_accounts(self):
 		return {
@@ -190,7 +191,9 @@ class FranceTaxDeclarationPreparation(Document):
 
 	def get_collection_accounts(self):
 		return {
-			t.name: t.tax_rate for t in self.get_vat_accounts() if t.account_number.startswith("4457")
+			t.name: t.tax_rate
+			for t in self.get_vat_accounts()
+			if t.account_number.startswith("4457") or t.account_number.startswith("4452")
 		}
 
 	def get_pending_tax_accounts(self):

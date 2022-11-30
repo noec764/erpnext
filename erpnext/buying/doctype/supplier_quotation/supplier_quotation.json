@@ -50,6 +50,7 @@
      "tax_category",
      "column_break_36",
      "shipping_rule",
+     "incoterm",
      "section_break_38",
      "taxes_and_charges",
      "taxes",
@@ -803,6 +804,12 @@
      "fieldname": "quotation_number",
      "fieldtype": "Data",
      "label": "Quotation Number"
+    },
+    {
+     "fieldname": "incoterm",
+     "fieldtype": "Link",
+     "label": "Incoterm",
+     "options": "Incoterm"
      }
     ],
     "icon": "fa fa-shopping-cart",
@@ -810,7 +817,7 @@
     "index_web_pages_for_search": 1,
     "is_submittable": 1,
     "links": [],
-    "modified": "2022-03-15 16:13:20.284572",
+    "modified": "2022-11-17 17:27:32.179686",
     "modified_by": "Administrator",
     "module": "Buying",
     "name": "Supplier Quotation",

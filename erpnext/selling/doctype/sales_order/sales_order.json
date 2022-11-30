@@ -74,6 +74,7 @@
   "tax_category",
   "column_break_38",
   "shipping_rule",
+  "incoterm",
   "section_break_40",
   "taxes_and_charges",
   "taxes",
@@ -1279,13 +1280,19 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
+},
+{
+ "fieldname": "incoterm",
+ "fieldtype": "Link",
+ "label": "Incoterm",
+ "options": "Incoterm"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-09-14 03:52:22.212953",
+ "modified": "2022-11-17 17:22:00.413878",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

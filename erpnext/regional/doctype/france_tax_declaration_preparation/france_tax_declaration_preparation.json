@@ -79,7 +79,8 @@
    "fieldname": "deductible_vat",
    "fieldtype": "Table",
    "label": "Deductible VAT",
-   "options": "France Tax Declaration Preparation Details"
+   "options": "France Tax Declaration Preparation Details",
+   "read_only": 1
   },
   {
    "fieldname": "get_collected_vat",
@@ -90,13 +91,14 @@
    "fieldname": "collected_vat",
    "fieldtype": "Table",
    "label": "Collected VAT Data",
-   "options": "France Tax Declaration Preparation Details"
+   "options": "France Tax Declaration Preparation Details",
+   "read_only": 1
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Maximum Date",
+   "label": "Declaration Date",
    "reqd": 1
   },
   {
@@ -129,8 +131,9 @@
   },
   {
    "fieldname": "deductible_details",
-   "fieldtype": "HTML",
-   "label": "Details"
+   "fieldtype": "Small Text",
+   "label": "Details",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_16",
@@ -194,8 +197,9 @@
   },
   {
    "fieldname": "collected_details",
-   "fieldtype": "HTML",
-   "label": "Details"
+   "fieldtype": "Small Text",
+   "label": "Details",
+   "read_only": 1
   },
   {
    "fieldname": "summary",
@@ -205,7 +209,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-08-02 15:49:31.646644",
+ "modified": "2022-11-29 15:42:30.307975",
  "modified_by": "Administrator",
  "module": "Regional",
  "name": "France Tax Declaration Preparation",
