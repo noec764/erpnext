@@ -32,6 +32,7 @@ class TestSubscription(FrappeTestCase):
 		subscription.billing_interval = "Day"
 		subscription.trial_period_start = today()
 		subscription.trial_period_end = add_days(current_date, 5)
+		subscription.generate_invoice_at_period_start = 1
 		subscription.append("plans", PLANS[0])
 		subscription.save()
 		subscription.process()
@@ -49,10 +50,6 @@ class TestSubscription(FrappeTestCase):
 			else:
 				self.assertEqual(subscription.current_invoice_start, getdate(add_days(current_date, i)))
 				self.assertEqual(subscription.current_invoice_end, getdate(add_days(current_date, i)))
-
-			if i == 6:
-				self.assertEqual(subscription.status, "Active")
-			if i == 7:
 				self.assertEqual(subscription.status, "Payable")
 
 		subscription.billing_interval = "Month"
