@@ -72,7 +72,6 @@ class FranceTaxDeclarationPreparation(Document):
 			"erpnext/regional/doctype/france_tax_declaration_preparation/tax_details.html",
 			{"details": output["tax_details"]},
 		)
-		print(self.deductible_details)
 
 		return self.deductible_details
 
@@ -107,7 +106,6 @@ class FranceTaxDeclarationPreparation(Document):
 						if row.get("account") == gl_entry.account:
 							gl_entry["taxable_amount"] += flt(row.get("taxable_amount"))
 			else:
-				print(gl_entry)
 				continue
 
 			taxable_amount = flt(gl_entry.get("taxable_amount"))
