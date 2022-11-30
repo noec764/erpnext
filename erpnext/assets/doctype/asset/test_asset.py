@@ -192,7 +192,7 @@ class TestAsset(AssetSetup):
 		self.assertEqual(doc.items[0].is_fixed_asset, 1)
 
 	def test_scrap_asset(self):
-		date = nowdate()
+		date = getdate()
 		purchase_date = add_months(get_first_day(date), -2)
 
 		asset = create_asset(
