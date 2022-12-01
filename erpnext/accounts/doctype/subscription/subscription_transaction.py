@@ -293,7 +293,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 				self.subscription.reload()
 				self.subscription.cancel_subscription()
 		except Exception:
-			invoice.log_error(_("Subscription Grand Total Simulation Error"))
+			frappe.log_error(title=_("Subscription Grand Total Simulation Error"))
 
 
 class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
