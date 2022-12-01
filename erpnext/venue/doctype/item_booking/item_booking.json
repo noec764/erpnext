@@ -105,7 +105,6 @@
   },
   {
    "allow_on_submit": 1,
-   "fetch_from": "reference_name.party_name",
    "fieldname": "party_name",
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
@@ -266,7 +265,7 @@
    "link_fieldname": "parent_item_booking"
   }
  ],
- "modified": "2022-01-04 12:03:49.368968",
+ "modified": "2022-11-04 12:03:49.368968",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",

@@ -152,7 +152,9 @@ class SubscriptionTransactionBase:
 			end_date = self.end_date
 
 		return max(
-			getdate(document.posting_date),
+			getdate(
+				document.posting_date if document.doctype == "Sales Invoice" else document.transaction_date
+			),
 			getdate(add_days(end_date, cint(self.subscription.days_until_due))),
 		)
 
@@ -293,7 +295,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 				self.subscription.reload()
 				self.subscription.cancel_subscription()
 		except Exception:
-			invoice.log_error(_("Subscription Grand Total Simulation Error"))
+			frappe.log_error(title=_("Subscription Grand Total Simulation Error"))
 
 
 class SubscriptionSalesOrderGenerator(SubscriptionTransactionBase):
