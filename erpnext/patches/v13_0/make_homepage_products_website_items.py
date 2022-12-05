@@ -2,6 +2,7 @@ import frappe
 
 
 def execute():
+	frappe.reload_doc("portal", "doctype", "homepage_featured_product")
 	homepage = frappe.get_doc("Homepage")
 
 	for row in homepage.products:

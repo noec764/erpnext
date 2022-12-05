@@ -165,7 +165,6 @@ erpnext.patches.v13_0.rename_issue_doctype_fields
 erpnext.patches.v13_0.create_print_uom_after_qty_custom_field
 erpnext.patches.v13_0.change_default_pos_print_format
 erpnext.patches.v13_0.set_youtube_video_id
-erpnext.patches.v13_0.print_uom_after_quantity_patch
 execute:frappe.delete_doc("Report", "Quoted Item Comparison")
 erpnext.patches.v13_0.update_pos_closing_entry_in_merge_log
 erpnext.patches.v13_0.add_po_to_global_search
@@ -229,7 +228,6 @@ erpnext.patches.v14_0.migrate_crm_settings
 erpnext.patches.v13_0.rename_ksa_qr_field
 erpnext.patches.v13_0.disable_ksa_print_format_for_others # 16-12-2021
 erpnext.patches.v13_0.update_asset_quantity_field
-erpnext.patches.v13_0.enable_provisional_accounting
 erpnext.patches.v13_0.enable_ksa_vat_docs
 erpnext.patches.v13_0.reset_corrupt_defaults
 erpnext.patches.v13_0.create_accounting_dimensions_for_asset_repair

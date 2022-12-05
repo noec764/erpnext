@@ -1,7 +1,5 @@
-import frappe
-
-from erpnext.setup.install import create_print_uom_after_qty_custom_field
+from erpnext.setup.install import create_print_setting_custom_fields
 
 
 def execute():
-	create_print_uom_after_qty_custom_field()
+	create_print_setting_custom_fields()

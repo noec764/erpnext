@@ -29,6 +29,9 @@ def get_existing_cost_center_allocations():
 	if not frappe.db.exists("DocType", "Distributed Cost Center"):
 		return
 
+	if not frappe.get_meta("Cost Center").has_field("enable_distributed_cost_center"):
+		return
+
 	par = frappe.qb.DocType("Cost Center")
 	child = frappe.qb.DocType("Distributed Cost Center")
 

@@ -55,7 +55,10 @@ def add_calendar_event_for_leads():
 
 		event.append("event_participants", {"reference_doctype": "Lead", "reference_docname": d.name})
 
-		event.insert(ignore_permissions=True)
+		try:
+			event.insert(ignore_permissions=True)
+		except Exception:
+			pass
 
 
 def add_calendar_event_for_opportunities():
@@ -91,4 +94,7 @@ def add_calendar_event_for_opportunities():
 			"event_participants", {"reference_doctype": "Opportunity", "reference_docname": d.name}
 		)
 
-		event.insert(ignore_permissions=True)
+		try:
+			event.insert(ignore_permissions=True)
+		except Exception:
+			pass
