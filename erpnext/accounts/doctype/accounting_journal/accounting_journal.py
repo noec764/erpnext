@@ -1,14 +1,10 @@
 # Copyright (c) 2019, Dokos SAS and Contributors
 # For license information, please see license.txt
 
-
-import json
-
 import frappe
 from frappe import _
 from frappe.email.doctype.notification.notification import get_context
 from frappe.model.document import Document
-from frappe.permissions import get_doctypes_with_read
 
 from erpnext.accounts.general_ledger import make_entry, make_reverse_gl_entries
 
