@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import cint, flt, formatdate, get_datetime_str
+from frappe.utils import flt, formatdate, get_datetime_str
 
 from erpnext import get_company_currency, get_default_company
 from erpnext.accounts.doctype.fiscal_year.fiscal_year import get_from_and_to_date
@@ -28,7 +28,7 @@ def get_currency(filters):
 		filters["presentation_currency"] if filters.get("presentation_currency") else company_currency
 	)
 
-	report_date = filters.get("to_date")
+	report_date = filters.get("to_date") or filters.get("period_end_date")
 
 	if not report_date:
 		fiscal_year_to_date = get_from_and_to_date(filters.get("to_fiscal_year"))["to_date"]
