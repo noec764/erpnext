@@ -31,8 +31,7 @@ class TaxRule(Document):
 
 	def validate(self):
 		self.validate_tax_template()
-		if self.from_date and self.to_date:
-			self.validate_from_to_dates("from_date", "to_date")
+		self.validate_from_to_dates("from_date", "to_date")
 		self.validate_filters()
 		self.validate_use_for_shopping_cart()
 
