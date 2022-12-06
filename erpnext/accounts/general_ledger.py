@@ -193,7 +193,10 @@ def merge_similar_entries(gl_map, precision=None):
 			same_head.credit_in_account_currency = flt(same_head.credit_in_account_currency) + flt(
 				entry.credit_in_account_currency
 			)
-			same_head.remarks += f"\n{entry.remarks}"
+			if not same_head.remarks:
+				same_head.remarks = entry.remarks
+			else:
+				same_head.remarks += f"\n{entry.remarks}"
 		else:
 			merged_gl_map.append(entry)
 
