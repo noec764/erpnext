@@ -594,10 +594,6 @@ class TestWorkOrder(FrappeTestCase):
 			bom.submit()
 			bom_name = bom.name
 
-		ste1 = test_stock_entry.make_stock_entry(
-			item_code=rm1, target="_Test Warehouse - _TC", qty=32, basic_rate=5000.0
-		)
-
 		work_order = make_wo_order_test_record(
 			item=fg_item, planned_start_date=now(), qty=1, do_not_save=True
 		)
@@ -638,6 +634,10 @@ class TestWorkOrder(FrappeTestCase):
 			bom.save()
 			bom.submit()
 			bom_name = bom.name
+
+		ste1 = test_stock_entry.make_stock_entry(
+			item_code=rm1, target="_Test Warehouse - _TC", qty=32, basic_rate=5000.0
+		)
 
 		work_order = make_wo_order_test_record(
 			item=fg_item, skip_transfer=True, planned_start_date=now(), qty=1
