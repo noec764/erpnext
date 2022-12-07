@@ -25,7 +25,11 @@ frappe.query_reports["Fichier des Ecritures Comptables [FEC]"] = {
 			fec_export(query_report);
 		});
 
-		query_report.add_make_chart_button = function() {
+		query_report.add_chart_buttons_to_toolbar = function() {
+			//
+		};
+
+		query_report.add_card_button_to_toolbar = function() {
 			//
 		};
 
