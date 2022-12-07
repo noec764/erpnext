@@ -164,12 +164,14 @@ frappe.ui.form.on('Item Booking', {
 			starts_on: frm.doc.starts_on,
 			ends_on: frm.doc.ends_on,
 		}).then(r => {
-			let message = __("{0} slots are still available for this item and this time slot.", [r])
-			if (r < 2) {
-				message = __("{0} slot still available for this item and this time slot.", [r])
+			if (r) {
+				let message = __("{0} slots are still available for this item and this time slot.", [r])
+				if (r < 2) {
+					message = __("{0} slot still available for this item and this time slot.", [r])
+				}
+				frm.set_intro()
+				frm.set_intro(message)
 			}
-			frm.set_intro()
-			frm.set_intro(message)
 		});
 	},
 	starts_on: function(frm) {
