@@ -121,7 +121,7 @@
     "label": "Show Barcode Field in Stock Transactions"
    },
    {
-    "default": "1",
+    "default": "0",
     "fieldname": "clean_description_html",
     "fieldtype": "Check",
     "label": "Convert Item Description to Clean HTML in Transactions"

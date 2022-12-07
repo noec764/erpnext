@@ -91,7 +91,7 @@ def get_gl_entries(filters):
 			sum(gl.debit_in_account_currency) as debitCurr, sum(gl.credit_in_account_currency) as creditCurr,
 			gl.voucher_type, gl.voucher_no, gl.against_voucher_type,
 			gl.against_voucher, gl.account_currency, gl.against,
-			gl.party_type, gl.party, gl.accounting_journal,
+			gl.party_type, gl.party, gl.accounting_journal, gl.remarks,
 			inv.name as InvName, inv.title as InvTitle, inv.posting_date as InvPostDate,
 			pur.name as PurName, pur.title as PurTitle, pur.posting_date as PurPostDate,
 			jnl.cheque_no as JnlRef, jnl.posting_date as JnlPostDate, jnl.title as JnlTitle,
@@ -125,7 +125,9 @@ def get_result_as_list(data, filters):
 
 	company_currency = frappe.get_cached_value("Company", filters.company, "default_currency")
 	accounts = frappe.get_all(
-		"Account", filters={"Company": filters.company}, fields=["name", "account_number"]
+		"Account",
+		filters={"Company": filters.company},
+		fields=["name", "account_number", "account_name"],
 	)
 	journals = {
 		j.journal_code: j.journal_name
@@ -141,10 +143,13 @@ def get_result_as_list(data, filters):
 		EcritureDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
 		account_number = [
-			account.account_number for account in accounts if account.name == d.get("account")
+			{"account_number": account.account_number, "account_name": account.account_name}
+			for account in accounts
+			if account.name == d.get("account") and account.account_number
 		]
-		if account_number[0] is not None:
-			CompteNum = account_number[0]
+		if account_number:
+			CompteNum = account_number[0]["account_number"]
+			CompteLib = account_number[0]["account_name"]
 		else:
 			frappe.throw(
 				_(
@@ -175,7 +180,9 @@ def get_result_as_list(data, filters):
 		# EcritureLib is the reference title unless it is an opening entry
 		if d.get("is_opening") == "Yes":
 			EcritureLib = _("Opening Entry Journal")
-		if d.get("voucher_type") == "Sales Invoice":
+		if d.get("remarks") and d.get("remarks").lower() not in ("no remarks", _("no remarks")):
+			EcritureLib = d.get("remarks")
+		elif d.get("voucher_type") == "Sales Invoice":
 			EcritureLib = d.get("InvTitle")
 		elif d.get("voucher_type") == "Purchase Invoice":
 			EcritureLib = d.get("PurTitle")
@@ -211,7 +218,7 @@ def get_result_as_list(data, filters):
 			EcritureNum,
 			EcritureDate,
 			CompteNum,
-			d.get("account"),
+			CompteLib,
 			CompAuxNum,
 			CompAuxLib,
 			PieceRef,
