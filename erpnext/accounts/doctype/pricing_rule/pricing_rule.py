@@ -184,8 +184,7 @@ class PricingRule(Document):
 		if self.is_cumulative and not (self.valid_from and self.valid_upto):
 			frappe.throw(_("Valid from and valid upto fields are mandatory for the cumulative"))
 
-		if self.valid_from and self.valid_upto and getdate(self.valid_from) > getdate(self.valid_upto):
-			frappe.throw(_("Valid from date must be less than valid upto date"))
+		self.validate_from_to_dates("valid_from", "valid_upto")
 
 	def validate_condition(self):
 		if (
@@ -611,13 +610,13 @@ def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
 
 def check_booking_credit_rule(args, doc):
 	from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
+
 	if args.get("customer") and doc:
 		result = False
-		if reference := frappe.db.get_value("Booking Credit Usage Reference",
-			dict(
-				reference_doctype="Item Booking",
-				reference_document=args.get("item_booking")
-			), "booking_credit_usage"
+		if reference := frappe.db.get_value(
+			"Booking Credit Usage Reference",
+			dict(reference_doctype="Item Booking", reference_document=args.get("item_booking")),
+			"booking_credit_usage",
 		):
 			return cint(frappe.db.get_value("Booking Credit Usage", reference, "docstatus")) == 1
 

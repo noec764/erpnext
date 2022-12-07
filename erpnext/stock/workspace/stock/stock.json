@@ -1,11 +1,7 @@
 {
- "charts": [
-  {
-   "chart_name": "Warehouse wise Stock Value"
-  }
- ],
+ "charts": [],
  "color": "#f4a261",
- "content": "[{\"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Stock\", \"col\": 12}}, {\"type\": \"chart\", \"data\": {\"chart_name\": null, \"col\": 12}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Quick Access\", \"level\": 4, \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Item\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Material Request\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Entry\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Purchase Receipt\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Delivery Note\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Ledger\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Stock Balance\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Dashboard\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"header\", \"data\": {\"text\": \"Masters & Reports\", \"level\": 4, \"col\": 12}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Items and Pricing\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Stock Transactions\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Stock Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Settings\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Serial No and Batch\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Tools\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Key Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Other Reports\", \"col\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"Incorrect Data Report\", \"col\": 4}}]",
+ "content": "[{\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"Stock\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Quick Access</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Ledger\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Balance\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters &amp; Reports</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Items and Pricing\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Stock Transactions\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Stock Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Serial No and Batch\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
  "creation": "2020-03-02 15:43:10.096528",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -17,6 +13,7 @@
  "label": "Stock",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Items and Pricing",
@@ -25,6 +22,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -36,6 +34,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -47,6 +46,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -58,6 +58,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -69,6 +70,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -80,6 +82,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -91,6 +94,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -102,6 +106,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -113,6 +118,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -124,6 +130,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -135,6 +142,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Stock Transactions",
@@ -143,6 +151,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -154,6 +163,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -165,6 +175,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item, Customer",
    "hidden": 0,
    "is_query_report": 0,
@@ -176,6 +187,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item, Supplier",
    "hidden": 0,
    "is_query_report": 0,
@@ -187,6 +199,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -198,6 +211,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -209,80 +223,7 @@
    "type": "Link"
   },
   {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Stock Reports",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Ledger",
-   "link_count": 0,
-   "link_to": "Stock Ledger",
-   "link_type": "Report",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Balance",
-   "link_count": 0,
-   "link_to": "Stock Balance",
-   "link_type": "Report",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Projected Qty",
-   "link_count": 0,
-   "link_to": "Stock Projected Qty",
-   "link_type": "Report",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Stock Summary",
-   "link_count": 0,
-   "link_to": "stock-balance",
-   "link_type": "Page",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Ageing",
-   "link_count": 0,
-   "link_to": "Stock Ageing",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item Price Stock",
-   "link_count": 0,
-   "link_to": "Item Price Stock",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings",
@@ -291,6 +232,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -302,6 +244,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -313,6 +256,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -324,6 +268,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -335,6 +280,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -346,6 +292,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -357,6 +304,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -368,6 +316,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Serial No and Batch",
@@ -376,6 +325,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -387,6 +337,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -398,6 +349,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 0,
@@ -409,6 +361,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Serial No",
    "hidden": 0,
    "is_query_report": 0,
@@ -420,6 +373,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Serial No",
    "hidden": 0,
    "is_query_report": 0,
@@ -431,6 +385,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Serial No",
    "hidden": 0,
    "is_query_report": 0,
@@ -442,6 +397,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Tools",
@@ -450,6 +406,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -461,6 +418,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -472,6 +430,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -483,6 +442,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -494,6 +454,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -505,6 +466,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -516,6 +478,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Key Reports",
@@ -524,6 +487,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Item Price",
    "hidden": 0,
    "is_query_report": 0,
@@ -535,6 +499,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Stock Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -546,6 +511,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 1,
@@ -557,6 +523,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Delivery Note",
    "hidden": 0,
    "is_query_report": 1,
@@ -568,6 +535,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Receipt",
    "hidden": 0,
    "is_query_report": 1,
@@ -579,6 +547,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Sales Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -590,6 +559,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -601,6 +571,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Bin",
    "hidden": 0,
    "is_query_report": 1,
@@ -612,6 +583,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Batch",
    "hidden": 0,
    "is_query_report": 1,
@@ -623,6 +595,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Other Reports",
@@ -631,6 +604,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Material Request",
    "hidden": 0,
    "is_query_report": 1,
@@ -642,6 +616,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Stock Ledger Entry",
    "hidden": 0,
    "is_query_report": 1,
@@ -653,6 +628,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Price List",
    "hidden": 0,
    "is_query_report": 1,
@@ -664,6 +640,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 1,
@@ -675,6 +652,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Item",
    "hidden": 0,
    "is_query_report": 1,
@@ -686,6 +664,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -697,6 +676,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Purchase Order",
    "hidden": 0,
    "is_query_report": 1,
@@ -708,6 +688,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Stock and Account Value Comparison",
@@ -716,9 +697,101 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stock Reports",
+   "link_count": 7,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Ledger",
+   "link_count": 0,
+   "link_to": "Stock Ledger",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Balance",
+   "link_count": 0,
+   "link_to": "Stock Balance",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Projected Qty",
+   "link_count": 0,
+   "link_to": "Stock Projected Qty",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stock Summary",
+   "link_count": 0,
+   "link_to": "stock-balance",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Ageing",
+   "link_count": 0,
+   "link_to": "Stock Ageing",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Item Price Stock",
+   "link_count": 0,
+   "link_to": "Item Price Stock",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Warehouse Wise Stock Balance",
+   "link_count": 0,
+   "link_to": "Warehouse Wise Stock Balance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2022-05-20 10:42:09.795068",
+ "modified": "2022-12-06 15:51:32.696266",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock",
@@ -731,6 +804,7 @@
  "shortcuts": [
   {
    "color": "Green",
+   "columns": 0,
    "format": "{}  Available",
    "label": "Item",
    "link_to": "Item",
@@ -739,6 +813,7 @@
   },
   {
    "color": "Yellow",
+   "columns": 0,
    "format": "{} Pending",
    "label": "Material Request",
    "link_to": "Material Request",
@@ -746,12 +821,14 @@
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Stock Entry",
    "link_to": "Stock Entry",
    "type": "DocType"
   },
   {
    "color": "Yellow",
+   "columns": 0,
    "format": "{} To Bill",
    "label": "Purchase Receipt",
    "link_to": "Purchase Receipt",
@@ -760,6 +837,7 @@
   },
   {
    "color": "Yellow",
+   "columns": 0,
    "format": "{} To Bill",
    "label": "Delivery Note",
    "link_to": "Delivery Note",
@@ -767,16 +845,19 @@
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Stock Ledger",
    "link_to": "Stock Ledger",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Stock Balance",
    "link_to": "Stock Balance",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Dashboard",
    "link_to": "Stock",
    "type": "Dashboard"

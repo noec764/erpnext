@@ -172,6 +172,11 @@ def get_cost_center_allocation_data(company, posting_date):
 
 
 def merge_similar_entries(gl_map, precision=None):
+	if cint(
+		frappe.get_cached_value("Accounts Settings", "Accounts Settings", "do_not_merge_similar_entries")
+	):
+		return gl_map
+
 	merged_gl_map = []
 	accounting_dimensions = get_accounting_dimensions()
 
@@ -188,6 +193,10 @@ def merge_similar_entries(gl_map, precision=None):
 			same_head.credit_in_account_currency = flt(same_head.credit_in_account_currency) + flt(
 				entry.credit_in_account_currency
 			)
+			if not same_head.remarks:
+				same_head.remarks = entry.remarks
+			else:
+				same_head.remarks += f"\n{entry.remarks}"
 		else:
 			merged_gl_map.append(entry)
 
@@ -295,13 +304,11 @@ def save_entries(gl_map, adv_adj, update_outstanding, from_repost=False):
 		check_freezing_date(gl_map[0]["posting_date"], adv_adj)
 
 	accounting_number = get_accounting_number(gl_map[0])
-
 	for entry in gl_map:
 		if not entry.get("accounting_journal"):
 			get_accounting_journal(entry)
 
 		entry["accounting_entry_number"] = accounting_number
-
 		make_entry(entry, adv_adj, update_outstanding, from_repost)
 
 
@@ -579,7 +586,9 @@ def make_reverse_gl_entries(
 			new_gle["debit_in_account_currency"] = credit_in_account_currency
 			new_gle["credit_in_account_currency"] = debit_in_account_currency
 
-			new_gle["remarks"] = "On cancellation of " + new_gle["voucher_no"]
+			if not new_gle["remarks"]:
+				new_gle["remarks"] = _("On cancellation of ") + new_gle["voucher_no"]
+
 			new_gle["is_cancelled"] = 1
 
 			if not new_gle.get("accounting_journal"):

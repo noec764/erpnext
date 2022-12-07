@@ -9,10 +9,6 @@ from frappe.model.document import Document
 from frappe.utils import add_days, add_years, cstr, getdate
 
 
-class FiscalYearIncorrectDate(frappe.ValidationError):
-	pass
-
-
 class FiscalYear(Document):
 	@frappe.whitelist()
 	def set_as_default(self):
@@ -53,18 +49,14 @@ class FiscalYear(Document):
 					)
 
 	def validate_dates(self):
-		if getdate(self.year_start_date) > getdate(self.year_end_date):
-			frappe.throw(
-				_("Fiscal Year Start Date should be one year earlier than Fiscal Year End Date"),
-				FiscalYearIncorrectDate,
-			)
+		self.validate_from_to_dates("year_start_date", "year_end_date")
 
 		date = getdate(self.year_start_date) + relativedelta(years=1) - relativedelta(days=1)
 
 		if getdate(self.year_end_date) != date:
 			frappe.throw(
 				_("Fiscal Year End Date should be one year after Fiscal Year Start Date"),
-				FiscalYearIncorrectDate,
+				frappe.exceptions.InvalidDates,
 			)
 
 	def on_update(self):
@@ -164,5 +156,6 @@ def auto_create_fiscal_year():
 
 
 def get_from_and_to_date(fiscal_year):
-	fields = ["year_start_date as from_date", "year_end_date as to_date"]
-	return frappe.get_cached_value("Fiscal Year", fiscal_year, fields, as_dict=1)
+	fields = ["year_start_date", "year_end_date"]
+	cached_results = frappe.get_cached_value("Fiscal Year", fiscal_year, fields, as_dict=1)
+	return dict(from_date=cached_results.year_start_date, to_date=cached_results.year_end_date)
