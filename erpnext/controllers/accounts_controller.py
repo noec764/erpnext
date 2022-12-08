@@ -1403,8 +1403,8 @@ class AccountsController(TransactionBase):
 				advance_query = advance_query.where(
 					((ple.against_voucher_type == self.doctype) & (ple.against_voucher_no == self.name))
 					| (
-						ple.against_voucher_type
-						== "Sales Invoice" & (ple.against_voucher_no.isin(down_payment_invoices[0]))
+						(ple.against_voucher_type == "Sales Invoice")
+						& (ple.against_voucher_no.isin(down_payment_invoices[0]))
 					)
 				)
 			else:
