@@ -1,12 +1,13 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-
+import io
 import re
+import zipfile
 
 import frappe
 from frappe import _
-from frappe.utils import format_datetime
+from frappe.utils import cstr, format_date, format_datetime, get_datetime, sbool
 
 
 def execute(filters=None):
@@ -44,24 +45,31 @@ def set_account_currency(filters):
 
 def get_columns(filters):
 	columns = [
-		"JournalCode" + "::90",
-		"JournalLib" + "::90",
-		"EcritureNum" + ":Dynamic Link:90",
-		"EcritureDate" + "::90",
-		"CompteNum" + ":Link/Account:100",
-		"CompteLib" + ":Link/Account:200",
-		"CompAuxNum" + "::90",
-		"CompAuxLib" + "::90",
-		"PieceRef" + "::90",
-		"PieceDate" + "::90",
-		"EcritureLib" + "::90",
-		"Debit" + "::90",
-		"Credit" + "::90",
-		"EcritureLet" + "::90",
-		"DateLet" + "::90",
-		"ValidDate" + "::90",
-		"Montantdevise" + "::90",
-		"Idevise" + "::90",
+		{"label": "JournalCode", "fieldname": "JournalCode", "width": 90},
+		{"label": "JournalLib", "fieldname": "JournalLib", "width": 90},
+		{"label": "EcritureNum", "fieldname": "EcritureNum", "width": 90},
+		{"label": "EcritureDate", "fieldname": "EcritureDate", "width": 90},
+		{"label": "CompteNum", "fieldname": "CompteNum", "width": 90},
+		{"label": "CompteLib", "fieldname": "CompteLib", "width": 90},
+		{"label": "CompAuxNum", "fieldname": "CompAuxNum", "width": 100},
+		{"label": "CompAuxLib", "fieldname": "CompAuxLib", "width": 200},
+		{"label": "PieceRefType", "fieldname": "PieceRefType", "width": 90, "hidden": 1},
+		{
+			"label": "PieceRef",
+			"fieldname": "PieceRef",
+			"width": 90,
+			"fieldtype": "Dynamic Link",
+			"options": "PieceRefType",
+		},
+		{"label": "PieceDate", "fieldname": "PieceDate", "width": 90},
+		{"label": "EcritureLib", "fieldname": "EcritureLib", "width": 90},
+		{"label": "Debit", "fieldname": "Debit", "width": 90},
+		{"label": "Credit", "fieldname": "Credit", "width": 90},
+		{"label": "EcritureLet", "fieldname": "EcritureLet", "width": 90},
+		{"label": "DateLet", "fieldname": "DateLet", "width": 90},
+		{"label": "ValidDate", "fieldname": "ValidDate", "width": 90},
+		{"label": "Montantdevise", "fieldname": "Montantdevise", "width": 90},
+		{"label": "Idevise", "fieldname": "Idevise", "width": 90},
 	]
 
 	return columns
@@ -176,6 +184,7 @@ def get_result_as_list(data, filters):
 		ValidDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
 		PieceRef = d.get("voucher_no") if d.get("voucher_no") else "Sans Reference"
+		PieceRefType = d.get("voucher_type") or "Sans Reference"
 
 		# EcritureLib is the reference title unless it is an opening entry
 		if d.get("is_opening") == "Yes":
@@ -212,26 +221,27 @@ def get_result_as_list(data, filters):
 				else "{:.2f}".format(d.get("creditCurr")).replace(".", ",")
 			)
 
-		row = [
-			JournalCode,
-			journals.get(JournalCode),
-			EcritureNum,
-			EcritureDate,
-			CompteNum,
-			CompteLib,
-			CompAuxNum,
-			CompAuxLib,
-			PieceRef,
-			PieceDate,
-			EcritureLib,
-			debit,
-			credit,
-			EcritureLet,
-			DateLet or "",
-			ValidDate,
-			Montantdevise,
-			Idevise if Idevise != company_currency else None,
-		]
+		row = {
+			"JournalCode": JournalCode,
+			"JournalLib": journals.get(JournalCode),
+			"EcritureNum": EcritureNum,
+			"EcritureDate": EcritureDate,
+			"CompteNum": CompteNum,
+			"CompteLib": CompteLib,
+			"CompAuxNum": CompAuxNum,
+			"CompAuxLib": CompAuxLib,
+			"PieceRefType": PieceRefType,
+			"PieceRef": PieceRef,
+			"PieceDate": PieceDate,
+			"EcritureLib": EcritureLib,
+			"Debit": debit,
+			"Credit": credit,
+			"EcritureLet": EcritureLet,
+			"DateLet": DateLet or "",
+			"ValidDate": ValidDate,
+			"Montantdevise": Montantdevise,
+			"Idevise": Idevise if Idevise != company_currency else None,
+		}
 
 		result.append(row)
 
@@ -264,3 +274,97 @@ def get_date_let(d, data):
 			return format_datetime(max([x.get("posting_date") for x in let_vouchers]), "yyyyMMdd")
 
 	return format_datetime(max(let_dates), "yyyyMMdd") if len(let_dates) > 1 else None
+
+
+@frappe.whitelist()
+def export_report(filters, with_files=False):
+	from frappe.utils.csvutils import to_csv
+	from PyPDF2 import PdfMerger, PdfReader
+
+	filters = frappe._dict(frappe.parse_json(filters))
+	with_files = sbool(with_files)
+
+	siren = frappe.db.get_value("Company", filters.company, "siren_number")
+	if not siren:
+		frappe.msgprint(_("Please register the SIREN number in the company information file"))
+
+	year_end_date = frappe.db.get_value("Fiscal Year", filters.fiscal_year, "year_end_date")
+	title = f"{siren}FEC{format_date(year_end_date, 'YYYYMMDD')}.txt"
+	report = execute(filters=filters)
+	if not report:
+		return
+
+	prepared_values = []
+	header_row = []
+	for header in report[0]:
+		if header.get("fieldname") != "PieceRefType":
+			header_row.append(header.get("label"))
+
+	prepared_values.append(header_row)
+	for line in report[1]:
+		prepared_line = line.copy()
+		prepared_line.pop("PieceRefType")
+		prepared_values.append(prepared_line.values())
+
+	fec_csv_file = cstr(to_csv(prepared_values, quoting="QUOTE_MINIMAL", delimiter="\t"))
+
+	if not with_files:
+		frappe.response["result"] = fec_csv_file
+		frappe.response["doctype"] = title
+		frappe.response["type"] = "csv"
+
+	else:
+		files = [{"file_name": title, "content": fec_csv_file}]
+
+		references_added = []
+		for line in report[1]:
+			if (
+				line.get("PieceRef")
+				and line.get("PieceRef") not in references_added
+				and line.get("PieceRef") != "Sans Reference"
+				and line.get("PieceRefType") in ["Sales Invoice", "Purchase Invoice", "Expense Claim"]
+			):
+				attached_files = frappe.get_all(
+					"File",
+					filters={
+						"attached_to_doctype": line.get("PieceRefType"),
+						"attached_to_name": line.get("PieceRef"),
+					},
+					fields=["name", "file_name", "file_url"],
+				)
+
+				merger = PdfMerger()
+				for attached_file in attached_files:
+					# if attached_file.file_name == "Facture_FR45923584.pdf":
+					# 	print(line.get("PieceRef"), attached_file)
+					if attached_file.file_name.endswith(".pdf"):
+						filedoc = frappe.get_doc("File", attached_file.name)
+						try:
+							content = io.BytesIO(filedoc.get_content())
+							merger.append(PdfReader(content))
+						except Exception:
+							continue
+
+				if merger.pages:
+					merged_pdf = io.BytesIO()
+					merger.write(merged_pdf)
+
+					merger.close()
+					merged_pdf.seek(0)
+
+					files.append({"file_name": f'{line.get("PieceRef")}.pdf', "content": merged_pdf.read()})
+
+				references_added.append(line.get("PieceRef"))
+
+		frappe.response["filename"] = f'FEC+Pieces_{get_datetime().strftime("%Y%m%d_%H%M%S")}.zip'
+		frappe.response["filecontent"] = zip_files(files)
+		frappe.response["type"] = "download"
+
+
+def zip_files(files):
+	zip_file = io.BytesIO()
+	zf = zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED)
+	for _file in files:
+		zf.writestr(_file["file_name"], _file["content"])
+	zf.close()
+	return zip_file.getvalue()
