@@ -6,7 +6,7 @@ import json
 
 import frappe
 import frappe.defaults
-from frappe import _, msgprint
+from frappe import _, msgprint, qb
 from frappe.contacts.address_and_contact import (
 	delete_contact_and_address,
 	load_address_and_contact,
@@ -792,12 +792,15 @@ def get_customer_primary_contact(doctype, txt, searchfield, start, page_len, fil
 # TODO: Refactor since it has been removed from ERPNext
 def get_customer_primary_address(doctype, txt, searchfield, start, page_len, filters):
 	customer = filters.get("customer")
-	return frappe.db.sql(
-		"""
-		select `tabAddress`.name from `tabAddress`, `tabDynamic Link`
-			where `tabAddress`.name = `tabDynamic Link`.parent and `tabDynamic Link`.link_name = %(customer)s
-			and `tabDynamic Link`.link_doctype = 'Customer'
-			and `tabAddress`.name like %(txt)s
-		""",
-		{"customer": customer, "txt": "%%%s%%" % txt},
+
+	con = qb.DocType("Contact")
+	dlink = qb.DocType("Dynamic Link")
+
+	return (
+		qb.from_(con)
+		.join(dlink)
+		.on(con.name == dlink.parent)
+		.select(con.name, con.full_name, con.email_id)
+		.where((dlink.link_name == customer) & (con.name.like(f"%{txt}%")))
+		.run()
 	)
