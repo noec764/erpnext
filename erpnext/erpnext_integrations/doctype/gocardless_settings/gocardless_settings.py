@@ -10,7 +10,6 @@ from frappe import _
 from frappe.integrations.utils import PaymentGatewayController
 from frappe.utils import call_hook_method, cint, flt, get_url
 from gocardless_pro import errors
-from payments.utils import create_payment_gateway
 
 from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (
 	GoCardlessCustomers,
@@ -21,6 +20,7 @@ from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events imp
 	GoCardlessMandateWebhookHandler,
 	GoCardlessPaymentWebhookHandler,
 )
+from erpnext.utilities import payment_app_import_guard
 
 
 class GoCardlessSettings(PaymentGatewayController):
@@ -46,6 +46,9 @@ class GoCardlessSettings(PaymentGatewayController):
 			frappe.throw(str(e))
 
 	def on_update(self):
+		with payment_app_import_guard():
+			from payments.utils import create_payment_gateway
+
 		create_payment_gateway(
 			"GoCardless-" + self.gateway_name, settings="GoCardLess Settings", controller=self.gateway_name
 		)

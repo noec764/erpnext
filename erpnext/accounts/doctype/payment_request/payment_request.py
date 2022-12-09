@@ -10,7 +10,6 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, get_url, nowdate
 from frappe.utils.background_jobs import enqueue
-from payments.utils import get_payment_gateway_controller
 
 from erpnext.accounts.doctype.payment_entry.payment_entry import (
 	get_company_defaults,
@@ -24,6 +23,14 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import get_account_currency
+from erpnext.utilities import payment_app_import_guard
+
+
+def _get_payment_gateway_controller(*args, **kwargs):
+	with payment_app_import_guard():
+		from payments.utils import get_payment_gateway_controller
+
+	return get_payment_gateway_controller(*args, **kwargs)
 
 
 class PaymentRequest(Document):
@@ -185,7 +192,7 @@ class PaymentRequest(Document):
 
 	def check_immediate_payment_for_gateway(self, gateway):
 		"""Returns a boolean"""
-		controller = get_payment_gateway_controller(gateway)
+		controller = _get_payment_gateway_controller(gateway)
 		if hasattr(controller, "can_make_immediate_payment"):
 			return controller.can_make_immediate_payment(self)
 
@@ -199,7 +206,7 @@ class PaymentRequest(Document):
 		return self.get_immediate_payment_for_gateway(self.payment_gateway)
 
 	def get_immediate_payment_for_gateway(self, gateway):
-		controller = get_payment_gateway_controller(gateway)
+		controller = _get_payment_gateway_controller(gateway)
 		if hasattr(controller, "immediate_payment_processing"):
 			result = controller.immediate_payment_processing(self)
 			if result:
@@ -223,7 +230,7 @@ class PaymentRequest(Document):
 		)
 		data.update(frappe.db.get_value("Customer", data.customer, "customer_name", as_dict=1))
 
-		controller = get_payment_gateway_controller(payment_gateway)
+		controller = _get_payment_gateway_controller(payment_gateway)
 		controller.validate_transaction_currency(self.currency)
 
 		if hasattr(controller, "validate_minimum_transaction_amount"):
