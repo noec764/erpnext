@@ -92,6 +92,7 @@ class SalesInvoice(SellingController):
 	def validate(self):
 		super(SalesInvoice, self).validate()
 		self.validate_auto_set_posting_time()
+		self.validate_posting_datetime_chronology()
 
 		if not self.is_pos:
 			self.so_dn_required()

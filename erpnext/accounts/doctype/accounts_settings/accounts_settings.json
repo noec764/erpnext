@@ -9,6 +9,7 @@
  "field_order": [
   "invoice_and_billing_tab",
   "mandatory_accounting_journal",
+  "validate_posting_date_chronology_in_sales_invoices",
   "column_break_3",
   "do_not_merge_similar_entries",
   "enable_features_section",
@@ -367,6 +368,12 @@
    "fieldname": "do_not_merge_similar_entries",
    "fieldtype": "Check",
    "label": "Do not merge similar accounting entries"
+  },
+  {
+   "default": "0",
+   "fieldname": "validate_posting_date_chronology_in_sales_invoices",
+   "fieldtype": "Check",
+   "label": "Validate posting date chronology in sales invoices"
   }
  ],
  "icon": "icon-cog",
@@ -374,7 +381,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-12-06 09:13:38.870368",
+ "modified": "2022-12-14 09:28:56.627727",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",

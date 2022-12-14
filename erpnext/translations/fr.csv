@@ -12877,3 +12877,5 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 ← Back to upload files,← Retour au téléchargement de fichiers,
 Price not available,Prix non disponible,
 Do not merge similar accounting entries,Ne pas fusionner les écritures liées au même compte,
+Please select a posting date and time after {0},Veuillez sélectionner une date de comptabilisation après le {0},
+Validate posting date chronology in sales invoices,Valider la chronologie des dates dans les factures de vente,
