@@ -1141,7 +1141,7 @@ class SalesInvoice(SellingController):
 								else flt(amount, tax.precision("tax_amount_after_discount_amount"))
 							),
 							"cost_center": tax.cost_center,
-							"remarks": f'{tax.description} / {_("Customer")}: {self.customer}',
+							"remarks": tax.get("remarks") or f'{tax.description} / {_("Customer")}: {self.customer}',
 						},
 						account_currency,
 						item=tax,
