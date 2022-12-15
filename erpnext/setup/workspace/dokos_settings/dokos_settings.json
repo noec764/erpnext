@@ -1,7 +1,7 @@
 {
  "charts": [],
  "color": "#6195ff",
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Support Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"E Commerce Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Domain Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"CRM Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Manufacturing Settings\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Global Defaults\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Naming Settings\",\"col\":4}}]",
+ "content": "[{\"id\":\"IEfLzX5vx5\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"EsdnflVH4g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects Settings\",\"col\":4}},{\"id\":\"pnDt7CBRxx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Settings\",\"col\":4}},{\"id\":\"-gHjJ5HgJg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Settings\",\"col\":4}},{\"id\":\"__ZG3Wx4Dn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Settings\",\"col\":4}},{\"id\":\"g67jg8Dt4d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Settings\",\"col\":4}},{\"id\":\"N93xnVpbLD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":4}},{\"id\":\"YEQ9DaIl2r\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Support Settings\",\"col\":4}},{\"id\":\"lGpRvgj03t\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"E Commerce Settings\",\"col\":4}},{\"id\":\"ujGbmNMXXS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":4}},{\"id\":\"ZTSlIDN_WY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Domain Settings\",\"col\":4}},{\"id\":\"B06hFCDJVF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"CRM Settings\",\"col\":4}},{\"id\":\"CC7h4Loe9n\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Manufacturing Settings\",\"col\":4}},{\"id\":\"lGqWmM5Z5M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Global Defaults\",\"col\":4}}]",
  "creation": "2020-03-12 14:47:51.166455",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -12,7 +12,7 @@
  "is_standard": 1,
  "label": "Dokos Settings",
  "links": [],
- "modified": "2022-07-01 13:55:49.507356",
+ "modified": "2022-12-15 09:22:56.595352",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Dokos Settings",
@@ -27,15 +27,6 @@
    "icon": "project",
    "label": "Projects Settings",
    "link_to": "Projects Settings",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "icon": "dot-horizontal",
-   "label": "Document Naming Settings",
-   "link_to": "Document Naming Settings",
    "type": "DocType"
   },
   {
