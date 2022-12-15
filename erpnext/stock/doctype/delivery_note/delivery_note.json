@@ -78,6 +78,7 @@
      "column_break_39",
      "shipping_rule",
      "incoterm",
+     "named_place",
      "section_break_41",
      "taxes_and_charges",
      "taxes",
@@ -1317,12 +1318,18 @@
          "fieldtype": "Link",
          "label": "Incoterm",
          "options": "Incoterm"
+        },
+        {
+         "depends_on": "incoterm",
+         "fieldname": "named_place",
+         "fieldtype": "Data",
+         "label": "Named Place"
        }
     ],
     "icon": "fa fa-truck",
     "idx": 146,
     "is_submittable": 1,
-    "modified": "2022-11-17 17:22:42.860790",
+    "modified": "2022-12-12 18:38:53.067799",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Delivery Note",

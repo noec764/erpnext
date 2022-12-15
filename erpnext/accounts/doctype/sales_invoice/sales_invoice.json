@@ -86,11 +86,12 @@
   "total",
   "net_total",
   "taxes_section",
+  "tax_category",
   "taxes_and_charges",
   "column_break_38",
   "shipping_rule",
   "incoterm",
-  "tax_category",
+  "named_place",
   "section_break_40",
   "taxes",
   "sec_tax_breakup",
@@ -1714,6 +1715,12 @@
  "fieldtype": "Link",
  "label": "Incoterm",
  "options": "Incoterm"
+},
+{
+ "depends_on": "incoterm",
+ "fieldname": "named_place",
+ "fieldtype": "Data",
+ "label": "Named Place"
   }
  ],
  "icon": "fa fa-file-text",
@@ -1728,7 +1735,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2022-11-17 17:17:10.883487",
+ "modified": "2022-12-12 18:34:33.409895",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
