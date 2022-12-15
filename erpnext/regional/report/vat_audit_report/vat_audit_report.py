@@ -49,9 +49,13 @@ class VATAuditReport(object):
 		)
 		if not self.sa_vat_accounts and not frappe.flags.in_test and not frappe.flags.in_migrate:
 			link_to_settings = get_link_to_form(
-				"South Africa VAT Settings", "", label="South Africa VAT Settings"
+				"South Africa VAT Settings", "", label=_("South Africa VAT Settings")
 			)
-			frappe.throw(_("Please set VAT Accounts in {0}").format(link_to_settings))
+			frappe.throw(
+				_("This report is specific to South Africa. Please set VAT Accounts in {0}").format(
+					link_to_settings
+				)
+			)
 
 	def get_invoice_data(self, doctype):
 		conditions = self.get_conditions()
