@@ -607,6 +607,8 @@ class TestPaymentReconciliation(FrappeTestCase):
 		si.cost_center = self.main_cc.name
 		si.submit()
 		pr = get_payment_entry(si.doctype, si.name)
+		pr.reference_no = "Conrad Dec 22"
+		pr.reference_date = "2022-12-31"
 		pr.cost_center = self.sub_cc.name
 		pr = pr.save().submit()
 
