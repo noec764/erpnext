@@ -52,6 +52,7 @@ def make_packing_list(doc):
 
 	if parent_items_price:
 		set_product_bundle_rate_amount(doc, parent_items_price)  # set price in bundle item
+		doc.calculate_taxes_and_totals()
 
 
 def is_product_bundle(item_code: str) -> bool:

@@ -868,12 +868,9 @@ class SalesInvoice(SellingController):
 			d.projected_qty = bin and flt(bin[0]["projected_qty"]) or 0
 
 	def update_packing_list(self):
-		if cint(self.update_stock) == 1:
-			from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
+		from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
-			make_packing_list(self)
-		else:
-			self.set("packed_items", [])
+		make_packing_list(self)
 
 	def set_billing_hours_and_amount(self):
 		if not self.project:
