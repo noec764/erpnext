@@ -1,11 +1,12 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+import datetime
 
 import frappe
 import frappe.share
 from frappe import _
-from frappe.utils import cint, flt, get_time, now_datetime
+from frappe.utils import cint, flt, format_datetime, get_datetime, get_time, now_datetime
 
 from erpnext.controllers.status_updater import StatusUpdater
 
@@ -29,6 +30,32 @@ class TransactionBase(StatusUpdater):
 				get_time(self.posting_time)
 			except ValueError:
 				frappe.throw(_("Invalid Posting Time"))
+
+	def validate_posting_datetime_chronology(self):
+		if not frappe.flags.in_import and cint(
+			frappe.get_cached_value(
+				"Accounts Settings", "Accounts Settings", "validate_posting_date_chronology_in_sales_invoices"
+			)
+		):
+			previous_invoice = frappe.get_all(
+				"Sales Invoice",
+				filters={"naming_series": self.naming_series},
+				fields=["name", "posting_date", "posting_time"],
+				order_by="name desc",
+				limit=1,
+			)
+
+			if previous_invoice:
+				previous_posting_datetime = datetime.datetime.combine(
+					previous_invoice[0].posting_date, get_time(previous_invoice[0].posting_time)
+				)
+				current_invoice_datetime = get_datetime(self.posting_date + " " + self.posting_time)
+				if previous_posting_datetime >= current_invoice_datetime:
+					frappe.throw(
+						_("Please select a posting date and time after {0}").format(
+							format_datetime(previous_posting_datetime)
+						)
+					)
 
 	def validate_uom_is_integer(self, uom_field, qty_fields):
 		validate_uom_is_integer(self, uom_field, qty_fields)

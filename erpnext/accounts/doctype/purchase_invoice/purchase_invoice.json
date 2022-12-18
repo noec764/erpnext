@@ -81,9 +81,10 @@
   "base_tax_withholding_net_total",
   "taxes_section",
   "tax_category",
-  "column_break_49",
   "shipping_rule",
+  "column_break_49",
   "incoterm",
+  "named_place",
   "section_break_51",
   "taxes_and_charges",
   "taxes",
@@ -1504,6 +1505,12 @@
    "fieldtype": "Link",
    "label": "Incoterm",
    "options": "Incoterm"
+  },
+  {
+   "depends_on": "incoterm",
+   "fieldname": "named_place",
+   "fieldtype": "Data",
+   "label": "Named Place"
    }
  ],
  "icon": "fa fa-file-text",
@@ -1511,7 +1518,7 @@
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-25 12:44:29.935567",
+ "modified": "2022-12-12 18:37:38.142688",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",

@@ -75,6 +75,7 @@
   "column_break_38",
   "shipping_rule",
   "incoterm",
+  "named_place",
   "section_break_40",
   "taxes_and_charges",
   "taxes",
@@ -1286,13 +1287,19 @@
  "fieldtype": "Link",
  "label": "Incoterm",
  "options": "Incoterm"
+},
+{
+ "depends_on": "incoterm",
+ "fieldname": "named_place",
+ "fieldtype": "Data",
+ "label": "Named Place"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-17 17:22:00.413878",
+ "modified": "2022-12-12 18:34:00.681780",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

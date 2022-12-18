@@ -8,9 +8,9 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def setup(company=None, patch=True):
 	setup_company_independent_fixtures()
-	set_accounting_journal_as_mandatory()
 	if not patch:
 		make_fixtures(company)
+		set_accounting_journal_as_mandatory()
 
 
 def setup_company_independent_fixtures():
@@ -31,7 +31,7 @@ def make_custom_fields(update=True):
 			fieldname="tax_rate",
 			label="Tax Rate",
 			fieldtype="Float",
-			insert_after="description",
+			insert_after="tax_details_section",
 			print_hide=1,
 			read_only=1,
 		),

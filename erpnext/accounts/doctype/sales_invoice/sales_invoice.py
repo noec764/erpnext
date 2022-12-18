@@ -92,6 +92,7 @@ class SalesInvoice(SellingController):
 	def validate(self):
 		super(SalesInvoice, self).validate()
 		self.validate_auto_set_posting_time()
+		self.validate_posting_datetime_chronology()
 
 		if not self.is_pos:
 			self.so_dn_required()
@@ -867,12 +868,9 @@ class SalesInvoice(SellingController):
 			d.projected_qty = bin and flt(bin[0]["projected_qty"]) or 0
 
 	def update_packing_list(self):
-		if cint(self.update_stock) == 1:
-			from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
+		from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
-			make_packing_list(self)
-		else:
-			self.set("packed_items", [])
+		make_packing_list(self)
 
 	def set_billing_hours_and_amount(self):
 		if not self.project:
@@ -1141,7 +1139,7 @@ class SalesInvoice(SellingController):
 								else flt(amount, tax.precision("tax_amount_after_discount_amount"))
 							),
 							"cost_center": tax.cost_center,
-							"remarks": f'{tax.description} / {_("Customer")}: {self.customer}',
+							"remarks": tax.get("remarks") or f'{tax.description} / {_("Customer")}: {self.customer}',
 						},
 						account_currency,
 						item=tax,

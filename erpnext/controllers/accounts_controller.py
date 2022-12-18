@@ -194,7 +194,7 @@ class AccountsController(TransactionBase):
 
 		validate_regional(self)
 
-		if self.doctype != "Material Request":
+		if self.doctype != "Material Request" and not self.ignore_pricing_rule:
 			apply_pricing_rule_on_transaction(self)
 
 	def validate_deferred_income_expense_account(self):

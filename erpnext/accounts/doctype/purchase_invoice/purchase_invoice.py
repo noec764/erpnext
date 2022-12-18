@@ -1201,7 +1201,7 @@ class PurchaseInvoice(BuyingController):
 							if account_currency == self.company_currency
 							else amount,
 							"cost_center": tax.cost_center,
-							"remarks": f'{tax.description} / {_("Supplier")}: {self.supplier}',
+							"remarks": tax.get("remarks") or f'{tax.description} / {_("Supplier")}: {self.supplier}',
 						},
 						account_currency,
 						item=tax,

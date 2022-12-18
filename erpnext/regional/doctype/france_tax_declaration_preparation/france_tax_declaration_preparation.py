@@ -28,8 +28,11 @@ class FranceTaxDeclarationPreparation(Document):
 			"tax_amount": 0.0,
 			"tax_details": defaultdict(lambda: defaultdict(float)),
 		}
+
 		for gl_entry in gl_entries:
+			voucher_gls = []
 			gl_entry["tax_rate"] = deductible_accounts.get(gl_entry.account)
+			gl_entry["tax_amount"] = flt(gl_entry.get("debit")) - flt(gl_entry.get("credit"))
 			linked_entries = self.get_linked_entries(gl_entry.accounting_entry_number)
 
 			if gl_entry.voucher_type in ("Sales Invoice", "Purchase Invoice"):
@@ -39,28 +42,34 @@ class FranceTaxDeclarationPreparation(Document):
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate")):
 						if row.get("account") == gl_entry.account:
-							gl_entry["taxable_amount"] += flt(row.get("taxable_amount"))
+							gl_entry_line = gl_entry.copy()
+							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
+							gl_entry_line["tax_amount"] = flt(row.get("tax_amount"))
+							voucher_gls.append(gl_entry_line)
 			elif len(
 				[e for e in linked_entries if e.account in list(deductible_accounts.keys())]
 			) == 1 and [e for e in linked_entries if e.account in expense_accounts]:
 				gl_entry["taxable_amount"] = sum(
 					flt(e.debit) - flt(e.credit) for e in linked_entries if e.account in expense_accounts
 				)
+				voucher_gls.append(gl_entry)
 			else:
 				continue
 
-			taxable_amount = flt(gl_entry.get("taxable_amount"))
-			tax_amount = flt(gl_entry.get("debit")) - flt(gl_entry.get("credit"))
-			output["taxable_amount"] += taxable_amount
-			output["tax_amount"] += tax_amount
-			output["gl_entries"].append(gl_entry)
-			output["tax_details"][gl_entry["account"]]["taxable_amount"] += taxable_amount
-			output["tax_details"][gl_entry["account"]]["tax_amount"] += tax_amount
+			for gl in voucher_gls:
+				taxable_amount = flt(gl.get("taxable_amount"))
+				tax_amount = flt(gl.get("tax_amount"))
+				output["taxable_amount"] += taxable_amount
+				output["tax_amount"] += tax_amount
+				output["gl_entries"].append(gl)
+				output["tax_details"][gl["account"]]["taxable_amount"] += taxable_amount
+				output["tax_details"][gl["account"]]["tax_amount"] += tax_amount
 
 		self.set("deductible_vat", [])
 
 		for gl_entry in output["gl_entries"]:
-			gl_entry["vat_amount"] = flt(gl_entry.get("debit")) - flt(gl_entry.get("credit"))
+			gl_entry["vat_amount"] = gl_entry["tax_amount"]
 			row = self.append("deductible_vat", {})
 			row.update(gl_entry)
 
@@ -88,38 +97,46 @@ class FranceTaxDeclarationPreparation(Document):
 			"tax_details": defaultdict(lambda: defaultdict(float)),
 		}
 		for gl_entry in gl_entries:
+			voucher_gls = []
 			gl_entry["tax_rate"] = collection_accounts.get(gl_entry.account)
+			gl_entry["tax_amount"] = flt(gl_entry.get("credit")) - flt(gl_entry.get("debit"))
 			linked_entries = self.get_linked_entries(gl_entry.accounting_entry_number)
 
-			if len([e for e in linked_entries if e.account in list(collection_accounts.keys())]) == 1 and [
-				e for e in linked_entries if e.account in income_accounts
-			]:
-				gl_entry["taxable_amount"] = sum(
-					flt(e.credit) - flt(e.debit) for e in linked_entries if e.account in income_accounts
-				)
-			elif gl_entry.voucher_type in ("Sales Invoice", "Purchase Invoice"):
+			if gl_entry.voucher_type in ("Sales Invoice", "Purchase Invoice"):
 				if "taxable_amount" not in gl_entry:
 					gl_entry["taxable_amount"] = 0.0
 				doc = frappe.get_doc(gl_entry.voucher_type, gl_entry.voucher_no)
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate")):
 						if row.get("account") == gl_entry.account:
-							gl_entry["taxable_amount"] += flt(row.get("taxable_amount"))
+							gl_entry_line = gl_entry.copy()
+							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
+							gl_entry_line["tax_amount"] = flt(row.get("tax_amount"))
+							voucher_gls.append(gl_entry_line)
+			elif len(
+				[e for e in linked_entries if e.account in list(collection_accounts.keys())]
+			) == 1 and [e for e in linked_entries if e.account in income_accounts]:
+				gl_entry["taxable_amount"] = sum(
+					flt(e.credit) - flt(e.debit) for e in linked_entries if e.account in income_accounts
+				)
+				voucher_gls.append(gl_entry)
 			else:
 				continue
 
-			taxable_amount = flt(gl_entry.get("taxable_amount"))
-			tax_amount = flt(gl_entry.get("credit")) - flt(gl_entry.get("debit"))
-			output["taxable_amount"] += taxable_amount
-			output["tax_amount"] += tax_amount
-			output["gl_entries"].append(gl_entry)
-			output["tax_details"][gl_entry["account"]]["taxable_amount"] += taxable_amount
-			output["tax_details"][gl_entry["account"]]["tax_amount"] += tax_amount
+			for gl in voucher_gls:
+				taxable_amount = flt(gl.get("taxable_amount"))
+				tax_amount = flt(gl.get("tax_amount"))
+				output["taxable_amount"] += taxable_amount
+				output["tax_amount"] += tax_amount
+				output["gl_entries"].append(gl)
+				output["tax_details"][gl["account"]]["taxable_amount"] += taxable_amount
+				output["tax_details"][gl["account"]]["tax_amount"] += tax_amount
 
 		self.set("collected_vat", [])
 
 		for gl_entry in output["gl_entries"]:
-			gl_entry["vat_amount"] = flt(gl_entry.get("credit")) - flt(gl_entry.get("debit"))
+			gl_entry["vat_amount"] = flt(gl_entry.get("tax_amount"))
 			row = self.append("collected_vat", {})
 			row.update(gl_entry)
 
@@ -180,7 +197,7 @@ class FranceTaxDeclarationPreparation(Document):
 				gl_entry.fiscal_year,
 			)
 			.orderby(gl_entry.posting_date)
-		).run(as_dict=True, debug=True)
+		).run(as_dict=True)
 
 	def get_deductible_accounts(self):
 		return {
