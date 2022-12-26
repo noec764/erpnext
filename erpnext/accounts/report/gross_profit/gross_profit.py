@@ -608,6 +608,8 @@ class GrossProfitGenerator(object):
 				else:
 					return flt(row.qty) * self.get_average_buying_rate(row, item_code)
 
+			return 0.0
+
 	def get_buying_amount(self, row, item_code):
 		# IMP NOTE
 		# stock_ledger_entries should already be filtered by item_code and warehouse and

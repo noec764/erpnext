@@ -111,18 +111,15 @@ class TestSubscription(FrappeTestCase):
 			subscription.process()
 			if getdate(frappe.flags.current_date) < add_months(expected_start, 1):
 				self.assertEqual(subscription.current_invoice_start, expected_start)
-				self.assertEqual(
-					subscription.current_invoice_end,
-					add_days(add_months(subscription.current_invoice_start, 1), -1),
-				)
-				self.assertEqual(subscription.status, "Payable")
-			else:
+			elif getdate(frappe.flags.current_date) < add_months(expected_start, 2):
 				self.assertEqual(subscription.current_invoice_start, add_months(expected_start, 1))
-				self.assertEqual(
-					subscription.current_invoice_end,
-					add_days(add_months(subscription.current_invoice_start, 1), -1),
-				)
-				self.assertEqual(subscription.status, "Payable")
+			else:
+				self.assertEqual(subscription.current_invoice_start, add_months(expected_start, 2))
+			self.assertEqual(
+				subscription.current_invoice_end,
+				add_days(add_months(subscription.current_invoice_start, 1), -1),
+			)
+			self.assertEqual(subscription.status, "Payable")
 
 	def test_invoice_generation(self):
 		subscription = frappe.new_doc("Subscription")

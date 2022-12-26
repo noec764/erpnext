@@ -29,6 +29,10 @@
   "transaction_reference",
   "column_break_17",
   "payment_gateway_account",
+  "accounting_dimensions_section",
+  "cost_center",
+  "dimension_col_break",
+  "project",
   "recipient_and_message",
   "subject",
   "mute_email",
@@ -292,12 +296,34 @@
    "label": "Subscription",
    "options": "Subscription",
    "read_only": 1
+},
+{
+ "collapsible": 1,
+ "fieldname": "accounting_dimensions_section",
+ "fieldtype": "Section Break",
+ "label": "Accounting Dimensions"
+},
+{
+ "fieldname": "cost_center",
+ "fieldtype": "Link",
+ "label": "Cost Center",
+ "options": "Cost Center"
+},
+{
+ "fieldname": "dimension_col_break",
+ "fieldtype": "Column Break"
+},
+{
+ "fieldname": "project",
+ "fieldtype": "Link",
+ "label": "Project",
+ "options": "Project"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-19 18:04:58.315260",
+ "modified": "2022-12-21 16:56:40.115737",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",

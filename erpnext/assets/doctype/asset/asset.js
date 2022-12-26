@@ -241,7 +241,17 @@ frappe.ui.form.on('Asset', {
 					formatted: asset_values.map(d => d?.toFixed(2))
 				}]
 			},
-			type: 'line'
+			type: 'line',
+			tooltipOptions: {
+				formatTooltipY: (d) =>
+					frappe.format(
+						d,
+						{
+							fieldtype: "Currency",
+						},
+						{ only_value: true }
+					),
+			}
 		});
 	},
 
