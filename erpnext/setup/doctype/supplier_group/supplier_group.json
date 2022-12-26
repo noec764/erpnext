@@ -108,7 +108,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2022-11-24 18:33:27.115880",
+ "modified": "2022-12-24 11:16:12.486719",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Supplier Group",
@@ -167,9 +167,12 @@
    "select": 1
   },
   {
+   "email": 1,
+   "print": 1,
    "read": 1,
+   "report": 1,
    "role": "Accounts User",
-   "select": 1
+   "share": 1
   }
  ],
  "show_name_in_global_search": 1,

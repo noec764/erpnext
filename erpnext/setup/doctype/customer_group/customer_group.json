@@ -140,10 +140,11 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2022-03-15 09:32:38.024517",
+ "modified": "2022-12-24 11:15:17.142746",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Customer Group",
+ "naming_rule": "By fieldname",
  "nsm_parent_field": "parent_customer_group",
  "owner": "Administrator",
  "permissions": [
@@ -201,14 +202,18 @@
    "share": 1
   },
   {
+   "email": 1,
+   "print": 1,
    "read": 1,
+   "report": 1,
    "role": "Accounts User",
-   "select": 1
+   "share": 1
   }
  ],
  "quick_entry": 1,
  "search_fields": "parent_customer_group",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
