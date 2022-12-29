@@ -105,6 +105,9 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 				args: args,
 			}).then((r) => {
 				this.render(r.message);
+				if(me.after_refresh) {
+					me.after_refresh();
+				}
 			}
 		);
 	}
