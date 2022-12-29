@@ -76,7 +76,7 @@ class AdjustmentEntry(Document):
 					get_accounting_journal(entry)
 
 				if entry["debit"] or entry["credit"]:
-					make_entry(entry, False, "Yes")
+					make_entry(entry, False, "False")
 
 	def _make_gl_entries(self):
 		from erpnext.accounts.general_ledger import make_gl_entries
@@ -96,6 +96,7 @@ class AdjustmentEntry(Document):
 
 		gl_entries = []
 		for d in self.details:
+			debit_or_credit = d.debit - d.credit
 			gl_entries.append(
 				frappe._dict(
 					{
@@ -103,8 +104,8 @@ class AdjustmentEntry(Document):
 						"fiscal_year": fiscal_year,
 						"account": d.account,
 						"against": d.document_name,
-						"credit": d.debit,
-						"debit": d.credit,
+						"credit": d.posting_amount if debit_or_credit >= 0 else 0.0,
+						"debit": d.posting_amount if debit_or_credit <= 0 else 0.0,
 						"against_voucher_type": d.document_type,
 						"against_voucher": d.document_name,
 						"posting_date": self.posting_date,
@@ -123,8 +124,8 @@ class AdjustmentEntry(Document):
 						"fiscal_year": fiscal_year,
 						"account": self.adjustment_account,
 						"against": d.document_name,
-						"credit": d.credit,
-						"debit": d.debit,
+						"credit": d.posting_amount if debit_or_credit <= 0 else 0.0,
+						"debit": d.posting_amount if debit_or_credit >= 0 else 0.0,
 						"against_voucher_type": d.document_type,
 						"against_voucher": d.document_name,
 						"posting_date": self.posting_date,
@@ -138,7 +139,9 @@ class AdjustmentEntry(Document):
 
 		if gl_entries:
 			try:
-				make_gl_entries(gl_entries, cancel=(self.docstatus == 2), merge_entries=True)
+				make_gl_entries(
+					gl_entries, cancel=(self.docstatus == 2), merge_entries=True, update_outstanding="False"
+				)
 				frappe.db.commit()
 			except Exception:
 				frappe.db.rollback()
