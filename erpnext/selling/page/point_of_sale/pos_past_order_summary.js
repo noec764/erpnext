@@ -152,7 +152,7 @@ erpnext.PointOfSale.PastOrderSummary = class {
 
 	get_payment_html(doc, payment) {
 		return `<div class="summary-row-wrapper payments">
-					<div>${__("payment.mode_of_payment")}</div>
+					<div>${__(payment.mode_of_payment)}</div>
 					<div>${format_currency(payment.amount, doc.currency)}</div>
 				</div>`;
 	}
