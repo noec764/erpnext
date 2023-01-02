@@ -91,6 +91,7 @@ class TestUtils(unittest.TestCase):
 		payment_entry.insert()
 
 		self.assertEqual(payment_entry.difference_amount, -4855.00)
+		payment_entry.reload()
 		payment_entry.references = []
 		payment_entry.submit()
 
