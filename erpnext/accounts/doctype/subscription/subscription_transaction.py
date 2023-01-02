@@ -261,7 +261,10 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 			reference = None
 
 			payment_entry = frappe.db.get_value(
-				"Payment Entry", dict(reference_no=reference), ["remarks", "unallocated_amount"], as_dict=True
+				"Payment Entry",
+				dict(reference_no=reference),
+				["name", "remarks", "unallocated_amount"],
+				as_dict=True,
 			)
 			if payment_entry:
 				invoice.append(
@@ -269,7 +272,7 @@ class SubscriptionInvoiceGenerator(SubscriptionTransactionBase):
 					{
 						"doctype": "Sales Invoice Advance",
 						"reference_type": "Payment Entry",
-						"reference_name": payment_entry,
+						"reference_name": payment_entry.get("name"),
 						"remarks": payment_entry.get("remarks"),
 						"advance_amount": flt(payment_entry.get("unallocated_amount")),
 						"allocated_amount": min(

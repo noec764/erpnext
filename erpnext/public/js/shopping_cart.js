@@ -239,8 +239,8 @@ $.extend(shopping_cart, {
 						fieldname: 'address_type',
 						fieldtype: 'Select',
 						options: [
-							'Billing',
-							'Shipping'
+							{ label: __('Billing'), value: 'Billing' },
+							{ label: __('Shipping'), value: 'Shipping' }
 						],
 						default: 'Shipping',
 						reqd: 1
