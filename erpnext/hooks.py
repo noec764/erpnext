@@ -484,7 +484,6 @@ scheduler_events = {
 		"erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_term_loans",
 		"erpnext.venue.doctype.booking_credit.booking_credit.process_expired_booking_credits",
 		"erpnext.crm.utils.open_leads_opportunities_based_on_todays_event",
-		"erpnext.stock.doctype.stock_entry.stock_entry.audit_incorrect_valuation_entries",
 	],
 	"monthly_long": [
 		"erpnext.accounts.deferred_revenue.process_deferred_accounting",
