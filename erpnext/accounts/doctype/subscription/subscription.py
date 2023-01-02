@@ -108,7 +108,8 @@ class Subscription(Document):
 			frappe.log_error(_("Subscription update error for subscription {0}").format(self.name))
 
 	def generate_sales_order(self):
-		if self.create_sales_order:
+		current_sales_orders = SubscriptionPeriod(self).get_current_documents("Sales Order")
+		if self.create_sales_order and not current_sales_orders:
 			return SubscriptionSalesOrderGenerator(self).create_new_sales_order()
 
 	def generate_invoice(self):
