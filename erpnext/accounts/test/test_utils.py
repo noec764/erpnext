@@ -82,6 +82,7 @@ class TestUtils(unittest.TestCase):
 		purchase_invoice = make_purchase_invoice(
 			item=item, supplier="_Test Supplier USD", currency="USD", conversion_rate=82.32
 		)
+		purchase_invoice.reload()
 		purchase_invoice.submit()
 
 		payment_entry = get_payment_entry(purchase_invoice.doctype, purchase_invoice.name)
