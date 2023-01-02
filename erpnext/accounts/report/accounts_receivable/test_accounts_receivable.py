@@ -3,7 +3,6 @@ import frappe.defaults
 from frappe.tests.utils import FrappeTestCase, change_settings
 from frappe.utils import add_days, flt, getdate, today
 
-from erpnext import get_default_cost_center
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from erpnext.accounts.report.accounts_receivable.accounts_receivable import execute
@@ -183,11 +182,9 @@ class TestAccountsReceivable(FrappeTestCase):
 		err = err.save().submit()
 
 		# Submit JV for ERR
-		jv = frappe.get_doc(err.make_jv_entry())
-		jv = jv.save()
-		for x in jv.accounts:
-			x.cost_center = get_default_cost_center(jv.company)
-		jv.submit()
+		err_journals = err.make_jv_entries()
+		je = frappe.get_doc("Journal Entry", err_journals.get("revaluation_jv"))
+		je = je.submit()
 
 		filters = {
 			"company": company,
@@ -200,7 +197,7 @@ class TestAccountsReceivable(FrappeTestCase):
 		report = execute(filters)
 
 		expected_data_for_err = [0, -5, 0, 5]
-		row = [x for x in report[1] if x.voucher_type == jv.doctype and x.voucher_no == jv.name][0]
+		row = [x for x in report[1] if x.voucher_type == je.doctype and x.voucher_no == je.name][0]
 		self.assertEqual(
 			expected_data_for_err,
 			[
