@@ -87,10 +87,17 @@ class WorkOrder(Document):
 		self.validate_transfer_against()
 		self.validate_operation_time()
 		self.status = self.get_status()
+		self.validate_workstation_type()
 
 		validate_uom_is_integer(self, "stock_uom", ["qty", "produced_qty"])
 
 		self.set_required_items(reset_only_qty=len(self.get("required_items")))
+
+	def validate_workstation_type(self):
+		for row in self.operations:
+			if not row.workstation and not row.workstation_type:
+				msg = f"Row {row.idx}: Workstation or Workstation Type is mandatory for an operation {row.operation}"
+				frappe.throw(_(msg))
 
 	def validate_sales_order(self):
 		if self.sales_order:
@@ -183,7 +190,7 @@ class WorkOrder(Document):
 		# already ordered qty
 		ordered_qty_against_so = frappe.db.sql(
 			"""select sum(qty) from `tabWork Order`
-			where production_item = %s and sales_order = %s and docstatus = 1 and name != %s""",
+			where production_item = %s and sales_order = %s and docstatus < 2 and name != %s""",
 			(self.production_item, self.sales_order, self.name),
 		)[0][0]
 
@@ -278,14 +285,7 @@ class WorkOrder(Document):
 			):
 				continue
 
-			qty = flt(
-				frappe.db.sql(
-					"""select sum(fg_completed_qty)
-				from `tabStock Entry` where work_order=%s and docstatus=1
-				and purpose=%s""",
-					(self.name, purpose),
-				)[0][0]
-			)
+			qty = self.get_transferred_or_manufactured_qty(purpose)
 
 			completed_qty = self.qty + (allowance_percentage / 100 * self.qty)
 			if qty > completed_qty:
@@ -307,26 +307,27 @@ class WorkOrder(Document):
 		if self.production_plan:
 			self.update_production_plan_status()
 
-	def set_process_loss_qty(self):
-		process_loss_qty = flt(
-			frappe.db.sql(
-				"""
-				SELECT sum(qty) FROM `tabStock Entry Detail`
-				WHERE
-					is_process_loss=1
-					AND parent IN (
-						SELECT name FROM `tabStock Entry`
-						WHERE
-							work_order=%s
-							AND purpose='Manufacture'
-							AND docstatus=1
-					)
-			""",
-				(self.name,),
-			)[0][0]
+	def get_transferred_or_manufactured_qty(self, purpose):
+		table = frappe.qb.DocType("Stock Entry")
+		query = (
+			frappe.qb.from_(table)
+			.select(Sum(table.fg_completed_qty))
+			.where((table.work_order == self.name) & (table.docstatus == 1) & (table.purpose == purpose))
 		)
-		if process_loss_qty is not None:
-			self.db_set("process_loss_qty", process_loss_qty)
+
+		return flt(query.run()[0][0])
+
+	def set_process_loss_qty(self):
+		table = frappe.qb.DocType("Stock Entry")
+		process_loss_qty = (
+			frappe.qb.from_(table)
+			.select(Sum(table.process_loss_qty))
+			.where(
+				(table.work_order == self.name) & (table.purpose == "Manufacture") & (table.docstatus == 1)
+			)
+		).run()[0][0]
+
+		self.db_set("process_loss_qty", flt(process_loss_qty))
 
 	def update_production_plan_status(self):
 		production_plan = frappe.get_doc("Production Plan", self.production_plan)
@@ -490,11 +491,6 @@ class WorkOrder(Document):
 
 	def prepare_data_for_job_card(self, row, index, plan_days, enable_capacity_planning):
 		self.set_operation_start_end_time(index, row)
-
-		if not row.workstation:
-			frappe.throw(
-				_("Row {0}: select the workstation against the operation {1}").format(row.idx, row.operation)
-			)
 
 		original_start_time = row.planned_start_time
 		job_card_doc = create_job_card(
@@ -662,6 +658,7 @@ class WorkOrder(Document):
 					"description",
 					"workstation",
 					"idx",
+					"workstation_type",
 					"base_hour_rate as hour_rate",
 					"time_in_mins",
 					"parent as bom",
@@ -1398,6 +1395,7 @@ def create_job_card(work_order, row, enable_capacity_planning=False, auto_create
 	doc.update(
 		{
 			"work_order": work_order.name,
+			"workstation_type": row.get("workstation_type"),
 			"operation": row.get("operation"),
 			"workstation": row.get("workstation"),
 			"posting_date": nowdate(),
