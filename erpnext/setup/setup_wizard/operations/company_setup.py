@@ -49,7 +49,7 @@ def enable_shopping_cart(args):  # nosemgrep
 	).insert()
 
 
-def create_bank_and_bank_account(bank_account_name, account):
+def create_bank_and_bank_account(company_name, bank_account_name, account):
 	bank = frappe.get_doc({"doctype": "Bank", "bank_name": bank_account_name})
 
 	try:
@@ -65,6 +65,7 @@ def create_bank_and_bank_account(bank_account_name, account):
 			"account": account,
 			"is_default": 1,
 			"is_company_account": 1,
+			"company": company_name
 		}
 	)
 

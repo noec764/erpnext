@@ -582,7 +582,7 @@ def create_bank_account(args):
 					update_modified=False,
 				)
 
-			create_bank_and_bank_account(args.bank_account, doc.name)
+			create_bank_and_bank_account(company_name, args.bank_account, doc.name)
 			create_accounting_journals(doc.name, company_name)
 
 			return doc
