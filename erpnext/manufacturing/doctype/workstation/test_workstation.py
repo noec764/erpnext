@@ -1,6 +1,5 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors and Contributors
 # See license.txt
-
 import frappe
 from frappe.test_runner import make_test_records
 from frappe.tests.utils import FrappeTestCase
@@ -108,6 +107,7 @@ def make_workstation(*args, **kwargs):
 		doc = frappe.get_doc({"doctype": "Workstation", "workstation_name": workstation_name})
 		doc.hour_rate_rent = args.get("hour_rate_rent")
 		doc.hour_rate_labour = args.get("hour_rate_labour")
+		doc.workstation_type = args.get("workstation_type")
 		doc.insert()
 
 		return doc
