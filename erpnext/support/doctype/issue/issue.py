@@ -72,8 +72,8 @@ class Issue(Document):
 				"reference_name": self.name,
 			}
 		)
-		communication.ignore_permissions = True
-		communication.ignore_mandatory = True
+		communication.flags.ignore_permissions = True
+		communication.flags.ignore_mandatory = True
 		communication.save()
 
 	@frappe.whitelist()
@@ -174,7 +174,7 @@ def get_issue_list(doctype, txt, filters, limit_start, limit_page_length=20, ord
 		ignore_permissions = True
 
 	return get_list(
-		doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=ignore_permissions
+		doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=ignore_permissions, order_by=order_by
 	)
 
 
