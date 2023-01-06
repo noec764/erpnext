@@ -96,10 +96,15 @@ def get_transaction_list(
 			if doctype == "Quotation":
 				filters.append(("quotation_to", "=", "Customer"))
 				filters.append(("party_name", "in", customers))
+			elif doctype == "Customer":
+				filters.append(("name", "in", customers))
 			else:
 				filters.append(("customer", "in", customers))
 		elif suppliers:
-			filters.append(("supplier", "in", suppliers))
+			if doctype == "Supplier":
+				filters.append(("name", "in", suppliers))
+			else:
+				filters.append(("supplier", "in", suppliers))
 		elif not custom:
 			return []
 
@@ -233,8 +238,8 @@ def get_customers_suppliers(doctype, user):
 
 	customer_field_name = get_customer_field_name(doctype)
 
-	has_customer_field = meta.has_field(customer_field_name)
-	has_supplier_field = meta.has_field("supplier")
+	has_customer_field = meta.has_field(customer_field_name) if doctype != "Customer" else True
+	has_supplier_field = meta.has_field("supplier") if doctype != "Supplier" else True
 
 	if has_common(["Supplier", "Customer"], frappe.get_roles(user)):
 		contacts = frappe.db.sql(
