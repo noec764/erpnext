@@ -276,6 +276,9 @@ class BuyingController(SubcontractingController):
 		if self.doctype not in ("Purchase Receipt", "Purchase Invoice", "Purchase Order"):
 			return
 
+		if not self.is_internal_transfer():
+			return
+
 		ref_doctype_map = {
 			"Purchase Order": "Sales Order Item",
 			"Purchase Receipt": "Delivery Note Item",
@@ -546,7 +549,9 @@ class BuyingController(SubcontractingController):
 			self.process_fixed_asset()
 			self.update_fixed_asset(field)
 
-		if self.doctype in ["Purchase Order", "Purchase Receipt"]:
+		if self.doctype in ["Purchase Order", "Purchase Receipt"] and not frappe.db.get_single_value(
+			"Buying Settings", "disable_last_purchase_rate"
+		):
 			update_last_purchase_rate(self, is_submit=1)
 
 	def on_cancel(self):
@@ -555,7 +560,9 @@ class BuyingController(SubcontractingController):
 		if self.get("is_return"):
 			return
 
-		if self.doctype in ["Purchase Order", "Purchase Receipt"]:
+		if self.doctype in ["Purchase Order", "Purchase Receipt"] and not frappe.db.get_single_value(
+			"Buying Settings", "disable_last_purchase_rate"
+		):
 			update_last_purchase_rate(self, is_submit=0)
 
 		if self.doctype in ["Purchase Receipt", "Purchase Invoice"]:
