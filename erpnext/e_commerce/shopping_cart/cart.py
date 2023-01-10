@@ -193,7 +193,8 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		frappe.flags.mute_messages = True
+		if frappe.conf.show_server_messages_in_cart:
+			frappe.flags.mute_messages = True
 		quotation.save()
 		frappe.flags.mute_messages = False
 	else:
@@ -503,11 +504,11 @@ def set_taxes(quotation, cart_settings):
 		shipping_address=quotation.shipping_address_name,
 		use_for_shopping_cart=1,
 	)
-	#
-	# 	# clear table
+
+	# clear table
 	quotation.set("taxes", [])
-	#
-	# 	# append taxes
+
+	# append taxes
 	quotation.append_taxes_from_master()
 
 
