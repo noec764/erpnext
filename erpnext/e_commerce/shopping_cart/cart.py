@@ -193,7 +193,7 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		if frappe.conf.show_server_messages_in_cart:
+		if not frappe.conf.show_server_messages_in_cart:
 			frappe.flags.mute_messages = True
 		quotation.save()
 		frappe.flags.mute_messages = False
