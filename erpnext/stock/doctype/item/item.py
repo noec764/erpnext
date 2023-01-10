@@ -166,9 +166,6 @@ class Item(Document):
 			return
 
 		if not self.valuation_rate and not self.standard_rate and not self.is_customer_provided_item:
-			self.valuation_rate = self.standard_rate
-
-		if not self.valuation_rate and not self.is_customer_provided_item:
 			frappe.throw(_("Valuation Rate is mandatory if Opening Stock entered"))
 
 		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
