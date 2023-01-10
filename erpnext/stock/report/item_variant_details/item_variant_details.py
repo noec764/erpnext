@@ -16,6 +16,7 @@ def get_data(item):
 	if not item:
 		return []
 	item_dicts = []
+
 	variant_results = frappe.db.get_all(
 		"Item", fields=["name"], filters={"variant_of": ["=", item], "disabled": 0}
 	)
@@ -112,6 +113,8 @@ def get_columns(item):
 		},
 	]
 	columns.extend(additional_columns)
+
+	return columns
 
 
 def get_open_sales_orders_count(variants_list):
