@@ -182,7 +182,7 @@ erpnext.ProductList = class {
 				</div>
 
 				<div class="cart-indicator list-indicator ${item.in_cart ? '' : 'hidden'}">
-					1
+					${ frappe.utils.icon('check', 'xs') }
 				</div>
 
 				<a href="/cart">
