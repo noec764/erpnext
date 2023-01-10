@@ -293,6 +293,7 @@ class ProductQuery:
 					"party_name": customer,
 					"contact_email": frappe.session.user,
 					"order_type": "Shopping Cart",
+					"company": get_shopping_cart_settings().company,  # E Commerce Settings -> overrides eventually (Venue Settings)
 					"docstatus": 0,
 				},
 				order_by="modified desc",
