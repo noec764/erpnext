@@ -3,11 +3,12 @@
 import frappe
 from frappe.utils import floor
 
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 class ProductFiltersBuilder:
 	def __init__(self, item_group=None):
 		if not item_group:
-			self.doc = frappe.get_doc("E Commerce Settings")
+			self.doc = get_shopping_cart_settings()
 		else:
 			self.doc = frappe.get_doc("Item Group", item_group)
 
@@ -53,8 +54,7 @@ class ProductFiltersBuilder:
 						)
 
 				# exclude variants if mentioned in settings
-				if frappe.db.get_single_value("E Commerce Settings", "hide_variants"):
-					item_filters["variant_of"] = ["is", "not set"]
+				if get_shopping_cart_settings().hide_variants:
 
 				# Get link field values attached to published items
 				item_values = frappe.get_all(

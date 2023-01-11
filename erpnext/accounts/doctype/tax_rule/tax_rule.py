@@ -12,6 +12,8 @@ from frappe.utils.nestedset import get_root_of
 
 from erpnext.setup.doctype.customer_group.customer_group import get_parent_customer_groups
 
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
+
 
 class IncorrectCustomerGroup(frappe.ValidationError):
 	pass
@@ -109,7 +111,7 @@ class TaxRule(Document):
 		"""If shopping cart is enabled and no tax rule exists for shopping cart, enable this one"""
 		if (
 			not self.use_for_shopping_cart
-			and cint(frappe.db.get_single_value("E Commerce Settings", "enabled"))
+			and cint(get_shopping_cart_settings().enabled)
 			and not frappe.db.get_value("Tax Rule", {"use_for_shopping_cart": 1, "name": ["!=", self.name]})
 		):
 

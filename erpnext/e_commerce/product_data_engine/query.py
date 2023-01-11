@@ -7,6 +7,7 @@ from frappe.utils import flt
 from erpnext.e_commerce.doctype.item_review.item_review import get_customer
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.utilities.product import get_non_stock_item_status
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 
 class ProductQuery:
@@ -21,7 +22,7 @@ class ProductQuery:
 	"""
 
 	def __init__(self):
-		self.settings = frappe.get_doc("E Commerce Settings")
+		self.settings = get_shopping_cart_settings()
 		self.page_length = self.settings.products_per_page or 20
 
 		self.or_filters = []
