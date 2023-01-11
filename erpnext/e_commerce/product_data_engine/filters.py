@@ -30,7 +30,7 @@ class ProductFiltersBuilder:
 		]
 
 		for df in fields:
-			item_filters, item_or_filters = {"published": 1}, []
+			item_filters, item_or_filters = [["published", "=", True]], []
 			link_doctype_values = self.get_filtered_link_doctype_records(df)
 
 			if df.fieldtype == "Link":
@@ -55,6 +55,11 @@ class ProductFiltersBuilder:
 
 				# exclude variants if mentioned in settings
 				if get_shopping_cart_settings().hide_variants:
+					item_filters.append(["variant_of", "is", "not set"])
+
+				venue_settings = frappe.get_cached_doc("Venue Settings")
+				if f := venue_settings.multicompany_get_item_filter():
+					item_filters.append(f)
 
 				# Get link field values attached to published items
 				item_values = frappe.get_all(
