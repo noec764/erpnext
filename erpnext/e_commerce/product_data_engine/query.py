@@ -61,6 +61,7 @@ class ProductQuery:
 		self.filter_with_discount = bool(fields.get("discount"))
 		result, discount_list, website_item_groups, cart_items, count = [], [], [], [], 0
 
+		self.build_multicompany_filters()
 		if fields:
 			self.build_fields_filters(fields)
 		if item_group:
@@ -221,6 +222,12 @@ class ProductQuery:
 		search = "%{}%".format(search_term)
 		for field in search_fields:
 			self.or_filters.append([field, "like", search])
+
+	def build_multicompany_filters(self):
+		"""Add filters for multi company."""
+		venue_settings = frappe.get_cached_doc("Venue Settings")
+		if f := venue_settings.multicompany_get_item_filter():
+			self.filters.append(f)
 
 	def add_display_details(self, result, discount_list, cart_items):
 		"""Add price and availability details in result."""
