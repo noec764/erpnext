@@ -17,7 +17,10 @@
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
-  "month_uom"
+  "month_uom",
+  "multi_venue_section",
+  "enable_multi_companies",
+  "cart_settings_overrides"
  ],
  "fields": [
   {
@@ -97,11 +100,30 @@
    "fieldname": "confirm_booking_after_payment",
    "fieldtype": "Check",
    "label": "Confirm booking after payment"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_multi_companies",
+   "fieldtype": "Check",
+   "label": "enable_multi_companies"
+  },
+  {
+   "depends_on": "enable_multi_companies",
+   "fieldname": "cart_settings_overrides",
+   "fieldtype": "Table",
+   "label": "cart_settings_overrides",
+   "mandatory_depends_on": "enable_multi_companies",
+   "options": "Venue Cart Settings"
+  },
+  {
+   "fieldname": "multi_venue_section",
+   "fieldtype": "Section Break",
+   "label": "Multi venue"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-09-30 17:07:55.586709",
+ "modified": "2023-01-04 15:16:54.006931",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
@@ -129,5 +151,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
