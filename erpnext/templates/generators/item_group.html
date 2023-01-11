@@ -34,6 +34,7 @@
 		{% endif %}
 	</div>
 	<div class="row">
+		{% if field_filters or attribute_filters %}
 		<div id="product-listing" class="col-12 order-2 col-md-9 order-md-2 item-card-group-section">
 			<!-- Products Rendered in all-products/index.js-->
 		</div>
@@ -53,6 +54,12 @@
 			</div>
 		</div>
 	</div>
+	{% else %}
+	<!-- Items section only -->
+	<div id="product-listing" class="col-12 item-card-group-section">
+		<!-- Rendered via JS -->
+	</div>
+	{% endif %}
 </div>
 
 <script>
