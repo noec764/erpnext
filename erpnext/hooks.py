@@ -72,7 +72,10 @@ treeviews = [
 ]
 
 # website
-update_website_context = ["erpnext.e_commerce.shopping_cart.utils.update_website_context"]
+update_website_context = [
+	"erpnext.e_commerce.shopping_cart.utils.update_website_context",
+	"erpnext.venue.doctype.venue_settings.venue_settings.update_website_context"
+]
 my_account_context = "erpnext.e_commerce.shopping_cart.utils.update_my_account_context"
 webform_list_context = "erpnext.controllers.website_list_for_contact.get_webform_list_context"
 
@@ -678,3 +681,5 @@ global_search_doctypes = {
 additional_timeline_content = {
 	"*": ["erpnext.telephony.doctype.call_log.call_log.get_linked_call_logs"]
 }
+
+override_e_commerce_settings = ["erpnext.venue.doctype.venue_settings.venue_settings.override_e_commerce_settings"]
