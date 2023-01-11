@@ -597,6 +597,10 @@ def get_debtors_account(cart_settings):
 			company=cart_settings.company,
 		)
 
+		if not parent_account:
+			frappe.throw(frappe._("Missing group for debtors account for company '{0}' and currency '{1}'").format(
+				cart_settings.company, payment_gateway_account_currency))
+
 		debtors_account = frappe.get_doc(
 			{
 				"doctype": "Account",
