@@ -33,7 +33,12 @@ class VenueSettings(Document):
 			frappe.throw(frappe._('You must select at least one company in the cart settings overrides'))
 
 	def on_update(self):
-		did_change = self.get_doc_before_save().enable_multi_companies != self.enable_multi_companies
+		old_doc = self.get_doc_before_save()
+		did_change = False
+		if old_doc:
+			did_change = old_doc.enable_multi_companies != self.enable_multi_companies
+		else:
+			did_change = True
 		if did_change:
 			if self.enable_multi_companies:
 				multicompany_create_custom_fields(self)
