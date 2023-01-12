@@ -247,11 +247,11 @@
 	<!-- Rating Progress Bars -->
 	<div class="rating-progress-bar-section col-4 ml-4">
 		{% for percent in reviews_per_rating %}
-			<div class="col-sm-4 small rating-bar-title">
+			<div class="row col small rating-bar-title">
 				{{ _(frappe.utils.cstr(loop.index) + " " + (loop.index == 1 and "star" or "stars")) }}
 			</div>
 			<div class="row">
-				<div class="col-md-7">
+				<div class="col-9">
 					<div class="progress rating-progress-bar" title="{{ percent }} % of reviews are {{ loop.index }} star">
 						<div class="progress-bar progress-bar-cosmetic" role="progressbar"
 							aria-valuenow="{{ percent }}"
@@ -260,7 +260,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-1 small">
+				<div class="col-3 small">
 					{{ percent }}%
 				</div>
 			</div>
