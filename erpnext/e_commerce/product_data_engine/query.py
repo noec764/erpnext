@@ -103,6 +103,7 @@ class ProductQuery:
 			limit_page_length=184467440737095516,
 			limit_start=start,  # get all items from this offset for total count ahead
 			order_by="ranking desc",
+			distinct=True,
 		)
 		count = len(count_items)
 
@@ -120,6 +121,7 @@ class ProductQuery:
 			limit_page_length=page_length,
 			limit_start=start,
 			order_by="ranking desc",
+			distinct=True,
 		)
 
 		return items, count
