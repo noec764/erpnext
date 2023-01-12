@@ -35,7 +35,7 @@ def get_product_filter_data(query_args=None):
 		search = query_args.get("search")
 		field_filters = query_args.get("field_filters", {})
 		attribute_filters = query_args.get("attribute_filters", {})
-		start = cint(query_args.start) if query_args.get("start") else 0
+		start = max(cint(query_args.get("start", 0)), 0)  # clamp to positive number
 		item_group = query_args.get("item_group")
 		from_filters = query_args.get("from_filters")
 	else:

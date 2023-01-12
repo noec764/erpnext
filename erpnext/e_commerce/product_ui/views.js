@@ -152,7 +152,7 @@ erpnext.ProductView =  class {
 		if (!this.products) { return; }
 
 		const query_params = frappe.utils.get_query_params();
-		const start = query_params.start ? cint(JSON.parse(query_params.start)) : 0;
+		const start = Math.max(0, cint(query_params.start)); // parse number and clamp to positive
 		const page_length = settings.products_per_page || 0;
 
 		const has_prev_btn = start > 0;
@@ -165,15 +165,17 @@ erpnext.ProductView =  class {
 			.appendTo(this.products_section);
 
 		if (has_prev_btn) {
+			const prev_page = Math.max(start - page_length, 0) // clamp to positive number
 			const prev = $('<button class="btn btn-default btn-prev">')
-				.attr("data-start", start - page_length)
+				.attr("data-start", prev_page)
 				.text(__("Previous"))
 			paging.append(prev);
 		}
 
 		if (has_next_btn) {
+			const next_page = start + page_length
 			const next = $('<button class="btn btn-default btn-next" style="float: right">')
-				.attr("data-start", start + page_length)
+				.attr("data-start", next_page)
 				.text(__("Next"))
 			paging.append(next);
 		}
