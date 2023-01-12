@@ -205,6 +205,22 @@ body.product-page {
 	}
 }
 
+.btn-item-filters {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	height: 48px;
+	width: 48px;
+	margin: 12px;
+	border-radius: 99px;
+	box-shadow: var(--shadow-lg);
+	overflow: visible;
+	background: red;
+	z-index: 100;
+	padding: 0px;
+	text-align: center;
+}
+
 #products-list-area, #products-grid-area {
 	padding: 0 5px;
 }
