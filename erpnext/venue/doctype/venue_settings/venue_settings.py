@@ -61,6 +61,9 @@ class VenueSettings(Document):
 
 		return False
 
+	def multicompany_get_allowed_companies(self) -> list:
+		return [override.company for override in self.cart_settings_overrides]
+
 	def multicompany_get_current_company(self):
 		if self.enable_multi_companies:
 			if company := multicompany_read_cookie():
@@ -86,6 +89,8 @@ class VenueSettings(Document):
 
 MULTICOMPANY_COOKIE_NAME = "company"
 MULTICOMPANY_FLAG_NAME = "multicompany_current_company"
+MULTICOMPANY_CONTEXT_ALL_COMPANIES = "multicompany_list"
+MULTICOMPANY_CONTEXT_CURRENT_COMPANY = "multicompany_current"
 
 def multicompany_read_cookie():
 	if from_flag := frappe.flags.get(MULTICOMPANY_FLAG_NAME, None):
@@ -149,6 +154,12 @@ def update_website_context(context):
 	# Get the company from the cookie, which is likely a valid company (or None)
 	company = venue_settings.multicompany_get_current_company()  # str | None
 
+	# Update context to include the list of all the allowed companies,
+	context[MULTICOMPANY_CONTEXT_CURRENT_COMPANY] = company
+	context[MULTICOMPANY_CONTEXT_ALL_COMPANIES] = [
+		{ "label": name, "value": name, "selected": name == company }
+		for name in venue_settings.multicompany_get_allowed_companies()
+	]
 
 	if context["top_bar_items"]:
 		# Filter out top bar items that route to excluded item groups

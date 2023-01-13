@@ -1,0 +1,27 @@
+{% if multicompany_list is defined %}
+<div class="dropdown">
+	<button class="btn btn-link dropdown-toggle" type="button" id="multicompany_select_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		{{ _("Select a company") }}
+	</button>
+
+	<div class="dropdown-menu" aria-labelledby="multicompany_select_btn">
+		{% for item in multicompany_list %}
+		<a class="dropdown-item {{ item.selected and 'active' or '' }}" data-value="{{ item.value |e }}" tabindex="0">
+			{{ item.label |e }}
+		</a>
+		{% endfor %}
+	</div>
+</div>
+<script>
+frappe.ready(() => {
+	$("#multicompany_select_btn").parent(".dropdown").on("click", "[data-value]", (event) => {
+		const newCompany = event.target.dataset.value
+		const days = 14
+		const expires = new Date()
+		expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000))
+		document.cookie = `company=${encodeURIComponent(newCompany)}; expires=${expires.toGMTString()}; path=/`
+		location.reload()
+	})
+})
+</script>
+{% endif %}
