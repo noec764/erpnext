@@ -93,16 +93,49 @@ MULTICOMPANY_CONTEXT_ALL_COMPANIES = "multicompany_list"
 MULTICOMPANY_CONTEXT_CURRENT_COMPANY = "multicompany_current"
 
 def multicompany_read_cookie():
-	if from_flag := frappe.flags.get(MULTICOMPANY_FLAG_NAME, None):
-		return from_flag
+	return multicompany_read_and_update_cookie()
+
+def multicompany_read_and_update_cookie():
+	cached = frappe.flags.get(MULTICOMPANY_FLAG_NAME, 0)
+	if cached != 0:
+		return cached
+
+	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
+
+	if not venue_settings.enable_multi_companies:
+		multicompany_clear_cookie()  # clear the cookie + set cache
+		return None
+
+	# Read the selected company from the query string parameters
+	# to overwrite the cookie "company" (MULTICOMPANY_COOKIE_NAME)
+	# if valid.
+	from_query = frappe.form_dict.get("selected_company", None)
+	if from_query:
+		is_valid = venue_settings.multicompany_is_company_allowed(from_query)
+		if is_valid:
+			multicompany_write_cookie(from_query)  # overwrite the cookie
+			return from_query
+		else:
+			frappe.local.flags.redirect_location = "/"
+			raise frappe.Redirect
+	elif from_query == "":
+		# front-end wants to clear of the cookie
+		multicompany_clear_cookie()  # clear the cookie + set cache
+		return None
+
 	try:
 		from_cookie = frappe.request.cookies.get(MULTICOMPANY_COOKIE_NAME, None)
 		from_cookie = unquote(from_cookie) if from_cookie else None
-		frappe.flags[MULTICOMPANY_FLAG_NAME] = from_cookie
-		return from_cookie
+		if venue_settings.multicompany_is_company_allowed(from_cookie):
+			multicompany_write_cookie(from_cookie)  # refresh the cookie
+			return from_cookie
 	except RuntimeError:
 		# frappe.request is not available in some contexts
+		multicompany_clear_cookie()  # clear the cookie
 		return None
+
+	multicompany_clear_cookie()  # fallback: clear the cookie
+	return None
 
 
 def multicompany_write_cookie(value):
@@ -118,33 +151,9 @@ def multicompany_clear_cookie():
 		frappe.local.cookie_manager.delete_cookie(MULTICOMPANY_COOKIE_NAME)
 
 
-def multicompany_update_cookie_from_query_params() -> None:
-	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
-
-	if not venue_settings.enable_multi_companies:
-		return multicompany_clear_cookie()  # clear the cookie if feature not active
-
-	# Read the selected company from the query string parameters
-	# to overwrite the cookie "company" (MULTICOMPANY_COOKIE_NAME)
-	# if valid.
-	company_from_query = frappe.form_dict.get("selected_company", None)
-	if company_from_query:
-		is_valid = venue_settings.multicompany_is_company_allowed(company_from_query)
-		if is_valid:
-			return multicompany_write_cookie(company_from_query)  # overwrite the cookie
-
-	company_from_cookie = venue_settings.multicompany_get_current_company()  # read from cookie
-	if company_from_cookie:  # is either a valid company or None
-		return multicompany_write_cookie(company_from_cookie)  # refresh the cookie
-
-	return multicompany_clear_cookie()  # clear the cookie if invalid
-
-
 def update_website_context(context):
 	if not frappe.db.get_single_value("Venue Settings", "enable_multi_companies"):
 		return
-
-	multicompany_update_cookie_from_query_params()
 
 	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
 
@@ -204,6 +213,7 @@ def update_website_context(context):
 
 
 def override_e_commerce_settings(e_commerce_settings):
+	print("*** override_e_commerce_settings")
 	"""
 	Hook that returns a new E Commerce Settings-like object with overrides for
 	the current company (stored in cookies) when the multicompany feature is enabled.
