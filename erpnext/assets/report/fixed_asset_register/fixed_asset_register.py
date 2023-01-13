@@ -4,7 +4,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import add_years, cstr, flt, formatdate, getdate, today
+from frappe.utils import cstr, flt, formatdate, getdate
 
 from erpnext.accounts.report.financial_statements import (
 	get_fiscal_year_data,
@@ -86,6 +86,7 @@ def get_data(filters):
 			"status",
 			"department",
 			"cost_center",
+			"calculate_depreciation",
 			"purchase_receipt",
 			"asset_category",
 			"purchase_date",
@@ -98,11 +99,7 @@ def get_data(filters):
 		assets_record = frappe.db.get_all("Asset", filters=conditions, fields=fields)
 
 	for asset in assets_record:
-		asset_value = (
-			asset.gross_purchase_amount
-			- flt(asset.opening_accumulated_depreciation)
-			- flt(depreciation_amount_map.get(asset.name))
-		)
+		asset_value = get_asset_value(asset, filters.finance_book)
 		if asset_value:
 			row = {
 				"asset_id": asset.asset_id,
@@ -124,6 +121,21 @@ def get_data(filters):
 			data.append(row)
 
 	return data
+
+
+def get_asset_value(asset, finance_book=None):
+	if not asset.calculate_depreciation:
+		return flt(asset.gross_purchase_amount) - flt(asset.opening_accumulated_depreciation)
+
+	finance_book_filter = ["finance_book", "is", "not set"]
+	if finance_book:
+		finance_book_filter = ["finance_book", "=", finance_book]
+
+	return frappe.db.get_value(
+		doctype="Asset Finance Book",
+		filters=[["parent", "=", asset.asset_id], finance_book_filter],
+		fieldname="value_after_depreciation",
+	)
 
 
 def prepare_chart_data(data, filters):
