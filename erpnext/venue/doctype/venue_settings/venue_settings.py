@@ -149,43 +149,47 @@ def update_website_context(context):
 	# Get the company from the cookie, which is likely a valid company (or None)
 	company = venue_settings.multicompany_get_current_company()  # str | None
 
-	# If the cookie is invalid, then `company` will be None
-	# which means that the JOIN will happen on VSC.company == None,
-	# which is always false (as VSC.company is a mandatory field),
-	# so all item group routes will be excluded in the end (correct behavior).
 
-	ItemGroup = frappe.qb.DocType('Item Group')
-	VSC = frappe.qb.DocType('Venue Selected Company')
-	query = frappe.qb.from_(ItemGroup)\
-		.select(
-			ItemGroup.route,
-			VSC.company.isnotnull().as_('allowed')
-		).left_join(VSC).on(
-			# basic join on child table
-			(VSC.parenttype == 'Item Group') & (VSC.parent == ItemGroup.name)
-			# additional join condition:
-			# if the company matches, include the row, else the row/company NULL (important!)
-			& (VSC.company == company)
-		).where(ItemGroup.show_in_website == 1)
+	if context["top_bar_items"]:
+		# Filter out top bar items that route to excluded item groups
 
-	excluded_routes = set()
-	for res in query.run(as_dict=True):
-		# assert res["route"], "Expected `route` to be non-empty, in results of query in e_commerce.shopping_cart.utils.update_website_context"
-		if not res["allowed"] and res["route"]:  # note: avoid to exclude "/" by mistake
-			route = res["route"]
-			if not route.startswith("/"):
-				route = "/" + route  # normalize
-			excluded_routes.add(route)
+		# If the cookie is invalid, then `company` will be None
+		# which means that the JOIN will happen on VSC.company == None,
+		# which is always false (as VSC.company is a mandatory field),
+		# so all item group routes will be excluded in the end (correct behavior).
 
-	fixed_top_bar_items = []
-	for item in context["top_bar_items"]:
-		url = item.url or ""
-		if not url.startswith("/"):
-			url = "/" + url  # normalize
-		if url in excluded_routes:
-			continue
-		fixed_top_bar_items.append(item)
-	context["top_bar_items"] = fixed_top_bar_items
+		ItemGroup = frappe.qb.DocType('Item Group')
+		VSC = frappe.qb.DocType('Venue Selected Company')
+		query = frappe.qb.from_(ItemGroup)\
+			.select(
+				ItemGroup.route,
+				VSC.company.isnotnull().as_('allowed')
+			).left_join(VSC).on(
+				# basic join on child table
+				(VSC.parenttype == 'Item Group') & (VSC.parent == ItemGroup.name)
+				# additional join condition:
+				# if the company matches, include the row, else the row/company NULL (important!)
+				& (VSC.company == company)
+			).where(ItemGroup.show_in_website == 1)
+
+		excluded_routes = set()
+		for res in query.run(as_dict=True):
+			# assert res["route"], "Expected `route` to be non-empty, in results of query in e_commerce.shopping_cart.utils.update_website_context"
+			if not res["allowed"] and res["route"]:  # note: avoid to exclude "/" by mistake
+				route = res["route"]
+				if not route.startswith("/"):
+					route = "/" + route  # normalize
+				excluded_routes.add(route)
+
+		fixed_top_bar_items = []
+		for item in context["top_bar_items"]:
+			url = item.url or ""
+			if not url.startswith("/"):
+				url = "/" + url  # normalize
+			if url in excluded_routes:
+				continue
+			fixed_top_bar_items.append(item)
+		context["top_bar_items"] = fixed_top_bar_items
 
 
 def override_e_commerce_settings(e_commerce_settings):
