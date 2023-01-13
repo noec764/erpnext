@@ -136,6 +136,9 @@ def multicompany_update_cookie_from_query_params() -> None:
 
 
 def update_website_context(context):
+	if not frappe.db.get_single_value("Venue Settings", "enable_multi_companies"):
+		return
+
 	multicompany_update_cookie_from_query_params()
 
 	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
