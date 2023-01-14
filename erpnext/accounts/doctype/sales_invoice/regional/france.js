@@ -1,6 +1,8 @@
 frappe.ui.form.on('Sales Invoice', {
 	refresh(frm) {
-		frm.trigger("validate_invoice_number");
+		if (frm.docstatus == 0) {
+			frm.trigger("validate_invoice_number");
+		}
 	},
 
 	set_posting_time(frm) {

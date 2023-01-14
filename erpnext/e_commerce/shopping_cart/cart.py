@@ -193,7 +193,8 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		frappe.flags.mute_messages = True
+		if not frappe.conf.show_server_messages_in_cart:
+			frappe.flags.mute_messages = True
 		quotation.save()
 		frappe.flags.mute_messages = False
 	else:
@@ -503,11 +504,11 @@ def set_taxes(quotation, cart_settings):
 		shipping_address=quotation.shipping_address_name,
 		use_for_shopping_cart=1,
 	)
-	#
-	# 	# clear table
+
+	# clear table
 	quotation.set("taxes", [])
-	#
-	# 	# append taxes
+
+	# append taxes
 	quotation.append_taxes_from_master()
 
 
@@ -579,25 +580,38 @@ def get_debtors_account(cart_settings):
 	account_name = _("Debtors ({0})").format(payment_gateway_account_currency)
 
 	debtors_account_name = get_account_name(
-		"Receivable",
-		"Asset",
+		account_type="Receivable",
+		root_type="Asset",
 		is_group=0,
 		account_currency=payment_gateway_account_currency,
 		company=cart_settings.company,
 	)
 
 	if not debtors_account_name:
+		# For a given currency and company, if no account was found,
+		# then try to create it.
+
+		parent_account = get_account_name(
+			root_type="Asset",
+			is_group=1,
+			account_currency=payment_gateway_account_currency,
+			company=cart_settings.company,
+		)
+
+		if not parent_account:
+			frappe.throw(frappe._("Missing group for debtors account for company '{0}' and currency '{1}'").format(
+				cart_settings.company, payment_gateway_account_currency))
+
 		debtors_account = frappe.get_doc(
 			{
 				"doctype": "Account",
 				"account_type": "Receivable",
 				"root_type": "Asset",
 				"is_group": 0,
-				"parent_account": get_account_name(
-					root_type="Asset", is_group=1, company=cart_settings.company
-				),
+				"parent_account": parent_account,
 				"account_name": account_name,
 				"currency": payment_gateway_account_currency,
+				"company": cart_settings.company,
 			}
 		).insert(ignore_permissions=True)
 

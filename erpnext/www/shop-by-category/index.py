@@ -52,6 +52,7 @@ def get_tabs(categories):
 
 
 def get_category_records(categories):
+	website_item_meta = frappe.get_meta("Website Item")
 	categorical_data = {}
 	for category in categories:
 		if category == "item_group":
@@ -60,8 +61,16 @@ def get_category_records(categories):
 				filters={"parent_item_group": "All Item Groups", "show_in_website": 1},
 				fields=["name", "parent_item_group", "is_group", "image", "route"],
 			)
+		elif category == "variant_of":
+			categorical_data[category] = frappe.db.get_all(
+				"Item",
+				filters={"has_variants": 1, "disabled": 0},
+				fields=["name", "image"],
+			)
 		else:
-			doctype = frappe.unscrub(category)
+			field_meta = website_item_meta.get_field(category)
+			doctype = field_meta.options
+
 			fields = ["name"]
 			if frappe.get_meta(doctype, cached=True).get_field("image"):
 				fields += ["image"]

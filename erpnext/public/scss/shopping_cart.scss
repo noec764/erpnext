@@ -205,6 +205,22 @@ body.product-page {
 	}
 }
 
+.btn-item-filters {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	height: 48px;
+	width: 48px;
+	margin: 12px;
+	border-radius: 99px;
+	box-shadow: var(--shadow-lg);
+	overflow: visible;
+	background: red;
+	z-index: 100;
+	padding: 0px;
+	text-align: center;
+}
+
 #products-list-area, #products-grid-area {
 	padding: 0 5px;
 }
@@ -1050,6 +1066,7 @@ body.product-page {
 	box-shadow: 0px 2px 6px rgba(17, 43, 66, 0.08), 0px 1px 4px rgba(17, 43, 66, 0.1);
 	background: white;
 	color: var(--primary-color);
+	--icon-stroke: var(--green-info);
 	font-size: 14px;
 
 	&.list-indicator {

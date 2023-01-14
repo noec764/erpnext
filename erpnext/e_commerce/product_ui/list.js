@@ -98,7 +98,7 @@ erpnext.ProductList = class {
 	get_item_details(item, settings) {
 		let details = `
 			<p class="product-code">
-				${ item.item_group } | Item Code : ${ item.item_code }
+				${ item.item_group } | ${__("Item Code")} : ${ item.item_code }
 			</p>
 			<div class="mt-2" style="color: var(--gray-600) !important; font-size: 13px;">
 				${ item.short_description || '' }
@@ -113,7 +113,7 @@ erpnext.ProductList = class {
 					<s>${ item.formatted_mrp ? item.formatted_mrp.replace(/ +/g, "") : "" }</s>
 				</small>
 				<small class="ml-1 product-info-green">
-					${ item.discount } OFF
+					${ item.discount } ${_("OFF")}
 				</small>
 			`;
 		}
@@ -182,7 +182,7 @@ erpnext.ProductList = class {
 				</div>
 
 				<div class="cart-indicator list-indicator ${item.in_cart ? '' : 'hidden'}">
-					1
+					${ frappe.utils.icon('check', 'xs') }
 				</div>
 
 				<a href="/cart">

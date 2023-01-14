@@ -244,8 +244,11 @@ def create_multiple_variants(item, args):
 	for attribute_values in args_set:
 		if not get_variant(item, args=attribute_values):
 			variant = create_variant(item, attribute_values)
-			variant.save()
-			count += 1
+			try:
+				variant.save()
+				count += 1
+			except frappe.exceptions.DuplicateEntryError:
+				continue
 
 	return count
 

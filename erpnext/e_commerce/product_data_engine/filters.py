@@ -62,8 +62,9 @@ class ProductFiltersBuilder:
 					fields=[df.fieldname],
 					filters=item_filters,
 					or_filters=item_or_filters,
-					distinct="True",
+					distinct=True,
 					pluck=df.fieldname,
+					order_by=df.fieldname,
 				)
 
 				values = list(set(item_values) & link_doctype_values)  # intersection of both

@@ -149,38 +149,38 @@ erpnext.ProductView =  class {
 	add_paging_section(settings) {
 		$(".product-paging-area").remove();
 
-		if (this.products) {
-			let paging_html = `
-				<div class="row product-paging-area mt-5">
-					<div class="col-3">
-					</div>
-					<div class="col-9 text-right">
-			`;
-			let query_params = frappe.utils.get_query_params();
-			let start = query_params.start ? cint(JSON.parse(query_params.start)) : 0;
-			let page_length = settings.products_per_page || 0;
+		if (!this.products) { return; }
 
-			let prev_disable = start > 0 ? "" : "disabled";
-			let next_disable = (this.product_count > page_length) ? "" : "disabled";
+		const query_params = frappe.utils.get_query_params();
+		const start = Math.max(0, cint(query_params.start)); // parse number and clamp to positive
+		const page_length = settings.products_per_page || 0;
 
-			paging_html += `
-				<button class="btn btn-default btn-prev" data-start="${ start - page_length }"
-					style="float: left" ${prev_disable}>
-					${ __("Prev") }
-				</button>`;
+		const has_prev_btn = start > 0;
+		const has_next_btn = this.product_count > page_length;
+		const has_buttons = has_prev_btn || has_next_btn;
 
-			paging_html += `
-				<button class="btn btn-default btn-next" data-start="${ start + page_length }"
-					${next_disable}>
-					${ __("Next") }
-				</button>
-			`;
+		if (!has_buttons) { return; }
 
-			paging_html += `</div></div>`;
+		const paging = $('<div class="product-paging-area mt-5">')
+			.appendTo(this.products_section);
 
-			$(".page_content").append(paging_html);
-			this.bind_paging_action();
+		if (has_prev_btn) {
+			const prev_page = Math.max(start - page_length, 0) // clamp to positive number
+			const prev = $('<button class="btn btn-default btn-prev">')
+				.attr("data-start", prev_page)
+				.text(__("Previous"))
+			paging.append(prev);
 		}
+
+		if (has_next_btn) {
+			const next_page = start + page_length
+			const next = $('<button class="btn btn-default btn-next" style="float: right">')
+				.attr("data-start", next_page)
+				.text(__("Next"))
+			paging.append(next);
+		}
+
+		this.bind_paging_action();
 	}
 
 	prepare_search() {
