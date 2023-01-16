@@ -231,6 +231,7 @@ erpnext.patches.v13_0.update_asset_quantity_field
 erpnext.patches.v13_0.enable_ksa_vat_docs
 erpnext.patches.v13_0.reset_corrupt_defaults
 erpnext.patches.v13_0.create_accounting_dimensions_for_asset_repair
+erpnext.patches.v14_0.update_reference_due_date_in_journal_entry
 
 
 # Dokos
