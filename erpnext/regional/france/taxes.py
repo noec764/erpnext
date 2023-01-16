@@ -25,6 +25,9 @@ def update_itemised_tax_data(doc):
 				valid_itemised_tax[item][tax] = itemised_tax[item][tax]
 
 	for row in doc.items:
+		if not row.item_code:
+			continue
+
 		tax_rate = 0.0
 		item_tax_rate = 0.0
 		item_specific_rates = []
