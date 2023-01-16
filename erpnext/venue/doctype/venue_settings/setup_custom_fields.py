@@ -9,13 +9,13 @@ def get_custom_fields():
 	def _get_fields(insert_after: str):
 		# hint for translation
 		# frappe._('Show only for selected companies')
-		# frappe._('Multi Company')
+		# frappe._('Multi-venue mode')
 
 		return [{
 			'insert_after': insert_after,
 			'fieldname': '_section_break_multicompany',
 			'fieldtype': 'Section Break',
-			'label': 'Multi Company',
+			'label': 'Multi-venue mode',
 			'collapsible': 0,
 		}, {
 			'insert_after': '_section_break_multicompany',
@@ -23,11 +23,6 @@ def get_custom_fields():
 			'fieldtype': 'Table MultiSelect',
 			'label': 'Show only for selected companies',
 			'options': 'Venue Selected Company',
-		}, {
-			'insert_after': 'only_companies',
-			'fieldname': 'btn_only_companies_reset',
-			'fieldtype': 'Button',
-			'label': 'Reset to defaults',
 		}]
 	return {
 		'Item Group': _get_fields(insert_after='website_specifications'),

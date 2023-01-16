@@ -105,25 +105,25 @@
    "default": "0",
    "fieldname": "enable_multi_companies",
    "fieldtype": "Check",
-   "label": "enable_multi_companies"
+   "label": "Enable"
   },
   {
    "depends_on": "enable_multi_companies",
    "fieldname": "cart_settings_overrides",
    "fieldtype": "Table",
-   "label": "cart_settings_overrides",
+   "label": "Allowed companies",
    "mandatory_depends_on": "enable_multi_companies",
    "options": "Venue Cart Settings"
   },
   {
    "fieldname": "multi_venue_section",
    "fieldtype": "Section Break",
-   "label": "Multi venue"
+   "label": "Multi-venue mode"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2023-01-04 15:16:54.006931",
+ "modified": "2023-01-16 14:17:35.500334",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
