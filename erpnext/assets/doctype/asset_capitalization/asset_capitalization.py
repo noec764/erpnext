@@ -8,7 +8,6 @@ import frappe
 # import erpnext
 from frappe import _
 from frappe.utils import cint, flt
-from six import string_types
 
 import erpnext
 from erpnext.assets.doctype.asset.depreciation import (
@@ -608,7 +607,7 @@ def get_target_asset_details(asset=None, company=None):
 
 @frappe.whitelist()
 def get_consumed_stock_item_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
@@ -660,7 +659,7 @@ def get_consumed_stock_item_details(args):
 
 @frappe.whitelist()
 def get_warehouse_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
@@ -676,7 +675,7 @@ def get_warehouse_details(args):
 
 @frappe.whitelist()
 def get_consumed_asset_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
@@ -728,7 +727,7 @@ def get_consumed_asset_details(args):
 
 @frappe.whitelist()
 def get_service_item_details(args):
-	if isinstance(args, string_types):
+	if isinstance(args, str):
 		args = json.loads(args)
 
 	args = frappe._dict(args)
