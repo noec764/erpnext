@@ -188,7 +188,7 @@ $.extend(shopping_cart, {
 	},
 
 	new_cart_address: function (reload) {
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			const d = new frappe.ui.Dialog({
 				title: __('New Address'),
 				fields: [
@@ -277,6 +277,7 @@ $.extend(shopping_cart, {
 				}
 			})
 			d.$wrapper.find(".modal-content").addClass("frappe-card");
+			d.on_hide = () => reject(); // reject the promise when closing the modal, if not resolved first
 			d.show();
 		});
 	},

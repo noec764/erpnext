@@ -101,7 +101,11 @@ $.extend(shopping_cart, {
 			})
 
 			if (!address.message) {
-				await shopping_cart.new_cart_address(false)
+				try {
+					await shopping_cart.new_cart_address(false);
+				} catch (e) {
+					if (e) console.error(e);
+				}
 			}
 
 			shopping_cart.place_order(this);
