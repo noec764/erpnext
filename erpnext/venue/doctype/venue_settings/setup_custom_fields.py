@@ -39,18 +39,19 @@ def multicompany_create_custom_fields(venue_settings):
 	custom_fields = get_custom_fields()
 	create_custom_fields(custom_fields)
 
-	companies = [c.company for c in venue_settings.cart_settings_overrides]
-
-	for doctype, fields in custom_fields.items():
-		for df in fields:
-			if df['fieldname'] == 'only_companies':
-				docs_to_update = frappe.get_all(doctype)
-				for doc in docs_to_update:
-					doc = frappe.get_doc(doctype, doc.name)
-					if not doc.only_companies:
-						for company in companies:
-							doc.append('only_companies', {'company': company})
-						doc.save()
+	# companies = [c.company for c in venue_settings.cart_settings_overrides]
+	# for doctype, fields in custom_fields.items():
+	# 	for df in fields:
+	# 		if df['fieldname'] == 'only_companies':
+	# 			docs_to_update = frappe.get_all(doctype)
+	# 			for doc in docs_to_update:
+	# 				if doctype == "Item Group" and not doc.parent_item_group:
+	# 					continue  # ignore root item group
+	# 				doc = frappe.get_doc(doctype, doc.name)
+	# 				if not doc.only_companies:
+	# 					for company in companies:
+	# 						doc.append('only_companies', {'company': company})
+	# 					doc.save()
 
 def multicompany_delete_custom_fields(venue_settings):
 	custom_fields = get_custom_fields()
