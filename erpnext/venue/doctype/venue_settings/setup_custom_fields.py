@@ -6,7 +6,7 @@ import frappe
 
 ## Custom fields for multi company
 def get_custom_fields():
-	def _get_fields(insert_after: str):
+	def _get_fields(insert_after: str, depends_on: str = None):
 		# hint for translation
 		# frappe._('Show only for selected companies')
 		# frappe._('Multi-venue mode')
@@ -17,16 +17,17 @@ def get_custom_fields():
 			'fieldtype': 'Section Break',
 			'label': 'Multi-venue mode',
 			'collapsible': 0,
+			'depends_on': depends_on,
 		}, {
 			'insert_after': '_section_break_multicompany',
 			'fieldname': 'only_companies',
 			'fieldtype': 'Table MultiSelect',
-			'label': 'Show only for selected companies',
+			'label': 'Show only for the following companies',
 			'options': 'Venue Selected Company',
 		}]
 	return {
-		'Item Group': _get_fields(insert_after='website_specifications'),
-		'Website Item': _get_fields(insert_after='brand'),
+		'Item Group': _get_fields(insert_after='website_specifications', depends_on='show_in_website'),
+		'Website Item': _get_fields(insert_after='brand', depends_on='published'),
 	}
 
 def multicompany_create_custom_fields(venue_settings):
