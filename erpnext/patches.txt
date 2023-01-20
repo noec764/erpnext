@@ -333,6 +333,7 @@ erpnext.patches.v14_0.create_incoterms_and_migrate_shipment
 erpnext.patches.v14_0.setup_clear_repost_logs
 erpnext.patches.v14_0.create_accounting_dimensions_for_payment_request
 erpnext.patches.v14_0.update_entry_type_for_journal_entry
+erpnext.patches.v14_0.change_autoname_for_tax_withheld_vouchers
 
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
