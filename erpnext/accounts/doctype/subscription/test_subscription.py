@@ -94,6 +94,7 @@ class TestSubscription(FrappeTestCase):
 		subscription.append("plans", PLANS[0])
 		subscription.save()
 		subscription.process()
+		frappe.db.commit()
 
 		for i in range(1, 11):
 			frappe.flags.current_date = add_days(nowdate(), 1)
@@ -109,6 +110,13 @@ class TestSubscription(FrappeTestCase):
 		for i in range(1, date_diff(add_months(getdate(current_date), 2), current_date)):
 			frappe.flags.current_date = add_days(nowdate(), 1)
 			subscription.process()
+			print(
+				frappe.flags.current_date,
+				subscription.current_invoice_start,
+				subscription.current_invoice_end,
+				add_months(expected_start, 1),
+				add_months(expected_start, 2),
+			)
 			if getdate(frappe.flags.current_date) < add_months(expected_start, 1):
 				self.assertEqual(subscription.current_invoice_start, expected_start)
 			elif getdate(frappe.flags.current_date) < add_months(expected_start, 2):

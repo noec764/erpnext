@@ -34,16 +34,17 @@ class SubscriptionPeriod:
 				if self.subscription.trial_period_end
 				else self.subscription.start
 			)
-		elif (
-			self.subscription.get_doc_before_save()
-			and self.subscription.get_doc_before_save().billing_interval
-			!= self.subscription.billing_interval
-		):
-			return (
-				add_days(getdate(self.end), 1)
-				if getdate(nowdate()) > getdate(self.end)
-				else getdate(self.start)
-			)
+		# TODO: Check logic for billing interval change
+		# elif (
+		# 	self.subscription.get_doc_before_save()
+		# 	and self.subscription.get_doc_before_save().billing_interval
+		# 	!= self.subscription.billing_interval
+		# ):
+		# 	return (
+		# 		add_days(getdate(self.end), 1)
+		# 		if getdate(nowdate()) > getdate(self.end)
+		# 		else getdate(self.start)
+		# 	)
 		elif self.subscription.get_doc_before_save() and getdate(
 			self.subscription.get_doc_before_save().trial_period_end
 		) != getdate(self.subscription.trial_period_end):
@@ -94,10 +95,27 @@ class SubscriptionPeriod:
 			return add_days(self.get_next_period_end(), 1)
 
 	def get_next_period_end(self):
-		if self.get_billing_cycle_data():
-			return add_to_date(self.subscription.current_invoice_start, **self.get_billing_cycle_data())
-		else:
-			return get_last_day(self.subscription.current_invoice_start)
+		from calendar import monthrange
+
+		if billing_cycle_data := self.get_billing_cycle_data():
+			next_period_end = getdate(
+				add_to_date(self.subscription.current_invoice_start, **billing_cycle_data)
+			)
+			if (
+				self.subscription.billing_interval in ("Month", "Year")
+				and self.subscription.invoicing_day
+				and next_period_end.day != self.subscription.invoicing_day
+			):
+				month_max_no_of_days = monthrange(next_period_end.year, next_period_end.month)[1]
+				if month_max_no_of_days > self.subscription.invoicing_day:
+					day = self.subscription.invoicing_day - 1
+				else:
+					day = month_max_no_of_days
+
+				next_period_end.replace(day=day)
+			return next_period_end
+
+		return get_last_day(self.subscription.current_invoice_start)
 
 	def get_billing_cycle_data(self):
 		data = {}
