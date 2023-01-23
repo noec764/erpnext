@@ -56,6 +56,10 @@ def get_item_reviews(web_item, start=0, end=10, data=None):
 	return data
 
 
+def scale_and_round_star_rating(rating):
+	return flt(rating * 5, 0)
+
+
 def get_queried_reviews(web_item, start=0, end=10, data=None):
 	"""
 	Query Website Item wise reviews and cache if needed.
@@ -81,15 +85,37 @@ def get_queried_reviews(web_item, start=0, end=10, data=None):
 	)[0]
 
 	data.average_rating = flt(rating_data.average, 1)
-	data.average_whole_rating = flt(data.average_rating, 0)
+	data.average_whole_rating = scale_and_round_star_rating(data.average_rating)
 
 	# get % of reviews per rating
-	reviews_per_rating = []
-	for i in range(1, 6):
-		count = frappe.db.get_all(
-			"Item Review", filters={"website_item": web_item, "rating": i}, fields=["count(*) as count"]
-		)[0].count
 
+	# First, for each rating (in the range 0-1),
+	# count the number of times it appears in the reviews of the item.
+	from pypika import functions as fn
+	ItemReview = frappe.qb.DocType("Item Review")
+	reviews_per_rating_query = frappe.qb.from_(ItemReview)\
+		.select(ItemReview.rating, fn.Count(1))\
+		.where(ItemReview.website_item == web_item)\
+		.groupby(ItemReview.rating)
+	reviews_per_rating_raw = reviews_per_rating_query.run()
+
+	# Then, aggregate the counts of ratings by groups
+	# i.e. (0.1, 0.2) -> 1 star ; (0.3, 0.4) -> 2 starts, ...
+	# where 0.1 is half a star, 0.2 is a full star.
+
+	# The groups are initialized to zero.
+	reviews_per_rating_grouped = {rating: 0 for rating in range(1, 5 + 1)}
+
+	for rating, subcount in reviews_per_rating_raw:
+		rounded_rating = scale_and_round_star_rating(rating)
+		if rounded_rating in reviews_per_rating_grouped:
+			# ignore ratings outside of 0-1 range, zero excluded
+			reviews_per_rating_grouped[rounded_rating] += subcount
+
+	# Then, for each group, we compute the percentage
+	# and append it the output array
+	reviews_per_rating = []
+	for rating, count in sorted(reviews_per_rating_grouped.items()):
 		percent = flt((count / rating_data.total or 1) * 100, 0) if count else 0
 		reviews_per_rating.append(percent)
 

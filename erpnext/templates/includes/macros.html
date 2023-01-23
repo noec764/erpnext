@@ -215,7 +215,7 @@
 	</p>
 	<div class="rating {{ 'ratings-pill' if for_summary else ''}}">
 		{% for i in range(1,6) %}
-			{% set fill_class = 'star-click' if i <= avg_rating else '' %}
+			{% set fill_class = 'star-click' if i < avg_rating else '' %}
 			<svg class="icon icon-{{ size }} {{ fill_class }}">
 				<use href="#icon-star"></use>
 			</svg>
@@ -226,9 +226,10 @@
 
 {%- macro ratings_summary(reviews, reviews_per_rating, average_rating, average_whole_rating, for_summary=False, total_reviews=None)-%}
 <div class="rating-summary-section mt-4">
+	{% set scaled_average_rating = (average_rating or 0) * 5 | round(1) %}
 	<div class="rating-summary-numbers col-3">
 		<h2 style="font-size: 2rem;">
-			{{ average_rating or 0 }}
+			{{ scaled_average_rating }}
 		</h2>
 		<div class="mb-2" style="margin-top: -.5rem;">
 			{{ frappe.utils.cstr(total_reviews or 0) + " " + _("ratings") }}
@@ -236,21 +237,21 @@
 
 		<!-- Ratings Summary -->
 		{% if reviews %}
-			{% set rating_title = frappe.utils.cstr(average_rating) + " " + _("out of 5") if not for_summary else ''%}
+			{% set rating_title = frappe.utils.cstr(scaled_average_rating) + " " + _("out of 5") if not for_summary else ''%}
 			{{ ratings_with_title(average_whole_rating, rating_title, "md", "rating-summary-title", for_summary) }}
 		{% endif %}
 
-		<div class="mt-2">{{ frappe.utils.cstr(average_rating or 0) + " " + _("out of 5") }}</div>
+		<div class="mt-2">{{ frappe.utils.cstr(scaled_average_rating) + " " + _("out of 5") }}</div>
 	</div>
 
 	<!-- Rating Progress Bars -->
 	<div class="rating-progress-bar-section col-4 ml-4">
 		{% for percent in reviews_per_rating %}
-			<div class="col-sm-4 small rating-bar-title">
-				{{ loop.index }} star
+			<div class="row col small rating-bar-title">
+				{{ _(frappe.utils.cstr(loop.index) + " " + (loop.index == 1 and "star" or "stars")) }}
 			</div>
 			<div class="row">
-				<div class="col-md-7">
+				<div class="col-9">
 					<div class="progress rating-progress-bar" title="{{ percent }} % of reviews are {{ loop.index }} star">
 						<div class="progress-bar progress-bar-cosmetic" role="progressbar"
 							aria-valuenow="{{ percent }}"
@@ -259,7 +260,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-1 small">
+				<div class="col-3 small">
 					{{ percent }}%
 				</div>
 			</div>
@@ -273,7 +274,7 @@
 <div class="user-reviews">
 	{% for review in reviews %}
 		<div class="mb-3 review">
-			{{ ratings_with_title(review.rating, _(review.review_title), "sm", "user-review-title") }}
+			{{ ratings_with_title(review.rating * 5, _(review.review_title), "sm", "user-review-title") }}
 
 			<div class="product-description mb-4">
 				<p>
