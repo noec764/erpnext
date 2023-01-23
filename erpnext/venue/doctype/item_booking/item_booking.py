@@ -104,7 +104,7 @@ class ItemBooking(Document):
 		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
 			frappe.throw(
 				_(
-					"An existing item booking for this item is overlapping with this document. Please change the dates to register this document of change your settings in Venue Settings."
+					"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings."
 				)
 			)
 
