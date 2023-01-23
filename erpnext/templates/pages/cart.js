@@ -7,7 +7,7 @@ var shopping_cart = erpnext.e_commerce.shopping_cart;
 
 $.extend(shopping_cart, {
 	show_error: function(title, text) {
-		$("#cart-container").html('<div class="msg-box"><h4>' +
+		$(".cart-container").html('<div class="msg-box"><h4>' +
 			title + '</h4><p class="text-muted">' + text + '</p></div>');
 	},
 
@@ -23,7 +23,7 @@ $.extend(shopping_cart, {
 
 	bind_address_picker_dialog: function() {
 		const d = this.get_update_address_dialog();
-		this.parent.find('.btn-change-address').on('click', (e) => {
+		$(".cart-container").on("click", '.btn-change-address', (e) => {
 			const type = $(e.currentTarget).parents('.address-container').attr('data-address-type');
 			$(d.get_field('address_picker').wrapper).html(
 				this.get_address_template(type)
@@ -94,7 +94,7 @@ $.extend(shopping_cart, {
 	},
 
 	bind_place_order: function() {
-		$(".btn-place-order").on("click", async function() {
+		$(".cart-container").on("click", ".btn-place-order", async function() {
 			const address = await frappe.call({
 				method: 'erpnext.e_commerce.shopping_cart.cart.get_customer_address',
 				freeze: true,
@@ -109,7 +109,7 @@ $.extend(shopping_cart, {
 	},
 
 	bind_request_quotation: function() {
-		$('.btn-request-for-quotation').on('click', function() {
+		$(".cart-container").on('click', '.btn-request-for-quotation', function() {
 			shopping_cart.request_quotation(this);
 		});
 	},
@@ -277,7 +277,7 @@ $.extend(shopping_cart, {
 	},
 
 	bind_coupon_code: function() {
-		$(".bt-coupon").on("click", function() {
+		$(".cart-container").on("click", ".bt-coupon", function() {
 			shopping_cart.apply_coupon_code(this);
 		});
 	},

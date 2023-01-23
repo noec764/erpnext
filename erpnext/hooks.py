@@ -10,6 +10,8 @@ source_link = "https://gitlab.com/dokos/dokos"
 app_logo_url = "/assets/erpnext/images/dokos_logo.svg"
 
 develop_version = "3.x.x-develop"
+required_apps = ["payments"]
+
 
 app_include_js = "erpnext.bundle.js"
 app_include_css = "erpnext.bundle.css"

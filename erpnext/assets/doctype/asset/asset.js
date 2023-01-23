@@ -201,14 +201,14 @@ frappe.ui.form.on('Asset', {
 		var asset_values = [frm.doc.gross_purchase_amount];
 		var last_depreciation_date = frm.doc.purchase_date;
 
-		if(frm.doc.opening_accumulated_depreciation) {
-			last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
-				-1*frm.doc.frequency_of_depreciation);
+		// if(frm.doc.opening_accumulated_depreciation) {
+		// 	last_depreciation_date = frappe.datetime.add_months(frm.doc.next_depreciation_date,
+		// 		-1*frm.doc.frequency_of_depreciation);
 
-			x_intervals.push(last_depreciation_date);
-			asset_values.push(flt(frm.doc.gross_purchase_amount) -
-				flt(frm.doc.opening_accumulated_depreciation));
-		}
+		// 	x_intervals.push(last_depreciation_date);
+		// 	asset_values.push(flt(frm.doc.gross_purchase_amount) -
+		// 		flt(frm.doc.opening_accumulated_depreciation));
+		// }
 
 		$.each(frm.doc.schedules || [], function(i, v) {
 			x_intervals.push(v.schedule_date);

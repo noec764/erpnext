@@ -39,13 +39,13 @@ $(() => {
 							freeze_message: __("Submitting Review ..."),
 							callback: (r) => {
 								if (!r.exc) {
+									d.hide();
 									frappe.msgprint({
 										message: __("Thank you for submitting your review"),
 										title: __("Review Submitted"),
 										indicator: "green"
 									});
-									d.hide();
-									location.reload();
+									setTimeout(() => location.reload(), 330);
 								}
 							}
 						});

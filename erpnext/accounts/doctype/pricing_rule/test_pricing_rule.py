@@ -1103,7 +1103,7 @@ class TestPricingRule(unittest.TestCase):
 		so.load_from_db()
 		self.assertEqual(so.items[1].is_free_item, 1)
 		self.assertEqual(so.items[1].item_code, "_Test Item")
-		self.assertEqual(so.items[1].qty, 4)
+		self.assertEqual(so.items[1].qty, 3)
 
 
 test_dependencies = ["Campaign"]

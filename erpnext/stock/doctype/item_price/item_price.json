@@ -182,7 +182,9 @@
     "default": "0",
     "fieldname": "lead_time_days",
     "fieldtype": "Int",
-    "label": "Lead Time in days"
+    "label": "Lead Time in days",
+    "hidden": 1,
+    "description": "Deprecated field. Will be removed in a future version."
    },
    {
     "fieldname": "column_break_18",
@@ -220,7 +222,7 @@
   "idx": 1,
   "index_web_pages_for_search": 1,
   "links": [],
-  "modified": "2022-11-15 08:26:04.041861",
+  "modified": "2023-01-19 08:26:04.041861",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Item Price",

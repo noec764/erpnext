@@ -706,7 +706,8 @@ class ReceivablePayableReport(object):
 				ple.amount_in_account_currency,
 				ple.remarks,
 			)
-			.where(ple.delinked == 0 and ple.is_advance == 0)
+			.where(ple.delinked == 0)
+			.where(ple.is_advance == 0)
 			.where(Criterion.all(self.qb_selection_filter))
 		)
 
@@ -715,7 +716,7 @@ class ReceivablePayableReport(object):
 		else:
 			query = query.orderby(self.ple.posting_date, self.ple.party)
 
-		self.ple_entries = query.run(as_dict=True)
+		self.ple_entries = query.run(as_dict=True, debug=True)
 
 	def get_sales_invoices_or_customers_based_on_sales_person(self):
 		if self.filters.get("sales_person"):

@@ -65,7 +65,7 @@ status_map = {
 			"eval:(self.per_delivered == 100 or self.skip_delivery_note) and self.per_billed == 100 and self.docstatus == 1",
 		],
 		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
+		["Closed", "eval:self.status=='Closed' and self.docstatus != 2"],
 		["On Hold", "eval:self.status=='On Hold'"],
 	],
 	"Purchase Order": [
@@ -86,7 +86,7 @@ status_map = {
 		["Delivered", "eval:self.status=='Delivered'"],
 		["Cancelled", "eval:self.docstatus==2"],
 		["On Hold", "eval:self.status=='On Hold'"],
-		["Closed", "eval:self.status=='Closed'"],
+		["Closed", "eval:self.status=='Closed' and self.docstatus != 2"],
 	],
 	"Delivery Note": [
 		["Draft", None],
@@ -94,7 +94,7 @@ status_map = {
 		["Return Issued", "eval:self.per_returned == 100 and self.docstatus == 1"],
 		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
 		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
+		["Closed", "eval:self.status=='Closed' and self.docstatus != 2"],
 	],
 	"Purchase Receipt": [
 		["Draft", None],
@@ -102,7 +102,7 @@ status_map = {
 		["Return Issued", "eval:self.per_returned == 100 and self.docstatus == 1"],
 		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
 		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
+		["Closed", "eval:self.status=='Closed' and self.docstatus != 2"],
 	],
 	"Material Request": [
 		["Draft", None],

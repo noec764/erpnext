@@ -398,7 +398,7 @@ def get_pdf(doctype, name, supplier, print_format=None, language=None, letter_he
 			print_format,
 			doc=doc,
 			language=language,
-			letter_head=letter_head or None,
+			letterhead=letter_head or None,
 		)
 
 
