@@ -802,16 +802,145 @@ def _get_events(start, end, item=None, user=None, fields=[]):
 		as_dict=1,
 	)
 
+	subscriptions_as_events = _get_subscriptions_as_events(start, end, item=item, user=user)
+	events += subscriptions_as_events
+
 	result = []
 
 	for event in events:
-		result.append(event)
 		if event.get("repeat_this_event") == 1:
-			result.extend(
-				process_recurring_events(event, now_datetime(), end, "starts_on", "ends_on", "rrule")
-			)
+			recurring = process_recurring_events(event, start, end, "starts_on", "ends_on", "rrule")
+			result.extend(recurring)
+		else:
+			result.append(event)
 
 	return result
+
+
+def _get_subscriptions_as_events(start, end, item=None, user=None):
+	subscriptions = _get_booking_subscriptions_between(start, end, item=item, user=user)
+	events = []
+	for sub in subscriptions:
+		qty = sub["qty"]
+		booked_item = sub["booked_item"]
+		customer = sub["customer"]
+
+		title = booked_item
+		if qty > 1:
+			title = f"{qty} × {title}"
+		if customer:
+			title += " - " + customer
+
+		title = frappe._("{0}: {1}").format(
+			frappe._("Subscription"),
+			title,
+		)
+
+		events.append({
+			**sub,
+			"starts_on": sub["start"],
+			"ends_on": sub["end"],
+			"item_name": booked_item,
+			"title": title,
+			"name": sub["name"],
+			"doctype": "Subscription",
+			# "repeat_this_event": 1,
+			# "rrule": "RRULE:FREQ=HOURLY",
+			# "user": sub["_customers"][0] if sub["_customers"] and len(sub["_customers"]) > 0,
+			# "status": "Active",
+			"all_day": 1,
+			"startEditable": False,
+			"durationEditable": False,
+		})
+	return events
+
+
+def _get_booking_subscriptions_between(after_date, before_date, item=None, user=None, fields=None, filters=None):
+	from pypika import Criterion, Field, functions as fn
+
+	Subscription = frappe.qb.DocType("Subscription")
+	SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
+
+	doc_meta = frappe.get_meta("Subscription")
+	fields = fields or []
+	for d in doc_meta.fields:
+		if d.fieldtype == "Color":
+			fields.append(Subscription.field(d.fieldname).as_("color"))
+			break
+
+	start_field = fn.Coalesce(
+		SubscriptionPlanDetail.from_date,
+		Subscription.start,
+		"0000-00-00"
+	)
+	end_field = fn.Coalesce(
+		SubscriptionPlanDetail.to_date,
+		Subscription.cancellation_date,
+		"9999-01-01"
+	)
+
+	item_field: Field = SubscriptionPlanDetail.booked_item
+
+	filters = [
+		start_field < before_date,
+		end_field > after_date,
+	]
+	if item:
+		item_name = item if isinstance(item, str) else item.name
+		filters.append(item_field == item_name)  # Must book this exact item
+	else:
+		filters.append(item_field.isnotnull())  # Must be a booking subscription
+
+	# if user:
+	# 	Contact = frappe.qb.DocType("Contact")
+	# 	DynamicLink = frappe.qb.DocType("Dynamic Link")
+	# 	query_for_customers = (
+	# 		frappe.qb.select(DynamicLink.link_name)
+	# 		.from_(Contact)
+	# 		.join(DynamicLink)
+	# 		.on(
+	# 			(Contact.name == DynamicLink.parent)
+	# 			(DynamicLink.parenttype == "Contact")
+	# 			& (DynamicLink.link_doctype == "Customer")
+	# 			& (Contact.user == user)
+	# 		)
+	# 	)
+	# 	all_customers: set = { res[0] for res in query_for_customers.run() }
+	# 	customer_field: Field = Subscription.customer
+	# 	filters.append(customer_field.isin(all_customers))
+
+	fields.extend((
+		Subscription.name.as_("name"),
+		SubscriptionPlanDetail.name.as_("plan_detail_name"),
+		SubscriptionPlanDetail.qty,
+		start_field.as_("start"),
+		end_field.as_("end"),
+		item_field.as_("booked_item"),
+		Subscription.customer.as_("customer"),
+	))
+
+	query = (
+		frappe.qb.select(*fields)
+		.from_(Subscription)
+		.join(SubscriptionPlanDetail)
+		.on(
+			(Subscription.name == SubscriptionPlanDetail.parent)
+			& (SubscriptionPlanDetail.parenttype == "Subscription"))  # NOTE: Plans are present in both Subscription and Subscription template
+		.where(Criterion.all(filters))
+	)
+
+	subscriptions = query.run(as_dict=True)
+
+	# Update subscriptions to strip the time component in the datetime
+	for s in subscriptions:
+		if abs(round(s["qty"]) - s["qty"]) > 1e-6:
+			raise ValueError("Non integer quantity of booked slots.")
+		s["start"] = get_datetime(s["start"]).date()
+		s["end"] = get_datetime(s["end"]).date()
+		s["qty"] = int(s["qty"])
+		s["color"] = s.get("color", "#77bbff")
+
+	return subscriptions
 
 
 @frappe.whitelist(allow_guest=True)
