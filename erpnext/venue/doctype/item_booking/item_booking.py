@@ -750,7 +750,23 @@ class ItemBookingAvailabilities:
 		)
 
 
-def _get_events(start, end, item=None, user=None):
+@frappe.whitelist()
+def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields=None):
+	assert doctype in (None, '', 'Item Booking'), "get_events_for_calendar: expected the doctype to be Item Booking"
+	# Note: we ignore the doctype because we return Item Booking and Subscription objects
+	if isinstance(field_map, str):
+		field_map: dict = frappe.parse_json(field_map)
+
+	fields = fields or []  # default value
+	for f in field_map.values():
+		dt = doctype
+		doc_meta = frappe.get_meta(dt)
+		if doc_meta.has_field(f):
+			fields.append(f)
+
+	events: list = _get_events(start, end, item=None, user=None, fields=fields)
+	return events
+
 	conditions = ""
 	if item:
 		conditions += " AND item={0} ".format(frappe.db.escape(item.name))
