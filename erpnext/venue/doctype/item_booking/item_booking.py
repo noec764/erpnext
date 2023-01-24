@@ -544,7 +544,8 @@ class ItemBookingAvailabilities:
 			return []
 
 		output = []
-		for dt in daterange(self.init, self.finish):
+		for dt in daterange_including_start(self.init, self.finish):
+			# For each day, get the available slots
 			calendar_availability = self._check_availability(dt)
 			if calendar_availability:
 				output.extend(calendar_availability)
@@ -559,22 +560,40 @@ class ItemBookingAvailabilities:
 
 		availability = []
 		schedules = []
+		dt_now = get_datetime(now())
 		if item_calendar.get("calendar"):
 			schedule_for_the_day = filter(lambda x: x.day == day, item_calendar.get("calendar"))
 			for line in schedule_for_the_day:
-				start = get_datetime(now())
-				if datetime.datetime.combine(date, get_time(line.end_time)) > start:
-					if datetime.datetime.combine(date, get_time(line.start_time)) > start:
-						start = datetime.datetime.combine(date, get_time(line.start_time))
+				day_start = datetime.datetime.combine(date, get_time(line.start_time))
+				day_end = datetime.datetime.combine(date, get_time(line.end_time))
 
-					schedules.append(
-						{"start": start, "end": datetime.datetime.combine(date, get_time(line.end_time))}
-					)
+				if dt_now >= day_end:
+					continue  # The day already ended, no slot can be booked
+
+				start = day_start
+				if dt_now > day_start:
+					# The day already started, some slots need to be skipped
+					start = self._round_datetime_in_slot(dt_now, day_start)
+
+				schedules.append({"start": start, "end": day_end})
 
 			if schedules:
 				availability.extend(self._get_availability_from_schedule(schedules))
 
 		return availability
+
+	def _round_datetime_in_slot(self, dt: datetime.datetime, slot_start: datetime.datetime, interval_in_minutes: int = None):
+		from math import ceil
+		assert dt >= slot_start, "_round_datetime_in_slot: Datetime to round should be after the beginning of the slot."
+		interval_in_minutes = interval_in_minutes or int(datetime.timedelta(minutes=cint(self.duration)).total_seconds() / 60)
+		if not interval_in_minutes:
+			return dt
+
+		offset = dt - slot_start
+		offset_in_minutes = offset.total_seconds() / 60
+		rounded_offset_in_minutes = interval_in_minutes * ceil(offset_in_minutes / interval_in_minutes)
+		new_dt = slot_start + datetime.timedelta(minutes=rounded_offset_in_minutes)
+		return new_dt
 
 	def _get_availability_from_schedule(self, schedules):
 		available_slots = []
@@ -852,6 +871,13 @@ def daterange(start_date, end_date):
 		start_date = datetime.datetime.now().replace(
 			hour=0, minute=0, second=0, microsecond=0
 		) + datetime.timedelta(days=1)
+	for n in range(int((end_date - start_date).days)):
+		yield start_date + timedelta(n)
+
+def daterange_including_start(start_date, end_date):
+	if start_date < get_datetime(now()):
+		start_date = datetime.datetime.now()
+	start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
 	for n in range(int((end_date - start_date).days)):
 		yield start_date + timedelta(n)
 
