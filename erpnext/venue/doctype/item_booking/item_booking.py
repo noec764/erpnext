@@ -283,7 +283,7 @@ def get_bookings_list(doctype, txt, filters, limit_start, limit_page_length=20, 
 
 @frappe.whitelist()
 def get_bookings_list_for_map(start, end):
-	bookings_list = _get_events(getdate(start), getdate(end), user=frappe.session.user)
+	bookings_list = _get_events(getdate(start), getdate(end), item=None, user=frappe.session.user)
 
 	return [
 		dict(
@@ -599,7 +599,7 @@ class ItemBookingAvailabilities:
 		available_slots = []
 		for line in schedules:
 			line = frappe._dict(line)
-			booked_items = _get_events(line.get("start"), line.get("end"), self.item_doc)
+			booked_items = _get_events(line.get("start"), line.get("end"), item=self.item_doc)
 			scheduled_items = []
 			for event in booked_items:
 				# Only keep booked events that overlap the schedule slot
@@ -683,8 +683,11 @@ class ItemBookingAvailabilities:
 		return scheduled_items
 
 	def _get_all_slots(self, line, simultaneous_booking_allowed, scheduled_items=None):
+		line_start = get_datetime(line.get("start"))
+		line_end = get_datetime(line.get("end"))
+
 		interval = int(datetime.timedelta(minutes=cint(self.duration)).total_seconds() / 60)
-		slots = sorted([(line.start, line.start)] + [(line.end, line.end)])
+		slots = sorted([(line_start, line_start)] + [(line_end, line_end)])
 		if not scheduled_items:
 			scheduled_items = []
 
@@ -697,21 +700,21 @@ class ItemBookingAvailabilities:
 
 		current_schedule = []
 		for scheduled_item in scheduled_items:
+			sch_start = get_datetime(scheduled_item.get("starts_on"))
+			sch_end = get_datetime(scheduled_item.get("ends_on"))
 			try:
-				if get_datetime(scheduled_item.get("starts_on")) < line.get("start"):
-					current_schedule.append(
-						(get_datetime(line.get("start")), get_datetime(scheduled_item.get("ends_on")))
-					)
-				elif get_datetime(scheduled_item.get("starts_on")) < line.get("end"):
-					current_schedule.append(
-						(get_datetime(scheduled_item.get("starts_on")), get_datetime(scheduled_item.get("ends_on")))
-					)
+				if sch_start < line_start:
+					# Ok, but the scheduled item begins before the current slot, then trim it.
+					current_schedule.append((line_start, sch_end))
+				elif sch_start < line_end:
+					# Ok, the scheduled item ends before the end of the slot, keep it.
+					current_schedule.append((sch_start, sch_end))
 			except Exception:
 				frappe.log_error(_("Slot availability error"))
 
 		if current_schedule:
 			sorted_schedule = list(reduced(sorted(current_schedule, key=lambda x: x[0])))
-			slots = sorted([(line.start, line.start)] + sorted_schedule + [(line.end, line.end)])
+			slots = sorted([(line_start, line_start)] + sorted_schedule + [(line_end, line_end)])
 
 		free_slots = []
 		for start, end in ((slots[i][1], slots[i + 1][0]) for i in range(len(slots) - 1)):
@@ -1324,7 +1327,7 @@ def get_booking_count(item=None, starts_on=None, ends_on=None):
 
 	if simultaneous_bookings_enabled:
 		item_doc = frappe.get_doc("Item", item)
-		events = _get_events(getdate(starts_on), getdate(ends_on), item_doc)
+		events = _get_events(getdate(starts_on), getdate(ends_on), item=item_doc)
 		timeslot = (get_datetime(starts_on), get_datetime(ends_on))
 		slots_left = (
 			cint(item_doc.get("simultaneous_bookings_allowed"))
