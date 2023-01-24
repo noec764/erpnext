@@ -18,7 +18,6 @@ from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import (
 	add_days,
-	add_to_date,
 	cint,
 	date_diff,
 	flt,
@@ -75,30 +74,17 @@ class ItemBooking(Document):
 		self.check_overlaps()
 
 	def check_overlaps(self):
-		overlaps = frappe.db.sql(
-			f"""
-			SELECT ib.name
-			FROM `tabItem Booking` as ib
-			WHERE
-			(
-				(ib.starts_on BETWEEN {frappe.db.escape(add_to_date(self.starts_on, seconds=1))} AND {frappe.db.escape(self.ends_on)})
-				OR (ib.ends_on BETWEEN {frappe.db.escape(add_to_date(self.starts_on, seconds=1))} AND {frappe.db.escape(self.ends_on)})
-				OR (
-					ib.starts_on <= {frappe.db.escape(add_to_date(self.starts_on, seconds=1))}
-					AND ib.ends_on >= {frappe.db.escape(self.ends_on)}
-				)
-			)
-			AND ib.item={frappe.db.escape(self.item)}
-			AND ib.status!='Cancelled'
-			AND ib.name!={frappe.db.escape(self.name)}
-		"""
-		)
+		overlapping_bookings = self.get_overlapping_bookings()
+		overlapping_subscriptions = self.get_overlapping_subscriptions()
+		overlaps = overlapping_bookings + overlapping_subscriptions
 
 		simultaneous_bookings_allowed = (
 			frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")
 			if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking")
 			else 0
 		)
+
+		# Check if overlap is disallowed for desk users
 		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
 
 		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
@@ -115,6 +101,58 @@ class ItemBooking(Document):
 
 		elif overlaps and not simultaneous_bookings_allowed:
 			frappe.publish_realtime("booking_overlap")
+
+
+	def get_overlapping_bookings(self):
+		from pypika import Criterion, functions as fn
+		IB = frappe.qb.DocType("Item Booking")
+		# https://stackoverflow.com/questions/13390333/two-rectangles-intersection
+		item_name = self.item if isinstance(self.item, str) else self.item.name
+		query = frappe.qb.select(IB.name).from_(IB).where(Criterion.all([
+			IB.name != self.name,
+			IB.item == item_name,
+			IB.status != "Cancelled",
+		])).where(Criterion.any([
+			(IB.starts_on < self.ends_on) & (IB.ends_on > self.starts_on),
+			# TODO: Check overlaps with recurring events. How to handle gaps in the recurrence?
+			# TODO: Check overlaps with other events when this booking (self) is recurring.
+			# (IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
+		]))
+		return [{"doctype": "Item Booking", "name": booking[0]} for booking in query.run()]
+
+
+	def get_overlapping_subscriptions(self):
+		from pypika import Criterion, functions as fn
+		Subscription = frappe.qb.DocType("Subscription")
+		SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
+		start_field = fn.Coalesce(
+			SubscriptionPlanDetail.from_date,
+			Subscription.start,
+			"0000-00-00"
+		)
+		end_field = fn.Coalesce(
+			SubscriptionPlanDetail.to_date,
+			Subscription.cancellation_date,
+			"9999-01-01"
+		)
+		item_name = self.item if isinstance(self.item, str) else self.item.name
+		query = (
+			frappe.qb.select(Subscription.name)
+			.from_(Subscription)
+			.join(SubscriptionPlanDetail)
+			.on(Criterion.all([
+				Subscription.name == SubscriptionPlanDetail.parent,
+				SubscriptionPlanDetail.parenttype == "Subscription",
+			]))
+			.where(Criterion.all([
+				start_field < self.ends_on,
+				end_field > self.starts_on,
+				SubscriptionPlanDetail.booked_item == item_name,
+			]))
+			.limit(1)
+		)
+		return [{"doctype": "Subscription", "name": sub[0]} for sub in query.run()]
+
 
 	def set_title(self):
 		if self.meta.get_field("title").hidden or not self.title:
