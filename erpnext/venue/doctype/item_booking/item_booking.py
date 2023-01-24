@@ -768,17 +768,12 @@ def _get_events(start, end, item=None, user=None):
 		FROM `tabItem Booking`
 		WHERE (
 				(
-					(date(starts_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (date(ends_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (
-						date(starts_on) <= date(%(start)s)
-						AND date(ends_on) >= date(%(end)s)
-					)
-				)
-				OR (
-					date(starts_on) <= date(%(start)s)
+					starts_on < %(end)s
+					AND ends_on > %(start)s
+				) OR (
+					starts_on < %(end)s
 					AND repeat_this_event=1
-					AND coalesce(repeat_till, '3000-01-01') > date(%(start)s)
+					AND coalesce(repeat_till, '3000-01-01') > %(start)s
 				)
 			)
 		AND status!="Cancelled"
