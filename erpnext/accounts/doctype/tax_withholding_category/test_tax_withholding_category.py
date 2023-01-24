@@ -53,7 +53,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_single_threshold_tds(self):
@@ -90,7 +89,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_category_checks(self):
@@ -117,7 +115,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		self.assertEqual(pi1.taxes[0].tax_amount, 1000)
 
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_cumulative_threshold_tcs(self):
@@ -153,7 +150,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tds_calculation_on_net_total(self):
@@ -188,7 +184,46 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
+			d.cancel()
+
+	def test_tds_calculation_on_net_total_partial_tds(self):
+		frappe.db.set_value(
+			"Supplier", "Test TDS Supplier4", "tax_withholding_category", "Cumulative Threshold TDS"
+		)
+		invoices = []
+
+		pi = create_purchase_invoice(supplier="Test TDS Supplier4", rate=20000, do_not_save=True)
+		pi.extend(
+			"items",
+			[
+				{
+					"doctype": "Purchase Invoice Item",
+					"item_code": frappe.db.get_value("Item", {"item_name": "TDS Item"}, "name"),
+					"qty": 1,
+					"rate": 20000,
+					"cost_center": "Main - _TC",
+					"expense_account": "Stock Received But Not Billed - _TC",
+					"apply_tds": 0,
+				},
+				{
+					"doctype": "Purchase Invoice Item",
+					"item_code": frappe.db.get_value("Item", {"item_name": "TDS Item"}, "name"),
+					"qty": 1,
+					"rate": 35000,
+					"cost_center": "Main - _TC",
+					"expense_account": "Stock Received But Not Billed - _TC",
+					"apply_tds": 1,
+				},
+			],
+		)
+		pi.save()
+		pi.submit()
+		invoices.append(pi)
+
+		self.assertEqual(pi.taxes[0].tax_amount, 5500)
+
+		# cancel invoices to avoid clashing
+		for d in reversed(invoices):
 			d.cancel()
 
 		orders = []
@@ -225,7 +260,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel orders to avoid clashing
 		for d in reversed(orders):
-			d.reload()
 			d.cancel()
 
 	def test_multi_category_single_supplier(self):
@@ -251,7 +285,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_category_voucher_display(self):
@@ -294,48 +327,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
-			d.cancel()
-
-	def test_tds_calculation_on_net_total_partial_tds(self):
-		frappe.db.set_value(
-			"Supplier", "Test TDS Supplier4", "tax_withholding_category", "Cumulative Threshold TDS"
-		)
-		invoices = []
-
-		pi = create_purchase_invoice(supplier="Test TDS Supplier4", rate=20000, do_not_save=True)
-		pi.extend(
-			"items",
-			[
-				{
-					"doctype": "Purchase Invoice Item",
-					"item_code": frappe.db.get_value("Item", {"item_name": "TDS Item"}, "name"),
-					"qty": 1,
-					"rate": 20000,
-					"cost_center": "Main - _TC",
-					"expense_account": "Stock Received But Not Billed - _TC",
-					"apply_tds": 0,
-				},
-				{
-					"doctype": "Purchase Invoice Item",
-					"item_code": frappe.db.get_value("Item", {"item_name": "TDS Item"}, "name"),
-					"qty": 1,
-					"rate": 35000,
-					"cost_center": "Main - _TC",
-					"expense_account": "Stock Received But Not Billed - _TC",
-					"apply_tds": 1,
-				},
-			],
-		)
-		pi.save()
-		pi.submit()
-		invoices.append(pi)
-
-		self.assertEqual(pi.taxes[0].tax_amount, 5500)
-
-		# cancel invoices to avoid clashing
-		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_via_payment_entry_for_advances(self):
@@ -636,15 +627,17 @@ def create_tax_withholding_category_records():
 		cumulative_threshold=0,
 	)
 
-	# Single threshold
 	create_tax_withholding_category(
-		category_name="Single Threshold TDS",
+		category_name="New TDS Category",
 		rate=10,
 		from_date=from_date,
 		to_date=to_date,
 		account="TDS - _TC",
-		single_threshold=20000,
-		cumulative_threshold=0,
+		single_threshold=0,
+		cumulative_threshold=30000,
+		round_off_tax_amount=1,
+		consider_party_ledger_amount=1,
+		tax_on_excess_amount=1,
 	)
 
 	create_tax_withholding_category(
