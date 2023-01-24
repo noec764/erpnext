@@ -602,10 +602,9 @@ class ItemBookingAvailabilities:
 			booked_items = _get_events(line.get("start"), line.get("end"), self.item_doc)
 			scheduled_items = []
 			for event in booked_items:
-				if (
-					get_datetime(event.get("starts_on")) >= line.get("start")
-					and get_datetime(event.get("starts_on")) <= line.get("end")
-				) or get_datetime(event.get("ends_on")) >= line.get("start"):
+				# Only keep booked events that overlap the schedule slot
+				if (get_datetime(event.get("starts_on")) < line.get("end")
+					and get_datetime(event.get("ends_on")) > line.get("start")):
 					scheduled_items.append(event)
 
 			slots = self._find_available_slot(line, scheduled_items)
