@@ -436,13 +436,14 @@
   {
    "fieldname": "invoicing_day",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Invoicing Day",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-01-20 10:40:09.812801",
+ "modified": "2023-01-24 08:15:44.396556",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

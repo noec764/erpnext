@@ -1,3 +1,5 @@
+from calendar import monthrange
+
 import frappe
 from frappe.utils.data import add_days, add_to_date, flt, get_last_day, getdate, nowdate
 
@@ -34,20 +36,21 @@ class SubscriptionPeriod:
 				if self.subscription.trial_period_end
 				else self.subscription.start
 			)
-		# TODO: Check logic for billing interval change
-		# elif (
-		# 	self.subscription.get_doc_before_save()
-		# 	and self.subscription.get_doc_before_save().billing_interval
-		# 	!= self.subscription.billing_interval
-		# ):
-		# 	return (
-		# 		add_days(getdate(self.end), 1)
-		# 		if getdate(nowdate()) > getdate(self.end)
-		# 		else getdate(self.start)
-		# 	)
+		elif (
+			self.subscription.get_doc_before_save()
+			and self.subscription.get_doc_before_save().billing_interval
+			!= self.subscription.billing_interval
+		):
+			self.subscription.load_doc_before_save()
+			return (
+				add_days(getdate(self.end), 1)
+				if getdate(nowdate()) > getdate(self.end)
+				else getdate(self.start)
+			)
 		elif self.subscription.get_doc_before_save() and getdate(
 			self.subscription.get_doc_before_save().trial_period_end
 		) != getdate(self.subscription.trial_period_end):
+			self.subscription.load_doc_before_save()
 			return (
 				max(getdate(self.subscription.start), add_days(getdate(self.subscription.trial_period_end), 1))
 				if self.subscription.trial_period_end
@@ -95,8 +98,6 @@ class SubscriptionPeriod:
 			return add_days(self.get_next_period_end(), 1)
 
 	def get_next_period_end(self):
-		from calendar import monthrange
-
 		if billing_cycle_data := self.get_billing_cycle_data():
 			next_period_end = getdate(
 				add_to_date(self.subscription.current_invoice_start, **billing_cycle_data)
@@ -107,12 +108,13 @@ class SubscriptionPeriod:
 				and next_period_end.day != self.subscription.invoicing_day
 			):
 				month_max_no_of_days = monthrange(next_period_end.year, next_period_end.month)[1]
+				# Remove 1 day because of the difference with the above next_period_date calculation
 				if month_max_no_of_days > self.subscription.invoicing_day:
 					day = self.subscription.invoicing_day - 1
 				else:
-					day = month_max_no_of_days
+					day = month_max_no_of_days - 1
 
-				next_period_end.replace(day=day)
+				next_period_end = next_period_end.replace(day=day)
 			return next_period_end
 
 		return get_last_day(self.subscription.current_invoice_start)

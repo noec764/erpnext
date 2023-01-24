@@ -319,11 +319,12 @@ class Subscription(Document):
 			self.contact_person = get_default_contact("Customer", self.customer)
 
 	def set_invoicing_day(self):
-		if not self.invoicing_day:
-			if self.trial_period_end:
-				self.invoicing_day = getdate(add_days(self.trial_period_end, 1)).day
-			else:
-				self.invoicing_day = getdate(self.start).day
+		if not self.invoicing_day or getdate(self.trial_period_end) > getdate(nowdate()):
+			self.invoicing_day = (
+				getdate(add_days(self.trial_period_end, 1)).day
+				if self.trial_period_end
+				else getdate(self.start).day
+			)
 
 		elif self.get_doc_before_save().billing_interval != self.billing_interval:
 			self.invoicing_day = add_days(getdate(self.current_invoice_end), 1).day
