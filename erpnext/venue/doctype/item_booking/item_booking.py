@@ -767,22 +767,20 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 	events: list = _get_events(start, end, item=None, user=None, fields=fields)
 	return events
 
+def _get_events(start, end, item=None, user=None, fields=[]):
 	conditions = ""
 	if item:
-		conditions += " AND item={0} ".format(frappe.db.escape(item.name))
+		item_name = item if isinstance(item, str) else item.name
+		conditions += " AND item={0} ".format(frappe.db.escape(item_name))
 	if user:
 		conditions += " AND user='{0}' ".format(user)
 
+	all_fields: set = {"starts_on", "ends_on", "item as item_name", "name", "repeat_this_event", "rrule", "user", "status"}
+	all_fields.update(fields or [])
+
 	events = frappe.db.sql(
 		"""
-		SELECT starts_on,
-				ends_on,
-				item_name,
-				name,
-				repeat_this_event,
-				rrule,
-				user,
-				status
+		SELECT {fields}
 		FROM `tabItem Booking`
 		WHERE (
 				(
@@ -797,7 +795,8 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 		AND status!="Cancelled"
 		{conditions}
 		ORDER BY starts_on""".format(
-			conditions=conditions
+			conditions=conditions,
+			fields=', '.join(all_fields)
 		),
 		{"start": start, "end": end},
 		as_dict=1,
