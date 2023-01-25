@@ -1047,7 +1047,7 @@ An error occurred while creating e-invoice for {}. Please check {} for more info
 An error occurred while making e-invoicing request. Please check {} for more information.,Une erreur est survenue lors de la requête d'e-facturation. Veuillez vérifier {} pour plus d'informations.,
 An error prevented the creation of all SEPA payment entries,Une erreur a empêché la création des écritures de paiement SEPA,
 An error prevented the subscription's creation,Une erreur a empêché la création de l'abonnement,
-An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings.,Cette réservation est en conflit avec une autre réservation ou un abonnement pour le même article. Veuillez sélectionner d'autres dates/horaires, ou autorisez les réservations multiples sur le bureau dans les paramètres du lieu,
+"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings.","Cette réservation est en conflit avec une autre réservation ou un abonnement pour le même article. Veuillez sélectionner d'autres dates/horaires, ou autorisez les réservations multiples sur le bureau dans les paramètres du lieu.",
 An invoice ({0}) with reference {1} exists already,Une facture ({0}) avec la référence {1} existe déjà,
 An invoice {0} with reference {1} exists already,Une facture ({0}) avec la référence {1} existe déjà,
 "An item exists with same name ({0}), please change the item group name or rename the item","Un article existe avec le même nom ({0}), veuillez changer le nom du groupe d'article ou renommer l'article",
