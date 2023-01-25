@@ -469,12 +469,7 @@ def new_invoice_end(subscription, end_date):
 
 
 def get_list_context(context=None):
-	templates = frappe.get_all(
-		"Subscription Template",
-		filters={"enable_on_portal": 1},
-		fields=["name", "portal_description", "portal_image"],
-	)
-
+	templates = get_published_subscription_templates()
 	context.update(
 		{
 			"show_sidebar": True,
@@ -493,6 +488,15 @@ def get_list_context(context=None):
 			else None,
 			"base_scripts": ["dialog.bundle.js", "controls.bundle.js"],
 		}
+	)
+
+
+@frappe.whitelist(allow_guest=True)
+def get_published_subscription_templates():
+	return frappe.get_all(
+		"Subscription Template",
+		filters={"enable_on_portal": 1},
+		fields=["name", "portal_description", "portal_image"],
 	)
 
 
