@@ -75,6 +75,7 @@ class BaseTestVenueCartSettings(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls) -> None:
 		super().setUpClass()  # note: call super first for rollback to work
+		frappe.set_user("Administrator")
 
 		e_commerce_settings = frappe.get_single("E Commerce Settings")
 		e_commerce_settings.company = DEFAULT_COMPANY
@@ -102,6 +103,7 @@ class BaseTestVenueCartSettings(FrappeTestCase):
 
 	def setUp(self) -> None:
 		super().setUp()
+		frappe.set_user("Administrator")
 		frappe.flags[MULTICOMPANY_FLAG_NAME] = None  # reset the flag
 
 
