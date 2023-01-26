@@ -5,17 +5,17 @@ from payments.payment_gateways.doctype.stripe_settings.idempotency import (
 
 
 class GoCardlessPayments:
-	def __init__(self, gateway, payment_request=None):
+	def __init__(self, gateway, reference=None):
 		self.gateway = gateway
 		self.client = self.gateway.client
-		self.payment_request = payment_request
+		self.reference = reference
 
 	@handle_idempotency
 	def create(self, **kwargs):
 		return self.client.payments.create(
 			params=kwargs,
 			headers={
-				"Idempotency-Key": IdempotencyKey("payments", "create", self.payment_request.name).get(),
+				"Idempotency-Key": IdempotencyKey("payments", "create", self.reference).get(),
 			},
 		)
 

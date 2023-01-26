@@ -269,7 +269,6 @@ erpnext.patches.dokos.v2_0.default_accounting_journals
 erpnext.patches.dokos.v2_0.update_document_status
 erpnext.patches.dokos.v2_0.update_custom_fields_for_france
 erpnext.patches.dokos.v2_0.venue_module
-erpnext.patches.dokos.v2_0.subscription_cycle_on_stripe
 erpnext.patches.dokos.v2_0.correct_unreconciled_amount_for_internal_transfers
 erpnext.patches.dokos.v2_0.update_website_settings
 erpnext.patches.dokos.v2_0.delete_subscription_portal

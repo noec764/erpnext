@@ -4,8 +4,8 @@
 import frappe
 from frappe import _
 from frappe.contacts.doctype.contact.contact import get_default_contact
-from frappe.integrations.utils import get_gateway_controller
-from frappe.utils import flt, fmt_money, get_url
+from payments.utils.utils import get_gateway_controller
+from frappe.utils import flt, fmt_money, get_url, check_format
 
 expected_keys = (
 	"amount",
@@ -13,7 +13,6 @@ expected_keys = (
 	"description",
 	"reference_doctype",
 	"reference_docname",
-	"webform",
 	"payer_name",
 	"payer_email",
 	"order_id",
@@ -72,9 +71,8 @@ def get_context(context):
 				"success_redirect_url": success_url,
 				"prefilled_customer": PrefilledCustomer(payment_request).get(),
 				"metadata": {
-					"reference_doctype": payment_request.reference_doctype,
-					"reference_name": payment_request.reference_name,
-					"payment_request": payment_request.name,
+					"reference_doctype": payment_request.doctype,
+					"reference_name": payment_request.name,
 				},
 			}
 		)
@@ -141,14 +139,13 @@ class PrefilledCustomer:
 	def get(self):
 		self.get_customer_address()
 		self.get_primary_contact()
+		email = self.primary_contact.get("email_id") or self.payment_request.email_to or frappe.session.user
 
 		return {
 			"company_name": self.customer.customer_name,
 			"given_name": self.primary_contact.get("first_name") or "",
 			"family_name": self.primary_contact.get("last_name") or "",
-			"email": self.primary_contact.get("email_id")
-			or self.payment_request.email_to
-			or frappe.session.user,
+			"email": email if check_format(email) else "",
 			"address_line1": self.customer_address.address_line1 or "",
 			"address_line2": self.customer_address.address_line2 or "",
 			"city": self.customer_address.city or "",
