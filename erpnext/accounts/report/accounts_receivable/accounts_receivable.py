@@ -716,7 +716,7 @@ class ReceivablePayableReport(object):
 		else:
 			query = query.orderby(self.ple.posting_date, self.ple.party)
 
-		self.ple_entries = query.run(as_dict=True, debug=True)
+		self.ple_entries = query.run(as_dict=True)
 
 	def get_sales_invoices_or_customers_based_on_sales_person(self):
 		if self.filters.get("sales_person"):

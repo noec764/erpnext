@@ -19,6 +19,7 @@
   "status",
   "subscription_period",
   "start",
+  "invoicing_day",
   "trial_period_start",
   "trial_period_end",
   "cancellation_date",
@@ -431,11 +432,18 @@
    "fieldtype": "Link",
    "label": "Invoice Print Format",
    "options": "Print Format"
+  },
+  {
+   "fieldname": "invoicing_day",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Invoicing Day",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-01 09:27:49.734923",
+ "modified": "2023-01-24 08:15:44.396556",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

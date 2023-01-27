@@ -1,6 +1,7 @@
 # Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
 # See license.txt
 
+from calendar import monthrange
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
@@ -24,13 +25,14 @@ class TestSubscription(FrappeTestCase):
 
 	def test_period_update_with_trial(self):
 		current_date = today()
+		frappe.flags.current_date = today()
 		subscription = frappe.new_doc("Subscription")
 		subscription.customer = "_Test Customer"
 		subscription.company = "_Test Company"
 		subscription.currency = "INR"
-		subscription.start = today()
+		subscription.start = current_date
 		subscription.billing_interval = "Day"
-		subscription.trial_period_start = today()
+		subscription.trial_period_start = current_date
 		subscription.trial_period_end = add_days(current_date, 5)
 		subscription.generate_invoice_at_period_start = 1
 		subscription.append("plans", PLANS[0])
@@ -54,11 +56,20 @@ class TestSubscription(FrappeTestCase):
 
 		subscription.billing_interval = "Month"
 		subscription.save()
-		frappe.flags.current_date = current_date
+		invoicing_day = None
+		current_invoice_end = subscription.current_invoice_end
 
 		for i in range(1, date_diff(add_months(getdate(current_date), 2), current_date)):
 			frappe.flags.current_date = add_days(nowdate(), 1)
 			subscription.process()
+
+			if current_invoice_end != subscription.current_invoice_end:
+				month_max_no_of_days = monthrange(getdate(nowdate()).year, getdate(nowdate()).month)[1]
+				if month_max_no_of_days > subscription.invoicing_day:
+					invoicing_day = subscription.invoicing_day - 1
+				else:
+					invoicing_day = month_max_no_of_days - 1
+				current_invoice_end = subscription.current_invoice_end
 
 			self.assertEqual(subscription.trial_period_start, getdate(current_date))
 			self.assertEqual(subscription.trial_period_end, getdate(add_days(current_date, 5)))
@@ -67,29 +78,26 @@ class TestSubscription(FrappeTestCase):
 				self.assertEqual(subscription.current_invoice_end, None)
 				self.assertEqual(subscription.status, "Trial")
 			elif getdate(frappe.flags.current_date) <= add_months(subscription.trial_period_end, 1):
-				self.assertEqual(subscription.current_invoice_start, getdate(add_days(current_date, 6)))
+				self.assertEqual(
+					subscription.current_invoice_start, add_days(subscription.trial_period_end, 5)
+				)
 				self.assertEqual(
 					subscription.current_invoice_end,
 					add_days(add_months(subscription.current_invoice_start, 1), -1),
 				)
 				self.assertEqual(subscription.status, "Payable")
 			else:
-				self.assertEqual(
-					subscription.current_invoice_start, add_days(add_months(subscription.trial_period_end, 1), 1)
-				)
-				self.assertEqual(
-					subscription.current_invoice_end,
-					add_days(add_months(subscription.current_invoice_start, 1), -1),
-				)
+				self.assertEqual(subscription.current_invoice_start.day, invoicing_day + 1)
 				self.assertEqual(subscription.status, "Payable")
 
 	def test_period_update_without_trial(self):
 		current_date = today()
+		frappe.flags.current_date = today()
 		subscription = frappe.new_doc("Subscription")
 		subscription.customer = "_Test Customer"
 		subscription.company = "_Test Company"
 		subscription.currency = "INR"
-		subscription.start = today()
+		subscription.start = current_date
 		subscription.billing_interval = "Day"
 		subscription.append("plans", PLANS[0])
 		subscription.save()
@@ -104,21 +112,28 @@ class TestSubscription(FrappeTestCase):
 
 		subscription.billing_interval = "Month"
 		subscription.save()
-		expected_start = add_days(getdate(current_date), 11)
 
-		for i in range(1, date_diff(add_months(getdate(current_date), 2), current_date)):
+		expected_start = getdate(add_days(getdate(current_date), 11))
+		invoicing_day = None
+		current_invoice_end = subscription.current_invoice_end
+
+		for i in range(1, date_diff(add_months(getdate(current_date), 3), current_date)):
 			frappe.flags.current_date = add_days(nowdate(), 1)
 			subscription.process()
+
+			if current_invoice_end != subscription.current_invoice_end:
+				month_max_no_of_days = monthrange(getdate(nowdate()).year, getdate(nowdate()).month)[1]
+				if month_max_no_of_days > subscription.invoicing_day:
+					invoicing_day = subscription.invoicing_day - 1
+				else:
+					invoicing_day = month_max_no_of_days - 1
+				current_invoice_end = subscription.current_invoice_end
+
 			if getdate(frappe.flags.current_date) < add_months(expected_start, 1):
 				self.assertEqual(subscription.current_invoice_start, expected_start)
+				self.assertEqual(subscription.current_invoice_end, add_days(add_months(expected_start, 1), -1))
 			elif getdate(frappe.flags.current_date) < add_months(expected_start, 2):
-				self.assertEqual(subscription.current_invoice_start, add_months(expected_start, 1))
-			else:
-				self.assertEqual(subscription.current_invoice_start, add_months(expected_start, 2))
-			self.assertEqual(
-				subscription.current_invoice_end,
-				add_days(add_months(subscription.current_invoice_start, 1), -1),
-			)
+				self.assertEqual(subscription.current_invoice_start.day, invoicing_day + 1)
 			self.assertEqual(subscription.status, "Payable")
 
 	def test_invoice_generation(self):
