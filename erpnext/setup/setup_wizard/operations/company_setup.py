@@ -121,11 +121,7 @@ def create_accounting_journals(bank_account_name, company):
 
 	for journal in journals:
 		try:
-			frappe.get_doc(journal).insert()
-		except frappe.DuplicateEntryError:
-			pass
-		except frappe.UniqueValidationError:
-			pass
+			frappe.get_doc(journal).insert(ignore_if_duplicate=True)
 		except Exception:
 			print(frappe.get_traceback())
 

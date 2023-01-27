@@ -102,22 +102,6 @@ class WebhooksController:
 				self.set_references(payment_entry.doctype, payment_entry.name)
 				self.set_as_completed()
 
-			elif self.subscription:
-				payment_entry = self.subscription.run_method("create_payment")
-				payment_entry.reference_no = reference
-				payment_entry.reference_date = nowdate()
-				payment_entry.subscription = self.subscription.name
-				payment_entry.insert(ignore_permissions=True, ignore_mandatory=True)
-				if self.payment_request:
-					payment_entry.payment_request = self.payment_request.name
-					payment_entry.mode_of_payment = frappe.db.get_value(
-						"Payment Gateway", self.payment_request.payment_gateway, "mode_of_payment"
-					)
-					payment_entry.references = []
-					self.add_subscription_references(payment_entry)
-				self.set_references(payment_entry.doctype, payment_entry.name)
-				self.set_as_completed()
-
 			else:
 				self.set_references(
 					self.metadata.get("reference_doctype"), self.metadata.get("reference_name")
@@ -157,12 +141,9 @@ class WebhooksController:
 			if self.payment_request:
 				payment_entry.references = []
 				payment_entry.save()
-				if self.subscription:
-					self.add_subscription_references(payment_entry)
-				else:
-					self.add_payment_request_references(payment_entry)
-					if self.sales_order:
-						self.make_sales_invoice = True
+				self.add_payment_request_references(payment_entry)
+				if self.sales_order:
+					self.make_sales_invoice = True
 
 			if (
 				payment_entry.references
@@ -185,19 +166,6 @@ class WebhooksController:
 		else:
 			self.set_references(self.metadata.get("reference_doctype"), self.metadata.get("reference_name"))
 			self.set_as_failed(_("Payment entry with reference {0} not found").format(reference))
-
-	def add_subscription_references(self, payment_entry):
-		payment_entry.subscription = self.payment_request.is_linked_to_a_subscription()
-		references = self.subscription.get_references_for_payment_request(self.payment_request.name)
-		allocated = 0.0
-		for ref in references:
-			allocation = min(
-				flt(payment_entry.unallocated_amount) - flt(allocated), flt(ref.get("outstanding_amount"))
-			)
-			allocated += allocation
-			ref = dict(allocated_amount=allocation, **ref)
-			payment_entry.append("references", ref)
-		payment_entry.save()
 
 	def add_payment_request_references(self, payment_entry):
 		references = self.payment_request.create_payment_entry(submit=False).get("references")
@@ -300,37 +268,6 @@ class WebhooksController:
 				si.delete()
 			return si
 
-	def set_references(self, dt=None, dn=None):
-		if dt and dn:
-			self.integration_request.db_set("reference_doctype", dt, update_modified=False)
-			self.integration_request.db_set("reference_docname", dn, update_modified=False)
-			self.integration_request.load_from_db()
-
-	def set_as_not_handled(self):
-		self.integration_request.db_set(
-			"error", _("This type of event is not handled"), update_modified=False
-		)
-		self.integration_request.load_from_db()
-		self.integration_request.update_status({}, "Not Handled")
-
-	def set_as_failed(self, message=None):
-		if message:
-			self.integration_request.db_set("error", str(message), update_modified=False)
-		self.integration_request.load_from_db()
-		self.integration_request.update_status({}, "Failed")
-
-	def set_as_completed(self, message=None):
-		if message:
-			self.integration_request.db_set("error", str(message), update_modified=False)
-		self.integration_request.load_from_db()
-		self.integration_request.update_status({}, "Completed")
-		self.update_payment_request()
-
-	def set_as_queued(self, message):
-		self.integration_request.db_set("error", str(message), update_modified=False)
-		self.integration_request.load_from_db()
-		self.integration_request.update_status({}, "Queued")
-
 	def update_payment_request(self):
 		if self.status_map.get(self.action_type) == "Paid" and self.make_sales_invoice:
 			self.payment_request.run_method("make_invoice")
@@ -347,13 +284,3 @@ class WebhooksController:
 				"status",
 				self.status_map.get(self.action_type),
 			)
-
-
-def handle_webhooks(handlers, **kwargs):
-	integration_request = frappe.get_doc(kwargs.get("doctype"), kwargs.get("docname"))
-
-	if handlers.get(integration_request.get("service_document")):
-		handlers.get(integration_request.get("service_document"))(**kwargs)
-	else:
-		integration_request.db_set("error", _("This type of event is not handled"))
-		integration_request.update_status({}, "Not Handled")

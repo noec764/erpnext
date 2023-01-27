@@ -14,7 +14,7 @@ dependencies = [
     "Unidecode~=1.2.0",
 
     # integration dependencies
-    "gocardless-pro~=1.27.0",
+    "gocardless-pro~=1.37.0",
     "ofxtools==0.8.16",
     "plaid-python~=7.2.1",
     "python-youtube~=0.8.0",

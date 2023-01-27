@@ -118,8 +118,9 @@
    "collapsible": 1,
    "fieldname": "payment_plan_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Payment gateways and plans"
+   "read_only": 1,
+   "label": "Payment gateways and plans",
+   "description": "This information is no longer used by Dokos. <br>All subscriptions are directly handled in Dokos and no longer in Stripe."
   },
   {
    "collapsible": 1,

@@ -1,2 +1,1 @@
-from .mandate import GoCardlessMandateWebhookHandler
-from .payment import GoCardlessPaymentWebhookHandler
+from .gocardless import GoCardlessWebhookHandler

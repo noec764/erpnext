@@ -6,60 +6,17 @@
   }
  ],
  "color": "#eeb867",
- "content": "[{\"type\":\"chart\",\"data\":{\"chart_name\":\"Item Booking Rate\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Event\",\"col\":4}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item Booking\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports &amp; Masters</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Subscription\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Bookings and events\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Booking Credits\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Website and Portal\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"q7tZVseqiW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Item Booking Rate\",\"col\":12}},{\"id\":\"-o4Q7XqDIY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jfNc7b275D\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"-KuGbODpbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription\",\"col\":4}},{\"id\":\"_ef_aRfubi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Event\",\"col\":4}},{\"id\":\"4ipGXlhskZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item Booking\",\"col\":4}},{\"id\":\"rH2qY8VqwD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_vvYEOukig\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports &amp; Masters</span>\",\"col\":12}},{\"id\":\"Hel9VfYoT-\",\"type\":\"card\",\"data\":{\"card_name\":\"Subscription\",\"col\":4}},{\"id\":\"XJWKRVCViy\",\"type\":\"card\",\"data\":{\"card_name\":\"Bookings and events\",\"col\":4}},{\"id\":\"-hy0yIunfH\",\"type\":\"card\",\"data\":{\"card_name\":\"Booking Credits\",\"col\":4}},{\"id\":\"1usAgmr9Y3\",\"type\":\"card\",\"data\":{\"card_name\":\"Website and Portal\",\"col\":4}},{\"id\":\"3PaUGbdwcl\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"id\":\"02X_BknbLC\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
  "creation": "2021-02-02 11:00:01.290986",
  "docstatus": 0,
  "doctype": "Workspace",
- "hidden": 0,
  "hide_custom": 0,
  "icon": "map",
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Venue",
  "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription",
-   "link_count": 0,
-   "link_to": "Subscription",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription Plan",
-   "link_count": 0,
-   "link_to": "Subscription Plan",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription Template",
-   "link_count": 0,
-   "link_to": "Subscription Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "columns": 0,
    "hidden": 0,
@@ -329,9 +286,62 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Venue Registration Form",
+   "link_count": 0,
+   "link_to": "Venue Registration Form",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription",
+   "link_count": 0,
+   "link_to": "Subscription",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription Plan",
+   "link_count": 0,
+   "link_to": "Subscription Plan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscription Template",
+   "link_count": 0,
+   "link_to": "Subscription Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2022-05-27 15:37:28.311756",
+ "modified": "2023-01-25 09:55:44.748022",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
