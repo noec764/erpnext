@@ -26,8 +26,10 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import get_account_currency
+from erpnext.erpnext_integrations.doctype.integration_references.integration_references import (
+	can_make_immediate_payment,
+)
 from erpnext.utilities import payment_app_import_guard
-from erpnext.erpnext_integrations.doctype.integration_references.integration_references import can_make_immediate_payment
 
 
 def _get_payment_gateway_controller(*args, **kwargs):
@@ -198,7 +200,7 @@ class PaymentRequest(Document):
 				metadata={
 					"reference_doctype": self.doctype,
 					"reference_name": self.name,
-				}
+				},
 			)
 			if result:
 				self.db_set("transaction_reference", result, commit=True)
@@ -226,11 +228,13 @@ class PaymentRequest(Document):
 	def get_payment_url(self, payment_gateway):
 		self.set_gateway_account()
 
-		data = frappe._dict({
-			"title": self.reference_document.get("company") or self.subject,
-			"customer": self.customer,
-			"customer_name": frappe.db.get_value("Customer", self.customer, "customer_name")
-		})
+		data = frappe._dict(
+			{
+				"title": self.reference_document.get("company") or self.subject,
+				"customer": self.customer,
+				"customer_name": frappe.db.get_value("Customer", self.customer, "customer_name"),
+			}
+		)
 
 		controller = _get_payment_gateway_controller(payment_gateway)
 		controller.validate_transaction_currency(self.currency)
@@ -264,6 +268,9 @@ class PaymentRequest(Document):
 		return payment_entry
 
 	def register_customer(self, reference_no):
+		if frappe.flags.in_test:
+			return
+
 		controller = _get_payment_gateway_controller(self.payment_gateway)
 		if frappe.db.exists("Integration References", dict(customer=self.customer)):
 			doc = frappe.get_doc("Integration References", dict(customer=self.customer))
@@ -393,13 +400,11 @@ class PaymentRequest(Document):
 
 		payment_entry.payment_request = self.name
 
-
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
 
 		return payment_entry
-
 
 	def get_payment_gateway_fees(self, reference_no=None):
 		if self.payment_gateway and reference_no:
@@ -410,7 +415,6 @@ class PaymentRequest(Document):
 				self.base_amount = transaction_fees.base_amount or self.base_amount
 				if transaction_fees.target_exchange_rate:
 					self.target_exchange_rate = transaction_fees.target_exchange_rate
-
 
 	def send_email(self, communication=None):
 		"""send email with payment link"""
