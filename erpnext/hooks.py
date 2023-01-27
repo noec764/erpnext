@@ -33,7 +33,10 @@ doctype_css = {
 	"Event": "public/css/event.css",
 }
 
-override_doctype_class = {"Address": "erpnext.accounts.custom.address.ERPNextAddress"}
+override_doctype_class = {
+	"Address": "erpnext.accounts.custom.address.ERPNextAddress",
+	"Event": "erpnext.venue.doctype.event_registration.event.event.DokosEvent",
+}
 
 welcome_email = "erpnext.setup.utils.welcome_email"
 
