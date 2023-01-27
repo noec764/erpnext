@@ -12904,3 +12904,5 @@ Enter the email of the person registering for the event.,Entrez l'email de la pe
 Indicate the first name of the person registering for the event.,Indiquez le prénom de la personne a enregitrer pour l'évènement.,
 Indicate the last name of the person registering for the event.,Indiquez le nom de la personne a enregitrer pour l'évènement.,
 "Indicate the status of the event. The event can be 'Confirmed', 'Unconfirmed', 'Open', 'Cancelled', 'Closed'.","Indiquez le statut de l'événement. L'événement peut être 'Confirmé', 'Non confirmé', 'Ouvert', 'Annulé', 'Fermé'.",
+Registration amount,Montant de l'inscription,
+Maximum number of registrations,Nombre maximum d'inscriptions,Event
