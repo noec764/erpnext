@@ -113,10 +113,9 @@ class GoCardlessSettings(PaymentGatewayController):
 			)
 
 	def get_payment_url(self, **kwargs):
-		payment_key = {"key": kwargs.get("payment_key")}
 		return get_url(
 			"./integrations/gocardless_checkout?{0}".format(
-				urlencode(kwargs) if not kwargs.get("payment_key") else urlencode(payment_key)
+				urlencode(kwargs)
 			)
 		)
 
@@ -129,7 +128,7 @@ class GoCardlessSettings(PaymentGatewayController):
 
 		GoCardlessCustomers(self).register(redirect_flow.links.customer, customer)
 
-		GoCardlessPayments(self, reference_document.name).create(
+		payment = GoCardlessPayments(self, reference_document.name).create(
 			amount=cint((reference_document.get("grand_total") or reference_document.get("amount")) * 100),
 			currency=reference_document.get("currency"),
 			description=reference_document.get("subject") or reference_document.get("description"),
@@ -140,6 +139,8 @@ class GoCardlessSettings(PaymentGatewayController):
 				"reference_name": reference_document.name
 			},
 		)
+
+		return getattr(payment, "id")
 
 	def get_transaction_fees(self, payments):
 		gc_payments = GoCardlessPayments(self).get(payments)

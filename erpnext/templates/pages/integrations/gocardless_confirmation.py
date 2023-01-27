@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Dokos SAS and Contributors
+# Copyright (c) 2023, Dokos SAS and Contributors
 # License: See license.txt
 
 import frappe
@@ -23,11 +23,14 @@ def get_context(context):
 
 		try:
 			redirect_flow = gateway_controller.client.redirect_flows.complete(
-				context.redirect_flow_id, params={"session_token": context.reference_docname}
+				context.redirect_flow_id, params={"session_token": f"{context.reference_doctype}&{context.reference_docname}"}
 			)
 
 			reference_document = frappe.get_doc(context.reference_doctype, context.reference_docname)
-			gateway_controller.handle_redirect_flow(redirect_flow, reference_document)
+			payment = gateway_controller.handle_redirect_flow(redirect_flow, reference_document)
+
+			reference_document.run_method("on_payment_authorized", status="Pending", reference_no=payment)
+
 			frappe.local.flags.redirect_location = "/payment-success"
 		except Exception:
 			frappe.log_error(_("GoCardless Payment Error"))
