@@ -48,13 +48,13 @@ def with_user(user):
 
 DEFAULT_COMPANY = '_Test Company with perpetual inventory'
 DEFAULT_PRICE_LIST = '_Test Price List India'
-OVERRIDDEN_PRICE_LIST = '_Test Price List 2'
+OVERRIDDEN_PRICE_LIST = '_Test Price List India'
 
 ALT_COMPANY_1 = '_Test Company'
-ALT_PRICE_LIST_1 = 'Standard Buying'
+ALT_PRICE_LIST_1 = '_Test Price List'
 
 ALT_COMPANY_2 = '_Test Company 3'
-ALT_PRICE_LIST_2 = 'Standard Selling'
+ALT_PRICE_LIST_2 = '_Test Price List 2'
 
 TEST_ITEM_1 = {
 	'item_code': '_Test Item',
@@ -78,8 +78,14 @@ class BaseTestVenueCartSettings(FrappeTestCase):
 		frappe.set_user("Administrator")
 
 		e_commerce_settings = frappe.get_single("E Commerce Settings")
-		e_commerce_settings.company = DEFAULT_COMPANY
-		e_commerce_settings.price_list = DEFAULT_PRICE_LIST
+		e_commerce_settings.update({
+			"enabled": 1,
+			"company": DEFAULT_COMPANY,
+			"price_list": DEFAULT_PRICE_LIST,
+			"default_customer_group": "_Test Customer Group",
+			"enable_checkout": 1,
+			"no_payment_gateway": 1,
+		})
 		e_commerce_settings.save()
 
 		venue = frappe.get_single("Venue Settings")
@@ -104,7 +110,8 @@ class BaseTestVenueCartSettings(FrappeTestCase):
 	def setUp(self) -> None:
 		super().setUp()
 		frappe.set_user("Administrator")
-		frappe.flags[MULTICOMPANY_FLAG_NAME] = None  # reset the flag
+		if MULTICOMPANY_FLAG_NAME in frappe.flags:
+			del frappe.flags[MULTICOMPANY_FLAG_NAME]  # reset the flag
 
 
 class TestVenueCartSettings(BaseTestVenueCartSettings):

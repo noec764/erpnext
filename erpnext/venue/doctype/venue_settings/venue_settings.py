@@ -213,7 +213,6 @@ def update_website_context(context):
 
 
 def override_e_commerce_settings(e_commerce_settings):
-	print("*** override_e_commerce_settings")
 	"""
 	Hook that returns a new E Commerce Settings-like object with overrides for
 	the current company (stored in cookies) when the multicompany feature is enabled.
