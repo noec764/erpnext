@@ -621,8 +621,7 @@ class GrossProfitGenerator(object):
 					return abs(previous_stock_value - flt(sle.stock_value)) * flt(row.qty) / abs(flt(sle.qty))
 				else:
 					return flt(row.qty) * self.get_average_buying_rate(row, item_code)
-
-			return 0.0
+		return 0.0
 
 	def get_buying_amount(self, row, item_code):
 		# IMP NOTE
@@ -788,6 +787,7 @@ class GrossProfitGenerator(object):
 				`tabSales Invoice Item`.warehouse, `tabSales Invoice Item`.item_group,
 				`tabSales Invoice Item`.brand, `tabSales Invoice Item`.so_detail,
 				`tabSales Invoice Item`.sales_order, `tabSales Invoice Item`.dn_detail,
+				`tabSales Invoice Item`.delivery_note, `tabSales Invoice Item`.stock_qty as qty,
 				`tabSales Invoice Item`.base_net_rate, `tabSales Invoice Item`.base_net_amount,
 				`tabSales Invoice Item`.name as "item_row", `tabSales Invoice`.is_return,
 				`tabSales Invoice Item`.cost_center
