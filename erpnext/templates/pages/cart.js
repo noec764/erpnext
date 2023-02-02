@@ -101,7 +101,11 @@ $.extend(shopping_cart, {
 			})
 
 			if (!address.message) {
-				await shopping_cart.new_cart_address(false)
+				try {
+					await shopping_cart.new_cart_address(false);
+				} catch (e) {
+					if (e) console.error(e);
+				}
 			}
 
 			shopping_cart.place_order(this);
@@ -225,28 +229,39 @@ $.extend(shopping_cart, {
 	place_order: function(btn) {
 		shopping_cart.freeze();
 
+		const onError = (response) => {
+			shopping_cart.unfreeze();
+			if (response.exc) {
+				let msg = frappe._("Something went wrong!");
+				if (response._server_messages) {
+					msg = JSON.parse(response._server_messages).map(m => JSON.parse(m))
+					msg = msg.map(m => typeof m === 'object' ? m.message : m)
+					msg = msg.join("<br>");
+				}
+
+				$("#cart-error")
+					.empty()
+					.html(msg)
+					.toggle(true);
+			} else {
+				console.error(response);
+			}
+		}
+
 		return frappe.call({
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.place_order",
 			btn: btn,
-			callback: function(r) {
-				if(r.exc) {
-					shopping_cart.unfreeze();
-					var msg = "";
-					if(r._server_messages) {
-						msg = JSON.parse(r._server_messages || []).join("<br>");
-					}
-
-					$("#cart-error")
-						.empty()
-						.html(msg || frappe._("Something went wrong!"))
-						.toggle(true);
-				} else {
-					$(btn).hide();
-					window.location.href = '/orders/' + encodeURIComponent(r.message);
-				}
+		}).then((r) => {
+			if (r.exc) {
+				onError(r);
+			} else {
+				$(btn).hide();
+				window.location.href = '/orders/' + encodeURIComponent(r.message);
 			}
-		});
+		}).catch((r) => {
+			onError(r.responseJSON);
+		})
 	},
 
 	request_quotation: function(btn) {
