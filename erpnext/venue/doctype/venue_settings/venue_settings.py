@@ -221,7 +221,7 @@ def override_e_commerce_settings(e_commerce_settings):
 
 def get_shopping_cart_overrides(company=None):
 	if not hasattr(frappe, "request"):
-		raise RuntimeError("override_e_commerce_settings: This function must be called from a `request` context.")
+		return  # not called from a request
 
 	venue_settings = frappe.get_cached_doc("Venue Settings")
 	if not venue_settings.get("enable_multi_companies"):

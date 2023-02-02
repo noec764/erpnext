@@ -91,6 +91,7 @@ class BaseTestVenueCartSettings(FrappeTestCase):
 		venue = frappe.get_single("Venue Settings")
 		venue.enable_multi_companies = True
 
+		# NOTE: The overrides are cached for the full runtime.
 		venue.cart_settings_overrides = []  # do not forget to clear the list
 		venue.append('cart_settings_overrides', {
 			'company': DEFAULT_COMPANY,
