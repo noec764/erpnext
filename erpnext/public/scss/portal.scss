@@ -20,6 +20,14 @@
 	}
 }
 
-.resources-list {
-	justify-content: center;
+.booking-page {
+	.resources-list {
+		justify-content: center;
+	}
+
+	.form-section {
+		.section-head {
+			margin-bottom: 5px;
+		}
+	}
 }
