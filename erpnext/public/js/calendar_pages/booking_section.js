@@ -87,7 +87,7 @@ class BookingCalendar {
 	}
 
 	getValidRange() {
-		return { start: momentjs().add(1,'d').format("YYYY-MM-DD") }
+		return { start: momentjs().format("YYYY-MM-DD") }
 	}
 
 	set_loading_state(state) {
