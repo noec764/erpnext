@@ -27,6 +27,17 @@ class DokosEvent(Event):
 	def validate(self):
 		super().validate()
 		self.validate_remaining_capacity()
+		self.validate_image_is_public()
+
+	def validate_image_is_public(self):
+		if str(self.image or "").startswith("/private/"):
+			file_name = frappe.get_value("File", { "is_private": True, "file_url": self.image })
+			file = frappe.get_doc("File", file_name)
+			file.is_private = False
+			file.save()
+			self.image = file.file_url
+			msg = _("The image of this event was made public to be displayed correctly on the website.")
+			frappe.msgprint(msg, alert=True, indicator="green")
 
 	def validate_remaining_capacity(self):
 		capacity_info = get_capacity_info(self)
@@ -38,14 +49,7 @@ class DokosEvent(Event):
 		super().get_context(context)
 
 		context.template = "/venue/doctype/event_registration/event/templates/event.html"
-
-		fields = []
-		for field in frappe.get_meta("Event Registration").fields:
-			if not (field.fieldname == "amended_from" or field.permlevel > 0):
-				field.label = _(field.label)
-				fields.append(field)
-
-		context.registration_form = frappe.as_json(fields)
+		context.image_design = "icon"
 
 		if frappe.session.user != "Guest":
 			context.is_registered = frappe.db.exists(
@@ -53,15 +57,53 @@ class DokosEvent(Event):
 			)
 			context.my_registrations = frappe.get_list(
 				"Event Registration",
-				fields=["name", "docstatus", "first_name", "last_name"],
+				fields=["name", "docstatus", "amount", "first_name", "last_name", "payment_status"],
 				filters=dict(user=frappe.session.user, event=self.name),
 			)
 
-		context.event_capacity_info = get_capacity_info(self)
+		context.allow_cancellations = self.allow_cancellations
+		context.accept_payment = False
+		context.event_capacity_info = get_capacity_info(self) or {"error": "could not compute capacity info"}
 
-		if self.registration_web_form:
-			web_form_route = frappe.get_value("Web Form", self.registration_web_form, "route")
-			context.registration_url = f"/{web_form_route}/new?event={self.name}"
+		from frappe.utils import format_datetime, format_duration, formatdate, parse_json
+		context.event_meta = []
+		shown_fields = ["max_number_of_registrations"]
+		for k in shown_fields:
+			df = self.meta.get_field(k)
+			val = self.get(k)
+			label = _(df.label, None, df.parent)
+
+			if k == "max_number_of_registrations":
+				if context.event_capacity_info["has_limit"]:
+					context.event_meta.append({ "label": _("{0} places").format(context.event_capacity_info["limit"]) })
+				continue
+			elif df.fieldtype == "Date":
+				val = formatdate(val)
+			elif df.fieldtype == "Datetime":
+				val = format_datetime(val)
+			elif df.fieldtype == "Duration":
+				val = format_duration(val)
+
+			context.event_meta.append({ "key": df.fieldname, "label": label, "value": val })
+
+		context.event_tags = frappe.get_all("Tag Link", filters={"document_type": "Event","document_name": self.name}, pluck="tag")
+
+		if self.registration_form:
+			web_form_info: dict = frappe.get_value("Web Form", self.registration_form, ["route", "accept_payment"], as_dict=1)
+			context.registration_url = f"/{web_form_info['route']}/new?event={self.name}"
+
+			if web_form_info["accept_payment"]:
+				context.accept_payment = True
+		else:
+			context.registration_url = ""
+
+			fields = []
+			for field in frappe.get_meta("Event Registration").fields:
+				if not (field.fieldname == "amended_from" or field.permlevel > 0):
+					field.label = _(field.label)
+					fields.append(field)
+
+			context.registration_form = frappe.as_json(fields)
 
 		context.can_edit_event = self.has_permission("write")
 
@@ -79,7 +121,7 @@ class CapacityInfo(TypedDict):
 
 
 @frappe.whitelist()
-def get_capacity_info(event: str) -> CapacityInfo:
+def get_capacity_info(event: str) -> CapacityInfo | None:
 	from pypika import functions as fn
 
 	fields = ["name", "published", "allow_registrations", "max_number_of_registrations"]
@@ -89,6 +131,9 @@ def get_capacity_info(event: str) -> CapacityInfo:
 		event_info = frappe.db.get_value("Event", event, fields, as_dict=True)
 	else:
 		raise frappe.exceptions.InvalidNameError(repr(event))
+
+	if not event_info:
+		return None
 
 	allow_registrations = bool(event_info["allow_registrations"] and event_info["published"])
 	max_number_of_registrations = int(event_info["max_number_of_registrations"] or 0)
