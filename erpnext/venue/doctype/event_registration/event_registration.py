@@ -10,9 +10,9 @@ class DuplicateRegistration(frappe.ValidationError):
 	@classmethod
 	def throw(cls, registration: dict = None):
 		if frappe.request.path.startswith("/app"):
-			cls.throw_desk(self)
+			cls.throw_desk(registration)
 		else:
-			cls.throw_website(self)
+			cls.throw_website(registration)
 
 	@classmethod
 	def throw_desk(cls, registration: dict = None):
@@ -129,6 +129,7 @@ class EventRegistration(Document):
 		curr_status = self.payment_status or "Unpaid"  # Probably created from the desk
 
 		if self.get_payment_amount() <= 0:
+			self.db_set("payment_status", new_status)
 			return
 
 		if new_status == "Paid" and curr_status in ("Unpaid", "Pending"):
@@ -141,9 +142,10 @@ class EventRegistration(Document):
 			if not reference_no:
 				frappe.throw(_("Missing Reference Number"))
 
-			self.make_invoice()
-			self.make_payment_entry(reference_no=reference_no, payment_gateway=self.payment_gateway)
+			invoice = self.make_invoice()
+			self.make_payment_entry(reference_no=reference_no, payment_gateway=self.payment_gateway, invoice_doc=invoice)
 		elif new_status in ("Failed", "Cancelled"):
+			self.set("payment_status", new_status)
 			self.cancel()
 
 	def on_webform_save(self, web_form: Document):
@@ -158,7 +160,7 @@ class EventRegistration(Document):
 			self.payment_status = "Unpaid"
 			self.save()
 
-	def get_payment_amount(self):
+	def get_payment_amount(self) -> float:
 		# TODO: Fetch from item instead
 		return self.amount
 
@@ -232,7 +234,7 @@ class EventRegistration(Document):
 		details = self.get_invoicing_details()
 
 		if details.rate <= 0:
-			raise ValueError("Registration amount is zero but a payment was requested.")
+			frappe.throw(_("Registration amount is zero but an invoice was requested."))
 
 		si = frappe.get_doc(
 			{
@@ -257,16 +259,36 @@ class EventRegistration(Document):
 
 		return si
 
-	def make_payment_entry(self, *, reference_no, payment_gateway=None, mode_of_payment=None):
+	def make_payment_entry(self, *, reference_no, payment_gateway, invoice_doc, mode_of_payment=None):
+		# Imports
 		from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
+		from erpnext.accounts.doctype.payment_request.payment_request import _get_payment_gateway_controller
 		from frappe.utils import nowdate
-		details = self.get_invoicing_details()
 
+		# Check parameters
 		if isinstance(payment_gateway, str):
 			payment_gateway = frappe.get_doc("Payment Gateway", payment_gateway)
-		if payment_gateway:
-			mode_of_payment = payment_gateway.mode_of_payment
 
+		if not payment_gateway:
+			frappe.throw(_("Missing Payment Gateway"))
+
+		# Invoicing and Payment data
+		details = self.get_invoicing_details()
+		base_amount = details.rate
+		fee_amount = 0.0
+		# exchange_rate = 1.0  # TODO
+
+		mode_of_payment = mode_of_payment or payment_gateway.mode_of_payment
+
+		# Update fee information if needed
+		controller = _get_payment_gateway_controller(payment_gateway.name)
+		if hasattr(controller, "get_transaction_fees"):
+			fee_information = controller.get_transaction_fees(reference_no)
+			base_amount = fee_information.base_amount
+			fee_amount = fee_information.fee_amount
+			# exchange_rate = fee_information.exchange_rate
+
+		# Get destination account
 		paid_to = get_bank_cash_account(mode_of_payment=mode_of_payment, company=details.company)
 		if paid_to and "account" in paid_to:
 			paid_to = paid_to["account"]
@@ -278,21 +300,50 @@ class EventRegistration(Document):
 				"party_type": "Customer",
 				"party": details.customer,
 				"company": details.company,
+				# TODO: Handle exchange rates and currencies
 				"paid_from_account_currency": details.currency,
 				"paid_to_account_currency": details.currency,
 				"source_exchange_rate": 1,
 				"target_exchange_rate": 1,
 				"reference_no": reference_no,
 				"reference_date": nowdate(),
-				"received_amount": details.rate,
-				"paid_amount": details.rate,
+				"received_amount": base_amount - fee_amount,
+				"paid_amount": base_amount - fee_amount,
 				"mode_of_payment": mode_of_payment,
 				"paid_to": paid_to,
 			}
 		)
+		pe.append(
+			"references",
+			{
+				"reference_doctype": invoice_doc.doctype,
+				"reference_name": invoice_doc.name,
+				"allocated_amount": base_amount
+			}
+		)
+
+		if fee_amount > 0.0:
+			write_off_account, default_cost_center = frappe.get_value("Company", details.company, ["write_off_account", "cost_center"])
+			fee_account = payment_gateway.fee_account or write_off_account
+			fee_cost_center = payment_gateway.cost_center or default_cost_center
+			if fee_account and fee_cost_center:
+				pe.append("deductions", {
+					"account": fee_account,
+					"cost_center": fee_cost_center,
+					"amount": fee_amount,
+				})
+
 		pe.flags.ignore_permissions = True
 		pe.insert()
 		pe.submit()
+
+		if fee_amount > 0.0 and not (payment_gateway.fee_account and payment_gateway.cost_center):
+			# Add warning about fees not going into the right account/cost center.
+			pe.add_comment(
+				"Comment",
+				_("Payment Gateway '{0}' must have a Fee Account and Cost Center for the fees ({1}) to be correctly assigned.").format(payment_gateway.name, fee_amount),
+				comment_email="Administrator",
+			)
 
 		return pe
 
