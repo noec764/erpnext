@@ -6136,6 +6136,7 @@ Make project from a template.,Créer un projet depuis un modèle,
 Make {0} Variant,Génerer {0} variant,
 Make {0} Variants,Génerer {0} variants,
 Make,Action,
+Make,Marque,Vehicle
 Manage Customer Group Tree.,Gérer l'Arborescence des Groupes de Clients.,
 Manage Customers,Gérer les clients,
 Manage Items,Gérer les articles,
