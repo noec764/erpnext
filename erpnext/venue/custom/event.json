@@ -58,10 +58,12 @@
 		},
 		{
 			"default": "0",
+			"depends_on": "eval:doc.registration_form&&doc.allow_registrations",
 			"dt": "Event",
-			"fieldname": "amount",
+			"fieldname": "registration_amount",
 			"fieldtype": "Currency",
 			"insert_after": "registration_form",
+			"is_system_generated": 1,
 			"label": "Registration amount",
 			"non_negative": 1
 		},
@@ -71,16 +73,16 @@
 			"fieldtype": "Column Break",
 			"insert_after": "amount",
 			"is_system_generated": 1,
-			"module": "Venue",
 			"name": "Event-column_break_38"
 		},
 		{
 			"default": null,
-			"depends_on": "eval:!doc.registration_web_form",
+			"depends_on": "eval:!doc.registration_form",
 			"dt": "Event",
 			"fieldname": "success_message",
 			"fieldtype": "HTML",
 			"insert_after": "column_break_38",
+			"is_system_generated": 1,
 			"label": "Registration success message"
 		}
 	],
