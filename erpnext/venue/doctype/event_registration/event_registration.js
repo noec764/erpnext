@@ -2,8 +2,20 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Event Registration", {
-	// refresh: function(frm) {
-	// }
+	refresh(frm) {
+		if (frm.doc.docstatus == 2 && frm.doc.payment_status == "Paid") {
+			frm.add_custom_button(__('Mark as refunded'), () => {
+				return frappe.call({
+					method: "erpnext.venue.doctype.event_registration.event_registration.mark_registration_as_refunded",
+					args: { name: frm.doc.name },
+					freeze: true,
+					callback() {
+						cur_frm.reload_doc()
+					}
+				});
+			});
+		}
+	}
 });
 
 frappe.tour["Event Registration"] = [
