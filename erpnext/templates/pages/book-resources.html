@@ -1,0 +1,24 @@
+{% extends "templates/web.html" %}
+
+{% block breadcrumbs %}
+	{% include "templates/includes/breadcrumbs.html" %}
+{% endblock %}
+
+{% block title %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block page_content %}
+<div id="booking-page"></div>
+{% endblock %}
+
+{% block script %}
+{{ include_script("dialog.bundle.js") }}
+{{ include_script("controls.bundle.js") }}
+{{ include_script("booking_page.bundle.js")}}
+{% endblock %}

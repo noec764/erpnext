@@ -506,7 +506,7 @@ def get_available_item(item, start, end):
 
 # TODO: refactor with a class and add an option to get monthly availabilities
 @frappe.whitelist(allow_guest=True)
-def get_availabilities(item, start, end, uom=None, user=None):
+def get_availabilities(item: str, start, end, uom: str = None, user: str = None):
 	return ItemBookingAvailabilities(
 		item=item, start=start, end=end, uom=uom, user=user
 	).get_available_slots()

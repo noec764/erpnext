@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Dokos SAS and Contributors
+// Copyright (c) 2023, Dokos SAS and Contributors
 // See license.txt
 
 import { Calendar } from '@fullcalendar/core';
@@ -79,7 +79,6 @@ class BookingCalendar {
 
 	destroy() {
 		this.fullCalendar&&this.fullCalendar.destroy();
-		document.getElementById('alternative-item').remove();
 	}
 
 	getSelectAllow(selectInfo) {
