@@ -106,6 +106,10 @@ const new_booking = (frm, value) => {
 }
 
 const refresh_intro_header = (frm) => {
+	if (frm.doc.__islocal) {
+		return frm.set_intro("");
+	}
+
 	frm.set_intro(__("Loading..."), frm.doc.published && frm.doc.allow_registrations ? "green" : "yellow");
 
 	frappe.xcall("erpnext.venue.doctype.event_registration.event.event.get_capacity_info", {
