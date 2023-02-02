@@ -20,7 +20,10 @@
   "contact",
   "payment_section",
   "amount",
-  "payment_gateway"
+  "company",
+  "column_break_15",
+  "payment_gateway",
+  "payment_status"
  ],
  "fields": [
   {
@@ -98,25 +101,45 @@
   {
    "fieldname": "payment_section",
    "fieldtype": "Section Break",
-   "label": "Payment"
+   "label": "Payment",
+   "permlevel": 1
   },
   {
    "fetch_from": "event.registration_amount",
    "fieldname": "amount",
    "fieldtype": "Currency",
-   "label": "Registration amount"
+   "label": "Registration amount",
+   "permlevel": 1
   },
   {
    "fieldname": "payment_gateway",
    "fieldtype": "Link",
    "label": "Payment Gateway",
-   "options": "Payment Gateway"
+   "options": "Payment Gateway",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "\nUnpaid\nPending\nPaid\nRefunded",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-27 17:10:45.137068",
+ "modified": "2023-02-01 18:10:25.936740",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Registration",

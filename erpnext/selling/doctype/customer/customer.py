@@ -355,6 +355,26 @@ def create_contact(contact, party_type, party, email):
 	contact.insert()
 
 
+def make_customer_from_contact(contact_doc):
+	customer_name = " ".join(
+		str(contact_doc.get(k, ""))
+		for k in ("first_name", "middle_name", "last_name")
+		if contact_doc.get(k, "")
+	)
+	customer = frappe.get_doc(
+		{
+			"doctype": "Customer",
+			"customer_name": customer_name,
+			"salutation": contact_doc.get("salutation"),
+			"gender": contact_doc.get("gender"),
+			"name": contact_doc.get("customer_primary_contact"),
+			"customer_type": "Individual",
+		}
+	)
+	customer.insert()
+	return customer
+
+
 @frappe.whitelist()
 def make_quotation(source_name, target_doc=None):
 	def set_missing_values(source, target):

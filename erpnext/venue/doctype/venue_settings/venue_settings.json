@@ -17,7 +17,9 @@
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
-  "month_uom"
+  "month_uom",
+  "event_registration_section",
+  "registration_item_code"
  ],
  "fields": [
   {
@@ -97,11 +99,22 @@
    "fieldname": "confirm_booking_after_payment",
    "fieldtype": "Check",
    "label": "Confirm booking after payment"
+  },
+  {
+   "fieldname": "event_registration_section",
+   "fieldtype": "Section Break",
+   "label": "Event Registration"
+  },
+  {
+   "fieldname": "registration_item_code",
+   "fieldtype": "Link",
+   "label": "Billed Item for registration",
+   "options": "Item"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-09-30 17:07:55.586709",
+ "modified": "2023-01-31 16:51:02.114992",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
@@ -129,5 +142,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
