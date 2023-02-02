@@ -15,9 +15,12 @@ class VenueRegistrationForm(Document):
 		self.create_contact()
 		self.create_address()
 		self.create_subscription()
+		self.create_user()
 
-	# def create_user(self):
-	# 	invite_user(self.contact)
+
+	def create_user(self):
+		invite_user(self.contact)
+
 
 	def create_contact(self):
 		def postprocess(source, target):
@@ -48,11 +51,11 @@ class VenueRegistrationForm(Document):
 			self.name,
 			{
 				self.doctype: {
-					"doctype": "Contact"
+					"doctype": "Contact",
+					"field_no_map": ["status"],
 				},
 			},
-			None,
-			postprocess,
+			postprocess=postprocess,
 			ignore_permissions=True
 		)
 
@@ -60,6 +63,7 @@ class VenueRegistrationForm(Document):
 		mapped_doc.insert()
 
 		self.contact = mapped_doc.name
+
 
 	def create_address(self):
 		def set_missing_values(source, target):
@@ -73,11 +77,11 @@ class VenueRegistrationForm(Document):
 			self.name,
 			{
 				self.doctype: {
-					"doctype": "Address"
+					"doctype": "Address",
+					"field_no_map": ["status"],
 				},
 			},
-			None,
-			set_missing_values,
+			postprocess=set_missing_values,
 			ignore_permissions=True
 		)
 
@@ -85,6 +89,7 @@ class VenueRegistrationForm(Document):
 		mapped_doc.insert()
 
 		self.address = mapped_doc.name
+
 
 	def create_customer(self):
 		def set_missing_values(source, target):
@@ -98,7 +103,8 @@ class VenueRegistrationForm(Document):
 			self.name,
 			{
 				self.doctype: {
-					"doctype": "Customer"
+					"doctype": "Customer",
+					"field_no_map": ["status"],
 				},
 			},
 			None,
@@ -110,6 +116,7 @@ class VenueRegistrationForm(Document):
 		mapped_doc.insert()
 
 		self.customer = mapped_doc.name
+
 
 	def create_subscription(self):
 		if self.subscription_template:
@@ -125,6 +132,9 @@ class VenueRegistrationForm(Document):
 
 
 	def on_payment_authorized(self, status=None, reference_no=None):
-		print("on_payment_authorized", status, reference_no)
+		if status in ["Authorized", "Completed", "Paid"]:
+			self.status = "Payment Method Registered"
+			self.submit()
 
-		return "/me"
+		elif status == "Pending":
+			self.status = "Pending"

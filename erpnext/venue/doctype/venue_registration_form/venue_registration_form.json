@@ -154,6 +154,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Email Address",
+   "options": "Email",
    "reqd": 1
   },
   {
@@ -182,10 +183,12 @@
    "read_only": 1
   },
   {
+   "default": "Initiated",
    "fieldname": "status",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Status",
-   "options": "Unpaid\nPaid",
+   "options": "Initiated\nPayment Method Registered\nPending\nAbandonned",
    "read_only": 1
   },
   {
@@ -207,7 +210,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-26 19:06:44.895902",
+ "modified": "2023-02-02 10:42:58.048339",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Registration Form",
