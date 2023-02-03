@@ -29,6 +29,13 @@ class SubscriptionTemplate(Document):
 		values = {x: getattr(self, x) for x in self.as_dict() if x not in self.get_excluded_fields()}
 		start_date = self.get_start_date(kwargs.start_date)
 
+		# Cast `datetime` objects to `date` objects
+		from datetime import datetime, date
+		if isinstance(start_date, datetime):
+			start_date = start_date.date()
+		elif not isinstance(start_date, (date, str)):
+			raise ValueError(_("Invalid Date"))
+
 		subscription = frappe.get_doc(
 			dict(
 				{

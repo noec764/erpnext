@@ -24,7 +24,7 @@ def get_data(filters):
 		return []
 
 	status_filter = (
-		"Confirmed, Not Confirmed"
+		"Confirmed, Not confirmed"
 		if filters.get("status") == "Confirmed and not confirmed"
 		else "Confirmed"
 	)

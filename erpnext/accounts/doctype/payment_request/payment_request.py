@@ -26,6 +26,9 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import get_account_currency
+from erpnext.erpnext_integrations.doctype.integration_references.integration_references import (
+	can_make_immediate_payment,
+)
 from erpnext.utilities import payment_app_import_guard
 
 from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
@@ -50,7 +53,6 @@ class PaymentRequest(Document):
 
 		if not self.no_payment_link:
 			self.validate_payment_gateways()
-			self.payment_gateways_validation()
 			self.validate_existing_gateway()
 			self.validate_currency()
 
@@ -68,7 +70,7 @@ class PaymentRequest(Document):
 
 		if existing_payment_request_amount:
 			ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
-			if hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") != "Shopping Cart":
+			if not hasattr(ref_doc, "order_type") or getattr(ref_doc, "order_type") != "Shopping Cart":
 				ref_amount = get_amount(ref_doc)
 
 				if existing_payment_request_amount + flt(self.grand_total) > ref_amount:
@@ -108,26 +110,6 @@ class PaymentRequest(Document):
 		if not self.payment_gateways and not self.payment_gateway:
 			frappe.throw(_("Please add at least one payment gateway"))
 
-	def payment_gateways_validation(self):
-		selected_gateways = set([x.get("payment_gateway") for x in self.payment_gateways])
-		if selected_gateways:
-			gateways = frappe.get_all(
-				"Payment Gateway",
-				filters={"name": ["in", selected_gateways]},
-				fields=["name", "gateway_settings", "gateway_controller"],
-			)
-			for gateway in gateways:
-				if gateway.gateway_settings and gateway.gateway_controller:
-					gateway_controller = frappe.get_doc(gateway.gateway_settings, gateway.gateway_controller)
-					if hasattr(gateway_controller, "validate_payment_request"):
-						try:
-							gateway_controller.validate_payment_request(self)
-						except Exception:
-							if frappe.flags.mute_gateways_validation:
-								self.payment_gateways = [
-									x for x in self.payment_gateways if x.payment_gateway != gateway.name
-								]
-
 	def set_gateway_account(self):
 		accounts = frappe.get_all(
 			"Payment Gateway Account",
@@ -149,9 +131,6 @@ class PaymentRequest(Document):
 
 	def on_submit(self):
 		self.db_set("status", "Initiated")
-		if self.is_linked_to_a_subscription():
-			self.create_subscription_event()
-
 		send_mail = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
@@ -192,19 +171,20 @@ class PaymentRequest(Document):
 		if not self.get("payment_gateway"):
 			return False
 
-		return self.check_immediate_payment_for_gateway(self.payment_gateway)
+		return self.check_immediate_payment_for_gateway()
 
-	def check_immediate_payment_for_gateway(self, gateway):
+	def check_immediate_payment_for_gateway(self) -> bool:
 		"""Returns a boolean"""
-		controller = _get_payment_gateway_controller(gateway)
-		if hasattr(controller, "can_make_immediate_payment"):
-			return controller.can_make_immediate_payment(self)
-
-		return False
+		controller = _get_payment_gateway_controller(self.payment_gateway)
+		return can_make_immediate_payment(self, controller)
 
 	@frappe.whitelist()
 	def process_payment_immediately(self):
-		if frappe.conf.mute_payment_gateways or not self.get("payment_gateway"):
+		if (
+			frappe.conf.mute_payment_gateways
+			or not self.get("payment_gateway")
+			or not self.check_immediate_payment_for_gateway()
+		):
 			return
 
 		return self.get_immediate_payment_for_gateway(self.payment_gateway)
@@ -212,7 +192,17 @@ class PaymentRequest(Document):
 	def get_immediate_payment_for_gateway(self, gateway):
 		controller = _get_payment_gateway_controller(gateway)
 		if hasattr(controller, "immediate_payment_processing"):
-			result = controller.immediate_payment_processing(self)
+			result = controller.immediate_payment_processing(
+				reference=self.name,
+				customer=self.get_customer(),
+				amount=flt(self.grand_total, self.precision("grand_total")),
+				currency=self.currency,
+				description=self.subject,
+				metadata={
+					"reference_doctype": self.doctype,
+					"reference_name": self.name,
+				},
+			)
 			if result:
 				self.db_set("transaction_reference", result, commit=True)
 				self.db_set("status", "Pending", commit=True)
@@ -228,11 +218,24 @@ class PaymentRequest(Document):
 		if frappe.db.has_column(self.reference_doctype, "customer"):
 			return frappe.db.get_value(self.reference_doctype, self.reference_name, "customer")
 
+	@property
+	def customer(self):
+		return self.get_customer()
+
+	@property
+	def reference_document(self):
+		return frappe.get_doc(self.reference_doctype, self.reference_name)
+
 	def get_payment_url(self, payment_gateway):
-		data = frappe.db.get_value(
-			self.reference_doctype, self.reference_name, ["company", "customer"], as_dict=1
+		self.set_gateway_account()
+
+		data = frappe._dict(
+			{
+				"title": self.reference_document.get("company") or self.subject,
+				"customer": self.customer,
+				"customer_name": frappe.db.get_value("Customer", self.customer, "customer_name"),
+			}
 		)
-		data.update(frappe.db.get_value("Customer", data.customer, "customer_name", as_dict=1))
 
 		controller = _get_payment_gateway_controller(payment_gateway)
 		controller.validate_transaction_currency(self.currency)
@@ -244,12 +247,11 @@ class PaymentRequest(Document):
 		return controller.get_payment_url(
 			**{
 				"amount": flt(self.grand_total, self.precision("grand_total")),
-				"title": frappe.safe_encode(data.company),
+				"title": frappe.safe_encode(data.title),
 				"description": frappe.safe_encode(self.subject),
 				"reference_doctype": "Payment Request",
 				"reference_docname": self.name,
-				"payer_email": self.email_to
-				or (frappe.session.user if frappe.session.user != "Guest" else ""),
+				"payer_email": self.email_to or frappe.session.user,
 				"payer_name": frappe.safe_encode(data.customer_name),
 				"order_id": self.name,
 				"currency": self.currency,
@@ -259,12 +261,32 @@ class PaymentRequest(Document):
 
 	def set_as_paid(self, reference_no=None):
 		frappe.flags.mute_messages = True
+		self.register_customer(reference_no)
 		payment_entry = self.create_payment_entry(reference_no=reference_no)
-		if self.reference_doctype != "Subscription":
-			self.make_invoice()
+		self.make_invoice()
 		frappe.flags.mute_messages = False
 
 		return payment_entry
+
+	def register_customer(self, reference_no):
+		if frappe.flags.in_test:
+			return
+
+		controller = _get_payment_gateway_controller(self.payment_gateway)
+		if frappe.db.exists("Integration References", dict(customer=self.customer)):
+			doc = frappe.get_doc("Integration References", dict(customer=self.customer))
+		else:
+			doc = frappe.new_doc("Integration References")
+
+		if controller.doctype == "Stripe Settings":
+			doc.stripe_customer_id = controller.get_customer_id(reference_no)
+			doc.stripe_settings = controller.name
+		elif controller.doctype == "GoCardless Settings":
+			doc.gocardless_customer_id = controller.get_customer_id(reference_no)
+			doc.gocardless_settings = self.gateway.name
+
+		doc.customer = self.customer
+		doc.save(ignore_permissions=True)
 
 	def create_payment_entry(self, submit=True, reference_no=None):
 		"""create entry"""
@@ -330,13 +352,7 @@ class PaymentRequest(Document):
 			}
 		)
 
-		# TODO: Refactor
-		# if self.exchange_rate:
-		# 	payment_entry.update(
-		# 		{
-		# 			"target_exchange_rate": self.exchange_rate,
-		# 		}
-		# 	)
+		self.get_payment_gateway_fees(reference_no)
 
 		if (
 			self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center")
@@ -383,11 +399,23 @@ class PaymentRequest(Document):
 				},
 			)
 
+		payment_entry.payment_request = self.name
+
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
 
 		return payment_entry
+
+	def get_payment_gateway_fees(self, reference_no=None):
+		if self.payment_gateway and reference_no:
+			controller = _get_payment_gateway_controller(self.payment_gateway)
+			if hasattr(controller, "get_transaction_fees"):
+				transaction_fees = controller.get_transaction_fees(reference_no)
+				self.fee_amount += transaction_fees.fee_amount
+				self.base_amount = transaction_fees.base_amount or self.base_amount
+				if transaction_fees.target_exchange_rate:
+					self.target_exchange_rate = transaction_fees.target_exchange_rate
 
 	def send_email(self, communication=None):
 		"""send email with payment link"""
@@ -458,11 +486,14 @@ class PaymentRequest(Document):
 		if not status:
 			return
 
-		if status in ["Authorized", "Completed"]:
+		if status in ["Authorized", "Completed", "Paid"]:
 			self.run_method("set_as_paid", reference_no)
 			self.db_set("status", "Paid", commit=True)
-		elif status in ["Pending"] and self.reference_doctype != "Subscription":
-			self.run_method("make_invoice")
+
+		elif status == "Pending" and not self.docstatus.is_draft():
+			self.db_set("status", "Pending", commit=True)
+
+		self.db_set("transaction_reference", reference_no, commit=True)
 
 		return self.get_redirection()
 
@@ -488,48 +519,6 @@ class PaymentRequest(Document):
 
 		return redirect_to
 
-	@frappe.whitelist()
-	def is_linked_to_a_subscription(self):
-		if self.reference_doctype == "Subscription":
-			return self.reference_name
-
-		meta = frappe.get_meta(self.reference_doctype, self.reference_name)
-		has_subscription_field = [df for df in meta.fields if df.fieldname == "subscription"]
-
-		if has_subscription_field:
-			return frappe.db.get_value(self.reference_doctype, self.reference_name, "subscription")
-
-		return None
-
-	@frappe.whitelist()
-	def get_linked_subscription(self):
-		subscription = self.is_linked_to_a_subscription()
-		if subscription:
-			return frappe.get_doc("Subscription", subscription)
-
-	def create_subscription_event(self):
-		from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
-
-		subscription = frappe.get_doc("Subscription", self.is_linked_to_a_subscription())
-		start = subscription.current_invoice_start
-		end = subscription.current_invoice_end
-
-		if not subscription.generate_invoice_at_period_start:
-			previous_period = SubscriptionPeriod(subscription).get_previous_period()
-			if previous_period:
-				start = previous_period[0].period_start
-				end = previous_period[0].period_end
-
-		subscription.add_subscription_event(
-			"Payment request created",
-			**{
-				"document_type": "Payment Request",
-				"document_name": self.name,
-				"period_start": start,
-				"period_end": end,
-			}
-		)
-
 	def set_message_from_template(self):
 		data = frappe._dict(get_message(self, self.email_template))
 		self.subject, self.message = data.subject, data.message
@@ -540,7 +529,7 @@ def make_payment_request(*args, **kwargs):
 	"""Make payment request"""
 	args = frappe._dict(kwargs)
 	ref_doc = frappe.get_doc(args.dt, args.dn)
-	grand_total = args.grand_total or get_amount(ref_doc)
+	grand_total = flt(args.grand_total) or get_amount(ref_doc)
 
 	if args.loyalty_points and args.dt == "Sales Order":
 		from erpnext.accounts.doctype.loyalty_program.loyalty_program import validate_loyalty_points

@@ -7,7 +7,7 @@ frappe.ui.form.on('Payment Gateway', {
 			return {
 				filters: {
 					"is_group": 0,
-					"account_type": "Expenses"
+					"account_type": "Expense Account"
 				}
 			};
 		});

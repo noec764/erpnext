@@ -1,5 +1,33 @@
+.body .container {
+	background: var(--body-bg-color);
+}
+
 .current-subscription-table {
 	table {
 		border: none;
+	}
+}
+
+.subscription-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+	grid-gap: 1rem;
+	grid-auto-rows: 1fr;
+
+	.card-footer {
+		background-color: transparent;
+		border-top: none;
+	}
+}
+
+.booking-page {
+	.resources-list {
+		justify-content: center;
+	}
+
+	.form-section {
+		.section-head {
+			margin-bottom: 5px;
+		}
 	}
 }

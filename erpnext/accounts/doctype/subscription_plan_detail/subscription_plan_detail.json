@@ -8,6 +8,7 @@
   "status",
   "item",
   "item_name",
+  "booked_item",
   "qty",
   "uom",
   "rate",
@@ -118,8 +119,9 @@
    "collapsible": 1,
    "fieldname": "payment_plan_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Payment gateways and plans"
+   "read_only": 1,
+   "label": "Payment gateways and plans",
+   "description": "This information is no longer used by Dokos. <br>All subscriptions are directly handled in Dokos and no longer in Stripe."
   },
   {
    "collapsible": 1,
@@ -174,12 +176,18 @@
    "fieldtype": "Data",
    "label": "Item Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "booked_item",
+   "fieldtype": "Link",
+   "label": "Booked Item",
+   "options": "Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-02 14:13:09.813277",
+ "modified": "2023-01-19 14:42:11.752265",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan Detail",

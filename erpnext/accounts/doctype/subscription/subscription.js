@@ -276,15 +276,6 @@ frappe.ui.form.on('Subscription', {
 					frm.reload_doc();
 				})
 		}, __("Set a new date"), __("Submit"));
-	},
-	show_stripe_section(frm) {
-		if (frm.doc.payment_gateway) {
-			frappe.db.get_value("Payment Gateway", frm.doc.payment_gateway, ["gateway_controller", "gateway_settings"], pg => {
-				(pg.gateway_settings == "Stripe Settings")&&frappe.db.get_value(pg.gateway_settings, pg.gateway_controller, "subscription_cycle_on_stripe", res => {
-					frm.fields_dict.plans.grid.update_docfield_property('payment_plan_section', 'hidden', !res.subscription_cycle_on_stripe);
-				});
-			})
-		}
 	}
 });
 
@@ -319,14 +310,11 @@ frappe.ui.form.on('Subscription Plan Detail', {
 		} else {
 			frappe.throw(__("This plan is already linked to an invoice item."))
 		}
-	},
-	form_render(frm, cdt, cdn) {
-		frm.trigger("show_stripe_section")
 	}
 })
 
 frappe.tour["Subscription"] = [
-    {
+	{
 		fieldname: "customer",
 		title: __("Customer"),
 		description: __("Select the customer that will be associated with this subscription."),
