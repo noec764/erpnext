@@ -2,9 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 import frappe
 
-from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
-	get_shopping_cart_settings,
-)
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 from erpnext.e_commerce.doctype.item_review.item_review import get_item_reviews
 from erpnext.e_commerce.doctype.website_item.website_item import check_if_user_is_customer
 

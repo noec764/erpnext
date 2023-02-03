@@ -2,10 +2,45 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Venue Settings', {
-	// refresh: function(frm) {
+	refresh: function(frm) {
+		if (frm.doc.__onload && frm.doc.__onload.quotation_series) {
+			let quotation_series = frm.doc.__onload.quotation_series;
+			if (typeof quotation_series === 'string') {
+				quotation_series = quotation_series.split('\n');
+			}
+			frm.fields_dict["cart_settings_overrides"].grid
+				.update_docfield_property("quotation_series", "options", quotation_series);
+		}
+	},
+})
 
-	// }
-});
+frappe.ui.form.on('Venue Cart Settings', {
+	company(frm, cdt, cdn) {
+		const row = locals[cdt][cdn]
+		if (row && row.company) {
+			const is_duplicate = frm.doc.cart_settings_overrides.some((row2) => {
+				return row2.company === row.company && row2.name != row.name
+			})
+			if (is_duplicate) {
+				row.company = ''
+				frm.refresh_field('cart_settings_overrides')
+				frappe.msgprint({
+					title: __('{0} {1} already exists', [__('Company'), row.company]),
+					indicator: 'orange',
+				})
+			}
+		}
+	},
+	cart_settings_overrides_add(frm, cdt, cdn) {
+		// When adding a row, set the company to the empty string
+		const row = locals[cdt][cdn]
+		row.company = ''
+		row.default_customer_group = ''
+		row.quotation_series = ''
+		row.price_list = ''
+		frm.refresh_field('cart_settings_overrides')
+	},
+})
 
 frappe.tour['Venue Settings'] = [
 	{

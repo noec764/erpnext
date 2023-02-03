@@ -7,6 +7,7 @@ from frappe.utils import flt
 from erpnext.e_commerce.doctype.item_review.item_review import get_customer
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.utilities.product import get_non_stock_item_status
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 
 class ProductQuery:
@@ -21,7 +22,7 @@ class ProductQuery:
 	"""
 
 	def __init__(self):
-		self.settings = frappe.get_doc("E Commerce Settings")
+		self.settings = get_shopping_cart_settings()
 		self.page_length = self.settings.products_per_page or 20
 
 		self.or_filters = []
@@ -60,6 +61,7 @@ class ProductQuery:
 		self.filter_with_discount = bool(fields.get("discount"))
 		result, discount_list, website_item_groups, cart_items, count = [], [], [], [], 0
 
+		self.build_multicompany_filters()
 		if fields:
 			self.build_fields_filters(fields)
 		if item_group:
@@ -221,6 +223,12 @@ class ProductQuery:
 		for field in search_fields:
 			self.or_filters.append([field, "like", search])
 
+	def build_multicompany_filters(self):
+		"""Add filters for multi company."""
+		venue_settings = frappe.get_cached_doc("Venue Settings")
+		if f := venue_settings.multicompany_get_item_filter():
+			self.filters.append(f)
+
 	def add_display_details(self, result, discount_list, cart_items):
 		"""Add price and availability details in result."""
 		for item in result:
@@ -292,6 +300,7 @@ class ProductQuery:
 					"party_name": customer,
 					"contact_email": frappe.session.user,
 					"order_type": "Shopping Cart",
+					"company": get_shopping_cart_settings().company,  # E Commerce Settings -> overrides eventually (Venue Settings)
 					"docstatus": 0,
 				},
 				order_by="modified desc",

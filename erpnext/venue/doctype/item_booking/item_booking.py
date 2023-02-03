@@ -32,11 +32,7 @@ from frappe.utils import (
 from frappe.utils.user import is_system_user, is_website_user
 from googleapiclient.errors import HttpError
 
-from erpnext.accounts.party import get_party_account_currency
-from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
-	get_shopping_cart_settings,
-)
-from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation, get_party
+from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation, get_party, get_shopping_cart_settings
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price

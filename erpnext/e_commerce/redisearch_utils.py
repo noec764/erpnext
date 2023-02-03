@@ -11,6 +11,10 @@ from redis.commands.search.field import TagField, TextField
 from redis.commands.search.indexDefinition import IndexDefinition
 from redis.commands.search.suggestion import Suggestion
 
+def get_shopping_cart_settings():
+	from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
+	return get_shopping_cart_settings()
+
 WEBSITE_ITEM_INDEX = "website_items_index"
 WEBSITE_ITEM_KEY_PREFIX = "website_item:"
 WEBSITE_ITEM_NAME_AUTOCOMPLETE = "website_items_name_dict"
@@ -30,7 +34,7 @@ def get_indexable_web_fields():
 
 def is_redisearch_enabled():
 	"Return True only if redisearch is loaded and enabled."
-	is_redisearch_enabled = frappe.db.get_single_value("E Commerce Settings", "is_redisearch_enabled")
+	is_redisearch_enabled = get_shopping_cart_settings().is_redisearch_enabled
 	return is_search_module_loaded() and is_redisearch_enabled
 
 
@@ -79,7 +83,7 @@ def create_website_items_index():
 	idx_def = IndexDefinition([make_key(WEBSITE_ITEM_KEY_PREFIX)])
 
 	# Index fields mentioned in e-commerce settings
-	idx_fields = frappe.db.get_single_value("E Commerce Settings", "search_index_fields")
+	idx_fields = get_shopping_cart_settings().search_index_fields
 	idx_fields = idx_fields.split(",") if idx_fields else []
 
 	if "web_item_name" in idx_fields:
@@ -236,7 +240,7 @@ def get_cache_key(name):
 
 
 def get_fields_indexed():
-	fields_to_index = frappe.db.get_single_value("E Commerce Settings", "search_index_fields")
+	fields_to_index = get_shopping_cart_settings().search_index_fields
 	fields_to_index = fields_to_index.split(",") if fields_to_index else []
 
 	mandatory_fields = ["name", "web_item_name", "route", "thumbnail", "ranking"]
