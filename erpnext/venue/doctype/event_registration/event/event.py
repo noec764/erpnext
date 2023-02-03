@@ -28,6 +28,7 @@ class DokosEvent(Event):
 		super().validate()
 		self.validate_remaining_capacity()
 		self.validate_image_is_public()
+		self.clear_amount_if_no_webform()
 
 	def validate_image_is_public(self):
 		if str(self.image or "").startswith("/private/"):
@@ -43,6 +44,10 @@ class DokosEvent(Event):
 		capacity_info = get_capacity_info(self)
 		if capacity_info["allow_registrations"] and capacity_info["overbooking"]:
 			EventIsOverbooked.throw_desk()
+
+	def clear_amount_if_no_webform(self):
+		if not self.registration_form:
+			self.registration_amount = 0
 
 	def get_context(self, context):
 		# no_cache show_sidebar show_close_button content event_style attachments
