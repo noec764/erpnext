@@ -9,7 +9,7 @@ from frappe.model.document import Document
 class DuplicateRegistration(frappe.ValidationError):
 	@classmethod
 	def throw(cls, registration: dict = None):
-		if frappe.request.path.startswith("/app"):
+		if frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/"):
 			cls.throw_desk(registration)
 		else:
 			cls.throw_website(registration)
