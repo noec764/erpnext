@@ -38,7 +38,6 @@ class EventRegistration(Document):
 		self.check_duplicates()
 		self.validate_available_capacity_of_event()
 		self.create_or_link_with_contact()
-		self.fill_company_field_if_needed()
 
 	def on_submit(self):
 		self.add_contact_to_event()
@@ -84,11 +83,10 @@ class EventRegistration(Document):
 			.run()[0][0]
 		)
 
-	def fill_company_field_if_needed(self):
+	def set_company_from_cart_settings(self):
 		if self.meta.has_field("company"):
-			if not self.get("company", None):
-				from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import get_shopping_cart_settings
-				self.company = get_shopping_cart_settings().company
+			from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import get_shopping_cart_settings
+			self.company = get_shopping_cart_settings().company
 
 	def create_or_link_with_contact(self):
 		contact = self.contact
@@ -151,6 +149,7 @@ class EventRegistration(Document):
 	def on_webform_save(self, web_form: Document):
 		# The document is created from the Web Form, it means that someone wants to register
 		self.user = frappe.session.user
+		self.set_company_from_cart_settings()
 
 		if self.get_payment_amount() <= 0:
 			# Free registration

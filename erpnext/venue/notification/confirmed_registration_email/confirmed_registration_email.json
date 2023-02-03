@@ -1,7 +1,7 @@
 {
  "attach_print": 0,
  "channel": "Email",
- "condition": "doc.user in (None, \"\", \"Guest\")",
+ "condition": "doc.user == \"Guest\"",
  "creation": "2023-02-02 16:36:27.541811",
  "days_in_advance": 0,
  "docstatus": 0,

@@ -1,4 +1,4 @@
-<b>{{_("Cancelled event registration: needs reimbursement")}}</b>
+<b>{{_("Cancelled event registration needs reimbursement")}}</b>
 
 <h3>{{_("Open Document")}}: {{ frappe.utils.get_link_to_form(doc.doctype, doc.name) }}</h3>
 
