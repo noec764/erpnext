@@ -140,7 +140,7 @@ class EventRegistration(Document):
 			if not reference_no:
 				frappe.throw(_("Missing Reference Number"))
 
-			invoice = self.make_invoice()
+			invoice = self.make_and_submit_invoice()
 			self.make_payment_entry(reference_no=reference_no, payment_gateway=self.payment_gateway, invoice_doc=invoice)
 		elif new_status in ("Failed", "Cancelled"):
 			self.set("payment_status", new_status)
@@ -229,12 +229,10 @@ class EventRegistration(Document):
 			item_code=self.get_item_code(),
 		)
 
-	def make_invoice(self):
+	def _create_invoice(self):
 		details = self.get_invoicing_details()
-
 		if details.rate <= 0:
 			frappe.throw(_("Registration amount is zero but an invoice was requested."))
-
 		si = frappe.get_doc(
 			{
 				"doctype": "Sales Invoice",
@@ -251,6 +249,12 @@ class EventRegistration(Document):
 				"rate": details.rate,
 			},
 		)
+		si.run_method("set_missing_values")
+		si.run_method("calculate_taxes_and_totals")
+		return si
+
+	def make_and_submit_invoice(self):
+		si = self._create_invoice()
 
 		si.flags.ignore_permissions = True
 		si.insert()
@@ -322,7 +326,7 @@ class EventRegistration(Document):
 		)
 
 		if fee_amount > 0.0:
-			write_off_account, default_cost_center = frappe.get_value("Company", details.company, ["write_off_account", "cost_center"])
+			write_off_account, default_cost_center = frappe.get_cached_value("Company", details.company, ["write_off_account", "cost_center"])
 			fee_account = payment_gateway.fee_account or write_off_account
 			fee_cost_center = payment_gateway.cost_center or default_cost_center
 			if fee_account and fee_cost_center:
@@ -345,6 +349,27 @@ class EventRegistration(Document):
 			)
 
 		return pe
+
+	# Whitelisted document-level methods
+	@frappe.whitelist()
+	def api_submit_then_make_invoice(self):
+		"""
+		Create a draft Sales Invoice, set the Registration's payment_status to Paid, then submit it.
+		"""
+		si = self._create_invoice()
+		si.insert()  # Insert as draft
+
+		self.set("payment_status", "Paid")
+		self.submit()
+
+		return si
+
+
+@frappe.whitelist()
+def mark_as_refunded(name: str):
+	doc = frappe.get_doc("Event Registration", name)
+	if doc.docstatus == 2 and doc.payment_status == "Paid":
+		doc.db_set("payment_status", "Refunded")
 
 
 @frappe.whitelist()
@@ -417,10 +442,3 @@ def cancel_registration_by_name(name):
 	elif doc.docstatus == 2:
 		return
 
-
-@frappe.whitelist()
-def mark_registration_as_refunded(name):
-	doc = frappe.get_doc("Event Registration", name)
-	if doc.docstatus == 2:
-		if doc.payment_status == "Paid":
-			doc.db_set("payment_status", "Refunded")

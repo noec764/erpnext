@@ -3,17 +3,36 @@
 
 frappe.ui.form.on("Event Registration", {
 	refresh(frm) {
-		if (frm.doc.docstatus == 2 && frm.doc.payment_status == "Paid") {
-			frm.add_custom_button(__('Mark as refunded'), () => {
-				return frappe.call({
-					method: "erpnext.venue.doctype.event_registration.event_registration.mark_registration_as_refunded",
-					args: { name: frm.doc.name },
-					freeze: true,
-					callback() {
-						cur_frm.reload_doc()
-					}
+		if (!frm.doc.__islocal && frm.doc.amount) {
+			// Registration is created and payable
+
+			const is_cancelled = frm.doc.docstatus == 2
+			const is_unpaid = frm.doc.payment_status.match(/^(|Unpaid|Pending)$/)
+			const is_paid = frm.doc.payment_status === "Paid"
+
+			if (!is_cancelled && is_unpaid) {
+				// Registration is not yet paid, so an invoice can be created.
+				const msg = __("Submit then create draft invoice", null, "Event Registration")
+				frm.add_custom_button(msg, () => {
+					return frm.call("api_submit_then_make_invoice").then((r) => {
+						const si = r.message
+						frappe.set_route("Form", si.doctype, si.name)
+					});
 				});
-			});
+			}
+
+			if (is_cancelled && is_paid) {
+				// Registration was paid by the client, but then cancelled
+				const msg = __("Mark as {0}", [__("Refunded", null, "Event Registration")])
+				frm.add_custom_button(msg, () => {
+					return frappe.call(
+						"erpnext.venue.doctype.event_registration.event_registration.mark_as_refunded",
+						{ name: frm.doc.name },
+					).then(() => {
+						cur_frm.reload_doc();
+					});
+				});
+			}
 		}
 	}
 });
