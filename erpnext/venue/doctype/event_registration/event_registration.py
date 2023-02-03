@@ -259,6 +259,7 @@ class EventRegistration(Document):
 		si.flags.ignore_permissions = True
 		si.insert()
 		si.submit()
+		self.add_comment_about_document(si)
 
 		return si
 
@@ -339,6 +340,7 @@ class EventRegistration(Document):
 		pe.flags.ignore_permissions = True
 		pe.insert()
 		pe.submit()
+		self.add_comment_about_document(pe)
 
 		if fee_amount > 0.0 and not (payment_gateway.fee_account and payment_gateway.cost_center):
 			# Add warning about fees not going into the right account/cost center.
@@ -349,6 +351,11 @@ class EventRegistration(Document):
 			)
 
 		return pe
+
+	def add_comment_about_document(self, other_doc: Document):
+		msg = _("{0}: {1}").format(_(other_doc.doctype), other_doc.name)
+		html = f'<a href="{other_doc.get_url()}">{msg}</a>'
+		self.add_comment("Comment", html, comment_email="Administrator")
 
 	# Whitelisted document-level methods
 	@frappe.whitelist()
