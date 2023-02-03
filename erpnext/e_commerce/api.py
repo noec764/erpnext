@@ -11,7 +11,7 @@ from frappe.utils import cint
 from erpnext.e_commerce.product_data_engine.filters import ProductFiltersBuilder
 from erpnext.e_commerce.product_data_engine.query import ProductQuery
 from erpnext.setup.doctype.item_group.item_group import get_child_groups_for_website
-
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 @frappe.whitelist(allow_guest=True)
 def get_product_filter_data(query_args=None):
@@ -79,4 +79,4 @@ def get_product_filter_data(query_args=None):
 
 @frappe.whitelist(allow_guest=True)
 def get_guest_redirect_on_action():
-	return frappe.db.get_single_value("E Commerce Settings", "redirect_on_action")
+	return get_shopping_cart_settings().redirect_on_action

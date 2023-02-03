@@ -31,6 +31,7 @@ from erpnext.erpnext_integrations.doctype.integration_references.integration_ref
 )
 from erpnext.utilities import payment_app_import_guard
 
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 def _get_payment_gateway_controller(*args, **kwargs):
 	with payment_app_import_guard():
@@ -500,9 +501,7 @@ class PaymentRequest(Document):
 		redirect_to = "no-redirection"
 
 		# if shopping cart enabled and in session
-		shopping_cart_settings = frappe.db.get_value(
-			"E Commerce Settings", None, ["enabled", "payment_success_url"], as_dict=1
-		)
+		shopping_cart_settings = get_shopping_cart_settings()
 
 		if (
 			shopping_cart_settings.get("enabled")
@@ -674,7 +673,7 @@ def get_gateway_details(args):  # nosemgrep
 		return get_payment_gateway_account(filters)
 
 	if args.order_type == "Shopping Cart":
-		payment_gateway_account = frappe.get_doc("E Commerce Settings").payment_gateway_account
+		payment_gateway_account = get_shopping_cart_settings().payment_gateway_account
 		return get_payment_gateway_account(payment_gateway_account)
 
 	filters.update({"is_default": 1})

@@ -8,7 +8,7 @@ from frappe.utils import cint, get_url, nowdate, sbool
 from erpnext.accounts.doctype.payment_request.payment_request import get_payment_link
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
 from erpnext.controllers.website_list_for_contact import get_customers_suppliers
-from erpnext.e_commerce.shopping_cart.cart import get_party
+from erpnext.e_commerce.shopping_cart.cart import get_party, get_shopping_cart_settings
 
 
 def get_context(context):
@@ -29,7 +29,7 @@ def get_context(context):
 	context.payment_requests = get_open_payment_requests_for_subscription(frappe.form_dict.name)
 
 	if (
-		not cint(frappe.db.get_single_value("E Commerce Settings", "enabled"))
+		not cint(get_shopping_cart_settings().enabled)
 		or frappe.session.user == "Guest"
 	):
 		frappe.throw(_("You need to be logged in to access this page"), frappe.PermissionError)
@@ -125,7 +125,7 @@ def new_subscription(template, process=False):
 	customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 	customer = customers[0] if customers else get_party().name
 
-	company = frappe.db.get_single_value("E Commerce Settings", "company")
+	company = get_shopping_cart_settings().company
 
 	subscription = make_subscription(
 		template=template,

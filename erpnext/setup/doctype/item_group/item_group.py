@@ -13,7 +13,7 @@ from frappe.website.website_generator import WebsiteGenerator
 
 from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import ECommerceSettings
 from erpnext.e_commerce.product_data_engine.filters import ProductFiltersBuilder
-
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 class ItemGroup(NestedSet, WebsiteGenerator):
 	nsm_parent_field = "parent_item_group"
@@ -68,7 +68,7 @@ class ItemGroup(NestedSet, WebsiteGenerator):
 		context.show_search = True
 		context.body_class = "product-page"
 		context.page_length = (
-			cint(frappe.db.get_single_value("E Commerce Settings", "products_per_page")) or 6
+			cint(get_shopping_cart_settings().products_per_page) or 6
 		)
 		context.search_link = "/product_search"
 

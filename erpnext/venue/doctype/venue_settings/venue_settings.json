@@ -19,7 +19,10 @@
   "column_break_8",
   "month_uom",
   "event_registration_section",
-  "registration_item_code"
+  "registration_item_code",
+  "multi_venue_section",
+  "enable_multi_companies",
+  "cart_settings_overrides"
  ],
  "fields": [
   {
@@ -110,11 +113,30 @@
    "fieldtype": "Link",
    "label": "Billed Item for registration",
    "options": "Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_multi_companies",
+   "fieldtype": "Check",
+   "label": "Enable"
+  },
+  {
+   "depends_on": "enable_multi_companies",
+   "fieldname": "cart_settings_overrides",
+   "fieldtype": "Table",
+   "label": "Allowed companies",
+   "mandatory_depends_on": "enable_multi_companies",
+   "options": "Venue Cart Settings"
+  },
+  {
+   "fieldname": "multi_venue_section",
+   "fieldtype": "Section Break",
+   "label": "Multi-venue mode"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2023-01-31 16:51:02.114992",
+ "modified": "2021-09-30 17:07:55.586709",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",
