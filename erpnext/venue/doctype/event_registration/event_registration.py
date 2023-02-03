@@ -258,8 +258,10 @@ class EventRegistration(Document):
 				"rate": details.rate,
 			},
 		)
+		si.flags.ignore_permissions = True
 		si.run_method("set_missing_values")
 		si.run_method("calculate_taxes_and_totals")
+		si.flags.ignore_permissions = False
 		return si
 
 	def make_and_submit_invoice(self):
