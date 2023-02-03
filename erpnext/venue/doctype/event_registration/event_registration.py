@@ -179,19 +179,28 @@ class EventRegistration(Document):
 		"""Returns the Customer associated with the Contact, creating it if needed."""
 		contact_name = self.contact
 		D = frappe.qb.DocType("Dynamic Link")
-		query = (
+		res = (
 			frappe.qb.from_(D)
 			.select(D.link_name)
 			.where((D.parenttype == "Contact") & (D.parent == contact_name) & (D.parentfield == "links"))
 			.where(D.link_doctype == "Customer")
 			.limit(1)
-		)
-		res = query.run()
-		if len(res) == 0:
-			customer = self._make_and_link_to_new_customer()
-			return customer.name
-		else:
+		).run()
+		if res:
 			return res[0][0]
+
+		C = frappe.qb.DocType("Customer")
+		res = (
+			frappe.qb.from_(C)
+			.select(C.name)
+			.where(C.customer_name == contact_name)
+			.limit(1)
+		).run()
+		if res:
+			return res[0][0]
+
+		customer = self._make_and_link_to_new_customer()
+		return customer.name
 
 	def _make_and_link_to_new_customer(self):
 		from erpnext.selling.doctype.customer.customer import make_customer_from_contact
