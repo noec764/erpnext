@@ -93,7 +93,7 @@ erpnext.ProductSearch = class {
 	setupProductsContainer() {
 		this.products_container = this.search_dropdown.append(`
 			<div id="product-results mt-2">
-				<div id="product-scroll" style="overflow: scroll; max-height: 300px">
+				<div id="product-scroll" style="max-height: 300px">
 				</div>
 			</div>
 		`).find("#product-scroll");

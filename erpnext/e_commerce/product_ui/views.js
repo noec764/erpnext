@@ -189,7 +189,7 @@ erpnext.ProductView =  class {
 				<div class="dropdown w-100" id="dropdownMenuSearch">
 					<input type="search" name="query" id="search-box" class="form-control font-md"
 						placeholder=${__("Search for Products")}
-						aria-label="Product" aria-describedby="button-addon2">
+						aria-label="Product" aria-describedby="button-addon2" autocomplete="off">
 					<div class="search-icon">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
 							fill="none"

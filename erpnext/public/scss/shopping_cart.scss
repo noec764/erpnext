@@ -500,7 +500,7 @@ body.product-page {
 		}
 
 		.fc-day-disabled {
-			background-color: white;
+			background-color: #fff;
 			border: none
 		}
 
@@ -525,6 +525,10 @@ body.product-page {
 			text-align: center;
 			border: 1px solid transparent;
 			border-radius: 50%;
+		}
+
+		.fc-daygrid-bg-harness {
+			background-color: #fff;
 		}
 	}
 

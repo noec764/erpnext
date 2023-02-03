@@ -1,3 +1,7 @@
+.body .container {
+	background: var(--body-bg-color);
+}
+
 .current-subscription-table {
 	table {
 		border: none;
@@ -13,5 +17,17 @@
 	.card-footer {
 		background-color: transparent;
 		border-top: none;
+	}
+}
+
+.booking-page {
+	.resources-list {
+		justify-content: center;
+	}
+
+	.form-section {
+		.section-head {
+			margin-bottom: 5px;
+		}
 	}
 }

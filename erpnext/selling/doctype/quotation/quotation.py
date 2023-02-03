@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+from collections import defaultdict
 
 import frappe
 from frappe import _
@@ -74,8 +75,12 @@ class Quotation(SellingController):
 		if ordered_items:
 			status = "Ordered"
 
+			items_dict = defaultdict(float)
 			for item in self.get("items"):
-				if item.qty > ordered_items.get(item.item_code, 0.0):
+				items_dict[item.item_code] += flt(item.qty)
+
+			for item in items_dict:
+				if items_dict.get(item) > ordered_items.get(item, 0.0):
 					status = "Partially Ordered"
 
 		return status

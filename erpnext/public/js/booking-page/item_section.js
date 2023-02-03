@@ -1,3 +1,5 @@
+import ResourceGrid from "./resource_grid";
+
 export default class ItemSection {
 	constructor(parent) {
 		this.parent = parent;
@@ -11,7 +13,7 @@ export default class ItemSection {
 
 	async get_data() {
 		const items = await frappe.call({
-			method: "erpnext.templates.pages.book.get_items",
+			method: "erpnext.templates.pages.book_resources.get_items",
 			args: {
 				filters: this.parent.filter_values
 			}
@@ -20,14 +22,11 @@ export default class ItemSection {
 	}
 
 	build_layout() {
-		console.log(this.data)
-		new erpnext.ProductGrid({
+		new ResourceGrid({
 			items: this.data.items,
 			products_section: $(this.parent.items_section),
 			settings: this.data.settings,
-			preference: "Grid View"
+			filters: this.parent.filter_values
 		});
 	}
-
-
 }
