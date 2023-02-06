@@ -99,6 +99,7 @@
   "delivery_note",
   "dn_detail",
   "delivered_qty",
+  "event_registration",
   "internal_transfer_section",
   "purchase_order",
   "column_break_92",
@@ -734,6 +735,13 @@
    "search_index": 1
   },
   {
+   "fieldname": "event_registration",
+   "fieldtype": "Link",
+   "options": "Event Registration",
+   "label": "Event Registration",
+   "read_only": 1
+  },
+  {
    "fieldname": "delivered_qty",
    "fieldtype": "Float",
    "label": "Delivered Qty",
@@ -901,7 +909,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-02 12:53:12.693217",
+ "modified": "2023-02-03 17:05:39.299589",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",

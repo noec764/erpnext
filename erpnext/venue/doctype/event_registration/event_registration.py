@@ -257,6 +257,7 @@ class EventRegistration(Document):
 				"item_code": details.item_code,
 				"qty": 1,
 				"rate": details.rate,
+				"event_registration": self.name,
 			},
 		)
 		si.flags.ignore_permissions = True
