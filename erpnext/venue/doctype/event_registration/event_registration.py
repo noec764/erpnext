@@ -134,7 +134,7 @@ class EventRegistration(Document):
 
 		if new_status == "Paid" and curr_status in ("Unpaid", "Pending"):
 			self.flags.ignore_permissions = True
-			self.db_set("payment_status", new_status, commit=True)
+			self.db_set("payment_status", new_status, commit=True)  # Commit because we this is a change we don't want to lose
 			self.submit()
 
 			if not self.payment_gateway:
@@ -147,6 +147,9 @@ class EventRegistration(Document):
 		elif new_status in ("Failed", "Cancelled"):
 			self.set("payment_status", new_status)
 			self.cancel()
+		elif new_status == "Pending" and curr_status == "Unpaid":
+			self.set("payment_status", new_status)
+			self.save()
 
 	def on_webform_save(self, web_form: Document):
 		# The document is created from the Web Form, it means that someone wants to register
@@ -155,7 +158,7 @@ class EventRegistration(Document):
 
 		if self.get_payment_amount() <= 0:
 			# Free registration
-			self.payment_status = "Paid"
+			self.payment_status = ""
 			self.submit()  # Automatically submit when created from a Web Form.
 		else:
 			self.payment_status = "Unpaid"
