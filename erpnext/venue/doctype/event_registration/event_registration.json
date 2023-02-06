@@ -111,7 +111,6 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Registration amount",
-   "no_copy": 1,
    "permlevel": 1
   },
   {
