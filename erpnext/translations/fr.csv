@@ -11326,6 +11326,7 @@ To Produce,A produire,
 To Range,Au Rang,
 To Receive and Bill,À Recevoir et Facturer,
 To Receive,À Recevoir,
+To refund,À rembourser,
 To Rename,A renommer,
 To Shareholder,A l'actionnaire,
 To State,Etat (Destination),
@@ -12925,4 +12926,5 @@ We have received your registration for the event '{0}',Nous avons bien reçu vot
 "If you wish to cancel this registration, we suggest you contact us from <a href='{0}'>the contact page</a>.","Si vous souhaitez annuler cette inscription, nous vous invitons à nous contacter depuis <a href='{0}'>la page de contact</a>.",
 Mark as {0},Marquer comme {0},
 Refunded,Remboursée,Event Registration
+Paid,Payée,Event Registration
 "Submit then create draft invoice","Valider et facturer (brouillon)",
