@@ -204,17 +204,18 @@ class EventRegistration(Document):
 
 	def _make_and_link_to_new_customer(self):
 		from erpnext.selling.doctype.customer.customer import make_customer_from_contact
-		customer = make_customer_from_contact(frappe.get_doc("Contact", self.contact))
+		contact = frappe.get_doc("Contact", self.contact)
+		customer = make_customer_from_contact(contact)
 		customer.update({
 			"customer_type": "Individual",
 		})
 		customer.save()
 
-		self.append("links", {
+		contact.append("links", {
 			"link_doctype": customer.doctype,
 			"link_name": customer.name,
 		})
-		self.save()
+		contact.save()
 		return customer
 
 	from functools import cache
