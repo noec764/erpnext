@@ -36,7 +36,42 @@ frappe.ui.form.on("Event Registration", {
 					});
 				});
 			}
+
+			frm.trigger("show_linked_invoices");
 		}
+	},
+	show_linked_invoices(frm) {
+		frappe.call(
+			"erpnext.venue.doctype.event_registration.event_registration.get_linked_invoices",
+			{ name: frm.doc.name },
+		).then((r) => {
+			if (r.exc || (!r.message) || (!r.message.length)) return;
+
+			const div = document.createElement("div");
+			Object.assign(div.style, {
+				display: "flex",
+				flexDirection: "column",
+			});
+			for (const obj of r.message) {
+				if (!obj || !("doctype" in obj) || !("name" in obj)) {
+					console.warn("Invalid value:", obj);
+					continue;
+				}
+
+				const href = frappe.utils.get_form_link(obj.doctype, obj.name, false /* no html */);
+				const row = document.createElement("a");
+				row.style.display = "block";
+				row.append(
+					__(obj.doctype, null, obj.doctype),
+					" · ",
+					obj.name,
+				)
+				row.setAttribute("href", href);
+				div.appendChild(row);
+			}
+			const html = div.innerHTML;
+			cur_frm.dashboard.add_section(html, __("Invoices"));
+		});
 	}
 });
 

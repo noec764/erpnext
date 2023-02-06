@@ -371,6 +371,31 @@ class EventRegistration(Document):
 		html = f'<a href="{other_doc.get_url()}">{msg}</a>'
 		self.add_comment("Comment", html, comment_email="Administrator")
 
+	def get_linked_invoices(self):
+		SII = frappe.qb.DocType("Sales Invoice Item")
+		query = (
+			frappe.qb.from_(SII)
+			# Select the name(s) of the Sales Invoice(s)
+			.select(SII.parent).distinct()
+			# Use the row's creation time as a proxy for the invoice's creation time
+			.orderby(SII.creation)
+			# Is linked to this Event Registration
+			.where(SII.event_registration == self.name)
+			# Is an item of a Sales Invoice (superfluous check?)
+			.where(SII.parenttype == "Sales Invoice")
+		)
+		res = [
+			{ "doctype": "Sales Invoice", "name": str(r[0]) }
+			for r in query.run()
+		]
+		return res
+
+@frappe.whitelist()
+def get_linked_invoices(name: str):
+	doc: EventRegistration = frappe.get_doc("Event Registration", name)
+	return doc.get_linked_invoices()
+
+
 @frappe.whitelist()
 def submit_then_make_invoice(source_name: str, target_doc=None):
 	"""
