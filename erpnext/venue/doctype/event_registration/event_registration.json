@@ -129,7 +129,7 @@
    "fieldtype": "Select",
    "label": "Payment Status",
    "no_copy": 1,
-   "options": "\nUnpaid\nPending\nPaid\nRefunded",
+   "options": "\nUnpaid\nPending\nPaid\nRefunded\nTo refund\nFailed\nCancelled",
    "permlevel": 1
   },
   {
@@ -145,10 +145,9 @@
    "options": "Company"
   }
  ],
- "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-03 15:59:05.698561",
+ "modified": "2023-02-06 12:49:35.456490",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Registration",
@@ -208,7 +207,7 @@
    "write": 1
   }
  ],
- "quick_entry": 0,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
