@@ -241,11 +241,11 @@ class EventRegistration(Document):
 			item_code=self.get_item_code(),
 		)
 
-	def _create_invoice(self):
+	def _set_fields_in_invoice(self, si: Document):
 		details = self.get_invoicing_details()
 		if details.rate <= 0:
 			frappe.throw(_("Registration amount is zero but an invoice was requested."))
-		si = frappe.get_doc(
+		si.update(
 			{
 				"doctype": "Sales Invoice",
 				"company": details.company,
@@ -262,16 +262,15 @@ class EventRegistration(Document):
 				"event_registration": self.name,
 			},
 		)
-		si.flags.ignore_permissions = True
 		si.run_method("set_missing_values")
 		si.run_method("calculate_taxes_and_totals")
-		si.flags.ignore_permissions = False
 		return si
 
 	def make_and_submit_invoice(self):
-		si = self._create_invoice()
-
+		si = frappe.new_doc("Sales Invoice")
 		si.flags.ignore_permissions = True
+		self._set_fields_in_invoice(si)
+
 		si.insert()
 		si.submit()
 		self.add_comment_about_document(si)
@@ -372,24 +371,28 @@ class EventRegistration(Document):
 		html = f'<a href="{other_doc.get_url()}">{msg}</a>'
 		self.add_comment("Comment", html, comment_email="Administrator")
 
-	# Whitelisted document-level methods
-	@frappe.whitelist()
-	def api_submit_then_make_invoice(self):
-		"""
-		Create a draft Sales Invoice, set the Registration's payment_status to Paid, then submit it.
-		"""
-		si = self._create_invoice()
-		si.insert()  # Insert as draft
+@frappe.whitelist()
+def submit_then_make_invoice(source_name: str, target_doc=None):
+	"""
+	Create an unsaved Sales Invoice, set the Registration's payment_status to Paid and submit it.
+	"""
+	from frappe.model.mapper import get_mapped_doc
 
-		self.set("payment_status", "Paid")
-		self.submit()
+	def postprocess(registration: EventRegistration, invoice: Document):
+		registration._set_fields_in_invoice(invoice)
+		registration.set("payment_status", "Paid")
+		registration.submit()
 
-		return si
+	return get_mapped_doc("Event Registration", source_name, {
+		"Event Registration": {
+			"doctype": "Sales Invoice",
+		}
+	}, postprocess=postprocess)
 
 
 @frappe.whitelist()
 def mark_as_refunded(name: str):
-	doc = frappe.get_doc("Event Registration", name)
+	doc: EventRegistration = frappe.get_doc("Event Registration", name)
 	if doc.docstatus == 2 and doc.payment_status == "Paid":
 		doc.db_set("payment_status", "Refunded")
 

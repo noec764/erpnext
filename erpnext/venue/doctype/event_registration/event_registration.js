@@ -16,10 +16,10 @@ frappe.ui.form.on("Event Registration", {
 			if (!is_cancelled && is_unpaid) {
 				// Registration is not yet paid, so an invoice can be created.
 				const msg = __("Submit then create draft invoice", null, "Event Registration")
-				frm.add_custom_button(msg, () => {
-					return frm.call("api_submit_then_make_invoice").then((r) => {
-						const si = r.message
-						frappe.set_route("Form", si.doctype, si.name)
+				frm.page.set_primary_action(msg, () => {
+					frappe.model.open_mapped_doc({
+						method: "erpnext.venue.doctype.event_registration.event_registration.submit_then_make_invoice",
+						frm: frm,
 					});
 				});
 			}
@@ -32,7 +32,7 @@ frappe.ui.form.on("Event Registration", {
 						"erpnext.venue.doctype.event_registration.event_registration.mark_as_refunded",
 						{ name: frm.doc.name },
 					).then(() => {
-						cur_frm.reload_doc();
+						frm.reload_doc();
 					});
 				});
 			}
