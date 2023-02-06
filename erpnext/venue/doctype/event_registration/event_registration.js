@@ -2,6 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Event Registration", {
+	onload(frm) {
+		frm.ignore_doctypes_on_cancel_all = ["Sales Invoice", "Archived Document"]
+	},
 	refresh(frm) {
 		if (!frm.doc.__islocal && frm.doc.amount) {
 			// Registration is created and payable

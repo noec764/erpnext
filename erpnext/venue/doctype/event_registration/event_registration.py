@@ -43,6 +43,8 @@ class EventRegistration(Document):
 		self.add_contact_to_event()
 
 	def on_cancel(self):
+		# Prevent cancellation propagation to linked Sales Invoice.
+		self.ignore_linked_doctypes = ["Sales Invoice"]
 		self.remove_contact_from_event()
 
 	def on_trash(self):
