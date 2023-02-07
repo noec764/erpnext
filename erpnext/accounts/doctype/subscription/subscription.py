@@ -208,7 +208,7 @@ class Subscription(Document):
 		if not plan.get("description") or not frappe.utils.strip_html_tags(plan.get("description")):
 			frappe.throw(_("Please enter a description before creating an invoice item."))
 
-		rate = cint(flt(SubscriptionPlansManager(self).get_plan_rate(plan)) * plan.qty * 100)
+		rate = round(flt(SubscriptionPlansManager(self).get_plan_rate(plan)) * plan.qty * 100)
 
 		if self.payment_gateway:
 			gateway_settings, gateway_controller = frappe.db.get_value(

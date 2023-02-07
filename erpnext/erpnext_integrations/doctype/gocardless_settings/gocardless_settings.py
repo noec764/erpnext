@@ -56,7 +56,7 @@ class GoCardlessSettings(PaymentGatewayController):
 	def immediate_payment_processing(self, reference, customer, amount, currency, description, metadata):
 		try:
 			processed_data = dict(
-				amount=cint(flt(amount) * 100.0),
+				amount=round(flt(amount) * 100.0),
 				currency=currency,
 				description=description,
 				reference=reference,
