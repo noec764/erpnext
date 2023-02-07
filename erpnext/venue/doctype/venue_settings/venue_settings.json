@@ -18,6 +18,8 @@
   "minute_uom",
   "column_break_8",
   "month_uom",
+  "event_registration_section",
+  "registration_item_code",
   "multi_venue_section",
   "enable_multi_companies",
   "cart_settings_overrides"
@@ -102,6 +104,17 @@
    "label": "Confirm booking after payment"
   },
   {
+   "fieldname": "event_registration_section",
+   "fieldtype": "Section Break",
+   "label": "Event Registration"
+  },
+  {
+   "fieldname": "registration_item_code",
+   "fieldtype": "Link",
+   "label": "Billed Item for registration",
+   "options": "Item"
+  },
+  {
    "default": "0",
    "fieldname": "enable_multi_companies",
    "fieldtype": "Check",
@@ -123,7 +136,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2023-01-16 14:17:35.500334",
+ "modified": "2021-09-30 17:07:55.586709",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

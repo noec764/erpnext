@@ -14,6 +14,8 @@ frappe.ui.form.on('Event', {
 				itemBookingDialog(frm)
 			});
 		}
+
+		refresh_intro_header(frm);
 	},
 	add_item_booking_details(frm) {
 		frappe.model.with_doctype("Item Booking", () => {
@@ -102,3 +104,58 @@ const new_booking = (frm, value) => {
 		all_day: frm.doc.all_day
 	})
 }
+
+const refresh_intro_header = (frm) => {
+	if (frm.doc.__islocal) {
+		return frm.set_intro("");
+	}
+
+	frm.set_intro(__("Loading..."), frm.doc.published && frm.doc.allow_registrations ? "green" : "yellow");
+
+	frappe.xcall("erpnext.venue.doctype.event_registration.event.event.get_capacity_info", {
+		event: frm.doc.name,
+	}).then((event_info) => {
+		const msg = [];
+		let color = "green";
+
+		if (event_info.overbooking) {
+			color = "red";
+			msg.push(__("This event is overbooked."));
+		} else if (!event_info.free) {
+			color = "orange";
+			msg.push(__("This event is fully booked."));
+		} else if (!event_info.allow_registrations) {
+			color = "yellow";
+			msg.push(__("Registration for this event is closed."));
+		}
+
+		if (event_info.current > 0 || event_info.allow_registrations) {
+			let count;
+			if (event_info.has_limit) {
+				count = __("{0}/{1}", [event_info.current, event_info.limit]);
+			} else {
+				count = event_info.current.toString();
+			}
+			msg.push(__("{0}: {1}", [
+				__("Registrations", null, "Event"),
+				count,
+			]));
+		}
+
+		frm.set_intro("");
+		return frm.set_intro(msg.join("<br/>"), color);
+	})
+}
+
+const update_tour_info = (tour_list, lang) => {
+	if (tour_list && lang === "*") {
+		tour_list.push({
+			fieldname: "max_number_of_registrations",
+			title: __("Maximum number of participants"),
+			description: __(
+				"Maximum number of participants"
+			),
+		});
+	}
+}
+update_tour_info(frappe.tour["Event"], "*");
