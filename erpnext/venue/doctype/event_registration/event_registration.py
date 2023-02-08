@@ -149,6 +149,7 @@ class EventRegistration(Document):
 			self.cancel()
 		elif new_status == "Pending" and curr_status == "Unpaid":
 			self.set("payment_status", new_status)
+			self.flags.ignore_permissions = True
 			self.save()
 
 	def on_webform_save(self, web_form: Document):
@@ -210,6 +211,7 @@ class EventRegistration(Document):
 	def _make_and_link_to_new_customer(self):
 		from erpnext.selling.doctype.customer.customer import make_customer_from_contact
 		contact = frappe.get_doc("Contact", self.contact)
+		contact.flags.ignore_permissions = True
 		customer = make_customer_from_contact(contact)
 		customer.update({
 			"customer_type": "Individual",
