@@ -4760,6 +4760,7 @@ Hiring Settings,Paramètres de recrutement,
 History In Company,Ancienneté dans la Société,
 Hold Invoice,Facture en attente,
 Hold Type,Documents mis en attente,
+Hold Type,Documents bloqués,Supplier
 Hold,Mis en attente,Issue
 Hold,Mettre en attente,
 Holiday List (ignored during SLA calculation),Liste de jours fériés (ignoré pour le calcul de l'accord de niveau de service),
@@ -8784,6 +8785,7 @@ Rejected,Rejeté,
 Related,En Relation,
 Relation,Relation,
 Release Date,Date de la fin de mise en attente,
+Release Date,Date de fin de blocage,Supplier
 Release date must be in the future,La date de fin de mise en attente doit être dans le futur,
 Relieving Date Missing,Date de détachement manquante,
 Relieving Date must be greater than Date of Joining,La Date de départ doit être postérieure à la date d'embauche,
@@ -12929,3 +12931,4 @@ Refunded,Remboursée,Event Registration
 Paid,Payée,Event Registration
 Confirmed,Confirmée,Event Registration
 "Submit then create draft invoice","Valider et facturer (brouillon)",
+On Hold,Bloqué,Supplier
