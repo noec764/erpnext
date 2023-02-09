@@ -247,12 +247,12 @@ class PaymentRequest(Document):
 		return controller.get_payment_url(
 			**{
 				"amount": flt(self.grand_total, self.precision("grand_total")),
-				"title": frappe.safe_encode(data.title),
-				"description": frappe.safe_encode(self.subject),
+				"title": data.title,
+				"description": self.subject or data.title,
 				"reference_doctype": "Payment Request",
 				"reference_docname": self.name,
 				"payer_email": self.email_to or frappe.session.user,
-				"payer_name": frappe.safe_encode(data.customer_name),
+				"payer_name": data.customer_name,
 				"order_id": self.name,
 				"currency": self.currency,
 				"payment_key": self.payment_key,
