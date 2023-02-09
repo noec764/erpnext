@@ -132,9 +132,10 @@ class EventRegistration(Document):
 			self.db_set("payment_status", new_status)
 			return
 
-		if new_status == "Paid" and curr_status in ("Unpaid", "Pending"):
+		PAID_STATUSES = ("Authorized", "Completed", "Paid")
+		if new_status in PAID_STATUSES and curr_status in ("Unpaid", "Pending"):
 			self.flags.ignore_permissions = True
-			self.db_set("payment_status", new_status, commit=True)  # Commit because we this is a change we don't want to lose
+			self.db_set("payment_status", "Paid", commit=True)  # Commit because we this is a change we don't want to lose
 			self.submit()
 
 			if not self.payment_gateway:
