@@ -486,11 +486,16 @@ class PaymentRequest(Document):
 		if not status:
 			return
 
-		if status in ["Authorized", "Completed", "Paid"]:
-			self.run_method("set_as_paid", reference_no)
-			self.db_set("status", "Paid", commit=True)
+		PAID_STATUSES = ("Authorized", "Completed", "Paid")
+		curr_status, next_status = self.status, status
+		is_not_draft = not self.docstatus.is_draft()
 
-		elif status == "Pending" and not self.docstatus.is_draft():
+		# Only change status to Paid or Pending *once*.
+
+		if (curr_status not in PAID_STATUSES) and (next_status in PAID_STATUSES):
+			self.db_set("status", "Paid", commit=True)
+			self.run_method("set_as_paid", reference_no)
+		elif (curr_status == "Initiated") and (next_status == "Pending") and is_not_draft:
 			self.db_set("status", "Pending", commit=True)
 
 		self.db_set("transaction_reference", reference_no, commit=True)
