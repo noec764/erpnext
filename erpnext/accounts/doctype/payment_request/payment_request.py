@@ -280,9 +280,13 @@ class PaymentRequest(Document):
 
 		if controller.doctype == "Stripe Settings":
 			doc.stripe_customer_id = controller.get_customer_id(reference_no)
+			if not doc.stripe_customer_id:
+				return
 			doc.stripe_settings = controller.name
 		elif controller.doctype == "GoCardless Settings":
 			doc.gocardless_customer_id = controller.get_customer_id(reference_no)
+			if not doc.gocardless_customer_id:
+				return
 			doc.gocardless_settings = self.gateway.name
 
 		doc.customer = self.customer
