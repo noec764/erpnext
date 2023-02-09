@@ -42,10 +42,9 @@ def get_site_info(site_info):
 
 @contextmanager
 def payment_app_import_guard():
-	marketplace_link = '<a href="https://frappecloud.com/marketplace/apps/payments">Marketplace</a>'
-	github_link = '<a href="https://github.com/frappe/payments/">GitHub</a>'
-	msg = _("payments app is not installed. Please install it from {} or {}").format(
-		marketplace_link, github_link
+	gitlab_link = '<a href="https://gitlab.com/dokos/payments/">Gitlab</a>'
+	msg = _("payments app is not installed. Please install it from {}").format(
+		gitlab_link
 	)
 	try:
 		yield
