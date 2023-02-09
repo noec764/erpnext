@@ -23,9 +23,9 @@ def can_make_immediate_payment(payment_request, controller):
 
 		if stripe_customer_id:
 			stripe_customer = StripeCustomer(controller).get(stripe_customer_id)
-			return bool(stripe_customer.get("default_source")) or bool(
-				stripe_customer.get("invoice_settings", {}).get("default_payment_method")
-			)
+			has_default_source = bool(stripe_customer.get("default_source"))
+			has_default_payment_method = bool(stripe_customer.get("invoice_settings", {}).get("default_payment_method"))
+			return has_default_source or has_default_payment_method
 
 	elif controller.doctype == "GoCardless Settings":
 		return bool(controller.check_mandate_validity(payment_request.get_customer()).get("mandate"))

@@ -132,7 +132,9 @@ class VenueRegistrationForm(Document):
 
 
 	def on_payment_authorized(self, status=None, reference_no=None):
-		if status in ["Authorized", "Completed", "Paid"]:
+		if status in ["Authorized", "Completed", "Paid", "Payment Method Registered"]:
+			if self.docstatus == 2 or self.status == "Payment Method Registered":
+				return
 			self.status = "Payment Method Registered"
 			self.submit()
 

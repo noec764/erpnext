@@ -285,7 +285,7 @@ def validate_serial_no(sle, item_det):
 			)
 	elif not sle.is_cancelled:
 		if serial_nos:
-			if cint(sle.actual_qty) != flt(sle.actual_qty):
+			if abs(cint(sle.actual_qty) - flt(sle.actual_qty)) > 0.0000001:
 				frappe.throw(
 					_("Serial No {0} quantity {1} cannot be a fraction").format(sle.item_code, sle.actual_qty)
 				)
