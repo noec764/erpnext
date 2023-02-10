@@ -160,5 +160,7 @@ class VenueRegistrationForm(Document):
 	def on_webform_save(self, webform):
 		if self.flags.in_payment_webform:
 			self.db_set("status", "Initiated")
+			self.create_customer()
+			self.save()  # This document will be fetched again in the payment gateway
 		else:
 			self.set_as_completed_and_submit()
