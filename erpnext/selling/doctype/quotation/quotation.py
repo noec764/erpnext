@@ -24,12 +24,12 @@ class Quotation(SellingController):
 			self.indicator_title = "Expired"
 
 	def validate(self):
+		self.validate_multicompany_items()
 		super(Quotation, self).validate()
 		self.set_status()
 		self.validate_uom_is_integer("stock_uom", "qty")
 		self.validate_valid_till()
 		self.validate_shopping_cart_items()
-		self.validate_multicompany_items()
 		self.set_customer_name()
 		if self.items:
 			self.with_items = 1
@@ -45,7 +45,7 @@ class Quotation(SellingController):
 		venue_settings = frappe.get_cached_doc("Venue Settings")
 		if venue_settings.enable_multi_companies:
 			if filter_mc := venue_settings.multicompany_get_item_filter_for_company(self.company):
-				kept_items = []
+				kept_items, deleted_items = [], []
 				for item in self.items:
 					has_compatible_web_item = frappe.get_all("Website Item", limit=1, filters=[
 						["item_code", "=", item.item_code],
@@ -53,10 +53,17 @@ class Quotation(SellingController):
 					])
 					if has_compatible_web_item:
 						kept_items.append(item)
-						continue
+					else:
+						if item.item_booking:
+							frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True)
+						deleted_items.append(item)
+
 				self.items = kept_items
 				if not kept_items:
-					frappe.throw(_("The shopping cart has been emptied because none of the items are available in the selected company."), frappe.MandatoryError)
+					frappe.msgprint(_("The shopping cart has been emptied because none of the items are available in the selected company."))
+				if deleted_items:
+					frappe.msgprint(_("This item cannot be added to this shopping cart. Please select another company."))
+
 
 	def validate_valid_till(self):
 		if self.valid_till and getdate(self.valid_till) < getdate(self.transaction_date):

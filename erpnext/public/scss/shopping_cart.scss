@@ -8,6 +8,10 @@
 
 body.product-page {
 	background: var(--body-bg-color);
+
+	.card {
+		border: none
+	}
 }
 
 .item-breadcrumbs {
@@ -496,6 +500,7 @@ body.product-page {
 
 	.fc {
 		.fc-daygrid-day {
+			background-color: #fff;
 			cursor: pointer;
 		}
 
@@ -1500,4 +1505,8 @@ body.product-page {
 
 .mt-minus-1 {
 	margin-top: -1rem;
+}
+
+.item-card .card {
+	border: none;
 }
