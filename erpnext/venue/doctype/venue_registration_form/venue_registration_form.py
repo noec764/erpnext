@@ -19,7 +19,8 @@ class VenueRegistrationForm(Document):
 
 
 	def create_user(self):
-		invite_user(self.contact)
+		user_name = invite_user(self.contact)
+		frappe.db.set_value("Contact", self.contact, "user", user_name)
 
 
 	def create_contact(self):
