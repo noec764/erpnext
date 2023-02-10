@@ -396,6 +396,7 @@ class EventRegistration(Document):
 		]
 		return res
 
+
 @frappe.whitelist()
 def get_linked_invoices(name: str):
 	doc: EventRegistration = frappe.get_doc("Event Registration", name)
@@ -440,26 +441,30 @@ def get_user_info(user=None):
 	)
 
 
-
 @frappe.whitelist(allow_guest=True)
 def register_to_event(event, data, user=None):
-	import warnings
-	warnings.warn("API endpoint erpnext.[...].event_registration.register_to_event is deprecated in favor of Web Form")
-
 	if frappe.session.user == "Guest":
 		raise frappe.exceptions.PermissionError()
+
+	event = frappe.get_doc("Event", event)
+	if not event.published:
+		raise frappe.exceptions.PermissionError()
+	if not event.allow_registrations:
+		raise frappe.exceptions.PermissionError()
+	if event.registration_form:  # Uses a custom Web Form
+		raise frappe.exceptions.ValidationError()  # Disable the default registration form
 
 	user = frappe.session.user
 
 	try:
-		registration = frappe.get_doc(
+		doc = frappe.get_doc(
 			dict({"doctype": "Event Registration", "event": event, "user": user}, **frappe.parse_json(data))
 		)
 
-		registration.flags.ignore_permissions = True
-		registration.flags.ignore_mandatory = True
-		registration.submit()
-		return registration
+		doc.flags.ignore_permissions = True
+		doc.flags.ignore_mandatory = True
+		doc.submit()
+		return doc
 	except DuplicateRegistration:
 		raise
 	except Exception:
@@ -471,14 +476,20 @@ def register_to_event(event, data, user=None):
 def cancel_registration(event):
 	user = frappe.session.user
 
-	registration = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
+	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
 
-	if registration:
-		doc = frappe.get_doc("Event Registration", registration)
+	event = frappe.get_doc("Event", doc.event)
+	if not event.published:
+		raise frappe.exceptions.PermissionError()
+	if not event.allow_cancellations:
+		raise frappe.exceptions.ValidationError()
+
+	if docname:
+		doc = frappe.get_doc("Event Registration", docname)
 		doc.flags.ignore_permissions = True
 		doc.cancel()
 
-	return registration
+	return docname
 
 
 @frappe.whitelist()
@@ -489,6 +500,12 @@ def cancel_registration_by_name(name):
 	if doc.user != user:
 		return
 
+	event = frappe.get_doc("Event", doc.event)
+	if not event.published:
+		raise frappe.exceptions.PermissionError()
+	if not event.allow_cancellations:
+		raise frappe.exceptions.ValidationError()
+
 	doc.flags.ignore_permissions = True
 
 	if doc.docstatus == 0:
@@ -497,4 +514,3 @@ def cancel_registration_by_name(name):
 		doc.cancel()
 	elif doc.docstatus == 2:
 		return
-
