@@ -153,12 +153,12 @@ class EventRegistration(Document):
 			self.flags.ignore_permissions = True
 			self.save()
 
-	def on_webform_save(self, web_form: Document):
+	def on_webform_save(self, webform):
 		# The document is created from the Web Form, it means that someone wants to register
 		self.user = frappe.session.user
 		self.set_company_from_cart_settings()
 
-		if self.get_payment_amount() <= 0:
+		if self.flags.in_payment_webform:
 			# Free registration
 			self.payment_status = ""
 			self.submit()  # Automatically submit when created from a Web Form.
