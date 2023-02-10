@@ -115,6 +115,7 @@
 				}
 				ul.event__tags {
 					display: flex;
+					gap: 0.5em;
 				}
 				ul.event__tags li {
 					border-radius: 99px;
@@ -122,7 +123,7 @@
 					padding: 1px 8px;
 					font-size: 0.8em;
 					font-weight: bold;
-					box-shadow: 0 0 0 1px currentColor;
+					border: 1px solid currentColor;
 					color: var(--primary-color);
 				}
 			</style>
@@ -202,7 +203,7 @@
 				{% else %}
 					<div class="alert alert-info mt-5 text-center is-unregistered" role="alert">
 						{% if event_capacity_info.free == 1 %}
-							{{ _("Only one place remaining.") }}
+							{{ _("Only one seat remaining.") }}
 						{% else %}
 							{{ _("{0} seats remaining").format(event_capacity_info.free) }}
 						{% endif %}

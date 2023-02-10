@@ -23,15 +23,19 @@ class DuplicateRegistration(frappe.ValidationError):
 		if not (registration and registration.event):
 			return cls.throw_desk()
 		event_route = frappe.get_cached_value("Event", registration.event, "route")
-		msg = _("You have already registered for this event. You can cancel your registration on the event page: {0}")
+		msg = _(
+			"You have already registered for this event. You can cancel your registration on the event page: {0}"
+		)
 		link = f'<a href="/{event_route}">{event_route}</a>'
 		msg = msg.format(link)
 		frappe.throw(msg, cls)
+
 
 class CannotDeletePaidRegistration(frappe.ValidationError):
 	@classmethod
 	def throw(cls, registration: dict):
 		frappe.throw(_("Cannot delete paid registration: {0}").format(registration.name), cls)
+
 
 class EventRegistration(Document):
 	def validate(self):
@@ -64,10 +68,13 @@ class EventRegistration(Document):
 			remaining_capacity = self.get_event_remaining_capacity()
 			if remaining_capacity <= 0:
 				from frappe.desk.doctype.event.event import EventIsFull
+
 				EventIsFull.throw()
 
 	def get_event_remaining_capacity(self):
-		event_info = frappe.db.get_value("Event", self.event, ["allow_registrations", "max_number_of_registrations"], as_dict=True)
+		event_info = frappe.db.get_value(
+			"Event", self.event, ["allow_registrations", "max_number_of_registrations"], as_dict=True
+		)
 		max_number_of_registrations = int(event_info["max_number_of_registrations"] or 0)
 		max_number_of_registrations = int(event_info["max_number_of_registrations"] or 0)
 
@@ -77,6 +84,7 @@ class EventRegistration(Document):
 			return float("inf")
 
 		from pypika import functions as fn
+
 		ER = frappe.qb.DocType("Event Registration")
 		return max_number_of_registrations - int(
 			frappe.qb.select(fn.Count(ER.star))
@@ -87,7 +95,10 @@ class EventRegistration(Document):
 
 	def set_company_from_cart_settings(self):
 		if self.meta.has_field("company"):
-			from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import get_shopping_cart_settings
+			from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
+				get_shopping_cart_settings,
+			)
+
 			self.company = get_shopping_cart_settings().company
 
 	def create_or_link_with_contact(self):
@@ -135,7 +146,9 @@ class EventRegistration(Document):
 		PAID_STATUSES = ("Authorized", "Completed", "Paid")
 		if new_status in PAID_STATUSES and curr_status in ("Unpaid", "Pending"):
 			self.flags.ignore_permissions = True
-			self.db_set("payment_status", "Paid", commit=True)  # Commit because we this is a change we don't want to lose
+			self.db_set(
+				"payment_status", "Paid", commit=True
+			)  # Commit because we this is a change we don't want to lose
 			self.submit()
 
 			if not self.payment_gateway:
@@ -144,7 +157,9 @@ class EventRegistration(Document):
 				frappe.throw(_("Missing Reference Number"))
 
 			invoice = self.make_and_submit_invoice()
-			self.make_payment_entry(reference_no=reference_no, payment_gateway=self.payment_gateway, invoice_doc=invoice)
+			self.make_payment_entry(
+				reference_no=reference_no, payment_gateway=self.payment_gateway, invoice_doc=invoice
+			)
 		elif new_status in ("Failed", "Cancelled"):
 			self.set("payment_status", new_status)
 			self.cancel()
@@ -178,7 +193,9 @@ class EventRegistration(Document):
 			return str(item_code)
 		elif item_code := frappe.get_cached_value("Event", self.event, "registration_item_code"):
 			return str(item_code)
-		elif item_code := frappe.get_cached_value("Venue Settings", "Venue Settings", "registration_item_code"):
+		elif item_code := frappe.get_cached_value(
+			"Venue Settings", "Venue Settings", "registration_item_code"
+		):
 			return str(item_code)
 		frappe.throw("Item code not specified for Event Registration")
 
@@ -197,12 +214,7 @@ class EventRegistration(Document):
 			return res[0][0]
 
 		C = frappe.qb.DocType("Customer")
-		res = (
-			frappe.qb.from_(C)
-			.select(C.name)
-			.where(C.customer_name == contact_name)
-			.limit(1)
-		).run()
+		res = (frappe.qb.from_(C).select(C.name).where(C.customer_name == contact_name).limit(1)).run()
 		if res:
 			return res[0][0]
 
@@ -211,23 +223,30 @@ class EventRegistration(Document):
 
 	def _make_and_link_to_new_customer(self):
 		from erpnext.selling.doctype.customer.customer import make_customer_from_contact
+
 		contact = frappe.get_doc("Contact", self.contact)
 		contact.flags.ignore_permissions = True
 		customer = make_customer_from_contact(contact)
-		customer.update({
-			"customer_type": "Individual",
-		})
+		customer.update(
+			{
+				"customer_type": "Individual",
+			}
+		)
 		customer.save()
 
-		contact.append("links", {
-			"link_doctype": customer.doctype,
-			"link_name": customer.name,
-		})
+		contact.append(
+			"links",
+			{
+				"link_doctype": customer.doctype,
+				"link_name": customer.name,
+			},
+		)
 		contact.save()
 		return customer
 
 	from functools import cache
-	@cache
+
+	@cache  # noqa
 	def get_invoicing_details(self):
 		company = None
 		if self.meta.has_field("company"):
@@ -235,7 +254,10 @@ class EventRegistration(Document):
 			company = self.get("company", None)
 		if not company:
 			# Else, get it from E Commerce Settings as a last resort
-			from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import get_shopping_cart_settings
+			from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
+				get_shopping_cart_settings,
+			)
+
 			company = get_shopping_cart_settings().company
 
 		currency = frappe.get_cached_value("Company", company, "default_currency")
@@ -285,9 +307,12 @@ class EventRegistration(Document):
 
 	def make_payment_entry(self, *, reference_no, payment_gateway, invoice_doc, mode_of_payment=None):
 		# Imports
-		from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
-		from erpnext.accounts.doctype.payment_request.payment_request import _get_payment_gateway_controller
 		from frappe.utils import nowdate
+
+		from erpnext.accounts.doctype.payment_request.payment_request import (
+			_get_payment_gateway_controller,
+		)
+		from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
 
 		# Check parameters
 		if isinstance(payment_gateway, str):
@@ -342,20 +367,25 @@ class EventRegistration(Document):
 			{
 				"reference_doctype": invoice_doc.doctype,
 				"reference_name": invoice_doc.name,
-				"allocated_amount": base_amount
-			}
+				"allocated_amount": base_amount,
+			},
 		)
 
 		if fee_amount > 0.0:
-			write_off_account, default_cost_center = frappe.get_cached_value("Company", details.company, ["write_off_account", "cost_center"])
+			write_off_account, default_cost_center = frappe.get_cached_value(
+				"Company", details.company, ["write_off_account", "cost_center"]
+			)
 			fee_account = payment_gateway.fee_account or write_off_account
 			fee_cost_center = payment_gateway.cost_center or default_cost_center
 			if fee_account and fee_cost_center:
-				pe.append("deductions", {
-					"account": fee_account,
-					"cost_center": fee_cost_center,
-					"amount": fee_amount,
-				})
+				pe.append(
+					"deductions",
+					{
+						"account": fee_account,
+						"cost_center": fee_cost_center,
+						"amount": fee_amount,
+					},
+				)
 
 		pe.flags.ignore_permissions = True
 		pe.insert()
@@ -366,7 +396,9 @@ class EventRegistration(Document):
 			# Add warning about fees not going into the right account/cost center.
 			pe.add_comment(
 				"Comment",
-				_("Payment Gateway '{0}' must have a Fee Account and Cost Center for the fees ({1}) to be correctly assigned.").format(payment_gateway.name, fee_amount),
+				_(
+					"Payment Gateway '{0}' must have a Fee Account and Cost Center for the fees ({1}) to be correctly assigned."
+				).format(payment_gateway.name, fee_amount),
 				comment_email="Administrator",
 			)
 
@@ -390,11 +422,9 @@ class EventRegistration(Document):
 			# Is an item of a Sales Invoice (superfluous check?)
 			.where(SII.parenttype == "Sales Invoice")
 		)
-		res = [
-			{ "doctype": "Sales Invoice", "name": str(r[0]) }
-			for r in query.run()
-		]
+		res = [{"doctype": "Sales Invoice", "name": str(r[0])} for r in query.run()]
 		return res
+
 
 @frappe.whitelist()
 def get_linked_invoices(name: str):
@@ -414,11 +444,16 @@ def submit_then_make_invoice(source_name: str, target_doc=None):
 		registration.set("payment_status", "Paid")
 		registration.submit()
 
-	return get_mapped_doc("Event Registration", source_name, {
-		"Event Registration": {
-			"doctype": "Sales Invoice",
-		}
-	}, postprocess=postprocess)
+	return get_mapped_doc(
+		"Event Registration",
+		source_name,
+		{
+			"Event Registration": {
+				"doctype": "Sales Invoice",
+			}
+		},
+		postprocess=postprocess,
+	)
 
 
 @frappe.whitelist()
@@ -440,26 +475,30 @@ def get_user_info(user=None):
 	)
 
 
-
 @frappe.whitelist(allow_guest=True)
 def register_to_event(event, data, user=None):
-	import warnings
-	warnings.warn("API endpoint erpnext.[...].event_registration.register_to_event is deprecated in favor of Web Form")
-
 	if frappe.session.user == "Guest":
 		raise frappe.exceptions.PermissionError()
+
+	event = frappe.get_doc("Event", event)
+	if not event.published:
+		raise frappe.exceptions.PermissionError()
+	if not event.allow_registrations:
+		raise frappe.exceptions.PermissionError()
+	if event.registration_form:  # Uses a custom Web Form
+		raise frappe.exceptions.ValidationError()  # Disable the default registration form
 
 	user = frappe.session.user
 
 	try:
-		registration = frappe.get_doc(
+		doc = frappe.get_doc(
 			dict({"doctype": "Event Registration", "event": event, "user": user}, **frappe.parse_json(data))
 		)
 
-		registration.flags.ignore_permissions = True
-		registration.flags.ignore_mandatory = True
-		registration.submit()
-		return registration
+		doc.flags.ignore_permissions = True
+		doc.flags.ignore_mandatory = True
+		doc.submit()
+		return doc
 	except DuplicateRegistration:
 		raise
 	except Exception:
@@ -471,14 +510,20 @@ def register_to_event(event, data, user=None):
 def cancel_registration(event):
 	user = frappe.session.user
 
-	registration = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
+	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
 
-	if registration:
-		doc = frappe.get_doc("Event Registration", registration)
+	event_doc = frappe.get_doc("Event", event)
+	if not event_doc.published:
+		raise frappe.exceptions.PermissionError()
+	if not event_doc.allow_cancellations:
+		raise frappe.exceptions.ValidationError()
+
+	if docname:
+		doc = frappe.get_doc("Event Registration", docname)
 		doc.flags.ignore_permissions = True
 		doc.cancel()
 
-	return registration
+	return docname
 
 
 @frappe.whitelist()
@@ -489,6 +534,12 @@ def cancel_registration_by_name(name):
 	if doc.user != user:
 		return
 
+	event = frappe.get_doc("Event", doc.event)
+	if not event.published:
+		raise frappe.exceptions.PermissionError()
+	if not event.allow_cancellations:
+		raise frappe.exceptions.ValidationError()
+
 	doc.flags.ignore_permissions = True
 
 	if doc.docstatus == 0:
@@ -497,4 +548,3 @@ def cancel_registration_by_name(name):
 		doc.cancel()
 	elif doc.docstatus == 2:
 		return
-
