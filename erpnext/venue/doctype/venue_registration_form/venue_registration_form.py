@@ -136,7 +136,9 @@ class VenueRegistrationForm(Document):
 			if self.docstatus == 2 or self.status == "Payment Method Registered":
 				return
 			self.status = "Payment Method Registered"
+			self.flags.ignore_permissions = True
 			self.submit()
-
 		elif status == "Pending":
 			self.status = "Pending"
+			self.flags.ignore_permissions = True
+			self.save()
