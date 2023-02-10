@@ -935,7 +935,7 @@ class StockEntry(StockController):
 								_("Row {0}# Item {1} not found in 'Raw Materials Supplied' table in {2} {3}").format(
 									se_item.idx,
 									se_item.item_code,
-									self.subcontract_data.order_doctype,
+									_(self.subcontract_data.order_doctype),
 									self.get(self.subcontract_data.order_field),
 								)
 							)
