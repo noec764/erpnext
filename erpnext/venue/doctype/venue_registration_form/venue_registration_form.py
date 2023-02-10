@@ -118,7 +118,6 @@ class VenueRegistrationForm(Document):
 
 		self.customer = mapped_doc.name
 
-
 	def create_subscription(self):
 		if self.subscription_template:
 			subscription = make_subscription(
@@ -131,15 +130,23 @@ class VenueRegistrationForm(Document):
 
 			self.subscription = subscription.name
 
+	def set_as_completed_and_submit(self):
+		self.status = "Completed"
+		self.flags.ignore_permissions = True
+		self.submit()
 
 	def on_payment_authorized(self, status=None, reference_no=None):
 		if status in ["Authorized", "Completed", "Paid", "Payment Method Registered"]:
-			if self.docstatus == 2 or self.status == "Payment Method Registered":
-				return
-			self.status = "Payment Method Registered"
-			self.flags.ignore_permissions = True
-			self.submit()
-		elif status == "Pending":
+			if self.docstatus == 0:
+				self.set_as_completed_and_submit()
+
+		elif status == "Pending" and self.status != "Completed":
 			self.status = "Pending"
 			self.flags.ignore_permissions = True
 			self.save()
+
+	def on_webform_save(self, webform):
+		if self.flags.in_payment_webform:
+			self.db_set("status", "Initiated")
+		else:
+			self.set_as_completed_and_submit()
