@@ -21,7 +21,7 @@ frappe.ready(() => {
 						if (template.portal_image) {
 							template_image = `<img class="card-img-top" src="${template.portal_image}" alt="${template.name}">`
 						}
-		
+
 						return `<div class="card" style="width: 18rem;">
 							${template_image}
 							${template_card}
@@ -34,12 +34,12 @@ frappe.ready(() => {
 					let prevButton = null;
 					const webform = document.getElementsByClassName("web-form")[0]
 					webform.addEventListener('click', (e) => {
-						const isButton = e.target.nodeName === 'BUTTON'; 
-						
+						const isButton = e.target.nodeName === 'BUTTON';
+
 						if (!isButton || !e.target.getAttribute("data-subscription")) {
 							return;
 						}
-						
+
 						e.target.classList.add('active');
 						e.target.innerHTML = __("Selected")
 
@@ -47,7 +47,7 @@ frappe.ready(() => {
 							prevButton.classList.remove('active');
 							prevButton.innerHTML = __("Select")
 						}
-						
+
 						prevButton = e.target;
 						frappe.web_form.set_value("subscription_template", e.target.getAttribute("data-subscription"))
 					})
