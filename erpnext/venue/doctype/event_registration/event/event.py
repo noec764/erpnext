@@ -80,7 +80,7 @@ class DokosEvent(Event):
 
 			if k == "max_number_of_registrations":
 				if context.event_capacity_info["has_limit"]:
-					context.event_meta.append({ "label": _("{0} places").format(context.event_capacity_info["limit"]) })
+					context.event_meta.append({ "label": _("{0} seats").format(context.event_capacity_info["limit"]) })
 				continue
 			elif df.fieldtype == "Date":
 				val = formatdate(val)

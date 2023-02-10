@@ -280,9 +280,13 @@ class PaymentRequest(Document):
 
 		if controller.doctype == "Stripe Settings":
 			doc.stripe_customer_id = controller.get_customer_id(reference_no)
+			if not doc.stripe_customer_id:
+				return
 			doc.stripe_settings = controller.name
 		elif controller.doctype == "GoCardless Settings":
 			doc.gocardless_customer_id = controller.get_customer_id(reference_no)
+			if not doc.gocardless_customer_id:
+				return
 			doc.gocardless_settings = self.gateway.name
 
 		doc.customer = self.customer
@@ -497,10 +501,16 @@ class PaymentRequest(Document):
 			self.run_method("set_as_paid", reference_no)
 		elif (curr_status == "Initiated") and (next_status == "Pending") and is_not_draft:
 			self.db_set("status", "Pending", commit=True)
+		elif (curr_status in ("Pending", "Initiated")) and (next_status == "Payment Method Registered"):
+			self.run_method("set_payment_method_registered")
 
 		self.db_set("transaction_reference", reference_no, commit=True)
 
 		return self.get_redirection()
+
+	def set_payment_method_registered(self):
+		"""Called when payment method is registered for off-session payments"""
+		self.process_payment_immediately()
 
 	def get_redirection(self):
 		redirect_to = "no-redirection"

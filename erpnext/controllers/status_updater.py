@@ -367,7 +367,7 @@ class StatusUpdater(Document):
 				_(item["target_ref_field"].title()),
 				frappe.bold(item["reduce_by"]),
 				frappe.bold(item.get("item_code")),
-				role,
+				_(role),
 			),
 			indicator="orange",
 			alert=True,
