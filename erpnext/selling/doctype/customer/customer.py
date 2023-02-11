@@ -355,6 +355,26 @@ def create_contact(contact, party_type, party, email):
 	contact.insert()
 
 
+def make_customer_from_contact(contact_doc):
+	customer_name = " ".join(
+		str(contact_doc.get(k, ""))
+		for k in ("first_name", "middle_name", "last_name")
+		if contact_doc.get(k, "")
+	)
+	customer = frappe.get_doc(
+		{
+			"doctype": "Customer",
+			"customer_name": customer_name,
+			"salutation": contact_doc.get("salutation"),
+			"gender": contact_doc.get("gender"),
+			"name": contact_doc.get("customer_primary_contact"),
+			"customer_type": "Individual",
+		}
+	)
+	customer.insert()
+	return customer
+
+
 @frappe.whitelist()
 def make_quotation(source_name, target_doc=None):
 	def set_missing_values(source, target):
@@ -501,22 +521,24 @@ def get_customer_list(doctype, txt, searchfield, start, page_len, filters=None):
 		filter_conditions = get_filters_cond(doctype, filters, [])
 		match_conditions += "{}".format(filter_conditions)
 
+	txt_anywhere = f"%{txt}%"
+	txt_start = f"{txt}%"
+
 	return frappe.db.sql(
-		"""
-		select %s
+		f"""
+		select {', '.join(fields)}
 		from `tabCustomer`
 		where docstatus < 2
-			and (%s like %s or customer_name like %s)
+			and ({searchfield} like %s or customer_name like %s)
 			{match_conditions}
 		order by
+			case when (name like %s or customer_name like %s) then 0 else 1 end,
 			case when name like %s then 0 else 1 end,
 			case when customer_name like %s then 0 else 1 end,
-			name, customer_name limit %s, %s
-		""".format(
-			match_conditions=match_conditions
-		)
-		% (", ".join(fields), searchfield, "%s", "%s", "%s", "%s", "%s", "%s"),
-		("%%%s%%" % txt, "%%%s%%" % txt, "%%%s%%" % txt, "%%%s%%" % txt, start, page_len),
+			name, customer_name
+		limit %s, %s
+		""",
+		(txt_anywhere, txt_anywhere, txt_start, txt_start, txt_anywhere, txt_anywhere, start, page_len),
 	)
 
 

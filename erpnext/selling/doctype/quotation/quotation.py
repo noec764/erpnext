@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+from collections import defaultdict
 
 import frappe
 from frappe import _
@@ -8,6 +9,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.utils import flt, getdate, nowdate
 
 from erpnext.controllers.selling_controller import SellingController
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 form_grid_templates = {"items": "templates/form_grid/item_grid.html"}
 
@@ -22,6 +24,7 @@ class Quotation(SellingController):
 			self.indicator_title = "Expired"
 
 	def validate(self):
+		self.validate_multicompany_items()
 		super(Quotation, self).validate()
 		self.set_status()
 		self.validate_uom_is_integer("stock_uom", "qty")
@@ -34,6 +37,33 @@ class Quotation(SellingController):
 		from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
 		make_packing_list(self)
+
+	def validate_multicompany_items(self):
+		if self.order_type != "Shopping Cart":
+			return
+
+		venue_settings = frappe.get_cached_doc("Venue Settings")
+		if venue_settings.enable_multi_companies:
+			if filter_mc := venue_settings.multicompany_get_item_filter_for_company(self.company):
+				kept_items, deleted_items = [], []
+				for item in self.items:
+					has_compatible_web_item = frappe.get_all("Website Item", limit=1, filters=[
+						["item_code", "=", item.item_code],
+						filter_mc,
+					])
+					if has_compatible_web_item:
+						kept_items.append(item)
+					else:
+						if item.item_booking:
+							frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True)
+						deleted_items.append(item)
+
+				self.items = kept_items
+				if not kept_items:
+					frappe.msgprint(_("The shopping cart has been emptied because none of the items are available in the selected company."))
+				if deleted_items:
+					frappe.msgprint(_("This item cannot be added to this shopping cart. Please select another company."))
+
 
 	def validate_valid_till(self):
 		if self.valid_till and getdate(self.valid_till) < getdate(self.transaction_date):
@@ -74,8 +104,12 @@ class Quotation(SellingController):
 		if ordered_items:
 			status = "Ordered"
 
+			items_dict = defaultdict(float)
 			for item in self.get("items"):
-				if item.qty > ordered_items.get(item.item_code, 0.0):
+				items_dict[item.item_code] += flt(item.qty)
+
+			for item in items_dict:
+				if items_dict.get(item) > ordered_items.get(item, 0.0):
 					status = "Partially Ordered"
 
 		return status
@@ -375,9 +409,7 @@ def _make_customer(source_name, ignore_permissions=False):
 				customer = frappe.get_doc(customer_doclist)
 				customer.flags.ignore_permissions = ignore_permissions
 				if quotation.get("party_name") == "Shopping Cart":
-					customer.customer_group = frappe.db.get_value(
-						"E Commerce Settings", None, "default_customer_group"
-					)
+					customer.customer_group = get_shopping_cart_settings().default_customer_group
 
 				try:
 					customer.insert()

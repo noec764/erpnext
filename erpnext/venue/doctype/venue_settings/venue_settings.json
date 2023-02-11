@@ -17,7 +17,12 @@
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
-  "month_uom"
+  "month_uom",
+  "event_registration_section",
+  "registration_item_code",
+  "multi_venue_section",
+  "enable_multi_companies",
+  "cart_settings_overrides"
  ],
  "fields": [
   {
@@ -97,6 +102,36 @@
    "fieldname": "confirm_booking_after_payment",
    "fieldtype": "Check",
    "label": "Confirm booking after payment"
+  },
+  {
+   "fieldname": "event_registration_section",
+   "fieldtype": "Section Break",
+   "label": "Event Registration"
+  },
+  {
+   "fieldname": "registration_item_code",
+   "fieldtype": "Link",
+   "label": "Billed Item for registration",
+   "options": "Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_multi_companies",
+   "fieldtype": "Check",
+   "label": "Enable"
+  },
+  {
+   "depends_on": "enable_multi_companies",
+   "fieldname": "cart_settings_overrides",
+   "fieldtype": "Table",
+   "label": "Allowed companies",
+   "mandatory_depends_on": "enable_multi_companies",
+   "options": "Venue Cart Settings"
+  },
+  {
+   "fieldname": "multi_venue_section",
+   "fieldtype": "Section Break",
+   "label": "Multi-venue mode"
   }
  ],
  "issingle": 1,
@@ -129,5 +164,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

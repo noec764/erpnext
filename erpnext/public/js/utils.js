@@ -341,9 +341,8 @@ $.extend(erpnext.utils, {
 	// check if payments app is installed on site, if not warn user.
 	check_payments_app: () => {
 		if (frappe.boot.versions && !frappe.boot.versions.payments) {
-			const marketplace_link = '<a href="https://frappecloud.com/marketplace/apps/payments">Marketplace</a>'
-			const github_link = '<a href="https://github.com/frappe/payments/">GitHub</a>'
-			const msg = __("payments app is not installed. Please install it from {0} or {1}", [marketplace_link, github_link])
+			const gitlab_link = '<a href="https://gitlab.com/dokos/payments/">Gitlab</a>'
+			const msg = __("payments app is not installed. Please install it from {0}", [gitlab_link])
 			frappe.msgprint(msg);
 		}
 

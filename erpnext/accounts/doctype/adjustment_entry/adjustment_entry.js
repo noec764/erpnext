@@ -45,23 +45,23 @@ frappe.tour["Adjustment Entry"] = {
 	"fr": [
 		{
 			fieldname: "entry_type",
-			description: __("Sélectionnez <strong>Revenus différés</strong> pour comptabiliser les revenus constatés d'avance ou <strong>Charges différées</strong> pour les charges constatées d'avance.")
+			description: "Sélectionnez <strong>Revenus différés</strong> pour comptabiliser les revenus constatés d'avance ou <strong>Charges différées</strong> pour les charges constatées d'avance."
 		},
 		{
 			fieldname: "adjustment_account",
-			description: __("Sélectionnez le compte comptable à utiliser pour constater le revenu ou la charge constatée d'avance.<br>Pour les revenus ce sera probablement une subdivision du compte 487, pour le charges une subdivision du compte 486.")
+			description: "Sélectionnez le compte comptable à utiliser pour constater le revenu ou la charge constatée d'avance.<br>Pour les revenus ce sera probablement une subdivision du compte 487, pour le charges une subdivision du compte 486."
 		},
 		{
 			fieldname: "posting_date",
-			description: __("Sélectionnez la date de comptabilisation de l'écriture. Ce sera probablement le dernier jour de l'exercice fiscal concerné.")
+			description: "Sélectionnez la date de comptabilisation de l'écriture. Ce sera probablement le dernier jour de l'exercice fiscal concerné."
 		},
 		{
 			fieldname: "reversal_date",
-			description: __("Sélectionnez la date d'annulation/extourne de l'écriture. Ce sera probablement le premier jour de l'exercice fiscal suivant.")
+			description: "Sélectionnez la date d'annulation/extourne de l'écriture. Ce sera probablement le premier jour de l'exercice fiscal suivant."
 		},
 		{
 			fieldname: "get_documents",
-			description: __("En cliquant sur ce bouton Dokos récupère toutes les factures contenant des prestations courant sur deux exercices grâce aux dates de début et de fin de la section <strong>Abonnement</strong>.<br>Le montant à comptabiliser est calculé pro-rata temporis.")
+			description: "En cliquant sur ce bouton Dokos récupère toutes les factures contenant des prestations courant sur deux exercices grâce aux dates de début et de fin de la section <strong>Abonnement</strong>.<br>Le montant à comptabiliser est calculé pro-rata temporis."
 		},
 	]
 }

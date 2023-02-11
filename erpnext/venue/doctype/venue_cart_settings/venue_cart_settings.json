@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-01-03 22:58:12.724558",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "price_list",
+  "default_customer_group",
+  "quotation_series"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Price List",
+   "options": "Price List"
+  },
+  {
+   "fieldname": "default_customer_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Customer Group",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "quotation_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Quotation Series"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-01-16 15:05:26.868039",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Venue Cart Settings",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -208,7 +208,7 @@ class Subscription(Document):
 		if not plan.get("description") or not frappe.utils.strip_html_tags(plan.get("description")):
 			frappe.throw(_("Please enter a description before creating an invoice item."))
 
-		rate = cint(flt(SubscriptionPlansManager(self).get_plan_rate(plan)) * plan.qty * 100)
+		rate = round(flt(SubscriptionPlansManager(self).get_plan_rate(plan)) * plan.qty * 100)
 
 		if self.payment_gateway:
 			gateway_settings, gateway_controller = frappe.db.get_value(
@@ -482,12 +482,7 @@ def new_invoice_end(subscription, end_date):
 
 
 def get_list_context(context=None):
-	templates = frappe.get_all(
-		"Subscription Template",
-		filters={"enable_on_portal": 1},
-		fields=["name", "portal_description", "portal_image"],
-	)
-
+	templates = get_published_subscription_templates()
 	context.update(
 		{
 			"show_sidebar": True,
@@ -506,6 +501,15 @@ def get_list_context(context=None):
 			else None,
 			"base_scripts": ["dialog.bundle.js", "controls.bundle.js"],
 		}
+	)
+
+
+@frappe.whitelist(allow_guest=True)
+def get_published_subscription_templates():
+	return frappe.get_all(
+		"Subscription Template",
+		filters={"enable_on_portal": 1},
+		fields=["name", "portal_description", "portal_image"],
 	)
 
 

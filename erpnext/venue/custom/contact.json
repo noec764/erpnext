@@ -1,0 +1,32 @@
+{
+	"custom_fields": [],
+	"custom_perms": [],
+	"doctype": "Contact",
+	"links": [
+		{
+			"group": "Events",
+			"link_doctype": "Event Registration",
+			"link_fieldname": "contact",
+			"name": "6be72110fe",
+			"owner": "Administrator",
+			"parent": "Contact",
+			"parentfield": "links",
+			"parenttype": "DocType"
+		}
+	],
+	"property_setters": [
+		{
+			"doc_type": "Contact",
+			"doctype_or_field": "DocType",
+			"is_system_generated": 1,
+			"modified": "2023-01-27 14:45:18.256437",
+			"modified_by": "Administrator",
+			"name": "Contact-main-links_order",
+			"owner": "Administrator",
+			"property": "links_order",
+			"property_type": "Small Text",
+			"value": "[\"6be72110fe\"]"
+		}
+	],
+	"sync_on_migrate": 1
+}

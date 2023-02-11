@@ -1,0 +1,117 @@
+{
+	"custom_fields": [
+		{
+			"description": "Leave this field empty or write 0 to not set a limit.",
+			"dt": "Event",
+			"fieldname": "max_number_of_registrations",
+			"fieldtype": "Int",
+			"insert_after": "status",
+			"is_system_generated": 1,
+			"label": "Maximum number of registrations",
+			"non_negative": 1
+		},
+		{
+			"depends_on": "eval:doc.published",
+			"dt": "Event",
+			"fieldname": "registrations_section",
+			"fieldtype": "Section Break",
+			"insert_after": "role",
+			"is_system_generated": 1,
+			"label": "Registrations",
+			"module": "Venue",
+			"name": "Event-registrations_section"
+		},
+		{
+			"default": "0",
+			"dt": "Event",
+			"fieldname": "allow_registrations",
+			"fieldtype": "Check",
+			"insert_after": "registrations_section",
+			"is_system_generated": 1,
+			"label": "Allow registrations",
+			"module": "Venue",
+			"name": "Event-allow_registrations"
+		},
+		{
+			"default": "0",
+			"depends_on": "eval:doc.allow_registrations",
+			"dt": "Event",
+			"fieldname": "allow_cancellations",
+			"fieldtype": "Check",
+			"insert_after": "allow_registrations",
+			"is_system_generated": 1,
+			"label": "Allow cancellations",
+			"module": "Venue",
+			"name": "Event-allow_cancellations"
+		},
+		{
+			"depends_on": "eval:doc.allow_registrations",
+			"dt": "Event",
+			"fieldname": "registration_form",
+			"fieldtype": "Link",
+			"insert_after": "allow_cancellations",
+			"is_system_generated": 1,
+			"label": "Registration Form",
+			"module": "Venue",
+			"name": "Event-registration_form",
+			"options": "Web Form"
+		},
+		{
+			"default": "0",
+			"depends_on": "eval:doc.registration_form&&doc.allow_registrations",
+			"dt": "Event",
+			"fieldname": "registration_amount",
+			"fieldtype": "Currency",
+			"insert_after": "registration_form",
+			"is_system_generated": 1,
+			"label": "Registration amount",
+			"non_negative": 1
+		},
+		{
+			"dt": "Event",
+			"fieldname": "column_break_38",
+			"fieldtype": "Column Break",
+			"insert_after": "amount",
+			"is_system_generated": 1,
+			"name": "Event-column_break_38"
+		},
+		{
+			"default": null,
+			"depends_on": "eval:!doc.registration_form",
+			"dt": "Event",
+			"fieldname": "success_message",
+			"fieldtype": "HTML",
+			"insert_after": "column_break_38",
+			"is_system_generated": 1,
+			"label": "Registration success message"
+		}
+	],
+	"custom_perms": [],
+	"doctype": "Event",
+	"links": [
+		{
+			"group": "Registrations",
+			"is_child_table": 0,
+			"link_doctype": "Event Registration",
+			"link_fieldname": "event",
+			"name": "6b3d53940f",
+			"parent": "Event",
+			"parent_doctype": null,
+			"parentfield": "links",
+			"parenttype": "DocType",
+			"table_fieldname": null
+		}
+	],
+	"property_setters": [
+		{
+			"doc_type": "Event",
+			"doctype_or_field": "DocType",
+			"module": "Venue",
+			"name": "Event-main-links_order",
+			"property": "links_order",
+			"property_type": "Small Text",
+			"value": "[\"6b3d53940f\"]"
+		}
+	],
+	"sync_on_migrate": 1
+}

@@ -189,7 +189,6 @@ class BankReconciliation:
 				self.payment_entries.append(payment_entry)
 
 	def get_payment_entry(self, transaction):
-		company_currency = frappe.db.get_value("Company", self.company, "default_currency")
 		party_account_currency = get_account_currency(self.party_account)
 
 		# payment type
@@ -226,11 +225,9 @@ class BankReconciliation:
 			paid_amount = received_amount = amount_to_pay_or_receive
 		elif payment_type == "Receive":
 			paid_amount = amount_to_pay_or_receive
-			target_exchange_rate = total_outstanding_amount / paid_amount
 			received_amount = total_outstanding_amount
 		else:
 			received_amount = amount_to_pay_or_receive
-			source_exchange_rate = received_amount / total_outstanding_amount
 			paid_amount = total_outstanding_amount
 
 		pe = frappe.new_doc("Payment Entry")
@@ -244,8 +241,8 @@ class BankReconciliation:
 		contacts = [x.get("contact_person") for x in self.documents]
 		pe.contact_person = contacts[0] if contacts else None
 		pe.contact_email = " ,".join(
-			[x.get("contact_email") for x in self.documents if x.get("contact_email")]
-		)
+			list(set([x.get("contact_email") for x in self.documents if x.get("contact_email")]))
+		)[:140]
 		pe.ensure_supplier_is_not_blocked()
 
 		pe.paid_from = self.party_account if payment_type == "Receive" else bank_account.account

@@ -10,9 +10,7 @@ from frappe.contacts.doctype.contact.contact import get_contact_name
 from frappe.model.document import Document
 from frappe.utils import cint, flt
 
-from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
-	get_shopping_cart_settings,
-)
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 
 class UnverifiedReviewer(frappe.ValidationError):

@@ -1589,12 +1589,14 @@ class AccountsController(TransactionBase):
 	def group_similar_items(self):
 		group_item_qty = {}
 		group_item_amount = {}
+		group_item_net_amount = {}
 		# to update serial number in print
 		count = 0
 
 		for item in self.items:
 			group_item_qty[item.item_code] = group_item_qty.get(item.item_code, 0) + item.qty
 			group_item_amount[item.item_code] = group_item_amount.get(item.item_code, 0) + item.amount
+			group_item_net_amount[item.item_code] = group_item_net_amount.get(item.item_code, 0) + item.net_amount
 
 		duplicate_list = []
 		for item in self.items:
@@ -1602,6 +1604,7 @@ class AccountsController(TransactionBase):
 				count += 1
 				item.qty = group_item_qty[item.item_code]
 				item.amount = group_item_amount[item.item_code]
+				item.net_amount = group_item_net_amount[item.item_code]
 
 				if item.qty:
 					item.rate = flt(flt(item.amount) / flt(item.qty), item.precision("rate"))

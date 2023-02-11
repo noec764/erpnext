@@ -1,0 +1,28 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.user == \"Guest\"",
+ "creation": "2023-02-02 16:36:27.541811",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Event Registration",
+ "enabled": 1,
+ "event": "Submit",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "{{ _(\"Hello {0},\").format(doc.first_name) }}\n{% set event = frappe.db.get_value(\"Event\", doc.event, [\"route\", \"subject\", \"starts_on\", \"ends_on\"], as_dict=True) %}\n\n{{ _(\"We have received your registration for the event '{0}'\").format('<a href=\"' + frappe.utils.get_url(event.route) + '\">' + event.subject + '</a>') }}\n\n{{ _(\"You were not logged in when you registered, so we are sending you this message to remind you of the details of the event you wish to attend. For your next registration, create an account on <a href='{0}'>our website</a> to manage your registrations more easily.\").format(frappe.utils.get_url(\"\")) }}\n\n<a href=\"{{ frappe.utils.get_url(event.route) }}\" style=\"display: block;\">\n<ul>\n<li><b>{{ event.subject }}</b></li>\n<li><b>{{ _(\"Starts on\") }}</b> {{ event.starts_on }}</li>\n<li><b>{{ _(\"Ends on\") }}</b> {{ event.ends_on }}</li>\n</ul>\n</a>\n\n<hr />\n{{ _(\"If you wish to cancel this registration, we suggest you contact us from <a href='{0}'>the contact page</a>.\").format(frappe.utils.get_url(\"/contact\")) }}",
+ "modified": "2023-02-09 18:47:32.179131",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "confirmed_registration_email",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "email"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Your registration has been confirmed"
+}

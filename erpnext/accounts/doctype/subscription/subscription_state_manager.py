@@ -110,11 +110,11 @@ class SubscriptionPeriod:
 				month_max_no_of_days = monthrange(next_period_end.year, next_period_end.month)[1]
 				# Remove 1 day because of the difference with the above next_period_date calculation
 				if month_max_no_of_days > self.subscription.invoicing_day:
-					day = self.subscription.invoicing_day - 1
+					day = self.subscription.invoicing_day
 				else:
-					day = month_max_no_of_days - 1
+					day = month_max_no_of_days
 
-				next_period_end = next_period_end.replace(day=day)
+				next_period_end = add_days(next_period_end.replace(day=day), -1)
 			return next_period_end
 
 		return get_last_day(self.subscription.current_invoice_start)

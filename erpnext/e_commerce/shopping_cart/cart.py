@@ -21,7 +21,7 @@ class WebsitePriceListMissingError(frappe.ValidationError):
 
 
 def set_cart_count(quotation=None):
-	if cint(frappe.db.get_singles_value("E Commerce Settings", "enabled")):
+	if cint(get_shopping_cart_settings().enabled):
 		if not quotation:
 			quotation = _get_cart_quotation()
 		cart_count = cstr(cint(quotation.get("total_qty")))
@@ -49,7 +49,7 @@ def get_cart_quotation(doc=None):
 		"shipping_addresses": get_shipping_addresses(party),
 		"billing_addresses": get_billing_addresses(party),
 		"shipping_rules": get_applicable_shipping_rules(party),
-		"cart_settings": frappe.get_cached_doc("E Commerce Settings"),
+		"cart_settings": get_shopping_cart_settings(),
 		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
 	}
 
@@ -81,9 +81,7 @@ def get_billing_addresses(party=None):
 @frappe.whitelist()
 def place_order():
 	quotation = _get_cart_quotation()
-	cart_settings = frappe.db.get_value(
-		"E Commerce Settings", None, ["company", "allow_items_not_in_stock"], as_dict=1
-	)
+	cart_settings = get_shopping_cart_settings()  # ["company", "allow_items_not_in_stock"]
 
 	quotation.company = cart_settings.company
 
@@ -193,10 +191,7 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		if not frappe.conf.show_server_messages_in_cart:
-			frappe.flags.mute_messages = True
 		quotation.save()
-		frappe.flags.mute_messages = False
 	else:
 		quotation.delete()
 		quotation = None
@@ -355,6 +350,8 @@ def _get_cart_quotation(party=None):
 	if not party:
 		party = get_party()
 
+	cart_settings = get_shopping_cart_settings()
+
 	quotation = frappe.get_all(
 		"Quotation",
 		fields=["name"],
@@ -362,6 +359,7 @@ def _get_cart_quotation(party=None):
 			"party_name": party.name,
 			"contact_email": frappe.session.user,
 			"order_type": "Shopping Cart",
+			"company": cart_settings.company,  # E Commerce Settings -> overrides eventually (Venue Settings)
 			"docstatus": 0,
 		},
 		order_by="modified desc",
@@ -371,11 +369,11 @@ def _get_cart_quotation(party=None):
 	if quotation:
 		qdoc = frappe.get_doc("Quotation", quotation[0].name)
 	else:
-		company = frappe.db.get_value("E Commerce Settings", None, ["company"])
+		company = cart_settings.company
 		qdoc = frappe.get_doc(
 			{
 				"doctype": "Quotation",
-				"naming_series": get_shopping_cart_settings().quotation_series or "QTN-CART-",
+				"naming_series": cart_settings.quotation_series or "QTN-CART-",
 				"quotation_to": party.doctype,
 				"company": company,
 				"order_type": "Shopping Cart",
@@ -434,7 +432,7 @@ def apply_cart_settings(party=None, quotation=None):
 	if not quotation:
 		quotation = _get_cart_quotation(party)
 
-	cart_settings = frappe.get_doc("E Commerce Settings")
+	cart_settings = get_shopping_cart_settings()
 
 	set_price_list_and_rate(quotation, cart_settings)
 
@@ -525,7 +523,7 @@ def get_party(user=None):
 			party_doctype = contact.links[0].link_doctype
 			party = contact.links[0].link_name
 
-	cart_settings = frappe.get_doc("E Commerce Settings")
+	cart_settings = get_shopping_cart_settings()
 
 	debtors_account = ""
 
@@ -545,7 +543,7 @@ def get_party(user=None):
 			{
 				"customer_name": fullname,
 				"customer_type": "Individual",
-				"customer_group": get_shopping_cart_settings().default_customer_group,
+				"customer_group": cart_settings.default_customer_group,
 				"territory": get_root_of("Territory"),
 			}
 		)

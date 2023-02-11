@@ -4,8 +4,8 @@
 import frappe
 from frappe import _
 from frappe.contacts.doctype.contact.contact import get_default_contact
-from frappe.integrations.utils import get_gateway_controller
-from frappe.utils import flt, fmt_money, get_url
+from payments.utils.utils import get_gateway_controller
+from frappe.utils import fmt_money, get_url, check_format
 
 expected_keys = (
 	"amount",
@@ -13,7 +13,6 @@ expected_keys = (
 	"description",
 	"reference_doctype",
 	"reference_docname",
-	"webform",
 	"payer_name",
 	"payer_email",
 	"order_id",
@@ -23,58 +22,39 @@ expected_keys = (
 
 def get_context(context):
 	context.no_cache = 1
-	# all these keys exist in form_dict
-	if frappe.db.exists(
-		"Payment Request", {"payment_key": frappe.form_dict.get("key"), "docstatus": 1}
-	):
-		payment_request = frappe.get_doc("Payment Request", {"payment_key": frappe.form_dict.get("key")})
-		gateway_controller = frappe.get_doc(
-			"GoCardless Settings", get_gateway_controller(payment_request.doctype, payment_request.name)
-		)
 
-	elif not (set(expected_keys) - set(frappe.form_dict.keys())):
+	if not (set(expected_keys) - set(list(frappe.form_dict))):
 		for key in expected_keys:
 			context[key] = frappe.form_dict[key]
 
-		if context["webform"]:
-			gateway_controller_name = get_gateway_controller("Web Form", context["webform"])
-			gateway_controller = frappe.get_doc("GoCardless Settings", gateway_controller_name)
-			context["grand_total"] = flt(context["amount"])
-			context["payment_gateway"] = frappe.db.get_value(
-				"Web Form", context["webform"], "payment_gateway"
-			)
-			payment_request = get_linked_payment_request(context)
-		else:
-			raise_invalid_link()
-
-	else:
-		raise_invalid_link()
-
-	if payment_request.status in ("Paid", "Completed", "Cancelled"):
-		frappe.redirect_to_message(
-			_("Already paid"),
-			_("This payment has already been done.<br>Please contact us if you have any question."),
+		gateway_controller = get_gateway_controller(
+			context.reference_doctype, context.reference_docname
 		)
-		frappe.local.flags.redirect_location = frappe.local.response.location
-		raise frappe.Redirect
+		if not gateway_controller:
+			redirect_to_invalid_link()
+
+		reference_document = frappe.get_doc(context.reference_doctype, context.reference_docname)
+	else:
+		print(set(expected_keys) - set(list(frappe.form_dict)))
+		redirect_to_invalid_link()
 
 	success_url = get_url(
-		f"./integrations/gocardless_confirmation?reference_doctype={payment_request.doctype}&reference_docname={payment_request.name}"
+		f"./integrations/gocardless_confirmation?reference_doctype={context.reference_doctype}&reference_docname={context.reference_docname}"
 	)
 
 	try:
-		redirect_flow = gateway_controller.client.redirect_flows.create(
+		gocardless_settings = frappe.get_cached_doc("GoCardless Settings", gateway_controller)
+		redirect_flow = gocardless_settings.client.redirect_flows.create(
 			params={
 				"description": _("Pay {0}").format(
-					fmt_money(amount=payment_request.grand_total, currency=payment_request.currency)
+					fmt_money(amount=context.amount, currency=context.currency)
 				),
-				"session_token": payment_request.name,
+				"session_token": f"{context.reference_doctype}&{context.reference_docname}",
 				"success_redirect_url": success_url,
-				"prefilled_customer": PrefilledCustomer(payment_request).get(),
+				"prefilled_customer": PrefilledCustomer(reference_document, context).get(),
 				"metadata": {
-					"reference_doctype": payment_request.reference_doctype,
-					"reference_name": payment_request.reference_name,
-					"payment_request": payment_request.name,
+					"reference_doctype": context.reference_doctype,
+					"reference_name": context.reference_docname
 				},
 			}
 		)
@@ -88,67 +68,31 @@ def get_context(context):
 	raise frappe.Redirect
 
 
-def raise_invalid_link():
+def redirect_to_invalid_link():
 	frappe.redirect_to_message(_("Invalid link"), _("This link is not valid.<br>Please contact us."))
 	frappe.local.flags.redirect_location = frappe.local.response.location
 	raise frappe.Redirect
 
 
-def get_linked_payment_request(context):
-	if frappe.db.exists(
-		"Payment Request",
-		dict(reference_doctype=context.reference_doctype, reference_name=context.reference_docname),
-	):
-		return frappe.get_doc(
-			"Payment Request",
-			dict(reference_doctype=context.reference_doctype, reference_name=context.reference_docname),
-		)
-	else:
-		return create_payment_request(**context)
-
-
-def create_payment_request(**kwargs):
-	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
-
-	pr = frappe.get_doc(
-		make_payment_request(
-			**{
-				"dt": kwargs.get("reference_doctype"),
-				"dn": kwargs.get("reference_docname"),
-				"grand_total": kwargs.get("grand_total"),
-				"submit_doc": True,
-				"return_doc": True,
-				"mute_email": 1,
-				"currency": kwargs.get("currency"),
-				"payment_gateway": kwargs.get("payment_gateway"),
-			}
-		)
-	)
-	frappe.db.commit()
-	return pr
-
-
 class PrefilledCustomer:
-	def __init__(self, payment_request):
-		self.payment_request = payment_request
-		self.reference = frappe.get_doc(
-			payment_request.reference_doctype, payment_request.reference_name
-		)
-		self.customer = frappe.get_doc("Customer", self.reference.customer)
+	def __init__(self, reference_document, context):
+		self.reference = reference_document
+		self.context = context
+		customer = self.reference.customer if hasattr(self.reference, 'customer') else self.reference.get("customer")
+		self.customer = frappe.get_doc("Customer", customer)
 		self.customer_address = {}
 		self.primary_contact = {}
 
 	def get(self):
 		self.get_customer_address()
 		self.get_primary_contact()
+		email = self.primary_contact.get("email_id") or self.context.payer_email or frappe.session.user
 
 		return {
 			"company_name": self.customer.customer_name,
 			"given_name": self.primary_contact.get("first_name") or "",
 			"family_name": self.primary_contact.get("last_name") or "",
-			"email": self.primary_contact.get("email_id")
-			or self.payment_request.email_to
-			or frappe.session.user,
+			"email": email if check_format(email) else "",
 			"address_line1": self.customer_address.address_line1 or "",
 			"address_line2": self.customer_address.address_line2 or "",
 			"city": self.customer_address.city or "",

@@ -10,7 +10,8 @@ frappe.views.calendar["Item Booking"] = {
 		"allDay": "all_day",
 		"rrule": "rrule",
 		"color": "color",
-		"status": "status"
+		"status": "status",
+		"doctype": "doctype"
 	},
 	status_color: {
 		"In cart": "orange",
@@ -18,5 +19,6 @@ frappe.views.calendar["Item Booking"] = {
 		"Confirmed": "green",
 		"Cancelled": "red"
 	},
-	filters: [["Item Booking", "status","!=", "Cancelled"]]
+	filters: [["Item Booking", "status", "!=", "Cancelled"]],
+	get_events_method: "erpnext.venue.doctype.item_booking.item_booking.get_events_for_calendar"
 };

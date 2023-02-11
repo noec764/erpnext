@@ -1,0 +1,517 @@
+<!-- sitemap -->
+{% extends "templates/web.html" %}
+
+{% block header %}
+{% if show_close_button%}
+	<button class="btn btn-secondary close-btn">{{ _("Back") }}</button>
+{% endif %}
+{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block page_content %}
+	<header class="mt-5 event__header" data-image-style="{{ image_design }}">
+		{% if doc.image and image_design in ("full", "icon") %}
+		<img class="event-header__side event__image event__image-{{ image_design }}" src="{{ doc.image }}" alt="{{ doc.subject }}">
+		{% endif %}
+
+		<div class="event-header__main">
+			<h1 class="event__title" itemprop="headline">{{ doc.subject }}</h1>
+
+			<div class="event__actions">
+				{% if can_edit_event %}
+				<a class="btn btn-sm btn-secondary" href="/app/event/{{ doc.name }}">
+					<svg class="icon icon-xs"><use href="#icon-edit"></use></svg>
+					<span>{{ _("Edit") }}</span>
+				</a>
+				{% endif %}
+
+				{% if allow_cancellations and is_registered %}
+				<button class="btn btn-sm btn-danger cancel-btn">{{ _("Cancel your registration") }}</button>
+				{% endif %}
+			</div>
+
+			<div class="event__timing" title="{{ frappe.utils.format_datetime(doc.starts_on, 'medium') }}">
+				{% set on_multiple_days = frappe.utils.getdate(doc.starts_on) != frappe.utils.getdate(doc.ends_on) %}
+
+				{% if on_multiple_days %}
+					{{ frappe.utils.global_date_format(doc.starts_on) }} &ndash; {{ frappe.utils.global_date_format(doc.ends_on) }}
+				{% else %}
+					{{ frappe.utils.global_date_format(doc.starts_on) }}
+					&middot;
+					{{ frappe.utils.get_time(doc.starts_on).strftime("%H:%M") }}
+					&ndash;
+					{{ frappe.utils.get_time(doc.ends_on).strftime("%H:%M") }}
+				{% endif %}
+
+				<br />
+
+				{% if doc.all_day %}
+					{{ _("All Day") }}
+				{% elif on_multiple_days %}
+					{{ frappe.utils.get_time(doc.starts_on).strftime("%H:%M") }}
+					&ndash;
+					{{ frappe.utils.get_time(doc.ends_on).strftime("%H:%M") }}
+				{% endif %}
+
+				{% if doc.repeat %}
+					<br />
+					<div>{{ doc.repeat }}</div>
+				{% endif %}
+			</div>
+
+			{% if event_meta %}
+			<dl class="event__meta">
+				{% for row in event_meta %}
+				<div data-key="{{ row.key if row.key else '' }}" {{ 'no-value="no-value"' if not row.value else '' }}>
+					<dt>{{ row.label }}</dt>
+					<dd>{{ row.value if row.value else '' }}</dd>
+				</div>
+				{% endfor %}
+			</dl>
+			<style>
+				/* Metadata such as starting datetime, available places, total places */
+				dl.event__meta {
+					display: flex;
+					flex-direction: column;
+					padding: 0;
+					margin: 0;
+				}
+				dl.event__meta > div {
+					display: flex;
+					gap: 0.5em;
+				}
+				dl.event__meta dt {
+					font-weight: bold;
+					padding: 0;
+					margin: 0;
+				}
+				dl.event__meta div:not([no-value]) dt::after {
+					content: "\2009:";
+				}
+				dl.event__meta dd {
+					padding: 0;
+					margin: 0;
+				}
+			</style>
+			{% endif %}
+
+			{% if event_tags %}
+			<ul class="event__tags reset">
+				{% for tag in event_tags %}
+				<li>{{ tag }}</li>
+				{% endfor %}
+			</ul>
+			<style>
+				/* Event tags */
+				ul.reset,
+				ul.reset li,
+				ul.reset ul li {
+					margin: 0px;
+					padding: 0px;
+					text-indent: 0px;
+					list-style-type: none;
+				}
+				ul.event__tags {
+					display: flex;
+					gap: 0.5em;
+				}
+				ul.event__tags li {
+					border-radius: 99px;
+					background: var(--primary-light);
+					padding: 1px 8px;
+					font-size: 0.8em;
+					font-weight: bold;
+					border: 1px solid currentColor;
+					color: var(--primary-color);
+				}
+			</style>
+			{% endif %}
+		</div>
+	</header>
+	<style>
+	.event__header {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 2em;
+		position: relative;
+	}
+	.event-header__side {
+		flex-shrink: 0;
+	}
+	.event-header__main {
+		align-self: stretch;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: center;
+		gap: 0.75em;
+	}
+	.event__title {
+		margin: 0;
+		padding: 0;
+	}
+	.event__actions {
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+		gap: 1em;
+	}
+	.event__header .event__image-icon {
+		height: 200px;
+		width: auto;
+		object-fit: contain;
+	}
+	.event__header .event__image-full {
+		position: absolute;
+		top: 0; left: 0; right: 0; bottom: 0;
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+		z-index: -1;
+	}
+	.event__timing {
+		font-weight: bold;
+		font-size: 1.4em;
+	}
+	</style>
+
+	<div class="mb-5">
+		{% set event_is_fully_booked = allow_registrations and event_capacity_info.has_limit and not event_capacity_info.free %}
+		{% set event_show_capacity = allow_registrations and event_capacity_info.has_limit and not is_registered %}
+		{% if allow_registrations %}
+			{% set event_state = "full" if event_is_fully_booked else "free" %}
+		{% else %}
+			{% set event_state = "closed" %}
+		{% endif %}
+
+		<div>
+		{% if doc.image and image_design == "column" %}
+			<img class="event__image event__image-column" src="{{ doc.image }}" alt="{{ doc.subject }}">
+		{% endif %}
+		</div>
+
+		<div class="event-info" data-event-state="{{ event_state }}" data-is-registered="{{ 'yes' if is_registered else 'no' }}">
+			{% if event_show_capacity %}
+				{% if event_is_fully_booked %}
+					<div class="alert alert-danger mt-5 text-center" role="alert">
+						{{ _("This event is fully booked.") }}
+					</div>
+				{% else %}
+					<div class="alert alert-info mt-5 text-center is-unregistered" role="alert">
+						{% if event_capacity_info.free == 1 %}
+							{{ _("Only one seat remaining.") }}
+						{% else %}
+							{{ _("{0} seats remaining").format(event_capacity_info.free) }}
+						{% endif %}
+					</div>
+				{% endif %}
+			{% endif %}
+
+			{% if is_registered %}
+				<div class="is-registered">
+					<div class="alert alert-success mt-5 text-center" role="alert">
+						{{ _("You are registered for this event") }}
+					</div>
+				</div>
+			{% endif %}
+
+			{{ content }}
+
+			{% if attachments %}
+			<ul class="list-group mb-4">
+				{% for attachment in attachments %}
+				<li class="list-group-item">
+					<span><i class="uil uil-file"></i></span>
+					<a href="{{ attachment.file_url }}" target="_blank">
+						<span class="ml-1">{{ attachment.file_name }}</span>
+					</a>
+				</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+
+			{% if my_registrations %}
+			<h3>{{ _("My registrations") }}</h3>
+			<ul>
+				{% for reg in my_registrations %}
+					<li class="registration-line" data-name="{{ reg.name }}" data-docstatus="{{ reg.docstatus }}" data-payment-status="{{ reg.payment_status }}">
+						<span class="registration-line__title">
+							<span>{{ reg.first_name }} {{ reg.last_name }}</span>
+							{% if reg.amount %}
+								<span>&middot;</span>
+								<span>{{ _(reg.payment_status or "Unpaid") }}</span>
+							{% endif %}
+						</span>
+
+						{% if allow_cancellations and reg.docstatus == 0 %}
+							<button class="btn btn-danger btn-xs cancel-one-btn" style="margin-left: 1ch;">{{ _("Cancel") }}</button>
+						{% endif %}
+						{% if allow_cancellations and reg.docstatus == 1 %}
+							<button class="btn btn-danger btn-xs cancel-one-btn" style="margin-left: 1ch;">{{ _("Cancel") }}</button>
+						{% endif %}
+						{# {% if accept_payment and reg.docstatus == 0 %}
+							<button class="btn btn-primary btn-xs pay-one-btn" style="margin-left: 1ch;">{{ _("Pay") }}</button>
+						{% endif %} #}
+						{% if reg.docstatus == 2 %}
+							{% if reg.amount and reg.payment_status == "Paid" %}
+								<span class="indicator-pill red" style="margin-left: 1ch;">{{ _("Cancelled") }}</span>
+							{% elif reg.amount and reg.payment_status == "Refunded" %}
+								<span class="indicator-pill green" style="margin-left: 1ch;">{{ _("Refunded") }}</span>
+							{% else %}
+								<span class="indicator-pill grey" style="margin-left: 1ch;">{{ _("Cancelled") }}</span>
+							{% endif %}
+						{% endif %}
+					</li>
+				{% endfor %}
+			</ul>
+			<style>
+				.registration-line {
+					padding: 3px 0px;
+				}
+				.registration-line[data-docstatus="1"] .registration-line__title {
+					font-weight: bold;
+				}
+				.registration-line[data-docstatus="2"] .registration-line__title {
+					{# text-decoration: line-through; #}
+				}
+			</style>
+			{% endif %}
+
+			<div class="event-alert-zone"></div>
+
+			{% if allow_registrations %}
+				<div id="registration-button" class="text-right">
+					{% if not event_is_fully_booked %}
+						{% if registration_url %}
+						<div><a class="btn btn-primary register-btn" href="{{ registration_url }}">{{ _("Registration Form") }}</a></div>
+						{% else %}
+						<div><button class="btn btn-primary register-btn">{{ _("Registration Form") }}</button></div>
+						{% endif %}
+					{% endif %}
+				</div>
+
+			{% if not registration_url %}
+			<div id="registration-form" style="display: none;">
+				<hr class="my-5" />
+				<div class="registration-fields"></div>
+				<div class="text-right">
+					<div><button class="btn btn-primary registration-submit-btn data-registration">{{ _("Register") }}</button></div>
+				</div>
+			</div>
+			{% endif %}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block style %}
+	<style>{{ event_style }}</style>
+	<style>
+		.frappe-control:not([data-fieldtype='MultiSelectPills']):not([data-fieldtype="Table MultiSelect"]).has-error input {
+			border: 1px solid #F9966C;
+		}
+
+		.frappe-control:not([data-fieldtype='MultiSelectPills']):not([data-fieldtype="Table MultiSelect"]).has-error input:focus {
+			box-shadow: 0 0 0 0.2px #F9966C;
+		}
+
+		.frappe-control[data-fieldtype='MultiSelectPills'].has-error .control-input-wrapper {
+			box-shadow: 0 0 0 0.2px #F9966C;
+		}
+
+		.page-break {
+			border-bottom: none;
+		}
+
+		.event-info[data-is-registered="no"] .is-registered,
+		.event-info[data-is-registered="yes"] .is-unregistered,
+		.event-info[data-is-registered="no"] .cancel-btn,
+		.event-info[data-is-registered="yes"] .register-btn,
+		.event-info[data-is-registered="yes"] .registration-submit-btn,
+		.event-info[data-is-registered="yes"] #registration-form {
+			display: none !important;
+		}
+	</style>
+{% endblock%}
+
+
+{% block base_scripts %}
+{{ super() }}
+{{ include_script("controls.bundle.js") }}
+{{ include_script("dialog.bundle.js") }}
+{% endblock %}
+
+{% block script %}
+<script>
+	const THIS_EVENT = {{ doc.name | tojson }};
+	const CUSTOM_SUCCESS_MESSAGE = {{ _(doc.success_message or "") | tojson }};
+
+	const set_ui_registration_state = ({ isRegistered }) => {
+		$(".event-info[data-is-registered]").attr("data-is-registered", isRegistered ? "yes" : "no");
+		$(".registration-submit-btn").attr("disabled", isRegistered);
+
+		if (!isRegistered) {
+			$(".event-alert-zone").empty();
+		}
+	}
+
+	const registration_cancelled = () => {
+		$("#registration-form").hide();
+		set_ui_registration_state({ isRegistered: false });
+		$(".cancel-btn").attr("disabled", false);
+		frappe.unfreeze();
+
+		location.reload();
+	}
+
+	const bind_cancel_btn = () => {
+		$(".cancel-btn").on("click", (e) => {
+			e.preventDefault();
+			$(".cancel-btn").attr("disabled", true);
+			frappe.call({
+				method: "erpnext.venue.doctype.event_registration.event_registration.cancel_registration",
+				args: {
+					event: THIS_EVENT
+				},
+				freeze: true,
+			}).then(r => {
+				registration_cancelled();
+			})
+		});
+	}
+
+	const bind_close_btn = () => {
+		$(".close-btn").on("click", (e) => {
+			e.preventDefault();
+			window.location.href = "/events";
+		});
+	}
+
+	const bind_cancel_one_btns = () => {
+		$("body").one("click", ".cancel-one-btn", (e) => {
+			e.preventDefault();
+
+			const $btn = $(e.target)
+			const name = $btn.closest("[data-name]").attr("data-name")
+			$btn.attr("disabled", true);
+			frappe.call({
+				method: "erpnext.venue.doctype.event_registration.event_registration.cancel_registration_by_name",
+				args: { name },
+				freeze: true,
+			}).then(r => {
+				$btn.attr("disabled", false);
+				window.location.reload();
+			})
+		})
+	}
+
+	frappe.ready(function() {
+		bind_close_btn()
+		bind_cancel_btn()
+		bind_cancel_one_btns()
+	});
+
+	{% if not registration_url %}
+	// Inline registration form
+	const REGISTRATION_FORM_FIELDS = {{ registration_form }};
+
+	const register_now = (values) => {
+		if (!values) { return; }
+
+		frappe.freeze();
+		$(".registration-submit-btn").attr("disabled", true);
+
+		frappe.call({
+			method: "erpnext.venue.doctype.event_registration.event_registration.register_to_event",
+			args: {
+				event: THIS_EVENT,
+				data: values
+			}
+		}).then(r => {
+			if (r && r.message) {
+				registration_succeeded(r.message)
+			} else {
+				registration_failed(r)
+			}
+		}).catch((r) => registration_failed(r))
+	}
+
+	const registration_succeeded = (registration_doc) => {
+		if (CUSTOM_SUCCESS_MESSAGE) {
+			if (CUSTOM_SUCCESS_MESSAGE.includes("<")) {
+				$(".event-alert-zone").html(CUSTOM_SUCCESS_MESSAGE);
+			} else {
+				$(".event-alert-zone").html(`<div class="alert alert-success mt-5 text-center" role="alert">
+					<span>${CUSTOM_SUCCESS_MESSAGE}</span>
+				</div>`);
+			}
+		} else {
+			const msg = {{ _("Thank you! You have been successfully registered.") | json }}
+			$(".event-alert-zone").html(`<div class="alert alert-success mt-5 text-center" role="alert">
+				<span>${msg}</span>
+			</div>`);
+		}
+
+		set_ui_registration_state({ isRegistered: true });
+		frappe.unfreeze();
+	}
+
+	const registration_failed = (r) => {
+		set_ui_registration_state({ isRegistered: false });
+		frappe.unfreeze();
+
+		if (r && r.exc_type === "EventIsFull") {
+			$(".registration-submit-btn").attr("disabled", false);
+			frappe.msgprint(__("This event is fully booked."), __("Registration failed"));
+		} else {
+			console.error(r);
+			$(".registration-submit-btn").attr("disabled", false);
+			frappe.msgprint(__("An error prevented your registration. Please try again or contact us."), __("Registration failed"));
+		}
+	}
+
+	const bind_register_btn = () => {
+		$(".register-btn").on("click", (e) => {
+			e.preventDefault();
+			show_registration_form();
+		})
+	}
+
+	const show_registration_form = () => {
+		$("#registration-form").show();
+
+		const body = $(".registration-fields").get(0);
+		body.innerHTML = "" // clear
+		const form = new frappe.ui.FieldGroup({
+			fields: REGISTRATION_FORM_FIELDS,
+			body: body,
+			no_submit_on_enter: true
+		});
+		form.make();
+
+		if (frappe.session.user != "Guest") {
+			frappe.call({
+				method: "erpnext.venue.doctype.event_registration.event_registration.get_user_info",
+			}).then(r => {
+				if (r && r.message) {
+					form.set_values(r.message);
+				}
+			})
+		}
+
+		$(".registration-submit-btn").off("click").on("click", (e) => {
+			e.preventDefault();
+			register_now(form.get_values());
+		})
+	}
+
+	frappe.ready(function() {
+		bind_register_btn()
+	});
+	{% endif %}
+</script>
+{% endblock %}

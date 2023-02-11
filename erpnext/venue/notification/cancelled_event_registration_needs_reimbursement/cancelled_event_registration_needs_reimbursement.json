@@ -1,0 +1,28 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "doc.payment_status == \"Paid\" and doc.amount > 0",
+ "creation": "2023-01-31 16:23:00.783610",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Event Registration",
+ "enabled": 1,
+ "event": "Cancel",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<b>{{_(\"Cancelled event registration needs reimbursement\")}}</b>\n\n<h3>{{_(\"Open Document\")}}: {{ frappe.utils.get_link_to_form(doc.doctype, doc.name) }}</h3>\n\n<ul class=\"list-unstyled\">\n\t<li>{{_(\"User\")}}: <b>{{ doc.contact }} - {{ doc.user }}</b></li>\n\t<li>{{_(\"Event\")}}: {{ frappe.utils.get_link_to_form(\"Event\", doc.event) }}</li>\n\t<li>{{ _(\"Event Registration\") }}: {{ frappe.utils.get_link_to_form(doc.doctype, doc.name) }}</li>\n</ul>",
+ "modified": "2023-02-09 18:46:59.012319",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Cancelled event registration needs reimbursement",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_role": "System Manager"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "subject": "Cancelled event registration needs reimbursement"
+}

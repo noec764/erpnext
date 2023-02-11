@@ -1,0 +1,214 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "EV-REG-.YYYY.-.######",
+ "creation": "2023-01-27 14:35:18.191848",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "first_name",
+  "last_name",
+  "column_break_3",
+  "email",
+  "mobile_number",
+  "section_break_6",
+  "event",
+  "amended_from",
+  "column_break_9",
+  "user",
+  "contact",
+  "payment_section",
+  "amount",
+  "company",
+  "column_break_15",
+  "payment_gateway",
+  "payment_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "First Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Last Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mobile_number",
+   "fieldtype": "Data",
+   "label": "Mobile Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "event",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Event",
+   "options": "Event",
+   "permlevel": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Event Registration",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email Address",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Link",
+   "label": "Contact",
+   "options": "Contact",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:(doc.event&&doc.amount)||doc.payment_gateway||doc.payment_status",
+   "fieldname": "payment_section",
+   "fieldtype": "Section Break",
+   "label": "Payment",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:doc.event",
+   "fetch_from": "event.registration_amount",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Registration amount",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:doc.amount",
+   "fieldname": "payment_gateway",
+   "fieldtype": "Link",
+   "label": "Payment Gateway",
+   "no_copy": 1,
+   "options": "Payment Gateway",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:doc.amount",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "no_copy": 1,
+   "options": "\nUnpaid\nPending\nPaid\nRefunded\nTo refund\nFailed\nCancelled",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:doc.amount",
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.amount",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-02-06 12:49:35.456490",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Event Registration",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Venue Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Venue Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "email"
+}
