@@ -60,7 +60,7 @@ class DokosEvent(Event):
 			context.is_registered = frappe.db.exists(
 				"Event Registration", dict(user=frappe.session.user, event=self.name, docstatus=1)
 			)
-			context.my_registrations = frappe.get_list(
+			context.my_registrations = frappe.get_all(
 				"Event Registration",
 				fields=["name", "docstatus", "amount", "first_name", "last_name", "payment_status"],
 				filters=dict(user=frappe.session.user, event=self.name),
