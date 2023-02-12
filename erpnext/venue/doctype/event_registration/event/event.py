@@ -60,7 +60,7 @@ class DokosEvent(Event):
 			context.is_registered = frappe.db.exists(
 				"Event Registration", dict(user=frappe.session.user, event=self.name, docstatus=1)
 			)
-			context.my_registrations = frappe.get_list(
+			context.my_registrations = frappe.get_all(
 				"Event Registration",
 				fields=["name", "docstatus", "amount", "first_name", "last_name", "payment_status"],
 				filters=dict(user=frappe.session.user, event=self.name),
@@ -94,10 +94,10 @@ class DokosEvent(Event):
 		context.event_tags = frappe.get_all("Tag Link", filters={"document_type": "Event","document_name": self.name}, pluck="tag")
 
 		if self.registration_form:
-			web_form_info: dict = frappe.get_value("Web Form", self.registration_form, ["route", "accept_payment"], as_dict=1)
-			context.registration_url = f"/{web_form_info['route']}/new?event={self.name}"
+			web_form = frappe.get_doc("Web Form", self.registration_form)
+			context.registration_url = f"/{web_form.route}/new?event={self.name}"
 
-			if web_form_info["accept_payment"]:
+			if getattr(web_form, "accept_payment", None):
 				context.accept_payment = True
 		else:
 			context.registration_url = ""

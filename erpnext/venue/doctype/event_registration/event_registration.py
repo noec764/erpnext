@@ -488,12 +488,16 @@ def register_to_event(event, data, user=None):
 	if event.registration_form:  # Uses a custom Web Form
 		raise frappe.exceptions.ValidationError()  # Disable the default registration form
 
+	data = frappe.parse_json(data)
 	user = frappe.session.user
 
 	try:
-		doc = frappe.get_doc(
-			dict({"doctype": "Event Registration", "event": event, "user": user}, **frappe.parse_json(data))
-		)
+		doc = frappe.get_doc({
+			**data,
+			"doctype": "Event Registration",
+			"event": event.name,
+			"user": user,
+		})
 
 		doc.flags.ignore_permissions = True
 		doc.flags.ignore_mandatory = True
@@ -504,6 +508,7 @@ def register_to_event(event, data, user=None):
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "Event registration error")
 		frappe.clear_messages()
+		raise
 
 
 @frappe.whitelist()
@@ -512,10 +517,10 @@ def cancel_registration(event):
 
 	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
 
-	event_doc = frappe.get_doc("Event", event)
-	if not event_doc.published:
+	event = frappe.get_doc("Event", event)
+	if not event.published:
 		raise frappe.exceptions.PermissionError()
-	if not event_doc.allow_cancellations:
+	if not event.allow_cancellations:
 		raise frappe.exceptions.ValidationError()
 
 	if docname:
