@@ -30,26 +30,25 @@ frappe.ready(() => {
 
 					frappe.web_form.get_field("subscription_templates").wrapper.innerHTML = `<div class="subscription-list">${template_cards}</div>`;
 
-
 					let prevButton = null;
-					const webform = document.getElementsByClassName("web-form")[0]
-					webform.addEventListener('click', (e) => {
-						const isButton = e.target.nodeName === 'BUTTON';
+					const webform = document.getElementsByClassName("web-form")[0];
+					webform.addEventListener("click", (e) => {
+						const button = e.target.closest("button");
 
-						if (!isButton || !e.target.getAttribute("data-subscription")) {
+						if (!button || !button.getAttribute("data-subscription")) {
 							return;
 						}
 
-						e.target.classList.add('active');
-						e.target.innerHTML = __("Selected")
-
-						if(prevButton !== null) {
-							prevButton.classList.remove('active');
-							prevButton.innerHTML = __("Select")
+						if (prevButton !== null && prevButton !== button) {
+							prevButton.classList.remove("active");
+							prevButton.innerText = __("Select");
 						}
 
-						prevButton = e.target;
-						frappe.web_form.set_value("subscription_template", e.target.getAttribute("data-subscription"))
+						button.classList.add("active");
+						button.innerText = __("Selected");
+
+						prevButton = button;
+						frappe.web_form.set_value("subscription_template", button.getAttribute("data-subscription"));
 					})
 				}
 			})
