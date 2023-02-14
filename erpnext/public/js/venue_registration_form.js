@@ -6,6 +6,7 @@ frappe.ready(() => {
 			}).then(r => {
 				if (r.message && r.message.length) {
 					const template_cards = r.message.map(template => {
+						const buttonId = `${frappe.scrub(template.name).replace('"', '\\"')}_subscription`
 						const template_card = `
 							<div class="card-body">
 								<h5 class="card-title">${template.name}</h5>
@@ -13,13 +14,13 @@ frappe.ready(() => {
 							</div>
 							<div class="card-footer">
 								<div class="text-right">
-									<button class="btn btn-primary" id='${frappe.scrub(template.name)}_subscription' data-subscription='${template.name}'>${__("Select")}</button>
+									<button class="btn btn-primary" id="${buttonId}">${__("Select")}</button>
 								</div>
 							</div>
 						`
 						let template_image = ''
 						if (template.portal_image) {
-							template_image = `<img class="card-img-top" src="${template.portal_image}" alt="${template.name}">`
+							template_image = `<img class="card-img-top" src="${template.portal_image}" alt="${frappe.utils.escape_html(template.name)}">`
 						}
 
 						return `<div class="card subscription-template-card" data-subscription="${frappe.utils.escape_html(template.name)}">
@@ -28,7 +29,18 @@ frappe.ready(() => {
 							</div>`
 					}).join("");
 
-					frappe.web_form.get_field("subscription_templates").wrapper.innerHTML = `<div class="subscription-list">${template_cards}</div>`;
+					frappe.web_form.get_field("subscription_templates").wrapper.innerHTML = `<div class="subscription-list">
+						${template_cards}
+						<style>
+							.subscription-template-card {
+								width: 18rem;
+								cursor: pointer;
+							}
+							.subscription-template-card.active {
+								border-color: var(--primary);
+							}
+						</style>
+					</div>`;
 
 					let prevButton = null;
 					const webform = document.getElementsByClassName("web-form")[0];
