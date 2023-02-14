@@ -3,21 +3,25 @@
 		<thead>
 			<tr>
 				<th class="text-left">{{ _("Account") }}</th>
+				<th class="text-left">{{ _("Tax Rate") }}</th>
 				<th class="text-left">{{ _("Taxable Amount") }}</th>
 				<th class="text-left">{{ _("Tax Amount") }}</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for account in details %}
+				{% for rate in details[account] %}
 				<tr>
 					<td>{{ account }}</td>
+					<td>{{ rate }} %</td>
 					<td class='text-right'>
-						{{ frappe.utils.fmt_money(details[account].get("taxable_amount", 0)) }}
+						{{ frappe.utils.fmt_money(details[account][rate].get("taxable_amount", 0)) }}
 					</td>
 					<td class='text-right'>
-						{{ frappe.utils.fmt_money(details[account].get("tax_amount", 0)) }}
+						{{ frappe.utils.fmt_money(details[account][rate].get("tax_amount", 0)) }}
 					</td>
 				</tr>
+				{% endfor %}
 			{% endfor %}
 		</tbody>
 	</table>

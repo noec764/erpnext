@@ -2,11 +2,6 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('France Tax Declaration Preparation', {
-	onload(frm) {
-		frm.get_field("deductible_details").$wrapper.empty()
-		frm.get_field("collected_details").$wrapper.empty()
-	},
-
 	refresh(frm) {
 		if (!frm.doc.title) {
 			frm.set_value("title", __("VAT Declaration Preparation"))
