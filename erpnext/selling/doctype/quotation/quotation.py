@@ -64,11 +64,7 @@ class Quotation(SellingController):
 
 				self.items = kept_items
 				if not kept_items:
-					frappe.msgprint(
-						_(
-							"The shopping cart has been emptied because none of the items are available in the selected company."
-						)
-					)
+					frappe.throw(_("The shopping cart has been emptied because none of the items are available in the selected company."), frappe.MandatoryError)
 				if deleted_items:
 					frappe.msgprint(
 						_("This item cannot be added to this shopping cart. Please select another company.")
