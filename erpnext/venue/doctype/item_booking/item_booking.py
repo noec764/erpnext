@@ -32,7 +32,12 @@ from frappe.utils import (
 from frappe.utils.user import is_system_user, is_website_user
 from googleapiclient.errors import HttpError
 
-from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation, get_party, get_shopping_cart_settings
+from erpnext.accounts.party import get_party_account_currency
+from erpnext.e_commerce.shopping_cart.cart import (
+	get_cart_quotation,
+	get_party,
+	get_shopping_cart_settings,
+)
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price
@@ -98,57 +103,72 @@ class ItemBooking(Document):
 		elif overlaps and not simultaneous_bookings_allowed:
 			frappe.publish_realtime("booking_overlap")
 
-
 	def get_overlapping_bookings(self):
-		from pypika import Criterion, functions as fn
+		from pypika import Criterion
+
 		IB = frappe.qb.DocType("Item Booking")
 		# https://stackoverflow.com/questions/13390333/two-rectangles-intersection
 		item_name = self.item if isinstance(self.item, str) else self.item.name
-		query = frappe.qb.select(IB.name).from_(IB).where(Criterion.all([
-			IB.name != self.name,
-			IB.item == item_name,
-			IB.status != "Cancelled",
-		])).where(Criterion.any([
-			(IB.starts_on < self.ends_on) & (IB.ends_on > self.starts_on),
-			# TODO: Check overlaps with recurring events. How to handle gaps in the recurrence?
-			# TODO: Check overlaps with other events when this booking (self) is recurring.
-			# (IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
-		]))
+		query = (
+			frappe.qb.select(IB.name)
+			.from_(IB)
+			.where(
+				Criterion.all(
+					[
+						IB.name != self.name,
+						IB.item == item_name,
+						IB.status != "Cancelled",
+					]
+				)
+			)
+			.where(
+				Criterion.any(
+					[
+						(IB.starts_on < self.ends_on) & (IB.ends_on > self.starts_on),
+						# TODO: Check overlaps with recurring events. How to handle gaps in the recurrence?
+						# TODO: Check overlaps with other events when this booking (self) is recurring.
+						# (IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
+					]
+				)
+			)
+		)
 		return [{"doctype": "Item Booking", "name": booking[0]} for booking in query.run()]
 
-
 	def get_overlapping_subscriptions(self):
-		from pypika import Criterion, functions as fn
+		from pypika import Criterion
+		from pypika import functions as fn
+
 		Subscription = frappe.qb.DocType("Subscription")
 		SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
-		start_field = fn.Coalesce(
-			SubscriptionPlanDetail.from_date,
-			Subscription.start,
-			"0000-00-00"
-		)
+		start_field = fn.Coalesce(SubscriptionPlanDetail.from_date, Subscription.start, "0000-00-00")
 		end_field = fn.Coalesce(
-			SubscriptionPlanDetail.to_date,
-			Subscription.cancellation_date,
-			"9999-01-01"
+			SubscriptionPlanDetail.to_date, Subscription.cancellation_date, "9999-01-01"
 		)
 		item_name = self.item if isinstance(self.item, str) else self.item.name
 		query = (
 			frappe.qb.select(Subscription.name)
 			.from_(Subscription)
 			.join(SubscriptionPlanDetail)
-			.on(Criterion.all([
-				Subscription.name == SubscriptionPlanDetail.parent,
-				SubscriptionPlanDetail.parenttype == "Subscription",
-			]))
-			.where(Criterion.all([
-				start_field < self.ends_on,
-				end_field > self.starts_on,
-				SubscriptionPlanDetail.booked_item == item_name,
-			]))
+			.on(
+				Criterion.all(
+					[
+						Subscription.name == SubscriptionPlanDetail.parent,
+						SubscriptionPlanDetail.parenttype == "Subscription",
+					]
+				)
+			)
+			.where(
+				Criterion.all(
+					[
+						start_field < self.ends_on,
+						end_field > self.starts_on,
+						SubscriptionPlanDetail.booked_item == item_name,
+					]
+				)
+			)
 			.limit(1)
 		)
 		return [{"doctype": "Subscription", "name": sub[0]} for sub in query.run()]
-
 
 	def set_title(self):
 		if self.meta.get_field("title").hidden or not self.title:
@@ -578,10 +598,17 @@ class ItemBookingAvailabilities:
 
 		return availability
 
-	def _round_datetime_in_slot(self, dt: datetime.datetime, slot_start: datetime.datetime, interval_in_minutes: int = None):
+	def _round_datetime_in_slot(
+		self, dt: datetime.datetime, slot_start: datetime.datetime, interval_in_minutes: int = None
+	):
 		from math import ceil
-		assert dt >= slot_start, "_round_datetime_in_slot: Datetime to round should be after the beginning of the slot."
-		interval_in_minutes = interval_in_minutes or int(datetime.timedelta(minutes=cint(self.duration)).total_seconds() / 60)
+
+		assert (
+			dt >= slot_start
+		), "_round_datetime_in_slot: Datetime to round should be after the beginning of the slot."
+		interval_in_minutes = interval_in_minutes or int(
+			datetime.timedelta(minutes=cint(self.duration)).total_seconds() / 60
+		)
 		if not interval_in_minutes:
 			return dt
 
@@ -599,8 +626,9 @@ class ItemBookingAvailabilities:
 			scheduled_items = []
 			for event in booked_items:
 				# Only keep booked events that overlap the schedule slot
-				if (get_datetime(event.get("starts_on")) < line.get("end")
-					and get_datetime(event.get("ends_on")) > line.get("start")):
+				if get_datetime(event.get("starts_on")) < line.get("end") and get_datetime(
+					event.get("ends_on")
+				) > line.get("start"):
 					scheduled_items.append(event)
 
 			slots = self._find_available_slot(line, scheduled_items)
@@ -748,7 +776,11 @@ class ItemBookingAvailabilities:
 
 @frappe.whitelist()
 def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields=None):
-	assert doctype in (None, '', 'Item Booking'), "get_events_for_calendar: expected the doctype to be Item Booking"
+	assert doctype in (
+		None,
+		"",
+		"Item Booking",
+	), "get_events_for_calendar: expected the doctype to be Item Booking"
 	# Note: we ignore the doctype because we return Item Booking and Subscription objects
 	if isinstance(field_map, str):
 		field_map: dict = frappe.parse_json(field_map)
@@ -763,7 +795,8 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 	events: list = _get_events(start, end, item=None, user=None, fields=fields)
 	return events
 
-def _get_events(start, end, item=None, user=None, fields=[]):
+
+def _get_events(start, end, item=None, user=None, fields=None):
 	conditions = ""
 	if item:
 		item_name = item if isinstance(item, str) else item.name
@@ -771,7 +804,19 @@ def _get_events(start, end, item=None, user=None, fields=[]):
 	if user:
 		conditions += " AND user='{0}' ".format(user)
 
-	all_fields: set = {"starts_on", "ends_on", "item as item_name", "name", "repeat_this_event", "rrule", "user", "status"}
+	if not fields:
+		fields = []
+
+	all_fields: set = {
+		"starts_on",
+		"ends_on",
+		"item as item_name",
+		"name",
+		"repeat_this_event",
+		"rrule",
+		"user",
+		"status",
+	}
 	all_fields.update(fields or [])
 
 	events = frappe.db.sql(
@@ -791,8 +836,7 @@ def _get_events(start, end, item=None, user=None, fields=[]):
 		AND status!="Cancelled"
 		{conditions}
 		ORDER BY starts_on""".format(
-			conditions=conditions,
-			fields=', '.join(all_fields)
+			conditions=conditions, fields=", ".join(all_fields)
 		),
 		{"start": start, "end": end},
 		as_dict=1,
@@ -832,27 +876,32 @@ def _get_subscriptions_as_events(start, end, item=None, user=None):
 			title,
 		)
 
-		events.append({
-			**sub,
-			"starts_on": sub["start"],
-			"ends_on": sub["end"],
-			"item_name": booked_item,
-			"title": title,
-			"name": sub["name"],
-			"doctype": "Subscription",
-			# "repeat_this_event": 1,
-			# "rrule": "RRULE:FREQ=HOURLY",
-			# "user": sub["_customers"][0] if sub["_customers"] and len(sub["_customers"]) > 0,
-			# "status": "Active",
-			"all_day": 1,
-			"startEditable": False,
-			"durationEditable": False,
-		})
+		events.append(
+			{
+				**sub,
+				"starts_on": sub["start"],
+				"ends_on": sub["end"],
+				"item_name": booked_item,
+				"title": title,
+				"name": sub["name"],
+				"doctype": "Subscription",
+				# "repeat_this_event": 1,
+				# "rrule": "RRULE:FREQ=HOURLY",
+				# "user": sub["_customers"][0] if sub["_customers"] and len(sub["_customers"]) > 0,
+				# "status": "Active",
+				"all_day": 1,
+				"startEditable": False,
+				"durationEditable": False,
+			}
+		)
 	return events
 
 
-def _get_booking_subscriptions_between(after_date, before_date, item=None, user=None, fields=None, filters=None):
-	from pypika import Criterion, Field, functions as fn
+def _get_booking_subscriptions_between(
+	after_date, before_date, item=None, user=None, fields=None, filters=None
+):
+	from pypika import Criterion, Field
+	from pypika import functions as fn
 
 	Subscription = frappe.qb.DocType("Subscription")
 	SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
@@ -864,15 +913,9 @@ def _get_booking_subscriptions_between(after_date, before_date, item=None, user=
 			fields.append(Subscription.field(d.fieldname).as_("color"))
 			break
 
-	start_field = fn.Coalesce(
-		SubscriptionPlanDetail.from_date,
-		Subscription.start,
-		"0000-00-00"
-	)
+	start_field = fn.Coalesce(SubscriptionPlanDetail.from_date, Subscription.start, "0000-00-00")
 	end_field = fn.Coalesce(
-		SubscriptionPlanDetail.to_date,
-		Subscription.cancellation_date,
-		"9999-01-01"
+		SubscriptionPlanDetail.to_date, Subscription.cancellation_date, "9999-01-01"
 	)
 
 	item_field: Field = SubscriptionPlanDetail.booked_item
@@ -905,15 +948,17 @@ def _get_booking_subscriptions_between(after_date, before_date, item=None, user=
 	# 	customer_field: Field = Subscription.customer
 	# 	filters.append(customer_field.isin(all_customers))
 
-	fields.extend((
-		Subscription.name.as_("name"),
-		SubscriptionPlanDetail.name.as_("plan_detail_name"),
-		SubscriptionPlanDetail.qty,
-		start_field.as_("start"),
-		end_field.as_("end"),
-		item_field.as_("booked_item"),
-		Subscription.customer.as_("customer"),
-	))
+	fields.extend(
+		(
+			Subscription.name.as_("name"),
+			SubscriptionPlanDetail.name.as_("plan_detail_name"),
+			SubscriptionPlanDetail.qty,
+			start_field.as_("start"),
+			end_field.as_("end"),
+			item_field.as_("booked_item"),
+			Subscription.customer.as_("customer"),
+		)
+	)
 
 	query = (
 		frappe.qb.select(*fields)
@@ -921,7 +966,8 @@ def _get_booking_subscriptions_between(after_date, before_date, item=None, user=
 		.join(SubscriptionPlanDetail)
 		.on(
 			(Subscription.name == SubscriptionPlanDetail.parent)
-			& (SubscriptionPlanDetail.parenttype == "Subscription"))  # NOTE: Plans are present in both Subscription and Subscription template
+			& (SubscriptionPlanDetail.parenttype == "Subscription")
+		)  # NOTE: Plans are present in both Subscription and Subscription template
 		.where(Criterion.all(filters))
 	)
 
@@ -1010,6 +1056,7 @@ def daterange(start_date, end_date):
 		) + datetime.timedelta(days=1)
 	for n in range(int((end_date - start_date).days)):
 		yield start_date + timedelta(n)
+
 
 def daterange_including_start(start_date, end_date):
 	if start_date < get_datetime(now()):

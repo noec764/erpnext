@@ -47,10 +47,14 @@ class Quotation(SellingController):
 			if filter_mc := venue_settings.multicompany_get_item_filter_for_company(self.company):
 				kept_items, deleted_items = [], []
 				for item in self.items:
-					has_compatible_web_item = frappe.get_all("Website Item", limit=1, filters=[
-						["item_code", "=", item.item_code],
-						filter_mc,
-					])
+					has_compatible_web_item = frappe.get_all(
+						"Website Item",
+						limit=1,
+						filters=[
+							["item_code", "=", item.item_code],
+							filter_mc,
+						],
+					)
 					if has_compatible_web_item:
 						kept_items.append(item)
 					else:
@@ -60,10 +64,11 @@ class Quotation(SellingController):
 
 				self.items = kept_items
 				if not kept_items:
-					frappe.msgprint(_("The shopping cart has been emptied because none of the items are available in the selected company."))
+					frappe.throw(_("The shopping cart has been emptied because none of the items are available in the selected company."), frappe.MandatoryError)
 				if deleted_items:
-					frappe.msgprint(_("This item cannot be added to this shopping cart. Please select another company."))
-
+					frappe.msgprint(
+						_("This item cannot be added to this shopping cart. Please select another company.")
+					)
 
 	def validate_valid_till(self):
 		if self.valid_till and getdate(self.valid_till) < getdate(self.transaction_date):
@@ -287,6 +292,17 @@ def set_expired_status():
 
 @frappe.whitelist()
 def make_sales_order(source_name: str, target_doc=None):
+	if not frappe.db.get_singles_value(
+		"Selling Settings", "allow_sales_order_creation_for_expired_quotation"
+	):
+		quotation = frappe.db.get_value(
+			"Quotation", source_name, ["transaction_date", "valid_till"], as_dict=1
+		)
+		if quotation.valid_till and (
+			quotation.valid_till < quotation.transaction_date or quotation.valid_till < getdate(nowdate())
+		):
+			frappe.throw(_("Validity period of this quotation has ended."))
+
 	return _make_sales_order(source_name, target_doc)
 
 

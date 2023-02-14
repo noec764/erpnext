@@ -27,6 +27,7 @@ erpnext.setup.slides_settings = [
 			{
 				fieldname: 'company_abbr',
 				label: __('Company Abbreviation'),
+				fieldtype: 'Data',
 				hidden: 1
 			},
 			{

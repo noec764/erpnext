@@ -32,7 +32,6 @@
       "default": "0",
       "fieldname": "disabled",
       "fieldtype": "Check",
-      "in_list_view": 1,
       "label": "Disabled"
      },
      {
@@ -59,12 +58,14 @@
       "default": "1",
       "fieldname": "selling",
       "fieldtype": "Check",
+      "in_list_view": 1,
       "label": "Selling"
      },
      {
       "default": "1",
       "fieldname": "buying",
       "fieldtype": "Check",
+      "in_list_view": 1,
       "label": "Buying"
      },
      {
@@ -74,10 +75,11 @@
     ],
     "icon": "icon-legal",
     "idx": 1,
-    "modified": "2022-06-16 15:07:38.094844",
+    "modified": "2023-02-01 14:33:39.246532",
     "modified_by": "Administrator",
     "module": "Setup",
     "name": "Terms and Conditions",
+    "naming_rule": "By fieldname",
     "owner": "Administrator",
     "permissions": [
      {
@@ -131,5 +133,6 @@
     "quick_entry": 1,
     "show_name_in_global_search": 1,
     "sort_field": "modified",
-    "sort_order": "ASC"
+    "sort_order": "ASC",
+    "states": []
    }

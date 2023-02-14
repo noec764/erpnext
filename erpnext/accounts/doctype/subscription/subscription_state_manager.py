@@ -1,7 +1,7 @@
 from calendar import monthrange
 
 import frappe
-from frappe.utils.data import add_days, add_to_date, flt, get_last_day, getdate, nowdate
+from frappe.utils.data import add_days, add_to_date, flt, get_last_day, getdate, nowdate, cint
 
 
 class SubscriptionPeriod:
@@ -102,19 +102,18 @@ class SubscriptionPeriod:
 			next_period_end = getdate(
 				add_to_date(self.subscription.current_invoice_start, **billing_cycle_data)
 			)
+
 			if (
 				self.subscription.billing_interval in ("Month", "Year")
-				and self.subscription.invoicing_day
-				and next_period_end.day != self.subscription.invoicing_day
+				and cint(self.subscription.invoicing_day) in [28, 29, 30, 31, 1]
 			):
 				month_max_no_of_days = monthrange(next_period_end.year, next_period_end.month)[1]
-				# Remove 1 day because of the difference with the above next_period_date calculation
-				if month_max_no_of_days > self.subscription.invoicing_day:
-					day = self.subscription.invoicing_day
+				if self.subscription.invoicing_day == 1:
+					next_period_end = get_last_day(next_period_end)
 				else:
-					day = month_max_no_of_days
+					day = self.subscription.invoicing_day - 1 if month_max_no_of_days > self.subscription.invoicing_day else month_max_no_of_days - 1
+					next_period_end = next_period_end.replace(day=day)
 
-				next_period_end = add_days(next_period_end.replace(day=day), -1)
 			return next_period_end
 
 		return get_last_day(self.subscription.current_invoice_start)

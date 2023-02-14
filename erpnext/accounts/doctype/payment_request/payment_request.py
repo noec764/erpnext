@@ -26,12 +26,12 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import get_account_currency
+from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 from erpnext.erpnext_integrations.doctype.integration_references.integration_references import (
 	can_make_immediate_payment,
 )
 from erpnext.utilities import payment_app_import_guard
 
-from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
 def _get_payment_gateway_controller(*args, **kwargs):
 	with payment_app_import_guard():
@@ -64,21 +64,20 @@ class PaymentRequest(Document):
 			frappe.throw(_("To create a Payment Request reference document is required"))
 
 	def validate_payment_request_amount(self):
-		existing_payment_request_amount = get_existing_payment_request_amount(
-			self.reference_doctype, self.reference_name
+		existing_payment_request_amount = flt(
+			get_existing_payment_request_amount(self.reference_doctype, self.reference_name)
 		)
 
-		if existing_payment_request_amount:
-			ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
-			if not hasattr(ref_doc, "order_type") or getattr(ref_doc, "order_type") != "Shopping Cart":
-				ref_amount = get_amount(ref_doc)
+		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		if not hasattr(ref_doc, "order_type") or getattr(ref_doc, "order_type") != "Shopping Cart":
+			ref_amount = get_amount(ref_doc)
 
-				if existing_payment_request_amount + flt(self.grand_total) > ref_amount:
-					frappe.throw(
-						_("Total Payment Request amount cannot be greater than {0} amount").format(
-							self.reference_doctype
-						)
+			if existing_payment_request_amount + flt(self.grand_total) > ref_amount:
+				frappe.throw(
+					_("Total Payment Request amount cannot be greater than {0} amount").format(
+						self.reference_doctype
 					)
+				)
 
 	def validate_currency(self):
 		if frappe.get_meta(self.reference_doctype).has_field("currency"):
