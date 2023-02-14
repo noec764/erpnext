@@ -22,7 +22,7 @@ frappe.ready(() => {
 							template_image = `<img class="card-img-top" src="${template.portal_image}" alt="${template.name}">`
 						}
 
-						return `<div class="card" style="width: 18rem;">
+						return `<div class="card subscription-template-card" data-subscription="${frappe.utils.escape_html(template.name)}">
 							${template_image}
 							${template_card}
 							</div>`
@@ -33,22 +33,28 @@ frappe.ready(() => {
 					let prevButton = null;
 					const webform = document.getElementsByClassName("web-form")[0];
 					webform.addEventListener("click", (e) => {
-						const button = e.target.closest("button");
+						const card = e.target.closest(".subscription-template-card");
+						if (!card) { return; }
 
-						if (!button || !button.getAttribute("data-subscription")) {
-							return;
-						}
+						const templateName = card.getAttribute("data-subscription")
+						if (!templateName) { return; }
+
+						const button = card.querySelector("button");
+						if (!button) { return; }
 
 						if (prevButton !== null && prevButton !== button) {
+							const prevCard = prevButton.closest(".subscription-template-card");
+							prevCard.classList.remove("active");
 							prevButton.classList.remove("active");
 							prevButton.innerText = __("Select");
 						}
 
+						card.classList.add("active");
 						button.classList.add("active");
 						button.innerText = __("Selected");
 
 						prevButton = button;
-						frappe.web_form.set_value("subscription_template", button.getAttribute("data-subscription"));
+						frappe.web_form.set_value("subscription_template", templateName);
 					})
 				}
 			})
