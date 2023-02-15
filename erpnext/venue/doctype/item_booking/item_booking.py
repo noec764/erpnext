@@ -2,9 +2,11 @@
 # For license information, please see license.txt
 
 import calendar
+from dataclasses import dataclass
 import datetime
 import json
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
@@ -44,6 +46,77 @@ from erpnext.utilities.product import get_price
 from erpnext.venue.utils import get_linked_customers
 
 
+if TYPE_CHECKING:
+	from typing import Callable, TypeVar
+	T = TypeVar("T")
+
+
+def util_split_list(items: "list[T]", condition: "Callable[[T], bool]") -> "tuple[list[T], list[T]]":
+	"""
+	Splits a list into two lists based on a condition.
+	Similar to:
+	```py
+	left  = [item for item in items if not condition(item)]
+	right = [item for item in items if     condition(item)]
+	```
+	"""
+	items_no, items_yes = [], []
+	for item in items:
+		(items_yes if condition(item) else items_no).append(item)
+	return items_no, items_yes
+
+
+class BookingException(Exception):
+	@property
+	def desk_message(self):
+		return self.message
+
+	def throw(self):
+		is_desk = False
+		try:
+			is_desk = frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/")
+		except Exception:
+			pass
+		if is_desk:
+			self.throw_desk()
+		else:
+			self.throw_website()
+
+	def throw_desk(self):
+		frappe.throw(self.desk_message, self.__class__)
+
+	def throw_website(self):
+		frappe.throw(self.message, self.__class__)
+
+@dataclass
+class ExceptionBookingOverlap(BookingException):
+	created: "ItemBooking"  # self
+	overlaps: "list[ItemBooking | Document | dict]"
+
+	def __post_init__(self):
+		self.message = _("This slot is no longer bookable.")
+
+	@property
+	def desk_message(self):
+		from frappe.utils import get_link_to_form
+		self.message = _(
+			"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings."
+		)
+		dt, name = self.overlaps[0].get("doctype"), self.overlaps[0].get("name")
+		link = get_link_to_form(dt, name)
+		return _("{0}: {1}").format(self.message, link)
+
+
+@dataclass
+class ExceptionTooManyBookings(BookingException):
+	created: "ItemBooking"  # self
+	overlaps: "list[ItemBooking | Document | dict]"
+
+	def __post_init__(self):
+		self.message = _("The maximum number of simultaneous bookings allowed for this item has been reached.")
+
+
+
 class ItemBooking(Document):
 	def before_insert(self):
 		if self.parent_item_booking:
@@ -75,10 +148,7 @@ class ItemBooking(Document):
 		self.check_overlaps()
 
 	def check_overlaps(self):
-		overlapping_bookings = self.get_overlapping_bookings()
-		overlapping_subscriptions = self.get_overlapping_subscriptions()
-		overlaps = overlapping_bookings + overlapping_subscriptions
-
+		# Get the number of simultaneous bookings allowed for this item
 		simultaneous_bookings_allowed = (
 			frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")
 			if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking")
@@ -88,24 +158,37 @@ class ItemBooking(Document):
 		# Check if overlap is disallowed for desk users
 		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
 
+		overlapping_bookings = self.get_overlapping_bookings()
+		overlapping_subscriptions = self.get_overlapping_subscriptions()
+		overlaps = overlapping_bookings + overlapping_subscriptions
+
+		# Split overlaps into repeating and non-repeating in a single line of code using functools
+		non_repeating_overlaps, repeating_overlaps = util_split_list(overlaps, lambda x: x.get("repeat_this_event", False))
+
+		overlaps = non_repeating_overlaps
+		for rep in repeating_overlaps:
+			recurring = process_recurring_events(rep, self.starts_on, self.ends_on, "starts_on", "ends_on", "rrule")
+			if not recurring:
+				recurring = [rep]
+
+			self_start = get_datetime(self.starts_on)
+			self_end = get_datetime(self.ends_on)
+			def filt(other: dict):
+				other_start = get_datetime(other.get("starts_on"))
+				other_end = get_datetime(other.get("ends_on"))
+				return (other_start < self_end) and (other_end > self_start)
+
+			recurring = [other for other in recurring if filt(other)]
+			if recurring:
+				overlaps.extend(recurring)
+
 		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
-			frappe.throw(
-				_(
-					"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings."
-				)
-			)
-
+			ExceptionBookingOverlap(self, overlaps).throw()
 		elif overlaps and len(overlaps) >= cint(simultaneous_bookings_allowed) and no_overlap_per_item:
-			frappe.throw(
-				_("The maximum number of simultaneous bookings allowed for this item has been reached.")
-			)
-
+			ExceptionTooManyBookings(self, overlaps).throw()
 		elif overlaps and not simultaneous_bookings_allowed:
 			frappe.publish_realtime("booking_overlap")
 
-		else:
-			print("No overlap")
-			print(f"{overlapping_bookings=} {overlapping_subscriptions=} {simultaneous_bookings_allowed=} {no_overlap_per_item=}")
 
 	def get_overlapping_bookings(self):
 		from pypika import Criterion, functions as fn
@@ -114,7 +197,7 @@ class ItemBooking(Document):
 		# https://stackoverflow.com/questions/13390333/two-rectangles-intersection
 		item_name = self.item if isinstance(self.item, str) else self.item.name
 		query = (
-			frappe.qb.select(IB.name)
+			frappe.qb.select(IB.name, IB.repeat_this_event, IB.rrule, IB.starts_on, IB.ends_on)
 			.from_(IB)
 			.where(
 				Criterion.all(
@@ -129,14 +212,14 @@ class ItemBooking(Document):
 				Criterion.any(
 					[
 						(IB.starts_on < self.ends_on) & (IB.ends_on > self.starts_on),
-						# TODO: Check overlaps with recurring events. How to handle gaps in the recurrence?
+						# Check overlaps with recurring events.
 						# TODO: Check overlaps with other events when this booking (self) is recurring.
-						# (IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
+						(IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
 					]
 				)
 			)
 		)
-		return [{"doctype": "Item Booking", "name": booking[0]} for booking in query.run()]
+		return [{"doctype": "Item Booking", **booking} for booking in query.run(as_dict=True)]
 
 	def get_overlapping_subscriptions(self):
 		from pypika import Criterion, functions as fn
