@@ -1,6 +1,8 @@
 # Copyright (c) 2023, Dokos SAS and Contributors
 # See license.txt
 
+from collections import Counter
+from operator import itemgetter
 import frappe
 from frappe.tests.utils import FrappeTestCase, change_settings
 
@@ -12,6 +14,8 @@ from erpnext.venue.doctype.item_booking.item_booking import get_availabilities
 from datetime import datetime, date
 
 TEST_CUSTOMER = "_Test Customer 1"
+TEST_USER_1 = "test@example.com"
+TEST_USER_2 = "test2@example.com"
 ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 MAX_SIMULTANEOUS_BOOKINGS_1 = 2
@@ -459,5 +463,192 @@ class TestItemBookingWithSubscription(BaseTestWithSubscriptionForBookableItem):
 		self.assertEqual(len(availabilities), 10)  # 10 hours between 8:00-18:00
 
 	@change_settings("Venue Settings", { "minute_uom": "Minute", "enable_simultaneous_booking": 0 })
-	def TODO__test_availability_for_specific_user(self):
-		...
+	def test_availability_for_specific_user(self):
+		dt_start = add_to_date(getdate(), days=4, hours=7)
+		dt_book_start = add_to_date(dt_start, hours=5)  # 7 + 5 = 12
+		dt_book_end = add_to_date(dt_book_start, hours=1)
+		dt_end = add_to_date(dt_start, days=1)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 10)
+
+		booking = self.makeBookingWithAutocleanup(self.ITEM_BOOKABLE_1.name, dt_book_start, dt_book_end, TEST_USER_1)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 9 + [1])
+
+		for avail in availabilities:
+			start = frappe.utils.get_datetime(avail["start"])
+			end = frappe.utils.get_datetime(avail["end"])
+			if start == dt_book_start and end == dt_book_end:
+				self.assertEqual(avail["status"], "selected")
+				self.assertEqual(avail["number"], 1)
+			else:
+				self.assertEqual(avail["status"], "available")
+				self.assertEqual(avail["number"], 0)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_2)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 9)  # a spot is taken by TEST_USER_1
+
+		for avail in availabilities:
+			self.assertEqual(avail["status"], "available")
+			self.assertEqual(avail["number"], 0)
+
+	@change_settings("Venue Settings", { "minute_uom": "Minute", "enable_simultaneous_booking": 0 })
+	def test_availability_for_specific_user_multiple_hours(self):
+		dt_start = add_to_date(getdate(), days=4, hours=7)
+		dt_book_start = add_to_date(dt_start, hours=5)  # 7 + 5 = 12
+		dt_book_end = add_to_date(dt_book_start, hours=3)
+		dt_end = add_to_date(dt_start, days=1)
+
+		n_hours_taken = int((dt_book_end - dt_book_start).total_seconds() / 3600)
+		self.assertEqual(n_hours_taken, 3, "invariant failed: date difference is not correct")
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 10)
+
+		booking = self.makeBookingWithAutocleanup(self.ITEM_BOOKABLE_1.name, dt_book_start, dt_book_end, TEST_USER_1)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(Counter(numbers), {0: 10 - n_hours_taken, 1: 1})
+
+		for avail in availabilities:
+			start = frappe.utils.get_datetime(avail["start"])
+			end = frappe.utils.get_datetime(avail["end"])
+			if start == dt_book_start and end == dt_book_end:
+				self.assertEqual(avail["status"], "selected")
+				self.assertEqual(avail["number"], 1)
+			else:
+				self.assertEqual(avail["status"], "available")
+				self.assertEqual(avail["number"], 0)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_2)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * (10 - n_hours_taken))
+
+		for avail in availabilities:
+			self.assertEqual(avail["status"], "available")
+			self.assertEqual(avail["number"], 0)
+
+	@change_settings("Venue Settings", { "minute_uom": "Minute", "enable_simultaneous_booking": 1 })
+	def test_availability_for_specific_user_with_simultaneous(self):
+		dt_start = add_to_date(getdate(), days=4, hours=7)
+		dt_book_start = add_to_date(dt_start, hours=5)  # 7 + 5 = 12
+		dt_book_end = add_to_date(dt_book_start, hours=1)
+		dt_end = add_to_date(dt_start, days=1)
+
+		n_hours_taken = int((dt_book_end - dt_book_start).total_seconds() / 3600)
+		self.assertEqual(n_hours_taken, 1, "invariant failed: date difference is not correct")
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 10)
+
+		booking1 = self.makeBookingWithAutocleanup(self.ITEM_BOOKABLE_1.name, dt_book_start, dt_book_end, TEST_USER_1)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 4 + [1] + [0] * 5)  # 5 free before, 1 taken, 4 free after
+
+		for avail in availabilities:
+			start = frappe.utils.get_datetime(avail["start"])
+			end = frappe.utils.get_datetime(avail["end"])
+			if start == dt_book_start and end == dt_book_end:
+				self.assertEqual(avail["status"], "selected")
+				self.assertEqual(avail["number"], 1)
+			else:
+				self.assertEqual(avail["status"], "available")
+				self.assertEqual(avail["number"], 0)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_2)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 10)
+
+		for avail in availabilities:
+			self.assertEqual(avail["status"], "available")
+			self.assertEqual(avail["number"], 0)
+
+		for i in range(MAX_SIMULTANEOUS_BOOKINGS_1 - 1):
+			bookingN = self.makeBookingWithAutocleanup(self.ITEM_BOOKABLE_1.name, dt_book_start, dt_book_end, TEST_USER_1)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_1)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(Counter(numbers), Counter({0: 9, 2: 1}))  # 9 free total, 1 taken twice
+
+		for avail in availabilities:
+			start = frappe.utils.get_datetime(avail["start"])
+			end = frappe.utils.get_datetime(avail["end"])
+			if start == dt_book_start and end == dt_book_end:
+				self.assertEqual(avail["status"], "selected")
+				self.assertEqual(avail["number"], 2)
+			else:
+				self.assertEqual(avail["status"], "available")
+				self.assertEqual(avail["number"], 0)
+
+		availabilities = get_availabilities(
+			self.ITEM_BOOKABLE_1.name,
+			start=dt_start,
+			end=dt_end,
+			uom="Hour",
+			user=TEST_USER_2)
+		numbers = list(map(itemgetter("number"), availabilities))
+		self.assertEqual(numbers, [0] * 9)
+
+		for avail in availabilities:
+			self.assertEqual(avail["status"], "available")
+			self.assertEqual(avail["number"], 0)
