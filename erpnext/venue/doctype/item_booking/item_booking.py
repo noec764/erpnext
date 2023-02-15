@@ -103,6 +103,10 @@ class ItemBooking(Document):
 		elif overlaps and not simultaneous_bookings_allowed:
 			frappe.publish_realtime("booking_overlap")
 
+		else:
+			print("No overlap")
+			print(f"{overlapping_bookings=} {overlapping_subscriptions=} {simultaneous_bookings_allowed=} {no_overlap_per_item=}")
+
 	def get_overlapping_bookings(self):
 		from pypika import Criterion
 
@@ -785,64 +789,76 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 	if isinstance(field_map, str):
 		field_map: dict = frappe.parse_json(field_map)
 
+	if fields and isinstance(fields, str):
+		fields: list = frappe.parse_json(fields)
+
 	fields = fields or []  # default value
+
 	for f in field_map.values():
 		dt = doctype
 		doc_meta = frappe.get_meta(dt)
 		if doc_meta.has_field(f):
 			fields.append(f)
 
-	events: list = _get_events(start, end, item=None, user=None, fields=fields)
+	if filters and isinstance(filters, str):
+		filters: dict | list = frappe.parse_json(filters)
+		if isinstance(filters, list):
+			# Normalize the filters to [table, field, operator, value]
+			for i, f in enumerate(filters):
+				if len(f) >= 4:
+					f = [f[0], f[1], f[2], f[3]]
+				elif len(f) == 3:
+					f = [doctype, f[0], f[1], f[2]]
+				filters[i] = f
+
+	events: list = _get_events(start, end, item=None, user=None, filters=filters, fields=fields)
 	return events
 
 
-def _get_events(start, end, item=None, user=None, fields=None):
-	conditions = ""
-	if item:
-		item_name = item if isinstance(item, str) else item.name
-		conditions += " AND item={0} ".format(frappe.db.escape(item_name))
-	if user:
-		conditions += " AND user='{0}' ".format(user)
+def _get_events(start, end, item=None, user=None, filters: list | dict | None = None, fields: list | None = None):
+	from pypika import Criterion
+	from pypika import functions as fn
 
-	if not fields:
-		fields = []
+	assert (not fields) or isinstance(fields, (list, tuple, set)), "`fields` parameters must be a list, tuple, set, or None"
+	filters = filters or []
 
-	all_fields: set = {
-		"starts_on",
-		"ends_on",
-		"item as item_name",
-		"name",
-		"repeat_this_event",
-		"rrule",
-		"user",
-		"status",
-	}
-	all_fields.update(fields or [])
-
-	events = frappe.db.sql(
-		"""
-		SELECT {fields}
-		FROM `tabItem Booking`
-		WHERE (
-				(
-					starts_on < %(end)s
-					AND ends_on > %(start)s
-				) OR (
-					starts_on < %(end)s
-					AND repeat_this_event=1
-					AND coalesce(repeat_till, '3000-01-01') > %(start)s
-				)
-			)
-		AND status!="Cancelled"
-		{conditions}
-		ORDER BY starts_on""".format(
-			conditions=conditions, fields=", ".join(all_fields)
-		),
-		{"start": start, "end": end},
-		as_dict=1,
+	IB = frappe.qb.DocType("Item Booking")
+	all_fields = list(
+		{
+			"starts_on",
+			"ends_on",
+			IB.item.as_("item_name"),
+			"name",
+			"repeat_this_event",
+			"rrule",
+			"user",
+			"status",
+			*(fields or []),
+		}
 	)
 
-	subscriptions_as_events = _get_subscriptions_as_events(start, end, item=item, user=user)
+	time_condition_1 = (IB.starts_on < end) & (IB.ends_on > start)
+	time_condition_2 = (IB.starts_on < end) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "3000-01-01") > start)
+
+	extra_conditions = []
+	if item:
+		item_name = item if isinstance(item, str) else item.name
+		extra_conditions.append(IB.item == item_name)
+	if user:
+		extra_conditions.append(IB.user == user)
+
+	query = (
+		frappe.qb.engine.build_conditions("Item Booking", filters)
+		.select(*all_fields)
+		.where(IB.status != "Cancelled")
+		.where(time_condition_1 | time_condition_2)
+		.where(Criterion.all(extra_conditions))
+	)
+	events = query.run(as_dict=1)
+
+
+	# Note: do not forward the fields/filters arguments to _get_subscriptions_as_events
+	subscriptions_as_events = _get_subscriptions_as_events(start, end, item=item, user=user, fields=None, filters=None)
 	events += subscriptions_as_events
 
 	result = []
@@ -857,8 +873,8 @@ def _get_events(start, end, item=None, user=None, fields=None):
 	return result
 
 
-def _get_subscriptions_as_events(start, end, item=None, user=None):
-	subscriptions = _get_booking_subscriptions_between(start, end, item=item, user=user)
+def _get_subscriptions_as_events(start, end, item=None, user=None, fields=None, filters=None):
+	subscriptions = _get_booking_subscriptions_between(start, end, item=item, user=user, fields=fields, filters=filters)
 	events = []
 	for sub in subscriptions:
 		qty = sub["qty"]
@@ -898,7 +914,7 @@ def _get_subscriptions_as_events(start, end, item=None, user=None):
 
 
 def _get_booking_subscriptions_between(
-	after_date, before_date, item=None, user=None, fields=None, filters=None
+	after_date, before_date, item=None, user=None, fields: list | None = None, filters: list | dict | None = None
 ):
 	from pypika import Criterion, Field
 	from pypika import functions as fn
@@ -907,10 +923,16 @@ def _get_booking_subscriptions_between(
 	SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
 
 	doc_meta = frappe.get_meta("Subscription")
-	fields = fields or []
+	all_fields = []
+	if fields:
+		fields.extend(
+			fieldname
+			for fieldname in fields
+			if doc_meta.has_field(fieldname)
+		)
 	for d in doc_meta.fields:
 		if d.fieldtype == "Color":
-			fields.append(Subscription.field(d.fieldname).as_("color"))
+			all_fields.append(Subscription.field(d.fieldname).as_("color"))
 			break
 
 	start_field = fn.Coalesce(SubscriptionPlanDetail.from_date, Subscription.start, "0000-00-00")
@@ -920,15 +942,15 @@ def _get_booking_subscriptions_between(
 
 	item_field: Field = SubscriptionPlanDetail.booked_item
 
-	filters = [
+	all_filters = [
 		start_field < before_date,
 		end_field > after_date,
 	]
 	if item:
 		item_name = item if isinstance(item, str) else item.name
-		filters.append(item_field == item_name)  # Must book this exact item
+		all_filters.append(item_field == item_name)  # Must book this exact item
 	else:
-		filters.append(item_field.isnotnull())  # Must be a booking subscription
+		all_filters.append(item_field.isnotnull())  # Must be a booking subscription
 
 	# if user:
 	# 	Contact = frappe.qb.DocType("Contact")
@@ -946,9 +968,9 @@ def _get_booking_subscriptions_between(
 	# 	)
 	# 	all_customers: set = { res[0] for res in query_for_customers.run() }
 	# 	customer_field: Field = Subscription.customer
-	# 	filters.append(customer_field.isin(all_customers))
+	# 	all_filters.append(customer_field.isin(all_customers))
 
-	fields.extend(
+	all_fields.extend(
 		(
 			Subscription.name.as_("name"),
 			SubscriptionPlanDetail.name.as_("plan_detail_name"),
@@ -961,14 +983,14 @@ def _get_booking_subscriptions_between(
 	)
 
 	query = (
-		frappe.qb.select(*fields)
-		.from_(Subscription)
+		frappe.qb.engine.build_conditions("Subscription", filters or [])
+		.select(*all_fields)
 		.join(SubscriptionPlanDetail)
 		.on(
 			(Subscription.name == SubscriptionPlanDetail.parent)
 			& (SubscriptionPlanDetail.parenttype == "Subscription")
 		)  # NOTE: Plans are present in both Subscription and Subscription template
-		.where(Criterion.all(filters))
+		.where(Criterion.all(all_filters))
 	)
 
 	subscriptions = query.run(as_dict=True)
