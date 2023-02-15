@@ -108,7 +108,7 @@ class ItemBooking(Document):
 			print(f"{overlapping_bookings=} {overlapping_subscriptions=} {simultaneous_bookings_allowed=} {no_overlap_per_item=}")
 
 	def get_overlapping_bookings(self):
-		from pypika import Criterion
+		from pypika import Criterion, functions as fn
 
 		IB = frappe.qb.DocType("Item Booking")
 		# https://stackoverflow.com/questions/13390333/two-rectangles-intersection
@@ -139,8 +139,7 @@ class ItemBooking(Document):
 		return [{"doctype": "Item Booking", "name": booking[0]} for booking in query.run()]
 
 	def get_overlapping_subscriptions(self):
-		from pypika import Criterion
-		from pypika import functions as fn
+		from pypika import Criterion, functions as fn
 
 		Subscription = frappe.qb.DocType("Subscription")
 		SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
@@ -816,8 +815,7 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 
 
 def _get_events(start, end, item=None, user=None, filters: list | dict | None = None, fields: list | None = None):
-	from pypika import Criterion
-	from pypika import functions as fn
+	from pypika import Criterion, functions as fn
 
 	assert (not fields) or isinstance(fields, (list, tuple, set)), "`fields` parameters must be a list, tuple, set, or None"
 	filters = filters or []
@@ -916,8 +914,7 @@ def _get_subscriptions_as_events(start, end, item=None, user=None, fields=None, 
 def _get_booking_subscriptions_between(
 	after_date, before_date, item=None, user=None, fields: list | None = None, filters: list | dict | None = None
 ):
-	from pypika import Criterion, Field
-	from pypika import functions as fn
+	from pypika import Criterion, Field, functions as fn
 
 	Subscription = frappe.qb.DocType("Subscription")
 	SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
