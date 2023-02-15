@@ -30,7 +30,12 @@ def get_custom_fields():
 		'Website Item': _get_fields(insert_after='brand', depends_on='published'),
 	}
 
-def multicompany_create_custom_fields(venue_settings):
+def multicompany_create_custom_fields(venue_settings = None):
+	if not venue_settings:
+		venue_settings = frappe.get_single("Venue Settings")
+		if not getattr(venue_settings, "enable_multi_companies", False):
+			return
+
 	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 	custom_fields = get_custom_fields()
 	create_custom_fields(custom_fields)
