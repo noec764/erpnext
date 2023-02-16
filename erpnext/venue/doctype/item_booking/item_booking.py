@@ -179,6 +179,7 @@ class ItemBooking(Document):
 			return  # Link validation will catch this
 
 		from frappe.utils import get_link_to_form
+
 		item_link = get_link_to_form("Item", self.item)
 
 		if not item_doc["enable_item_booking"]:
@@ -257,9 +258,9 @@ class ItemBooking(Document):
 				# NOTE: This always run for simultaneous_bookings_allowed=0
 				frappe.publish_realtime("booking_overlap")
 
-
 	def get_overlapping_bookings(self):
-		from pypika import Criterion, functions as fn
+		from pypika import Criterion
+		from pypika import functions as fn
 
 		IB = frappe.qb.DocType("Item Booking")
 		# https://stackoverflow.com/questions/13390333/two-rectangles-intersection
@@ -282,7 +283,9 @@ class ItemBooking(Document):
 						(IB.starts_on < self.ends_on) & (IB.ends_on > self.starts_on),
 						# Check overlaps with recurring events.
 						# TODO: Check overlaps with other events when this booking (self) is recurring.
-						(IB.starts_on < self.ends_on) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
+						(IB.starts_on < self.ends_on)
+						& (IB.repeat_this_event == 1)
+						& (fn.Coalesce(IB.repeat_till, "9999-01-01") > self.starts_on),
 					]
 				)
 			)
@@ -290,7 +293,8 @@ class ItemBooking(Document):
 		return [{"doctype": "Item Booking", **booking} for booking in query.run(as_dict=True)]
 
 	def get_overlapping_subscriptions(self):
-		from pypika import Criterion, functions as fn
+		from pypika import Criterion
+		from pypika import functions as fn
 
 		Subscription = frappe.qb.DocType("Subscription")
 		SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
@@ -965,10 +969,15 @@ def get_events_for_calendar(doctype, start, end, field_map, filters=None, fields
 	return events
 
 
-def _get_events(start, end, item=None, user=None, filters: list | dict | None = None, fields: list | None = None):
-	from pypika import Criterion, functions as fn
+def _get_events(
+	start, end, item=None, user=None, filters: list | dict | None = None, fields: list | None = None
+):
+	from pypika import Criterion
+	from pypika import functions as fn
 
-	assert (not fields) or isinstance(fields, (list, tuple, set)), "`fields` parameters must be a list, tuple, set, or None"
+	assert (not fields) or isinstance(
+		fields, (list, tuple, set)
+	), "`fields` parameters must be a list, tuple, set, or None"
 	filters = filters or []
 
 	IB = frappe.qb.DocType("Item Booking")
@@ -987,7 +996,11 @@ def _get_events(start, end, item=None, user=None, filters: list | dict | None = 
 	)
 
 	time_condition_1 = (IB.starts_on < end) & (IB.ends_on > start)
-	time_condition_2 = (IB.starts_on < end) & (IB.repeat_this_event == 1) & (fn.Coalesce(IB.repeat_till, "3000-01-01") > start)
+	time_condition_2 = (
+		(IB.starts_on < end)
+		& (IB.repeat_this_event == 1)
+		& (fn.Coalesce(IB.repeat_till, "3000-01-01") > start)
+	)
 
 	extra_conditions = []
 	if item:
@@ -1005,9 +1018,10 @@ def _get_events(start, end, item=None, user=None, filters: list | dict | None = 
 	)
 	events = query.run(as_dict=1)
 
-
 	# Note: do not forward the fields/filters arguments to _get_subscriptions_as_events
-	subscriptions_as_events = _get_subscriptions_as_events(start, end, item=item, user=user, fields=None, filters=None)
+	subscriptions_as_events = _get_subscriptions_as_events(
+		start, end, item=item, user=user, fields=None, filters=None
+	)
 	events += subscriptions_as_events
 
 	result = []
@@ -1023,7 +1037,9 @@ def _get_events(start, end, item=None, user=None, filters: list | dict | None = 
 
 
 def _get_subscriptions_as_events(start, end, item=None, user=None, fields=None, filters=None):
-	subscriptions = _get_booking_subscriptions_between(start, end, item=item, user=user, fields=fields, filters=filters)
+	subscriptions = _get_booking_subscriptions_between(
+		start, end, item=item, user=user, fields=fields, filters=filters
+	)
 	events = []
 	for sub in subscriptions:
 		qty = sub["qty"]
@@ -1063,9 +1079,15 @@ def _get_subscriptions_as_events(start, end, item=None, user=None, fields=None, 
 
 
 def _get_booking_subscriptions_between(
-	after_date, before_date, item=None, user=None, fields: list | None = None, filters: list | dict | None = None
+	after_date,
+	before_date,
+	item=None,
+	user=None,
+	fields: list | None = None,
+	filters: list | dict | None = None,
 ):
-	from pypika import Criterion, Field, functions as fn
+	from pypika import Criterion, Field
+	from pypika import functions as fn
 
 	Subscription = frappe.qb.DocType("Subscription")
 	SubscriptionPlanDetail = frappe.qb.DocType("Subscription Plan Detail")
@@ -1073,11 +1095,7 @@ def _get_booking_subscriptions_between(
 	doc_meta = frappe.get_meta("Subscription")
 	all_fields = []
 	if fields:
-		fields.extend(
-			fieldname
-			for fieldname in fields
-			if doc_meta.has_field(fieldname)
-		)
+		fields.extend(fieldname for fieldname in fields if doc_meta.has_field(fieldname))
 	for d in doc_meta.fields:
 		if d.fieldtype == "Color":
 			all_fields.append(Subscription.field(d.fieldname).as_("color"))
