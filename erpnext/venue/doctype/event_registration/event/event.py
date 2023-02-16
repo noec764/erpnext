@@ -110,7 +110,8 @@ class DokosEvent(Event):
 
 			context.registration_form = frappe.as_json(fields)
 
-		context.can_edit_event = self.has_permission("write")
+		from frappe.utils.user import is_system_user
+		context.can_edit_event = is_system_user() and self.has_permission("write")
 
 
 
