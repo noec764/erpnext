@@ -44,13 +44,15 @@ from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price
 from erpnext.venue.utils import get_linked_customers
 
-
 if TYPE_CHECKING:
 	from typing import Callable, TypeVar
+
 	T = TypeVar("T")
 
 
-def util_split_list(items: "list[T]", condition: "Callable[[T], bool]") -> "tuple[list[T], list[T]]":
+def util_split_list(
+	items: "list[T]", condition: "Callable[[T], bool]"
+) -> "tuple[list[T], list[T]]":
 	"""
 	Splits a list into two lists based on a condition.
 	Similar to:
@@ -65,15 +67,18 @@ def util_split_list(items: "list[T]", condition: "Callable[[T], bool]") -> "tupl
 	return items_no, items_yes
 
 
+def is_desk() -> bool:
+	try:
+		return bool(frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/"))
+	except Exception:
+		pass
+	return False
+
+
 class BookingException(frappe.ValidationError):
 	@classmethod
 	def throw(cls, *args, **kwargs):
-		is_desk = False
-		try:
-			is_desk = frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/")
-		except Exception:
-			pass
-		if is_desk:
+		if is_desk():
 			cls.throw_desk(*args, **kwargs)
 		else:
 			cls.throw_website(*args, **kwargs)
@@ -86,18 +91,15 @@ class BookingException(frappe.ValidationError):
 	def throw_desk(cls, *args, **kwargs):
 		raise cls(*args, **kwargs)
 
+
 class ExceptionBookingOverlap(BookingException):
 	@classmethod
-	def throw_website(cls, doc: "ItemBooking", overlaps: list):
-		frappe.throw(_("This slot is no longer bookable."), exc=cls)
-
-	@classmethod
-	def throw_desk(cls, doc: "ItemBooking", overlaps: list):
+	def overlaps_to_html(cls, overlaps: list):
 		from frappe.utils import get_link_to_form
-		msg = _(
-			"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings."
-		)
-		conflicts_str = "<br/><br/><ul>"
+
+		conflicts_str = "<br/><br/>"
+		conflicts_str += "<h3>" + _("Existing Bookings") + "</h3>"
+		conflicts_str += "<ul>"
 		shown = set()
 		for overlap in overlaps:
 			dt, name = overlap.get("doctype"), overlap.get("name")
@@ -107,20 +109,33 @@ class ExceptionBookingOverlap(BookingException):
 			link = get_link_to_form(dt, name)
 			conflicts_str += f"<li>{link}</li>"
 		conflicts_str += "</ul>"
+		return conflicts_str
 
-		msg = msg + conflicts_str
+	@classmethod
+	def throw_website(cls, doc: "ItemBooking", overlaps: list):
+		frappe.throw(_("This slot is no longer bookable."), exc=cls)
+
+	@classmethod
+	def throw_desk(cls, doc: "ItemBooking", overlaps: list):
+		msg = _(
+			"An existing item booking or subscription for this item is overlapping with this document. Please change its dates to save it, or change your settings in Venue Settings."
+		)
+
+		msg = msg + cls.overlaps_to_html(overlaps)
 		frappe.throw(msg, exc=cls)
 
-class ExceptionTooManyBookings(BookingException):
+
+class ExceptionTooManyBookings(ExceptionBookingOverlap):
 	@classmethod
-	def throw_website(cls, *args, **kwargs):
-		cls.throw_desk(args, kwargs)
+	def throw_website(cls, doc: "ItemBooking", overlaps: list):
+		cls.throw_desk(doc, overlaps)
 
 	@classmethod
-	def throw_desk(cls, *args, **kwargs):
+	def throw_desk(cls, doc: "ItemBooking", overlaps: list):
 		frappe.throw(
-			_("The maximum number of simultaneous bookings allowed for this item has been reached."),
-			exc=cls
+			_("The maximum number of simultaneous bookings allowed for this item has been reached.")
+			+ cls.overlaps_to_html(overlaps),
+			exc=cls,
 		)
 
 
@@ -165,23 +180,36 @@ class ItemBooking(Document):
 		# Check if overlap is disallowed for desk users
 		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
 
+	def check_overlaps(self):
 		overlapping_bookings = self.get_overlapping_bookings()
 		overlapping_subscriptions = self.get_overlapping_subscriptions()
 		overlaps = overlapping_bookings + overlapping_subscriptions
 
 		# Split overlaps into repeating and non-repeating in a single line of code using functools
-		non_repeating_overlaps, repeating_overlaps = util_split_list(overlaps, lambda x: x.get("repeat_this_event", False))
+		non_repeating_overlaps, repeating_overlaps = util_split_list(
+			overlaps, lambda x: x.get("repeat_this_event", False)
+		)
 
 		overlaps = non_repeating_overlaps
 		for rep in repeating_overlaps:
 			self_start = get_datetime(self.starts_on)
 			self_end = get_datetime(self.ends_on)
 
-			recurring = process_recurring_events(rep, self_start.date(), self.ends_on, "starts_on", "ends_on", "rrule")
+			# Transform the recurring event into a list of instances
+			# Note that the starting timestamp for the processing is the 00:00 of the day of the current booking (self)
+			# NOTE: Only events that start on the same day as the current booking are considered for overlap.
+			# TODO: Handle the case where the recurring event starts 1 day or more before the current booking.
+			# Example: A recurring event that starts at 23:00 on the day before the current booking.
+
+			time_window = (self_start.date(), self.ends_on)
+			recurring = process_recurring_events(rep, *time_window, "starts_on", "ends_on", "rrule")
+
+			# If the recurring event does not have any instances in the time window, at least keep the original event.
 			if not recurring:
 				recurring = [rep]
 
 			def filt(other: dict):
+				"""Filter out instances of the recurring event that do not overlap with the current event."""
 				other_start = get_datetime(other.get("starts_on"))
 				other_end = get_datetime(other.get("ends_on"))
 				return (other_start < self_end) and (other_end > self_start)
@@ -190,12 +218,35 @@ class ItemBooking(Document):
 			if recurring:
 				overlaps.extend(recurring)
 
-		if overlaps and not simultaneous_bookings_allowed and no_overlap_per_item:
-			ExceptionBookingOverlap.throw(self, overlaps)
-		elif overlaps and len(overlaps) >= cint(simultaneous_bookings_allowed) and no_overlap_per_item:
-			ExceptionTooManyBookings.throw(self, overlaps)
-		elif overlaps and not simultaneous_bookings_allowed:
-			frappe.publish_realtime("booking_overlap")
+		# Process the overlaps, which is a list of existing documents that overlap with the current booking.
+		if not overlaps:
+			# It is always possible to book an item if there are no overlaps.
+			return
+
+		# Get the number of simultaneous bookings allowed for this item.
+		simultaneous_bookings_allowed = 0
+		if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking"):
+			# If simultaneous bookings are enabled, get the number of simultaneous bookings allowed for this item.
+			simultaneous_bookings_allowed = cint(
+				frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")  # type: ignore
+			)
+
+		# Get if overlaps are disallowed for desk users
+		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
+
+		# At this point, there are overlaps, so we need to check if there are too many bookings.
+
+		if no_overlap_per_item or not is_desk():
+			if simultaneous_bookings_allowed <= 0:
+				# Overlaps are not allowed, and there is already a booking/subscription.
+				ExceptionBookingOverlap.throw(self, overlaps)
+			elif len(overlaps) >= simultaneous_bookings_allowed:
+				# There would be too many bookings if we allowed this one.
+				ExceptionTooManyBookings.throw(self, overlaps)
+		else:
+			if len(overlaps) >= simultaneous_bookings_allowed:
+				# NOTE: This always run for simultaneous_bookings_allowed=0
+				frappe.publish_realtime("booking_overlap")
 
 
 	def get_overlapping_bookings(self):
