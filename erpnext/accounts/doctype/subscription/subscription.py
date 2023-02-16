@@ -7,7 +7,7 @@ import frappe
 import numpy as np
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils.data import add_days, cint, flt, getdate, global_date_format, nowdate
+from frappe.utils.data import add_days, flt, getdate, global_date_format, nowdate
 
 from erpnext.accounts.doctype.subscription.subscription_plans_manager import (
 	SubscriptionPlansManager,
