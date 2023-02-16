@@ -1,6 +1,10 @@
 frappe.ready(() => {
 	Object.assign(frappe, {
 		show_subscription_template_selection: () => {
+			if (!frappe.web_form.get_field("subscription_templates")) {
+				return
+			}
+
 			frappe.call({
 				method: "erpnext.accounts.doctype.subscription.subscription.get_published_subscription_templates"
 			}).then(r => {
