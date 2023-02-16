@@ -145,6 +145,7 @@ class ItemBooking(Document):
 			self.google_calendar = self.google_calendar_id = None
 
 	def validate(self):
+		self.validate_linked_item()
 		self.set_title()
 
 		if self.sync_with_google_calendar and not self.google_calendar:
@@ -169,16 +170,24 @@ class ItemBooking(Document):
 
 		self.check_overlaps()
 
-	def check_overlaps(self):
-		# Get the number of simultaneous bookings allowed for this item
-		simultaneous_bookings_allowed = (
-			frappe.db.get_value("Item", self.item, "simultaneous_bookings_allowed")
-			if frappe.db.get_single_value("Venue Settings", "enable_simultaneous_booking")
-			else 0
-		)
+	def validate_linked_item(self):
+		if not self.item:
+			return
 
-		# Check if overlap is disallowed for desk users
-		no_overlap_per_item = frappe.db.get_single_value("Venue Settings", "no_overlap_per_item")
+		item_doc = frappe.get_value("Item", self.item, ["enable_item_booking"], as_dict=True)
+		if not item_doc:
+			return  # Link validation will catch this
+
+		from frappe.utils import get_link_to_form
+		item_link = get_link_to_form("Item", self.item)
+
+		if not item_doc["enable_item_booking"]:
+			msg = _("Booking is not enabled for this item.")
+			msg = _("{0}: {1}").format(item_link, msg)
+			if is_desk():
+				frappe.msgprint(msg)
+			else:
+				frappe.throw(msg)
 
 	def check_overlaps(self):
 		overlapping_bookings = self.get_overlapping_bookings()
