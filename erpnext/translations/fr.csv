@@ -201,7 +201,7 @@ INV-.####<br>
 <p>If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.</p>","<h3>Les ensembles de produits</h3>
 
 <p>Cela permet de grouper certains <b>Articles</b> au sein d'un autre <b>Article</b>. Cela sert si vous vendez certains <b>Articles</b> au sein d'un lot et que vous souhaitez suivre les stocks des <b>Articles détaillés</b> et non celui du <b>Lot</b>.</p>
-<p><b>L'article</b> du lot Item aura la valeur <b>Non</b> dans le champ <code>Maintenir le stock</code> et la valeur <b>Oui</b> and le champ <code>Est un article de vente</code>.</p>
+<p><b>L'article</b> du lot Item aura la valeur <b>Non</b> dans le champ <code>Est un article en stock</code> et la valeur <b>Oui</b> and le champ <code>Est un article de vente</code>.</p>
 <h4>Exemple:</h4>
 <p>Si vous vendez des ordinateurs et des sacs à dos séparément et avez un prix spécial si le client achète les deux, alors la combinaison ordinateur + sac à dos sera un nouvel ensemble de produits.</p>",
 "<h3>Currency Exchange Settings Help</h3>
@@ -3461,7 +3461,7 @@ Divorced,Divorcé,
 Do Not Contact,Ne Pas Contacter,
 Do Not Explode,Ne pas exploser,
 Do Not Include in Total,Ne pas inclure dans le total,
-Do not allow overlapping bookings for the same item on desk,Ne pas autoriser les réservations multiples pour le même article sur le bureau,
+Do not allow overlapping bookings for the same item on desk,Interdire les réservations multiples pour le même article sur le bureau,
 Do not cancel this subscription,Ne pas annuler cet abonnement,
 Do not create a payment link,Ne pas créer de lien de paiement,
 Do not include in total,Ne pas inclure au total,
@@ -6186,7 +6186,7 @@ Main,Principal,
 Maintain Asset,Gérer l'actif,
 Maintain Same Rate Throughout Sales Cycle,Maintenir le même prix unitaire durant tout le cycle de vente,
 Maintain Same Rate Throughout the Purchase Cycle,Conserver le même prix unitaire tout au long du cycle d'achats,
-Maintain Stock,Maintenir le stock,
+Maintain Stock,Est un article en stock,
 Maintain same rate throughout purchase cycle,Maintenir le même taux durant le cycle d'achat,
 Maintenance Date,Date de l'Entretien,
 Maintenance Details,Détails de la maintenance,
@@ -11458,7 +11458,7 @@ This is the code of the journal. It will be displayed in the general ledger.,Cod
 This is the default offset (days) for the Delivery Date in Sales Orders. The fallback offset is 7 days from the order placement date.,Jours de décalage pour la date de livraison dans les commandes client. Le décalage par défaut est de 7 jours par rapport à la date de commande.,
 This is the label of this journal. It should be more explicit than the journal code.,Libellé du journal. Il peut être plus explicite que le code du journal.,
 This is the number of the last created transaction with this prefix,Numéro de la dernière transaction créée avec ce préfixe,
-This item booking is overlapping with another item booking for the same item,La réservation d'article est en conflit avec une autre réservation d'articles pour le même article,
+This item booking is overlapping with another item booking for the same item,Cette réservation d'article est en conflit avec une autre réservation d'articles pour le même article,
 This item filter has already been applied for the {0},Ce filtre d'élément a déjà été appliqué pour le {0}.,
 This link is not valid.<br>Please contact us.,Ce lien n'est pas valide.<br>Veuillez nous contacter.,
 This option can be checked to edit the 'Posting Date' and 'Posting Time' fields.,Cette option peut être cochée pour modifier les champs 'Date de comptabilisation' et 'Heure de comptabilisation'.,
@@ -11607,7 +11607,7 @@ To date needs to be before from date,La date de fin doit être avant la date de 
 To duration (Mins),Durée maximum (Mins),
 "To enable Capital Work in Progress Accounting,","Pour activer la comptabilisation des immobilisations en cours,",
 "To filter based on Party, select Party Type first","Pour filtrer en fonction du Tiers, sélectionnez d'abord le Type de tiers",
-To include non-stock items in the material request planning. i.e. Items for which 'Maintain Stock' checkbox is unticked.,"Pour inclure les articles non stockés dans la planification des demandes de matériel, c'est-à-dire les articles pour lesquels la case ""Maintenir le stock"" n'est pas cochée.",
+To include non-stock items in the material request planning. i.e. Items for which 'Maintain Stock' checkbox is unticked.,"Pour inclure les articles non stockés dans la planification des demandes de matériel, c'est-à-dire les articles pour lesquels la case ""Est un article en stock"" n'est pas cochée.",
 "To include tax in row {0} in Item rate, taxes in rows {1} must also be included","Pour inclure la taxe de la ligne {0} dans le prix de l'Article, les taxes des lignes {1} doivent également être incluses",
 "To know more about projected quantity, <a href=""https://erpnext.com/docs/user/manual/en/stock/projected-quantity"" style=""text-decoration: underline;"" target=""_blank"">click here</a>.","Pour en savoir plus sur les quantités projetés, <a href=""https://erpnext.com/docs/user/manual/en/stock/projected-quantity"" style=""text-decoration: underline;"" target=""_blank"">cliquez ici</a>.",
 To make Customer based incentive schemes.,Faire des programmes d'incitation basés sur le client.,
