@@ -191,7 +191,7 @@ frappe.ui.form.on("Item", {
 	},
 
 	is_down_payment_item: function(frm) {
-		frm.set_value('is_stock_item', !frm.doc.is_down_payment_item);
+		frm.set_value('is_stock_item', false);
 	},
 
 	is_fixed_asset: function(frm) {
