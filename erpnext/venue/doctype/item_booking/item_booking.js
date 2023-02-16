@@ -3,7 +3,8 @@
 
 frappe.ui.form.on('Item Booking', {
 	onload(frm) {
-		frappe.realtime.on('booking_overlap', () => {
+		frappe.realtime.off("booking_overlap");
+		frappe.realtime.on("booking_overlap", () => {
 			frappe.show_alert({
 				message: __("This item booking is overlapping with another item booking for the same item"),
 				indicator: "orange"
@@ -11,6 +12,7 @@ frappe.ui.form.on('Item Booking', {
 		})
 	},
 	setup(frm) {
+		frappe.realtime.off("event_synced");
 		frappe.realtime.on('event_synced', (data) => {
 			frappe.show_alert({message: data.message, indicator: 'green'});
 			frm.reload_doc();

@@ -22,3 +22,11 @@ frappe.views.calendar["Item Booking"] = {
 	filters: [["Item Booking", "status", "!=", "Cancelled"]],
 	get_events_method: "erpnext.venue.doctype.item_booking.item_booking.get_events_for_calendar"
 };
+
+frappe.realtime.off("booking_overlap");
+frappe.realtime.on("booking_overlap", () => {
+	frappe.show_alert({
+		message: __("This item booking is overlapping with another item booking for the same item"),
+		indicator: "orange"
+	})
+});
