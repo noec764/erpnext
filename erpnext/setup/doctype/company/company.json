@@ -264,7 +264,7 @@
    "fieldname": "existing_company",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
-   "label": "Existing Company ",
+   "label": "Existing Company",
    "no_copy": 1,
    "options": "Company"
   },
