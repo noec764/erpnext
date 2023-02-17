@@ -315,7 +315,6 @@ erpnext.patches.v13_0.set_per_billed_in_return_delivery_note
 execute:frappe.delete_doc("DocType", "Naming Series")
 erpnext.patches.v13_0.job_card_status_on_hold
 erpnext.patches.v14_0.copy_is_subcontracted_value_to_is_old_subcontracting_flow
-erpnext.patches.v14_0.migrate_gl_to_payment_ledger
 erpnext.patches.v14_0.crm_ux_cleanup
 erpnext.patches.v14_0.migrate_existing_lead_notes_as_per_the_new_format
 erpnext.patches.v14_0.remove_india_localisation # 14-07-2022
@@ -324,7 +323,6 @@ erpnext.patches.v14_0.remove_hr_and_payroll_modules
 erpnext.patches.v13_0.update_exchange_rate_settings
 erpnext.patches.v14_0.create_accounting_dimensions_in_subcontracting_doctypes
 erpnext.patches.v14_0.fix_subcontracting_receipt_gl_entries
-erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
 erpnext.patches.v13_0.update_schedule_type_in_loans
 erpnext.patches.v13_0.drop_unused_sle_index_parts
 erpnext.patches.v14_0.update_partial_tds_fields
@@ -339,3 +337,7 @@ erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
 erpnext.patches.dokos.v3_0.update_custom_fields_for_france #2022-12-16
 erpnext.accounts.doctype.subscription.patches.set_an_invoicing_day_on_existing_subscriptions
+
+# below 2 migration patches should always run last
+erpnext.patches.v14_0.migrate_gl_to_payment_ledger
+erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
