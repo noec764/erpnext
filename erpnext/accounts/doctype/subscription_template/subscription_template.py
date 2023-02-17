@@ -11,6 +11,7 @@ from frappe.model.document import Document
 from frappe.utils import get_first_day, get_last_day, getdate, nowdate
 
 from erpnext.accounts.doctype.tax_rule.tax_rule import get_tax_template
+from erpnext.accounts.doctype.subscription.subscription_state_manager import SubscriptionPeriod
 
 
 class SubscriptionTemplate(Document):
@@ -28,6 +29,7 @@ class SubscriptionTemplate(Document):
 
 		values = {x: getattr(self, x) for x in self.as_dict() if x not in self.get_excluded_fields()}
 		start_date = self.get_start_date(kwargs.start_date)
+		cancellation_date = self.get_cancellation_date(start_date)
 
 		# Cast `datetime` objects to `date` objects
 		from datetime import datetime, date
@@ -47,6 +49,7 @@ class SubscriptionTemplate(Document):
 					"start": start_date,
 					"plans": self.get_plans_from_template(),
 					"tax_template": self.get_tax_template(start_date, kwargs.customer, kwargs.company),
+					"cancellation_date": cancellation_date
 				},
 				**values
 			)
@@ -71,6 +74,11 @@ class SubscriptionTemplate(Document):
 			return getdate(start).replace(day=1)
 		elif self.start_date == "Last day of the month":
 			return get_last_day(start)
+		
+
+	def get_cancellation_date(self, start_date):
+		if self.ends_after_first_period:
+			return SubscriptionPeriod(self, start=start_date).get_current_invoice_end()
 
 	def get_plans_from_template(self):
 		if self.subscription_plan:

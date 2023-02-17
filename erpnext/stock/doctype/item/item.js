@@ -191,7 +191,7 @@ frappe.ui.form.on("Item", {
 	},
 
 	is_down_payment_item: function(frm) {
-		frm.set_value('is_stock_item', !frm.doc.is_down_payment_item);
+		frm.set_value('is_stock_item', false);
 	},
 
 	is_fixed_asset: function(frm) {
@@ -255,6 +255,7 @@ frappe.ui.form.on("Item", {
 	},
 
 	toggle_simultaneous_bookings(frm) {
+		frm.trigger("show_auto_booking_note");
 		if (frm.doc.show_in_website && frm.doc.enable_item_booking) {
 			frappe.model.with_doctype("Venue Settings", () => {
 				frappe.perm.has_perm("Venue Settings", 0, "read")&&frappe.db.get_value("Venue Settings", "Venue Settings", "enable_simultaneous_booking", r => {
@@ -264,7 +265,46 @@ frappe.ui.form.on("Item", {
 				})
 			})
 		}
-	}
+	},
+
+	simultaneous_bookings_allowed(frm) {
+		const field = frm.fields_dict.simultaneous_bookings_allowed;
+		const df = field.df;
+		if (frm.doc.enable_item_booking && (!df.hidden) && frm.doc.simultaneous_bookings_allowed <= 0) {
+			frm.set_df_property("simultaneous_bookings_allowed", "invalid", 1)
+			field.set_invalid();
+
+			const label = __(df.label || df.fieldname);
+			const minValue = 0;
+			frappe.msgprint(__("{0} must be greater than {1}", [label, minValue]));
+		}
+	},
+
+	show_auto_booking_note(frm) {
+		if (frm.doc.enable_item_booking) {
+			const field = cur_frm.fields_dict.simultaneous_bookings_allowed;
+			if (field.df.description) {
+				return;
+			}
+
+			const msg = [
+				__("Note: {0}", [
+					__("You can set up subscriptions to automatically decrease the availability of booked items."),
+				]),
+				__("For more information, {0}.", [`<a target=_blank href="https://doc.dokos.io/dokos/lieu/abonnement-reservation">${__("Documentation")}</a>`]),
+			].join(" ");
+
+			const desc = `<div style="display:flex;align-items:center;gap:1ch;">
+				<div class="indicator-pill-round yellow" style="flex-shrink:0;--icon-stroke:currentColor;">
+					${frappe.utils.icon("small-message", "sm")}
+				</div>
+				<div>
+					${msg}
+				</div>
+			</div>`;
+			field.set_description(desc);
+		}
+	},
 });
 
 frappe.ui.form.on('Item Reorder', {

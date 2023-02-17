@@ -19,8 +19,22 @@ class VenueRegistrationForm(Document):
 
 
 	def create_user(self):
-		user_name = invite_user(self.contact)
-		frappe.db.set_value("Contact", self.contact, "user", user_name)
+		contact = frappe.get_doc("Contact", self.contact)
+
+		frappe.flags.mute_messages = True
+		user = frappe.get_doc(
+			{
+				"doctype": "User",
+				"first_name": contact.first_name,
+				"last_name": contact.last_name,
+				"email": contact.email_id,
+				"user_type": "Website User",
+				"send_welcome_email": 1,
+			}
+		).insert(ignore_permissions=True)
+		frappe.flags.mute_messages = False
+
+		frappe.db.set_value("Contact", self.contact, "user", user.name)
 
 
 	def create_contact(self):

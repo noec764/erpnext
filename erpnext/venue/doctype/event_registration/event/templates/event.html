@@ -13,7 +13,7 @@
 {% block page_content %}
 	<header class="mt-5 event__header" data-image-style="{{ image_design }}">
 		{% if doc.image and image_design in ("full", "icon") %}
-		<img class="event-header__side event__image event__image-{{ image_design }}" src="{{ doc.image }}" alt="{{ doc.subject }}">
+		<img class="event-header__side event__image" src="{{ doc.image }}" alt="{{ doc.subject }}">
 		{% endif %}
 
 		<div class="event-header__main">
@@ -160,18 +160,22 @@
 		align-items: center;
 		gap: 1em;
 	}
-	.event__header .event__image-icon {
-		height: 200px;
+	.event__header[data-image-style="icon"] .event__image {
 		width: auto;
-		object-fit: contain;
-	}
-	.event__header .event__image-full {
-		position: absolute;
-		top: 0; left: 0; right: 0; bottom: 0;
 		height: 100%;
+		max-height: 200px;
+		max-width: 200px;
+		align-self: flex-start;
+		border-radius: 5px;
+	}
+	.event__header[data-image-style="full"] {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.event__header[data-image-style="full"] .event__image {
+		max-height: 300px;
 		width: 100%;
 		object-fit: cover;
-		z-index: -1;
 	}
 	.event__timing {
 		font-weight: bold;
@@ -179,7 +183,7 @@
 	}
 	</style>
 
-	<div class="mb-5">
+	<div class="mt-5 mb-5">
 		{% set event_is_fully_booked = allow_registrations and event_capacity_info.has_limit and not event_capacity_info.free %}
 		{% set event_show_capacity = allow_registrations and event_capacity_info.has_limit and not is_registered %}
 		{% if allow_registrations %}

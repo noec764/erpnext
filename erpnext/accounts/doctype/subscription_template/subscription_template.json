@@ -23,6 +23,7 @@
   "billing_interval",
   "billing_interval_count",
   "start_date",
+  "ends_after_first_period",
   "plans_section",
   "subscription_plan",
   "discounts_section",
@@ -223,15 +224,22 @@
    "fieldtype": "Link",
    "label": "Invoice Print Format",
    "options": "Print Format"
+  },
+  {
+   "default": "0",
+   "fieldname": "ends_after_first_period",
+   "fieldtype": "Check",
+   "label": "Ends after the first period"
   }
  ],
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-01-23 11:04:34.859654",
+ "modified": "2023-02-16 10:45:27.832649",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -261,5 +269,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
