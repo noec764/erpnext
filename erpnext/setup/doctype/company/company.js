@@ -395,11 +395,6 @@ frappe.tour["Company"] = [
 		description: __("Default account for deferred expense booking.")
 	},
 	{
-		fieldname: "default_payroll_payable_account",
-		title: __("Default Payroll Payable Account"),
-		description: __("Default account for payroll payables.")
-	},
-	{
 		fieldname: "default_expense_claim_payable_account",
 		title: __("Default Expense Claim Payable Account"),
 		description: __("Default account for expense claim payables.")

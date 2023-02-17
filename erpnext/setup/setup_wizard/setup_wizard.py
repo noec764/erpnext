@@ -31,7 +31,7 @@ def get_setup_stages(args=None):
 			},
 			{
 				"status": _("Setting defaults"),
-				"fail_msg": "Failed to set defaults",
+				"fail_msg": _("Failed to set defaults"),
 				"tasks": [
 					{"fn": setup_defaults, "args": args, "fail_msg": _("Failed to setup defaults")},
 				],
