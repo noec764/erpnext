@@ -26,10 +26,10 @@
   "account_manager",
   "image",
   "defaults_tab",
-  "default_price_list",
+  "default_currency",
   "default_bank_account",
   "column_break_14",
-  "default_currency",
+  "default_price_list",
   "internal_customer_section",
   "is_internal_customer",
   "represents_company",
@@ -583,11 +583,10 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2022-11-28 17:01:19.566815",
+ "modified": "2023-02-18 11:04:46.343527",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
- "name_case": "Title Case",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
