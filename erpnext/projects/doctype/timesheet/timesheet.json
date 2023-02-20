@@ -307,11 +307,11 @@
       "label": "Exchange Rate"
      }
     ],
-    "icon": "fa fa-clock-o",
+    "icon": "uil uil-stopwatch",
     "idx": 1,
     "is_submittable": 1,
     "links": [],
-    "modified": "2022-06-15 22:08:53.930200",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Projects",
     "name": "Timesheet",

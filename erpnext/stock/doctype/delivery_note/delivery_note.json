@@ -628,7 +628,7 @@
       "fieldtype": "Section Break",
       "label": "Taxes and Charges",
       "oldfieldtype": "Section Break",
-      "options": "fa fa-money"
+      "options": "uil uil-money-bill"
      },
      {
       "fieldname": "tax_category",
@@ -758,7 +758,7 @@
       "fieldname": "totals",
       "fieldtype": "Section Break",
       "oldfieldtype": "Section Break",
-      "options": "fa fa-money"
+      "options": "uil uil-money-bill"
      },
      {
       "fieldname": "base_grand_total",
@@ -1167,7 +1167,7 @@
       "fieldtype": "Section Break",
       "label": "Commission",
       "oldfieldtype": "Section Break",
-      "options": "fa fa-group",
+      "options": "uil uil-users-alt",
       "print_hide": 1
      },
      {
@@ -1329,7 +1329,7 @@
     "icon": "fa fa-truck",
     "idx": 146,
     "is_submittable": 1,
-    "modified": "2022-12-12 18:38:53.067799",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Delivery Note",

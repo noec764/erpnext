@@ -341,12 +341,12 @@
     "fieldtype": "Column Break"
    }
   ],
-  "icon": "icon-cog",
+  "icon": "uil uil-setting",
   "idx": 1,
   "index_web_pages_for_search": 1,
   "issingle": 1,
   "links": [],
-  "modified": "2022-02-05 15:33:43.692736",
+  "modified": "2023-02-20 16:33:50.446725",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Stock Settings",

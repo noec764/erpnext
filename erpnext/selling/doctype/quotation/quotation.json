@@ -495,7 +495,7 @@
 			"fieldtype": "Section Break",
 			"label": "Taxes and Charges",
 			"oldfieldtype": "Section Break",
-			"options": "fa fa-money"
+			"options": "uil uil-money-bill"
 		},
 		{
 			"fieldname": "tax_category",
@@ -634,7 +634,7 @@
 			"fieldname": "totals",
 			"fieldtype": "Section Break",
 			"oldfieldtype": "Section Break",
-			"options": "fa fa-money",
+			"options": "uil uil-money-bill",
 			"print_hide": 1
 		},
 		{
@@ -997,7 +997,7 @@
 	"icon": "fa fa-shopping-cart",
 	"idx": 82,
 	"is_submittable": 1,
-	"modified": "2022-12-12 18:32:28.671332",
+	"modified": "2023-02-20 16:33:50.446725",
 	"modified_by": "Administrator",
 	"module": "Selling",
 	"name": "Quotation",

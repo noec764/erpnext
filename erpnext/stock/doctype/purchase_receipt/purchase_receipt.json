@@ -583,7 +583,7 @@
       "fieldname": "taxes_charges_section",
       "fieldtype": "Section Break",
       "oldfieldtype": "Section Break",
-      "options": "fa fa-money"
+      "options": "uil uil-money-bill"
      },
      {
       "fieldname": "tax_category",
@@ -642,7 +642,7 @@
       "fieldname": "totals",
       "fieldtype": "Section Break",
       "oldfieldtype": "Section Break",
-      "options": "fa fa-money"
+      "options": "uil uil-money-bill"
      },
      {
       "fieldname": "base_taxes_and_charges_added",
@@ -1169,7 +1169,7 @@
     "idx": 261,
     "is_submittable": 1,
     "links": [],
-    "modified": "2022-12-12 18:40:32.447752",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Purchase Receipt",

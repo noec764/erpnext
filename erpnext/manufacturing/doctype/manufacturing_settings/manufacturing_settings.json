@@ -195,9 +195,9 @@
      "label": "Allow Excess Material Transfer"
      }
     ],
-    "icon": "icon-wrench",
+    "icon": "uil uil-wrench",
     "issingle": 1,
-    "modified": "2021-09-13 22:09:09.401559",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Manufacturing",
     "name": "Manufacturing Settings",
