@@ -67,7 +67,10 @@ def add_institution(token, response):
 @frappe.whitelist()
 def add_bank_accounts(response, bank, company):
 	response = frappe.parse_json(response)
-	bank = json.loads(bank)
+
+	if isinstance(bank, str):
+		bank = json.loads(bank)
+
 	result = []
 
 	default_gl_account = get_default_bank_cash_account(company, "Bank")
@@ -171,8 +174,9 @@ def sync_transactions(bank, bank_account):
 	end_date = formatdate(today(), "YYYY-MM-dd")
 
 	try:
-		transactions = get_transactions(
-			bank=bank, bank_account=bank_account, start_date=start_date, end_date=end_date
+		transactions = (
+			get_transactions(bank=bank, bank_account=bank_account, start_date=start_date, end_date=end_date)
+			or []
 		)
 		result = []
 		for transaction in reversed(transactions):
@@ -182,9 +186,7 @@ def sync_transactions(bank, bank_account):
 			last_transaction_date = frappe.db.get_value("Bank Transaction", result.pop(), "date")
 
 			frappe.logger().info(
-				"Plaid added {} new Bank Transactions from '{}' between {} and {}".format(
-					len(result), bank_account, start_date, end_date
-				)
+				f"Plaid added {len(result)} new Bank Transactions from '{bank_account}' between {start_date} and {end_date}"
 			)
 
 		frappe.db.set_value("Bank Account", bank_account, "last_integration_date", last_transaction_date)
@@ -229,19 +231,20 @@ def new_bank_transaction(transaction):
 
 	bank_account = frappe.db.get_value("Bank Account", dict(integration_id=transaction["account_id"]))
 
-	if float(transaction["amount"]) >= 0:
-		debit = 0
-		credit = float(transaction["amount"])
+	amount = float(transaction["amount"])
+	if amount >= 0.0:
+		deposit = 0.0
+		withdrawal = amount
 	else:
-		debit = abs(float(transaction["amount"]))
-		credit = 0
+		deposit = abs(amount)
+		withdrawal = 0.0
 
 	status = "Pending" if transaction["pending"] == "True" else "Settled"
 
 	tags = []
 	try:
 		tags += transaction["category"]
-		tags += ["Plaid Cat. {}".format(transaction["category_id"])]
+		tags += [f'Plaid Cat. {transaction["category_id"]}']
 	except KeyError:
 		pass
 
@@ -253,10 +256,13 @@ def new_bank_transaction(transaction):
 					"date": getdate(transaction["date"]),
 					"status": status,
 					"bank_account": bank_account,
-					"debit": debit,
-					"credit": credit,
+					"debit": deposit,
+					"credit": withdrawal,
 					"currency": transaction["iso_currency_code"],
 					"reference_number": transaction["transaction_id"],
+					"transaction_type": (
+						transaction["transaction_code"] or transaction["payment_meta"]["payment_method"]
+					),
 					"description": transaction["name"],
 				}
 			)
@@ -269,7 +275,7 @@ def new_bank_transaction(transaction):
 			result.append(new_transaction.name)
 
 		except Exception as e:
-			frappe.throw(title=_("Bank transaction creation error"), msg=str(e))
+			frappe.throw(_("Bank transaction creation error"))
 
 	return result
 
@@ -299,3 +305,26 @@ def enqueue_synchronization():
 def get_link_token_for_update(access_token):
 	plaid = PlaidConnector(access_token)
 	return plaid.get_link_token(update_mode=True)
+
+
+def get_company(bank_account_name):
+	from frappe.defaults import get_user_default
+
+	company_names = frappe.db.get_all("Company", pluck="name")
+	if len(company_names) == 1:
+		return company_names[0]
+	if frappe.db.exists("Bank Account", bank_account_name):
+		return frappe.db.get_value("Bank Account", bank_account_name, "company")
+	company_default = get_user_default("Company")
+	if company_default:
+		return company_default
+	frappe.throw(_("Could not detect the Company for updating Bank Accounts"))
+
+
+@frappe.whitelist()
+def update_bank_account_ids(response):
+	data = json.loads(response)
+	institution_name = data["institution"]["name"]
+	bank = frappe.get_doc("Bank", institution_name).as_dict()
+	bank_account_name = f"{data['account']['name']} - {institution_name}"
+	return add_bank_accounts(response, bank, get_company(bank_account_name))
