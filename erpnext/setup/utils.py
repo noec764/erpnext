@@ -161,6 +161,19 @@ def set_defaults_for_tests():
 	system_settings.currency_precision = 2
 	system_settings.save()
 
+	# Set default value for Item.is_stock_item to 1
+	frappe.get_doc(
+		{
+			"doctype": "Property Setter",
+			"doctype_or_field": "DocField",
+			"doc_type": "Item",
+			"field_name": "is_stock_item",
+			"property": "default",
+			"property_type": "Check",
+			"value": "1",
+		}
+	).insert(ignore_permissions=True)
+
 
 def insert_record(records):
 	from frappe.desk.page.setup_wizard.setup_wizard import make_records
