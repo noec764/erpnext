@@ -29,7 +29,7 @@ class VenueRegistrationForm(Document):
 				"last_name": contact.last_name,
 				"email": contact.email_id,
 				"user_type": "Website User",
-				"send_welcome_email": 0,
+				"send_welcome_email": 1,
 			}
 		).insert(ignore_permissions=True)
 		frappe.flags.mute_messages = False
