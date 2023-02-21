@@ -102,11 +102,11 @@
     "read_only": 1
   }
  ],
- "icon": "fa fa-file-text",
+ "icon": "uil uil-file-alt",
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-20 14:51:04.714154",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Period Closing Voucher",

@@ -271,7 +271,7 @@
    "fieldtype": "Section Break",
    "label": "Costing and Billing",
    "oldfieldtype": "Section Break",
-   "options": "fa fa-money"
+   "options": "uil uil-money-bill"
   },
   {
    "fieldname": "estimated_costing",
@@ -460,7 +460,7 @@
  "idx": 29,
  "links": [],
  "max_attachments": 4,
- "modified": "2022-08-11 16:45:06.108499",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",

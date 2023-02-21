@@ -319,11 +319,11 @@
    "read_only": 1
    }
   ],
-  "icon": "fa fa-ticket",
+  "icon": "uil uil-ticket",
   "idx": 70,
   "is_submittable": 1,
   "links": [],
-  "modified": "2022-08-25 11:49:28.155048",
+  "modified": "2023-02-20 16:33:50.446725",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Material Request",

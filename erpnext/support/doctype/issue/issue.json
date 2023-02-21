@@ -388,10 +388,10 @@
    "read_only": 1
   }
  ],
- "icon": "fa fa-ticket",
+ "icon": "uil uil-bug",
  "idx": 7,
  "links": [],
- "modified": "2021-11-24 13:13:10.276630",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",

@@ -377,7 +377,7 @@
  "label": "Disable Rounded Total"
   }
  ],
- "icon": "icon-cog",
+ "icon": "uil uil-setting",
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [
@@ -402,7 +402,7 @@
    "link_fieldname": "pos_profile"
   }
  ],
- "modified": "2022-08-10 12:57:06.241439",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Profile",
