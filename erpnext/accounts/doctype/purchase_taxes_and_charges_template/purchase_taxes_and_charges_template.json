@@ -74,10 +74,10 @@
    "options": "Tax Category"
   }
  ],
- "icon": "fa fa-money",
+ "icon": "uil uil-money-bill",
  "idx": 1,
  "links": [],
- "modified": "2022-05-16 16:15:29.059370",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Taxes and Charges Template",

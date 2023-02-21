@@ -723,7 +723,7 @@
    "fieldname": "taxes_section",
    "fieldtype": "Section Break",
    "oldfieldtype": "Section Break",
-   "options": "fa fa-money"
+   "options": "uil uil-money-bill"
   },
   {
    "fieldname": "taxes_and_charges",
@@ -912,7 +912,7 @@
    "fieldname": "totals",
    "fieldtype": "Section Break",
    "oldfieldtype": "Section Break",
-   "options": "fa fa-money",
+   "options": "uil uil-money-bill",
    "print_hide": 1
   },
   {
@@ -1030,7 +1030,7 @@
    "fieldtype": "Section Break",
    "label": "Advance Payments",
    "oldfieldtype": "Section Break",
-   "options": "fa fa-money",
+   "options": "uil uil-money-bill",
    "print_hide": 1
   },
   {
@@ -1085,7 +1085,7 @@
    "fieldname": "payments_section",
    "fieldtype": "Section Break",
    "label": "Payments",
-   "options": "fa fa-money"
+   "options": "uil uil-money-bill"
   },
   {
    "depends_on": "is_pos",
@@ -1420,7 +1420,7 @@
    "fieldtype": "Section Break",
    "label": "Commission",
    "oldfieldtype": "Section Break",
-   "options": "fa fa-group",
+   "options": "uil uil-users-alt",
    "print_hide": 1
   },
   {
@@ -1551,11 +1551,11 @@
  "read_only": 1
   }
  ],
- "icon": "fa fa-file-text",
+ "icon": "uil uil-file-alt",
  "is_sealed": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-09-27 13:00:24.166684",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice",

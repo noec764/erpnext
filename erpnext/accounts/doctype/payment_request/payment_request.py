@@ -415,6 +415,9 @@ class PaymentRequest(Document):
 			controller = _get_payment_gateway_controller(self.payment_gateway)
 			if hasattr(controller, "get_transaction_fees"):
 				transaction_fees = controller.get_transaction_fees(reference_no)
+				if not self.fee_amount:
+					self.fee_amount = 0.0
+
 				self.fee_amount += transaction_fees.fee_amount
 				self.base_amount = transaction_fees.base_amount or self.base_amount
 				if transaction_fees.target_exchange_rate:

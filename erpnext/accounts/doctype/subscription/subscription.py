@@ -312,7 +312,15 @@ class Subscription(Document):
 		frappe.db.set_value("Sales Invoice", sales_invoice, "subscription", self.name)
 
 	def set_customer_status(self):
-		frappe.get_doc("Customer", self.customer).set_status(update=True, update_modified=False)
+		customer = frappe.get_doc("Customer", self.customer)
+		customer.set_status(update=True, update_modified=False)
+		if (
+			self.role_profile_name
+			and customer.meta.has_field("role_profile_name")
+			and customer.role_profile_name != self.role_profile_name
+		):
+			customer.role_profile_name = self.role_profile_name
+			customer.save()
 
 	def get_billing_contact(self):
 		if self.customer and not self.contact_person:
@@ -326,7 +334,9 @@ class Subscription(Document):
 				else (getdate(self.start).day if self.start else None)
 			)
 
-		elif (self.get_doc_before_save() or {}).get("billing_interval") != self.billing_interval and self.current_invoice_end:
+		elif (self.get_doc_before_save() or {}).get(
+			"billing_interval"
+		) != self.billing_interval and self.current_invoice_end:
 			self.invoicing_day = add_days(getdate(self.current_invoice_end), 1).day
 
 

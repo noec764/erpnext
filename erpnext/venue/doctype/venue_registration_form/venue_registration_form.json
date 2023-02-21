@@ -35,7 +35,8 @@
   "subscription",
   "amended_from",
   "payment_tab",
-  "payment_gateway"
+  "payment_gateway",
+  "payment_reference"
  ],
  "fields": [
   {
@@ -205,12 +206,18 @@
    "fieldtype": "Link",
    "label": "Payment Gateway",
    "options": "Payment Gateway"
+  },
+  {
+   "fieldname": "payment_reference",
+   "fieldtype": "Data",
+   "label": "Payment Reference",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-10 15:16:09.670517",
+ "modified": "2023-02-21 12:00:21.523777",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Registration Form",

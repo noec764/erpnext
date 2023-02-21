@@ -17,7 +17,9 @@
   "accounts",
   "lft",
   "rgt",
-  "old_parent"
+  "old_parent",
+  "portal_tab",
+  "role_profile_name"
  ],
  "fields": [
   {
@@ -101,6 +103,18 @@
    "fieldname": "payment_terms_section",
    "fieldtype": "Section Break",
    "label": "Payment Terms"
+  },
+  {
+   "fieldname": "portal_tab",
+   "fieldtype": "Tab Break",
+   "label": "Portal"
+  },
+  {
+   "description": "All users linked to a supplier within this supplier group will be given this role profile",
+   "fieldname": "role_profile_name",
+   "fieldtype": "Link",
+   "label": "Role Profile",
+   "options": "Role Profile"
   }
  ],
  "icon": "fa fa-flag",
@@ -108,7 +122,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2022-12-24 11:16:12.486719",
+ "modified": "2023-02-21 18:25:16.243227",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Supplier Group",

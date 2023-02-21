@@ -617,10 +617,10 @@
    "options": "Country"
   }
  ],
- "icon": "fa fa-info-sign",
+ "icon": "uil uil-user-exclamation",
  "idx": 195,
  "links": [],
- "modified": "2022-10-13 12:42:21.545636",
+ "modified": "2023-02-20 16:33:50.446725",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",

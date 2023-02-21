@@ -121,11 +121,11 @@
       "label": "Disabled"
      }
     ],
-    "icon": "fa fa-money",
+    "icon": "uil uil-money-bill",
     "idx": 1,
     "is_tree": 1,
     "links": [],
-    "modified": "2022-01-31 13:22:58.916273",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Accounts",
     "name": "Cost Center",

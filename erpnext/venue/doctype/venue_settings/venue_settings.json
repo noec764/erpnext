@@ -14,6 +14,7 @@
   "sync_with_google_calendar",
   "allow_event_cancellation",
   "cancellation_delay",
+  "role_allowed_to_skip_cart",
   "units_of_measure_section",
   "minute_uom",
   "column_break_8",
@@ -132,11 +133,18 @@
    "fieldname": "multi_venue_section",
    "fieldtype": "Section Break",
    "label": "Multi-venue mode"
+  },
+  {
+   "description": "Users with this role will be able to make bookings without having to validate a shopping cart and create a sales order",
+   "fieldname": "role_allowed_to_skip_cart",
+   "fieldtype": "Link",
+   "label": "Role allowed to skip shopping cart",
+   "options": "Role"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-09-30 17:07:55.586709",
+ "modified": "2023-02-21 20:29:40.522849",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

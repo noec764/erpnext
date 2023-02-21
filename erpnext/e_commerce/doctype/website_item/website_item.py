@@ -224,6 +224,9 @@ class WebsiteItem(WebsiteGenerator):
 			context.update(get_slideshow(self))
 
 		context.booking_enabled = self.enable_item_booking
+		context.skip_cart = (
+			frappe.db.get_single_value("Venue Settings", "role_allowed_to_skip_cart") in frappe.get_roles()
+		)
 
 		self.set_metatags(context)
 		self.set_shopping_cart_data(context)

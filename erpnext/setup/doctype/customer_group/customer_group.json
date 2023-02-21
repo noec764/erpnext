@@ -20,7 +20,9 @@
   "default_receivable_account",
   "accounts",
   "credit_limit_section",
-  "credit_limits"
+  "credit_limits",
+  "portal_tab",
+  "role_profile_name"
  ],
  "fields": [
   {
@@ -134,13 +136,25 @@
    "fieldtype": "Table",
    "label": "Credit Limit",
    "options": "Customer Credit Limit"
+  },
+  {
+   "fieldname": "portal_tab",
+   "fieldtype": "Tab Break",
+   "label": "Portal"
+  },
+  {
+   "description": "All users linked to a customer within this customer group will be given this role profile",
+   "fieldname": "role_profile_name",
+   "fieldtype": "Link",
+   "label": "Role Profile",
+   "options": "Role Profile"
   }
  ],
  "icon": "fa fa-sitemap",
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2022-12-24 11:15:17.142746",
+ "modified": "2023-02-21 18:25:24.126016",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Customer Group",

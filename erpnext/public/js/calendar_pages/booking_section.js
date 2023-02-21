@@ -47,7 +47,7 @@ class BookingCalendar {
 		this.slots = [];
 		this.booking_selector = null;
 		this.locale = frappe.get_cookie('preferred_language') || frappe.boot.lang || 'en';
-
+		this.skip_cart = this.parent.skip_cart == "True"
 		this.render();
 	}
 
@@ -234,14 +234,27 @@ class BookingSelector {
 			end: moment.utc(event.end).format("YYYY-MM-DD H:mm:SS"),
 			item: this.parent.parent.item,
 			uom: this.parent.parent.uom,
-			user: frappe.session.user
+			user: frappe.session.user,
+			status: this.parent.skip_cart ? "Confirmed": null
 		}).then(r => {
-			this.update_cart(r.message.name, 1)
+			if (!this.parent.skip_cart) {
+				this.update_cart(r.message.name, 1)
+			} else {
+				this.parent.fullCalendar&&this.parent.fullCalendar.refetchEvents();
+			}
 		})
 	}
 
 	remove_booked_slot(booking_id) {
-		this.update_cart(booking_id, 0)
+		if (!this.parent.skip_cart) {
+			this.update_cart(booking_id, 0)
+		} else {
+			frappe.call("erpnext.venue.doctype.item_booking.item_booking.remove_booked_slot", {
+				name: booking_id
+			}).then(r => {
+				this.parent.fullCalendar&&this.parent.fullCalendar.refetchEvents();
+			})
+		}
 	}
 
 	update_cart(booking, qty) {

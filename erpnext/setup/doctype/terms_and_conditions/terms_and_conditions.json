@@ -73,9 +73,9 @@
       "fieldtype": "Section Break"
      }
     ],
-    "icon": "icon-legal",
+    "icon": "uil uil-file-contract",
     "idx": 1,
-    "modified": "2023-02-01 14:33:39.246532",
+    "modified": "2023-02-20 16:33:50.446725",
     "modified_by": "Administrator",
     "module": "Setup",
     "name": "Terms and Conditions",

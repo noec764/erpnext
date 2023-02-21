@@ -171,6 +171,7 @@ class Customer(TransactionBase):
 			self.link_lead_address_and_contact()
 
 		self.update_customer_groups()
+		self.update_user_role()
 
 	def update_customer_groups(self):
 		ignore_doctypes = ["Lead", "Opportunity", "POS Profile", "Tax Rule", "Pricing Rule"]

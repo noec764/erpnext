@@ -2,12 +2,13 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe.contacts.doctype.address.address import get_preferred_address
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import nowdate
 
-from frappe.contacts.doctype.contact.contact import invite_user
 from erpnext.accounts.doctype.subscription_template.subscription_template import make_subscription
+
 
 class VenueRegistrationForm(Document):
 	def on_submit(self):
@@ -16,7 +17,6 @@ class VenueRegistrationForm(Document):
 		self.create_address()
 		self.create_subscription()
 		self.create_user()
-
 
 	def create_user(self):
 		contact = frappe.get_doc("Contact", self.contact)
@@ -36,33 +36,25 @@ class VenueRegistrationForm(Document):
 
 		frappe.db.set_value("Contact", self.contact, "user", user.name)
 
-
 	def create_contact(self):
 		if self.contact:
 			return
 
 		def postprocess(source, target):
-			target.append("email_ids", {
-				"email_id": self.email,
-				"is_primary": 1
-			})
+			target.append("email_ids", {"email_id": self.email, "is_primary": 1})
 
 			if self.get("phone") or self.get("is_primary_phone"):
-				target.append("phone_nos", {
-					"phone": self.get("phone") or self.get("is_primary_phone"),
-					"is_primary_phone": 1
-				})
+				target.append(
+					"phone_nos",
+					{"phone": self.get("phone") or self.get("is_primary_phone"), "is_primary_phone": 1},
+				)
 
 			if self.get("is_primary_mobile_no"):
-				target.append("phone_nos", {
-					"phone": self.get("is_primary_mobile_no"),
-					"is_primary_mobile_no": 1
-				})
+				target.append(
+					"phone_nos", {"phone": self.get("is_primary_mobile_no"), "is_primary_mobile_no": 1}
+				)
 
-			target.append("links", {
-				"link_doctype": "Customer",
-				"link_name": self.customer
-			})
+			target.append("links", {"link_doctype": "Customer", "link_name": self.customer})
 
 		mapped_doc = get_mapped_doc(
 			self.doctype,
@@ -74,24 +66,21 @@ class VenueRegistrationForm(Document):
 				},
 			},
 			postprocess=postprocess,
-			ignore_permissions=True
+			ignore_permissions=True,
 		)
 
 		mapped_doc.flags.ignore_permissions = True
 		mapped_doc.insert()
 
-		self.contact = mapped_doc.name
-
+		self.db_set("contact", mapped_doc.name)
 
 	def create_address(self):
 		if self.address:
 			return
 
 		def set_missing_values(source, target):
-			target.append("links", {
-				"link_doctype": "Customer",
-				"link_name": self.customer
-			})
+			target.append("links", {"link_doctype": "Customer", "link_name": self.customer})
+			target.is_primary_address = 1
 
 		mapped_doc = get_mapped_doc(
 			self.doctype,
@@ -103,14 +92,13 @@ class VenueRegistrationForm(Document):
 				},
 			},
 			postprocess=set_missing_values,
-			ignore_permissions=True
+			ignore_permissions=True,
 		)
 
 		mapped_doc.flags.ignore_permissions = True
 		mapped_doc.insert()
 
-		self.address = mapped_doc.name
-
+		self.db_set("address", mapped_doc.name)
 
 	def create_customer(self):
 		if self.customer:
@@ -118,7 +106,7 @@ class VenueRegistrationForm(Document):
 
 		def set_missing_values(source, target):
 			target.customer_type = "Company" if self.get("customer_name") else "Individual"
-			target.customer_name = self.get("customer_name") or f'{self.first_name} {self.last_name}'
+			target.customer_name = self.get("customer_name") or f"{self.first_name} {self.last_name}"
 			target.customer_group = frappe.db.get_default("Customer Group")
 			target.territory = frappe.db.get_default("Territory")
 
@@ -133,13 +121,13 @@ class VenueRegistrationForm(Document):
 			},
 			None,
 			set_missing_values,
-			ignore_permissions=True
+			ignore_permissions=True,
 		)
 
 		mapped_doc.flags.ignore_permissions = True
 		mapped_doc.insert()
 
-		self.customer = mapped_doc.name
+		self.db_set("customer", mapped_doc.name)
 
 	def create_subscription(self):
 		if self.subscription:
@@ -154,7 +142,7 @@ class VenueRegistrationForm(Document):
 				ignore_permissions=True,
 			)
 
-			self.subscription = subscription.name
+			self.db_set("subscription", subscription.name)
 
 	def set_as_completed_and_submit(self):
 		self.status = "Completed"
@@ -162,6 +150,9 @@ class VenueRegistrationForm(Document):
 		self.submit()
 
 	def on_payment_authorized(self, status=None, reference_no=None):
+		if reference_no:
+			self.db_set("payment_reference", reference_no)
+
 		if status in ["Authorized", "Completed", "Paid", "Payment Method Registered"]:
 			if self.docstatus == 0:
 				self.set_as_completed_and_submit()
@@ -178,3 +169,25 @@ class VenueRegistrationForm(Document):
 			self.save()  # This document will be fetched again in the payment gateway
 		else:
 			self.set_as_completed_and_submit()
+
+
+def get_webform_context(context):
+	if frappe.session.user == "Guest":
+		return
+
+	existing_values = frappe._dict()
+	if contact := frappe.db.get_value("Contact", dict(email_id=frappe.session.user), "name"):
+		contact_doc = frappe.get_doc("Contact", contact)
+		if customer := contact_doc.get_link_for("Customer"):
+			customer_doc = frappe.get_doc("Customer", customer)
+			existing_values.update(customer_doc.as_dict())
+			if address := get_preferred_address("Customer", customer):
+				address_doc = frappe.get_doc("Address", address)
+				existing_values.update(address_doc.as_dict())
+
+		existing_values.update(contact_doc.as_dict())
+
+	meta = frappe.get_meta(context.doc_type)
+	for field in meta.fields:
+		if field.fieldname in existing_values:
+			context.reference_doc[field.fieldname] = existing_values[field.fieldname]
