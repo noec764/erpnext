@@ -142,4 +142,40 @@ def update_role_for_users(doctype, docname, role_profile):
 		user_doc = frappe.get_doc("User", user.name)
 		user_doc.role_profile_name = role_profile
 		user_doc.flags.ignore_permissions = True
-		user_doc.save()
+
+		if not role_profile:
+			user_doc.add_default_roles()
+		else:
+			user_doc.save()
+
+
+def update_contact_user_roles(doc, method=None):
+	if not doc.user:
+		return
+
+	if supplier := doc.get_link_for("Supplier"):
+		update_linked_user("Supplier", supplier, doc)
+
+	if customer := doc.get_link_for("Customer"):
+		update_linked_user("Customer", customer, doc)
+
+
+def update_linked_user(doctype, docname, doc):
+	def get_linked_user(doc):
+		return frappe.get_doc("User", doc.user)
+
+	def update_role_profile(user, role_profile):
+		if role_profile != user.role_profile_name:
+			user.role_profile_name = role_profile
+			user.save()
+
+	user = get_linked_user(doc)
+	dt_has_field = frappe.get_meta(doctype).has_field("role_profile_name")
+	link_group = frappe.db.get_value(doctype, docname, f"{doctype.lower()}_group")
+	role_profile = None
+	if dt_has_field:
+		role_profile = frappe.db.get_value(doctype, docname, "role_profile_name")
+	if role_profile:
+		update_role_profile(user, role_profile)
+	elif role_profile := frappe.db.get_value(f"{doctype} Group", link_group, "role_profile_name"):
+		update_role_profile(user, role_profile)

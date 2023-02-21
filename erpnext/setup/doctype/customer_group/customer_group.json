@@ -22,7 +22,7 @@
   "credit_limit_section",
   "credit_limits",
   "portal_tab",
-  "role_profile"
+  "role_profile_name"
  ],
  "fields": [
   {
@@ -144,7 +144,7 @@
   },
   {
    "description": "All users linked to a customer within this customer group will be given this role profile",
-   "fieldname": "role_profile",
+   "fieldname": "role_profile_name",
    "fieldtype": "Link",
    "label": "Role Profile",
    "options": "Role Profile"
@@ -154,7 +154,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-02-21 17:09:07.406174",
+ "modified": "2023-02-21 18:25:24.126016",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Customer Group",

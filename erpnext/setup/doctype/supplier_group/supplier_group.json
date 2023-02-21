@@ -19,7 +19,7 @@
   "rgt",
   "old_parent",
   "portal_tab",
-  "role_profile"
+  "role_profile_name"
  ],
  "fields": [
   {
@@ -111,7 +111,7 @@
   },
   {
    "description": "All users linked to a supplier within this supplier group will be given this role profile",
-   "fieldname": "role_profile",
+   "fieldname": "role_profile_name",
    "fieldtype": "Link",
    "label": "Role Profile",
    "options": "Role Profile"
@@ -122,7 +122,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-02-21 17:09:18.604707",
+ "modified": "2023-02-21 18:25:16.243227",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Supplier Group",

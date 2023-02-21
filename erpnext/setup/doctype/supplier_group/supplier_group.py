@@ -25,13 +25,16 @@ class SupplierGroup(NestedSet):
 		frappe.utils.nestedset.update_nsm(self)
 
 	def update_user_role(self):
-		if self.role_profile:
-			for supplier in frappe.get_all(
-				"Supplier", filters={"disabled": 0, "supplier_group": self.name}
-			):
-				frappe.enqueue(
-					update_role_for_users,
-					doctype="Supplier",
-					docname=supplier.name,
-					role_profile=self.role_profile,
-				)
+		supplier_has_role_profile = frappe.get_meta("Supplier").has_field("role_profile_name")
+		fields = ["name", "role_profile_name"] if supplier_has_role_profile else ["name"]
+		for supplier in frappe.get_all(
+			"Supplier", filters={"disabled": 0, "supplier_group": self.name}, fields=fields
+		):
+			frappe.enqueue(
+				update_role_for_users,
+				doctype="Supplier",
+				docname=supplier.name,
+				role_profile=supplier.role_profile_name
+				if supplier_has_role_profile
+				else self.role_profile_name,
+			)

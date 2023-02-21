@@ -208,8 +208,8 @@ class TransactionBase(StatusUpdater):
 		if self.doctype in ("Customer", "Supplier"):
 			from erpnext.portal.utils import update_role_for_users
 
-			role_profile = frappe.get_cached_value(
-				f"{self.doctype} Group", self.get(f"{self.doctype.lower()}_group"), "role_profile"
+			role_profile = self.get("role_profile_name") or frappe.get_cached_value(
+				f"{self.doctype} Group", self.get(f"{self.doctype.lower()}_group"), "role_profile_name"
 			)
 			frappe.enqueue(
 				update_role_for_users, doctype=self.doctype, docname=self.name, role_profile=role_profile

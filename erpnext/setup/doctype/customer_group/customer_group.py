@@ -27,16 +27,19 @@ class CustomerGroup(NestedSet):
 			frappe.msgprint(_("A customer with the same name already exists"), raise_exception=1)
 
 	def update_user_role(self):
-		if self.role_profile:
-			for customer in frappe.get_all(
-				"Customer", filters={"disabled": 0, "customer_group": self.name}
-			):
-				frappe.enqueue(
-					update_role_for_users,
-					doctype="Customer",
-					docname=customer.name,
-					role_profile=self.role_profile,
-				)
+		customer_has_role_profile = frappe.get_meta("Supplier").has_field("role_profile_name")
+		fields = ["name", "role_profile_name"] if customer_has_role_profile else ["name"]
+		for customer in frappe.get_all(
+			"Customer", filters={"disabled": 0, "customer_group": self.name}, fields=fields
+		):
+			frappe.enqueue(
+				update_role_for_users,
+				doctype="Customer",
+				docname=customer.name,
+				role_profile=customer.role_profile_name
+				if customer_has_role_profile
+				else self.role_profile_name,
+			)
 
 
 def get_parent_customer_groups(customer_group):
