@@ -131,8 +131,6 @@ def default_accounts_mapping(accounts, company):
 		"default_income_account": 706 if company.domain == "Services" else 701,
 		"default_deferred_revenue_account": 487,
 		"default_deferred_expense_account": 486,
-		"default_payroll_payable_account": 421,
-		"default_expense_claim_payable_account": 421,
 		"default_inventory_account": 310,
 		"stock_adjustment_account": 603,
 		"stock_received_but_not_billed": 4081,

@@ -48,8 +48,9 @@ class TestAssetMaintenance(unittest.TestCase):
 		if not frappe.db.exists("Asset Maintenance", "Photocopier"):
 			asset_maintenance = frappe.get_doc(
 				{
+					"__newname": "Photocopier",
 					"doctype": "Asset Maintenance",
-					"asset_name": "Photocopier",
+					"asset_name": asset_name,
 					"maintenance_team": "Team Awesome",
 					"company": "_Test Company",
 					"asset_maintenance_tasks": get_maintenance_tasks(),
@@ -65,7 +66,7 @@ class TestAssetMaintenance(unittest.TestCase):
 				{
 					"doctype": "Asset Maintenance Log",
 					"asset_maintenance": "Photocopier",
-					"task": "Change Oil",
+					# "task": "Change Oil",  # Don't set a task if it doesn't exist
 					"completion_date": add_days(nowdate(), 2),
 					"maintenance_status": "Completed",
 				}

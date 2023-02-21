@@ -195,7 +195,7 @@ def add_standard_navbar_items():
 
 
 def add_app_name():
-	frappe.db.set_value("System Settings", None, "app_name", "Dokos")
+	frappe.db.set_single_value("Website Settings", "app_name", "Dokos")
 
 
 def setup_log_settings():

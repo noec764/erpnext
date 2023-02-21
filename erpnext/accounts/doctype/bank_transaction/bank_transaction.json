@@ -10,6 +10,7 @@
   "naming_series",
   "date",
   "reference_number",
+  "transaction_type",
   "category",
   "status",
   "column_break_2",
@@ -216,6 +217,11 @@
    "in_standard_filter": 1,
    "label": "Category",
    "options": "Bank Transaction Category"
+},
+{
+ "fieldname": "transaction_type",
+ "fieldtype": "Data",
+ "label": "Transaction Type"
   }
  ],
  "is_submittable": 1,
