@@ -113,3 +113,33 @@ def party_exists(doctype, user):
 		return doctype in doctypes
 
 	return False
+
+
+def update_role_for_users(doctype, docname, role_profile):
+	dynamic_link = frappe.qb.DocType("Dynamic Link")
+	contact = frappe.qb.DocType("Contact")
+	user = frappe.qb.DocType("User")
+	users = (
+		frappe.qb.from_(dynamic_link)
+		.join(contact)
+		.on(
+			(contact.name == dynamic_link.parent)
+			& (dynamic_link.link_doctype == doctype)
+			& (dynamic_link.link_name == docname)
+		)
+		.join(user)
+		.on((contact.email_id == user.name))
+		.where(
+			(user.enabled == 1)
+			& (user.name.notin(frappe.STANDARD_USERS))
+			& ((user.role_profile_name != role_profile) | (user.role_profile_name.isnull()))
+		)
+		.select(user.name)
+		.run(as_dict=True, debug=True)
+	)
+
+	for user in users:
+		user_doc = frappe.get_doc("User", user.name)
+		user_doc.role_profile_name = role_profile
+		user_doc.flags.ignore_permissions = True
+		user_doc.save()

@@ -54,6 +54,7 @@ class Supplier(TransactionBase):
 
 		self.create_primary_contact()
 		self.create_primary_address()
+		self.update_user_role()
 
 	def validate(self):
 		self.flags.is_new_doc = self.is_new()
