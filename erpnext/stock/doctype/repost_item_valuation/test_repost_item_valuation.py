@@ -127,10 +127,22 @@ class TestRepostItemValuation(FrappeTestCase, StockTestMixin):
 			self.assertEqual(riv.company, "_Test Company with perpetual inventory")
 			self.assertEqual(riv.warehouse, "Stores - TCP1")
 
-	def test_deduplication(self):
-		def _assert_status(doc, status):
-			doc.load_from_db()
-			self.assertEqual(doc.status, status)
+	def test_traceability(self):
+		sinv = create_sales_invoice(
+			company="_Test Company",
+			posting_date="2021-01-02",
+			debit_to="Debtors - _TC",
+			income_account="Sales - _TC",
+			expense_account="Cost of Goods Sold - _TC",
+			warehouse="_Test Warehouse - _TC",
+			update_stock=0,
+			currency="INR",
+			item_code="_Test Item",
+			cost_center="Main - _TC",
+			qty=1,
+			rate=1.23,
+		)
+		sales_invoice_name = sinv.name
 
 		riv_args = frappe._dict(
 			doctype="Repost Item Valuation",
@@ -138,7 +150,26 @@ class TestRepostItemValuation(FrappeTestCase, StockTestMixin):
 			warehouse="_Test Warehouse - _TC",
 			based_on="Item and Warehouse",
 			voucher_type="Sales Invoice",
-			voucher_no="SI-1",
+			voucher_no=sales_invoice_name,
+			posting_date="2021-01-02",
+			posting_time="00:01:00",
+		)
+
+		riv = frappe.get_doc(riv_args)
+		self.assertEqual(riv.voucher_type, "Sales Invoice")  # traceability
+		self.assertEqual(riv.voucher_no, sales_invoice_name)
+
+	def test_deduplication(self):
+		def _assert_status(doc, status):
+			doc.load_from_db()
+			self.assertEqual(doc.status, status)
+
+		# Note: don't include a voucher_type and voucher_no because the posting date and time are always fetched from this linked document if given.
+		riv_args = frappe._dict(
+			doctype="Repost Item Valuation",
+			item_code="_Test Item",
+			warehouse="_Test Warehouse - _TC",
+			based_on="Item and Warehouse",
 			posting_date="2021-01-02",
 			posting_time="00:01:00",
 		)
@@ -148,8 +179,6 @@ class TestRepostItemValuation(FrappeTestCase, StockTestMixin):
 		riv1.flags.dont_run_in_test = True
 		riv1.submit()
 		_assert_status(riv1, "Queued")
-		self.assertEqual(riv1.voucher_type, "Sales Invoice")  # traceability
-		self.assertEqual(riv1.voucher_no, "SI-1")
 
 		# newer than existing duplicate - riv1
 		riv2 = frappe.get_doc(riv_args.update({"posting_date": "2021-01-03"}))
