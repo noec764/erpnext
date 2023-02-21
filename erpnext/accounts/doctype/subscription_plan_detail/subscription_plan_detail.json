@@ -8,7 +8,6 @@
   "status",
   "item",
   "item_name",
-  "booked_item",
   "qty",
   "uom",
   "rate",
@@ -26,6 +25,8 @@
   "column_break_17",
   "add_invoice_item",
   "stripe_invoice_item",
+  "venue_section",
+  "booked_item",
   "portal_section",
   "edit_on_portal",
   "accounting_dimensions_section",
@@ -117,11 +118,11 @@
   },
   {
    "collapsible": 1,
+   "description": "This information is no longer used by Dokos. <br>All subscriptions are directly handled in Dokos and no longer in Stripe.",
    "fieldname": "payment_plan_section",
    "fieldtype": "Section Break",
-   "read_only": 1,
    "label": "Payment gateways and plans",
-   "description": "This information is no longer used by Dokos. <br>All subscriptions are directly handled in Dokos and no longer in Stripe."
+   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -178,16 +179,22 @@
    "read_only": 1
   },
   {
+   "description": "Select a bookable item to book for the duration of the subscription",
    "fieldname": "booked_item",
    "fieldtype": "Link",
    "label": "Booked Item",
    "options": "Item"
+  },
+  {
+   "fieldname": "venue_section",
+   "fieldtype": "Section Break",
+   "label": "Venue Management"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-19 14:42:11.752265",
+ "modified": "2023-02-21 17:10:03.844862",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Plan Detail",
