@@ -426,7 +426,8 @@ class Asset(AccountsController):
 		# otherwise, if number_of_depreciations_booked = 2, available_for_use_date = 01/01/2020 and frequency_of_depreciation = 12
 		# from_date = 01/01/2022
 		from_date = self.get_modified_available_for_use_date(row)
-		days = date_diff(row.depreciation_start_date, from_date) + 1
+		# Regionalized date difference calculation
+		days = date_difference(row.depreciation_start_date, from_date) + 1
 
 		# if frequency_of_depreciation is 12 months, total_days = 365
 		total_days = get_total_days(row.depreciation_start_date, row.frequency_of_depreciation)
