@@ -270,13 +270,13 @@ def create_role_profile_fields():
 	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 	custom_fields = {}
-	for dt in ("Customer", "Subscription"):
+	for dt, insert_after in {"Customer": "customer_primary_contact", "Subscription": "contact_person", "Subscription Template": "portal_description"}.items():
 		df = dict(
 			doctype=dt,
 			fieldname="role_profile_name",
 			label="Role Profile",
 			fieldtype="Link",
-			insert_after="customer_primary_contact" if dt == "Customer" else "contact_person",
+			insert_after=insert_after,
 			options="Role Profile",
 			description="All users associated with this customer will be attributed this role profile"
 		)
