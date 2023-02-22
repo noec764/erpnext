@@ -95,6 +95,17 @@ class BookingCalendar {
 
 	calendar_options() {
 		const me = this;
+
+		let initialDate;
+		const queryParamStartDate = new URLSearchParams(window.location.search).get("start_date");
+		if (this.parent.date) {
+			initialDate = momentjs(this.parent.date).format("YYYY-MM-DD");
+		} else if (queryParamStartDate) {
+			initialDate = queryParamStartDate;
+		} else {
+			initialDate = momentjs().add(1,'d').format("YYYY-MM-DD");
+		}
+
 		return {
 			eventClassNames: function(arg) {
 				return ['booking-calendar', arg.event.extendedProps.status || ""]
@@ -117,11 +128,10 @@ class BookingCalendar {
 			showNonCurrentDates: false,
 			locale: this.locale,
 			timeZone: frappe.boot.timeZone || 'UTC',
-			initialDate: this.parent.date ? momentjs(this.parent.date).format("YYYY-MM-DD") : momentjs().add(1,'d').format("YYYY-MM-DD"),
+			initialDate: initialDate,
 			noEventsContent: __("No slot available"),
 			selectAllow: this.getSelectAllow,
 			validRange: this.getValidRange,
-			defaultDate: this.getDefaultDate,
 			displayEventTime: false,
 			dateClick: function(info) {
 				me.booking_selector = new BookingSelector({
