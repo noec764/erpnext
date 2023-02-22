@@ -315,7 +315,7 @@ class Subscription(Document):
 		customer = frappe.get_doc("Customer", self.customer)
 		customer.set_status(update=True, update_modified=False)
 		if (
-			self.role_profile_name
+			self.get("role_profile_name")
 			and customer.meta.has_field("role_profile_name")
 			and customer.role_profile_name != self.role_profile_name
 		):
