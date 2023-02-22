@@ -420,6 +420,9 @@ def get_list_context(context=None):
 			"header_action": frappe.render_template(
 				"templates/includes/item_booking/item_booking_list_action.html", {}
 			),
+			"list_footer": frappe.render_template(
+				"templates/includes/item_booking/item_booking_list_footer.html", {}
+			),
 		}
 	)
 

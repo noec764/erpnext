@@ -237,6 +237,61 @@ class BookingPage {
 	}
 }
 
+class BookingPageSidebar {
+	constructor(wrapper) {
+		this.wrapper = wrapper
+		this.upcoming_bookings = []
+		this.get_upcoming_bookings().then(() => {
+			this.build()
+		})
+	}
+
+	get_upcoming_bookings() {
+		return frappe.call({
+			method: "erpnext.templates.pages.book_resources.get_upcoming_bookings"
+		}).then(r => {
+			this.upcoming_bookings = r.message;
+		})
+	}
+
+	build() {
+		console.log(this.upcoming_bookings)
+		const booking_items = Object.keys(this.upcoming_bookings).map(booking => {
+			const timetable = this.upcoming_bookings[booking].map(item => {
+				return `<div class="small muted">
+					· ${frappe.datetime.str_to_user(item.starts_on, false, true)}: ${ frappe.datetime.str_to_user(item.starts_on, true, false) }-${ frappe.datetime.str_to_user(item.ends_on, true, false) }
+				</div>`
+			}).join('')
+
+			return `<tr class="booking-items">
+			<td class="py-2">
+				<div class="label">${ booking }</div>
+				${timetable}
+			</td>
+		</tr>`
+		}).join('')
+
+		const html = `<div id="upcoming-bookings" class="card frappe-card p-4 sticky-top">
+			<h6 class="title">${ __("Upcoming Bookings") }</h6>
+			<div class="h-100">
+				<div class="card-body p-0">
+					<table class="w-100">
+						<tbody>
+							${booking_items}
+						</tbody>
+					</table>
+					<a class="btn btn-primary font-md w-100 mt-4" href="/bookings">
+						${ __("See Bookings") }
+					</a>
+				</div>
+			</div>
+		</div>`
+
+		this.wrapper.innerHTML = html;
+	}
+}
+
 $(document).ready(() => {
 	new BookingPage(document.getElementById("booking-page"))
+	new BookingPageSidebar(document.getElementById("booking-page-sidebar"))
 })

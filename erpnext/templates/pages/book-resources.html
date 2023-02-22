@@ -5,16 +5,23 @@
 {% endblock %}
 
 {% block title %}
+	{{ _("Book Resources") }}
 {% endblock %}
 
 {% block header %}
+	<h3 class="mt-2 mb-6">{{ _("Book Resources") }}</h3>
 {% endblock %}
+
 
 {% block header_actions %}
 {% endblock %}
 
 {% block page_content %}
-<div id="booking-page"></div>
+<div class="row">
+	<div id="booking-page" class="col-lg-9"></div>
+	<div id="booking-page-sidebar" class="col-lg-3 d-flex align-items-start"></div>
+</div>
+
 
 <style>
 	.filter-date-container {
@@ -85,6 +92,9 @@
 		color: var(--secondary);
 		border: 2px solid currentColor;
 		line-height: 1;
+	}
+	#booking-page .filter-type__pill span{
+		font-weight: 600;
 	}
 	#booking-page .filter-type__pill input {
 		visibility: hidden;

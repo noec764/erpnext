@@ -1,9 +1,11 @@
 # Copyright (c) 2023, Dokos SAS and Contributors
 # License: GNU General Public License v3. See license.txt
+from collections import defaultdict
+
 import frappe
 from frappe import _
 from frappe.translate import get_dict
-from frappe.utils import add_days, getdate
+from frappe.utils import add_days, getdate, now_datetime
 from frappe.utils.jinja_globals import bundled_asset_absolute
 
 from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
@@ -78,3 +80,18 @@ def get_items(filters=None):
 	items.sort(key=lambda item: (bool(item.availabilities), item.item_name))
 
 	return {"items": items, "group_counts": group_counts, "settings": get_shopping_cart_settings()}
+
+@frappe.whitelist()
+def get_upcoming_bookings():
+	user = frappe.session.user
+
+	bookings = frappe.get_all("Item Booking",
+		filters={"user": user, "starts_on": (">", now_datetime()), "status": ("in", ("Confirmed", "Not Confirmed"))},
+		fields=["item_name", "user", "starts_on", "ends_on"]
+	)
+
+	output = defaultdict(list)
+	for booking in bookings:
+		output[booking.item_name].append(booking)
+
+	return output
