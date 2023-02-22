@@ -1,4 +1,4 @@
-export default class ResourceGrid  {
+export default class ResourceGrid {
 	/* Options:
 		- items: Items
 		- settings: E Commerce Settings
@@ -15,18 +15,50 @@ export default class ResourceGrid  {
 		let me = this;
 		let html = ``;
 
+		this.items = this.items.sort((a, b) => {
+			return this.is_item_available(b) - this.is_item_available(a);
+		});
+
 		this.items.forEach(item => {
 			let title = item.web_item_name || item.item_name || item.item_code || "";
-			title =  title.length > 90 ? title.substr(0, 90) + "..." : title;
 
-			html += `<div class="col-xs-12 col-sm-6 col-md-4 item-card"><div class="card">`;
+			let card_class = "card booking-card";
+			if (this.is_item_available(item)) {
+				card_class += " booking-available";
+			} else {
+				card_class += " booking-unavailable";
+			}
+
+			html += `<a class="${card_class}" href="${this.get_href(item)}" style="cursor: pointer;">`;
 			html += me.get_image_html(item, title);
 			html += me.get_card_body_html(item, title, me.settings);
-			html += `</div></div>`;
+			html += `</a>`;
 		});
 
 		let $product_wrapper = this.products_section;
 		$product_wrapper.append(html);
+	}
+
+	get_href(item) {
+		if (!item.route) {
+			return '#';
+		}
+		if (item.__cached_url) {
+			return item.__cached_url;
+		}
+
+		const { item_groups, ...filters } = this.filters;
+		const search_params = new URLSearchParams(filters);
+		search_params.append("_back", "booking-search");
+
+		let url = frappe.utils.escape_html(item.route);
+		if (!url.startsWith('/')) {
+			url = '/' + url;
+		}
+		url += `?${search_params.toString()}`;
+
+		item.__cached_url = url;
+		return url;
 	}
 
 	get_image_html(item, title) {
@@ -35,54 +67,50 @@ export default class ResourceGrid  {
 		if (image) {
 			return `
 				<div class="card-img-container">
-					<a href="/${ item.route || '#' }" style="text-decoration: none;">
-						<img class="card-img" src="${ image }" alt="${ title }">
-					</a>
+					<img class="card-img" src="${image}" alt="${frappe.utils.escape_html(title)}">
 				</div>
 			`;
 		} else {
 			return `
 				<div class="card-img-container">
-					<a href="/${ item.route || '#' }" style="text-decoration: none;">
-						<div class="card-img-top no-image">
-							${ frappe.get_abbr(title) }
-						</div>
-					</a>
+					<div class="card-img-top no-image">
+						${ frappe.get_abbr(title) }
+					</div>
 				</div>
 			`;
 		}
 	}
 
 	get_card_body_html(item, title, settings) {
-		let body_html = `
+		return `
 			<div class="card-body text-left card-body-flex" style="width:100%">
 				<div style="margin-top: 1rem; display: flex;">
+					${this.get_title(item, title)}
+				</div>
+				<div class="product-category">
+					${item.item_group || ''}
+				</div>
+				${this.get_booking_availability(item)}
+				${this.get_primary_button(item, settings)}
+			</div>
 		`;
-		body_html += this.get_title(item, title);
-
-		body_html += `</div>`;
-		body_html += `<div class="product-category">${ item.item_group || '' }</div>`;
-
-		body_html += this.get_booking_availability(item);
-		body_html += this.get_primary_button(item, settings);
-		body_html += `</div>`; // close div on line 49
-
-		return body_html;
 	}
 
 	get_title(item, title) {
-		let title_html = `
-			<a href="/${ item.route || '#' }">
-				<div class="product-title">
-					${ title || '' }
-				</div>
-			</a>
+		const title_html = `
+			<div class="ellipsis product-title">
+				${ title || '' }
+			</div>
 		`;
 		return title_html;
 	}
 
+	is_item_available(item) {
+		return item.availabilities && item.availabilities.length;
+	}
+
 	get_booking_availability(item) {
-		if (item.availabilities && item.availabilities.length) {
+		if (this.is_item_available(item)) {
 			return `
 					<span class="out-of-stock mb-2 mt-1" style="color: var(--primary-color)">
 						${ __("Available") }
@@ -101,24 +129,17 @@ export default class ResourceGrid  {
 
 	get_primary_button(item, settings) {
 		if (settings.enabled && !item.no_add_to_cart) {
-			const { item_groups, ...filters } = this.filters;
-			const search_params = new URLSearchParams(filters).toString()
-			const url = Object.keys(filters).length ? `${item.route}?${search_params}` : item.route
 			return `
-				<a href="${url}">
-					<div id="${ item.name }" class="btn
-						btn-sm btn-primary
-						mb-0 mt-0 w-100"
-						data-item-code="${ item.item_code }"
-						style="padding: 0.25rem 1rem; min-width: 135px;">
-						<span class="mr-2">
-							<svg class="icon icon-md">
-								<use href="#icon-assets"></use>
-							</svg>
-						</span>
-						${ __('Select a slot') }
-					</div>
-				</a>
+				<button id="${ item.name }" class="btn btn-sm btn-primary mb-0 mt-0 w-100"
+					data-item-code="${ item.item_code }"
+					style="padding: 0.25rem 1rem; min-width: 135px;">
+					<span class="mr-2">
+						<svg class="icon icon-md">
+							<use href="#icon-assets"></use>
+						</svg>
+					</span>
+					${ __('Select a slot') }
+				</button>
 			`;
 		} else {
 			return ``;
