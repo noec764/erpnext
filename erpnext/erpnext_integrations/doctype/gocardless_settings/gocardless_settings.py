@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Frappe Technologies and contributors
+# Copyright (c) 2023, Dokos SAS and contributors
 # For license information, please see license.txt
 
 
@@ -7,17 +7,20 @@ from urllib.parse import urlencode
 import frappe
 import gocardless_pro
 from frappe import _
-from payments.utils.utils import PaymentGatewayController
 from frappe.utils import call_hook_method, cint, flt, get_url
 from gocardless_pro import errors
+from payments.utils.utils import PaymentGatewayController
 
 from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (
 	GoCardlessCustomers,
 	GoCardlessMandates,
 	GoCardlessPayments,
-	GoCardlessPayoutItems
+	GoCardlessPayoutItems,
+	GoCardlessPayouts,
 )
-from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events import GoCardlessWebhookHandler
+from erpnext.erpnext_integrations.doctype.gocardless_settings.webhook_events import (
+	GoCardlessWebhookHandler,
+)
 from erpnext.utilities import payment_app_import_guard
 
 
@@ -52,8 +55,9 @@ class GoCardlessSettings(PaymentGatewayController):
 		)
 		call_hook_method("payment_gateway_enabled", gateway="GoCardless-" + self.gateway_name)
 
-
-	def immediate_payment_processing(self, reference, customer, amount, currency, description, metadata):
+	def immediate_payment_processing(
+		self, reference, customer, amount, currency, description, metadata
+	):
 		try:
 			processed_data = dict(
 				amount=round(flt(amount) * 100.0),
@@ -61,7 +65,7 @@ class GoCardlessSettings(PaymentGatewayController):
 				description=description,
 				reference=reference,
 				links={},
-				metadata=metadata
+				metadata=metadata,
 			)
 
 			valid_mandate = self.check_mandate_validity(customer)
@@ -113,11 +117,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			)
 
 	def get_payment_url(self, **kwargs):
-		return get_url(
-			"./integrations/gocardless_checkout?{0}".format(
-				urlencode(kwargs)
-			)
-		)
+		return get_url("./integrations/gocardless_checkout?{0}".format(urlencode(kwargs)))
 
 	def handle_redirect_flow(self, redirect_flow, reference_document):
 		customer = reference_document.get("customer") or reference_document.get_customer()
@@ -136,7 +136,7 @@ class GoCardlessSettings(PaymentGatewayController):
 			links={"mandate": redirect_flow.links.mandate},
 			metadata={
 				"reference_doctype": reference_document.doctype,
-				"reference_name": reference_document.name
+				"reference_name": reference_document.name,
 			},
 		)
 
@@ -144,14 +144,15 @@ class GoCardlessSettings(PaymentGatewayController):
 
 	def get_transaction_fees(self, payments):
 		gc_payments = GoCardlessPayments(self).get(payments)
-		gc_payout = getattr(gc_payments, "payout", {})
-		payout_items = GoCardlessPayoutItems(self.gocardless_settings).get_list(gc_payout)
+		gc_payment_links = getattr(gc_payments, "links", {})
+		gc_payout = getattr(gc_payment_links, "payout")
+		payout_items = GoCardlessPayoutItems(self).get_list(gc_payout)
 
 		return frappe._dict(
-			base_amount = self.get_base_amount(payout_items.records),
-			fee_amount = self.get_fee_amount(payout_items.records),
-			tax_amount = self.get_tax_amount(payout_items.records),
-			exchange_rate = self.get_exchange_rate(gc_payout)
+			base_amount=self.get_base_amount(payout_items.records, gc_payments),
+			fee_amount=self.get_fee_amount(payout_items.records, gc_payments),
+			tax_amount=self.get_tax_amount(payout_items.records, gc_payments),
+			exchange_rate=self.get_exchange_rate(GoCardlessPayouts(self).get(gc_payout)),
 		)
 
 	@staticmethod
@@ -201,4 +202,6 @@ def handle_webhooks(**kwargs):
 	if integration_request.service_document in ["mandates", "payments"]:
 		GoCardlessWebhookHandler(**kwargs)
 	else:
-		integration_request.handle_failure({"message": _("This type of event is not handled")}, "Not Handled")
+		integration_request.handle_failure(
+			{"message": _("This type of event is not handled")}, "Not Handled"
+		)

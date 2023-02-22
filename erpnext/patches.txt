@@ -337,6 +337,7 @@ erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
 erpnext.patches.dokos.v3_0.update_custom_fields_for_france #2022-12-16
 erpnext.accounts.doctype.subscription.patches.set_an_invoicing_day_on_existing_subscriptions
+erpnext.patches.dokos.v3_0.retry_gocardless_payout_webhooks
 
 # below 2 migration patches should always run last
 erpnext.patches.v14_0.migrate_gl_to_payment_ledger

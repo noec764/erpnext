@@ -22,11 +22,20 @@ export default class ItemSection {
 	}
 
 	build_layout() {
+		let filtered_items = this.data.items
+		if (this.parent.search_type === "client" && this.parent.filter_values.search) {
+			const s = this.parent.filter_values.search
+			filtered_items = this.data.items.filter(item => {
+				return item.item_name.toLowerCase().includes(s.toLowerCase())
+			})
+		}
 		new ResourceGrid({
-			items: this.data.items,
+			items: filtered_items,
 			products_section: $(this.parent.items_section),
 			settings: this.data.settings,
 			filters: this.parent.filter_values
 		});
+
+		this.parent.after_refresh?.(this.data)
 	}
 }

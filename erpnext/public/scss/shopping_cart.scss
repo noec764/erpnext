@@ -120,8 +120,9 @@ body.product-page {
 
 	.card-img {
 		max-height: 210px;
-		object-fit: contain;
-		margin-top: 1.25rem;
+		object-fit: cover;
+		border-bottom-right-radius: unset;
+		border-bottom-left-radius: unset;
 	}
 
 	.no-image {

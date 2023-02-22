@@ -201,10 +201,9 @@ class ItemBooking(Document):
 		)
 
 		overlaps = non_repeating_overlaps
+		self_start = get_datetime(self.starts_on)
+		self_end = get_datetime(self.ends_on)
 		for rep in repeating_overlaps:
-			self_start = get_datetime(self.starts_on)
-			self_end = get_datetime(self.ends_on)
-
 			# Transform the recurring event into a list of instances
 			# Note that the starting timestamp for the processing is the 00:00 of the day of the current booking (self)
 			# NOTE: Only events that start on the same day as the current booking are considered for overlap.
@@ -420,6 +419,9 @@ def get_list_context(context=None):
 			else 0,
 			"header_action": frappe.render_template(
 				"templates/includes/item_booking/item_booking_list_action.html", {}
+			),
+			"list_footer": frappe.render_template(
+				"templates/includes/item_booking/item_booking_list_footer.html", {}
 			),
 		}
 	)
@@ -712,6 +714,11 @@ class ItemBookingAvailabilities:
 
 		self.uom = kwargs.get("uom") or self.item_doc.sales_uom
 		self.duration = get_uom_in_minutes(self.uom)
+
+		if self.duration == 0:
+			if not self.uom:
+				frappe.throw(_("UOM is not set for Item {0}").format(self.item))
+			frappe.throw(_("UOM {0} is not supported").format(self.uom))
 
 	def get_available_slots(self):
 		if not self.item_doc.enable_item_booking or not self.duration:

@@ -11,6 +11,19 @@ frappe.ui.form.on('Venue Settings', {
 			frm.fields_dict["cart_settings_overrides"].grid
 				.update_docfield_property("quotation_series", "options", quotation_series);
 		}
+
+		if (!frm.is_new()) {
+			frm.add_custom_button(__("Create/Update Role Profile Fields in Customer and Subscription"), function(){
+				frappe.call({
+					method: "erpnext.venue.doctype.venue_settings.venue_settings.create_role_profile_fields"
+				}).then(r => {
+					frappe.show_alert({
+						message: __("A field called role_profile_name has been created in the Customer and Subscription document types"),
+						indicator: "green"
+					})
+				})
+			});
+		}
 	},
 })
 
