@@ -282,11 +282,6 @@ class PaymentRequest(Document):
 			if not doc.stripe_customer_id:
 				return
 			doc.stripe_settings = controller.name
-		elif controller.doctype == "GoCardless Settings":
-			doc.gocardless_customer_id = controller.get_customer_id(reference_no)
-			if not doc.gocardless_customer_id:
-				return
-			doc.gocardless_settings = self.gateway.name
 
 		doc.customer = self.customer
 		doc.save(ignore_permissions=True)
@@ -496,9 +491,7 @@ class PaymentRequest(Document):
 		curr_status, next_status = self.status, status
 		is_not_draft = not self.docstatus.is_draft()
 
-		# Only change status to Paid or Pending *once*.
-
-		if (curr_status not in PAID_STATUSES) and (next_status in PAID_STATUSES):
+		if next_status in PAID_STATUSES:
 			self.db_set("status", "Paid", commit=True)
 			self.run_method("set_as_paid", reference_no)
 		elif (curr_status == "Initiated") and (next_status == "Pending") and is_not_draft:

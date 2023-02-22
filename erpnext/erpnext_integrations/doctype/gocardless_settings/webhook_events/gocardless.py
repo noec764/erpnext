@@ -3,7 +3,10 @@ import json
 import frappe
 from frappe import _
 
-from erpnext.erpnext_integrations.doctype.gocardless_settings.api import GoCardlessMandates, GoCardlessPayments
+from erpnext.erpnext_integrations.doctype.gocardless_settings.api import (
+	GoCardlessMandates,
+	GoCardlessPayments,
+)
 
 MANDATES_STATUS = {
 	"customer_approval_granted": "Pending Customer Approval",
@@ -28,6 +31,7 @@ PAYMENTS_STATUS = {
 	"failed": "Failed",
 	"paid_out": "Paid",
 }
+
 
 class GoCardlessWebhookHandler:
 	def __init__(self, **kwargs):
@@ -55,6 +59,11 @@ class GoCardlessWebhookHandler:
 				key = "reference_docname" if k == "reference_name" else k
 				self.integration_request.db_set(key, self.metadata[k])
 
+		# For compatibility
+		if "payment_request" in self.metadata:
+			self.integration_request.db_set("reference_doctype", "Payment Request")
+			self.integration_request.db_set("reference_docname", self.metadata["payment_request"])
+
 	def handle_webhook(self):
 		action = self.data.get("action")
 		service = self.integration_request.service_document
@@ -68,54 +77,51 @@ class GoCardlessWebhookHandler:
 	def handle_payments(self, action):
 		if action not in PAYMENTS_STATUS:
 			return self.integration_request.handle_failure(
-				response={"message": _("This type of event is not handled")},
-				status="Not Handled"
+				response={"message": _("This type of event is not handled")}, status="Not Handled"
 			)
 
-		elif not (self.integration_request.reference_doctype and self.integration_request.reference_docname):
+		elif not (
+			self.integration_request.reference_doctype and self.integration_request.reference_docname
+		):
 			return self.integration_request.handle_failure(
-				response={"message": _("This event contains not metadata")},
-				status="Failed"
+				response={"message": _("This event contains not metadata")}, status="Failed"
 			)
 
-		elif not frappe.db.exists(self.integration_request.reference_doctype, self.integration_request.reference_docname):
+		elif not frappe.db.exists(
+			self.integration_request.reference_doctype, self.integration_request.reference_docname
+		):
 			return self.integration_request.handle_failure(
-				response={"message": _("The reference document does not exist")},
-				status="Failed"
+				response={"message": _("The reference document does not exist")}, status="Failed"
 			)
 
 		try:
-			print("PENDING", PAYMENTS_STATUS[action])
-			reference_document = frappe.get_doc(self.integration_request.reference_doctype, self.integration_request.reference_docname)
-			response = reference_document.run_method("on_payment_authorized", status=PAYMENTS_STATUS[action], reference_no=self.payment)
-
-			self.integration_request.handle_success(
-				response={"message": response}
+			reference_document = frappe.get_doc(
+				self.integration_request.reference_doctype, self.integration_request.reference_docname
 			)
+			response = reference_document.run_method(
+				"on_payment_authorized", status=PAYMENTS_STATUS[action], reference_no=self.payment
+			)
+
+			self.integration_request.handle_success(response={"message": response})
 
 		except Exception:
 			self.integration_request.handle_failure(
-				response={"message": frappe.get_traceback()},
-				status="Failed"
+				response={"message": frappe.get_traceback()}, status="Failed"
 			)
 
 	def handle_mandates(self, action):
 		if action not in MANDATES_STATUS:
 			return self.integration_request.handle_failure(
-				response={"message": _("This type of event is not handled")},
-				status="Not Handled"
+				response={"message": _("This type of event is not handled")}, status="Not Handled"
 			)
 
 		try:
 			response = self.change_mandate_status()
-			self.integration_request.handle_success(
-				response={"message": response}
-			)
+			self.integration_request.handle_success(response={"message": response})
 
 		except Exception:
 			self.integration_request.handle_failure(
-				response={"message": frappe.get_traceback()},
-				status="Failed"
+				response={"message": frappe.get_traceback()}, status="Failed"
 			)
 
 	def change_mandate_status(self):
