@@ -15,6 +15,7 @@ def execute():
 		doc = frappe.get_doc("Integration Request", wh.name)
 		doc.retry_webhook()
 
+		doc.reload()
 		ref_no = frappe.db.get_value(
 			doc.reference_doctype, doc.reference_docname, "transaction_reference"
 		)
