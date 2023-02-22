@@ -263,3 +263,23 @@ def _get_shopping_cart_overrides_cached(company):
 	cart_settings["_was_overridden_by_multicompany_mode"] = True
 	cart_settings = frappe._dict(cart_settings)  # convert back to frappe._dict
 	return cart_settings
+
+
+@frappe.whitelist()
+def create_role_profile_fields():
+	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+
+	custom_fields = {}
+	for dt in ("Customer", "Subscription"):
+		df = dict(
+			doctype=dt,
+			fieldname="role_profile_name",
+			label="Role Profile",
+			fieldtype="Link",
+			insert_after="customer_primary_contact" if dt == "Customer" else "contact_person",
+			options="Role Profile",
+			description="All users associated with this customer will be attributed this role profile"
+		)
+		custom_fields[dt] = [df]
+
+	create_custom_fields(custom_fields)
