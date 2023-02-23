@@ -64,6 +64,17 @@ class VenueSettings(Document):
 	def multicompany_get_allowed_companies(self) -> list:
 		return [override.company for override in self.cart_settings_overrides]
 
+	def multicompany_get_dropdown(self, selected_company: str | None = None) -> list:
+		selected_company = selected_company or self.multicompany_get_current_company()
+		return [
+			{
+				"label": override.get("_label") or override.company,
+				"value": override.company,
+				"selected": override.company == selected_company
+			}
+			for override in self.cart_settings_overrides
+		]
+
 	def multicompany_get_current_company(self):
 		if self.enable_multi_companies:
 			if company := multicompany_read_cookie():
@@ -89,7 +100,7 @@ class VenueSettings(Document):
 
 MULTICOMPANY_COOKIE_NAME = "company"
 MULTICOMPANY_FLAG_NAME = "multicompany_current_company"
-MULTICOMPANY_CONTEXT_ALL_COMPANIES = "multicompany_list"
+MULTICOMPANY_CONTEXT_DROPDOWN = "multicompany_dropdown"
 MULTICOMPANY_CONTEXT_CURRENT_COMPANY = "multicompany_current"
 
 def multicompany_read_cookie():
@@ -165,10 +176,7 @@ def update_website_context(context):
 
 	# Update context to include the list of all the allowed companies,
 	context[MULTICOMPANY_CONTEXT_CURRENT_COMPANY] = company
-	context[MULTICOMPANY_CONTEXT_ALL_COMPANIES] = [
-		{ "label": name, "value": name, "selected": name == company }
-		for name in venue_settings.multicompany_get_allowed_companies()
-	]
+	context[MULTICOMPANY_CONTEXT_DROPDOWN] = venue_settings.multicompany_get_dropdown(company)
 
 	if context["top_bar_items"]:
 		# Filter out top bar items that route to excluded item groups
@@ -241,7 +249,7 @@ def _get_shopping_cart_overrides_cached(company):
 	venue_settings = frappe.get_cached_doc("Venue Settings")
 	cart_settings = frappe.get_cached_doc("E Commerce Settings")
 
-	# find the overrides for the company
+	# Find the overrides for the company
 	overrides = None
 	for o in venue_settings.get("cart_settings_overrides", []):
 		if o.get("company") == company:
@@ -249,12 +257,18 @@ def _get_shopping_cart_overrides_cached(company):
 			break
 	if not overrides: return  # note: could've been a for-else, but this is more readable
 
-	# get and copy the cart_settings to a dict
+	# Get and copy the cart_settings to a dict
 	cart_settings = cart_settings.as_dict()
 
-	# update the base with the overrides
+	# Fetch the names of the fields to override
 	# fields = {"company", "price_list", "default_customer_group", "quotation_series"}
-	fields = { df.fieldname for df in frappe.get_meta("Venue Cart Settings").get("fields") }
+	fields: set[str] = { df.fieldname for df in frappe.get_meta("Venue Cart Settings").fields }
+	# NOTE: Could also do an intersection with the fields of the E Commerce Settings
+
+	# Remove the _label field as should only be used to display the choice of company
+	fields.difference_update({ "_label" })
+
+	# Update the base with the overrides
 	for fieldname in fields:
 		if value := overrides.get(fieldname):
 			cart_settings["_" + fieldname + "__original"] = cart_settings[fieldname]
