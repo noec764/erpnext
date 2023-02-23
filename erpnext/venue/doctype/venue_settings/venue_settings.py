@@ -2,16 +2,17 @@
 # For license information, please see license.txt
 
 
+import datetime
+from urllib.parse import unquote
+
 import frappe
 from frappe.model.document import Document
-
-from urllib.parse import unquote
-import datetime
 
 from erpnext.venue.doctype.venue_settings.setup_custom_fields import (
 	multicompany_create_custom_fields,
 	multicompany_delete_custom_fields,
 )
+
 
 class VenueSettings(Document):
 	# Support for multiple companies/venues with distinct items
@@ -26,11 +27,15 @@ class VenueSettings(Document):
 		unique_companies = set()
 		for override in self.cart_settings_overrides:
 			if override.company in unique_companies:
-				frappe.throw(frappe._('Company {0} is used more than once in the cart settings overrides').format(override.company))
+				frappe.throw(
+					frappe._("Company {0} is used more than once in the cart settings overrides").format(
+						override.company
+					)
+				)
 			unique_companies.add(override.company)
 
 		if self.enable_multi_companies and not unique_companies:
-			frappe.throw(frappe._('You must select at least one company in the cart settings overrides'))
+			frappe.throw(frappe._("You must select at least one company in the cart settings overrides"))
 
 	def on_update(self):
 		old_doc = self.get_doc_before_save()
@@ -70,7 +75,7 @@ class VenueSettings(Document):
 			{
 				"label": override.get("_label") or override.company,
 				"value": override.company,
-				"selected": override.company == selected_company
+				"selected": override.company == selected_company,
 			}
 			for override in self.cart_settings_overrides
 		]
@@ -103,8 +108,10 @@ MULTICOMPANY_FLAG_NAME = "multicompany_current_company"
 MULTICOMPANY_CONTEXT_DROPDOWN = "multicompany_dropdown"
 MULTICOMPANY_CONTEXT_CURRENT_COMPANY = "multicompany_current"
 
+
 def multicompany_read_cookie():
 	return multicompany_read_and_update_cookie()
+
 
 def multicompany_read_and_update_cookie():
 	cached = frappe.flags.get(MULTICOMPANY_FLAG_NAME, 0)
@@ -186,19 +193,22 @@ def update_website_context(context):
 		# which is always false (as VSC.company is a mandatory field),
 		# so all item group routes will be excluded in the end (correct behavior).
 
-		ItemGroup = frappe.qb.DocType('Item Group')
-		VSC = frappe.qb.DocType('Venue Selected Company')
-		query = frappe.qb.from_(ItemGroup)\
-			.select(
-				ItemGroup.route,
-				VSC.company.isnotnull().as_('allowed')
-			).left_join(VSC).on(
+		ItemGroup = frappe.qb.DocType("Item Group")
+		VSC = frappe.qb.DocType("Venue Selected Company")
+		query = (
+			frappe.qb.from_(ItemGroup)
+			.select(ItemGroup.route, VSC.company.isnotnull().as_("allowed"))
+			.left_join(VSC)
+			.on(
 				# basic join on child table
-				(VSC.parenttype == 'Item Group') & (VSC.parent == ItemGroup.name)
+				(VSC.parenttype == "Item Group")
+				& (VSC.parent == ItemGroup.name)
 				# additional join condition:
 				# if the company matches, include the row, else the row/company NULL (important!)
 				& (VSC.company == company)
-			).where(ItemGroup.show_in_website == 1)
+			)
+			.where(ItemGroup.show_in_website == 1)
+		)
 
 		excluded_routes = set()
 		for res in query.run(as_dict=True):
@@ -227,6 +237,7 @@ def override_e_commerce_settings(e_commerce_settings):
 	"""
 	return get_shopping_cart_overrides()  # NOTE: might return None, which means no override
 
+
 def get_shopping_cart_overrides(company=None):
 	if not hasattr(frappe, "request"):
 		return  # not called from a request
@@ -242,8 +253,13 @@ def get_shopping_cart_overrides(company=None):
 	# everything is ok, return the overrides (if any, and cached)
 	return _get_shopping_cart_overrides_cached(company)
 
+
 from functools import lru_cache
-@lru_cache(maxsize=32, typed=True)  # note: there is no way to invalidate this cache if the settings change during runtime
+
+
+@lru_cache(
+	maxsize=32, typed=True
+)  # note: there is no way to invalidate this cache if the settings change during runtime
 def _get_shopping_cart_overrides_cached(company):
 	assert company, "invalid arguments: do not use this function directly"
 	venue_settings = frappe.get_cached_doc("Venue Settings")
@@ -255,18 +271,19 @@ def _get_shopping_cart_overrides_cached(company):
 		if o.get("company") == company:
 			overrides = o
 			break
-	if not overrides: return  # note: could've been a for-else, but this is more readable
+	if not overrides:
+		return  # note: could've been a for-else, but this is more readable
 
 	# Get and copy the cart_settings to a dict
 	cart_settings = cart_settings.as_dict()
 
 	# Fetch the names of the fields to override
 	# fields = {"company", "price_list", "default_customer_group", "quotation_series"}
-	fields: set[str] = { df.fieldname for df in frappe.get_meta("Venue Cart Settings").fields }
+	fields: set[str] = {df.fieldname for df in frappe.get_meta("Venue Cart Settings").fields}
 	# NOTE: Could also do an intersection with the fields of the E Commerce Settings
 
 	# Remove the _label field as should only be used to display the choice of company
-	fields.difference_update({ "_label" })
+	fields.difference_update({"_label"})
 
 	# Update the base with the overrides
 	for fieldname in fields:
@@ -284,7 +301,11 @@ def create_role_profile_fields():
 	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 	custom_fields = {}
-	for dt, insert_after in {"Customer": "customer_primary_contact", "Subscription": "contact_person", "Subscription Template": "portal_description"}.items():
+	for dt, insert_after in {
+		"Customer": "customer_primary_contact",
+		"Subscription": "contact_person",
+		"Subscription Template": "portal_description",
+	}.items():
 		df = dict(
 			doctype=dt,
 			fieldname="role_profile_name",
@@ -292,7 +313,7 @@ def create_role_profile_fields():
 			fieldtype="Link",
 			insert_after=insert_after,
 			options="Role Profile",
-			description="All users associated with this customer will be attributed this role profile"
+			description="All users associated with this customer will be attributed this role profile",
 		)
 		custom_fields[dt] = [df]
 
