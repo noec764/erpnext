@@ -69,7 +69,7 @@ class BookingPage {
 
 		const make_pill = (label, value) => {
 			const $pill = $(`
-				<label class="filter-type__pill">
+				<label class="filter-type__pill ellipsis">
 					<input type="checkbox" name="" />
 					<span>...</span>
 				</label>
