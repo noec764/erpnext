@@ -99,6 +99,7 @@
    "has_batch_no": 0,
    "has_serial_no": 0,
    "inspection_required": 0,
+   "is_stock_item": 1,
    "is_sub_contracted_item": 0,
    "item_code": "_Test Item Home Desktop 200",
    "item_group": "_Test Item Group Desktops",
