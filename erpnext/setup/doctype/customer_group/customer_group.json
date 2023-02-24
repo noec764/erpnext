@@ -67,6 +67,7 @@
    "fieldname": "default_price_list",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
+   "in_preview": 1,
    "label": "Default Price List",
    "options": "Price List"
   },
