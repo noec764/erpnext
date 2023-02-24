@@ -259,6 +259,11 @@ class PaymentRequest(Document):
 		)
 
 	def set_as_paid(self, reference_no=None):
+		if existing_pe := frappe.db.get_value(
+			"Payment Entry", filters={"docstatus": 1, "reference_no": reference_no}
+		):
+			return frappe.get_doc("Payment Entry", existing_pe)
+
 		frappe.flags.mute_messages = True
 		self.register_customer(reference_no)
 		payment_entry = self.create_payment_entry(reference_no=reference_no)
@@ -302,7 +307,7 @@ class PaymentRequest(Document):
 			frappe.db.get_value(
 				"Payment Gateway",
 				self.payment_gateway,
-				["fee_account", "cost_center", "mode_of_payment"],
+				["fee_account", "tax_account", "cost_center", "mode_of_payment"],
 				as_dict=1,
 			)
 			or dict()
@@ -352,27 +357,30 @@ class PaymentRequest(Document):
 
 		self.get_payment_gateway_fees(reference_no)
 
-		if (
-			self.fee_amount and gateway_defaults.get("fee_account") and gateway_defaults.get("cost_center")
-		):
-			fees = flt(self.fee_amount) * flt(self.get("target_exchange_rate", 1))
-			payment_entry.update(
-				{
-					"paid_amount": flt(self.base_amount or self.grand_total) - fees,
-					"received_amount": flt(self.grand_total) - fees,
-				}
-			)
+		for value in ["fee", "tax"]:
+			if (
+				self.get(f"{value}_amount")
+				and gateway_defaults.get(f"{value}_account")
+				and gateway_defaults.get("cost_center")
+			):
+				fee_amount = flt(self.get(f"{value}_amount")) * flt(self.get("target_exchange_rate", 1))
+				payment_entry.update(
+					{
+						"paid_amount": flt(self.base_amount or self.grand_total) - fee_amount,
+						"received_amount": flt(self.grand_total) - fee_amount,
+					}
+				)
 
-			payment_entry.append(
-				"deductions",
-				{
-					"account": gateway_defaults.get("fee_account"),
-					"cost_center": gateway_defaults.get("cost_center"),
-					"amount": self.fee_amount,
-				},
-			)
+				payment_entry.append(
+					"deductions",
+					{
+						"account": gateway_defaults.get(f"{value}_account"),
+						"cost_center": gateway_defaults.get("cost_center"),
+						"amount": self.get(f"{value}_amount"),
+					},
+				)
 
-			payment_entry.set_amounts()
+				payment_entry.set_amounts()
 
 		# Update dimensions
 		payment_entry.update(
@@ -415,6 +423,7 @@ class PaymentRequest(Document):
 
 				self.fee_amount += transaction_fees.fee_amount
 				self.base_amount = transaction_fees.base_amount or self.base_amount
+				self.tax_amount = transaction_fees.get("tax_amount")
 				if transaction_fees.target_exchange_rate:
 					self.target_exchange_rate = transaction_fees.target_exchange_rate
 
@@ -766,7 +775,7 @@ def get_message(doc, template):
 			"payment_can_be_processed_immediately": payment_can_be_processed_immediately
 			if payment_can_be_processed_immediately is not None
 			else check_if_immediate_payment_is_autorized(doc.get("name")),
-		}
+		},
 	)
 
 	email_template = frappe.get_doc("Email Template", template)

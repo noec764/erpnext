@@ -148,20 +148,22 @@ class GoCardlessSettings(PaymentGatewayController):
 		gc_payout = getattr(gc_payment_links, "payout")
 		payout_items = GoCardlessPayoutItems(self).get_list(gc_payout)
 
-		return frappe._dict(
-			base_amount=self.get_base_amount(payout_items.records, gc_payments),
-			fee_amount=self.get_fee_amount(payout_items.records, gc_payments),
-			tax_amount=self.get_tax_amount(payout_items.records, gc_payments),
+		fees = frappe._dict(
+			base_amount=self.get_base_amount(payout_items.records, gc_payments.id),
+			fee_amount=self.get_fee_amount(payout_items.records, gc_payments.id),
+			tax_amount=self.get_tax_amount(payout_items.records, gc_payments.id),
 			exchange_rate=self.get_exchange_rate(GoCardlessPayouts(self).get(gc_payout)),
 		)
+
+		return fees
 
 	@staticmethod
 	def get_base_amount(payout_items, payments):
 		paid_amount = sum(
 			[
-				flt(x.amount)
-				for x in payout_items
-				if (x.type == "payment_paid_out" and getattr(x.links, "payment") == payments)
+				flt(record.amount)
+				for record in payout_items
+				if (record.type == "payment_paid_out" and record.links.payment == payments)
 			]
 		)
 		return paid_amount / 100
@@ -170,26 +172,24 @@ class GoCardlessSettings(PaymentGatewayController):
 	def get_fee_amount(payout_items, payments):
 		fee_amount = sum(
 			[
-				flt(x.amount)
-				for x in payout_items
+				flt(record.amount)
+				for record in payout_items
 				if (
-					(x.type == "gocardless_fee" or x.type == "app_fee")
-					and getattr(x.links, "payment") == payments
+					(record.type == "gocardless_fee" or record.type == "app_fee")
+					and record.links.payment == payments
 				)
 			]
 		)
-		return fee_amount / 100
+		return abs(fee_amount) / 100
 
 	@staticmethod
 	def get_tax_amount(payout_items, payments):
 		taxes = []
 		for x in payout_items:
-			if (x.type == "gocardless_fee" or x.type == "app_fee") and getattr(
-				x.links, "payment"
-			) == payments:
+			if (x.type == "gocardless_fee" or x.type == "app_fee") and x.links.payment == payments:
 				taxes.extend(x.taxes)
 
-		return sum([flt(x.get("amount")) for x in taxes]) / 100
+		return abs(sum([flt(x.get("amount")) for x in taxes])) / 100
 
 	@staticmethod
 	def get_exchange_rate(payout):
