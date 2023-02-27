@@ -1,11 +1,11 @@
-{% if multicompany_list is defined %}
+{% if multicompany_dropdown is defined %}
 <div class="dropdown">
 	<button class="btn btn-link dropdown-toggle" type="button" id="multicompany_select_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		{{ _("Select a company") }}
 	</button>
 
 	<div class="dropdown-menu" aria-labelledby="multicompany_select_btn">
-		{% for item in multicompany_list %}
+		{% for item in multicompany_dropdown %}
 		<a class="dropdown-item {{ item.selected and 'active' or '' }}" data-value="{{ item.value |e }}" tabindex="0">
 			{{ item.label |e }}
 		</a>

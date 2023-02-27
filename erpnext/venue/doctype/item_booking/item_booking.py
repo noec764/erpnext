@@ -715,7 +715,7 @@ class ItemBookingAvailabilities:
 		self.uom = kwargs.get("uom") or self.item_doc.sales_uom
 		self.duration = get_uom_in_minutes(self.uom)
 
-		if self.duration == 0:
+		if self.item_doc.enable_item_booking and self.duration == 0:
 			if not self.uom:
 				frappe.throw(_("UOM is not set for Item {0}").format(self.item))
 			frappe.throw(_("UOM {0} is not supported").format(self.uom))
