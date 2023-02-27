@@ -590,9 +590,11 @@ def make_reverse_gl_entries(
 		check_freezing_date(gl_entries[0]["posting_date"], adv_adj)
 		set_as_cancel(gl_entries[0]["voucher_type"], gl_entries[0]["voucher_no"])
 
+		accounting_number = get_accounting_number(gl_entries[0])
 		for entry in gl_entries:
 			new_gle = copy.deepcopy(entry)
 			new_gle["name"] = None
+			new_gle["accounting_entry_number"] = accounting_number
 			debit = new_gle.get("debit", 0)
 			credit = new_gle.get("credit", 0)
 
