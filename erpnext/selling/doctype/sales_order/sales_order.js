@@ -330,16 +330,9 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 					});
 					return;
 				}
-				else if(!r.message) {
-					frappe.msgprint({
-						title: __('Work Order not created'),
-						message: __('Work Order already created for all items with BOM'),
-						indicator: 'orange'
-					});
-					return;
-				} else {
-					var fields = [
-						{fieldtype:'Table', fieldname: 'items',
+				else {
+					const fields = [
+						{label: __('Items'), fieldtype:'Table', fieldname: 'items',
 							description: __('Select BOM and Qty for Production'),
 							fields: [
 								{fieldtype:'Read Only', fieldname:'item_code',
@@ -421,9 +414,9 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 	make_raw_material_request() {
 		var me = this;
 		this.frm.call({
-			doc: this.frm.doc,
-			method: 'get_work_order_items',
+			method: "erpnext.selling.doctype.sales_order.sales_order.get_work_order_items",
 			args: {
+				sales_order: this.frm.docname,
 				for_raw_material_request: 1
 			},
 			callback: function(r) {
@@ -442,6 +435,7 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 	}
 
 	make_raw_material_request_dialog(r) {
+		var me = this;
 		var fields = [
 			{fieldtype:'Check', fieldname:'include_exploded_items',
 				label: __('Include Exploded Items')},
