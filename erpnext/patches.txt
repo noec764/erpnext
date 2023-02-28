@@ -274,7 +274,7 @@ erpnext.patches.dokos.v2_0.update_website_settings
 erpnext.patches.dokos.v2_0.delete_subscription_portal
 erpnext.patches.dokos.v3_0.rename_policy_title_field
 erpnext.patches.dokos.v2_0.relink_payment_requests_with_subscriptions
-erpnext.patches.dokos.v2_0.add_accounting_entry_number
+erpnext.patches.dokos.v2_0.add_accounting_entry_number #2023-02-28
 execute:frappe.delete_doc_if_exists("Report", "Cadrage TVA base par taux")
 execute:frappe.db.set_value('Website Settings', 'Website Settings', 'app_name', 'Dokos')
 erpnext.patches.dokos.v3_0.merge_straight_line_depreciation_methods
