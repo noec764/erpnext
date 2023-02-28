@@ -1,24 +1,45 @@
+workflow:
+  rules:
+    # Exclude commits with a title containing "[no-ci]"
+    - if: $CI_COMMIT_TITLE =~ /\[no-ci\]/
+      when: never
+
+    # Don't run for the source branch if there is an open merge request (to avoid duplicate builds)
+    # https://docs.gitlab.com/ee/ci/yaml/workflow.html#switch-between-branch-pipelines-and-merge-request-pipelines
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+
+    # Run for merge requests, or...
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+    # or run if the branch is the v3.x.x, v3.x.x-hotfix, master or develop branch
+    - if: $CI_COMMIT_REF_NAME =~ /(\.x\.x|master|develop)/
+
+    # or run if there is a tag
+    - if: $CI_COMMIT_TAG != null
+
+    # or run if the commit message contains "[build-docker]"
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-docker\]/
+
 stages:
   - Unit Tests
-
-variables:
-  BASE_BRANCH: "develop"
+  - Docker Dokos
 
 unittests:
   image: "python:3.10-buster"
 
   stage: Unit Tests
 
+  variables:
+    BASE_BRANCH: "develop"
+
   rules:
-    - if: $CI_COMMIT_REF_NAME == "master"
+    # Skip if the commit message contains "[skip-tests]"
+    - if: $CI_COMMIT_MESSAGE =~ /\[skip-tests\]/
+      when: never
+    - if: $CI_COMMIT_REF_NAME =~ /(\.x\.x|master|develop)/
       variables:
-        BASE_BRANCH: "master"
-    - if: $CI_COMMIT_REF_NAME == "v3.x.x"
-      variables:
-        BASE_BRANCH: "v3.x.x"
-    - if: $CI_COMMIT_REF_NAME == "v3.x.x-hotfix"
-      variables:
-        BASE_BRANCH: "v3.x.x-hotfix"
+        BASE_BRANCH: "${CI_COMMIT_REF_NAME}"
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "v3.x.x-hotfix"
       variables:
         BASE_BRANCH: "v3.x.x-hotfix"
@@ -74,3 +95,59 @@ unittests:
 
   script:
     - su -c "cd /home/dokotest/dokos-bench && bench --site test_site run-parallel-tests --app erpnext" dokotest
+
+build_docker:
+  stage: Docker Dokos
+  rules:  # Run if the commit is tagged or if its message contains "[build-docker]"
+    - if: $CI_COMMIT_TAG != null
+    - if: $CI_COMMIT_MESSAGE =~ /\[build-docker\]/
+  image: docker:git
+  services:
+    - docker:dind
+  variables:
+    DOKOS_BRANCH: "${CI_COMMIT_REF_NAME}"
+    DODOCK_BRANCH: "v3.x.x-hotfix"
+  script:
+    - IMAGE_VERSION=$CI_COMMIT_TAG
+    - if [ -z "$IMAGE_VERSION" ]; then IMAGE_VERSION=$CI_COMMIT_SHORT_SHA; fi
+    - IMAGE_NAME="$CI_REGISTRY_IMAGE:$IMAGE_VERSION"
+
+    - if echo "$CI_COMMIT_REF_NAME" | grep -Eq '(\.x\.x|master|develop)'; then DODOCK_BRANCH="$CI_COMMIT_REF_NAME"; fi
+
+    - echo "Building image $IMAGE_NAME"
+    - git clone https://github.com/frappe/frappe_docker.git
+    - cd frappe_docker
+    - |-
+      export APPS_JSON=$(cat <<-EOF
+      [
+        {
+          "url": "https://gitlab.com/dokos/payments",
+          "branch": "develop"
+        },
+        {
+          "url": "https://gitlab.com/dokos/hrms",
+          "branch": "develop"
+        },
+        {
+          "url": "https://gitlab.com/dokos/dokos",
+          "branch": "$DOKOS_BRANCH"
+        }
+      ]
+      EOF
+      )
+    - echo ${APPS_JSON}
+    - export APPS_JSON_BASE64=$(echo ${APPS_JSON} | base64 -w 0)
+    - echo $APPS_JSON_BASE64
+    - >
+      docker build \
+        --build-arg=FRAPPE_PATH=https://gitlab.com/dokos/dodock \
+        --build-arg=FRAPPE_BRANCH=$DODOCK_BRANCH \
+        --build-arg=PYTHON_VERSION=3.10.6 \
+        --build-arg=NODE_VERSION=16.19.0 \
+        --build-arg=APPS_JSON_BASE64="$APPS_JSON_BASE64" \
+        --tag=$IMAGE_NAME \
+        --file=images/custom/Containerfile .
+    - echo "Logging in to registry $CI_REGISTRY"
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - echo "Pushing image $IMAGE_NAME"
+    - docker push $IMAGE_NAME
