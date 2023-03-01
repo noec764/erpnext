@@ -86,7 +86,8 @@ export default {
 			).then((result) => {
 				this.$emit('resetList')
 				this.btn_clicked = false;
-				frappe.show_alert({message: __(`${this.selected_documents.length} documents reconciled`), indicator: "green"})
+				const message = __("{0} documents reconciled", [this.selected_documents.length]);
+				frappe.show_alert({message, indicator: "green"})
 			}).catch(r => {
 				this.btn_clicked = false;
 			})
