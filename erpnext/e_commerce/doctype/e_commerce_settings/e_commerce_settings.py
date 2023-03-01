@@ -160,14 +160,16 @@ class ECommerceSettings(Document):
 
 
 def validate_cart_settings(doc=None, method=None):
-	frappe.get_doc("E Commerce Settings", "E Commerce Settings").run_method("validate")
+	frappe.get_single("E Commerce Settings").run_method("validate")
 
 
 def get_shopping_cart_settings() -> ECommerceSettings:
-	e_commerce_settings = frappe.get_cached_doc("E Commerce Settings")
+	e_commerce_settings = frappe.get_single("E Commerce Settings")
 
 	for hook in frappe.get_hooks("override_e_commerce_settings"):
-		e_commerce_settings = frappe.get_attr(hook)(e_commerce_settings=e_commerce_settings) or e_commerce_settings
+		e_commerce_settings = (
+			frappe.get_attr(hook)(e_commerce_settings=e_commerce_settings) or e_commerce_settings
+		)
 
 	return e_commerce_settings
 
