@@ -29,7 +29,7 @@ frappe.query_reports["Subcontracted Raw Materials To Be Transferred"] = {
 			fieldname:"to_date",
 			label: __("To Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_days(frappe.datetime.month_start(),-1),
+			default: frappe.datetime.get_today(),
 			reqd: 1
 		},
 	]
