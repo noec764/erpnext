@@ -18,6 +18,7 @@ from erpnext.venue.doctype.item_booking.item_booking import get_availabilities
 def get_context(context):
 	context.no_cache = 1
 	context.show_sidebar = True
+	context.full_width = True
 
 	if context.translated_messages:
 		messages = frappe.parse_json(context.translated_messages)
@@ -38,6 +39,38 @@ def get_item_groups():
 
 
 @frappe.whitelist()
+def count_item_groups():
+	# Perform query to get items
+	engine = ProductQuery()
+	engine.page_length = 999999999
+	engine.filters = [["enable_item_booking", "=", 1]]
+	result = engine.query(fields={})
+	items = result["items"]
+
+	# Count available/total items per group
+	counts = {}
+	for item in items:
+		group = item.item_group
+		if group not in counts:
+			counts[group] = 0
+		counts[group] += 1
+
+	groups = []
+	for group_name in counts:
+		group_count = counts[group_name]
+		if group_count:
+			groups.append(
+				{
+					"label": frappe._(group_name),
+					"value": group_name,
+					"count": group_count,
+				}
+			)
+
+	return groups
+
+
+@frappe.whitelist()
 def get_items(filters=None):
 	if filters:
 		filters = frappe.parse_json(filters)
@@ -52,7 +85,7 @@ def get_items(filters=None):
 
 	# Perform query to get items
 	engine = ProductQuery()
-	engine.page_length = 1000
+	engine.page_length = 999999999
 	engine.filters = query_filters
 	result = engine.query(fields={}, search_term=search_term, start=0, item_group=None)
 	items = result["items"]
@@ -63,7 +96,11 @@ def get_items(filters=None):
 		start_date, end_date = getdate(start_date), getdate(end_date)
 		end_date = add_days(end_date, 1)
 		for item in items:
-			item.availabilities = get_availabilities(item.item_code, start_date, end_date)
+			try:
+				item.availabilities = get_availabilities(item.item_code, start_date, end_date)
+			except frappe.ValidationError:
+				frappe.clear_last_message()
+				item.availabilities = []
 
 	# Count available/total items per group
 	group_counts = {}
@@ -81,13 +118,19 @@ def get_items(filters=None):
 
 	return {"items": items, "group_counts": group_counts, "settings": get_shopping_cart_settings()}
 
+
 @frappe.whitelist()
 def get_upcoming_bookings():
 	user = frappe.session.user
 
-	bookings = frappe.get_all("Item Booking",
-		filters={"user": user, "starts_on": (">", now_datetime()), "status": ("in", ("Confirmed", "Not Confirmed"))},
-		fields=["item_name", "user", "starts_on", "ends_on"]
+	bookings = frappe.get_all(
+		"Item Booking",
+		filters={
+			"user": user,
+			"starts_on": (">", now_datetime()),
+			"status": ("in", ("Confirmed", "Not Confirmed")),
+		},
+		fields=["item_name", "user", "starts_on", "ends_on"],
 	)
 
 	output = defaultdict(list)
