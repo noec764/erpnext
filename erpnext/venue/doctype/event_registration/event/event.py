@@ -3,7 +3,6 @@
 
 import frappe
 from frappe import _
-
 from frappe.desk.doctype.event.event import Event
 
 
@@ -20,7 +19,12 @@ class EventIsOverbooked(frappe.ValidationError):
 
 	@classmethod
 	def throw_desk(cls):
-		frappe.throw(_("This event is overbooked. Either increase the number of maximum registrations, or cancel some registrations."), cls)
+		frappe.throw(
+			_(
+				"This event is overbooked. Either increase the number of maximum registrations, or cancel some registrations."
+			),
+			cls,
+		)
 
 
 class DokosEvent(Event):
@@ -32,7 +36,7 @@ class DokosEvent(Event):
 
 	def validate_image_is_public(self):
 		if str(self.image or "").startswith("/private/"):
-			file_name = frappe.get_value("File", { "is_private": True, "file_url": self.image })
+			file_name = frappe.get_value("File", {"is_private": True, "file_url": self.image})
 			file = frappe.get_doc("File", file_name)
 			file.is_private = False
 			file.save()
@@ -50,7 +54,7 @@ class DokosEvent(Event):
 			self.registration_amount = 0
 
 	def get_context(self, context):
-		# no_cache show_sidebar show_close_button content event_style attachments
+		# no_cache show_sidebar show_close_button content event_style attachments
 		super().get_context(context)
 
 		context.template = "/venue/doctype/event_registration/event/templates/event.html"
@@ -68,9 +72,12 @@ class DokosEvent(Event):
 
 		context.allow_cancellations = self.allow_cancellations
 		context.accept_payment = False
-		context.event_capacity_info = get_capacity_info(self) or {"error": "could not compute capacity info"}
+		context.event_capacity_info = get_capacity_info(self) or {
+			"error": "could not compute capacity info"
+		}
 
-		from frappe.utils import format_datetime, format_duration, formatdate, parse_json
+		from frappe.utils import format_datetime, format_duration, formatdate
+
 		context.event_meta = []
 		shown_fields = ["max_number_of_registrations"]
 		for k in shown_fields:
@@ -80,7 +87,9 @@ class DokosEvent(Event):
 
 			if k == "max_number_of_registrations":
 				if context.event_capacity_info["has_limit"]:
-					context.event_meta.append({ "label": _("{0} seats").format(context.event_capacity_info["limit"]) })
+					context.event_meta.append(
+						{"label": _("{0} seats").format(context.event_capacity_info["limit"])}
+					)
 				continue
 			elif df.fieldtype == "Date":
 				val = formatdate(val)
@@ -89,9 +98,11 @@ class DokosEvent(Event):
 			elif df.fieldtype == "Duration":
 				val = format_duration(val)
 
-			context.event_meta.append({ "key": df.fieldname, "label": label, "value": val })
+			context.event_meta.append({"key": df.fieldname, "label": label, "value": val})
 
-		context.event_tags = frappe.get_all("Tag Link", filters={"document_type": "Event","document_name": self.name}, pluck="tag")
+		context.event_tags = frappe.get_all(
+			"Tag Link", filters={"document_type": "Event", "document_name": self.name}, pluck="tag"
+		)
 
 		if self.registration_form:
 			web_form = frappe.get_doc("Web Form", self.registration_form)
@@ -111,11 +122,13 @@ class DokosEvent(Event):
 			context.registration_form = frappe.as_json(fields)
 
 		from frappe.utils.user import is_system_user
+
 		context.can_edit_event = is_system_user() and self.has_permission("write")
 
 
+from typing import Literal, TypedDict
 
-from typing import TypedDict, Literal
+
 class CapacityInfo(TypedDict):
 	allow_registrations: bool
 	is_full: bool
@@ -132,7 +145,7 @@ def get_capacity_info(event: DokosEvent | str) -> CapacityInfo | None:
 
 	fields = ["name", "published", "allow_registrations", "max_number_of_registrations"]
 	if isinstance(event, DokosEvent):
-		event_info = { k: event.get(k) for k in fields }
+		event_info = {k: event.get(k) for k in fields}
 	elif isinstance(event, str):
 		event_info = frappe.db.get_value("Event", event, fields, as_dict=True)
 	else:
