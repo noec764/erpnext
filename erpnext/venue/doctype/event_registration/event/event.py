@@ -127,11 +127,11 @@ class CapacityInfo(TypedDict):
 
 
 @frappe.whitelist()
-def get_capacity_info(event: str) -> CapacityInfo | None:
+def get_capacity_info(event: DokosEvent | str) -> CapacityInfo | None:
 	from pypika import functions as fn
 
 	fields = ["name", "published", "allow_registrations", "max_number_of_registrations"]
-	if isinstance(event, Event):
+	if isinstance(event, DokosEvent):
 		event_info = { k: event.get(k) for k in fields }
 	elif isinstance(event, str):
 		event_info = frappe.db.get_value("Event", event, fields, as_dict=True)
