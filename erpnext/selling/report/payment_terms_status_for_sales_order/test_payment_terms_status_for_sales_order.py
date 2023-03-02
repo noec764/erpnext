@@ -346,10 +346,11 @@ class TestPaymentTermsStatusForSalesOrder(FrappeTestCase):
 	def test_04_due_date_filter(self):
 		self.create_payment_terms_template()
 		item = create_item(item_code="_Test Excavator 1", is_stock_item=0)
-		transaction_date = nowdate()
+		transaction_date = add_days(nowdate(), -28)
+		delivery_date = add_days(transaction_date, 15)
 		so = make_sales_order(
-			transaction_date=add_days(transaction_date, -30),
-			delivery_date=add_days(transaction_date, -15),
+			transaction_date=transaction_date,
+			delivery_date=delivery_date,
 			item=item.item_code,
 			qty=10,
 			rate=100000,
@@ -374,8 +375,8 @@ class TestPaymentTermsStatusForSalesOrder(FrappeTestCase):
 				{
 					"company": "_Test Company",
 					"item": item.item_code,
-					"from_due_date": add_days(transaction_date, -30),
-					"to_due_date": add_days(transaction_date, -15),
+					"from_due_date": transaction_date,
+					"to_due_date": delivery_date,
 				}
 			)
 		)
@@ -384,11 +385,11 @@ class TestPaymentTermsStatusForSalesOrder(FrappeTestCase):
 			{
 				"name": so.name,
 				"customer": so.customer,
-				"submitted": datetime.date.fromisoformat(add_days(transaction_date, -30)),
+				"submitted": datetime.date.fromisoformat(transaction_date),
 				"status": "Completed",
 				"payment_term": None,
 				"description": "_Test 50-50",
-				"due_date": datetime.date.fromisoformat(add_days(transaction_date, -15)),
+				"due_date": datetime.date.fromisoformat(delivery_date),
 				"invoice_portion": 50.0,
 				"currency": "INR",
 				"base_payment_amount": 500000.0,
