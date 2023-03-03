@@ -202,6 +202,8 @@ def get_result_as_list(data, filters):
 		else:
 			EcritureLib = d.get("voucher_type")
 
+		EcritureLib = EcritureLib.replace("\n", " ")
+
 		PieceDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
 		debit = "{:.2f}".format(d.get("debit")).replace(".", ",")
@@ -289,7 +291,7 @@ def export_report(filters, with_files=False):
 		frappe.msgprint(_("Please register the SIREN number in the company information file"))
 
 	year_end_date = frappe.db.get_value("Fiscal Year", filters.fiscal_year, "year_end_date")
-	title = f"{siren}FEC{format_date(year_end_date, 'YYYYMMDD')}.txt"
+	title = f"{siren}FEC{format_date(year_end_date, 'YYYYMMdd')}"
 	report = execute(filters=filters)
 	if not report:
 		return
@@ -311,10 +313,10 @@ def export_report(filters, with_files=False):
 	if not with_files:
 		frappe.response["result"] = fec_csv_file
 		frappe.response["doctype"] = title
-		frappe.response["type"] = "csv"
+		frappe.response["type"] = "txt"
 
 	else:
-		files = [{"file_name": title, "content": fec_csv_file}]
+		files = [{"file_name": f"{title}.txt", "content": fec_csv_file}]
 
 		references_added = []
 		for line in report[1]:

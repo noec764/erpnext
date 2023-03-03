@@ -54,6 +54,7 @@ def create_item():
 				"item_name": "Milk",
 				"description": "Milk",
 				"item_group": "Products",
+				"is_stock_item": 1,
 			}
 		).insert()
 

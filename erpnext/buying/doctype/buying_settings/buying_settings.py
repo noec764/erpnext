@@ -27,6 +27,13 @@ class BuyingSettings(Document):
 			hide_name_field=False,
 		)
 
+	def before_save(self):
+		self.check_maintain_same_rate()
+
+	def check_maintain_same_rate(self):
+		if self.maintain_same_rate:
+			self.set_landed_cost_based_on_purchase_invoice_rate = 0
+
 	def toggle_discount_accounting_fields(self):
 		enable_discount_accounting = cint(self.enable_discount_accounting)
 

@@ -46,6 +46,7 @@ def make_item(item_code=None, properties=None, uoms=None):
 			"item_name": item_code,
 			"description": item_code,
 			"item_group": "Products",
+			"is_stock_item": 1,
 		}
 	)
 
@@ -548,6 +549,7 @@ class TestItem(FrappeTestCase):
 				has_variant=1,
 				item_group="Products",
 				variant_based_on="Manufacturer",
+				is_stock_item=1,
 			)
 		).insert()
 

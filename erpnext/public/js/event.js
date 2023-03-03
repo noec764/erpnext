@@ -124,9 +124,6 @@ const refresh_intro_header = (frm) => {
 		} else if (!event_info.free) {
 			color = "orange";
 			msg.push(__("This event is fully booked."));
-		} else if (!event_info.allow_registrations) {
-			color = "yellow";
-			msg.push(__("Registration for this event is closed."));
 		}
 
 		if (event_info.current > 0 || event_info.allow_registrations) {

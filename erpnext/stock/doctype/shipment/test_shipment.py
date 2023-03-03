@@ -206,6 +206,7 @@ def create_shipment_item(item_name, company_name):
 	item.item_group = "All Item Groups"
 	item.stock_uom = "Nos"
 	item.standard_rate = 50
+	item.is_stock_item = 1
 	item.append("item_defaults", {"company": company_name, "default_warehouse": "Stores - _TC"})
 	item.insert()
 	return item
