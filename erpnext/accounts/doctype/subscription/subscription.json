@@ -443,7 +443,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-01-24 08:15:44.396556",
+ "modified": "2023-02-24 16:58:06.859174",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",
@@ -487,6 +487,7 @@
    "write": 1
   }
  ],
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -54,7 +54,7 @@
   }
  ],
  "links": [],
- "modified": "2022-08-03 15:51:00.678429",
+ "modified": "2023-02-24 16:58:08.535910",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM Conversion Factor",
@@ -74,6 +74,7 @@
   }
  ],
  "quick_entry": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

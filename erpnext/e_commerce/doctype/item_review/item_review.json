@@ -56,18 +56,21 @@
    "fieldname": "rating",
    "fieldtype": "Rating",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Rating",
    "read_only": 1
   },
   {
    "fieldname": "comment",
    "fieldtype": "Small Text",
+   "in_preview": 1,
    "label": "Comment",
    "read_only": 1
   },
   {
    "fieldname": "review_title",
    "fieldtype": "Data",
+   "in_preview": 1,
    "label": "Review Title",
    "read_only": 1
   },
@@ -87,7 +90,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-10 12:08:58.119691",
+ "modified": "2023-02-24 16:57:59.763634",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "Item Review",
@@ -128,7 +131,9 @@
    "share": 1
   }
  ],
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

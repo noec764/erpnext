@@ -1281,25 +1281,25 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
-},
-{
- "fieldname": "incoterm",
- "fieldtype": "Link",
- "label": "Incoterm",
- "options": "Incoterm"
-},
-{
- "depends_on": "incoterm",
- "fieldname": "named_place",
- "fieldtype": "Data",
- "label": "Named Place"
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "depends_on": "incoterm",
+   "fieldname": "named_place",
+   "fieldtype": "Data",
+   "label": "Named Place"
   }
  ],
  "icon": "uil uil-file-alt",
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-20 16:33:50.446725",
+ "modified": "2023-02-24 16:58:04.998117",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
@@ -1371,6 +1371,7 @@
  ],
  "search_fields": "status,transaction_date,customer,customer_name, territory,order_type,company",
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

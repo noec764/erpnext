@@ -163,7 +163,7 @@
    "options": "Service Level Agreement"
   },
   {
-    "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
+   "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
    "fieldname": "response_by",
    "fieldtype": "Datetime",
    "label": "Response By",
@@ -177,7 +177,7 @@
    "read_only": 1
   },
   {
-    "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
+   "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
    "fieldname": "resolution_by",
    "fieldtype": "Datetime",
    "label": "Resolution By",
@@ -391,7 +391,7 @@
  "icon": "uil uil-bug",
  "idx": 7,
  "links": [],
- "modified": "2023-02-20 16:33:50.446725",
+ "modified": "2023-02-24 16:57:58.227099",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",
@@ -420,8 +420,10 @@
  "quick_entry": 1,
  "search_fields": "status,customer,subject,raised_by",
  "sender_field": "raised_by",
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "subject_field": "subject",
  "timeline_field": "customer",
  "title_field": "subject",
