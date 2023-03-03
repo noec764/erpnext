@@ -460,14 +460,6 @@ body.product-page {
 				--icon-stroke: var(--gray-500);
 			}
 		}
-
-		.w-30-40 {
-			width: 30%;
-
-			@media (max-width: 992px) {
-				width: 40%;
-			}
-		}
 	}
 
 	.tab-content {
