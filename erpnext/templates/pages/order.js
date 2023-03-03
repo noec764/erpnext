@@ -21,7 +21,7 @@ frappe.ready(function(){
 		const loyalty_points = parseInt(loyalty_points_input.value);
 
 		if (loyalty_points > available_loyalty_points) {
-			frappe.msgprint(__(`You cannot redeem more than ${available_loyalty_points} points.`))
+			frappe.msgprint(__("You cannot redeem more than {0} points.", [available_loyalty_points]))
 			return;
 		}
 
@@ -38,11 +38,11 @@ frappe.ready(function(){
 					if (r) {
 						let message = ""
 						if (!r.message.redeem_accepted) {
-							frappe.msgprint(__(`You can only redeem a maximum of ${r.message.redeemable_points} points in this order.`));
+							frappe.msgprint(__("You can only redeem a maximum of {0} points in this order.", [r.message.redeemable_points]));
 						} else {
-							loyalty_points_status.innerHTML = __(`${loyalty_points} loyalty points applied for an amount of ${r.message.loyalty_amount}.`)
+							loyalty_points_status.innerText = __("{0} loyalty points applied for an amount of {1}.", [loyalty_points, r.message.loyalty_amount]);
 							const payment_button = document.getElementById("pay-for-order");
-							payment_button.innerHTML = __(`Pay ${r.message.remaining_amount}`);
+							payment_button.innerText = __("Pay {0}", [r.message.remaining_amount]);
 							payment_button.href = "/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn="+doc_info.doctype_name+"&dt="+doc_info.doctype+"&loyalty_points="+loyalty_points+"&submit_doc=1&order_type=Shopping Cart";
 						}
 					}

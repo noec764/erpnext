@@ -120,7 +120,9 @@ export default {
 					if (result.status == "Missing header map") {
 						this.show_spinner = false
 						const bank_account = this.bank_accounts.filter(f => f.name == (this.selectedBankAccount || this.bank_accounts[0].name))
-						this.text_msg = __(`Please setup a <a href="/app/bank/${bank_account[0].bank}">header mapping for this bank</a> before uploading a csv/xlsx file.`)
+						this.text_msg = __("Please setup a <a href='{0}'>header mapping for this bank</a> before uploading a csv/xlsx file.", [
+							frappe.utils.escape_html("/app/bank/" + bank_account[0].bank)
+						])
 					} else {
 						if (result.success !== 0) {
 							frappe.show_alert({message:__("All bank transactions have been created"), indicator:'green'});
@@ -129,7 +131,8 @@ export default {
 							frappe.show_alert({message:__("Please check the error log for details about the import errors"), indicator:'red'});
 						}
 						if (result.duplicates !== 0) {
-							frappe.show_alert({message:__(`${result.duplicates} entries are duplicates and have not been created`), indicator:'orange'});
+							const message = __("{0} entries are duplicates and have not been created", [result.duplicates])
+							frappe.show_alert({message, indicator:'orange'});
 						}
 						erpnext.bank_transaction.trigger('close_dialog');
 						erpnext.bank_reconciliation.trigger("refresh")
@@ -156,8 +159,10 @@ export default {
 					this.show_spinner = false
 					this.text_msg = __(`Please <a href="/app/plaid-settings">link your bank account with Plaid first</a>`)
 				} else {
-					frappe.show_alert({message:__(`Bank account '${bank_account[0].account_name}' has been synchronized`), indicator:'green'});
-					frappe.show_alert({message:__(`${result.length} bank transaction(s) created`), indicator:'green'});
+					const msg1 = __("Bank account '{0}' has been synchronized", [bank_account[0].account_name]);
+					const msg2 = __("{0} bank transaction(s) created", [result.length]);
+					frappe.show_alert({message:msg1, indicator:'green'});
+					frappe.show_alert({message:msg2, indicator:'green'});
 					erpnext.bank_transaction.trigger('close_dialog');
 					erpnext.bank_reconciliation.trigger("refresh")
 				}
