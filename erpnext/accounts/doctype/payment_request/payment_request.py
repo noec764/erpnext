@@ -357,19 +357,14 @@ class PaymentRequest(Document):
 
 		self.get_payment_gateway_fees(reference_no)
 
+		total_fee_amount = 0.0
 		for value in ["fee", "tax"]:
 			if (
 				self.get(f"{value}_amount")
 				and gateway_defaults.get(f"{value}_account")
 				and gateway_defaults.get("cost_center")
 			):
-				fee_amount = flt(self.get(f"{value}_amount")) * flt(self.get("target_exchange_rate", 1))
-				payment_entry.update(
-					{
-						"paid_amount": flt(self.base_amount or self.grand_total) - fee_amount,
-						"received_amount": flt(self.grand_total) - fee_amount,
-					}
-				)
+				total_fee_amount += flt(self.get(f"{value}_amount")) * flt(self.get("target_exchange_rate", 1))
 
 				payment_entry.append(
 					"deductions",
@@ -380,7 +375,14 @@ class PaymentRequest(Document):
 					},
 				)
 
-				payment_entry.set_amounts()
+		payment_entry.update(
+			{
+				"paid_amount": flt(self.base_amount or self.grand_total) - total_fee_amount,
+				"received_amount": flt(self.grand_total) - total_fee_amount,
+			}
+		)
+
+		payment_entry.set_amounts()
 
 		# Update dimensions
 		payment_entry.update(
