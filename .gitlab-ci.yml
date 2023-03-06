@@ -43,6 +43,7 @@ unittests:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "v3.x.x-hotfix"
       variables:
         BASE_BRANCH: "v3.x.x-hotfix"
+    - if: $CI_COMMIT_MESSAGE =~ /\[dodock-branch=(.*)\]/
     - if: $CI_COMMIT_TAG == null
 
   services:
@@ -60,6 +61,10 @@ unittests:
     MYSQL_ROOT_PASSWORD: "test_dodock"
 
   before_script:
+    # Fetch base branch from commit message if it contains "[dodock-branch=<branch>]"
+    - export BRANCH_FROM_COMMIT_MESSAGE=$(echo "$CI_COMMIT_MESSAGE" | sed -n 's/.*\[dodock-branch=\(.*\)\].*/\1/p')
+    - if [ -n "$BRANCH_FROM_COMMIT_MESSAGE" ]; then export BASE_BRANCH="$BRANCH_FROM_COMMIT_MESSAGE"; fi
+
     - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-suggests --no-install-recommends mariadb-client xfonts-75dpi xfonts-base
     - export LANG=C.UTF-8
     - export LC_ALL=C.UTF-8
@@ -86,7 +91,7 @@ unittests:
     - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^socketio:/# socketio:/g' Procfile"
     - su -c "cd /home/dokotest/dokos-bench && sed -i 's/^redis_socketio:/# redis_socketio:/g' Procfile"
     - su -c "cd /home/dokotest/dokos-bench && cat Procfile"
-    - su -c "cd /home/dokotest/dokos-bench && /home/dokotest/dokos-bench/env/bin/python -m pip install --quiet hypothesis==6.31.0 unittest-xml-reporting"
+    - su -c "cd /home/dokotest/dokos-bench && /home/dokotest/dokos-bench/env/bin/python -m pip install --quiet unittest-xml-reporting"
     - su -c "cd /home/dokotest/dokos-bench && bench start &> bench_start.log &" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench --site test_site reinstall --yes --mariadb-root-password test_dodock" dokotest
     - su -c "cd /home/dokotest/dokos-bench && bench --site test_site install-app payments" dokotest

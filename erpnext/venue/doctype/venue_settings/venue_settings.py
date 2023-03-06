@@ -82,7 +82,7 @@ class VenueSettings(Document):
 
 	def multicompany_get_current_company(self):
 		if self.enable_multi_companies:
-			if company := multicompany_read_cookie():
+			if company := multicompany_read_cookie(self):
 				if self.multicompany_is_company_allowed(company):
 					return company
 
@@ -109,16 +109,16 @@ MULTICOMPANY_CONTEXT_DROPDOWN = "multicompany_dropdown"
 MULTICOMPANY_CONTEXT_CURRENT_COMPANY = "multicompany_current"
 
 
-def multicompany_read_cookie():
-	return multicompany_read_and_update_cookie()
+def multicompany_read_cookie(venue_settings=None):
+	return multicompany_read_and_update_cookie(venue_settings)
 
 
-def multicompany_read_and_update_cookie():
+def multicompany_read_and_update_cookie(venue_settings: VenueSettings | None = None):
 	cached = frappe.flags.get(MULTICOMPANY_FLAG_NAME, 0)
 	if cached != 0:
 		return cached
 
-	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
+	venue_settings: VenueSettings = venue_settings or frappe.get_single("Venue Settings")
 
 	if not venue_settings.enable_multi_companies:
 		multicompany_clear_cookie()  # clear the cookie + set cache
@@ -173,7 +173,7 @@ def update_website_context(context):
 	if not frappe.db.get_single_value("Venue Settings", "enable_multi_companies"):
 		return
 
-	venue_settings: VenueSettings = frappe.get_cached_doc("Venue Settings")
+	venue_settings: VenueSettings = frappe.get_single("Venue Settings")
 
 	if not venue_settings.enable_multi_companies:
 		return
@@ -242,7 +242,7 @@ def get_shopping_cart_overrides(company=None):
 	if not hasattr(frappe, "request"):
 		return  # not called from a request
 
-	venue_settings = frappe.get_cached_doc("Venue Settings")
+	venue_settings = frappe.get_single("Venue Settings")
 	if not venue_settings.get("enable_multi_companies"):
 		return  # multi-company support is disabled
 
@@ -262,8 +262,8 @@ from functools import lru_cache
 )  # note: there is no way to invalidate this cache if the settings change during runtime
 def _get_shopping_cart_overrides_cached(company):
 	assert company, "invalid arguments: do not use this function directly"
-	venue_settings = frappe.get_cached_doc("Venue Settings")
-	cart_settings = frappe.get_cached_doc("E Commerce Settings")
+	venue_settings = frappe.get_single("Venue Settings")
+	cart_settings = frappe.get_single("E Commerce Settings")
 
 	# Find the overrides for the company
 	overrides = None

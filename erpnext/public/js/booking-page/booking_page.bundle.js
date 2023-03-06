@@ -60,21 +60,25 @@ class BookingPage {
 			},
 			render_input: true,
 		});
-
-		window.cur_page = this;
 	}
 
 	async add_filter_type() {
 		const $row = $(`<fieldset class="filter-type"><legend></legend></fieldset>`).appendTo(this.toolbar)
 
-		const make_pill = (label, value) => {
+		const make_pill = (label, value, count = -1) => {
+			if (count === 0) {
+				return
+			}
 			const $pill = $(`
 				<label class="filter-type__pill ellipsis">
 					<input type="checkbox" name="" />
-					<span>...</span>
+					<span></span>
 				</label>
 			`).appendTo($row)
-			$pill.find("span").text(label)
+
+			const full_label = count >= 0 ? `${label} (${count})` : label
+			$pill.find("span").text(full_label)
+
 			const $checkbox = $pill.find("input")
 			$checkbox.on("change", () => this.refresh_search())
 			$checkbox.attr("name", value)
@@ -82,16 +86,12 @@ class BookingPage {
 		}
 
 		this.item_groups = await frappe.call({
-			method: "erpnext.templates.pages.book_resources.get_item_groups",
-		})
+			method: "erpnext.templates.pages.book_resources.count_item_groups",
+		}).then(r => r.message)
 
-		const options = this.item_groups.message.sort((a, b) => a.localeCompare(b)).map((group) => ({
-			label: __(group),
-			value: group,
-		}))
-
+		const options = this.item_groups.sort((a, b) => a.label.localeCompare(b.label))
 		for (const option of options) {
-			make_pill(option.label, option.value)
+			make_pill(option.label, option.value, option.count)
 		}
 
 		const $checkboxes = $row.find("input")
@@ -115,9 +115,8 @@ class BookingPage {
 			set_counts(group_counts = {}) {
 				$checkboxes.each((i, checkbox) => {
 					const total = group_counts[checkbox.name]?.total || 0
-					const avail = group_counts[checkbox.name]?.available || 0
-					let new_label = __(checkbox.name)
-					new_label += ` (${total})`
+					const new_label = `${__(checkbox.name)} (${total})`
+					checkbox.setAttribute("data-total", total)
 					checkbox.parentElement.querySelector("span").innerText = new_label
 				})
 			},
@@ -194,9 +193,9 @@ class BookingPage {
 		}
 	}
 
-	after_refresh(data) {
-		this.filter_by_type.set_counts(data.group_counts)
-	}
+	// after_refresh(data) {
+	// 	this.filter_by_type.set_counts(data.group_counts)
+	// }
 
 	update_url_with_filter_values() {
 		const url = new URL(window.location.href)
@@ -255,7 +254,6 @@ class BookingPageSidebar {
 	}
 
 	build() {
-		console.log(this.upcoming_bookings)
 		const booking_items = Object.keys(this.upcoming_bookings).map(booking => {
 			const timetable = this.upcoming_bookings[booking].map(item => {
 				return `<div class="small muted">
@@ -280,8 +278,8 @@ class BookingPageSidebar {
 							${booking_items}
 						</tbody>
 					</table>
-					<a class="btn btn-primary font-md w-100 mt-4" href="/bookings">
-						${ __("See Bookings") }
+					<a class="btn btn-primary btn-sm w-100 mt-4 ellipsis" href="/bookings">
+						<span class="ellipsis">${ __("See Bookings") }</span>
 					</a>
 				</div>
 			</div>

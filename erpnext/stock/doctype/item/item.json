@@ -170,7 +170,8 @@
    "label": "Item Name",
    "oldfieldname": "item_name",
    "oldfieldtype": "Data",
-   "search_index": 1
+   "search_index": 1,
+   "translatable": 1
   },
   {
    "fieldname": "item_group",
@@ -295,12 +296,14 @@
    "print_hide": 1
   },
   {
+   "description": "Shown on invoices, quotations and orders",
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "in_preview": 1,
    "label": "Description",
    "oldfieldname": "description",
-   "oldfieldtype": "Text"
+   "oldfieldtype": "Text",
+   "translatable": 1
   },
   {
    "fieldname": "sb_barcodes",
@@ -979,7 +982,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2023-02-20 16:33:50.446725",
+ "modified": "2023-03-01 17:43:24.970257",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
