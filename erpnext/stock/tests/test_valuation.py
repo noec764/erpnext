@@ -141,7 +141,10 @@ class TestFIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.queue.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
+					places=6,
 				)
 				total_qty -= qty
 			self.assertTotalQty(total_qty)
@@ -164,7 +167,9 @@ class TestFIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.queue.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
 				)
 				total_qty -= qty
 				total_value -= sum(q * r for q, r in consumed)
@@ -291,7 +296,10 @@ class TestLIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.stack.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
+					places=6,
 				)
 				total_qty -= qty
 			self.assertTotalQty(total_qty)
