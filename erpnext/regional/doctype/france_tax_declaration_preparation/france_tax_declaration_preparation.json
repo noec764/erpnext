@@ -16,6 +16,8 @@
   "deductible_vat_section",
   "get_deductible_vat",
   "deductible_vat",
+  "section_break_9",
+  "deductible_tax_adjustments",
   "section_break_7",
   "deductible_taxable_amount",
   "column_break_9",
@@ -26,6 +28,8 @@
   "collected_vat_section",
   "get_collected_vat",
   "collected_vat",
+  "section_break_21",
+  "collected_tax_adjustments",
   "section_break_16",
   "collected_taxable_amount",
   "column_break_18",
@@ -204,12 +208,32 @@
   {
    "fieldname": "summary",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "deductible_tax_adjustments",
+   "fieldtype": "Table",
+   "label": "Deductible Tax Adjustments",
+   "options": "France Tax Declaration Preparation Details"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "collected_tax_adjustments",
+   "fieldtype": "Table",
+   "label": "Collected Tax Adjustments",
+   "options": "France Tax Declaration Preparation Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-14 16:50:15.356040",
+ "modified": "2023-03-08 17:33:14.613636",
  "modified_by": "Administrator",
  "module": "Regional",
  "name": "France Tax Declaration Preparation",
