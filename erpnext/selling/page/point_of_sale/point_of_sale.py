@@ -6,7 +6,7 @@ import json
 from typing import Dict, Optional
 
 import frappe
-from frappe.utils import cint, validate_email_address
+from frappe.utils import cint, nowdate, validate_email_address
 from frappe.utils.nestedset import get_root_of
 
 from erpnext.accounts.doctype.pos_invoice.pos_invoice import get_stock_availability
@@ -63,6 +63,8 @@ def search_by_term(search_term, warehouse, price_list):
 		filters={
 			"price_list": price_list,
 			"item_code": item_code,
+			"valid_from": ("<=", nowdate()),
+			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
 		},
 		fields=["uom", "stock_uom", "currency", "price_list_rate"],
 	)
@@ -172,6 +174,8 @@ def get_items(start, page_length, price_list, item_group, pos_profile, search_te
 				"price_list": price_list,
 				"item_code": item.item_code,
 				"selling": True,
+				"valid_from": ("<=", nowdate()),
+				"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
 			},
 		)
 
@@ -319,7 +323,10 @@ def get_past_order_list(search_term, status, limit=20):
 	elif status:
 		invoice_list = frappe.db.get_all(
 			"POS Invoice",
-			filters={"status": status, "docstatus": ("!=", 2)},
+			filters={
+				"status": status,
+				"docstatus": ("!=", 2),
+			},
 			fields=fields,
 			page_length=limit,
 		)
