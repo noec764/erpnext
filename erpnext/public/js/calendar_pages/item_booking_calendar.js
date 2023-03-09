@@ -135,7 +135,10 @@ class ItemCalendar {
 	}
 
 	eventClick(event) {
-		if (frappe.datetime.get_diff(event.event.end, frappe.datetime.nowdate()) <= 0) {
+		if (
+			this.parent.can_cancel == "0" ||
+			frappe.datetime.get_diff(event.event.start, frappe.datetime.add_minutes(frappe.datetime.nowdate(), parseInt(this.parent.cancellation_delay))) <= 0
+		) {
 			return
 		}
 
@@ -145,7 +148,7 @@ class ItemCalendar {
 				args: {
 					id: event.event.id
 				}
-			}).then(r => {
+			}).then(() => {
 				this.refresh();
 			})
 		});

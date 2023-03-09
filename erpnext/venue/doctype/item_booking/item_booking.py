@@ -404,6 +404,8 @@ def get_list_context(context=None):
 	allow_event_cancellation = frappe.db.get_single_value(
 		"Venue Settings", "allow_event_cancellation"
 	)
+
+	cancellation_delay = cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0
 	context.update(
 		{
 			"show_sidebar": True,
@@ -413,12 +415,12 @@ def get_list_context(context=None):
 			"get_list": get_bookings_list,
 			"row_template": "templates/includes/item_booking/item_booking_row.html",
 			"can_cancel": allow_event_cancellation,
-			"cancellation_delay": cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay"))
-			/ 60
-			if allow_event_cancellation
-			else 0,
+			"cancellation_delay": cancellation_delay,
 			"header_action": frappe.render_template(
-				"templates/includes/item_booking/item_booking_list_action.html", {}
+				"templates/includes/item_booking/item_booking_list_action.html", {
+					"can_cancel": allow_event_cancellation,
+					"cancellation_delay": cancellation_delay
+				}
 			),
 			"list_footer": frappe.render_template(
 				"templates/includes/item_booking/item_booking_list_footer.html", {}

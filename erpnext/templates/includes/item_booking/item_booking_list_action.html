@@ -25,7 +25,9 @@
 					calendar.innerHTML = "";
 
 					new erpnext.itemBookingCalendar({
-						parentId: "calendar-section"
+						parentId: "calendar-section",
+						can_cancel: "{{ can_cancel }}",
+						cancellation_delay: "{{ cancellation_delay }}"
 					})
 				} else {
 					switcher.innerHTML = __("Calendar view")
