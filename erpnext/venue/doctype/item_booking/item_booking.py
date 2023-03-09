@@ -339,10 +339,16 @@ class ItemBooking(Document):
 
 	def set_status(self, status):
 		self.db_set("status", status, update_modified=True, notify=True)
+
+		gcalendar_method = delete_event_in_google_calendar if status == "Cancelled" else update_event_in_google_calendar
+		gcalendar_method(self)
+
 		for child in frappe.get_all(
 			"Item Booking", filters=dict(parent_item_booking=self.name), pluck="name"
 		):
-			frappe.get_doc("Item Booking", child).set_status(status)
+			child = frappe.get_doc("Item Booking", child)
+			child.set_status(status)
+			gcalendar_method(child)
 
 	def on_update(self):
 		self.synchronize_child_bookings()
@@ -509,7 +515,8 @@ def cancel_appointment(id, force=False):
 	booking = frappe.get_doc("Item Booking", id)
 	if force:
 		booking.flags.ignore_links = True
-	return booking.set_status("Cancelled")
+	booking.set_status("Cancelled")
+	return booking
 
 
 @frappe.whitelist(allow_guest=True)
