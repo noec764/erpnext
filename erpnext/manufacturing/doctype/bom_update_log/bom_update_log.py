@@ -212,6 +212,8 @@ def resume_bom_cost_update_jobs():
 			["name", "boms_updated", "status"],
 		)
 		incomplete_level = any(row.get("status") == "Pending" for row in bom_batches)
+
+		# NOTE: Do not change this condition unless you know what you are doing.
 		if not bom_batches or incomplete_level:
 			continue
 
