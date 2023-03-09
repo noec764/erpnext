@@ -45,16 +45,19 @@ class FranceTaxDeclarationPreparation(Document):
 				tax_amount = 0.0
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate") or []):
-						if row.get("account") == gl_entry.account:
+						if row.get("account") == gl_entry.account or (
+							row.get("account_number")
+							and row.get("account_number") == all_tax_accounts.get(gl_entry.account)
+						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
 							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
 							gl_entry_line["tax_amount"] = row.get("tax_amount")
 
 							# Handle UE witholding taxes
-							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] > 0.0:
+							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] != 0.0:
 								gl_entry_line["tax_amount"] = flt(
-									gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0, 2
+									flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0, 2
 								)
 
 							tax_amount += gl_entry_line["tax_amount"]
@@ -69,7 +72,7 @@ class FranceTaxDeclarationPreparation(Document):
 							"On Previous Row Total",
 						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
 							gl_entry_line["taxable_amount"] = flt(
 								doc.taxes[cint(tax_row.row_id) - 1].get("base_tax_amount")
 							)
@@ -77,6 +80,14 @@ class FranceTaxDeclarationPreparation(Document):
 								gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0, 2
 							)
 							voucher_gls.append(gl_entry_line)
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					gl_entry_line = gl_entry.copy()
+					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
+					gl_entry_line["taxable_amount"] = flt(
+						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					)
+					voucher_gls.append(gl_entry_line)
 
 			elif len(
 				[e for e in linked_entries if e.account in list(deductible_accounts.keys())]
@@ -157,16 +168,20 @@ class FranceTaxDeclarationPreparation(Document):
 				tax_amount = 0.0
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate") or []):
-						if row.get("account") == gl_entry.account:
+						if row.get("account") == gl_entry.account or (
+							row.get("account_number")
+							and row.get("account_number") == all_tax_accounts.get(gl_entry.account)
+						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
 							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
-							gl_entry_line["tax_amount"] = abs(row.get("tax_amount"))
+							gl_entry_line["tax_amount"] = row.get("tax_amount")
 
 							# Handle UE witholding taxes
-							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] > 0.0:
+							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] != 0.0:
+								gl_entry_line["tax_rate"] = gl_entry_line["tax_rate"] * -1
 								gl_entry_line["tax_amount"] = (
-									gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0
+									flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0
 								)
 
 							tax_amount += gl_entry_line["tax_amount"]
@@ -181,14 +196,23 @@ class FranceTaxDeclarationPreparation(Document):
 							"On Previous Row Total",
 						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
-							gl_entry_line["taxable_amount"] = abs(
-								flt(doc.taxes[cint(tax_row.row_id) - 1].get("base_tax_amount"))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
+							gl_entry_line["taxable_amount"] = flt(
+								doc.taxes[cint(tax_row.row_id) - 1].get("base_tax_amount")
 							)
 							gl_entry_line["tax_amount"] = flt(
-								gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0, 2
+								flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0, 2
 							)
 							voucher_gls.append(gl_entry_line)
+							tax_amount += gl_entry_line["tax_amount"]
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					gl_entry_line = gl_entry.copy()
+					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
+					gl_entry_line["taxable_amount"] = flt(
+						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					)
+					voucher_gls.append(gl_entry_line)
 
 			elif len(
 				[e for e in linked_entries if e.account in list(collection_accounts.keys())]
@@ -337,7 +361,6 @@ class FranceTaxDeclarationPreparation(Document):
 	def get_summary(self):
 		collection = frappe.parse_json(self.collected_tax_details) or {}
 		deductions = frappe.parse_json(self.deductible_tax_details) or {}
-		print(collection)
 
 		summary = []
 		default_currency = frappe.get_cached_value("Company", self.company, "default_currency")

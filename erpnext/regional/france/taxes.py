@@ -14,9 +14,14 @@ def update_itemised_tax_data(doc):
 	tax_accounts = set(
 		itemised_tax[item][tax].get("tax_account") for item in itemised_tax for tax in itemised_tax[item]
 	)
-	valid_tax_accounts = frappe.get_all(
-		"Account", filters={"name": ("in", list(tax_accounts)), "account_type": "Tax"}, pluck="name"
+	tax_accounts = frappe.get_all(
+		"Account",
+		filters={"name": ("in", list(tax_accounts)), "account_type": "Tax"},
+		fields=["name", "account_number"],
 	)
+	valid_tax_accounts = [t.name for t in tax_accounts]
+	account_numbers = {t.name: t.accounr_number for t in tax_accounts}
+
 	valid_itemised_tax = {}
 	for item in itemised_tax:
 		valid_itemised_tax[item] = {}
@@ -64,6 +69,7 @@ def update_itemised_tax_data(doc):
 			[
 				{
 					"account": tax.get("tax_account"),
+					"account_number": account_numbers.get(tax.get("tax_account")),
 					"rate": tax.get("tax_rate", 0),
 					"taxable_amount": row.get("base_net_amount"),
 					"tax_amount": row.get("tax_amount"),
