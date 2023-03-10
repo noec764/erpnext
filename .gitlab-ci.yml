@@ -30,9 +30,6 @@ unittests:
 
   stage: Unit Tests
 
-  variables:
-    BASE_BRANCH: "develop"
-
   rules:
     # Skip if the commit message contains "[skip-tests]"
     - if: $CI_COMMIT_MESSAGE =~ /\[skip-tests\]/
@@ -57,6 +54,7 @@ unittests:
       alias: redis_socketio
 
   variables:
+    BASE_BRANCH: "develop"
     MYSQL_DATABASE: "test_dodock"
     MYSQL_ROOT_PASSWORD: "test_dodock"
 

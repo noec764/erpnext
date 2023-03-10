@@ -433,7 +433,7 @@ override_doctype_dashboards = {
 
 scheduler_events = {
 	"cron": {
-		"0/15 * * * *": [
+		"0/5 * * * *": [
 			"erpnext.manufacturing.doctype.bom_update_log.bom_update_log.resume_bom_cost_update_jobs",
 		],
 		"0/30 * * * *": [
