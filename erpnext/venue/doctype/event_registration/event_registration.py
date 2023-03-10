@@ -173,7 +173,7 @@ class EventRegistration(Document):
 		self.user = frappe.session.user
 		self.set_company_from_cart_settings()
 
-		if self.flags.in_payment_webform:
+		if not self.flags.in_payment_webform:
 			# Free registration
 			self.payment_status = ""
 			self.submit()  # Automatically submit when created from a Web Form.
