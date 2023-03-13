@@ -340,6 +340,5 @@ erpnext.accounts.doctype.subscription.patches.set_an_invoicing_day_on_existing_s
 erpnext.patches.dokos.v3_0.retry_gocardless_payout_webhooks
 erpnext.patches.dokos.v3_0.gocardless_payments_corrections
 
-# below 2 migration patches should always run last
+# below migration patch should always run last
 erpnext.patches.v14_0.migrate_gl_to_payment_ledger
-erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger
