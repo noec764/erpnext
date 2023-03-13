@@ -226,7 +226,7 @@ class EventRegistration(Document):
 
 		contact = frappe.get_doc("Contact", self.contact)
 		contact.flags.ignore_permissions = True
-		customer = make_customer_from_contact(contact)
+		customer = make_customer_from_contact(contact, ignore_permissions=True)
 		customer.update(
 			{
 				"customer_type": "Individual",

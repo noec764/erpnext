@@ -356,7 +356,7 @@ def create_contact(contact, party_type, party, email):
 	contact.insert()
 
 
-def make_customer_from_contact(contact_doc):
+def make_customer_from_contact(contact_doc, ignore_permissions=False):
 	customer_name = " ".join(
 		str(contact_doc.get(k, ""))
 		for k in ("first_name", "middle_name", "last_name")
@@ -372,7 +372,7 @@ def make_customer_from_contact(contact_doc):
 			"customer_type": "Individual",
 		}
 	)
-	customer.insert()
+	customer.insert(ignore_permissions=ignore_permissions)
 	return customer
 
 
