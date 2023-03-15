@@ -774,9 +774,7 @@ def get_message(doc, template):
 			"doc": doc,
 			"reference": frappe.get_doc(doc.get("reference_doctype"), doc.get("reference_name")),
 			"payment_link": get_payment_link(doc.get("payment_key")),
-			"payment_can_be_processed_immediately": payment_can_be_processed_immediately
-			if payment_can_be_processed_immediately is not None
-			else check_if_immediate_payment_is_autorized(doc.get("name")),
+			"payment_can_be_processed_immediately": bool(payment_can_be_processed_immediately),
 		},
 	)
 
