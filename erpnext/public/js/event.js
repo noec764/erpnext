@@ -16,6 +16,15 @@ frappe.ui.form.on('Event', {
 		}
 
 		refresh_intro_header(frm);
+
+		frm.set_query("registration_form", function() {
+			return {
+				filters: {
+					'published': 1,
+					'doc_type': 'Event Registration',
+				}
+			};
+		});
 	},
 	add_item_booking_details(frm) {
 		frappe.model.with_doctype("Item Booking", () => {

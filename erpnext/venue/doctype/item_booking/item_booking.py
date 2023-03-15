@@ -339,10 +339,16 @@ class ItemBooking(Document):
 
 	def set_status(self, status):
 		self.db_set("status", status, update_modified=True, notify=True)
+
+		gcalendar_method = delete_event_in_google_calendar if status == "Cancelled" else update_event_in_google_calendar
+		gcalendar_method(self)
+
 		for child in frappe.get_all(
 			"Item Booking", filters=dict(parent_item_booking=self.name), pluck="name"
 		):
-			frappe.get_doc("Item Booking", child).set_status(status)
+			child = frappe.get_doc("Item Booking", child)
+			child.set_status(status)
+			gcalendar_method(child)
 
 	def on_update(self):
 		self.synchronize_child_bookings()
@@ -404,6 +410,8 @@ def get_list_context(context=None):
 	allow_event_cancellation = frappe.db.get_single_value(
 		"Venue Settings", "allow_event_cancellation"
 	)
+
+	cancellation_delay = cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0
 	context.update(
 		{
 			"show_sidebar": True,
@@ -413,12 +421,12 @@ def get_list_context(context=None):
 			"get_list": get_bookings_list,
 			"row_template": "templates/includes/item_booking/item_booking_row.html",
 			"can_cancel": allow_event_cancellation,
-			"cancellation_delay": cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay"))
-			/ 60
-			if allow_event_cancellation
-			else 0,
+			"cancellation_delay": cancellation_delay,
 			"header_action": frappe.render_template(
-				"templates/includes/item_booking/item_booking_list_action.html", {}
+				"templates/includes/item_booking/item_booking_list_action.html", {
+					"can_cancel": allow_event_cancellation,
+					"cancellation_delay": cancellation_delay
+				}
 			),
 			"list_footer": frappe.render_template(
 				"templates/includes/item_booking/item_booking_list_footer.html", {}
@@ -507,7 +515,8 @@ def cancel_appointment(id, force=False):
 	booking = frappe.get_doc("Item Booking", id)
 	if force:
 		booking.flags.ignore_links = True
-	return booking.set_status("Cancelled")
+	booking.set_status("Cancelled")
+	return booking
 
 
 @frappe.whitelist(allow_guest=True)

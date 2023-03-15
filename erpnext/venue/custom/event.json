@@ -110,7 +110,8 @@
 			"name": "Event-main-links_order",
 			"property": "links_order",
 			"property_type": "Small Text",
-			"value": "[\"6b3d53940f\"]"
+			"value": "[\"6b3d53940f\"]",
+			"is_system_generated": 1
 		}
 	],
 	"sync_on_migrate": 1

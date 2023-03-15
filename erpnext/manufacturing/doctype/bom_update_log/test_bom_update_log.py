@@ -64,8 +64,12 @@ def update_cost_in_all_boms_in_test():
 	"""
 	log = enqueue_update_cost()  # create BOM Update Log
 
+	iter = 0
 	while log.status != "Completed":
 		resume_bom_cost_update_jobs()  # run cron job until complete
 		log.reload()
+		iter += 1
+		if iter > 100:
+			raise Exception("Test: BOM Update Log not completed in 100 iterations")
 
 	return log

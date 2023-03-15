@@ -6,7 +6,7 @@ from collections import defaultdict
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import flt, fmt_money
+from frappe.utils import cint, flt, fmt_money
 
 from erpnext.accounts.utils import get_balance_on
 
@@ -19,6 +19,7 @@ class FranceTaxDeclarationPreparation(Document):
 	@frappe.whitelist()
 	def get_deductible_vat(self):
 		deductible_accounts = self.get_deductible_accounts()
+		all_tax_accounts = self.get_all_tax_accounts()
 		expense_accounts = self.get_accounts("Expense Account")
 		gl_entries = self.get_gl_entries(list(deductible_accounts.keys()))
 
@@ -31,6 +32,8 @@ class FranceTaxDeclarationPreparation(Document):
 
 		for gl_entry in gl_entries:
 			voucher_gls = []
+
+			gl_entry["against"] = gl_entry["against"][:140]
 			gl_entry["tax_rate"] = deductible_accounts.get(gl_entry.account)
 			gl_entry["tax_amount"] = flt(gl_entry.get("debit")) - flt(gl_entry.get("credit"))
 			linked_entries = self.get_linked_entries(gl_entry.accounting_entry_number)
@@ -39,21 +42,53 @@ class FranceTaxDeclarationPreparation(Document):
 				if "taxable_amount" not in gl_entry:
 					gl_entry["taxable_amount"] = 0.0
 				doc = frappe.get_doc(gl_entry.voucher_type, gl_entry.voucher_no)
+				tax_amount = 0.0
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate") or []):
-						if row.get("account") == gl_entry.account:
+						if row.get("account") == gl_entry.account or (
+							row.get("account_number")
+							and row.get("account_number") == all_tax_accounts.get(gl_entry.account)
+						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
 							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
-							gl_entry_line["tax_amount"] = flt(row.get("tax_amount"))
+							gl_entry_line["tax_amount"] = row.get("tax_amount")
 
 							# Handle UE witholding taxes
-							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] > 0.0:
-								gl_entry_line["tax_amount"] = (
-									gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0
+							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] != 0.0:
+								gl_entry_line["tax_amount"] = flt(
+									flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0, 2
 								)
 
+							tax_amount += gl_entry_line["tax_amount"]
+							gl_entry_line["tax_amount"] = flt(gl_entry_line["tax_amount"], 2)
+
 							voucher_gls.append(gl_entry_line)
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					for tax_row in doc.get("taxes", []):
+						if tax_row.account_head == gl_entry.account and tax_row.charge_type in (
+							"On Previous Row Amount",
+							"On Previous Row Total",
+						):
+							gl_entry_line = gl_entry.copy()
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
+							gl_entry_line["taxable_amount"] = flt(
+								doc.taxes[cint(tax_row.row_id) - 1].get("base_tax_amount")
+							)
+							gl_entry_line["tax_amount"] = flt(
+								gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0, 2
+							)
+							voucher_gls.append(gl_entry_line)
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					gl_entry_line = gl_entry.copy()
+					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
+					gl_entry_line["taxable_amount"] = flt(
+						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					)
+					voucher_gls.append(gl_entry_line)
+
 			elif len(
 				[e for e in linked_entries if e.account in list(deductible_accounts.keys())]
 			) == 1 and [e for e in linked_entries if e.account in expense_accounts]:
@@ -62,22 +97,35 @@ class FranceTaxDeclarationPreparation(Document):
 				)
 				voucher_gls.append(gl_entry)
 			else:
-				continue
+				gl_entry["tax_rate"] = flt(gl_entry.get("tax_rate")) or all_tax_accounts.get(
+					gl_entry.get("account")
+				)
+				voucher_gls.append(gl_entry)
 
 			for gl in voucher_gls:
 				taxable_amount = flt(gl.get("taxable_amount"))
 				tax_amount = flt(gl.get("tax_amount"))
-				output["taxable_amount"] += taxable_amount
-				output["tax_amount"] += tax_amount
+
+				if taxable_amount:
+					output["taxable_amount"] += taxable_amount
+					output["tax_amount"] += tax_amount
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["taxable_amount"] += taxable_amount
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["tax_amount"] += tax_amount
+				else:
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["adjustment_amount"] += tax_amount
 				output["gl_entries"].append(gl)
-				output["tax_details"][gl["account"]][gl["tax_rate"]]["taxable_amount"] += taxable_amount
-				output["tax_details"][gl["account"]][gl["tax_rate"]]["tax_amount"] += tax_amount
 
 		self.set("deductible_vat", [])
+		self.set("deductible_tax_adjustments", [])
 
 		for gl_entry in output["gl_entries"]:
 			gl_entry["vat_amount"] = gl_entry["tax_amount"]
-			row = self.append("deductible_vat", {})
+			if gl_entry.get("taxable_amount"):
+				table_to_update = "deductible_vat"
+			else:
+				table_to_update = "deductible_tax_adjustments"
+
+			row = self.append(table_to_update, {})
 			row.update(gl_entry)
 
 		self.set("deductible_taxable_amount", output["taxable_amount"])
@@ -96,6 +144,7 @@ class FranceTaxDeclarationPreparation(Document):
 	@frappe.whitelist()
 	def get_collected_vat(self):
 		collection_accounts = self.get_collection_accounts()
+		all_tax_accounts = self.get_all_tax_accounts()
 		income_accounts = self.get_accounts("Income Account")
 		gl_entries = self.get_gl_entries(list(collection_accounts.keys()))
 
@@ -107,6 +156,7 @@ class FranceTaxDeclarationPreparation(Document):
 		}
 		for gl_entry in gl_entries:
 			voucher_gls = []
+			gl_entry["against"] = gl_entry["against"][:140]
 			gl_entry["tax_rate"] = collection_accounts.get(gl_entry.account)
 			gl_entry["tax_amount"] = flt(gl_entry.get("credit")) - flt(gl_entry.get("debit"))
 			linked_entries = self.get_linked_entries(gl_entry.accounting_entry_number)
@@ -115,21 +165,55 @@ class FranceTaxDeclarationPreparation(Document):
 				if "taxable_amount" not in gl_entry:
 					gl_entry["taxable_amount"] = 0.0
 				doc = frappe.get_doc(gl_entry.voucher_type, gl_entry.voucher_no)
+				tax_amount = 0.0
 				for item in doc.get("items", []):
 					for row in frappe.parse_json(item.get("item_tax_rate") or []):
-						if row.get("account") == gl_entry.account:
+						if row.get("account") == gl_entry.account or (
+							row.get("account_number")
+							and row.get("account_number") == all_tax_accounts.get(gl_entry.account)
+						):
 							gl_entry_line = gl_entry.copy()
-							gl_entry_line["tax_rate"] = abs(flt(row.get("rate")))
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
 							gl_entry_line["taxable_amount"] = flt(row.get("taxable_amount"))
-							gl_entry_line["tax_amount"] = flt(row.get("tax_amount"))
+							gl_entry_line["tax_amount"] = row.get("tax_amount")
 
 							# Handle UE witholding taxes
-							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] > 0.0:
+							if not gl_entry_line["tax_amount"] and gl_entry_line["tax_rate"] != 0.0:
+								gl_entry_line["tax_rate"] = gl_entry_line["tax_rate"] * -1
 								gl_entry_line["tax_amount"] = (
-									gl_entry_line["taxable_amount"] * gl_entry_line["tax_rate"] / 100.0
+									flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0
 								)
 
+							tax_amount += gl_entry_line["tax_amount"]
+							gl_entry_line["tax_amount"] = flt(gl_entry_line["tax_amount"], 2)
+
 							voucher_gls.append(gl_entry_line)
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					for tax_row in doc.get("taxes", []):
+						if tax_row.account_head == gl_entry.account and tax_row.charge_type in (
+							"On Previous Row Amount",
+							"On Previous Row Total",
+						):
+							gl_entry_line = gl_entry.copy()
+							gl_entry_line["tax_rate"] = flt(row.get("rate"))
+							gl_entry_line["taxable_amount"] = flt(
+								doc.taxes[cint(tax_row.row_id) - 1].get("base_tax_amount")
+							)
+							gl_entry_line["tax_amount"] = flt(
+								flt(gl_entry_line["taxable_amount"]) * flt(gl_entry_line["tax_rate"]) / 100.0, 2
+							)
+							voucher_gls.append(gl_entry_line)
+							tax_amount += gl_entry_line["tax_amount"]
+
+				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
+					gl_entry_line = gl_entry.copy()
+					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
+					gl_entry_line["taxable_amount"] = flt(
+						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					)
+					voucher_gls.append(gl_entry_line)
+
 			elif len(
 				[e for e in linked_entries if e.account in list(collection_accounts.keys())]
 			) == 1 and [e for e in linked_entries if e.account in income_accounts]:
@@ -138,22 +222,35 @@ class FranceTaxDeclarationPreparation(Document):
 				)
 				voucher_gls.append(gl_entry)
 			else:
-				continue
+				gl_entry["tax_rate"] = flt(gl_entry.get("tax_rate")) or all_tax_accounts.get(
+					gl_entry.get("account")
+				)
+				voucher_gls.append(gl_entry)
 
 			for gl in voucher_gls:
 				taxable_amount = flt(gl.get("taxable_amount"))
 				tax_amount = flt(gl.get("tax_amount"))
-				output["taxable_amount"] += taxable_amount
-				output["tax_amount"] += tax_amount
+
+				if taxable_amount:
+					output["taxable_amount"] += taxable_amount
+					output["tax_amount"] += tax_amount
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["taxable_amount"] += taxable_amount
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["tax_amount"] += tax_amount
+				else:
+					output["tax_details"][gl["account"]][gl["tax_rate"]]["adjustment_amount"] += tax_amount
 				output["gl_entries"].append(gl)
-				output["tax_details"][gl["account"]][gl["tax_rate"]]["taxable_amount"] += taxable_amount
-				output["tax_details"][gl["account"]][gl["tax_rate"]]["tax_amount"] += tax_amount
 
 		self.set("collected_vat", [])
+		self.set("collected_tax_adjustments", [])
 
 		for gl_entry in output["gl_entries"]:
-			gl_entry["vat_amount"] = flt(gl_entry.get("tax_amount"))
-			row = self.append("collected_vat", {})
+			gl_entry["vat_amount"] = gl_entry["tax_amount"]
+			if gl_entry.get("taxable_amount"):
+				table_to_update = "collected_vat"
+			else:
+				table_to_update = "collected_tax_adjustments"
+
+			row = self.append(table_to_update, {})
 			row.update(gl_entry)
 
 		self.set("collected_taxable_amount", output["taxable_amount"])
@@ -199,6 +296,7 @@ class FranceTaxDeclarationPreparation(Document):
 			frappe.qb.from_(gl_entry)
 			.where(gl_entry.account.isin(accounts))
 			.where(gl_entry.is_cancelled == 0)
+			.where(gl_entry.is_opening == "No")
 			.where(gl_entry.posting_date <= self.date)
 			.where(gl_entry.name.notin(subquery))
 			.select(
@@ -221,6 +319,9 @@ class FranceTaxDeclarationPreparation(Document):
 		return {
 			t.name: t.tax_rate for t in self.get_vat_accounts() if t.account_number.startswith("4456")
 		}
+
+	def get_all_tax_accounts(self):
+		return {t.name: t.tax_rate for t in self.get_vat_accounts()}
 
 	def get_collection_accounts(self):
 		return {
@@ -265,16 +366,19 @@ class FranceTaxDeclarationPreparation(Document):
 		default_currency = frappe.get_cached_value("Company", self.company, "default_currency")
 		collection_total_taxable = 0.0
 		collection_total_tax = 0.0
+		collection_adjustment_amount = 0.0
 		for account in collection:
 			for rate, values in collection[account].items():
 				collection_total_taxable += flt(values.get("taxable_amount"))
 				collection_total_tax += flt(values.get("tax_amount"))
+				collection_adjustment_amount += flt(values.get("adjustment_amount"))
 				summary.append(
 					{
 						"account": account,
 						"tax_rate": f"{rate} %",
 						"taxable_amount": fmt_money(values.get("taxable_amount"), currency=default_currency),
 						"tax_amount": fmt_money(values.get("tax_amount"), currency=default_currency),
+						"adjustment_amount": fmt_money(values.get("adjustment_amount"), currency=default_currency),
 					}
 				)
 
@@ -284,22 +388,26 @@ class FranceTaxDeclarationPreparation(Document):
 				"tax_rate": "",
 				"taxable_amount": fmt_money(collection_total_taxable, currency=default_currency),
 				"tax_amount": fmt_money(collection_total_tax, currency=default_currency),
+				"adjustment_amount": fmt_money(collection_adjustment_amount, currency=default_currency),
 				"bold": 1,
 			}
 		)
 		summary.append({})
 		deductions_total_taxable = 0.0
 		deductions_total_tax = 0.0
+		deductions_adjustment_amount = 0.0
 		for account, values in deductions.items():
 			for rate, values in deductions[account].items():
 				deductions_total_taxable += flt(values.get("taxable_amount"))
 				deductions_total_tax += flt(values.get("tax_amount"))
+				deductions_adjustment_amount += flt(values.get("adjustment_amount"))
 				summary.append(
 					{
 						"account": account,
 						"tax_rate": f"{rate} %",
 						"taxable_amount": fmt_money(values.get("taxable_amount"), currency=default_currency),
 						"tax_amount": fmt_money(values.get("tax_amount"), currency=default_currency),
+						"adjustment_amount": fmt_money(values.get("adjustment_amount"), currency=default_currency),
 					}
 				)
 
@@ -313,6 +421,7 @@ class FranceTaxDeclarationPreparation(Document):
 						"account": account,
 						"tax_rate": "",
 						"tax_amount": fmt_money(balance, currency=default_currency),
+						"adjustment_amount": "",
 					}
 				)
 
@@ -322,6 +431,7 @@ class FranceTaxDeclarationPreparation(Document):
 				"tax_rate": "",
 				"taxable_amount": fmt_money(deductions_total_taxable, currency=default_currency),
 				"tax_amount": fmt_money(deductions_total_tax, currency=default_currency),
+				"adjustment_amount": fmt_money(deductions_adjustment_amount, currency=default_currency),
 				"bold": 1,
 			}
 		)
@@ -334,6 +444,10 @@ class FranceTaxDeclarationPreparation(Document):
 				"tax_rate": "",
 				"tax_amount": fmt_money(
 					flt(collection_total_tax) - flt(deductions_total_tax), currency=default_currency
+				),
+				"adjustment_amount": fmt_money(
+					flt(collection_adjustment_amount) + flt(deductions_adjustment_amount),
+					currency=default_currency,
 				),
 				"bold": 1,
 			}
@@ -352,7 +466,7 @@ class FranceTaxDeclarationPreparation(Document):
 				"sortable": 0,
 				"focusable": 0,
 				"dropdown": 0,
-				"width": 300,
+				"width": 500,
 			},
 			{
 				"id": "tax_rate",
@@ -377,6 +491,16 @@ class FranceTaxDeclarationPreparation(Document):
 			{
 				"id": "tax_amount",
 				"name": _("Tax Amount"),
+				"editable": 0,
+				"resizable": 0,
+				"sortable": 0,
+				"focusable": 0,
+				"dropdown": 0,
+				"width": 200,
+			},
+			{
+				"id": "adjustment_amount",
+				"name": _("Adjustments Amount"),
 				"editable": 0,
 				"resizable": 0,
 				"sortable": 0,

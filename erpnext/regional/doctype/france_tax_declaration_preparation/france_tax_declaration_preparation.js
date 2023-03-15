@@ -115,7 +115,7 @@ frappe.ui.form.on('France Tax Declaration Preparation Details', {
 
 const highlight_inconsistencies = (frm, cdt, cdn) => {
 	const row = locals[cdt][cdn]
-	if (Math.round(row.tax_rate * row.taxable_amount / 100, 2) != Math.round(row.vat_amount, 2)) {
+	if (Math.round(row.tax_rate * row.taxable_amount, 2) != Math.round(row.vat_amount * 100, 2)) {
 		frm.get_field(row.parentfield).$wrapper.find(`[data-idx="${row.idx}"]`).css("background-color", "var(--red-50)")
 	} else {
 		frm.get_field(row.parentfield).$wrapper.find(`[data-idx="${row.idx}"]`).css("background-color", "")

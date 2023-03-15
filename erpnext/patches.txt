@@ -333,13 +333,12 @@ erpnext.patches.v14_0.update_entry_type_for_journal_entry
 erpnext.patches.v14_0.change_autoname_for_tax_withheld_vouchers
 
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
-erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france
+erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france #2023-03-09
 execute:frappe.delete_doc('Report', 'GoCardless Payments', ignore_missing=True)
 erpnext.patches.dokos.v3_0.update_custom_fields_for_france #2022-12-16
 erpnext.accounts.doctype.subscription.patches.set_an_invoicing_day_on_existing_subscriptions
 erpnext.patches.dokos.v3_0.retry_gocardless_payout_webhooks
 erpnext.patches.dokos.v3_0.gocardless_payments_corrections
 
-# below 2 migration patches should always run last
+# below migration patch should always run last
 erpnext.patches.v14_0.migrate_gl_to_payment_ledger
-erpnext.patches.v14_0.migrate_remarks_from_gl_to_payment_ledger

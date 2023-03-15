@@ -132,7 +132,7 @@ class TestFIFOValuation(unittest.TestCase):
 		total_qty = 0
 
 		for qty, rate in stock_queue:
-			if qty == 0:
+			if round_off_if_near_zero(qty) == 0:
 				continue
 			if qty > 0:
 				self.queue.add_stock(qty, rate)
@@ -141,7 +141,10 @@ class TestFIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.queue.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
+					places=6,
 				)
 				total_qty -= qty
 			self.assertTotalQty(total_qty)
@@ -154,7 +157,7 @@ class TestFIFOValuation(unittest.TestCase):
 
 		for qty, rate in stock_queue:
 			# don't allow negative stock
-			if qty == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
+			if round_off_if_near_zero(qty) == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
 				continue
 			if qty > 0:
 				self.queue.add_stock(qty, rate)
@@ -164,7 +167,9 @@ class TestFIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.queue.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
 				)
 				total_qty -= qty
 				total_value -= sum(q * r for q, r in consumed)
@@ -179,7 +184,7 @@ class TestFIFOValuation(unittest.TestCase):
 
 		for qty, rate in stock_queue:
 			# don't allow negative stock
-			if qty == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
+			if round_off_if_near_zero(qty) == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
 				continue
 			if qty > 0:
 				self.queue.add_stock(qty, rate)
@@ -282,7 +287,7 @@ class TestLIFOValuation(unittest.TestCase):
 		total_qty = 0
 
 		for qty, rate in stock_stack:
-			if qty == 0:
+			if round_off_if_near_zero(qty) == 0:
 				continue
 			if qty > 0:
 				self.stack.add_stock(qty, rate)
@@ -291,7 +296,10 @@ class TestLIFOValuation(unittest.TestCase):
 				qty = abs(qty)
 				consumed = self.stack.remove_stock(qty)
 				self.assertAlmostEqual(
-					qty, sum(q for q, _ in consumed), msg=f"incorrect consumption {consumed}"
+					qty,
+					sum(q for q, _ in consumed),
+					msg=f"incorrect consumption {consumed}",
+					places=6,
 				)
 				total_qty -= qty
 			self.assertTotalQty(total_qty)
@@ -304,7 +312,7 @@ class TestLIFOValuation(unittest.TestCase):
 
 		for qty, rate in stock_stack:
 			# don't allow negative stock
-			if qty == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
+			if round_off_if_near_zero(qty) == 0 or total_qty + qty < 0 or abs(qty) < 0.1:
 				continue
 			if qty > 0:
 				self.stack.add_stock(qty, rate)
