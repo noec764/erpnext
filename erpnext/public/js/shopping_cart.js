@@ -241,7 +241,6 @@ $.extend(shopping_cart, {
 							{ label: __('Billing'), value: 'Billing' },
 							{ label: __('Shipping'), value: 'Shipping' }
 						],
-						default: 'Shipping',
 						reqd: 1
 					},
 					{

@@ -64,7 +64,7 @@ $.extend(shopping_cart, {
 				});
 			}
 		});
-
+		d.disable_primary_action();
 		return d;
 	},
 

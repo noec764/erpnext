@@ -178,12 +178,6 @@ website_route_rules = [
 			"parents": [{"label": "Request for Quotation", "route": "rfq"}],
 		},
 	},
-	{"from_route": "/addresses", "to_route": "Address"},
-	{
-		"from_route": "/addresses/<path:name>",
-		"to_route": "addresses",
-		"defaults": {"doctype": "Address", "parents": [{"label": "Addresses", "route": "addresses"}]},
-	},
 	{"from_route": "/boms", "to_route": "BOM"},
 	{"from_route": "/timesheets", "to_route": "Timesheet"},
 	{"from_route": "/material-requests", "to_route": "Material Request"},
@@ -321,6 +315,7 @@ has_website_permission = {
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
 	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
+    "Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
 }
 
 before_tests = "erpnext.setup.utils.before_tests"
@@ -330,11 +325,6 @@ standard_queries = {"Customer": "erpnext.selling.doctype.customer.customer.get_c
 doc_events = {
 	"*": {
 		"validate": "erpnext.support.doctype.service_level_agreement.service_level_agreement.apply",
-		"after_insert": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
-		"on_change": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
-		"on_submit": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
-		"on_cancel": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
-		"on_trash": "erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
@@ -366,11 +356,13 @@ doc_events = {
 			"erpnext.regional.italy.utils.sales_invoice_on_submit",
 			"erpnext.regional.saudi_arabia.utils.create_qr_code",
 			"erpnext.erpnext_integrations.taxjar_integration.create_transaction",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		],
 		"on_cancel": [
 			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
 			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction",
 			"erpnext.regional.saudi_arabia.utils.delete_qr_code_file",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
 		],
 	},
 	"POS Invoice": {"on_submit": ["erpnext.regional.saudi_arabia.utils.create_qr_code"]},
@@ -403,9 +395,14 @@ doc_events = {
 	},
 	"Item Booking": {
 		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
-		"on_update": ["erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar"],
-		"on_cancel": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
-		"on_trash": "erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+		"on_update": [
+			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		],
+		"on_trash": [
+			"erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
+			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+		],
 	},
 	("Quotation", "Sales Order", "Sales Invoice"): {
 		"validate": ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]

@@ -62,6 +62,8 @@ frappe.ready(() => {
 		const $section = $target.closest('[data-section]');
 		$section.find('.address-card').removeClass('active');
 		$target.addClass('active');
+		$('.btn-modal-primary').removeClass('disabled')
+		$('.btn-modal-primary').removeAttr('disabled')
 	});
 
 	$('#input_same_billing').change((e) => {
