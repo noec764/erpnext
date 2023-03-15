@@ -9,6 +9,9 @@
 {% endblock %}
 
 {% block script %}
+{{ include_script("dialog.bundle.js") }}
+{{ include_script("controls.bundle.js") }}
+{{ include_script("portal-calendar.bundle.js") }}
 <script> {% include "templates/pages/event-slots.js" %} </script>
 {% endblock %}
 
