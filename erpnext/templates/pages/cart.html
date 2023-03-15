@@ -44,7 +44,7 @@
 				</table>
 
 				<div class="row mt-2">
-					<div class="col-3">
+					<div class="col-4">
 						{% if cart_settings.enable_checkout %}
 							<a class="btn btn-primary-light font-md" href="/orders">
 								{{ _('Past Orders') }}
@@ -55,10 +55,10 @@
 							</a>
 						{% endif %}
 					</div>
-					<div class="col-9">
+					<div class="col-8 align-self-end">
 						{% if doc.items %}
-						<div class="place-order-container">
-							<a class="btn btn-primary-light mr-2 font-md" href="/all-products">
+						<div class="continue-shopping-container">
+							<a class="btn btn-primary-light mr-2 font-md btn-continue-shopping" href="/all-products">
 								{{ _('Continue Shopping') }}
 							</a>
 						</div>
@@ -81,7 +81,7 @@
 
 		<!-- Right section -->
 		<div class="col-md-4">
-			<div class="cart-payment-addresses">
+			<div class="cart-payment-addresses pb-4 h-100">
 				<!-- Apply Coupon Code  -->
 				{% set show_coupon_code = cart_settings.show_apply_coupon_code_in_website and cart_settings.enable_checkout %}
 				{% if show_coupon_code == 1%}
@@ -94,11 +94,9 @@
 					</div>
 				{% endif %}
 
-				<div class="mb-3 frappe-card p-5 payment-summary">
+				<div class="mb-3 frappe-card p-5 payment-summary h-100">
 					{% include "templates/includes/cart/cart_payment_summary.html" %}
 				</div>
-
-				{% include "templates/includes/cart/cart_address.html" %}
 			</div>
 		</div>
 		{% endif %}

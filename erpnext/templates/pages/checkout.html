@@ -1,0 +1,53 @@
+{% extends "templates/web.html" %}
+
+{% block title %} {{ _("Checkout") }} {% endblock %}
+
+{% block header %}<h3 class="checkout-cart-header mt-2 mb-6">{{ _("Checkout") }}</h3>{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block page_content %}
+
+{% if doc.items %}
+<div class="cart-container">
+	<div class="row m-0">
+		<!-- Left section -->
+		<div class="col-md-8">
+			<div class="frappe-card p-5 mb-4">
+				{% include "templates/includes/cart/cart_address.html" %}
+			</div>
+		</div>
+
+		<!-- Right section -->
+		<div class="col-md-4">
+			<div class="cart-payment-addresses">
+				<div class="mb-3 frappe-card p-5 payment-summary">
+					{% include "templates/includes/cart/cart_payment_summary.html" %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% else %}
+<div class="cart-empty frappe-card">
+	<div class="cart-empty-state">
+		<img src="/assets/erpnext/images/ui-states/cart-empty-state.png" alt="Empty State">
+	</div>
+	<div class="cart-empty-message mt-4">{{ _('No checkout available') }}</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block base_scripts %}
+<!-- js should be loaded in body! -->
+{{ super() }}
+{{ include_script("controls.bundle.js") }}
+{{ include_script("dialog.bundle.js") }}
+
+<script>Object.assign(frappe.boot, {
+	link_title_doctypes: {{ link_title_doctypes }}
+})
+</script>
+{% endblock %}
