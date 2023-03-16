@@ -309,11 +309,11 @@
   {
    "columns": 0,
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Booking Credits Balance",
    "link_count": 0,
-   "link_to": "booking-credits",
-   "link_type": "Page",
+   "link_to": "Booking Credits Balance",
+   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   },
@@ -351,7 +351,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-03-14 18:25:02.377725",
+ "modified": "2023-03-16 18:48:54.052600",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",

@@ -181,13 +181,14 @@ def get_balance(customer, booking_credit_type=None, user=None):
 	balance = frappe.get_all(
 		"Booking Credit",
 		filters=filters,
-		pluck="balance",
+		fields=["balance", "booking_credit_type"],
 	)
 
-	if balance:
-		return sum(balance)
+	result = defaultdict(int)
+	for bal in balance:
+		result[bal.booking_credit_type] += bal.balance
 
-	return 0.0
+	return result
 
 
 def _process_expired_booking_entry(balance_entry):
