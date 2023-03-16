@@ -28,6 +28,7 @@ class BookingCredit(StatusUpdater):
 			"expiration_date": self.expiration_date,
 			"uom": self.uom,
 			"item": self.item,
+			"booking_credit_type": self.booking_credit_type
 		}
 
 		create_ledger_entry(**ledger_entry)

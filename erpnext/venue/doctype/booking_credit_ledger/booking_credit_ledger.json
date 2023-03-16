@@ -13,6 +13,7 @@
   "credits",
   "uom",
   "item",
+  "booking_credit_type",
   "column_break_4",
   "reference_doctype",
   "reference_document",
@@ -84,6 +85,7 @@
    "options": "User"
   },
   {
+   "fetch_from": "booking_credit_type.uom",
    "fieldname": "uom",
    "fieldtype": "Link",
    "label": "Unit of Measure",
@@ -101,12 +103,19 @@
    "fieldname": "expiration_date",
    "fieldtype": "Date",
    "label": "Expiration Date"
+  },
+  {
+   "fieldname": "booking_credit_type",
+   "fieldtype": "Link",
+   "label": "Booking Credit Type",
+   "options": "Booking Credit Type",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-14 16:13:01.808026",
+ "modified": "2023-03-14 18:31:59.770023",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Ledger",

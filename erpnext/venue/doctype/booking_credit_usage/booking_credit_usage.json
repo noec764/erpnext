@@ -17,6 +17,7 @@
   "datetime",
   "section_break_4",
   "item",
+  "booking_credit_type",
   "column_break_6",
   "quantity",
   "column_break_11",
@@ -114,12 +115,19 @@
   {
    "fieldname": "section_break_13",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "booking_credit_type",
+   "fieldtype": "Link",
+   "label": "Booking Credit Type",
+   "options": "Booking Credit Type",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-06-14 15:54:44.494617",
+ "modified": "2023-03-14 18:33:35.463937",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",
