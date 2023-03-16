@@ -26,6 +26,7 @@
   "uom",
   "section_break_17",
   "sales_invoice",
+  "subscription",
   "status",
   "amended_from"
  ],
@@ -166,6 +167,13 @@
    "label": "Sales Invoice",
    "options": "Sales Invoice",
    "read_only": 1
+  },
+  {
+   "fieldname": "subscription",
+   "fieldtype": "Link",
+   "label": "Subscription",
+   "options": "Subscription",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -176,7 +184,7 @@
    "link_fieldname": "reference_document"
   }
  ],
- "modified": "2023-03-16 10:49:17.138554",
+ "modified": "2023-03-16 11:09:51.150048",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

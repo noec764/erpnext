@@ -43,3 +43,11 @@ class BookingCreditUsage(Document):
 			pluck="name",
 		):
 			frappe.delete_doc("Booking Credit Usage Reference", doc)
+
+
+def add_booking_credit_usage(doc, method):
+	pass
+
+
+def cancel_booking_credit_usage(doc, method):
+	pass

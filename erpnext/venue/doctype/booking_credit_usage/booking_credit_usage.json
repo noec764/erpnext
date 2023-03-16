@@ -22,6 +22,8 @@
   "quantity",
   "uom",
   "section_break_13",
+  "item_booking",
+  "section_break_15",
   "amended_from"
  ],
  "fields": [
@@ -124,12 +126,23 @@
    "label": "Booking Credit Type",
    "options": "Booking Credit Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "item_booking",
+   "fieldtype": "Link",
+   "label": "Item Booking",
+   "options": "Item Booking",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-16 09:34:21.395798",
+ "modified": "2023-03-16 11:54:04.487022",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",

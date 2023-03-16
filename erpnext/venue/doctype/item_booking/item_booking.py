@@ -1425,6 +1425,34 @@ def make_sales_order(source_name, target_doc=None):
 
 	return doclist
 
+@frappe.whitelist()
+def make_booking_credit_usage(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		bct = frappe.qb.DocType("Booking Credit Type")
+		bctc = frappe.qb.DocType("Booking Credit Type Conversions")
+		result = (
+			frappe.qb.from_(bct)
+			.inner_join(bctc)
+			.on(bct.name == bctc.parent)
+			.select(bct.name)
+			.where(bct.disabled == 0)
+			.where(bct.uom == source.uom)
+			.where(bctc.item == source.item)
+		).run(as_dict=True, debug=True)
+
+		if result:
+			target.booking_credit_type = result[0].name
+
+	doclist = get_mapped_doc(
+		"Item Booking",
+		source_name,
+		{"Item Booking": {"doctype": "Booking Credit Usage", "field_map": {"party_name": "customer"}}},
+		target_doc,
+		set_missing_values,
+	)
+
+	return doclist
+
 
 def get_calendar_item(account):
 	return frappe.db.get_value(

@@ -242,87 +242,8 @@ class RuleProcessor:
 			self.datetime = get_datetime(self.start)
 			self.item = getattr(self.doc, self.rule.item_field, None) if self.rule.item_field else None
 
-			if self.rule.applicable_for and self.check_application_rule(self.doc):
-				return
+			self.apply_standard_rules()
 
-			if self.rule.custom_deduction_rule:
-				self.apply_custom_rules()
-			else:
-				self.apply_standard_rules()
-
-		else:
-			self.apply_addition_rules()
-
-	def check_application_rule(self, doc):
-		meta = frappe.get_meta(doc.doctype)
-		options = [x.options for x in meta.fields]
-		if self.rule.applicable_for not in options:
-			if self.rule.applicable_for == "Item Group" and "Item" in options:
-				fields = [x.fieldname for x in meta.fields if x.options == "Item"]
-				for field in fields:
-					item_group = frappe.db.get_value("Item", doc.get(field), "item_group")
-					return item_group != self.rule.applicable_for_document_type
-			elif self.rule.applicable_for == "Customer Group":
-				fields = [x.fieldname for x in meta.fields if x.options == "Customer"]
-				for field in fields:
-					customer_group = frappe.db.get_value("Customer", doc.get(field), "customer_group")
-					return customer_group != self.rule.applicable_for_document_type
-
-			return True
-
-		fields = [x.fieldname for x in meta.fields if x.options == self.rule.applicable_for]
-
-		for field in fields:
-			if getattr(doc, field, None) == self.rule.applicable_for_document_type:
-				return False
-
-		return True
-
-	def apply_addition_rules(self):
-		self.datetime = self.get_posting_date()
-		recurrences = self.get_recurrence()
-
-		for recurrence in recurrences:
-			self.datetime = get_datetime(recurrence)
-			self.expiration_date = self.get_expiration_date()
-
-			if self.rule.use_child_table:
-				for row in self.doc.get(self.rule.child_table) or []:
-					if self.rule.applicable_for and self.check_application_rule(row):
-						continue
-
-					self.item = getattr(row, self.rule.item_field, None) if self.rule.item_field else None
-					self.uom = getattr(row, self.rule.uom_field, None) if self.rule.uom_field else None
-					self.qty = getattr(row, self.rule.qty_field, None) if self.rule.qty_field else None
-
-					self.check_custom_addition_rules()
-
-					if self.uom and self.qty:
-						self.add_credit()
-			else:
-				self.item = getattr(self.doc, self.rule.item_field, None) if self.rule.item_field else None
-				self.uom = getattr(self.doc, self.rule.uom_field, None) if self.rule.uom_field else None
-				self.qty = getattr(self.doc, self.rule.qty_field, None) if self.rule.qty_field else None
-
-				if self.rule.applicable_for and self.check_application_rule(self.doc):
-					return
-
-				self.check_custom_addition_rules()
-
-				if self.uom and self.qty:
-					self.add_credit()
-
-	def check_custom_addition_rules(self):
-		if self.rule.custom_addition_rules:
-			uom = self.uom
-			qty = self.qty
-			self.uom = self.qty = None
-
-			for rule in self.rule.addition_booking_credit_rules:
-				if rule.source_unit_of_measure == uom:
-					self.uom = rule.target_unit_of_measure
-					self.qty = flt(rule.target_quantity) * flt(qty)
-					break
 
 	def apply_standard_rules(self):
 		default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
@@ -373,89 +294,6 @@ class RuleProcessor:
 		):
 			return self.deduct_credit()
 
-	def apply_custom_rules(self):
-		booking_calendar = None
-		if self.days > 1:
-			calendar_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
-			booking_calendar = get_item_calendar(self.item, calendar_uom)
-			if booking_calendar:
-				for d in range(self.days):
-					daily_slots = [
-						x
-						for x in booking_calendar.get("calendar")
-						if x.day == calendar.day_name[add_days(self.start.date(), d).weekday()]
-					]
-					min_time = min([x.start_time for x in daily_slots])
-					max_time = max([x.end_time for x in daily_slots])
-					time_diff = (
-						datetime.combine(date.today(), get_time(max_time))
-						- datetime.combine(date.today(), get_time(min_time))
-					).total_seconds()
-					total_duration = time_diff / 60
-					self.calculate_intervals(total_duration)
-
-		if not booking_calendar:
-			total_duration = self.duration
-			self.calculate_intervals(total_duration)
-
-	def calculate_intervals(self, total_duration):
-		import numpy as np
-
-		intervals = [
-			(x.from_duration, x.to_duration) for x in self.rule.booking_credit_rules if x.duration_interval
-		]
-		intervals.sort(key=lambda t: t[0])
-
-		levels = [x for x in self.rule.booking_credit_rules if not x.duration_interval]
-		min_level = min([x.duration for x in self.rule.booking_credit_rules if not x.duration_interval])
-
-		corresponding_interval = None
-		for index, interval in enumerate(intervals):
-			if total_duration < interval[0]:
-				corresponding_interval = (index - 1) if (index - 1) >= 0 else None
-				break
-
-			elif total_duration in range(interval[0], interval[1] + 1) or total_duration > interval[1]:
-				corresponding_interval = index
-
-		result = []
-		if corresponding_interval is not None:
-			selected_rule = [
-				x
-				for x in self.rule.booking_credit_rules
-				if x.from_duration == intervals[corresponding_interval][0]
-				and x.to_duration == intervals[corresponding_interval][1]
-			][0]
-			total_duration -= min(flt(total_duration), flt(selected_rule.to_duration))
-			result.append((selected_rule.credit_qty, selected_rule.credit_uom))
-
-		while total_duration > 0:
-			if self.rule.round_down and total_duration < min_level:
-				break
-
-			closest_index = np.argmin(np.abs(np.array([x.duration for x in levels]) - total_duration))
-			total_duration -= min(flt(levels[closest_index].duration), flt(total_duration))
-			result.append((levels[closest_index].credit_qty, levels[closest_index].credit_uom))
-
-		for index, res in enumerate(result):
-			self.qty = res[0]
-			self.uom = res[1]
-
-			self.deduct_credit()
-
-	def add_credit(self):
-		doc = frappe.get_doc(
-			{
-				"doctype": "Booking Credit",
-				"date": getdate(self.datetime),
-				"customer": self.customer,
-				"quantity": self.qty,
-				"uom": self.uom,
-				"expiration_date": self.expiration_date,
-				"item": self.item,
-			}
-		).insert(ignore_permissions=True)
-		return doc.submit()
 
 	def deduct_credit(self):
 		if self.rule.valid_from and getdate(self.datetime) >= getdate(self.rule.valid_from):
@@ -538,21 +376,6 @@ class RuleProcessor:
 				pluck="from_uom",
 			)
 
-	def get_expiration_date(self):
-		if self.rule.expiration_rule == "End of the month":
-			return get_last_day(self.datetime)
-
-		if self.rule.expiration_rule == "End of the year":
-			return get_year_ending(self.datetime)
-
-		if not self.rule.expiration_delay:
-			return None
-
-		years = self.rule.expiration_delay if self.rule.expiration_rule == "Add X years" else 0
-		months = self.rule.expiration_delay if self.rule.expiration_rule == "Add X months" else 0
-		days = self.rule.expiration_delay if self.rule.expiration_rule == "Add X days" else 0
-		return add_to_date(self.datetime, years=years, months=months, days=days)
-
 	def get_posting_date(self):
 		posting_datetime = (
 			getattr(self.doc, self.rule.date_field, None) if self.rule.date_field else now_datetime()
@@ -599,26 +422,3 @@ class RuleProcessor:
 
 		return self.item
 
-	def get_recurrence(self):
-		from dateutil import rrule
-
-		if self.rule.recurrence_interval and self.rule.recurrence_end:
-			end_date = getattr(self.doc, self.rule.recurrence_end, None) or now_datetime()
-
-			if self.rule.recurrence_interval == "Every Day":
-				frequency = rrule.DAILY
-
-			elif self.rule.recurrence_interval == "Every Week":
-				frequency = rrule.WEEKLY
-
-			elif self.rule.recurrence_interval == "Every Month":
-				frequency = rrule.MONTHLY
-
-			return [
-				getdate(x)
-				for x in rrule.rrule(
-					frequency, dtstart=get_datetime(self.datetime), until=get_datetime(end_date)
-				)
-			]
-
-		return [self.datetime]

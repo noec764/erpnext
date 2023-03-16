@@ -17,24 +17,10 @@
   "posting_date_rule",
   "column_break_18",
   "posting_date_delay",
-  "expiration_section",
-  "expiration_rule",
-  "column_break_20",
-  "expiration_delay",
   "recurrence_section",
   "recurrence_interval",
   "column_break_26",
-  "recurrence_end",
-  "fields_map",
-  "start_time_field",
-  "customer_field",
-  "uom_field",
-  "date_field",
-  "column_break_14",
-  "end_time_field",
-  "user_field",
-  "item_field",
-  "qty_field"
+  "recurrence_end"
  ],
  "fields": [
   {
@@ -52,63 +38,6 @@
    "label": "Disabled"
   },
   {
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
-   "fieldname": "start_time_field",
-   "fieldtype": "Select",
-   "label": "Start Time Field",
-   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
-  },
-  {
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
-   "fieldname": "end_time_field",
-   "fieldtype": "Select",
-   "label": "End Time Field",
-   "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
-  },
-  {
-   "fieldname": "customer_field",
-   "fieldtype": "Select",
-   "label": "Customer Field"
-  },
-  {
-   "fieldname": "user_field",
-   "fieldtype": "Select",
-   "label": "User Field"
-  },
-  {
-   "fieldname": "column_break_14",
-   "fieldtype": "Column Break"
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "fields_map",
-   "fieldtype": "Section Break",
-   "label": "Fields Mapping"
-  },
-  {
-   "fieldname": "uom_field",
-   "fieldtype": "Select",
-   "label": "Unit of Measure Field"
-  },
-  {
-   "fieldname": "item_field",
-   "fieldtype": "Select",
-   "label": "Item Field",
-   "reqd": 1
-  },
-  {
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
-   "fieldname": "date_field",
-   "fieldtype": "Select",
-   "label": "Date Field"
-  },
-  {
-   "depends_on": "eval:doc.rule_type==\"Booking Credits Addition\"",
-   "fieldname": "qty_field",
-   "fieldtype": "Select",
-   "label": "Quantity Field"
-  },
-  {
    "default": "Today",
    "depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\"",
    "fieldname": "valid_from",
@@ -117,25 +46,8 @@
    "mandatory_depends_on": "eval:doc.rule_type==\"Booking Credits Deduction\""
   },
   {
-   "fieldname": "expiration_section",
-   "fieldtype": "Section Break",
-   "label": "Expiration"
-  },
-  {
-   "fieldname": "expiration_rule",
-   "fieldtype": "Select",
-   "label": "Expiration Rule",
-   "options": "\nAdd X days\nAdd X months\nAdd X years\nEnd of the month\nEnd of the year"
-  },
-  {
    "fieldname": "column_break_18",
    "fieldtype": "Column Break"
-  },
-  {
-   "depends_on": "eval:[\"Add X days\", \"Add X months\", \"Add X years\"].includes(doc.expiration_rule)",
-   "fieldname": "expiration_delay",
-   "fieldtype": "Int",
-   "label": "Expiration Delay"
   },
   {
    "fieldname": "posting_date_section",
@@ -153,10 +65,6 @@
    "fieldname": "posting_date_delay",
    "fieldtype": "Int",
    "label": "Posting Date Delay"
-  },
-  {
-   "fieldname": "column_break_20",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "recurrence_section",
@@ -188,7 +96,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-16 10:32:05.239555",
+ "modified": "2023-03-16 11:05:03.833131",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Rule",

@@ -23,6 +23,7 @@ from erpnext.accounts.doctype.subscription.subscription_transaction import (
 	SubscriptionSalesOrderGenerator,
 )
 from erpnext.accounts.party import get_default_contact
+from erpnext.venue.doctype.booking_credit.booking_credit import automatic_booking_credit_allocation
 
 BILLING_STATUS = ["Billable", "Billing failed", "Cancelled and billable"]
 
@@ -98,6 +99,7 @@ class Subscription(Document):
 			SubscriptionStateManager(self).set_status()
 
 		self.set_customer_status()
+		automatic_booking_credit_allocation(self)
 
 	def process_active_subscription(self):
 		try:

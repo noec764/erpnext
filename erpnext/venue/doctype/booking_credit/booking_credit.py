@@ -4,7 +4,7 @@
 from collections import defaultdict
 
 import frappe
-from frappe.utils import flt, get_datetime, now_datetime, cint, add_to_date
+from frappe.utils import flt, get_datetime, now_datetime, cint, add_to_date, nowdate, getdate
 
 from erpnext.controllers.status_updater import StatusUpdater
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
@@ -60,14 +60,14 @@ class BookingCredit(StatusUpdater):
 		self.set_status(update=True)
 
 
-def add_cancel_booking_credits(doc, method):
+def add_booking_credits(doc, method):
+	"""Adds booking credits from a validated sales invoice"""
 	if not frappe.db.exists("Booking Credit Type", dict(disabled=0)):
 		return
 
-	add_booking_credits(doc)
+	_add_booking_credits(doc)
 
-
-def add_booking_credits(doc):
+def _add_booking_credits(doc):
 	grouped_items = defaultdict(lambda: defaultdict(float))
 	for item in doc.get("items"):
 		grouped_items[item.item_code][item.uom] += flt(item.qty)
@@ -81,11 +81,77 @@ def add_booking_credits(doc):
 						"date": doc.posting_date, #TODO: See how to implement delayed date
 						"customer": doc.customer,
 						"quantity": flt(grouped_items[grouped_item][uom]) * cint(credit_type.credits),
+						"sales_invoice": doc.name
 					}
 				)
 				booking_credit.flags.ignore_permissions = True
 				booking_credit.insert()
 				booking_credit.submit()
+
+def automatic_booking_credit_allocation(subscription):
+	for rule in subscription.booking_credits_allocation:
+		if last_generated_credit := get_last_credit_for_customer(subscription.customer, rule.booking_credit_type, subscription=subscription.name):
+			if not are_subscription_credits_due(last_generated_credit[0].date, rule, subscription):
+				continue
+
+		booking_credit = frappe.get_doc(
+			{
+				"doctype": "Booking Credit",
+				"date": nowdate(),
+				"customer": subscription.customer,
+				"quantity": cint(rule.quantity),
+				"subscription": subscription.name
+			}
+		)
+		booking_credit.flags.ignore_permissions = True
+		booking_credit.insert()
+		booking_credit.submit()
+
+def are_subscription_credits_due(date, rule, subscription):
+	from dateutil import rrule
+
+	if rule.recurrence == "Once":
+		return False
+	
+	if rule.recurrence == "Every Billing Period":
+		if getdate(date) != getdate() and getdate() == getdate(subscription.current_invoice_start):
+			return True
+		return False
+	
+	if rule.recurrence == "Every Day":
+		frequency = rrule.DAILY
+
+	elif rule.recurrence == "Every Week":
+		frequency = rrule.WEEKLY
+
+	elif rule.recurrence == "Every Month":
+		frequency = rrule.MONTHLY
+
+	end_date = getdate(subscription.cancellation_date or subscription.current_invoice_end)
+	possible_dates = [
+		getdate(x)
+		for x in rrule.rrule(
+			frequency, dtstart=get_datetime(subscription.start), until=get_datetime(end_date)
+		)
+	]
+
+	if getdate(date) != getdate() and getdate() in possible_dates:
+		return True
+
+def get_last_credit_for_customer(customer, booking_credit_type, subscription):
+	filters={
+			"customer": customer,
+			"booking_credit_type": booking_credit_type,
+			"docstatus": 1
+		}
+
+	return frappe.get_all(
+		"Booking Credit",
+		filters=filters,
+		fields=["name", "date"],
+		order_by="date DESC",
+		limit=1
+	)
 
 
 @frappe.whitelist()

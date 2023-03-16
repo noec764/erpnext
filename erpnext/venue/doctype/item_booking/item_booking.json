@@ -237,9 +237,9 @@
   {
    "fieldname": "uom",
    "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Unit of Measure",
-   "options": "UOM"
+   "label": "Selected Unit of Measure",
+   "options": "UOM",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -263,12 +263,18 @@
    "group": "Child Bookings",
    "link_doctype": "Item Booking",
    "link_fieldname": "parent_item_booking"
+  },
+  {
+   "group": "Booking Credits",
+   "link_doctype": "Booking Credit Usage",
+   "link_fieldname": "item_booking"
   }
  ],
- "modified": "2023-02-24 16:57:59.404593",
+ "modified": "2023-03-16 14:03:17.431819",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

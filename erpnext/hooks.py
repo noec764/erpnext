@@ -356,7 +356,7 @@ doc_events = {
 			"erpnext.regional.italy.utils.sales_invoice_on_submit",
 			"erpnext.regional.saudi_arabia.utils.create_qr_code",
 			"erpnext.erpnext_integrations.taxjar_integration.create_transaction",
-			"erpnext.venue.doctype.booking_credit.booking_credit.add_cancel_booking_credits",
+			"erpnext.venue.doctype.booking_credit.booking_credit.add_booking_credits",
 		],
 		"on_cancel": [
 			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
@@ -396,11 +396,11 @@ doc_events = {
 		"after_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_in_google_calendar",
 		"on_update": [
 			"erpnext.venue.doctype.item_booking.item_booking.update_event_in_google_calendar",
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+			"erpnext.venue.doctype.booking_credit_usage.booking_credit_usage.add_booking_credit_usage",
 		],
 		"on_trash": [
 			"erpnext.venue.doctype.item_booking.item_booking.delete_event_in_google_calendar",
-			"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_credit_rules",
+			"erpnext.venue.doctype.booking_credit_usage.booking_credit_usage.cancel_booking_credit_usage",
 		],
 	},
 	("Quotation", "Sales Order", "Sales Invoice"): {
