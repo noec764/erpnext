@@ -22,8 +22,7 @@ class BookingCreditUsage(Document):
 				"credits": self.quantity * -1,
 				"reference_doctype": self.doctype,
 				"reference_document": self.name,
-				"uom": self.uom,
-				"item": self.item,
+				"booking_credit_type": self.booking_credit_type
 			}
 		)
 

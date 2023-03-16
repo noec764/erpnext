@@ -1,5 +1,5 @@
 <div class="booking-credit-dashboard">
-	<h6 style="margin-bottom: 25px;">{{ __("Balance for {0} on {1}", [customer, frappe.datetime.global_date_format(date)]) }}</h6>
+	<h6 style="margin-bottom: 25px;">{{ __("Balance for {0} on {1}", [customer, frappe.datetime.global_date_format()]) }}</h6>
 	{% for d in balance %}
 		{% if flt(d.balance) != 0.0 %}
 		<div class="row">

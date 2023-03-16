@@ -11,12 +11,10 @@ from erpnext.venue.doctype.item_booking.item_booking import get_uom_in_minutes
 
 @frappe.whitelist()
 def get_balance(
-	limit_start=0, limit=20, customer=None, customer_group=None, date=None, sort_order=None
+	limit_start=0, limit=20, customer=None, customer_group=None, sort_order=None
 ):
 	result = []
 	filters = {"customer": ("!=", "")}
-	if not date:
-		date = nowdate()
 
 	if customer:
 		customers = [customer]
@@ -41,12 +39,11 @@ def get_balance(
 		)
 
 	for customer in customers:
-		balance = _get_balance(customer, date)
+		balance = _get_balance(customer)
 		result.append(
 			{
 				"customer": customer,
-				"balance": balance,
-				"max_count": max([balance[x][0].get("balance") for x in balance]) if balance else 0,
+				"balance": balance
 			}
 		)
 

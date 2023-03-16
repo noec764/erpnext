@@ -19,26 +19,12 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 		this.sort_by = 'customer';
 		this.sort_order = 'asc';
 		this.loading = false;
-		this.date = frappe.datetime.now_date();
 		this.make_form();
 		this.make_sort_selector();
 		this.get_data();
 	}
 
 	make_form() {
-		this.date_field = this.page.add_field({
-			fieldname: 'date',
-			label: __('Date'),
-			fieldtype:'Date',
-			default: frappe.datetime.now_date(),
-			change:() => {
-				this.date = this.date_field.value;
-				this.balances = [];
-				this.limit_start = 0;
-				this.get_data();
-			}
-		});
-
 		this.customer_field = this.page.add_field({
 			fieldname: 'customer',
 			label: __('Customer'),
@@ -92,7 +78,7 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 				sort_order: 'asc',
 				options: [
 					{fieldname: 'customer', label: __('Customer Name')},
-					{fieldname: 'max_count', label: __('Balance')}
+					{fieldname: 'balance', label: __('Balance')}
 				]
 			},
 			change: function(sort_by, sort_order) {
@@ -110,7 +96,6 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 			this.loading = true;
 			frappe.xcall('erpnext.venue.page.booking_credits.booking_credits.get_balance', {
 				"customer": this.customer,
-				"date": this.date,
 				"limit": this.limit,
 				"limit_start": this.limit_start,
 				"customer_group": this.customer_group,
@@ -153,8 +138,6 @@ erpnext.bookingCreditsBalance = class BookingCreditsBalance {
 				{
 					balance: Object.keys(customer.balance).map(f => { return {...customer.balance[f][0], item: f}}),
 					customer: customer.customer,
-					date: this.date,
-					max_count: customer.max_count
 				})
 			}).join("");
 		this.form.get_field('balance_html').$wrapper.html(result);

@@ -34,7 +34,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "credits",
@@ -90,14 +91,15 @@
    "fieldtype": "Link",
    "label": "Unit of Measure",
    "options": "UOM",
-   "reqd": 1
+   "read_only": 1
   },
   {
+   "fetch_from": "booking_credit_type.item",
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Item",
    "options": "Item",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "expiration_date",
@@ -115,7 +117,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-14 18:31:59.770023",
+ "modified": "2023-03-16 09:38:18.478791",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Ledger",

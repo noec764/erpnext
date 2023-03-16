@@ -8,6 +8,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "balance",
+  "section_break_15",
   "naming_series",
   "date",
   "user",
@@ -17,12 +19,13 @@
   "expiration_date",
   "is_expired",
   "section_break_7",
-  "item",
   "booking_credit_type",
+  "item",
   "column_break_9",
   "quantity",
-  "column_break_13",
   "uom",
+  "section_break_17",
+  "sales_invoice",
   "status",
   "amended_from"
  ],
@@ -75,7 +78,7 @@
    "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Int",
-   "label": "Quantity",
+   "label": "Purchased Quantity",
    "reqd": 1
   },
   {
@@ -83,11 +86,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "booking_credit_type.uom",
    "fieldname": "uom",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Unit of Measure",
    "options": "UOM",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -101,6 +106,8 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "User",
    "options": "User"
   },
@@ -119,31 +126,57 @@
    "hidden": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Draft\nActive\nExpired\nCancelled"
+   "options": "Draft\nActive\nExpired\nCancelled\nConsumed"
   },
   {
-   "fieldname": "column_break_13",
-   "fieldtype": "Column Break"
-  },
-  {
+   "fetch_from": "booking_credit_type.item",
    "fieldname": "item",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item",
    "options": "Item",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "booking_credit_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Booking Credit Type",
    "options": "Booking Credit Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.docstatus==1",
+   "fieldname": "balance",
+   "fieldtype": "Int",
+   "label": "Balance Quantity"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2023-03-14 18:30:57.088875",
+ "links": [
+  {
+   "link_doctype": "Booking Credit Ledger",
+   "link_fieldname": "reference_document"
+  }
+ ],
+ "modified": "2023-03-16 10:49:17.138554",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

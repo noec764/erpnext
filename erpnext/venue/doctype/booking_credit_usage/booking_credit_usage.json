@@ -16,11 +16,10 @@
   "column_break_3",
   "datetime",
   "section_break_4",
-  "item",
   "booking_credit_type",
+  "item",
   "column_break_6",
   "quantity",
-  "column_break_11",
   "uom",
   "section_break_13",
   "amended_from"
@@ -56,12 +55,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "booking_credit_type.uom",
    "fieldname": "uom",
    "fieldtype": "Link",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Unit of Measure",
    "options": "UOM",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -82,6 +82,8 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "User",
    "options": "User"
   },
@@ -102,15 +104,13 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_11",
-   "fieldtype": "Column Break"
-  },
-  {
+   "fetch_from": "booking_credit_type.item",
    "fieldname": "item",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item",
    "options": "Item",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "section_break_13",
@@ -119,6 +119,8 @@
   {
    "fieldname": "booking_credit_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Booking Credit Type",
    "options": "Booking Credit Type",
    "reqd": 1
@@ -127,7 +129,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-14 18:33:35.463937",
+ "modified": "2023-03-16 09:34:21.395798",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Usage",
@@ -168,6 +170,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "user",
+ "title_field": "customer",
  "track_changes": 1
 }
