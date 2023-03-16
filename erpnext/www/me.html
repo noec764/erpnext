@@ -90,11 +90,7 @@
 		<span>
 			<div class="my-account-item">{{_("Available booking credits") }}</div>
 			{% for bal in credits_balance %}
-			{% for credits in credits_balance[bal] %}
-				{% if credits["balance"] %}
-				<div class="my-account-item-desc">{{ bal }}: <span class="muted">{{ credits["balance"] or "" }} {{ credits["uom"] or "" }}</span></div>
-				{% endif %}
-			{% endfor %}
+			<div class="my-account-item-desc">{{ bal }}: <span class="muted">{{ credits_balance[bal] or "" }}</span></div>
 			{% endfor %}
 		</span>
 	</div>
