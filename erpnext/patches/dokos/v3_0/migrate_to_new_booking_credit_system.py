@@ -40,6 +40,9 @@ def execute():
 
 			frappe.db.set_value(dt, booking_credit.name, "booking_credit_type", bt)
 
+	for reference in frappe.get_all("Booking Credit Usage Reference", filters={"reference_doctype": "Item Booking"}, fields=["reference_document", "booking_credit_usage"]):
+		frappe.db.set_value("Booking Credit Usage", reference.booking_credit_usage, "item_booking", reference.reference_document)
+
 
 def get_validity(rule):
 	if rule.expiration_rule == "End of the month":
