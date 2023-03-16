@@ -677,9 +677,9 @@ def get_applicable_shipping_rules(party=None, quotation=None):
 	shipping_rules = get_shipping_rules(quotation)
 
 	if shipping_rules:
-		rule_label_map = frappe.db.get_values("Shipping Rule", shipping_rules, "label")
+		rule_label_map = {rule.name: rule.label for rule in frappe.db.get_values("Shipping Rule", dict(name=["in", shipping_rules]), ["name", "label"], as_dict=True)}
 		# we need this in sorted order as per the position of the rule in the settings page
-		return [[rule, rule] for rule in shipping_rules]
+		return [[rule, rule_label_map[rule]] for rule in shipping_rules]
 
 
 def get_shipping_rules(quotation=None, cart_settings=None):
