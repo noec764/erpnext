@@ -153,7 +153,7 @@ status_map = {
 		["Draft", None],
 		["Cancelled", "eval:self.docstatus == 2"],
 		["Consumed", "eval:self.docstatus == 1 and self.balance == 0"],
-		["Active", "eval:self.docstatus == 1 and not self.is_expired"],
+		["Active", "eval:self.docstatus == 1 and not self.is_expired and self.balance > 0"],
 		["Expired", "eval:self.docstatus == 1 and self.is_expired"],
 	],
 	"POS Closing Entry": [
