@@ -197,8 +197,12 @@ def _process_expired_booking_entry(balance_entry):
 
 
 @frappe.whitelist()
-def has_booking_credits(customer):
-	return bool(frappe.db.get_all("Booking Credit", filters={"customer": customer, "status": "Active"}, limit=1))
+def has_booking_credits(customer, booking_credit_type=None):
+	filters={"customer": customer, "status": "Active"}
+	if booking_credit_type:
+		filters["booking_credit_type"] = booking_credit_type
+
+	return bool(frappe.db.get_all("Booking Credit", filters=filters, limit=1))
 
 
 
