@@ -143,7 +143,7 @@ def get_credits_per_item_and_uom(item, uom):
 		.where(bct.disabled == 0)
 		.where(bct.uom == uom)
 		.where(bctc.item == item)
-	).run(as_dict=True, debug=True)
+	).run(as_dict=True)
 
 	if result:
 		return result[0].credits

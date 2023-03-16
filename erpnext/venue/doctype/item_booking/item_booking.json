@@ -243,9 +243,11 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.item && doc.uom",
    "fieldname": "deduct_booking_credits",
    "fieldtype": "Check",
-   "label": "Deduct booking credits"
+   "label": "Deduct booking credits",
+   "set_only_once": 1
   },
   {
    "fieldname": "section_break_31",
@@ -270,7 +272,7 @@
    "link_fieldname": "item_booking"
   }
  ],
- "modified": "2023-03-16 14:03:17.431819",
+ "modified": "2023-03-16 17:04:55.435115",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking",

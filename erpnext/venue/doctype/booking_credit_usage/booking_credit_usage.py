@@ -3,9 +3,11 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import now_datetime
 
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.utils import get_customer
+from erpnext.venue.doctype.booking_credit.booking_credit import get_booking_credit_types_for_item, get_converted_qty
 
 
 class BookingCreditUsage(Document):
@@ -46,8 +48,42 @@ class BookingCreditUsage(Document):
 
 
 def add_booking_credit_usage(doc, method):
-	pass
+	if not doc.party_type == "Customer":
+		return
+
+	if not doc.deduct_booking_credits:
+		return
+
+	if frappe.db.exists("Booking Credit Usage", {"item_booking": doc.name, "docstatus": 1}):
+		return
+
+	bct = get_booking_credit_types_for_item(doc.item, doc.uom)
+	if bct:
+		usage = frappe.get_doc(
+			{
+				"doctype": "Booking Credit Usage",
+				"datetime": now_datetime(),
+				"customer": doc.party_name,
+				"quantity": get_converted_qty(bct[0], doc.item),
+				"user": doc.user,
+				"booking_credit_type": bct[0],
+				"item_booking": doc.name
+			}
+		).insert(ignore_permissions=True)
+
+	return usage.submit()
 
 
 def cancel_booking_credit_usage(doc, method):
-	pass
+	doc_before_save = doc.get_doc_before_save()
+	if doc_before_save:
+		for field in ("status", "starts_on", "ends_on", "party_name"):
+			if doc_before_save.get(field) != doc.get(field):
+				for bcu in frappe.get_all(
+					"Booking Credit Usage",
+					filters={"item_booking", doc.name},
+					pluck="name",
+				):
+					bcu_doc = frappe.get_doc("Booking Credit Usage", bcu)
+					bcu_doc.flags.ignore_permissions = True
+					bcu_doc.cancel()

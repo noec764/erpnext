@@ -74,14 +74,15 @@ def _add_booking_credits(doc):
 
 	for grouped_item in grouped_items:
 		for uom in grouped_items[grouped_item]:
-			if credit_type := frappe.get_cached_value("Booking Credit Type", dict(item=grouped_item.item_code, uom=uom, disabled=0), "credits"):
+			if credit_type := frappe.get_cached_doc("Booking Credit Type", dict(item=grouped_item, uom=uom, disabled=0)):
 				booking_credit = frappe.get_doc(
 					{
 						"doctype": "Booking Credit",
 						"date": doc.posting_date, #TODO: See how to implement delayed date
 						"customer": doc.customer,
 						"quantity": flt(grouped_items[grouped_item][uom]) * cint(credit_type.credits),
-						"sales_invoice": doc.name
+						"sales_invoice": doc.name,
+						"booking_credit_type": credit_type.name
 					}
 				)
 				booking_credit.flags.ignore_permissions = True
@@ -196,6 +197,36 @@ def _process_expired_booking_entry(balance_entry):
 	frappe.db.set_value("Booking Credit", balance_entry.name, "status", "Expired")
 
 
+def get_booking_credit_types_for_item(item, uom):
+	bct = frappe.qb.DocType("Booking Credit Type")
+	bctc = frappe.qb.DocType("Booking Credit Type Conversions")
+	return (
+		frappe.qb.from_(bct)
+		.inner_join(bctc)
+		.on(bct.name == bctc.parent)
+		.select(bct.name)
+		.where(bct.disabled == 0)
+		.where(bct.uom == uom)
+		.where(bctc.item == item)
+	).run(pluck=True)
+
+def get_booking_credits_for_customer(customer, booking_credit_type=None):
+	filters={"customer": customer, "status": "Active"}
+	if booking_credit_type:
+		filters["booking_credit_type"] = booking_credit_type
+
+	return sum(frappe.db.get_all("Booking Credit", filters=filters, pluck="balance"))
+
+def get_converted_qty(booking_credit_type, item):
+	return frappe.db.get_value(
+		"Booking Credit Type Conversions",
+		{
+			"parent": booking_credit_type,
+			"item": item
+		},
+		"credits"
+	)
+
 @frappe.whitelist()
 def has_booking_credits(customer, booking_credit_type=None):
 	filters={"customer": customer, "status": "Active"}
@@ -204,7 +235,21 @@ def has_booking_credits(customer, booking_credit_type=None):
 
 	return bool(frappe.db.get_all("Booking Credit", filters=filters, limit=1))
 
+@frappe.whitelist(allow_guest=True)
+def get_booking_credits_by_item(item, uom):
+	if frappe.session.user == "Guest":
+		return 0.0
 
+	customer = get_customer(frappe.session.user)
+	if not customer:
+		return 0.0
+
+	booking_credit_types = get_booking_credit_types_for_item(item, uom)
+	result = 0.0
+	for booking_credit_type in booking_credit_types:
+		result += get_booking_credits_for_customer(customer, booking_credit_type)
+
+	return result
 
 # @frappe.whitelist()
 # def get_balance(customer, date=None, uom=None):
