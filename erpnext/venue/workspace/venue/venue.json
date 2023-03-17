@@ -321,28 +321,6 @@
    "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Booking Credit Rule",
-   "link_count": 0,
-   "link_to": "Booking Credit Rule",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Booking Credit Conversion",
-   "link_count": 0,
-   "link_to": "Booking Credit Conversion",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Booking Credit Type",
    "link_count": 0,
    "link_to": "Booking Credit Type",
@@ -351,7 +329,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-03-16 18:48:54.052600",
+ "modified": "2023-03-17 08:05:39.601168",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
