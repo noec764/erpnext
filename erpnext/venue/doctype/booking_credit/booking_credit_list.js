@@ -6,6 +6,8 @@ frappe.listview_settings['Booking Credit'] = {
 			return [__("Active"), "green", "status,=,Active"];
 		} else if (doc.status == "Expired") {
 			return [__("Expired"), "darkgray", "status,=,Expired"];
+		} else if (doc.status == "Consumed") {
+			return [__("Consumed"), "gray", "status,=,Consumed"];
 		}
 	}
 };

@@ -10,10 +10,9 @@ from frappe.utils import cint
 
 class BookingCreditLedger(Document):
 	def on_submit(self):
-		if self.reference_doctype != "Booking Credit":
-			self.recalculate_fifo_balance()
+		self.calculate_fifo_balance()
 
-	def recalculate_fifo_balance(self):
+	def calculate_fifo_balance(self):
 		booking_credit = frappe.qb.DocType("Booking Credit")
 		query = (
 			frappe.qb.from_(booking_credit)
@@ -38,18 +37,25 @@ class BookingCreditLedger(Document):
 
 		total_credits = cint(self.credits) * -1
 		for bc in booking_credits:
-			usable_balance = min(cint(bc.balance), total_credits)
-			new_balance = cint(bc.balance) - usable_balance
-			total_credits -= usable_balance
-			frappe.db.set_value("Booking Credit", bc.name, "balance", new_balance)
-
-			if new_balance == 0.0:
-				doc = frappe.get_doc("Booking Credit", bc.name)
-				doc.set_status()
-
-
-			if not total_credits:
+			remaining = self.set_fifo_balance(bc, total_credits)
+			if not remaining:
 				break
+
+	def set_fifo_balance(self, booking_credit, total_credits):
+		usable_balance = min(cint(booking_credit.balance), total_credits)
+
+		doc = frappe.get_doc("Booking Credit", booking_credit.name)
+		doc.append(
+			"booking_credit_ledger_allocation",
+			{"booking_credit_ledger": self.name, "allocation": usable_balance},
+		)
+		doc.flags.ignore_permissions = True
+		doc.flags.ignore_links = True
+		doc.flags.ignore_mandatory = True
+		doc.save()
+
+		total_credits -= usable_balance
+		return total_credits
 
 
 def create_ledger_entry(**kwargs):

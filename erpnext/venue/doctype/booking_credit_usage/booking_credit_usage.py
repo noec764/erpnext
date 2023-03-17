@@ -5,9 +5,12 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import now_datetime
 
+from erpnext.venue.doctype.booking_credit.booking_credit import (
+	get_booking_credit_types_for_item,
+	get_converted_qty,
+)
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
 from erpnext.venue.utils import get_customer
-from erpnext.venue.doctype.booking_credit.booking_credit import get_booking_credit_types_for_item, get_converted_qty
 
 
 class BookingCreditUsage(Document):
@@ -22,29 +25,15 @@ class BookingCreditUsage(Document):
 				"customer": self.customer,
 				"date": self.datetime,
 				"credits": self.quantity * -1,
-				"reference_doctype": self.doctype,
-				"reference_document": self.name,
-				"booking_credit_type": self.booking_credit_type
+				"booking_credit_usage": self.name,
+				"booking_credit_type": self.booking_credit_type,
 			}
 		)
 
 	def on_cancel(self):
-		doc = frappe.get_doc(
-			"Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name)
-		)
+		doc = frappe.get_doc("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1))
 		doc.flags.ignore_permissions = True
 		doc.cancel()
-
-	def on_trash(self):
-		self.delete_references()
-
-	def delete_references(self):
-		for doc in frappe.get_all(
-			"Booking Credit Usage Reference",
-			filters={"booking_credit_usage": self.name},
-			pluck="name",
-		):
-			frappe.delete_doc("Booking Credit Usage Reference", doc)
 
 
 def add_booking_credit_usage(doc, method):
@@ -67,7 +56,7 @@ def add_booking_credit_usage(doc, method):
 				"quantity": get_converted_qty(bct[0], doc.item),
 				"user": doc.user,
 				"booking_credit_type": bct[0],
-				"item_booking": doc.name
+				"item_booking": doc.name,
 			}
 		).insert(ignore_permissions=True)
 

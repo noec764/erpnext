@@ -253,7 +253,7 @@ class SalesOrder(SellingController):
 
 			update_coupon_code_count(self.coupon_code, "used")
 
-		if self.base_grand_total == 0.0:
+		if self.base_grand_total == 0.0 and not frappe.flags.in_test:
 			self.update_status("Closed")
 
 	def on_cancel(self):

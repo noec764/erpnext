@@ -7,7 +7,11 @@
 			<span class="inline-graph-half">
 				{% if bal.balance <= 0 %}
 				<span class="inline-graph-count">
+					{% if bal.booking_credit_type %}
 					{{ __("{0}: {1} {2}", [bal.booking_credit_type, bal.balance, __("Credits")]) }}
+					{% else %}
+					{{ __("{0} {1}", [bal.balance, __("Credits")]) }}
+					{% endif %}
 				</span>
 				<span class="inline-graph-bar">
 					<span class="inline-graph-bar-inner dark"
@@ -19,7 +23,11 @@
 			<span class="inline-graph-half" title="{{ __("Credits") }}">
 				{% if bal.balance > 0 %}
 				<span class="inline-graph-count">
+					{% if bal.booking_credit_type %}
 					{{ __("{0}: {1} {2}", [bal.booking_credit_type, bal.balance, __("Credits")]) }}
+					{% else %}
+					{{ __("{0} {1}", [bal.balance, __("Credits")]) }}
+					{% endif %}
 				</span>
 				<span class="inline-graph-bar">
 					<span class="inline-graph-bar-inner dark"

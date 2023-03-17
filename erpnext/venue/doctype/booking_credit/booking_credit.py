@@ -4,7 +4,7 @@
 from collections import defaultdict
 
 import frappe
-from frappe.utils import flt, get_datetime, now_datetime, cint, add_to_date, nowdate, getdate
+from frappe.utils import add_to_date, cint, flt, get_datetime, getdate, now_datetime, nowdate
 
 from erpnext.controllers.status_updater import StatusUpdater
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
@@ -17,7 +17,11 @@ class BookingCredit(StatusUpdater):
 			self.customer = get_customer(self.user)
 
 		self.set_expiration_date()
+		self.set_balance()
 		self.set_status()
+
+	def before_update_after_submit(self):
+		self.set_balance()
 
 	def set_expiration_date(self):
 		validity = frappe.db.get_value("Booking Credit Type", self.booking_credit_type, "validity")
@@ -32,10 +36,9 @@ class BookingCredit(StatusUpdater):
 			"customer": self.customer,
 			"date": self.date,
 			"credits": self.quantity,
-			"reference_doctype": self.doctype,
-			"reference_document": self.name,
+			"booking_credit": self.name,
 			"expiration_date": self.expiration_date,
-			"booking_credit_type": self.booking_credit_type
+			"booking_credit_type": self.booking_credit_type,
 		}
 
 		create_ledger_entry(**ledger_entry)
@@ -53,11 +56,23 @@ class BookingCredit(StatusUpdater):
 
 	def on_cancel(self):
 		doc = frappe.get_doc(
-			"Booking Credit Ledger", dict(reference_doctype=self.doctype, reference_document=self.name)
+			"Booking Credit Ledger",
+			dict(booking_credit=self.name, booking_credit_usage=["is", "not set"], docstatus=1),
 		)
 		doc.flags.ignore_permissions = True
 		doc.cancel()
 		self.set_status(update=True)
+
+		for bcl in frappe.get_all(
+			"Booking Credit Ledger",
+			filters=dict(booking_credit=self.name, booking_credit_usage=["is", "set"], docstatus=1),
+		):
+			bcl_doc = frappe.get_doc("Booking Credit Ledger", bcl)
+			bcl_doc.booking_credit = None
+			bcl_doc.run_method("calculate_fifo_balance")
+
+	def set_balance(self):
+		self.balance = sum([a.allocation for a in self.booking_credit_ledger_allocation])
 
 
 def add_booking_credits(doc, method):
@@ -67,6 +82,7 @@ def add_booking_credits(doc, method):
 
 	_add_booking_credits(doc)
 
+
 def _add_booking_credits(doc):
 	grouped_items = defaultdict(lambda: defaultdict(float))
 	for item in doc.get("items"):
@@ -74,24 +90,29 @@ def _add_booking_credits(doc):
 
 	for grouped_item in grouped_items:
 		for uom in grouped_items[grouped_item]:
-			if credit_type := frappe.get_cached_doc("Booking Credit Type", dict(item=grouped_item, uom=uom, disabled=0)):
+			if credit_type := frappe.get_cached_doc(
+				"Booking Credit Type", dict(item=grouped_item, uom=uom, disabled=0)
+			):
 				booking_credit = frappe.get_doc(
 					{
 						"doctype": "Booking Credit",
-						"date": doc.posting_date, #TODO: See how to implement delayed date
+						"date": doc.posting_date,  # TODO: See how to implement delayed date
 						"customer": doc.customer,
 						"quantity": flt(grouped_items[grouped_item][uom]) * cint(credit_type.credits),
 						"sales_invoice": doc.name,
-						"booking_credit_type": credit_type.name
+						"booking_credit_type": credit_type.name,
 					}
 				)
 				booking_credit.flags.ignore_permissions = True
 				booking_credit.insert()
 				booking_credit.submit()
 
+
 def automatic_booking_credit_allocation(subscription):
 	for rule in subscription.booking_credits_allocation:
-		if last_generated_credit := get_last_credit_for_customer(subscription.customer, rule.booking_credit_type, subscription=subscription.name):
+		if last_generated_credit := get_last_credit_for_customer(
+			subscription.customer, rule.booking_credit_type, subscription=subscription.name
+		):
 			if not are_subscription_credits_due(last_generated_credit[0].date, rule, subscription):
 				continue
 
@@ -101,24 +122,25 @@ def automatic_booking_credit_allocation(subscription):
 				"date": nowdate(),
 				"customer": subscription.customer,
 				"quantity": cint(rule.quantity),
-				"subscription": subscription.name
+				"subscription": subscription.name,
 			}
 		)
 		booking_credit.flags.ignore_permissions = True
 		booking_credit.insert()
 		booking_credit.submit()
 
+
 def are_subscription_credits_due(date, rule, subscription):
 	from dateutil import rrule
 
 	if rule.recurrence == "Once":
 		return False
-	
+
 	if rule.recurrence == "Every Billing Period":
 		if getdate(date) != getdate() and getdate() == getdate(subscription.current_invoice_start):
 			return True
 		return False
-	
+
 	if rule.recurrence == "Every Day":
 		frequency = rrule.DAILY
 
@@ -139,19 +161,12 @@ def are_subscription_credits_due(date, rule, subscription):
 	if getdate(date) != getdate() and getdate() in possible_dates:
 		return True
 
+
 def get_last_credit_for_customer(customer, booking_credit_type, subscription):
-	filters={
-			"customer": customer,
-			"booking_credit_type": booking_credit_type,
-			"docstatus": 1
-		}
+	filters = {"customer": customer, "booking_credit_type": booking_credit_type, "docstatus": 1}
 
 	return frappe.get_all(
-		"Booking Credit",
-		filters=filters,
-		fields=["name", "date"],
-		order_by="date DESC",
-		limit=1
+		"Booking Credit", filters=filters, fields=["name", "date"], order_by="date DESC", limit=1
 	)
 
 
@@ -165,12 +180,7 @@ def get_balance(customer, booking_credit_type=None, user=None):
 	:param user: id of a user --> Must be linked to the customer provided
 	"""
 
-	filters={
-		"customer": customer,
-		"balance": (">", 0.0),
-		"status": "Active",
-		"docstatus": 1
-	}
+	filters = {"customer": customer, "balance": (">", 0.0), "status": "Active", "docstatus": 1}
 
 	if booking_credit_type:
 		filters["booking_credit_type"] = booking_credit_type
@@ -189,6 +199,17 @@ def get_balance(customer, booking_credit_type=None, user=None):
 		result[bal.booking_credit_type] += bal.balance
 
 	return result
+
+
+def process_expired_booking_credits():
+	expired_entries = frappe.get_all(
+		"Booking Credit",
+		filters={"is_expired": 0, "expiration_date": ("<", getdate()), "docstatus": 1},
+	)
+	for expired_entry in expired_entries:
+		doc = frappe.get_doc("Booking Credit", expired_entry.name)
+		doc.db_set("is_expired", 1)
+		doc.set_status(update=True, update_modified=False)
 
 
 def _process_expired_booking_entry(balance_entry):
@@ -211,30 +232,29 @@ def get_booking_credit_types_for_item(item, uom):
 		.where(bctc.item == item)
 	).run(pluck=True)
 
+
 def get_booking_credits_for_customer(customer, booking_credit_type=None):
-	filters={"customer": customer, "status": "Active"}
+	filters = {"customer": customer, "status": "Active"}
 	if booking_credit_type:
 		filters["booking_credit_type"] = booking_credit_type
 
 	return sum(frappe.db.get_all("Booking Credit", filters=filters, pluck="balance"))
 
+
 def get_converted_qty(booking_credit_type, item):
 	return frappe.db.get_value(
-		"Booking Credit Type Conversions",
-		{
-			"parent": booking_credit_type,
-			"item": item
-		},
-		"credits"
+		"Booking Credit Type Conversions", {"parent": booking_credit_type, "item": item}, "credits"
 	)
+
 
 @frappe.whitelist()
 def has_booking_credits(customer, booking_credit_type=None):
-	filters={"customer": customer, "status": "Active"}
+	filters = {"customer": customer, "status": "Active"}
 	if booking_credit_type:
 		filters["booking_credit_type"] = booking_credit_type
 
 	return bool(frappe.db.get_all("Booking Credit", filters=filters, limit=1))
+
 
 @frappe.whitelist(allow_guest=True)
 def get_booking_credits_by_item(item, uom):
@@ -251,158 +271,3 @@ def get_booking_credits_by_item(item, uom):
 		result += get_booking_credits_for_customer(customer, booking_credit_type)
 
 	return result
-
-# @frappe.whitelist()
-# def get_balance(customer, date=None, uom=None):
-# 	default_uom = frappe.db.get_single_value("Venue Settings", "minute_uom")
-# 	query_filters = {"customer": customer, "docstatus": 1}
-# 	if uom:
-# 		query_filters.update({"uom": uom})
-
-# 	booking_credits = frappe.get_all(
-# 		"Booking Credit Ledger",
-# 		filters=query_filters,
-# 		fields=["credits", "date", "uom", "item"],
-# 		order_by="date DESC",
-# 	)
-
-# 	if date:
-# 		booking_credits += _process_expired_booking_credits(date=date, customer=customer, submit=False)
-
-# 	items = list(set([x.item for x in booking_credits if x.item is not None]))
-# 	balance = {}
-# 	for item in items:
-# 		balance[item] = []
-# 		uoms = list(set([x.uom for x in booking_credits if x.uom is not None and x.item == item]))
-# 		for uom in uoms:
-# 			row = {"uom": uom}
-
-# 			fifo_date = now_datetime()
-# 			for credit in [x for x in booking_credits if x.uom == uom and x.item == item]:
-# 				bal = sum(
-# 					[
-# 						x["credits"]
-# 						for x in booking_credits
-# 						if x.uom == uom and x.item == item and getdate(x["date"]) <= getdate(credit["date"])
-# 					]
-# 				)
-# 				if bal <= 0:
-# 					break
-# 				else:
-# 					fifo_date = credit.date
-
-# 			row["date"] = fifo_date
-# 			row["balance"] = sum(
-# 				[x["credits"] for x in booking_credits if x["uom"] == uom and x["item"] == item]
-# 			)
-# 			row["conversions"] = []
-# 			balance[item].append(row)
-
-# 	convertible_items = [
-# 		x
-# 		for x in frappe.get_all("Booking Credit Conversion", pluck="booking_credits_item")
-# 		if x in [y for y in balance]
-# 	]
-# 	for bal in balance:
-# 		if bal not in convertible_items:
-# 			for row in balance[bal]:
-# 				if flt(row.get("balance")) < 0 and row.get("uom") == default_uom:
-# 					for i in convertible_items:
-# 						for r in balance[i]:
-# 							conversion = {
-# 								"uom": r.get("uom"),
-# 								"item": i,
-# 								"qty": flt(
-# 									min(
-# 										get_uom_in_minutes(row.get("uom"))
-# 										* abs(flt(row.get("balance")))
-# 										/ get_uom_in_minutes(r.get("uom")),
-# 										r.get("balance"),
-# 									),
-# 									2,
-# 								),
-# 							}
-# 							if conversion.get("qty") > 0:
-# 								row["conversions"].append(conversion)
-
-# 	return balance
-
-
-# def process_expired_booking_credits():
-# 	return _process_expired_booking_credits()
-
-
-# def _process_expired_booking_credits(date=None, customer=None, submit=True):
-# 	query_filters = {"is_expired": 0, "expiration_date": ("is", "set"), "docstatus": 1}
-
-# 	if customer:
-# 		query_filters.update({"customer": customer})
-
-# 	expired_entries = frappe.get_all(
-# 		"Booking Credit",
-# 		filters=query_filters,
-# 		fields=["name", "quantity", "uom", "customer", "expiration_date", "item"],
-# 	)
-# 	balance_entries = []
-# 	for expired_entry in expired_entries:
-# 		if getdate(expired_entry.expiration_date) >= getdate(date):
-# 			continue
-
-# 		balance = _calculate_expired_booking_entry(expired_entry, date)
-
-# 		if balance:
-# 			balance_entries.append(balance)
-
-# 	if submit:
-# 		for balance_entry in balance_entries:
-# 			_process_expired_booking_entry(balance_entry)
-
-# 	return balance_entries
-
-
-# def _calculate_expired_booking_entry(expired_entry, date):
-# 	balance = sum(
-# 		frappe.get_all(
-# 			"Booking Credit Ledger",
-# 			filters={
-# 				"customer": expired_entry.customer,
-# 				"date": ("<=", get_datetime(date)),
-# 				"docstatus": 1,
-# 				"uom": expired_entry.uom,
-# 			},
-# 			order_by="date DESC",
-# 			pluck="credits",
-# 		)
-# 	)
-
-# 	credits_left = sum(
-# 		frappe.get_all(
-# 			"Booking Credit",
-# 			filters={
-# 				"customer": expired_entry.customer,
-# 				"is_expired": 0,
-# 				"date": (">=", expired_entry.date),
-# 				"uom": expired_entry.uom,
-# 				"docstatus": 1,
-# 				"name": ("!=", expired_entry.name),
-# 			},
-# 			pluck="quantity",
-# 		)
-# 	)
-
-# 	if (balance - credits_left) >= 0:
-# 		return frappe._dict(
-# 			{
-# 				"user": expired_entry.user,
-# 				"customer": expired_entry.customer,
-# 				"date": get_datetime(expired_entry.expiration_date),
-# 				"credits": min(expired_entry.quantity, credits_left) * -1,
-# 				"reference_doctype": "Booking Credit",
-# 				"reference_document": expired_entry.name,
-# 				"uom": expired_entry.uom,
-# 				"item": expired_entry.item,
-# 				"name": expired_entry.name,
-# 			}
-# 		)
-
-# 	return {}

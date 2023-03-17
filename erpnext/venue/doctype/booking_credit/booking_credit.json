@@ -28,7 +28,9 @@
   "sales_invoice",
   "subscription",
   "status",
-  "amended_from"
+  "amended_from",
+  "column_break_22",
+  "booking_credit_ledger_allocation"
  ],
  "fields": [
   {
@@ -152,10 +154,13 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "depends_on": "eval:doc.docstatus==1",
    "fieldname": "balance",
    "fieldtype": "Int",
-   "label": "Balance Quantity"
+   "in_list_view": 1,
+   "label": "Balance Quantity",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_17",
@@ -174,6 +179,19 @@
    "label": "Subscription",
    "options": "Subscription",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "booking_credit_ledger_allocation",
+   "fieldtype": "Table",
+   "label": "Booking Credit Ledger Allocation",
+   "options": "Booking Credit Ledger Allocation",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -181,10 +199,10 @@
  "links": [
   {
    "link_doctype": "Booking Credit Ledger",
-   "link_fieldname": "reference_document"
+   "link_fieldname": "booking_credit"
   }
  ],
- "modified": "2023-03-16 11:09:51.150048",
+ "modified": "2023-03-17 15:42:59.570130",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

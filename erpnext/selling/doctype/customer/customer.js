@@ -178,7 +178,7 @@ frappe.ui.form.on("Customer", {
 			frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
 			{
 				balance: Object.keys(balance).map(bct => {
-					return {booking_credit_type: bct, balance: balance[bct]}
+					return {booking_credit_type: bct || '', balance: balance[bct]}
 				}),
 				customer: frm.doc.customer_name,
 				date: frm.doc.date,

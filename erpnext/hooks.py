@@ -315,7 +315,7 @@ has_website_permission = {
 	"Issue": "erpnext.support.doctype.issue.issue.has_website_permission",
 	"Timesheet": "erpnext.controllers.website_list_for_contact.has_website_permission",
 	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
-    "Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
+	"Event Slot Booking": "erpnext.controllers.website_list_for_contact.has_website_permission",
 }
 
 before_tests = "erpnext.setup.utils.before_tests"
@@ -444,7 +444,6 @@ scheduler_events = {
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
 		"erpnext.venue.doctype.item_booking.item_booking.clear_draft_bookings",
 		"erpnext.crm.doctype.social_media_post.social_media_post.process_scheduled_social_media_posts",
-		"erpnext.venue.doctype.booking_credit_rule.booking_credit_rule.trigger_after_specific_time",
 	],
 	"hourly": [
 		"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.automatic_synchronization",
