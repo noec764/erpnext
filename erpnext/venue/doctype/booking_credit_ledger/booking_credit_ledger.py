@@ -26,6 +26,9 @@ class BookingCreditLedger(Document):
 			parent_doc.save()
 
 	def calculate_fifo_balance(self):
+		if self.booking_credit:
+			return
+
 		booking_credit = frappe.qb.DocType("Booking Credit")
 		query = (
 			frappe.qb.from_(booking_credit)

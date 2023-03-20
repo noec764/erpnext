@@ -92,8 +92,11 @@ def _add_booking_credits(doc):
 
 	for grouped_item in grouped_items:
 		for uom in grouped_items[grouped_item]:
-			if credit_type := frappe.get_cached_doc(
-				"Booking Credit Type", dict(item=grouped_item, uom=uom, disabled=0)
+			if credit_type := frappe.get_cached_value(
+				"Booking Credit Type",
+				dict(item=grouped_item, uom=uom, disabled=0),
+				["credits", "name"],
+				as_dict=True,
 			):
 				booking_credit = frappe.get_doc(
 					{
@@ -126,6 +129,7 @@ def automatic_booking_credit_allocation(subscription):
 				"quantity": cint(rule.quantity),
 				"subscription": subscription.name,
 				"expiration": rule.expiration,
+				"booking_credit_type": rule.booking_credit_type,
 			}
 		)
 		booking_credit.flags.ignore_permissions = True
@@ -240,7 +244,7 @@ def get_booking_credit_types_for_item(item, uom):
 		.on(bct.name == bctc.parent)
 		.select(bct.name)
 		.where(bct.disabled == 0)
-		.where(bct.uom == uom)
+		.where(bctc.uom == uom)
 		.where(bctc.item == item)
 	).run(pluck=True)
 

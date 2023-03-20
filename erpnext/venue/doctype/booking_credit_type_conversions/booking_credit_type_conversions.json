@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
+  "uom",
   "credits"
  ],
  "fields": [
@@ -26,12 +27,20 @@
    "in_list_view": 1,
    "label": "Credits",
    "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit of Measure",
+   "options": "UOM",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-03-14 18:25:47.461391",
+ "modified": "2023-03-20 16:28:44.165045",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Type Conversions",

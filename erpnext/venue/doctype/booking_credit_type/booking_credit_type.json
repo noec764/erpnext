@@ -88,8 +88,24 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-03-16 10:37:12.639095",
+ "links": [
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit",
+   "link_fieldname": "booking_credit_type"
+  },
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit Usage",
+   "link_fieldname": "booking_credit_type"
+  },
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit Ledger",
+   "link_fieldname": "booking_credit_type"
+  }
+ ],
+ "modified": "2023-03-20 14:55:21.418044",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Type",

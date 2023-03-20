@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Booking Credit Type', {
 	setup: function(frm) {
-		frm.set_query("uom", function(doc) {
+		frm.set_query("uom", "conversion_table", function(doc) {
 			return {
 				query: "erpnext.e_commerce.doctype.website_item.website_item.get_booking_uoms",
 			};
