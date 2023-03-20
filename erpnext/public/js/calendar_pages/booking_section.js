@@ -141,7 +141,7 @@ class BookingCalendar {
 				this.booking_selector&&this.booking_selector.empty();
 			},
 			events: function(info, callback) {
-				frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_availabilities", {
+				frappe.call("erpnext.templates.pages.cart.get_availabilities_for_cart", {
 					start: momentjs(info.start).format("YYYY-MM-DD"),
 					end: momentjs(info.end).format("YYYY-MM-DD"),
 					item: me.parent.item,
@@ -188,7 +188,7 @@ class BookingSelector {
 					frappe.datetime.get_date(this.date_info.date) <= frappe.datetime.get_date(s.end)
 				)
 			)
-	
+
 			this.build();
 			this.render();
 		})
