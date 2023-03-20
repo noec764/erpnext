@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import click
 import frappe
 from frappe.utils import cint, getdate
 
@@ -148,6 +149,11 @@ def execute():
 	for pr in frappe.get_all("Pricing Rule", filters={"booking_credits_based": 1}):
 		frappe.delete_doc("Pricing Rule", pr.name, force=True)
 
+	frappe.db.commit()
+
+	if frappe.get_all("Booking Credit Type"):
+		notify_users()
+
 
 def create_booking_credit_type(conversion, uom, rule):
 	booking_credit_conversions = frappe.qb.DocType("Booking Credit Conversions")
@@ -195,3 +201,22 @@ def get_validity(rule):
 
 	if rule.expiration_rule == "Add X days":
 		return 24 * 3600 * cint(rule.expiration_delay)
+
+
+def notify_users():
+
+	click.secho(
+		"Le fonctionnement des crédits de réservation a été modifié.\n"
+		"Un script de migration a basculé les anciennes de règles de crédit de réservation vers les nouveau type de document 'Type de crédit de réservation'.\n"
+		"Nous n'avons pas pu ajouter automatiquement les règles d'allocation périodiques (ex. 2 heures de salle de réunion par semaine) dans les abonnements.\n"
+		"Vous trouverez une documentation sur ce sujet ici:"
+		"https://doc.dokos.io/dokos/lieu/credit-reservation",
+		fg="yellow",
+	)
+
+	note = frappe.new_doc("Note")
+	note.title = "Améliorations des crédits de réservation"
+	note.public = 1
+	note.notify_on_login = 1
+	note.content = """<div class="ql-editor read-mode"><p>Le fonctionnement des crédits de réservation a été modifié.</p><p>Un script de migration a basculé les anciennes de règles de crédit de réservation vers les nouveau type de document <strong>Type de crédit de réservation</strong></p><p>Nous n\'avons pas pu ajouter automatiquement les règles d\'allocation périodiques (ex. 2 heures de salle de réunion par semaine) dans les abonnements.</p><p>Vous trouverez une documentation sur ce sujet à cette adresse: <a href='https://doc.dokos.io/dokos/lieu/credit-reservation'>https://doc.dokos.io/dokos/lieu/credit-reservation</a></p></div>"""
+	note.insert(ignore_mandatory=True)
