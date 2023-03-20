@@ -2,11 +2,16 @@
 # License: GNU General Public License v3. See license.txt
 
 import frappe
+from frappe.utils import cint
 
 from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
 	show_quantity_in_website,
 )
-from erpnext.e_commerce.shopping_cart.cart import _get_cart_quotation, _set_price_list, get_shopping_cart_settings
+from erpnext.e_commerce.shopping_cart.cart import (
+	_get_cart_quotation,
+	_set_price_list,
+	get_shopping_cart_settings,
+)
 from erpnext.utilities.product import (
 	get_non_stock_item_status,
 	get_price,
@@ -90,7 +95,7 @@ def get_product_info_for_website(item_code, skip_quotation_creation=False, addit
 		"uom": item_info.get("stock_uom"),
 		"sales_uom": item_info.get("sales_uom") or item_info.get("stock_uom"),
 		"price_per_uom": price_per_uom,
-		"credits_per_uom": credits_per_uom
+		"credits_per_uom": credits_per_uom,
 	}
 
 	if stock_status:
@@ -133,19 +138,22 @@ def set_product_info_for_website(item):
 
 
 def get_credits_per_item_and_uom(item, uom):
-	bct = frappe.qb.DocType("Booking Credit Type")
-	bctc = frappe.qb.DocType("Booking Credit Type Conversions")
-	result = (
-		frappe.qb.from_(bct)
-		.inner_join(bctc)
-		.on(bct.name == bctc.parent)
-		.select(bctc.credits)
-		.where(bct.disabled == 0)
-		.where(bct.uom == uom)
-		.where(bctc.item == item)
-	).run(as_dict=True)
+	from erpnext.venue.doctype.booking_credit.booking_credit import get_booking_credits_by_item
 
-	if result:
-		return result[0].credits
+	if balance := get_booking_credits_by_item(item, uom):
+		bct = frappe.qb.DocType("Booking Credit Type")
+		bctc = frappe.qb.DocType("Booking Credit Type Conversions")
+		result = (
+			frappe.qb.from_(bct)
+			.inner_join(bctc)
+			.on(bct.name == bctc.parent)
+			.select(bctc.credits)
+			.where(bct.disabled == 0)
+			.where(bct.uom == uom)
+			.where(bctc.item == item)
+		).run(as_dict=True)
+
+		if result and cint(result[0].credits) <= cint(balance):
+			return result[0].credits
 
 	return 0.0

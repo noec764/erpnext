@@ -72,7 +72,9 @@ class BookingCredit(StatusUpdater):
 			bcl_doc.run_method("calculate_fifo_balance")
 
 	def set_balance(self):
-		self.balance = sum([a.allocation for a in self.booking_credit_ledger_allocation])
+		self.balance = cint(self.quantity) - sum(
+			[a.allocation for a in self.booking_credit_ledger_allocation]
+		)
 
 
 def add_booking_credits(doc, method):
@@ -171,16 +173,25 @@ def get_last_credit_for_customer(customer, booking_credit_type, subscription):
 
 
 @frappe.whitelist()
-def get_balance(customer, booking_credit_type=None, user=None):
+def get_balance(customer, booking_credit_type=None, user=None, date=None):
 	"""Returns the booking credit balance for a specific customer and/or user.
 
 	:param customer: id of the customer
-	:param date: date of the balance
 	:param booking_credit_type: id of a specific booking credit type
 	:param user: id of a user --> Must be linked to the customer provided
+	:param date: date of the balance
 	"""
 
-	filters = {"customer": customer, "balance": (">", 0.0), "status": "Active", "docstatus": 1}
+	if not date:
+		date = nowdate()
+
+	filters = {
+		"customer": customer,
+		"balance": (">", 0.0),
+		"status": "Active",
+		"docstatus": 1,
+		"date": ("<=", date),
+	}
 
 	if booking_credit_type:
 		filters["booking_credit_type"] = booking_credit_type
@@ -233,8 +244,11 @@ def get_booking_credit_types_for_item(item, uom):
 	).run(pluck=True)
 
 
-def get_booking_credits_for_customer(customer, booking_credit_type=None):
-	filters = {"customer": customer, "status": "Active"}
+def get_booking_credits_for_customer(customer, booking_credit_type=None, date=None):
+	if not date:
+		date = nowdate()
+	filters = {"customer": customer, "status": "Active", "date": ("<=", date)}
+
 	if booking_credit_type:
 		filters["booking_credit_type"] = booking_credit_type
 

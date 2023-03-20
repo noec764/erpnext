@@ -31,7 +31,7 @@
 		{{ _('Free') }}
 	</span>
 </div>
-{% else %}
+{% elif not item.is_free_item %}
 <span class="item-rate">
 	{{ _('Rate:') }} {{ item.get_formatted('rate') }}
 </span>

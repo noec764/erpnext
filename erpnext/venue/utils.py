@@ -22,6 +22,9 @@ def get_linked_customers(user):
 
 
 @frappe.whitelist()
-def get_customer(user):
+def get_customer(user=None):
+	if not user:
+		user = frappe.session.user
+
 	customers, dummy = get_linked_customers(user)
 	return customers[0] if customers else ""

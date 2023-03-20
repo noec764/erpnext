@@ -1,0 +1,9 @@
+<!-- Total at the end of the cart items -->
+{% if credits_balance %}
+<div class="row my-4">
+	<div class="h6 col-12">{{ _("Booking credit balance") }}</div>
+	{% for cb in credits_balance %}
+	<div class="col-12 small">{{ cb }}: {{ credits_balance[cb] }}</div>
+	{% endfor %}
+</div>
+{% endif %}

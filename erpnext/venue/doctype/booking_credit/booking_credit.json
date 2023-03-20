@@ -182,8 +182,7 @@
   },
   {
    "fieldname": "column_break_22",
-   "fieldtype": "Section Break",
-   "hidden": 1
+   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,
@@ -202,7 +201,7 @@
    "link_fieldname": "booking_credit"
   }
  ],
- "modified": "2023-03-17 15:42:59.570130",
+ "modified": "2023-03-20 13:46:12.259546",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

@@ -107,8 +107,7 @@
    "in_standard_filter": 1,
    "label": "Booking Credit",
    "options": "Booking Credit",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "booking_credit_usage",
@@ -130,7 +129,7 @@
    "table_fieldname": "booking_credit_ledger_allocation"
   }
  ],
- "modified": "2023-03-17 14:35:22.979000",
+ "modified": "2023-03-20 12:32:56.485036",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Ledger",

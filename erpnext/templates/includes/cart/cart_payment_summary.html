@@ -53,6 +53,8 @@
 		{% endif %}
 	</div>
 
+	{% include "templates/includes/cart/cart_items_credits_total.html" %}
+
 	{% if route == "cart" and doc.base_grand_total > 0 %}
 		<div class="card-footer btn-checkout">
 			<a class="btn btn-primary font-md w-100" type="button" href="/checkout">

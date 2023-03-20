@@ -7,6 +7,7 @@ from frappe.utils import now_datetime
 
 from erpnext.venue.doctype.booking_credit.booking_credit import (
 	get_booking_credit_types_for_item,
+	get_booking_credits_for_customer,
 	get_converted_qty,
 )
 from erpnext.venue.doctype.booking_credit_ledger.booking_credit_ledger import create_ledger_entry
@@ -30,10 +31,11 @@ class BookingCreditUsage(Document):
 			}
 		)
 
-	def on_cancel(self):
-		doc = frappe.get_doc("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1))
-		doc.flags.ignore_permissions = True
-		doc.cancel()
+	def before_cancel(self):
+		if frappe.db.exists("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1)):
+			doc = frappe.get_doc("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1))
+			doc.flags.ignore_permissions = True
+			doc.cancel()
 
 
 def add_booking_credit_usage(doc, method):
@@ -47,32 +49,32 @@ def add_booking_credit_usage(doc, method):
 		return
 
 	bct = get_booking_credit_types_for_item(doc.item, doc.uom)
-	if bct:
-		usage = frappe.get_doc(
-			{
-				"doctype": "Booking Credit Usage",
-				"datetime": now_datetime(),
-				"customer": doc.party_name,
-				"quantity": get_converted_qty(bct[0], doc.item),
-				"user": doc.user,
-				"booking_credit_type": bct[0],
-				"item_booking": doc.name,
-			}
-		).insert(ignore_permissions=True)
+	for bc in bct:
+		credits = get_booking_credits_for_customer(doc.party_name, bc)
+		quantity = get_converted_qty(bc, doc.item)
+		if credits and credits >= quantity:
+			usage = frappe.get_doc(
+				{
+					"doctype": "Booking Credit Usage",
+					"datetime": now_datetime(),
+					"customer": doc.party_name,
+					"quantity": quantity,
+					"user": doc.user,
+					"booking_credit_type": bc,
+					"item_booking": doc.name,
+				}
+			).insert(ignore_permissions=True)
+			break
 
 	return usage.submit()
 
 
 def cancel_booking_credit_usage(doc, method):
-	doc_before_save = doc.get_doc_before_save()
-	if doc_before_save:
-		for field in ("status", "starts_on", "ends_on", "party_name"):
-			if doc_before_save.get(field) != doc.get(field):
-				for bcu in frappe.get_all(
-					"Booking Credit Usage",
-					filters={"item_booking", doc.name},
-					pluck="name",
-				):
-					bcu_doc = frappe.get_doc("Booking Credit Usage", bcu)
-					bcu_doc.flags.ignore_permissions = True
-					bcu_doc.cancel()
+	for bcu in frappe.get_all(
+		"Booking Credit Usage",
+		filters={"item_booking": doc.name},
+		pluck="name",
+	):
+		bcu_doc = frappe.get_doc("Booking Credit Usage", bcu)
+		bcu_doc.flags.ignore_permissions = True
+		bcu_doc.cancel()
