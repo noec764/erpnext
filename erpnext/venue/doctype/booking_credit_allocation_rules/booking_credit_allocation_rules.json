@@ -8,7 +8,8 @@
  "field_order": [
   "booking_credit_type",
   "quantity",
-  "recurrence"
+  "recurrence",
+  "expiration"
  ],
  "fields": [
   {
@@ -33,12 +34,19 @@
    "label": "Recurrence",
    "options": "Once\nEvery Day\nEvery Week\nEvery Month\nEvery Billing Period",
    "reqd": 1
+  },
+  {
+   "description": "Leave empty if no expiration",
+   "fieldname": "expiration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Expiration (days)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-03-16 11:02:53.399049",
+ "modified": "2023-03-20 14:50:07.592008",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Allocation Rules",

@@ -29,7 +29,7 @@
   "subscription",
   "status",
   "amended_from",
-  "column_break_22",
+  "allocation_section",
   "booking_credit_ledger_allocation"
  ],
  "fields": [
@@ -181,16 +181,18 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_22",
-   "fieldtype": "Section Break"
-  },
-  {
    "allow_on_submit": 1,
    "fieldname": "booking_credit_ledger_allocation",
    "fieldtype": "Table",
    "label": "Booking Credit Ledger Allocation",
    "options": "Booking Credit Ledger Allocation",
    "read_only": 1
+  },
+  {
+   "fieldname": "allocation_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Allocation Section"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -201,7 +203,7 @@
    "link_fieldname": "booking_credit"
   }
  ],
- "modified": "2023-03-20 13:46:12.259546",
+ "modified": "2023-03-20 14:42:22.910095",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

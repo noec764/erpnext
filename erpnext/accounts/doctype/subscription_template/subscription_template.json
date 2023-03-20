@@ -38,7 +38,9 @@
   "portal_image",
   "portal_description",
   "payment_gateways_section",
-  "payment_gateways"
+  "payment_gateways",
+  "booking_credits_section",
+  "booking_credits_allocation"
  ],
  "fields": [
   {
@@ -230,12 +232,23 @@
    "fieldname": "ends_after_first_period",
    "fieldtype": "Check",
    "label": "Ends after the first period"
+  },
+  {
+   "fieldname": "booking_credits_section",
+   "fieldtype": "Tab Break",
+   "label": "Booking Credits"
+  },
+  {
+   "fieldname": "booking_credits_allocation",
+   "fieldtype": "Table",
+   "label": "Automatic Allocation",
+   "options": "Booking Credit Allocation Rules"
   }
  ],
  "image_field": "portal_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-02-16 10:45:27.832649",
+ "modified": "2023-03-20 14:45:07.732530",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription Template",

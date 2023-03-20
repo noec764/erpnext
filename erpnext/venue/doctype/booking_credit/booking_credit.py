@@ -125,6 +125,7 @@ def automatic_booking_credit_allocation(subscription):
 				"customer": subscription.customer,
 				"quantity": cint(rule.quantity),
 				"subscription": subscription.name,
+				"expiration": rule.expiration,
 			}
 		)
 		booking_credit.flags.ignore_permissions = True
