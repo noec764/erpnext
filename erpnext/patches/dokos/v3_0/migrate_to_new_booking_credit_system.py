@@ -178,7 +178,7 @@ def create_booking_credit_type(conversion, uom, rule):
 		.run(as_dict=True)
 	)
 	for con in conversion_table:
-		booking_type.append("conversion_table", {"item": con.convertible_item, "credits": 1})
+		booking_type.append("conversion_table", {"item": con.convertible_item, "uom": uom, "credits": 1})
 
 	return booking_type.insert(ignore_if_duplicate=True)
 
