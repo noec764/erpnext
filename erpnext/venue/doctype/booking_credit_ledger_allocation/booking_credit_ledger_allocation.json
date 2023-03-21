@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-17 13:51:19.386565",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "booking_credit_ledger",
+  "allocation"
+ ],
+ "fields": [
+  {
+   "fieldname": "booking_credit_ledger",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Booking Credit Ledger",
+   "options": "Booking Credit Ledger",
+   "reqd": 1
+  },
+  {
+   "fieldname": "allocation",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Allocation",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-17 13:51:19.386565",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Booking Credit Ledger Allocation",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -53,6 +53,21 @@
 			</a>
 		</span>
 	</div>
+	<div class="col d-flex justify-content-between align-items-center">
+		<span>
+			<div class="my-account-item">{{_("Manage my addresses") }}</div>
+			<div class="my-account-item-desc">{{_("Modify or delete your addresses") }}</div>
+		</span>
+		<span class="my-account-item-link">
+			<a href="/address">
+				<svg class="right-icon icon icon-md">
+					<use xlink:href="#icon-right">
+					</use>
+				</svg>
+				<span class="item-link-text">{{_("See your addresses") }}</span>
+			</a>
+		</span>
+	</div>
 	{% if third_party_apps %}
 	<div class="col d-flex justify-content-between align-items-center">
 		<span>
@@ -75,11 +90,7 @@
 		<span>
 			<div class="my-account-item">{{_("Available booking credits") }}</div>
 			{% for bal in credits_balance %}
-			{% for credits in credits_balance[bal] %}
-				{% if credits["balance"] %}
-				<div class="my-account-item-desc">{{ bal }}: <span class="muted">{{ credits["balance"] or "" }} {{ credits["uom"] or "" }}</span></div>
-				{% endif %}
-			{% endfor %}
+			<div class="my-account-item-desc">{{ bal }}: <span class="muted">{{ credits_balance[bal] or "" }}</span></div>
 			{% endfor %}
 		</span>
 	</div>

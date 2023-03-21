@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-14 18:17:00.669821",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "uom",
+  "credits"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bookable Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "credits",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Credits",
+   "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit of Measure",
+   "options": "UOM",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-20 16:28:44.165045",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Booking Credit Type Conversions",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

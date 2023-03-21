@@ -354,9 +354,6 @@ def get_pricing_rule_for_item(args, doc=None, for_validate=False):
 			if pricing_rule.get("suggestion"):
 				continue
 
-			if pricing_rule.booking_credits_based and not check_booking_credit_rule(args, doc):
-				continue
-
 			item_details.validate_applied_rule = pricing_rule.get("validate_applied_rule", 0)
 			item_details.price_or_product_discount = pricing_rule.get("price_or_product_discount")
 
@@ -606,61 +603,3 @@ def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
 		fields=["distinct uom"],
 		as_list=1,
 	)
-
-
-def check_booking_credit_rule(args, doc):
-	from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
-
-	if args.get("customer") and doc:
-		result = False
-		if reference := frappe.db.get_value(
-			"Booking Credit Usage Reference",
-			dict(reference_doctype="Item Booking", reference_document=args.get("item_booking")),
-			"booking_credit_usage",
-		):
-			return cint(frappe.db.get_value("Booking Credit Usage", reference, "docstatus")) == 1
-
-		convertible_items = frappe.get_all(
-			"Booking Credit Conversions", fields=["convertible_item", "booking_credits_item"]
-		)
-
-		booking_credit_items = [x.booking_credits_item for x in convertible_items]
-
-		used_qty = defaultdict(lambda: defaultdict(float))
-		for item in doc.items:
-			if item.get("item_booking") and item.item_code in [
-				x.convertible_item for x in convertible_items
-			]:
-				booking_date = frappe.db.get_value("Item Booking", item.get("item_booking"), "starts_on")
-				booking_credit_items = [
-					x.booking_credits_item for x in convertible_items if x.convertible_item == item.item_code
-				]
-				qty = item.qty
-
-				balance = get_balance(
-					args.get("customer"), getdate(booking_date or item.get("transaction_date"))
-				)
-
-				simplified_balance = {x: {} for x in balance if x in booking_credit_items}
-				for bal in simplified_balance:
-					for d in balance[bal]:
-						simplified_balance[bal][d.get("uom")] = d.get("balance")
-
-				for credit in booking_credit_items:
-					if simplified_balance.get(credit, {}).get(item.uom):
-						simplified_balance[credit][item.uom] -= flt(used_qty.get(credit, {}).get(item.uom))
-
-					if qty > 0 and flt(simplified_balance.get(credit, {}).get(item.uom)) > 0:
-						removable_qty = min(qty, simplified_balance[credit][item.uom])
-						used_qty[credit][item.uom] += removable_qty
-						simplified_balance[credit][item.uom] -= removable_qty
-						qty -= removable_qty
-
-				result = False if qty > 0 else True
-
-			if item.name == args.get("child_docname"):
-				return result
-
-		return result
-
-	return False

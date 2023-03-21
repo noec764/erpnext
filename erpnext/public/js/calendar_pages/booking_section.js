@@ -21,9 +21,7 @@ erpnext.booking_section = class BookingDialog {
 		this.read_only = frappe.session.user === "Guest";
 		this.wrapper = document.getElementsByClassName(this.parentId)[0];
 
-		frappe.get_user_lang().then(() => {
-			this.build_calendar();
-		});
+		this.build_calendar();
 	}
 
 	build_calendar() {
@@ -143,7 +141,7 @@ class BookingCalendar {
 				this.booking_selector&&this.booking_selector.empty();
 			},
 			events: function(info, callback) {
-				frappe.call("erpnext.venue.doctype.item_booking.item_booking.get_availabilities", {
+				frappe.call("erpnext.templates.pages.cart.get_availabilities_for_cart", {
 					start: momentjs(info.start).format("YYYY-MM-DD"),
 					end: momentjs(info.end).format("YYYY-MM-DD"),
 					item: me.parent.item,
@@ -169,19 +167,31 @@ class BookingCalendar {
 class BookingSelector {
 	constructor(opts) {
 		Object.assign(this, opts);
+		this.credits = 0.0;
 		this.make()
 	}
 
 	make() {
-		this.slots = this.parent.slots.filter(s => (
-			frappe.datetime.get_date(s.start) <= frappe.datetime.get_date(this.date_info.date)
-			) && (
-				frappe.datetime.get_date(this.date_info.date) <= frappe.datetime.get_date(s.end)
+		frappe.call({
+			method: "erpnext.venue.doctype.booking_credit.booking_credit.get_booking_credits_by_item",
+			args: {
+				item: this.parent.parent.item,
+				uom: this.parent.parent.uom
+			}
+		}).then(r => {
+			if (r.message) {
+				this.credits = r.message;
+			}
+			this.slots = this.parent.slots.filter(s => (
+				frappe.datetime.get_date(s.start) <= frappe.datetime.get_date(this.date_info.date)
+				) && (
+					frappe.datetime.get_date(this.date_info.date) <= frappe.datetime.get_date(s.end)
+				)
 			)
-		)
 
-		this.build();
-		this.render();
+			this.build();
+			this.render();
+		})
 	}
 
 	build() {
@@ -233,20 +243,54 @@ class BookingSelector {
 			if (selected_slot.status == "selected") {
 				this.remove_booked_slot(selected_slot.id)
 			} else {
-				this.book_new_slot(selected_slot)
+				if (this.credits > 0) {
+					const d = new frappe.ui.Dialog({
+						title: __("Use your credits"),
+						size: "large",
+						fields: [
+							{
+								"fieldtype": "HTML",
+								"fieldname": "content",
+							}
+						],
+						primary_action_label: __("Use my credits"),
+						primary_action: () => {
+							this.book_new_slot(selected_slot, true)
+							d.hide()
+						},
+						secondary_action_label: __("Do not use my credits"),
+						secondary_action: () => {
+							this.book_new_slot(selected_slot)
+							d.hide()
+						}
+					})
+					d.fields_dict.content.$wrapper.html(
+						`
+							<div>
+								<h6>${__("You have") + " " + this.credits + " " + (this.credits > 1 ? __("credits") : __("credit")) + " " + __("available for this resource.")}</h6>
+								<h6>${__("Do you want to use your credits for this booking ?")}</h6>
+							</div>
+						`
+					);
+					d.show();
+				} else {
+					this.book_new_slot(selected_slot)
+				}
 			}
 		}
 	}
 
-	book_new_slot(event) {
+	book_new_slot(event, with_credits) {
 		frappe.call("erpnext.venue.doctype.item_booking.item_booking.book_new_slot", {
 			start: moment.utc(event.start).format("YYYY-MM-DD H:mm:SS"),
 			end: moment.utc(event.end).format("YYYY-MM-DD H:mm:SS"),
 			item: this.parent.parent.item,
 			uom: this.parent.parent.uom,
 			user: frappe.session.user,
-			status: this.parent.skip_cart ? "Confirmed": null
+			status: this.parent.skip_cart ? "Confirmed": null,
+			with_credits: with_credits
 		}).then(r => {
+			console.log(r)
 			if (!this.parent.skip_cart) {
 				this.update_cart(r.message.name, 1)
 			} else {
@@ -273,7 +317,7 @@ class BookingSelector {
 			qty: qty,
 			uom: this.parent.parent.uom,
 			booking: booking,
-			cart_dropdown: true
+			cart_dropdown: true,
 		}).then(() => {
 			this.parent.fullCalendar&&this.parent.fullCalendar.refetchEvents();
 		})

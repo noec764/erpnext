@@ -23,6 +23,7 @@ class Quotation(SellingController):
 
 	def validate(self):
 		self.validate_multicompany_items()
+		self.update_item_bookings()
 		super(Quotation, self).validate()
 		self.set_status()
 		self.validate_uom_is_integer("stock_uom", "qty")
@@ -35,6 +36,7 @@ class Quotation(SellingController):
 		from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
 		make_packing_list(self)
+
 
 	def before_submit(self):
 		self.set_has_alternative_item()
@@ -167,25 +169,19 @@ class Quotation(SellingController):
 			frappe.get_doc("Lead", self.party_name).set_status(update=True)
 
 	def update_item_bookings(self):
-		booking_credit_pricing_rules = frappe.get_all(
-			"Pricing Rule", filters={"booking_credits_based": 1}, pluck="name"
-		)
 		for item in self.items:
 			if item.item_booking:
 				booking = frappe.get_doc("Item Booking", item.item_booking)
-				booking.party_type = self.quotation_to
-				booking.party_name = self.party_name
+				if booking.party_type != self.quotation_to or booking.party_name != self.party_name:
+					booking.party_type = self.quotation_to
+					booking.party_name = self.party_name
+					booking.save(ignore_permissions=True)
 
-				if any(
-					[
-						True
-						for x in frappe.parse_json(item.pricing_rules or [])
-						if x in booking_credit_pricing_rules
-					]
-				):
-					booking.deduct_booking_credits = True
+				if booking.deduct_booking_credits and booking.credits_have_been_deducted():
+					item.is_free_item = True
+					item.rate = 0.0
+					item.discount_percentage = 100.0
 
-				booking.save(ignore_permissions=True)
 
 	def set_customer_name(self):
 		if self.party_name and self.quotation_to == "Customer":
@@ -252,7 +248,6 @@ class Quotation(SellingController):
 		# update enquiry status
 		self.update_opportunity("Quotation")
 		self.update_lead()
-		self.update_item_bookings()
 
 	def on_cancel(self):
 		if self.lost_reasons:

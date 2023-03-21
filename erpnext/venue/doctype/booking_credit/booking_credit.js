@@ -48,22 +48,15 @@ frappe.ui.form.on('Booking Credit', {
 			frappe.xcall('erpnext.venue.doctype.booking_credit.booking_credit.get_balance', {
 				customer: frm.doc.customer,
 				date: frm.doc.date
-			}).then(r => {
-				const credits = Object.keys(r).map(m => {
-					return r[m]
-				}).flat().map(d => {
-					return d.balance
-				});
-				const max_count = Math.max.apply(null, credits) > 0 ? Math.max.apply(null, credits) : Math.min.apply(null, credits);
-
+			}).then(balance => {
 				frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
 				{
-					balance: Object.keys(r).map(f => {
-						return flatten_credits(r, f)
-					}).flat(),
+					balance: Object.keys(balance).map(bct => {
+						return {booking_credit_type: bct == 'null' ? '' : bct, balance: balance[bct]}
+					}),
 					customer: frm.doc.customer,
 					date: frm.doc.date,
-					max_count: max_count,
+					total: Object.values(balance).reduce((a, b) => a + b, 0),
 				}), __("Booking Credits Balance"));
 				frm.dashboard.show();
 				frm.get_balance = false;
@@ -88,9 +81,3 @@ frappe.ui.form.on('Booking Credit', {
 		})
 	}
 });
-
-function flatten_credits(obj, item) {
-	return obj[item].map(f => {
-		return {...f, item: item}
-	})
-}

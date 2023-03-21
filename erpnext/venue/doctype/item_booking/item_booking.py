@@ -29,6 +29,7 @@ from frappe.utils import (
 	now,
 	now_datetime,
 	time_diff_in_minutes,
+	sbool
 )
 from frappe.utils.user import is_system_user, is_website_user
 from googleapiclient.errors import HttpError
@@ -43,6 +44,7 @@ from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_w
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price
 from erpnext.venue.utils import get_linked_customers
+from erpnext.venue.doctype.booking_credit.booking_credit import get_booking_credit_types_for_item
 
 if TYPE_CHECKING:
 	from typing import Callable, TypeVar
@@ -353,23 +355,6 @@ class ItemBooking(Document):
 	def on_update(self):
 		self.synchronize_child_bookings()
 
-		doc_before_save = self.get_doc_before_save()
-		if doc_before_save:
-			for field in ("status", "starts_on", "ends_on", "party_name"):
-				if doc_before_save.get(field) != self.get(field):
-					self.delete_linked_credit_usage()
-
-	def delete_linked_credit_usage(self):
-		for doc in frappe.get_all(
-			"Booking Credit Usage Reference",
-			filters={"reference_doctype": "Item Booking", "reference_document": self.name},
-			pluck="booking_credit_usage",
-		):
-			doc = frappe.get_doc("Booking Credit Usage", doc)
-			doc.flags.ignore_permissions = True
-			doc.cancel()
-			doc.delete()
-
 	def synchronize_child_bookings(self):
 		def update_child(item, childname=None):
 			child = (
@@ -404,6 +389,12 @@ class ItemBooking(Document):
 				"Item Booking", filters=dict(parent_item_booking=self.name), fields=["name", "item"]
 			):
 				update_child(child.item, child.name)
+
+	def credits_have_been_deducted(self):
+		return bool(frappe.db.get_all("Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, limit=1))
+
+	def get_deducted_credits(self):
+		return sum(frappe.db.get_all("Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, pluck="quantity"))
 
 
 def get_list_context(context=None):
@@ -584,6 +575,7 @@ def book_new_slot(**kwargs):
 				"uom": kwargs.get("uom"),
 				"sync_with_google_calendar": kwargs.get("sync_with_google_calendar")
 				or frappe.db.get_single_value("Venue Settings", "sync_with_google_calendar"),
+				"deduct_booking_credits": sbool(kwargs.get("with_credits"))
 			}
 		).insert(ignore_permissions=True)
 
@@ -1419,6 +1411,23 @@ def make_sales_order(source_name, target_doc=None):
 		"Item Booking",
 		source_name,
 		{"Item Booking": {"doctype": "Sales Order", "field_map": {"party_name": "customer"}}},
+		target_doc,
+		set_missing_values,
+	)
+
+	return doclist
+
+@frappe.whitelist()
+def make_booking_credit_usage(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		result = get_booking_credit_types_for_item(source.item, source.uom)
+		if result:
+			target.booking_credit_type = result[0]
+
+	doclist = get_mapped_doc(
+		"Item Booking",
+		source_name,
+		{"Item Booking": {"doctype": "Booking Credit Usage", "field_map": {"party_name": "customer"}}},
 		target_doc,
 		set_missing_values,
 	)

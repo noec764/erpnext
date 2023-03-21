@@ -10,27 +10,61 @@
  "amount_based_on_field": 0,
  "apply_document_permissions": 0,
  "creation": "2016-06-24 15:50:33.196990",
+ "currency_based_on_field": 0,
  "doc_type": "Address",
  "docstatus": 0,
  "doctype": "Web Form",
  "idx": 0,
  "is_standard": 1,
+ "list_columns": [
+  {
+   "fieldname": "address_title",
+   "fieldtype": "Data",
+   "label": "Address Title"
+  },
+  {
+   "fieldname": "address_type",
+   "fieldtype": "Select",
+   "label": "Address Type"
+  },
+  {
+   "fieldname": "address_line1",
+   "fieldtype": "Data",
+   "label": "Address Line 1"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City/Town"
+  },
+  {
+   "fieldname": "pincode",
+   "fieldtype": "Data",
+   "label": "Postal Code"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country"
+  }
+ ],
+ "list_title": "My Addresses",
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-09-25 11:56:35.661505",
+ "modified": "2023-03-15 12:16:53.948131",
  "modified_by": "Administrator",
  "module": "Utilities",
  "name": "addresses",
  "owner": "Administrator",
+ "payment_button_label": "Pay now",
+ "payment_type": "Immediate payment",
  "published": 1,
  "route": "address",
- "route_to_success_link": 0,
  "show_attachments": 0,
- "show_in_grid": 0,
+ "show_list": 1,
  "show_sidebar": 0,
- "sidebar_items": [],
- "success_url": "/addresses",
- "title": "Address",
+ "success_url": "/address/list",
+ "title": "Addresses",
  "web_form_fields": [
   {
    "allow_read_on_all_link_options": 0,

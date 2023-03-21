@@ -257,6 +257,9 @@ class SalesOrder(SellingController):
 
 			update_coupon_code_count(self.coupon_code, "used")
 
+		if self.base_grand_total == 0.0 and not frappe.flags.in_test:
+			self.update_status("Closed")
+
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
 		super(SalesOrder, self).on_cancel()
@@ -515,9 +518,6 @@ class SalesOrder(SellingController):
 				)
 
 	def update_item_bookings(self):
-		booking_credit_pricing_rules = frappe.get_all(
-			"Pricing Rule", filters={"booking_credits_based": 1}, pluck="name"
-		)
 		confirm_after_payment = cint(
 			frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment")
 		)
@@ -542,12 +542,7 @@ class SalesOrder(SellingController):
 					else:
 						status = "Not confirmed"
 
-				# Check if the line item is associated to any booking credit pricing rule
-				if any(
-					[True for x in frappe.parse_json(d.pricing_rules or []) if x in booking_credit_pricing_rules]
-				):
-					frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
-				elif frappe.db.get_value("Item Booking", d.item_booking, "deduct_booking_credits"):
+				if frappe.db.get_value("Item Booking", d.item_booking, "deduct_booking_credits"):
 					# Check directly in booking in case the pricing rule is only associated with the quotation
 					status = "Confirmed"
 

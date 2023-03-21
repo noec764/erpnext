@@ -12,110 +12,12 @@ $.extend(shopping_cart, {
 	},
 
 	bind_events: function() {
-		shopping_cart.bind_address_picker_dialog();
-		shopping_cart.bind_place_order();
-		shopping_cart.bind_request_quotation();
 		shopping_cart.bind_change_qty();
 		shopping_cart.bind_remove_cart_item();
 		shopping_cart.bind_change_notes();
 		shopping_cart.bind_coupon_code();
-	},
-
-	bind_address_picker_dialog: function() {
-		const d = this.get_update_address_dialog();
-		$(".cart-container").on("click", '.btn-change-address', (e) => {
-			const type = $(e.currentTarget).parents('.address-container').attr('data-address-type');
-			$(d.get_field('address_picker').wrapper).html(
-				this.get_address_template(type)
-			);
-			d.show();
-		});
-	},
-
-	get_update_address_dialog() {
-		let d = new frappe.ui.Dialog({
-			title: "Select Address",
-			fields: [{
-				'fieldtype': 'HTML',
-				'fieldname': 'address_picker',
-			}],
-			primary_action_label: __('Set Address'),
-			primary_action: () => {
-				const $card = d.$wrapper.find('.address-card.active');
-				const address_type = $card.closest('[data-address-type]').attr('data-address-type');
-				const address_name = $card.closest('[data-address-name]').attr('data-address-name');
-				frappe.call({
-					type: "POST",
-					method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
-					freeze: true,
-					args: {
-						address_type,
-						address_name
-					},
-					callback: function(r) {
-						d.hide();
-						if (!r.exc) {
-							$(".cart-tax-items").html(r.message.total);
-							shopping_cart.parent.find(
-								`.address-container[data-address-type="${address_type}"]`
-							).html(r.message.address);
-						}
-					}
-				});
-			}
-		});
-
-		return d;
-	},
-
-	get_address_template(type) {
-		return {
-			shipping: `<div class="mb-3" data-section="shipping-address">
-				<div class="row no-gutters" data-fieldname="shipping_address_name">
-					{% for address in shipping_addresses %}
-						<div class="mr-3 mb-3 w-100" data-address-name="{{address.name}}" data-address-type="shipping"
-							{% if doc.shipping_address_name == address.name %} data-active {% endif %}>
-							{% include "templates/includes/cart/address_picker_card.html" %}
-						</div>
-					{% endfor %}
-				</div>
-			</div>`,
-			billing: `<div class="mb-3" data-section="billing-address">
-				<div class="row no-gutters" data-fieldname="customer_address">
-					{% for address in billing_addresses %}
-						<div class="mr-3 mb-3 w-100" data-address-name="{{address.name}}" data-address-type="billing"
-							{% if doc.shipping_address_name == address.name %} data-active {% endif %}>
-							{% include "templates/includes/cart/address_picker_card.html" %}
-						</div>
-					{% endfor %}
-				</div>
-			</div>`,
-		}[type];
-	},
-
-	bind_place_order: function() {
-		$(".cart-container").on("click", ".btn-place-order", async function() {
-			const address = await frappe.call({
-				method: 'erpnext.e_commerce.shopping_cart.cart.get_customer_address',
-				freeze: true,
-			})
-
-			if (!address.message) {
-				try {
-					await shopping_cart.new_cart_address(false);
-				} catch (e) {
-					if (e) console.error(e);
-				}
-			}
-
-			shopping_cart.place_order(this);
-		});
-	},
-
-	bind_request_quotation: function() {
-		$(".cart-container").on('click', '.btn-request-for-quotation', function() {
-			shopping_cart.request_quotation(this);
-		});
+		shopping_cart.bind_place_order();
+		shopping_cart.bind_request_quotation();
 	},
 
 	bind_change_qty: function() {
@@ -221,71 +123,6 @@ $.extend(shopping_cart, {
 			callback: function(r) {
 				if(!r.exc) {
 					shopping_cart.render(r.message);
-				}
-			}
-		});
-	},
-
-	place_order: function(btn) {
-		shopping_cart.freeze();
-
-		const onError = (response) => {
-			shopping_cart.unfreeze();
-			if (response.exc) {
-				let msg = frappe._("Something went wrong!");
-				if (response._server_messages) {
-					msg = JSON.parse(response._server_messages).map(m => JSON.parse(m))
-					msg = msg.map(m => typeof m === 'object' ? m.message : m)
-					msg = msg.join("<br>");
-				}
-
-				$("#cart-error")
-					.empty()
-					.html(msg)
-					.toggle(true);
-			} else {
-				console.error(response);
-			}
-		}
-
-		return frappe.call({
-			type: "POST",
-			method: "erpnext.e_commerce.shopping_cart.cart.place_order",
-			btn: btn,
-		}).then((r) => {
-			if (r.exc) {
-				onError(r);
-			} else {
-				$(btn).hide();
-				window.location.href = '/orders/' + encodeURIComponent(r.message);
-			}
-		}).catch((r) => {
-			onError(r.responseJSON);
-		})
-	},
-
-	request_quotation: function(btn) {
-		shopping_cart.freeze();
-
-		return frappe.call({
-			type: "POST",
-			method: "erpnext.e_commerce.shopping_cart.cart.request_for_quotation",
-			btn: btn,
-			callback: function(r) {
-				if(r.exc) {
-					shopping_cart.unfreeze();
-					var msg = "";
-					if(r._server_messages) {
-						msg = JSON.parse(r._server_messages || []).join("<br>");
-					}
-
-					$("#cart-error")
-						.empty()
-						.html(msg || frappe._("Something went wrong!"))
-						.toggle(true);
-				} else {
-					$(btn).hide();
-					window.location.href = '/quotations/' + encodeURIComponent(r.message);
 				}
 			}
 		});

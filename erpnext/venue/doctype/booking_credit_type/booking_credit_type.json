@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:label",
+ "creation": "2023-03-13 10:19:07.269371",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "disabled",
+  "section_break_2",
+  "label",
+  "item",
+  "uom",
+  "column_break_3",
+  "credits",
+  "validity",
+  "conversions_section",
+  "conversion_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Label",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "conversions_section",
+   "fieldtype": "Section Break",
+   "label": "Conversions"
+  },
+  {
+   "fieldname": "conversion_table",
+   "fieldtype": "Table",
+   "label": "Conversion Table",
+   "options": "Booking Credit Type Conversions"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Leave empty if credits have a no validity end date",
+   "fieldname": "validity",
+   "fieldtype": "Duration",
+   "label": "Validity"
+  },
+  {
+   "default": "1",
+   "description": "Number of credits allocation for each item purchase",
+   "fieldname": "credits",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Credits",
+   "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit of Measure",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit",
+   "link_fieldname": "booking_credit_type"
+  },
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit Usage",
+   "link_fieldname": "booking_credit_type"
+  },
+  {
+   "group": "Links",
+   "link_doctype": "Booking Credit Ledger",
+   "link_fieldname": "booking_credit_type"
+  }
+ ],
+ "modified": "2023-03-20 14:55:21.418044",
+ "modified_by": "Administrator",
+ "module": "Venue",
+ "name": "Booking Credit Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

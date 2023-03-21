@@ -135,7 +135,7 @@ def update_role_for_users(doctype, docname, role_profile):
 			& ((user.role_profile_name != role_profile) | (user.role_profile_name.isnull()))
 		)
 		.select(user.name)
-		.run(as_dict=True, debug=True)
+		.run(as_dict=True)
 	)
 
 	for user in users:

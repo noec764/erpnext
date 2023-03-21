@@ -93,7 +93,7 @@ $.extend(shopping_cart, {
 					booking: opts.booking,
 					additional_notes: opts.additional_notes !== undefined ? opts.additional_notes : undefined,
 					with_items: opts.with_items || 0,
-					uom: opts.uom
+					uom: opts.uom,
 				},
 				btn: opts.btn,
 				callback: function(r) {
@@ -104,6 +104,96 @@ $.extend(shopping_cart, {
 				}
 			});
 		}
+	},
+
+	bind_place_order: function() {
+		$(".cart-container").on("click", ".btn-place-order", async function() {
+			const address = await frappe.call({
+				method: 'erpnext.e_commerce.shopping_cart.cart.get_customer_address',
+				freeze: true,
+			})
+
+			if (!address.message) {
+				try {
+					await shopping_cart.new_cart_address(false);
+				} catch (e) {
+					if (e) console.error(e);
+				}
+			}
+
+			shopping_cart.place_order(this);
+		});
+	},
+
+	bind_request_quotation: function() {
+		$(".cart-container").on('click', '.btn-request-for-quotation', function() {
+			shopping_cart.request_quotation(this);
+		});
+	},
+
+	place_order: function(btn) {
+		shopping_cart.freeze();
+
+		const onError = (response) => {
+			shopping_cart.unfreeze();
+			if (response.exc) {
+				let msg = frappe._("Something went wrong!");
+				if (response._server_messages) {
+					msg = JSON.parse(response._server_messages).map(m => JSON.parse(m))
+					msg = msg.map(m => typeof m === 'object' ? m.message : m)
+					msg = msg.join("<br>");
+				}
+
+				$("#cart-error")
+					.empty()
+					.html(msg)
+					.toggle(true);
+			} else {
+				console.error(response);
+			}
+		}
+
+		return frappe.call({
+			type: "POST",
+			method: "erpnext.e_commerce.shopping_cart.cart.place_order",
+			btn: btn,
+		}).then((r) => {
+			if (r.exc) {
+				onError(r);
+			} else {
+				$(btn).hide();
+				window.location.href = '/orders/' + encodeURIComponent(r.message);
+			}
+		}).catch((r) => {
+			onError(r.responseJSON);
+		})
+	},
+
+	request_quotation: function(btn) {
+		shopping_cart.freeze();
+
+		return frappe.call({
+			type: "POST",
+			method: "erpnext.e_commerce.shopping_cart.cart.request_for_quotation",
+			btn: btn,
+			callback: function(r) {
+				if(r.exc) {
+					shopping_cart.unfreeze();
+					var msg = "";
+					if(r._server_messages) {
+						msg = JSON.parse(r._server_messages || []).join("<br>");
+					}
+
+					$("#cart-error")
+						.empty()
+						.html(msg || frappe._("Something went wrong!"))
+						.toggle(true);
+				} else {
+					$(btn).hide();
+					window.location.href = '/quotations/' + encodeURIComponent(r.message);
+				}
+			}
+		});
 	},
 
 	set_cart_count: function(animate=false) {
@@ -241,7 +331,6 @@ $.extend(shopping_cart, {
 							{ label: __('Billing'), value: 'Billing' },
 							{ label: __('Shipping'), value: 'Shipping' }
 						],
-						default: 'Shipping',
 						reqd: 1
 					},
 					{

@@ -3,9 +3,33 @@
 
 no_cache = 1
 
+import frappe
+
 from erpnext.e_commerce.shopping_cart.cart import get_cart_quotation
+from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
+from erpnext.venue.doctype.item_booking.item_booking import get_availabilities
+from erpnext.venue.utils import get_customer
 
 
 def get_context(context):
 	context.body_class = "product-page"
 	context.update(get_cart_quotation())
+
+	context.credits_balance = {}
+	if any(item.is_free_item and item.item_booking for item in context.doc.items):
+		context.credits_balance = get_balance(get_customer())
+
+
+@frappe.whitelist(allow_guest=True)
+def get_availabilities_for_cart(item, start, end, uom=None):
+	quotation = get_cart_quotation()
+
+	booked_items = [item.item_booking for item in quotation.get("doc", {}).get("items")]
+	availabilities = get_availabilities(item, start, end, uom)
+
+	output = []
+	for availability in availabilities:
+		if not availability.get("number") or availability.get("id") in booked_items:
+			output.append(availability)
+
+	return output
