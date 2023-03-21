@@ -24,8 +24,9 @@ class BookingCredit(StatusUpdater):
 		self.set_balance()
 
 	def set_expiration_date(self):
-		validity = frappe.db.get_value("Booking Credit Type", self.booking_credit_type, "validity")
-		self.expiration_date = add_to_date(self.date, seconds=cint(validity))
+		if not self.expiration_date:
+			validity = frappe.db.get_value("Booking Credit Type", self.booking_credit_type, "validity")
+			self.expiration_date = add_to_date(self.date, seconds=cint(validity))
 
 	def before_submit(self):
 		self.balance = self.quantity

@@ -12,9 +12,9 @@
   "section_break_15",
   "naming_series",
   "date",
-  "user",
   "customer",
   "customer_name",
+  "user",
   "column_break_4",
   "expiration_date",
   "is_expired",
@@ -38,7 +38,7 @@
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Date",
+   "label": "Validity Start Date",
    "reqd": 1
   },
   {
@@ -203,7 +203,7 @@
    "link_fieldname": "booking_credit"
   }
  ],
- "modified": "2023-03-20 14:42:22.910095",
+ "modified": "2023-03-20 19:02:18.243537",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit",

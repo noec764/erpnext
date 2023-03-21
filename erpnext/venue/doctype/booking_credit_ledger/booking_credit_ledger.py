@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cint, nowdate
+from frappe.utils import cint, getdate
 
 
 class BookingCreditLedger(Document):
@@ -38,7 +38,7 @@ class BookingCreditLedger(Document):
 			.where(booking_credit.balance > 0.0)
 			.where(booking_credit.status == "Active")
 			.where(booking_credit.docstatus == 1)
-			.where(booking_credit.date <= nowdate())
+			.where(booking_credit.date <= getdate(self.date))
 			.orderby(booking_credit.expiration_date)
 			.orderby(booking_credit.date)
 		)
