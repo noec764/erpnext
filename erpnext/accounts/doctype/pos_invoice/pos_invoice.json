@@ -1040,7 +1040,7 @@
    "label": "Allocate Advances Automatically (FIFO)"
   },
   {
-   "depends_on": "eval:!doc.allocate_advances_automatically",
+   "depends_on": "eval:doc.docstatus==0&&!doc.allocate_advances_automatically",
    "fieldname": "get_advances",
    "fieldtype": "Button",
    "label": "Get Advances Received",
