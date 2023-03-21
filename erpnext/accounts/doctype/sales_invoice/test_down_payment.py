@@ -200,3 +200,202 @@ class TestDownPayment(FrappeTestCase):
 		self.assertTrue(
 			any(x.get("account") == "_Test Receivable - _TC" for x in gl if x.is_cancelled == 0)
 		)
+
+
+class TestDownPayment2(FrappeTestCase):
+	def setUp(self):
+		frappe.db.set_value(
+			"Company",
+			"_Test Company",
+			"default_down_payment_receivable_account",
+			"_Test Down Payment - _TC",
+		)
+
+	def get_accounting_params(self):
+		return {
+			"company": "_Test Company",
+			"cost_center": "_Test Cost Center - _TC",
+			"warehouse": "_Test Warehouse - _TC",
+			"currency": "INR",
+			"selling_price_list": "Standard Selling",
+		}
+
+	def create_sales_order(self, amount: float):
+		return frappe.get_doc(
+			{
+				"doctype": "Sales Order",
+				"customer": "_Test Customer",
+				**self.get_accounting_params(),
+				"items": [
+					{
+						**self.get_accounting_params(),
+						"item_code": "_Test Item",
+						"qty": 1,
+						"rate": amount,
+						"delivery_date": "2020-01-01",
+					}
+				],
+				"taxes_and_charges": "",
+			}
+		)
+
+	def create_sales_invoice(self, sales_order: "frappe.Document"):
+		return frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"customer": sales_order.customer,
+				**self.get_accounting_params(),
+				"items": [
+					{
+						**self.get_accounting_params(),
+						**item.as_dict(),
+						"name": None,
+						"parent": None,
+						"parentfield": None,
+						"parenttype": None,
+						"idx": None,
+						"doctype": "Sales Invoice Item",
+						"sales_order": sales_order.name,
+					}
+					for item in sales_order.items
+				],
+				"taxes_and_charges": "",
+				"is_down_payment_invoice": 0,
+				"is_pos": 0,
+			}
+		)
+
+	def create_down_payment_sales_invoice(
+		self, sales_order: "frappe.Document", percentage: float = 0.3
+	):
+		return frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"customer": sales_order.customer,
+				**self.get_accounting_params(),
+				"items": [
+					{
+						**self.get_accounting_params(),
+						"item_code": "999-Down Payment",
+						"qty": 1,
+						"rate": sales_order.grand_total * percentage,
+						"delivery_date": "2020-01-01",
+						"sales_order": sales_order.name,
+					}
+				],
+				"taxes_and_charges": "",
+				"is_down_payment_invoice": 1,
+				"is_pos": 0,
+			}
+		)
+
+	def create_payment_entry(self, voucher: "frappe.Document", amount: float):
+		return frappe.get_doc(
+			{
+				"doctype": "Payment Entry",
+				"company": voucher.company,
+				"payment_type": "Receive",
+				"party_type": "Customer",
+				"party": voucher.customer,
+				"paid_from": "Debtors - _TC",
+				"paid_to": "Cash - _TC",
+				"paid_amount": amount,
+				"received_amount": amount,
+				"reference_no": "123",
+				"reference_date": "2020-01-01",
+				"references": [
+					{
+						"reference_doctype": voucher.doctype,
+						"reference_name": voucher.name,
+						"allocated_amount": amount,
+					}
+				],
+			}
+		)
+
+	def test_down_payment_full(self):
+		# Create a Sales Order
+		so = self.create_sales_order(amount=10000)
+		so.submit().reload()
+
+		self.assertEqual(so.grand_total, 10000)
+		self.assertEqual(so.total_taxes_and_charges, 0)
+		self.assertEqual(len(so.taxes), 0)
+
+		# Create a down payment Sales Invoice against the Sales Order
+		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3)
+		dp_si.submit().reload()
+
+		self.assertEqual(dp_si.grand_total, 3000)
+		self.assertEqual(dp_si.total_advance, 0)
+		self.assertEqual(dp_si.outstanding_amount, 3000)
+		self.assertEqual(dp_si.total_taxes_and_charges, 0)
+		self.assertEqual(len(dp_si.taxes), 0)
+
+		# Create a Payment Entry against the Sales Invoice
+		advances = []
+		for v in [100, 900, 2000]:
+			pe = self.create_payment_entry(voucher=dp_si, amount=v)
+			pe.submit().reload()
+			advances.append(pe)
+
+		# Create a draft Sales Invoice against the Sales Order, and add the payments as advances
+		si = self.create_sales_invoice(sales_order=so)
+		for dp in advances:
+			si.append(
+				"advances",
+				{
+					"reference_name": dp.name,
+					"reference_type": "Payment Entry",
+					"advance_amount": dp.paid_amount,
+					"allocated_amount": dp.paid_amount,
+					"is_down_payment": 1,
+				},
+			)
+
+		si.save().reload()
+
+		self.assertEqual(si.grand_total, 10000)
+		self.assertEqual(si.total_advance, 3000)
+		self.assertEqual(si.outstanding_amount, 7000)
+
+		# Submit the Sales Invoice
+		si.submit().reload()
+
+		self.assertEqual(si.grand_total, 10000)
+		self.assertEqual(si.total_advance, 3000)
+		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+		self.assertEqual(si.status, "Partly Paid")
+
+	def test_down_payment_partial(self):
+		so = self.create_sales_order(amount=10000).submit()
+		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3).submit()
+
+		advances = []
+		for v in [100, 900]:
+			advances.append(self.create_payment_entry(voucher=dp_si, amount=v).submit())
+
+		si = self.create_sales_invoice(sales_order=so)
+		for dp in advances:
+			si.append(
+				"advances",
+				{
+					"reference_name": dp.name,
+					"reference_type": "Payment Entry",
+					"advance_amount": dp.paid_amount,
+					"allocated_amount": dp.paid_amount,
+					"is_down_payment": 1,
+				},
+			)
+
+		si.save()
+
+		self.assertEqual(si.grand_total, 10000)
+		self.assertEqual(si.total_advance, 1000)
+		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+
+		si.submit().reload()
+		self.assertEqual(si.grand_total, 10000)
+		self.assertEqual(si.total_advance, 1000)
+		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+		self.assertEqual(si.status, "Partly Paid")

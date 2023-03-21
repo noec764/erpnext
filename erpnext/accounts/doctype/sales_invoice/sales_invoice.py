@@ -1067,6 +1067,11 @@ class SalesInvoice(SellingController):
 			)
 
 	def make_down_payment_final_invoice_entries(self, gl_entries):
+		# In the case of a down payment with multiple payments, associated entries of
+		# the gl_entries list would be credited/debited multiple times if we didn't make
+		# sure that the pair of GL Entry was not already processed.
+		handled_down_payment_entries: set[str] = set()
+
 		for d in self.get("advances"):
 			if (
 				flt(d.allocated_amount) > 0 and d.reference_type == "Payment Entry" and cint(d.is_down_payment)
@@ -1078,7 +1083,15 @@ class SalesInvoice(SellingController):
 					down_payment_entries.extend(
 						(
 							frappe.qb.from_(gl_entry)
-							.select("*")
+							.select(
+								"name",
+								"account",
+								"against",
+								"debit",
+								"debit_in_account_currency",
+								"credit",
+								"credit_in_account_currency",
+							)
 							.where(gl_entry.voucher_type == ref.reference_doctype)
 							.where(gl_entry.voucher_no == ref.reference_name)
 							.where(gl_entry.is_cancelled == 0)
@@ -1106,6 +1119,12 @@ class SalesInvoice(SellingController):
 						)
 
 				for down_payment_entry in down_payment_entries:
+					if down_payment_entry["name"] in handled_down_payment_entries:
+						# Skip this down payment entry if it has already been handled,
+						# possibly for a previous payment entry.
+						continue
+					handled_down_payment_entries.add(down_payment_entry["name"])
+
 					for gl_entry in gl_entries:
 						if gl_entry["account"] == down_payment_entry["account"]:
 							if gl_entry["account"] not in down_payment_accounts:
