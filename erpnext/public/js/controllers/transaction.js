@@ -99,6 +99,15 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			frm.cscript.calculate_taxes_and_totals();
 		});
 
+		frappe.ui.form.on(this.frm.doctype + " Advance", {
+			advances_add(frm, cdt, cdn) {
+				frm.cscript.calculate_taxes_and_totals();
+			},
+			advances_remove(frm, cdt, cdn) {
+				frm.cscript.calculate_taxes_and_totals();
+			},
+		});
+
 		frappe.ui.form.on(this.frm.doctype + " Item", {
 			items_add: function(frm, cdt, cdn) {
 				var item = frappe.get_doc(cdt, cdn);
@@ -1888,6 +1897,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				callback: function(r, rt) {
 					refresh_field("advances");
 					me.frm.dirty();
+					me.frm.cscript.calculate_taxes_and_totals();
 				}
 			})
 		}
