@@ -80,7 +80,7 @@
    "fieldname": "get_items_from",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Get Items From",
+   "label": "Get items from",
    "options": "\nSales Order\nMaterial Request"
   },
   {

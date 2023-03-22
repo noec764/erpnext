@@ -495,7 +495,7 @@ cur_frm.fields_dict['sales_orders'].grid.get_field("sales_order").get_query = fu
 frappe.tour['Production Plan'] = [
 	{
 		fieldname: "get_items_from",
-		title: "Get Items From",
+		title: "Get items from",
 		description: __("Select whether to get items from a Sales Order or a Material Request. For now select <b>Sales Order</b>.\n A Production Plan can also be created manually where you can select the Items to manufacture.")
 	},
 	{

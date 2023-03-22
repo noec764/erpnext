@@ -179,6 +179,7 @@
 		erpnext.e_commerce.wishlist.wishlist_action($btn);
 	});
 
+	{% if booking_enabled %}
 	frappe.ready(() => {
 		new erpnext.booking_section({
 			parentId: 'booking-calendar',
@@ -188,6 +189,7 @@
 			skip_cart: "{{ skip_cart }}"
 		})
 	})
+	{% endif %}
 </script>
 {% endblock %}
 

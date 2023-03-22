@@ -65,7 +65,10 @@
   "payment_gateways_section",
   "payment_gateway",
   "column_break_38",
-  "payment_gateway_reference"
+  "payment_gateway_reference",
+  "venue_management_tab",
+  "booking_credits_section",
+  "booking_credits_allocation"
  ],
  "fields": [
   {
@@ -439,11 +442,27 @@
    "hidden": 1,
    "label": "Invoicing Day",
    "read_only": 1
+  },
+  {
+   "fieldname": "venue_management_tab",
+   "fieldtype": "Tab Break",
+   "label": "Venue Management"
+  },
+  {
+   "fieldname": "booking_credits_section",
+   "fieldtype": "Section Break",
+   "label": "Booking Credits"
+  },
+  {
+   "fieldname": "booking_credits_allocation",
+   "fieldtype": "Table",
+   "label": "Automatic Allocation",
+   "options": "Booking Credit Allocation Rules"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-02-24 16:58:06.859174",
+ "modified": "2023-03-16 11:04:16.466896",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Subscription",

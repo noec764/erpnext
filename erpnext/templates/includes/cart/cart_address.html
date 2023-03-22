@@ -4,7 +4,7 @@
 	{% set select_address = True %}
 {% endif %}
 
-<div class="mb-3 frappe-card p-5" data-section="shipping-address">
+<div class="mb-3 p-5" data-section="shipping-address">
 	<div class="d-flex">
 		<div class="col-6 address-header"><h6>{{ _("Shipping Address") }}</h6></div>
 		<div class="col-6" style="padding: 0;">
@@ -33,7 +33,7 @@
 </div>
 
 {% if billing_addresses %}
-	<div class="mb-3 frappe-card p-5" data-section="billing-address">
+	<div class="mb-3 p-5" data-section="billing-address">
 		<div class="d-flex">
 			<div class="col-6 address-header"><h6>{{ _("Billing Address") }}</h6></div>
 			<div class="col-6" style="padding: 0;">
@@ -62,6 +62,8 @@ frappe.ready(() => {
 		const $section = $target.closest('[data-section]');
 		$section.find('.address-card').removeClass('active');
 		$target.addClass('active');
+		$('.btn-modal-primary').removeClass('disabled')
+		$('.btn-modal-primary').removeAttr('disabled')
 	});
 
 	$('#input_same_billing').change((e) => {
@@ -70,7 +72,7 @@ frappe.ready(() => {
 	});
 
 	$('.btn-new-address').click(() => {
-		shopping_cart.new_cart_address(true)
+		shopping_cart.new_cart_address(true).catch(() => {})
 	});
 
 	function setup_state() {

@@ -11,27 +11,50 @@
  "apply_document_permissions": 0,
  "breadcrumbs": "[{\"label\":_(\"Issues\"), \"route\":\"issues\"}]",
  "creation": "2016-06-24 15:50:33.186483",
+ "currency_based_on_field": 0,
  "doc_type": "Issue",
  "docstatus": 0,
  "doctype": "Web Form",
  "idx": 0,
  "introduction_text": "",
- "is_multi_step_form": 0,
  "is_standard": 1,
+ "list_columns": [
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Link",
+   "label": "Priority"
+  },
+  {
+   "fieldname": "issue_type",
+   "fieldtype": "Link",
+   "label": "Issue Type"
+  }
+ ],
+ "list_title": "My Issues",
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2022-05-26 21:23:40.274301",
+ "modified": "2023-03-15 12:19:46.084774",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "issues",
  "owner": "Administrator",
+ "payment_button_label": "Pay now",
+ "payment_type": "Immediate payment",
  "published": 1,
  "route": "issues",
- "route_to_success_link": 0,
  "show_attachments": 0,
- "show_in_grid": 0,
+ "show_list": 1,
  "show_sidebar": 1,
- "sidebar_items": [],
  "success_message": "",
  "success_url": "/issues",
  "title": "Issue",

@@ -13,9 +13,10 @@
   "credits",
   "uom",
   "item",
+  "booking_credit_type",
   "column_break_4",
-  "reference_doctype",
-  "reference_document",
+  "booking_credit",
+  "booking_credit_usage",
   "expiration_date",
   "amended_from"
  ],
@@ -32,8 +33,10 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "credits",
@@ -45,21 +48,6 @@
   {
    "fieldname": "column_break_4",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "reference_doctype",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Reference Doctype",
-   "options": "DocType",
-   "reqd": 1
-  },
-  {
-   "fieldname": "reference_document",
-   "fieldtype": "Dynamic Link",
-   "label": "Reference Document",
-   "options": "reference_doctype",
-   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -84,29 +72,64 @@
    "options": "User"
   },
   {
+   "fetch_from": "booking_credit_type.uom",
    "fieldname": "uom",
    "fieldtype": "Link",
    "label": "Unit of Measure",
    "options": "UOM",
-   "reqd": 1
+   "read_only": 1
   },
   {
+   "fetch_from": "booking_credit_type.item",
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Item",
    "options": "Item",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "expiration_date",
    "fieldtype": "Date",
-   "label": "Expiration Date"
+   "label": "Expiration Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "booking_credit_type",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Booking Credit Type",
+   "options": "Booking Credit Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "booking_credit",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Booking Credit",
+   "options": "Booking Credit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "booking_credit_usage",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Booking Credit Usage",
+   "options": "Booking Credit Usage",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2022-07-14 16:13:01.808026",
+ "links": [
+  {
+   "is_child_table": 1,
+   "link_doctype": "Booking Credit Ledger Allocation",
+   "link_fieldname": "booking_credit_ledger",
+   "parent_doctype": "Booking Credit",
+   "table_fieldname": "booking_credit_ledger_allocation"
+  }
+ ],
+ "modified": "2023-03-20 12:32:56.485036",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Booking Credit Ledger",

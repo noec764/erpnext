@@ -24,6 +24,9 @@ frappe.ui.form.on('Item Booking', {
 			},
 			'Sales Order': () => {
 				make_sales_order(frm)
+			},
+			'Booking Credit Usage': () => {
+				make_booking_credit_usage(frm)
 			}
 		}
 	},
@@ -349,6 +352,18 @@ const make_quotation = frm => {
 const make_sales_order = frm => {
 	frappe.xcall(
 		"erpnext.venue.doctype.item_booking.item_booking.make_sales_order",
+		{ source_name: frm.doc.name }
+	).then(r => {
+		if (r) {
+			const doclist = frappe.model.sync(r);
+			frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+		}
+	})
+}
+
+const make_booking_credit_usage = frm => {
+	frappe.xcall(
+		"erpnext.venue.doctype.item_booking.item_booking.make_booking_credit_usage",
 		{ source_name: frm.doc.name }
 	).then(r => {
 		if (r) {

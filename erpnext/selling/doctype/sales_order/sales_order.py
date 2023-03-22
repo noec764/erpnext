@@ -25,6 +25,9 @@ from erpnext.accounts.doctype.subscription_event.subscription_event import (
 )
 from erpnext.accounts.party import get_party_account
 from erpnext.controllers.selling_controller import SellingController
+from erpnext.manufacturing.doctype.blanket_order.blanket_order import (
+	validate_against_blanket_order,
+)
 from erpnext.manufacturing.doctype.production_plan.production_plan import (
 	get_items_for_material_requests,
 )
@@ -58,6 +61,7 @@ class SalesOrder(SellingController):
 		self.validate_warehouse()
 		self.validate_drop_ship()
 		self.validate_serial_no_based_delivery()
+		validate_against_blanket_order(self)
 		validate_inter_company_party(
 			self.doctype, self.customer, self.company, self.inter_company_order_reference
 		)
@@ -252,6 +256,9 @@ class SalesOrder(SellingController):
 			from erpnext.accounts.doctype.pricing_rule.utils import update_coupon_code_count
 
 			update_coupon_code_count(self.coupon_code, "used")
+
+		if self.base_grand_total == 0.0 and not frappe.flags.in_test:
+			self.update_status("Closed")
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("GL Entry", "Stock Ledger Entry", "Payment Ledger Entry")
@@ -511,9 +518,6 @@ class SalesOrder(SellingController):
 				)
 
 	def update_item_bookings(self):
-		booking_credit_pricing_rules = frappe.get_all(
-			"Pricing Rule", filters={"booking_credits_based": 1}, pluck="name"
-		)
 		confirm_after_payment = cint(
 			frappe.db.get_single_value("Venue Settings", "confirm_booking_after_payment")
 		)
@@ -538,12 +542,7 @@ class SalesOrder(SellingController):
 					else:
 						status = "Not confirmed"
 
-				# Check if the line item is associated to any booking credit pricing rule
-				if any(
-					[True for x in frappe.parse_json(d.pricing_rules or []) if x in booking_credit_pricing_rules]
-				):
-					frappe.db.set_value("Item Booking", d.item_booking, "deduct_booking_credits", 1)
-				elif frappe.db.get_value("Item Booking", d.item_booking, "deduct_booking_credits"):
+				if frappe.db.get_value("Item Booking", d.item_booking, "deduct_booking_credits"):
 					# Check directly in booking in case the pricing rule is only associated with the quotation
 					status = "Confirmed"
 

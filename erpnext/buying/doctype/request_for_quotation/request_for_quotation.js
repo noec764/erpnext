@@ -314,7 +314,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 							company: me.frm.doc.company
 						}
 					})
-				}, __("Get Items From"));
+				}, __("Get items from"));
 
 			// Get items from Opportunity
 			this.frm.add_custom_button(__('Opportunity'),
@@ -333,7 +333,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 							company: me.frm.doc.company
 						}
 					})
-				}, __("Get Items From"));
+				}, __("Get items from"));
 
 			// Get items from open Material Requests based on supplier
 			this.frm.add_custom_button(__('Possible Supplier'), function() {
@@ -374,7 +374,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 				});
 
 				dialog.show();
-			}, __("Get Items From"));
+			}, __("Get items from"));
 
 			// Link Material Requests
 			this.frm.add_custom_button(__('Link to Material Requests'),

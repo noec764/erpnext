@@ -171,26 +171,18 @@ frappe.ui.form.on("Customer", {
 					customer: frm.doc.name
 				})
 			}
-		}).then(r => {
-			if (!r) {
+		}).then(balance => {
+			if (!balance || !Object.keys(balance).length) {
 				return
 			}
-
-			const credits = Object.keys(r).map(m => {
-				return r[m]
-			}).flat().map(d => {
-				return d.balance
-			});
-			const max_count = Math.max.apply(null, credits) > 0 ? Math.max.apply(null, credits) : Math.min.apply(null, credits);
-
 			frm.dashboard.add_section(frappe.render_template('booking_credit_dashboard',
 			{
-				balance: Object.keys(r).map(f => {
-					return flatten_credits(r, f)
-				}).flat(),
-				customer: frm.doc.name,
-				date: frappe.datetime.now_date(),
-				max_count: max_count
+				balance: Object.keys(balance).map(bct => {
+					return {booking_credit_type: bct || '', balance: balance[bct]}
+				}),
+				customer: frm.doc.customer_name,
+				date: frm.doc.date,
+				total: Object.values(balance).reduce((a, b) => a + b, 0),
 			}), __("Booking Credits Balance"));
 			frm.dashboard.show();
 			frm.get_balance = false;

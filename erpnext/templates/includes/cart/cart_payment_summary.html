@@ -51,17 +51,29 @@
 				</tr>
 			</table>
 		{% endif %}
-
-		{% if cart_settings.enable_checkout %}
-			<button class="btn btn-primary btn-place-order font-md w-100" type="button">
-				{{ _('Place Order') }}
-			</button>
-		{% else %}
-			<button class="btn btn-primary btn-request-for-quotation font-md w-100" type="button">
-				{{ _('Request for Quote') }}
-			</button>
-		{% endif %}
 	</div>
+
+	{% include "templates/includes/cart/cart_items_credits_total.html" %}
+
+	{% if route == "cart" and doc.base_grand_total > 0 %}
+		<div class="card-footer btn-checkout">
+			<a class="btn btn-primary font-md w-100" type="button" href="/checkout">
+				{{ _('Proceed to checkout') }}
+			</a>
+		</div>
+	{% elif cart_settings.enable_checkout %}
+		<button class="btn btn-primary btn-place-order font-md w-100" type="button">
+			{% if route == "cart" %}
+			{{ _('Validate your selection') }}
+			{% else %}
+			{{ _('Place Order') }}
+			{% endif %}
+		</button>
+	{% else %}
+		<button class="btn btn-primary btn-request-for-quotation font-md w-100" type="button">
+			{{ _('Request for Quote') }}
+		</button>
+	{% endif %}
 </div>
 
 <!-- TODO: Apply Coupon Dialog-->

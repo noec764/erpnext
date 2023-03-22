@@ -4,9 +4,7 @@ from collections import defaultdict
 
 import frappe
 from frappe import _
-from frappe.translate import get_dict
 from frappe.utils import add_days, getdate, now_datetime
-from frappe.utils.jinja_globals import bundled_asset_absolute
 
 from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import (
 	get_shopping_cart_settings,
@@ -19,13 +17,6 @@ def get_context(context):
 	context.no_cache = 1
 	context.show_sidebar = True
 	context.full_width = True
-
-	if context.translated_messages:
-		messages = frappe.parse_json(context.translated_messages)
-		messages.update(get_dict("jsfile", bundled_asset_absolute("controls.bundle.js")))
-		messages.update(get_dict("jsfile", bundled_asset_absolute("dialog.bundle.js")))
-		messages.update(get_dict("jsfile", bundled_asset_absolute("booking_page.bundle.js")))
-		context.translated_messages = messages
 
 	if frappe.session.user == "Guest":
 		frappe.throw(_("You need to be logged in to access this page"), frappe.PermissionError)

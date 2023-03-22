@@ -21,7 +21,7 @@ def get_context(context):
 	context.enable_stripe = False
 	context.enable_gocardless = False
 	context.lang = frappe.local.lang
-	context.credits_balance = None
+	context.credits_balance = {}
 	context.current_user = frappe.get_doc("User", frappe.session.user)
 
 	active_tokens = frappe.get_all(
@@ -35,14 +35,17 @@ def get_context(context):
 
 	customers, suppliers = get_customers_suppliers("Integration References", frappe.session.user)
 	if customers:
-		if frappe.db.exists("Integration References", dict(customer=customers[0])):
-			references = frappe.get_doc("Integration References", dict(customer=customers[0]))
-			if references.get("stripe_customer_id") and references.get("stripe_settings"):
-				context.enable_stripe = True
-				context.stripe_payment_methods = get_customer_payment_methods(references)
-				context.publishable_key = get_api_key(references.stripe_settings)
+		try:
+			if frappe.db.exists("Integration References", dict(customer=customers[0])):
+				references = frappe.get_doc("Integration References", dict(customer=customers[0]))
+				if references.get("stripe_customer_id") and references.get("stripe_settings"):
+					context.enable_stripe = True
+					context.stripe_payment_methods = get_customer_payment_methods(references)
+					context.publishable_key = get_api_key(references.stripe_settings)
+		except Exception:
+			pass
 
-		context.credits_balance = get_balance(customers[0]) or None
+		context.credits_balance = get_balance(customers[0])
 
 
 def get_customer_payment_methods(references):
