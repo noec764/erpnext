@@ -1,10 +1,13 @@
+import unittest
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import flt, nowdate
 
 from erpnext.accounts.doctype.payment_entry.test_payment_entry import get_payment_entry
+from erpnext.setup.utils import get_exchange_rate
 
-test_dependencies = ["Journal Entry", "Contact", "Address"]
+test_dependencies = ["Journal Entry", "Contact", "Address", "Account"]
 test_records = frappe.get_test_records("Sales Invoice")
 
 
@@ -202,13 +205,13 @@ class TestDownPayment(FrappeTestCase):
 		)
 
 
-class TestDownPayment2(FrappeTestCase):
+class TestDownPaymentMultiplePayments(FrappeTestCase):
 	def setUp(self):
 		frappe.db.set_value(
 			"Company",
 			"_Test Company",
 			"default_down_payment_receivable_account",
-			"_Test Down Payment - _TC",
+			"_Test Down Payment USD - _TC",
 		)
 
 	def get_accounting_params(self):
@@ -216,15 +219,18 @@ class TestDownPayment2(FrappeTestCase):
 			"company": "_Test Company",
 			"cost_center": "_Test Cost Center - _TC",
 			"warehouse": "_Test Warehouse - _TC",
-			"currency": "INR",
+			"currency": "USD",
+			"party_account_currency": "USD",
+			"price_list_currency": "USD",
 			"selling_price_list": "Standard Selling",
+			"conversion_rate": get_exchange_rate("USD", "INR"),
 		}
 
 	def create_sales_order(self, amount: float):
 		return frappe.get_doc(
 			{
 				"doctype": "Sales Order",
-				"customer": "_Test Customer",
+				"customer": "_Test Customer USD",
 				**self.get_accounting_params(),
 				"items": [
 					{
@@ -262,6 +268,7 @@ class TestDownPayment2(FrappeTestCase):
 				"taxes_and_charges": "",
 				"is_down_payment_invoice": 0,
 				"is_pos": 0,
+				"disable_rounded_total": 0,
 			}
 		)
 
@@ -276,6 +283,7 @@ class TestDownPayment2(FrappeTestCase):
 				"items": [
 					{
 						**self.get_accounting_params(),
+						"doctype": "Sales Invoice Item",
 						"item_code": "999-Down Payment",
 						"qty": 1,
 						"rate": sales_order.grand_total * percentage,
@@ -286,6 +294,7 @@ class TestDownPayment2(FrappeTestCase):
 				"taxes_and_charges": "",
 				"is_down_payment_invoice": 1,
 				"is_pos": 0,
+				"disable_rounded_total": 0,
 			}
 		)
 
@@ -297,8 +306,10 @@ class TestDownPayment2(FrappeTestCase):
 				"payment_type": "Receive",
 				"party_type": "Customer",
 				"party": voucher.customer,
-				"paid_from": "Debtors - _TC",
-				"paid_to": "Cash - _TC",
+				"paid_from": "_Test Receivable USD - _TC",
+				"paid_to": "_Test Bank USD - _TC",
+				"paid_from_account_currency": "USD",
+				"paid_to_account_currency": "USD",
 				"paid_amount": amount,
 				"received_amount": amount,
 				"reference_no": "123",
@@ -308,28 +319,39 @@ class TestDownPayment2(FrappeTestCase):
 						"reference_doctype": voucher.doctype,
 						"reference_name": voucher.name,
 						"allocated_amount": amount,
+						"due_date": "2020-01-01",
 					}
 				],
 			}
 		)
 
+	def get_advance_for_payment_entry(self, pe: "frappe.Document"):
+		return {
+			"reference_name": pe.name,
+			"reference_type": "Payment Entry",
+			"advance_amount": pe.paid_amount,
+			"allocated_amount": pe.paid_amount,
+			"is_down_payment": 1,
+			"ref_exchange_rate": self.get_accounting_params()["conversion_rate"],
+		}
+
 	def test_down_payment_full(self):
 		# Create a Sales Order
-		so = self.create_sales_order(amount=10000)
+		so = self.create_sales_order(amount=10_000)
 		so.submit().reload()
 
-		self.assertEqual(so.grand_total, 10000)
-		self.assertEqual(so.total_taxes_and_charges, 0)
+		self.assertAlmostEqual(so.grand_total, 10_000)
+		self.assertAlmostEqual(so.total_taxes_and_charges, 0)
 		self.assertEqual(len(so.taxes), 0)
 
 		# Create a down payment Sales Invoice against the Sales Order
 		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3)
 		dp_si.submit().reload()
 
-		self.assertEqual(dp_si.grand_total, 3000)
-		self.assertEqual(dp_si.total_advance, 0)
-		self.assertEqual(dp_si.outstanding_amount, 3000)
-		self.assertEqual(dp_si.total_taxes_and_charges, 0)
+		self.assertAlmostEqual(dp_si.grand_total, 3_000)
+		self.assertAlmostEqual(dp_si.total_advance, 0)
+		self.assertAlmostEqual(dp_si.outstanding_amount, 3_000)
+		self.assertAlmostEqual(dp_si.total_taxes_and_charges, 0)
 		self.assertEqual(len(dp_si.taxes), 0)
 
 		# Create a Payment Entry against the Sales Invoice
@@ -342,60 +364,123 @@ class TestDownPayment2(FrappeTestCase):
 		# Create a draft Sales Invoice against the Sales Order, and add the payments as advances
 		si = self.create_sales_invoice(sales_order=so)
 		for dp in advances:
-			si.append(
-				"advances",
-				{
-					"reference_name": dp.name,
-					"reference_type": "Payment Entry",
-					"advance_amount": dp.paid_amount,
-					"allocated_amount": dp.paid_amount,
-					"is_down_payment": 1,
-				},
-			)
+			si.append("advances", self.get_advance_for_payment_entry(pe=dp))
 
 		si.save().reload()
 
-		self.assertEqual(si.grand_total, 10000)
-		self.assertEqual(si.total_advance, 3000)
-		self.assertEqual(si.outstanding_amount, 7000)
+		self.assertAlmostEqual(si.grand_total, 10_000)
+		self.assertAlmostEqual(si.total_advance, 3_000)
+		self.assertAlmostEqual(si.outstanding_amount, 7000)
 
 		# Submit the Sales Invoice
 		si.submit().reload()
 
-		self.assertEqual(si.grand_total, 10000)
-		self.assertEqual(si.total_advance, 3000)
-		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+		self.assertAlmostEqual(si.grand_total, 10_000)
+		self.assertAlmostEqual(si.total_advance, 3_000)
+		self.assertAlmostEqual(si.outstanding_amount, 7_000)
 		self.assertEqual(si.status, "Partly Paid")
 
+		dp_si.reload()
+		self.assertEqual(dp_si.status, "Paid")
+
 	def test_down_payment_partial(self):
-		so = self.create_sales_order(amount=10000).submit()
-		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3).submit()
+		so = self.create_sales_order(amount=10_000).submit()
+		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3)
+		dp_si.submit()
 
 		advances = []
-		for v in [100, 900]:
+		for v in [10, 90]:
 			advances.append(self.create_payment_entry(voucher=dp_si, amount=v).submit())
 
 		si = self.create_sales_invoice(sales_order=so)
 		for dp in advances:
-			si.append(
-				"advances",
-				{
-					"reference_name": dp.name,
-					"reference_type": "Payment Entry",
-					"advance_amount": dp.paid_amount,
-					"allocated_amount": dp.paid_amount,
-					"is_down_payment": 1,
-				},
-			)
+			si.append("advances", self.get_advance_for_payment_entry(pe=dp))
 
 		si.save()
 
-		self.assertEqual(si.grand_total, 10000)
-		self.assertEqual(si.total_advance, 1000)
-		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+		self.assertAlmostEqual(si.grand_total, 10_000)
+		self.assertAlmostEqual(si.total_advance, 100)
+		self.assertAlmostEqual(si.outstanding_amount, 9_900)
 
 		si.submit().reload()
-		self.assertEqual(si.grand_total, 10000)
-		self.assertEqual(si.total_advance, 1000)
-		self.assertEqual(si.outstanding_amount, si.grand_total - si.total_advance)
+
+		self.assertAlmostEqual(si.grand_total, 10_000)
+		self.assertAlmostEqual(si.total_advance, 100)
+		# The outstanding amount of the invoice is the grand total (10_000) minus the down payment (3000, 30% of 10_000), which is 7_000
+		self.assertAlmostEqual(si.outstanding_amount, 7_000)
 		self.assertEqual(si.status, "Partly Paid")
+
+		dp_si.reload()
+		self.assertEqual(dp_si.outstanding_amount, 3000 - 100)
+		self.assertEqual(dp_si.status, "Partly Paid")
+
+	def test_down_payment_partial_two_decimal_places(self):
+		so = self.create_sales_order(amount=10_000.50).submit()
+		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3)
+		dp_si.submit()
+
+		advances = []
+		for v in [10, 90]:
+			advances.append(self.create_payment_entry(voucher=dp_si, amount=v).submit())
+
+		si = self.create_sales_invoice(sales_order=so)
+		for dp in advances:
+			si.append("advances", self.get_advance_for_payment_entry(pe=dp))
+
+		si.save()
+
+		self.assertAlmostEqual(si.grand_total, 10_000.50)
+		self.assertAlmostEqual(si.total_advance, 100)
+		self.assertAlmostEqual(si.outstanding_amount, 9_900.50)
+
+		si.submit().reload()
+
+		self.assertAlmostEqual(si.grand_total, 10_000.50)
+		self.assertAlmostEqual(si.total_advance, 100)
+		# The outstanding amount of the invoice is the grand total (10_000.50) minus the down payment (3000.15, 30% of 10_000.50), which is 7_000.35
+		self.assertAlmostEqual(si.outstanding_amount, 7_000.35)
+		self.assertEqual(si.status, "Partly Paid")
+
+		dp_si.reload()
+		self.assertEqual(dp_si.outstanding_amount, 3000.15 - 100)
+		self.assertEqual(dp_si.status, "Partly Paid")
+
+	@unittest.skip(
+		"Not working yet because rounding is not supported for outstanding amount: si.precision('outstanding_amount') is 2."
+	)
+	def test_down_payment_not_rounded(self):
+		so = self.create_sales_order(amount=10_000.410)
+		so.disable_rounded_total = 1
+		so.submit()
+
+		dp_si = self.create_down_payment_sales_invoice(sales_order=so, percentage=0.3)
+		dp_si.disable_rounded_total = 1
+		dp_si.submit()
+
+		advances = []
+		for v in [10, 90]:
+			advances.append(self.create_payment_entry(voucher=dp_si, amount=v).submit())
+
+		si = self.create_sales_invoice(sales_order=so)
+		si.disable_rounded_total = 1
+		for dp in advances:
+			si.append("advances", self.get_advance_for_payment_entry(pe=dp))
+
+		si.save()
+
+		self.assertAlmostEqual(si.grand_total, 10_000.410)
+		self.assertAlmostEqual(si.total_advance, 100)
+		self.assertAlmostEqual(si.outstanding_amount, 9_900.410)
+
+		si.submit().reload()
+
+		self.assertAlmostEqual(si.grand_total, 10_000.410)
+		self.assertAlmostEqual(si.total_advance, 100)
+		# The outstanding amount of the invoice is the grand total (10_000.410) minus the down payment (3000.123, 30% of 10_000.410), which is 7_000.287
+		self.assertAlmostEqual(
+			si.outstanding_amount, 7_000.287
+		)  # TODO: This is failing because of rounding: got 7_000.29
+		self.assertEqual(si.status, "Partly Paid")
+
+		dp_si.reload()
+		self.assertEqual(dp_si.status, "Partly Paid")
