@@ -302,14 +302,17 @@ def _make_test_records(verbose=None):
 		["_Test Receivable USD", "Current Assets", 0, "Receivable", "USD"],
 		["_Test Payable USD", "Current Liabilities", 0, "Payable", "USD"],
 		["_Test Down Payment", "Current Assets", 0, "Receivable", None],
+		["_Test Down Payment USD", "Current Assets", 0, "Receivable", "USD"],
 	]
+
+	test_objects = []
 
 	for company, abbr in [
 		["_Test Company", "_TC"],
 		["_Test Company 1", "_TC1"],
 		["_Test Company with perpetual inventory", "TCP1"],
 	]:
-		test_objects = make_test_objects(
+		test_objects += make_test_objects(
 			"Account",
 			[
 				{
