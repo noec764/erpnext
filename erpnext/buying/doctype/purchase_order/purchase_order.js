@@ -366,7 +366,7 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends e
 					child_fieldname: "items",
 					child_columns: ["item_code", "qty"]
 				})
-			}, __("Get Items From"));
+			}, __("Get items from"));
 
 		this.frm.add_custom_button(__('Supplier Quotation'),
 			function() {
@@ -383,7 +383,7 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends e
 						status: ["not in", ["Stopped", "Expired"]],
 					}
 				})
-			}, __("Get Items From"));
+			}, __("Get items from"));
 
 		this.frm.add_custom_button(__('Update Rate as per Last Purchase'),
 			function() {

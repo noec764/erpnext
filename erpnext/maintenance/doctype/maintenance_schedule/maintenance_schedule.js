@@ -62,7 +62,7 @@ erpnext.maintenance.MaintenanceSchedule = class MaintenanceSchedule extends frap
 							company: me.frm.doc.company
 						}
 					});
-				}, __("Get Items From"));
+				}, __("Get items from"));
 		} else if (this.frm.doc.docstatus === 1) {
 			let schedules = me.frm.doc.schedules;
 			let flag = schedules.some(schedule => schedule.completion_status === "Pending");

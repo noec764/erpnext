@@ -93,7 +93,7 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 							company: me.frm.doc.company
 						}
 					})
-				}, __("Get Items From"));
+				}, __("Get items from"));
 			this.frm.add_custom_button(__('Warranty Claim'),
 				function () {
 					erpnext.utils.map_current_doc({
@@ -109,7 +109,7 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 							company: me.frm.doc.company
 						}
 					})
-				}, __("Get Items From"));
+				}, __("Get items from"));
 			this.frm.add_custom_button(__('Sales Order'),
 				function () {
 					if (!me.frm.doc.customer) {
@@ -129,7 +129,7 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 							order_type: me.frm.doc.order_type,
 						}
 					})
-				}, __("Get Items From"));
+				}, __("Get items from"));
 		}
 	}
 };

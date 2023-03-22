@@ -256,7 +256,7 @@ frappe.ui.form.on('Stock Entry', {
 						docstatus: 1
 					}
 				})
-			}, __("Get Items From"));
+			}, __("Get items from"));
 
 			frm.add_custom_button(__('Material Request'), function() {
 				const allowed_request_types = ["Material Transfer", "Material Issue", "Customer Provided"];
@@ -293,7 +293,7 @@ frappe.ui.form.on('Stock Entry', {
 						status: ["not in", ["Transferred", "Issued", "Cancelled", "Stopped"]]
 					}
 				})
-			}, __("Get Items From"));
+			}, __("Get items from"));
 		}
 		if (frm.doc.docstatus===0 && frm.doc.purpose == "Material Issue") {
 			frm.add_custom_button(__('Expired Batches'), function() {
@@ -316,7 +316,7 @@ frappe.ui.form.on('Stock Entry', {
 						}
 					}
 				});
-			}, __("Get Items From"));
+			}, __("Get items from"));
 		}
 
 		frm.events.show_bom_custom_button(frm);
@@ -357,7 +357,7 @@ frappe.ui.form.on('Stock Entry', {
 						add_to_transit: 1,
 					}
 				})
-			}, __("Get Items From"));
+			}, __("Get items from"));
 		}
 	},
 
@@ -368,7 +368,7 @@ frappe.ui.form.on('Stock Entry', {
 	},
 
 	stock_entry_type: function(frm){
-		frm.remove_custom_button('Bill of Materials', "Get Items From");
+		frm.remove_custom_button('Bill of Materials', "Get items from");
 		frm.events.show_bom_custom_button(frm);
 		frm.trigger('add_to_transit');
 	},
@@ -519,7 +519,7 @@ frappe.ui.form.on('Stock Entry', {
 			['Material Issue', 'Material Receipt', 'Material Transfer', 'Send to Subcontractor'].includes(frm.doc.purpose)) {
 			frm.add_custom_button(__('Bill of Materials'), function() {
 				frm.events.get_items_from_bom(frm);
-			}, __("Get Items From"));
+			}, __("Get items from"));
 		}
 	},
 
