@@ -9,7 +9,6 @@ from erpnext.accounts.report.balance_sheet.balance_sheet import check_opening_ba
 from erpnext.accounts.report.financial_statements import (
 	accumulate_values_into_parents,
 	add_total_row,
-	filter_accounts,
 	filter_out_zero_value_rows,
 	get_appropriate_currency,
 	get_period_list,
@@ -48,6 +47,8 @@ def execute(filters=None):
 		period["label"] = period.label + " " + _(" - Net")
 	period_list.extend(additional_columns)
 	period_list = list(reversed(sorted(period_list, key=lambda x: x["from_date"])))
+
+	filters.period_start_date = period_list[0]["year_start_date"]
 
 	currency = filters.presentation_currency or frappe.get_cached_value(
 		"Company", filters.company, "default_currency"
@@ -120,7 +121,7 @@ def execute(filters=None):
 	chart = get_chart_data(filters, columns, asset, liability, equity)
 
 	report_summary = get_report_summary(
-		period_list, asset, liability, equity, provisional_profit_loss, total_credit, currency, filters
+		period_list, asset, liability, equity, provisional_profit_loss, currency, filters
 	)
 
 	return columns, data, message, chart, report_summary
@@ -142,7 +143,7 @@ def get_data(
 	root_type_query = (
 		f"root_type='{root_type}'"
 		if root_type not in ("Asset", "Liability")
-		else f"root_type in ('Asset', 'Liability')"
+		else "root_type in ('Asset', 'Liability')"
 	)
 
 	accounts = get_accounts(company, root_type_query)
@@ -426,7 +427,6 @@ def get_report_summary(
 	liability,
 	equity,
 	provisional_profit_loss,
-	total_credit,
 	currency,
 	filters,
 	consolidated=False,
