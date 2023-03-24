@@ -65,8 +65,9 @@ def search_by_term(search_term, warehouse, price_list):
 			"item_code": item_code,
 			"valid_from": ("<=", nowdate()),
 			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
+			"batch_no": batch_no,
 		},
-		fields=["uom", "stock_uom", "currency", "price_list_rate"],
+		fields=["uom", "stock_uom", "currency", "price_list_rate", "batch_no"],
 	)
 
 	def __sort(p):
@@ -169,7 +170,7 @@ def get_items(start, page_length, price_list, item_group, pos_profile, search_te
 
 		item_price = frappe.get_all(
 			"Item Price",
-			fields=["price_list_rate", "currency", "uom"],
+			fields=["price_list_rate", "currency", "uom", "batch_no"],
 			filters={
 				"price_list": price_list,
 				"item_code": item.item_code,
@@ -194,6 +195,7 @@ def get_items(start, page_length, price_list, item_group, pos_profile, search_te
 					"price_list_rate": price.get("price_list_rate"),
 					"currency": price.get("currency"),
 					"uom": price.uom or item.uom,
+					"batch_no": price.batch_no,
 				}
 			)
 
