@@ -170,8 +170,7 @@
    "label": "Item Name",
    "oldfieldname": "item_name",
    "oldfieldtype": "Data",
-   "search_index": 1,
-   "translatable": 1
+   "search_index": 1
   },
   {
    "fieldname": "item_group",
@@ -302,8 +301,7 @@
    "in_preview": 1,
    "label": "Description",
    "oldfieldname": "description",
-   "oldfieldtype": "Text",
-   "translatable": 1
+   "oldfieldtype": "Text"
   },
   {
    "fieldname": "sb_barcodes",
