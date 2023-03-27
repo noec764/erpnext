@@ -30,7 +30,9 @@ def execute(filters=None):
 
 		d.update({"range1": 0, "range2": 0, "range3": 0, "range4": 0, "outstanding": payment_amount})
 
+		filters.report_date = None
 		if d.against_voucher:
+			filters.report_date = d.posting_date
 			ReceivablePayableReport(filters).get_ageing_data(invoice.posting_date, d)
 
 		row = [
@@ -94,7 +96,7 @@ def get_columns(filters):
 			"options": "party_type",
 			"width": 160,
 		},
-		{"fieldname": "posting_date", "label": _("Posting Date"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "posting_date", "label": _("Posting Date"), "fieldtype": "Date", "width": 160},
 		{
 			"fieldname": "invoice",
 			"label": _("Invoice"),
@@ -108,13 +110,13 @@ def get_columns(filters):
 			"fieldname": "invoice_posting_date",
 			"label": _("Invoice Posting Date"),
 			"fieldtype": "Date",
-			"width": 100,
+			"width": 160,
 		},
-		{"fieldname": "due_date", "label": _("Payment Due Date"), "fieldtype": "Date", "width": 100},
+		{"fieldname": "due_date", "label": _("Payment Due Date"), "fieldtype": "Date", "width": 150},
 		{"fieldname": "debit", "label": _("Debit"), "fieldtype": "Currency", "width": 140},
 		{"fieldname": "credit", "label": _("Credit"), "fieldtype": "Currency", "width": 140},
 		{"fieldname": "remarks", "label": _("Remarks"), "fieldtype": "Data", "width": 200},
-		{"fieldname": "age", "label": _("Age"), "fieldtype": "Int", "width": 50},
+		{"fieldname": "age", "label": _("Payment Delay"), "fieldtype": "Int", "width": 150},
 		{"fieldname": "range1", "label": _("0-30"), "fieldtype": "Currency", "width": 140},
 		{"fieldname": "range2", "label": _("30-60"), "fieldtype": "Currency", "width": 140},
 		{"fieldname": "range3", "label": _("60-90"), "fieldtype": "Currency", "width": 140},
@@ -123,7 +125,7 @@ def get_columns(filters):
 			"fieldname": "delay_in_payment",
 			"label": _("Delay in payment (Days)"),
 			"fieldtype": "Int",
-			"width": 100,
+			"width": 160,
 		},
 	]
 
@@ -175,7 +177,7 @@ def get_entries(filters):
 def get_invoice_posting_date_map(filters):
 	invoice_details = {}
 	dt = "Sales Invoice" if filters.get("payment_type") == _("Incoming") else "Purchase Invoice"
-	for t in frappe.db.sql("select name, posting_date, due_date from `tab{0}`".format(dt), as_dict=1):
+	for t in frappe.get_all(dt, fields=["name", "posting_date", "due_date"]):
 		invoice_details[t.name] = t
 
 	return invoice_details
