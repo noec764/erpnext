@@ -269,7 +269,7 @@ class BookingPageSidebar {
 		</tr>`
 		}).join('')
 
-		const html = `<div id="upcoming-bookings" class="card frappe-card p-4 sticky-top">
+		const html = `<div id="upcoming-bookings" class="card frappe-card p-4 sticky-top flex-grow-1">
 			<h6 class="title">${ __("Upcoming Bookings") }</h6>
 			<div class="h-100">
 				<div class="card-body p-0">
