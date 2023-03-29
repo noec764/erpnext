@@ -1187,7 +1187,7 @@ def get_item_calendar(item=None, uom=None):
 		uom = frappe.get_cached_value("Item", item, "sales_uom")
 
 	calendars = frappe.get_all(
-		"Item Booking Calendar", fields=["name", "item", "uom", "calendar_type"]
+		"Item Booking Calendar", fields=["name", "item", "uom"]
 	)
 	for filters in [
 		dict(item=item, uom=uom),
@@ -1203,7 +1203,7 @@ def get_item_calendar(item=None, uom=None):
 		]
 		if filtered_calendars:
 			return {
-				"type": filtered_calendars[0].calendar_type or "Daily",
+				"type": "Daily",
 				"calendar": frappe.get_all(
 					"Item Booking Calendars",
 					filters={"parent": filtered_calendars[0].name, "parenttype": "Item Booking Calendar"},

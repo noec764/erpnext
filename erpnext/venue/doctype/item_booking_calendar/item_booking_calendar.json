@@ -12,8 +12,6 @@
   "uom",
   "column_break_4",
   "item",
-  "calendar_type_section",
-  "calendar_type",
   "booking_calendar_section",
   "booking_calendar"
  ],
@@ -58,18 +56,6 @@
    "fieldname": "booking_calendar_section",
    "fieldtype": "Section Break",
    "label": "Booking Calendar"
-  },
-  {
-   "fieldname": "calendar_type_section",
-   "fieldtype": "Section Break",
-   "label": "Calendar Type"
-  },
-  {
-   "default": "Daily",
-   "fieldname": "calendar_type",
-   "fieldtype": "Select",
-   "label": "Calendar Type",
-   "options": "Daily\nMonthly"
   }
  ],
  "index_web_pages_for_search": 1,

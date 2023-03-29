@@ -67,7 +67,6 @@ class BaseTestWithBookableItem(FrappeTestCase):
 				"calendar_title": "_Test Booking Calendar for Item Booking with Subscription",
 				"uom": None,
 				"item": cls.ITEM_BOOKABLE_1.name,
-				"calendar_type": "Daily",
 				"booking_calendar": [
 					{"day": d, "start_time": "08:00:00", "end_time": "18:00:00"} for d in ALL_DAYS
 				],
