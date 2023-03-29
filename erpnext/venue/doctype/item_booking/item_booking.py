@@ -28,8 +28,8 @@ from frappe.utils import (
 	getdate,
 	now,
 	now_datetime,
+	sbool,
 	time_diff_in_minutes,
-	sbool
 )
 from frappe.utils.user import is_system_user, is_website_user
 from googleapiclient.errors import HttpError
@@ -43,8 +43,8 @@ from erpnext.e_commerce.shopping_cart.cart import (
 from erpnext.e_commerce.shopping_cart.product_info import get_product_info_for_website
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.product import get_price
-from erpnext.venue.utils import get_linked_customers
 from erpnext.venue.doctype.booking_credit.booking_credit import get_booking_credit_types_for_item
+from erpnext.venue.utils import get_linked_customers
 
 if TYPE_CHECKING:
 	from typing import Callable, TypeVar
@@ -342,7 +342,9 @@ class ItemBooking(Document):
 	def set_status(self, status):
 		self.db_set("status", status, update_modified=True, notify=True)
 
-		gcalendar_method = delete_event_in_google_calendar if status == "Cancelled" else update_event_in_google_calendar
+		gcalendar_method = (
+			delete_event_in_google_calendar if status == "Cancelled" else update_event_in_google_calendar
+		)
 		gcalendar_method(self)
 
 		for child in frappe.get_all(
@@ -391,10 +393,18 @@ class ItemBooking(Document):
 				update_child(child.item, child.name)
 
 	def credits_have_been_deducted(self):
-		return bool(frappe.db.get_all("Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, limit=1))
+		return bool(
+			frappe.db.get_all(
+				"Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, limit=1
+			)
+		)
 
 	def get_deducted_credits(self):
-		return sum(frappe.db.get_all("Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, pluck="quantity"))
+		return sum(
+			frappe.db.get_all(
+				"Booking Credit Usage", filters={"item_booking": self.name, "docstatus": 1}, pluck="quantity"
+			)
+		)
 
 
 def get_list_context(context=None):
@@ -402,7 +412,11 @@ def get_list_context(context=None):
 		"Venue Settings", "allow_event_cancellation"
 	)
 
-	cancellation_delay = cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60 if allow_event_cancellation else 0
+	cancellation_delay = (
+		cint(frappe.db.get_single_value("Venue Settings", "cancellation_delay")) / 60
+		if allow_event_cancellation
+		else 0
+	)
 	context.update(
 		{
 			"show_sidebar": True,
@@ -414,10 +428,8 @@ def get_list_context(context=None):
 			"can_cancel": allow_event_cancellation,
 			"cancellation_delay": cancellation_delay,
 			"header_action": frappe.render_template(
-				"templates/includes/item_booking/item_booking_list_action.html", {
-					"can_cancel": allow_event_cancellation,
-					"cancellation_delay": cancellation_delay
-				}
+				"templates/includes/item_booking/item_booking_list_action.html",
+				{"can_cancel": allow_event_cancellation, "cancellation_delay": cancellation_delay},
 			),
 			"list_footer": frappe.render_template(
 				"templates/includes/item_booking/item_booking_list_footer.html", {}
@@ -575,7 +587,7 @@ def book_new_slot(**kwargs):
 				"uom": kwargs.get("uom"),
 				"sync_with_google_calendar": kwargs.get("sync_with_google_calendar")
 				or frappe.db.get_single_value("Venue Settings", "sync_with_google_calendar"),
-				"deduct_booking_credits": sbool(kwargs.get("with_credits"))
+				"deduct_booking_credits": sbool(kwargs.get("with_credits")),
 			}
 		).insert(ignore_permissions=True)
 
@@ -1186,9 +1198,7 @@ def get_item_calendar(item=None, uom=None):
 	if not uom:
 		uom = frappe.get_cached_value("Item", item, "sales_uom")
 
-	calendars = frappe.get_all(
-		"Item Booking Calendar", fields=["name", "item", "uom"]
-	)
+	calendars = frappe.get_all("Item Booking Calendar", fields=["name", "item", "uom"])
 	for filters in [
 		dict(item=item, uom=uom),
 		dict(item=item, uom=None),
@@ -1416,6 +1426,7 @@ def make_sales_order(source_name, target_doc=None):
 	)
 
 	return doclist
+
 
 @frappe.whitelist()
 def make_booking_credit_usage(source_name, target_doc=None):
