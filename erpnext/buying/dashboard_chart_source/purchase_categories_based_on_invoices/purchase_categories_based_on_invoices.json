@@ -1,0 +1,13 @@
+{
+ "creation": "2023-03-31 17:56:20.535728",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2023-03-31 18:02:43.268052",
+ "modified_by": "Administrator",
+ "module": "Buying",
+ "name": "Purchase Categories based on Invoices",
+ "owner": "Administrator",
+ "source_name": "Purchase Categories based on Invoices",
+ "timeseries": 0
+}
