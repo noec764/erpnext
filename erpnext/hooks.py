@@ -92,6 +92,9 @@ calendars = [
 	"Event Slot",
 	"Event Slot Booking",
 ]
+
+fullcalendar_scheduler_licence_key = "GPL-My-Project-Is-Open-Source"
+
 gcalendar_integrations = {
 	"Item Booking": {
 		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
