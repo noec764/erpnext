@@ -94,9 +94,7 @@ def get_available_slots(start, end):
 			content=x.description,
 			available_slots=cint(x.available_bookings),
 			booked_slots=cint(booking_count.get(x.name)),
-			booked_by_user=bool(
-				[y.user == frappe.session.user for y in booked_slots if y.event_slot == x.name]
-			),
+			booked_by_user=is_booked_by_user(x, booked_slots),
 			textColor="#fff",
 			display="background" if cint(booking_count.get(x.name)) >= cint(x.available_bookings) else None,
 			backgroundColor="#3788d8"
@@ -109,9 +107,7 @@ def get_available_slots(start, end):
 
 def get_formatted_description(slot, booked_slots, booked_number):
 	remaining_slots = max(0, cint(slot.available_bookings) - booked_number)
-	booked_by_user = bool(
-		[x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name]
-	)
+	booked_by_user = is_booked_by_user(slot, booked_slots)
 	html = f"""
 		<p class="card-text">🡒 {remaining_slots} {_("slot available") if remaining_slots in (0, 1) else _("slots available")}</p>
 	"""
@@ -130,12 +126,14 @@ def get_formatted_description(slot, booked_slots, booked_number):
 
 
 def get_color(slot, booked_slots, booking_count):
-	booked_by_user = bool(
-		[x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name]
-	)
+	booked_by_user = is_booked_by_user(slot, booked_slots)
 	if cint(slot.available_bookings) <= cint(booking_count.get(slot.name)):
 		return "gray"
 	elif booked_by_user:
 		return "#3788d8"
 	else:
 		return "green"
+
+
+def is_booked_by_user(slot, booked_slots):
+	return any(x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name)
