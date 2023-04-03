@@ -95,12 +95,12 @@ def get_formatted_description(slot, booked_slots, booked_number):
 	remaining_slots = max(0, cint(slot.available_bookings) - booked_number)
 	booked_by_user = is_booked_by_user(slot, booked_slots)
 	html = f"""
-		<p class="card-text">🡒 {remaining_slots} {_("slot available") if remaining_slots in (0, 1) else _("slots available")}</p>
+		<p class="card-text">{remaining_slots} {_("slot available") if remaining_slots in (0, 1) else _("slots available")}</p>
 	"""
 
 	if booked_by_user:
 		html += f"""
-			<p>🡒 {_("You are registered")}</p>
+			<p>{_("You are registered")}</p>
 		"""
 
 	return f"""
