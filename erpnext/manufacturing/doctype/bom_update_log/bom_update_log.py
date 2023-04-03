@@ -164,7 +164,7 @@ def queue_bom_cost_jobs(
 
 	while current_boms_list:
 		batch_no += 1
-		batch_size = 20_000
+		batch_size = 7_000
 		boms_to_process = current_boms_list[:batch_size]  # slice out batch of 20k BOMs
 
 		# update list to exclude 20K (queued) BOMs
@@ -254,9 +254,6 @@ def get_processed_current_boms(
 	current_boms = []
 
 	for row in bom_batches:
-		if not row.boms_updated:
-			continue
-
 		boms_updated = json.loads(row.boms_updated)
 		current_boms.extend(boms_updated)
 		boms_updated_dict = {bom: True for bom in boms_updated}
