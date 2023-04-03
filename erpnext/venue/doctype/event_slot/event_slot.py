@@ -43,35 +43,21 @@ class EventSlot(Document):
 					frappe.db.set_value("Event Slot Booking", d.name, field, getattr(self, field, None))
 
 
-def _get_slots(start, end, filters=None, conditions=None):
-	return frappe.db.sql(
-		"""
-		select
-			`tabEvent Slot`.name,
-			`tabEvent Slot`.slot_title,
-			`tabEvent Slot`.starts_on,
-			`tabEvent Slot`.ends_on,
-			`tabEvent Slot`.available_bookings,
-			`tabEvent Slot`.description
-		from
-			`tabEvent Slot`
-		WHERE (
-				(
-					(date(`tabEvent Slot`.starts_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (date(`tabEvent Slot`.ends_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (
-						date(`tabEvent Slot`.starts_on) <= date(%(start)s)
-						AND date(`tabEvent Slot`.ends_on) >= date(%(end)s)
-					)
-				)
-			)
-			{conditions}
-		""".format(
-			conditions=conditions or ""
-		),
-		{"start": start, "end": end},
-		as_dict=True,
+def _get_slots(start, end):
+	EventSlot = frappe.qb.DocType("Event Slot")
+	query = (
+		frappe.qb.from_(EventSlot)
+		.select(
+			"name",
+			"slot_title",
+			"starts_on",
+			"ends_on",
+			"available_bookings",
+			"description",
+		)
+		.where(((EventSlot.starts_on < end) & (EventSlot.ends_on > start)))
 	)
+	return query.run(as_dict=True)
 
 
 @frappe.whitelist()
