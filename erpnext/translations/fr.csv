@@ -508,7 +508,7 @@ Account {0}: Parent account {1} does not belong to company: {2},Compte {0}: Le C
 Account {0}: Parent account {1} does not exist,Compte {0}: Le Compte parent {1} n'existe pas,
 Account {0}: You can not assign itself as parent account,Compte {0}: Vous ne pouvez pas assigner un compte comme son propre parent,
 Account: <b>{0}</b> is capital Work in progress and can not be updated by Journal Entry,Le compte: <b>{0}</b> est un compte d'immobilisation en cours et ne peut pas être mis à jour avec une écriture de journal,
-Account: {0} can only be updated via Stock Transactions,Compte : {0} peut uniquement être mis à jour via les Mouvements de Stock,
+Account: {0} can only be updated via Stock Transactions,Le compte {0} peut uniquement être mis à jour via des transactions de stocks,
 Account: {0} does not exist,Le compte {0} n'existe pas,
 Account: {0} is not permitted under Payment Entry,Compte : {0} n'est pas autorisé dans les écritures de paiement,
 Account: {0} with currency: {1} can not be selected,Compte : {0} avec la devise : {1} ne peut pas être sélectionné,
