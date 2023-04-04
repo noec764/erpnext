@@ -92,6 +92,9 @@ calendars = [
 	"Event Slot",
 	"Event Slot Booking",
 ]
+
+fullcalendar_scheduler_licence_key = "GPL-My-Project-Is-Open-Source"
+
 gcalendar_integrations = {
 	"Item Booking": {
 		"pull_insert": "erpnext.venue.doctype.item_booking.item_booking.insert_event_to_calendar",
@@ -320,7 +323,9 @@ has_website_permission = {
 
 before_tests = "erpnext.setup.utils.before_tests"
 
-standard_queries = {"Customer": "erpnext.selling.doctype.customer.customer.get_customer_list"}
+standard_queries = {
+	"Customer": "erpnext.controllers.queries.customer_query",
+}
 
 doc_events = {
 	"*": {
@@ -581,6 +586,7 @@ accounting_dimension_doctypes = [
 	"Subcontracting Order Item",
 	"Subcontracting Receipt",
 	"Subcontracting Receipt Item",
+	"Account Closing Balance",
 ]
 
 # get matching queries for Bank Reconciliation

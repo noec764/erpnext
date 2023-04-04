@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "EV-REG-.YYYY.-.######",
+ "autoname": "format:EV-REG-{YYYY}-{######}",
  "creation": "2023-01-27 14:35:18.191848",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -53,7 +53,8 @@
   },
   {
    "fieldname": "section_break_6",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "permlevel": 1
   },
   {
    "fieldname": "event",
@@ -70,6 +71,7 @@
    "label": "Amended From",
    "no_copy": 1,
    "options": "Event Registration",
+   "permlevel": 1,
    "print_hide": 1,
    "read_only": 1
   },
@@ -83,7 +85,8 @@
   },
   {
    "fieldname": "column_break_9",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "permlevel": 1
   },
   {
    "fieldname": "user",
@@ -135,29 +138,32 @@
   {
    "depends_on": "eval:doc.amount",
    "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "permlevel": 1
   },
   {
    "depends_on": "eval:doc.amount",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "permlevel": 1
   },
   {
    "fieldname": "customer",
    "fieldtype": "Link",
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "permlevel": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-10 09:49:08.827331",
+ "modified": "2023-03-31 17:52:10.335090",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Event Registration",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

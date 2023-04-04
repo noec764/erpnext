@@ -198,7 +198,7 @@ class RequestforQuotation(BuyingController):
 			"rfq_link": rfq_link,
 			"user_fullname": full_name,
 			"supplier_name": supplier_name or data.get("supplier_name"),
-			"supplier_salutation": self.salutation or "Dear Mx.",
+			"supplier_salutation": self.salutation or _("Dear Mx."),
 		}
 
 		subject = self.subject or _("Request for Quotation")

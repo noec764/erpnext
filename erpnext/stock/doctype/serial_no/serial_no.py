@@ -575,11 +575,15 @@ def auto_make_serial_nos(args):
 	item_code = args.get("item_code")
 	for serial_no in serial_nos:
 		is_new = False
+		sr = None
 		if frappe.db.exists("Serial No", serial_no):
 			sr = frappe.get_cached_doc("Serial No", serial_no)
 		elif args.get("actual_qty", 0) > 0:
 			sr = frappe.new_doc("Serial No")
 			is_new = True
+
+		if not sr:
+			continue
 
 		sr = update_args_for_serial_no(sr, serial_no, args, is_new=is_new)
 		if is_new:

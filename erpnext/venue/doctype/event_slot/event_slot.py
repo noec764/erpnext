@@ -43,35 +43,21 @@ class EventSlot(Document):
 					frappe.db.set_value("Event Slot Booking", d.name, field, getattr(self, field, None))
 
 
-def _get_slots(start, end, filters=None, conditions=None):
-	return frappe.db.sql(
-		"""
-		select
-			`tabEvent Slot`.name,
-			`tabEvent Slot`.slot_title,
-			`tabEvent Slot`.starts_on,
-			`tabEvent Slot`.ends_on,
-			`tabEvent Slot`.available_bookings,
-			`tabEvent Slot`.description
-		from
-			`tabEvent Slot`
-		WHERE (
-				(
-					(date(`tabEvent Slot`.starts_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (date(`tabEvent Slot`.ends_on) BETWEEN date(%(start)s) AND date(%(end)s))
-					OR (
-						date(`tabEvent Slot`.starts_on) <= date(%(start)s)
-						AND date(`tabEvent Slot`.ends_on) >= date(%(end)s)
-					)
-				)
-			)
-			{conditions}
-		""".format(
-			conditions=conditions or ""
-		),
-		{"start": start, "end": end},
-		as_dict=True,
+def _get_slots(start, end):
+	EventSlot = frappe.qb.DocType("Event Slot")
+	query = (
+		frappe.qb.from_(EventSlot)
+		.select(
+			"name",
+			"slot_title",
+			"starts_on",
+			"ends_on",
+			"available_bookings",
+			"description",
+		)
+		.where(((EventSlot.starts_on < end) & (EventSlot.ends_on > start)))
 	)
+	return query.run(as_dict=True)
 
 
 @frappe.whitelist()
@@ -94,9 +80,7 @@ def get_available_slots(start, end):
 			content=x.description,
 			available_slots=cint(x.available_bookings),
 			booked_slots=cint(booking_count.get(x.name)),
-			booked_by_user=bool(
-				[y.user == frappe.session.user for y in booked_slots if y.event_slot == x.name]
-			),
+			booked_by_user=is_booked_by_user(x, booked_slots),
 			textColor="#fff",
 			display="background" if cint(booking_count.get(x.name)) >= cint(x.available_bookings) else None,
 			backgroundColor="#3788d8"
@@ -109,33 +93,33 @@ def get_available_slots(start, end):
 
 def get_formatted_description(slot, booked_slots, booked_number):
 	remaining_slots = max(0, cint(slot.available_bookings) - booked_number)
-	booked_by_user = bool(
-		[x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name]
-	)
+	booked_by_user = is_booked_by_user(slot, booked_slots)
 	html = f"""
-		<p class="card-text">🡒 {remaining_slots} {_("slot available") if remaining_slots in (0, 1) else _("slots available")}</p>
+		<p class="card-text">{remaining_slots} {_("slot available") if remaining_slots in (0, 1) else _("slots available")}</p>
 	"""
 
 	if booked_by_user:
 		html += f"""
-			<p>🡒 {_("You are registered")}</p>
+			<p>{_("You are registered")}</p>
 		"""
 
 	return f"""
 		<div>
-			<h6 class="card-title text-white">{slot.slot_title}</h6>
+			<h6 class="card-title" style="color:inherit;">{slot.slot_title}</h6>
 			{html}
 		</div>
 	"""
 
 
 def get_color(slot, booked_slots, booking_count):
-	booked_by_user = bool(
-		[x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name]
-	)
+	booked_by_user = is_booked_by_user(slot, booked_slots)
 	if cint(slot.available_bookings) <= cint(booking_count.get(slot.name)):
 		return "gray"
 	elif booked_by_user:
 		return "#3788d8"
 	else:
 		return "green"
+
+
+def is_booked_by_user(slot, booked_slots):
+	return any(x.user == frappe.session.user for x in booked_slots if x.event_slot == slot.name)

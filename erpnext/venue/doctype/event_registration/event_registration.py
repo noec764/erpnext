@@ -197,7 +197,7 @@ class EventRegistration(Document):
 			"Venue Settings", "Venue Settings", "registration_item_code"
 		):
 			return str(item_code)
-		frappe.throw("Item code not specified for Event Registration")
+		frappe.throw(_("Item code not specified for Event Registration"))
 
 	def get_or_make_customer(self) -> str:
 		"""Returns the Customer associated with the Contact, creating it if needed."""
@@ -492,12 +492,14 @@ def register_to_event(event, data, user=None):
 	user = frappe.session.user
 
 	try:
-		doc = frappe.get_doc({
-			**data,
-			"doctype": "Event Registration",
-			"event": event.name,
-			"user": user,
-		})
+		doc = frappe.get_doc(
+			{
+				**data,
+				"doctype": "Event Registration",
+				"event": event.name,
+				"user": user,
+			}
+		)
 
 		doc.flags.ignore_permissions = True
 		doc.flags.ignore_mandatory = True

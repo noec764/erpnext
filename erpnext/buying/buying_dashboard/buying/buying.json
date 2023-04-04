@@ -27,7 +27,7 @@
    "width": "Half"
   },
   {
-   "chart": "Top Suppliers",
+   "chart": "Top Suppliers based on Receipts",
    "width": "Full"
   }
  ],
@@ -36,9 +36,9 @@
  "docstatus": 0,
  "doctype": "Dashboard",
  "idx": 0,
- "is_default": 1,
+ "is_default": 0,
  "is_standard": 1,
- "modified": "2020-07-22 12:48:38.112744",
+ "modified": "2023-03-31 16:57:51.205048",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",

@@ -12,9 +12,8 @@
   "uom",
   "column_break_4",
   "item",
-  "calendar_type_section",
-  "calendar_type",
   "booking_calendar_section",
+  "booking_calendar_setup_button",
   "booking_calendar"
  ],
  "fields": [
@@ -60,21 +59,14 @@
    "label": "Booking Calendar"
   },
   {
-   "fieldname": "calendar_type_section",
-   "fieldtype": "Section Break",
-   "label": "Calendar Type"
-  },
-  {
-   "default": "Daily",
-   "fieldname": "calendar_type",
-   "fieldtype": "Select",
-   "label": "Calendar Type",
-   "options": "Daily\nMonthly"
+   "fieldname": "booking_calendar_setup_button",
+   "fieldtype": "Button",
+   "label": "Setup Calendar"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-08-24 17:46:17.477192",
+ "modified": "2023-03-29 18:57:14.380796",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Item Booking Calendar",

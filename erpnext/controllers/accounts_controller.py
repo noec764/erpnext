@@ -488,6 +488,8 @@ class AccountsController(TransactionBase):
 				parent_dict.update({"customer": parent_dict.get("party_name")})
 
 			self.pricing_rules = []
+			basic_item_details_map = {}
+
 			for item in self.get("items"):
 				if item.get("item_code"):
 					args = parent_dict.copy()
@@ -506,7 +508,17 @@ class AccountsController(TransactionBase):
 					if self.get("is_subcontracted"):
 						args["is_subcontracted"] = self.is_subcontracted
 
-					ret = get_item_details(args, self, for_validate=True, overwrite_warehouse=False)
+					basic_details = basic_item_details_map.get(item.item_code)
+					ret, basic_item_details = get_item_details(
+						args,
+						self,
+						for_validate=True,
+						overwrite_warehouse=False,
+						return_basic_details=True,
+						basic_details=basic_details,
+					)
+
+					basic_item_details_map.setdefault(item.item_code, basic_item_details)
 
 					for fieldname, value in ret.items():
 						if item.meta.get_field(fieldname) and value is not None:
@@ -1250,7 +1262,7 @@ class AccountsController(TransactionBase):
 				)
 			)
 
-	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on, parentfield):
+	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on):
 		from erpnext.controllers.status_updater import get_allowance_for
 
 		item_allowance = {}
@@ -1263,17 +1275,19 @@ class AccountsController(TransactionBase):
 
 		total_overbilled_amt = 0.0
 
+		reference_names = [d.get(item_ref_dn) for d in self.get("items") if d.get(item_ref_dn)]
+		reference_details = self.get_billing_reference_details(
+			reference_names, ref_dt + " Item", based_on
+		)
+
 		for item in self.get("items"):
 			if not item.get(item_ref_dn):
 				continue
 
-			ref_amt = flt(
-				frappe.db.get_value(ref_dt + " Item", item.get(item_ref_dn), based_on),
-				self.precision(based_on, item),
-			)
+			ref_amt = flt(reference_details.get(item.get(item_ref_dn)), self.precision(based_on, item))
 			if not ref_amt:
 				frappe.msgprint(
-					_("System will not check overbilling since amount for Item {0} in {1} is zero").format(
+					_("System will not check over billing since amount for Item {0} in {1} is zero").format(
 						item.item_code, ref_dt
 					),
 					title=_("Warning"),
@@ -1319,6 +1333,16 @@ class AccountsController(TransactionBase):
 				indicator="orange",
 				alert=True,
 			)
+
+	def get_billing_reference_details(self, reference_names, reference_doctype, based_on):
+		return frappe._dict(
+			frappe.get_all(
+				reference_doctype,
+				filters={"name": ("in", reference_names)},
+				fields=["name", based_on],
+				as_list=1,
+			)
+		)
 
 	def get_billed_amount_for_item(self, item, item_ref_dn, based_on):
 		"""
@@ -1596,7 +1620,9 @@ class AccountsController(TransactionBase):
 		for item in self.items:
 			group_item_qty[item.item_code] = group_item_qty.get(item.item_code, 0) + item.qty
 			group_item_amount[item.item_code] = group_item_amount.get(item.item_code, 0) + item.amount
-			group_item_net_amount[item.item_code] = group_item_net_amount.get(item.item_code, 0) + item.net_amount
+			group_item_net_amount[item.item_code] = (
+				group_item_net_amount.get(item.item_code, 0) + item.net_amount
+			)
 
 		duplicate_list = []
 		for item in self.items:
