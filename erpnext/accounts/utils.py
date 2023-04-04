@@ -54,25 +54,16 @@ GL_REPOSTING_CHUNK = 100
 
 @frappe.whitelist()
 def get_fiscal_year(
-	date=None, fiscal_year=None, label="Date", verbose=1, company=None, as_dict=False, boolean=False
+	date=None, fiscal_year=None, label=None, verbose=1, company=None, as_dict=False
 ):
-	fiscal_years = get_fiscal_years(
-		date, fiscal_year, label, verbose, company, as_dict=as_dict, boolean=boolean
-	)
-	if boolean:
-		return fiscal_years
-	else:
-		return fiscal_years[0]
+	if not label:
+		label = _("Date")
+
+	return get_fiscal_years(date, fiscal_year, label, verbose, company, as_dict=as_dict)[0]
 
 
 def get_fiscal_years(
-	transaction_date=None,
-	fiscal_year=None,
-	label="Date",
-	verbose=1,
-	company=None,
-	as_dict=False,
-	boolean=False,
+	transaction_date=None, fiscal_year=None, label=None, verbose=1, company=None, as_dict=False
 ):
 	if not label:
 		label = _("Date")
@@ -139,12 +130,8 @@ def get_fiscal_years(
 	if company:
 		error_msg = _("""{0} for {1}""").format(error_msg, frappe.bold(company))
 
-	if boolean:
-		return False
-
 	if verbose == 1:
 		frappe.msgprint(error_msg)
-
 	raise FiscalYearError(error_msg)
 
 
