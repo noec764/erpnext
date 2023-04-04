@@ -118,6 +118,7 @@ def get_balance_sheet_data(fiscal_year, companies, columns, filters):
 		liability,
 		equity,
 		provisional_profit_loss,
+		total_credit,
 		company_currency,
 		filters,
 		True,
