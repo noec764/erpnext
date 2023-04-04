@@ -105,7 +105,7 @@ def get_formatted_description(slot, booked_slots, booked_number):
 
 	return f"""
 		<div>
-			<h6 class="card-title text-white">{slot.slot_title}</h6>
+			<h6 class="card-title" style="color:inherit;">{slot.slot_title}</h6>
 			{html}
 		</div>
 	"""
