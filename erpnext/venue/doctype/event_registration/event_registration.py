@@ -233,7 +233,7 @@ class EventRegistration(Document):
 
 	def on_webform_save(self, webform):
 		# The document is created from the Web Form, it means that someone wants to register
-		self.user = frappe.session.user
+		self.user = self.user or frappe.session.user
 		self.set_company_from_cart_settings()
 
 		if not self.flags.in_payment_webform:
@@ -241,10 +241,20 @@ class EventRegistration(Document):
 			self.payment_status = ""
 			self.submit()  # Automatically submit when created from a Web Form.
 		else:
+			self.amount = self.get_payment_amount()
 			self.payment_status = "Unpaid"
 			self.save()
 
 	def get_payment_amount(self) -> float:
+		"""This is a PURE function that returns the amount to be paid (INCLUDING taxes) for the Event Registration.
+		This function should not depend on the value of the `amount` field unless it returns it unchanged.
+
+		In other words, the following code should guarantee `amt1 == amt2`:
+		```python
+		amt1 = self.amount = self.get_payment_amount()
+		amt2 = self.amount = self.get_payment_amount()
+		```
+		"""
 		# TODO: Fetch from item instead
 		return self.amount
 
