@@ -1,25 +1,38 @@
 # Copyright (c) 2021, Dokos SAS and contributors
 # License: MIT. See LICENSE
 
+from functools import cached_property
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 
 
+def is_desk() -> bool:
+	try:
+		path = frappe.request.path
+		if path.startswith("/app/") or path.startswith("/api/"):
+			return True
+	except Exception:
+		pass
+	return False
+
+
 class DuplicateRegistration(frappe.ValidationError):
-	@classmethod
-	def throw(cls, registration: dict = None):
-		if frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/"):
-			cls.throw_desk(registration)
-		else:
-			cls.throw_website(registration)
+	"""Raised when a duplicate registration is found for the same user (or email address if user is missing)."""
 
 	@classmethod
-	def throw_desk(cls, registration: dict = None):
+	def throw(cls, registration: "EventRegistration | None" = None):
+		if is_desk():
+			return cls.throw_desk(registration)
+		return cls.throw_website(registration)
+
+	@classmethod
+	def throw_desk(cls, registration: "EventRegistration | None" = None):
 		frappe.throw(_("User is already registered for this event."), cls)
 
 	@classmethod
-	def throw_website(cls, registration: dict = None):
+	def throw_website(cls, registration: "EventRegistration | None" = None):
 		if not (registration and registration.event):
 			return cls.throw_desk()
 		event_route = frappe.get_cached_value("Event", registration.event, "route")
@@ -31,16 +44,38 @@ class DuplicateRegistration(frappe.ValidationError):
 		frappe.throw(msg, cls)
 
 
+class DuplicateRegistrationEmail(DuplicateRegistration):
+	"""Raised when a duplicate registration is found for the same email address."""
+
+	@classmethod
+	def throw_website(cls, registration):
+		frappe.throw(_("A registration with the same email address already exists."), cls)
+
+
 class CannotDeletePaidRegistration(frappe.ValidationError):
 	@classmethod
-	def throw(cls, registration: dict):
+	def throw(cls, registration: "EventRegistration"):
 		frappe.throw(_("Cannot delete paid registration: {0}").format(registration.name), cls)
 
 
 class EventRegistration(Document):
+	name: str
+	event: str | None
+	contact: str | None
+	amount: float
+	payment_status: str
+	email: str | None
+	first_name: str | None
+	last_name: str | None
+
+	@cached_property
+	def event_doc(self):
+		return frappe.get_doc("Event", self.event)
+
 	def validate(self):
-		self.check_duplicates()
+		self.validate_duplicates()
 		self.validate_available_capacity_of_event()
+
 		self.create_or_link_with_contact()
 		if not self.contact and self.get_payment_amount() > 0:
 			frappe.throw("A contact is required to register for paid events")
@@ -57,7 +92,7 @@ class EventRegistration(Document):
 		if self.amount and self.payment_status == "Paid" and self.docstatus != 2:
 			CannotDeletePaidRegistration.throw(self)
 
-	def check_duplicates(self):
+	def validate_duplicates(self):
 		# TODO: Allow one User to register for different Contacts.
 		if frappe.db.exists(
 			"Event Registration",
@@ -147,6 +182,9 @@ class EventRegistration(Document):
 
 		if self.get_payment_amount() <= 0:
 			self.db_set("payment_status", new_status)
+			frappe.log_error(
+				message=f"A payment for {self!r} was received with status {new_status!r} (ref_no: {reference_no}) but the payment amount is zero (or negative)",
+			)
 			return
 
 		PAID_STATUSES = ("Authorized", "Completed", "Paid")
