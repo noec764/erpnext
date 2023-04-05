@@ -508,7 +508,7 @@ def mark_as_refunded(name: str):
 
 
 @frappe.whitelist()
-def get_user_info(user=None):
+def get_user_info():
 	user = frappe.session.user
 
 	if user == "Guest":
@@ -520,20 +520,24 @@ def get_user_info(user=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def register_to_event(event, data, user=None):
-	if frappe.session.user == "Guest":
-		raise frappe.exceptions.PermissionError()
-
+def register_to_event(event, data):
 	event = frappe.get_doc("Event", event)
 	if not event.published:
 		raise frappe.exceptions.PermissionError()
 	if not event.allow_registrations:
 		raise frappe.exceptions.PermissionError()
-	if event.registration_form:  # Uses a custom Web Form
-		raise frappe.exceptions.ValidationError()  # Disable the default registration form
+	if event.registration_form:  # Uses a custom Web Form, possibly paid
+		frappe.throw("The simplified registration form is disabled for this event.")
 
 	data = frappe.parse_json(data)
-	user = frappe.session.user
+
+	user = None
+	if user is None and frappe.session.user != "Guest":
+		user = frappe.session.user
+
+	if frappe.session.user == "Guest":
+		if getattr(event, "disable_guest_registration", False):
+			raise frappe.exceptions.PermissionError()
 
 	try:
 		doc = frappe.get_doc(
@@ -546,7 +550,6 @@ def register_to_event(event, data, user=None):
 		)
 
 		doc.flags.ignore_permissions = True
-		doc.flags.ignore_mandatory = True
 		doc.submit()
 		return doc
 	except DuplicateRegistration:
@@ -561,14 +564,13 @@ def register_to_event(event, data, user=None):
 def cancel_registration(event):
 	user = frappe.session.user
 
-	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
-
 	event = frappe.get_doc("Event", event)
 	if not event.published:
 		raise frappe.exceptions.PermissionError()
 	if not event.allow_cancellations:
 		raise frappe.exceptions.ValidationError()
 
+	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
 	if docname:
 		doc = frappe.get_doc("Event Registration", docname)
 		doc.flags.ignore_permissions = True
@@ -583,7 +585,7 @@ def cancel_registration_by_name(name):
 
 	doc = frappe.get_doc("Event Registration", name)
 	if doc.user != user:
-		return
+		raise frappe.exceptions.PermissionError()
 
 	event = frappe.get_doc("Event", doc.event)
 	if not event.published:
