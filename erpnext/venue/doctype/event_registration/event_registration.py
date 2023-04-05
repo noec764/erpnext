@@ -42,6 +42,8 @@ class EventRegistration(Document):
 		self.check_duplicates()
 		self.validate_available_capacity_of_event()
 		self.create_or_link_with_contact()
+		if not self.contact and self.get_payment_amount() > 0:
+			frappe.throw("A contact is required to register for paid events")
 
 	def on_submit(self):
 		self.add_contact_to_event()
@@ -103,13 +105,13 @@ class EventRegistration(Document):
 
 	def create_or_link_with_contact(self):
 		contact = self.contact
-		if not contact:
+		if not contact and self.email:
 			contact = frappe.db.get_value("Contact", dict(email_id=self.email))
 
 		if not contact and self.user:
 			contact = frappe.db.get_value("Contact", dict(user=self.user))
 
-		if not contact:
+		if not contact and self.email:
 			contact_doc = frappe.get_doc(
 				{
 					"doctype": "Contact",
@@ -125,11 +127,15 @@ class EventRegistration(Document):
 		self.contact = contact
 
 	def add_contact_to_event(self):
+		if not self.contact:
+			return
 		event = frappe.get_doc("Event", self.event)
 		event.add_participant(self.contact)
 		event.save(ignore_permissions=True)
 
 	def remove_contact_from_event(self):
+		if not self.contact:
+			return
 		event = frappe.get_doc("Event", self.event)
 		event.remove_participant(self.contact)
 		event.save(ignore_permissions=True)
