@@ -93,12 +93,31 @@ class EventRegistration(Document):
 			CannotDeletePaidRegistration.throw(self)
 
 	def validate_duplicates(self):
-		# TODO: Allow one User to register for different Contacts.
+		if self.allow_multiple_registrations_for_same_user():
+			# Allow one User to register multiple times (for example, for different members of a same family).
+			# Allow desk System Users to register some people multiple times.
+			return
+
+		base_filters = {"event": self.event, "name": ("!=", self.name), "docstatus": 1}
 		if frappe.db.exists(
 			"Event Registration",
-			dict(email=self.email, event=self.event, name=("!=", self.name), docstatus=1),
+			{"email": self.email, **base_filters},
+		):
+			DuplicateRegistrationEmail.throw(self)
+
+		if self.user and frappe.db.exists(
+			"Event Registration",
+			{"user": self.user, **base_filters},
 		):
 			DuplicateRegistration.throw(self)
+
+	def allow_multiple_registrations_for_same_user(self):
+		# Use get_value because field might not exist.
+		if not self.event_doc.allow_registrations:
+			return False
+		if not self.event_doc.get("allow_multiple_registrations", False):
+			return False
+		return True
 
 	def validate_available_capacity_of_event(self):
 		if self.docstatus == 1:
