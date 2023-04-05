@@ -69,7 +69,7 @@ class EventRegistration(Document):
 		if self.docstatus == 1:
 			remaining_capacity = self.get_event_remaining_capacity()
 			if remaining_capacity <= 0:
-				from frappe.desk.doctype.event.event import EventIsFull
+				from erpnext.venue.doctype.event_registration.event.event import EventIsFull
 
 				EventIsFull.throw()
 
