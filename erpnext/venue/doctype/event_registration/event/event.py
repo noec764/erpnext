@@ -57,6 +57,7 @@ class DokosEvent(Event):
 		# no_cache show_sidebar show_close_button content event_style attachments
 		super().get_context(context)
 
+		context.no_cache = 1  # Override caching from Frappe's Event
 		context.template = "/venue/doctype/event_registration/event/templates/event.html"
 		context.image_design = "icon"
 
