@@ -1,12 +1,16 @@
 {
  "charts": [
   {
-   "chart_name": "Purchase Categories based on Invoices",
-   "label": "Purchase Categories based on Invoices"
+   "chart_name": "Top Purchasing Groups",
+   "label": "Top Purchasing Groups"
+  },
+  {
+   "chart_name": "Top Purchased Items",
+   "label": "Top Purchased Items"
   }
  ],
  "color": "#e76f51",
- "content": "[{\"id\":\"jaD5Y78fqB\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Categories based on Invoices\",\"col\":12}},{\"id\":\"_QMB5x8Qpv\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NjBy_YFu3R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vos Raccourcis</span>\",\"col\":12}},{\"id\":\"0lVGuTNSBt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":4}},{\"id\":\"dUopEvEVUB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":4}},{\"id\":\"i0dFRIwt2S\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"Y1yf6OvgxW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":4}},{\"id\":\"E6PLYCoGkz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":4}},{\"id\":\"m1uctiG4Zr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"id\":\"9QRO1GqtDd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mDoBbwi37_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Donn\u00e9es de base &amp; Rapports</span>\",\"col\":12}},{\"id\":\"2akgHh4EWQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"hAPeJSwRbl\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"44q4hrIpPw\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"96f3-3zpk7\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"GSy_1zfqRp\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"XUNSFsTCer\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"NQI5PItf66\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}},{\"id\":\"_QMB5x8Qpv\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NjBy_YFu3R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vos Raccourcis</span>\",\"col\":12}},{\"id\":\"0lVGuTNSBt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":4}},{\"id\":\"dUopEvEVUB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":4}},{\"id\":\"i0dFRIwt2S\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"Y1yf6OvgxW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":4}},{\"id\":\"E6PLYCoGkz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":4}},{\"id\":\"m1uctiG4Zr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"id\":\"9QRO1GqtDd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mDoBbwi37_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Donn\u00e9es de base &amp; Rapports</span>\",\"col\":12}},{\"id\":\"2akgHh4EWQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"hAPeJSwRbl\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"44q4hrIpPw\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"96f3-3zpk7\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"GSy_1zfqRp\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"XUNSFsTCer\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"NQI5PItf66\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
  "creation": "2020-01-28 11:50:26.195467",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -550,7 +554,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-05 09:04:53.087584",
+ "modified": "2023-04-05 11:32:58.425563",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",

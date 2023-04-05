@@ -56,7 +56,7 @@ frappe.dashboards.chart_sources["Purchase Analytics"] = {
 		},
 		{
 			fieldname: "limit",
-			label: __("Max. number of categories"),
+			label: __("Max. number of items"),
 			fieldtype: "Int"
 		},
 	]

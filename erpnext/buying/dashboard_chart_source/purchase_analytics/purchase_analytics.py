@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
-from frappe.utils import add_months, nowdate
+from frappe.utils import add_months, get_year_start, nowdate
 from frappe.utils.dashboard import cache_source
 
 from erpnext import get_default_company
@@ -25,17 +25,17 @@ def get(
 	filters = frappe.parse_json(filters)
 	limit = filters.get("limit")
 
-	number_of_months = 3
+	start_date = from_date or add_months(nowdate(), -3)
 	if filters.get("range"):
 		if filters.get("range") == "Quarterly":
-			number_of_months = 12
+			start_date = get_year_start(nowdate())
 		elif filters.get("range") == "Yearly":
-			number_of_months = 24
+			start_date = get_year_start(add_months(nowdate(), -24))
 		elif filters.get("range") == "Weekly":
-			number_of_months = 1
+			start_date = add_months(nowdate(), -1)
 
 	if not filters.get("from_date"):
-		filters["from_date"] = add_months(nowdate(), -1 * number_of_months)
+		filters["from_date"] = start_date
 
 	if not filters.get("to_date"):
 		filters["to_date"] = nowdate()
@@ -45,7 +45,7 @@ def get(
 
 	columns, data, message, chart, report_summary, skip_total_row = Analytics(filters).run()
 
-	data = sort_and_filter_data(data)
+	data = sort_and_filter_data(data, limit)
 
 	length = len(columns)
 
@@ -67,33 +67,38 @@ def get(
 
 
 def sort_and_filter_data(data, limit=None):
-	data_with_total = [d for d in data if d.get("total") and d.get("indent", 0) > 0]
+	data_with_total = [d for d in data if d.get("total") and d.get("indent", 1) > 0]
 
 	filtered_data = []
-	grouped_data = []
-	subgroup = []
-	for d in data_with_total:
-		if d.get("indent") == 1 and subgroup:
+
+	if not data_with_total[0].get("indent"):
+		filtered_data = data_with_total
+
+	else:
+		grouped_data = []
+		subgroup = []
+		for d in data_with_total:
+			if d.get("indent") == 1 and subgroup:
+				grouped_data.append(subgroup)
+				subgroup = []
+
+			subgroup.append(d)
+
+		if subgroup:
 			grouped_data.append(subgroup)
-			subgroup = []
 
-		subgroup.append(d)
-
-	if subgroup:
-		grouped_data.append(subgroup)
-
-	for group in grouped_data:
-		if len(group) == 1:
-			filtered_data.append(group[0])
-		else:
-			max_value = max(group, key=lambda g: g["indent"])
-			for g in group:
-				if g.get("indent") == max_value:
-					filtered_data.append(g)
+		for group in grouped_data:
+			if len(group) == 1:
+				filtered_data.append(group[0])
+			else:
+				max_value = max(group, key=lambda g: g["indent"])
+				for g in group:
+					if g.get("indent") == max_value:
+						filtered_data.append(g)
 
 	if limit:
-		filtered_data.sort(key=lambda x: x["total"])
-		filtered_data = filtered_data[: limit - 1]
+		filtered_data.sort(key=lambda x: x["total"], reverse=True)
+		filtered_data = filtered_data[:limit]
 
 	return filtered_data
 
