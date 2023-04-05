@@ -238,7 +238,7 @@
 			</ul>
 			{% endif %}
 
-			{% if my_registrations %}
+			{% if my_registrations and show_registration_list %}
 			<h3>{{ _("My registrations") }}</h3>
 			<ul>
 				{% for reg in my_registrations %}
