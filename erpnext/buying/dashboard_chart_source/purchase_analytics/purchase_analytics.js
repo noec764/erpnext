@@ -4,8 +4,8 @@
 
 frappe.provide('frappe.dashboards.chart_sources');
 
-frappe.dashboards.chart_sources["Purchase Categories based on Invoices"] = {
-	method: "erpnext.buying.dashboard_chart_source.purchase_categories_based_on_invoices.purchase_categories_based_on_invoices.get",
+frappe.dashboards.chart_sources["Purchase Analytics"] = {
+	method: "erpnext.buying.dashboard_chart_source.purchase_analytics.purchase_analytics.get",
 	filters: [
 		{
 			fieldname: "tree_type",
@@ -53,6 +53,11 @@ frappe.dashboards.chart_sources["Purchase Categories based on Invoices"] = {
 			],
 			default: "Monthly",
 			reqd: 1
-		}
+		},
+		{
+			fieldname: "limit",
+			label: __("Max. number of categories"),
+			fieldtype: "Int"
+		},
 	]
 };

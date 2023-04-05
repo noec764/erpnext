@@ -23,12 +23,29 @@ def get(
 	heatmap_year=None,
 ):
 	filters = frappe.parse_json(filters)
-	filters["from_date"] = add_months(nowdate(), -3)
-	filters["to_date"] = nowdate()
+	limit = filters.get("limit")
+
+	number_of_months = 3
+	if filters.get("range"):
+		if filters.get("range") == "Quarterly":
+			number_of_months = 12
+		elif filters.get("range") == "Yearly":
+			number_of_months = 24
+		elif filters.get("range") == "Weekly":
+			number_of_months = 1
+
+	if not filters.get("from_date"):
+		filters["from_date"] = add_months(nowdate(), -1 * number_of_months)
+
+	if not filters.get("to_date"):
+		filters["to_date"] = nowdate()
+
 	if not filters.get("company"):
 		filters["company"] = get_default_company()
 
 	columns, data, message, chart, report_summary, skip_total_row = Analytics(filters).run()
+
+	data = sort_and_filter_data(data)
 
 	length = len(columns)
 
@@ -49,20 +66,47 @@ def get(
 	return chart
 
 
+def sort_and_filter_data(data, limit=None):
+	data_with_total = [d for d in data if d.get("total") and d.get("indent", 0) > 0]
+
+	filtered_data = []
+	grouped_data = []
+	subgroup = []
+	for d in data_with_total:
+		if d.get("indent") == 1 and subgroup:
+			grouped_data.append(subgroup)
+			subgroup = []
+
+		subgroup.append(d)
+
+	if subgroup:
+		grouped_data.append(subgroup)
+
+	for group in grouped_data:
+		if len(group) == 1:
+			filtered_data.append(group[0])
+		else:
+			max_value = max(group, key=lambda g: g["indent"])
+			for g in group:
+				if g.get("indent") == max_value:
+					filtered_data.append(g)
+
+	if limit:
+		filtered_data.sort(key=lambda x: x["total"])
+		filtered_data = filtered_data[: limit - 1]
+
+	return filtered_data
+
+
 def add_labels_and_values(columns, data):
 	labels = []
 	datasets = []
-	column_names = [col.get("fieldname") for col in columns]
 
 	for col in columns:
 		labels.append(col.get("label"))
 
 	for d in data:
 		values = []
-		report_values = [value for key, value in d.items() if key in column_names]
-		if not all(report_values) or d.get("indent") != 1:
-			continue
-
 		for col in columns:
 			values.append(d.get(col.get("fieldname")))
 
