@@ -10,7 +10,7 @@ import frappe
 class TestCashFlowMapping(unittest.TestCase):
 	def setUp(self):
 		if frappe.db.exists("Cash Flow Mapping", "Test Mapping"):
-			frappe.delete_doc("Cash Flow Mappping", "Test Mapping")
+			frappe.delete_doc("Cash Flow Mapping", "Test Mapping")
 
 	def tearDown(self):
 		frappe.delete_doc("Cash Flow Mapping", "Test Mapping")
