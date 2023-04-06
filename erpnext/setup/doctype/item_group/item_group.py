@@ -15,6 +15,7 @@ from erpnext.e_commerce.doctype.e_commerce_settings.e_commerce_settings import E
 from erpnext.e_commerce.product_data_engine.filters import ProductFiltersBuilder
 from erpnext.e_commerce.shopping_cart.cart import get_shopping_cart_settings
 
+
 class ItemGroup(NestedSet, WebsiteGenerator):
 	nsm_parent_field = "parent_item_group"
 	website = frappe._dict(
@@ -67,9 +68,7 @@ class ItemGroup(NestedSet, WebsiteGenerator):
 	def get_context(self, context):
 		context.show_search = True
 		context.body_class = "product-page"
-		context.page_length = (
-			cint(get_shopping_cart_settings().products_per_page) or 6
-		)
+		context.page_length = cint(get_shopping_cart_settings().products_per_page) or 6
 		context.search_link = "/product_search"
 
 		filter_engine = ProductFiltersBuilder(self.name)
@@ -148,12 +147,17 @@ def get_item_for_list_in_html(context):
 
 
 def get_parent_item_groups(item_group_name, from_item=False):
-	base_nav_page = {"name": _("All Products"), "route": "/all-products"}
+	settings = frappe.get_cached_doc("E Commerce Settings")
+
+	if settings.enable_field_filters:
+		base_nav_page = {"name": _("Shop by Category"), "route": "/shop-by-category"}
+	else:
+		base_nav_page = {"name": _("All Products"), "route": "/all-products"}
 
 	if from_item and frappe.request.environ.get("HTTP_REFERER"):
 		# base page after 'Home' will vary on Item page
 		last_page = frappe.request.environ["HTTP_REFERER"].split("/")[-1].split("?")[0]
-		if last_page and last_page == "shop-by-category":
+		if last_page and last_page in ("shop-by-category", "all-products"):
 			base_nav_page_title = " ".join(last_page.split("-")).title()
 			base_nav_page = {"name": _(base_nav_page_title), "route": "/" + last_page}
 
