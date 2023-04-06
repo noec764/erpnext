@@ -18,9 +18,6 @@ workflow:
     # or run if there is a tag
     - if: $CI_COMMIT_TAG != null
 
-    # or run if the commit message contains "[build-docker]"
-    - if: $CI_COMMIT_MESSAGE =~ /\[build-docker\]/
-
 stages:
   - Unit Tests
   - Docker Dokos
@@ -111,11 +108,29 @@ build_docker:
     DOKOS_BRANCH: "${CI_COMMIT_REF_NAME}"
     DODOCK_BRANCH: "v3.x.x-hotfix"
   script:
-    - IMAGE_VERSION=$CI_COMMIT_TAG
-    - if [ -z "$IMAGE_VERSION" ]; then IMAGE_VERSION=$CI_COMMIT_SHORT_SHA; fi
-    - IMAGE_NAME="$CI_REGISTRY_IMAGE:$IMAGE_VERSION"
+    # Set image tag
+    - IMAGE_TAG=$CI_COMMIT_TAG
+    - if [ -z "$IMAGE_TAG" ]; then
+        IMAGE_TAG=$CI_COMMIT_SHORT_SHA;
+      fi
 
-    - if echo "$CI_COMMIT_REF_NAME" | grep -Eq '(\.x\.x|master|develop)'; then DODOCK_BRANCH="$CI_COMMIT_REF_NAME"; fi
+    # Override image tag from commit message if it contains "[docker-tag=<branch>]"
+    - TAG_FROM_COMMIT_MESSAGE=$(echo "$CI_COMMIT_MESSAGE" | sed -n 's/.*\[docker-tag=\(.*\)\].*/\1/p')
+    - if [ -n "$TAG_FROM_COMMIT_MESSAGE" ]; then IMAGE_TAG="$TAG_FROM_COMMIT_MESSAGE"; fi
+
+    # Set image name
+    - IMAGE_NAME="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+
+    # Set dodock branch
+    - if echo "$CI_COMMIT_REF_NAME" | grep -Eq '(\.x\.x|main|master|develop)'; then
+        DODOCK_BRANCH="$CI_COMMIT_REF_NAME";
+      fi
+
+    # Override dodock branch from commit message if it contains "[dodock-branch=<branch>]"
+    - BRANCH_FROM_COMMIT_MESSAGE=$(echo "$CI_COMMIT_MESSAGE" | sed -n 's/.*\[dodock-branch=\(.*\)\].*/\1/p')
+    - if [ -n "$BRANCH_FROM_COMMIT_MESSAGE" ]; then
+        DODOCK_BRANCH="$BRANCH_FROM_COMMIT_MESSAGE";
+      fi
 
     - echo "Building image $IMAGE_NAME"
     - git clone https://github.com/frappe/frappe_docker.git
@@ -150,7 +165,27 @@ build_docker:
         --build-arg=APPS_JSON_BASE64="$APPS_JSON_BASE64" \
         --tag=$IMAGE_NAME \
         --file=images/custom/Containerfile .
+
     - echo "Logging in to registry $CI_REGISTRY"
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
     - echo "Pushing image $IMAGE_NAME"
     - docker push $IMAGE_NAME
+
+    # Push latest tag if the commit is tagged
+    - if [ -n "$CI_COMMIT_TAG" ]; then
+        N="$CI_REGISTRY_IMAGE:latest"
+        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+      fi
+
+    # Push hotfix tag if the commit is on the hotfix branch
+    - if [ "$CI_COMMIT_REF_NAME" = "v3.x.x-hotfix" ]; then
+        N="$CI_REGISTRY_IMAGE:hotfix"
+        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+      fi
+
+    # Push develop tag if the commit is on the develop branch
+    - if [ "$CI_COMMIT_REF_NAME" = "develop" ]; then
+        N="$CI_REGISTRY_IMAGE:develop"
+        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+      fi
