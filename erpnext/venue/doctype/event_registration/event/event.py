@@ -70,6 +70,10 @@ class DokosEvent(Event):
 				fields=["name", "docstatus", "amount", "first_name", "last_name", "payment_status"],
 				filters=dict(user=frappe.session.user, event=self.name),
 			)
+			context.show_registration_list = len(context.my_registrations) > 0
+			if context.my_registrations and context.my_registrations[0].docstatus == 1:
+				# Hide registration list if there is only one registration and it is confirmed
+				context.show_registration_list = False
 
 		context.allow_cancellations = self.allow_cancellations
 		context.accept_payment = False

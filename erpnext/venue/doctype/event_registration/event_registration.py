@@ -1,25 +1,38 @@
 # Copyright (c) 2021, Dokos SAS and contributors
 # License: MIT. See LICENSE
 
+from functools import cached_property
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 
 
+def is_desk() -> bool:
+	try:
+		path = frappe.request.path
+		if path.startswith("/app/") or path.startswith("/api/"):
+			return True
+	except Exception:
+		pass
+	return False
+
+
 class DuplicateRegistration(frappe.ValidationError):
-	@classmethod
-	def throw(cls, registration: dict = None):
-		if frappe.request.path.startswith("/app/") or frappe.request.path.startswith("/api/"):
-			cls.throw_desk(registration)
-		else:
-			cls.throw_website(registration)
+	"""Raised when a duplicate registration is found for the same user (or email address if user is missing)."""
 
 	@classmethod
-	def throw_desk(cls, registration: dict = None):
+	def throw(cls, registration: "EventRegistration | None" = None):
+		if is_desk():
+			return cls.throw_desk(registration)
+		return cls.throw_website(registration)
+
+	@classmethod
+	def throw_desk(cls, registration: "EventRegistration | None" = None):
 		frappe.throw(_("User is already registered for this event."), cls)
 
 	@classmethod
-	def throw_website(cls, registration: dict = None):
+	def throw_website(cls, registration: "EventRegistration | None" = None):
 		if not (registration and registration.event):
 			return cls.throw_desk()
 		event_route = frappe.get_cached_value("Event", registration.event, "route")
@@ -31,17 +44,41 @@ class DuplicateRegistration(frappe.ValidationError):
 		frappe.throw(msg, cls)
 
 
+class DuplicateRegistrationEmail(DuplicateRegistration):
+	"""Raised when a duplicate registration is found for the same email address."""
+
+	@classmethod
+	def throw_website(cls, registration):
+		frappe.throw(_("A registration with the same email address already exists."), cls)
+
+
 class CannotDeletePaidRegistration(frappe.ValidationError):
 	@classmethod
-	def throw(cls, registration: dict):
+	def throw(cls, registration: "EventRegistration"):
 		frappe.throw(_("Cannot delete paid registration: {0}").format(registration.name), cls)
 
 
 class EventRegistration(Document):
+	name: str
+	event: str | None
+	contact: str | None
+	amount: float
+	payment_status: str
+	email: str | None
+	first_name: str | None
+	last_name: str | None
+
+	@cached_property
+	def event_doc(self):
+		return frappe.get_doc("Event", self.event)
+
 	def validate(self):
-		self.check_duplicates()
+		self.validate_duplicates()
 		self.validate_available_capacity_of_event()
+
 		self.create_or_link_with_contact()
+		if not self.contact and self.get_payment_amount() > 0:
+			frappe.throw("A contact is required to register for paid events")
 
 	def on_submit(self):
 		self.add_contact_to_event()
@@ -55,19 +92,38 @@ class EventRegistration(Document):
 		if self.amount and self.payment_status == "Paid" and self.docstatus != 2:
 			CannotDeletePaidRegistration.throw(self)
 
-	def check_duplicates(self):
-		# TODO: Allow one User to register for different Contacts.
+	def validate_duplicates(self):
+		if self.allow_multiple_registrations_for_same_user():
+			# Allow one User to register multiple times (for example, for different members of a same family).
+			# Allow desk System Users to register some people multiple times.
+			return
+
+		base_filters = {"event": self.event, "name": ("!=", self.name), "docstatus": 1}
 		if frappe.db.exists(
 			"Event Registration",
-			dict(email=self.email, event=self.event, name=("!=", self.name), docstatus=1),
+			{"email": self.email, **base_filters},
+		):
+			DuplicateRegistrationEmail.throw(self)
+
+		if self.user and frappe.db.exists(
+			"Event Registration",
+			{"user": self.user, **base_filters},
 		):
 			DuplicateRegistration.throw(self)
+
+	def allow_multiple_registrations_for_same_user(self):
+		# Use get_value because field might not exist.
+		if not self.event_doc.allow_registrations:
+			return False
+		if not self.event_doc.get("allow_multiple_registrations", False):
+			return False
+		return True
 
 	def validate_available_capacity_of_event(self):
 		if self.docstatus == 1:
 			remaining_capacity = self.get_event_remaining_capacity()
 			if remaining_capacity <= 0:
-				from frappe.desk.doctype.event.event import EventIsFull
+				from erpnext.venue.doctype.event_registration.event.event import EventIsFull
 
 				EventIsFull.throw()
 
@@ -103,13 +159,13 @@ class EventRegistration(Document):
 
 	def create_or_link_with_contact(self):
 		contact = self.contact
-		if not contact:
+		if not contact and self.email:
 			contact = frappe.db.get_value("Contact", dict(email_id=self.email))
 
 		if not contact and self.user:
 			contact = frappe.db.get_value("Contact", dict(user=self.user))
 
-		if not contact:
+		if not contact and self.email:
 			contact_doc = frappe.get_doc(
 				{
 					"doctype": "Contact",
@@ -125,11 +181,15 @@ class EventRegistration(Document):
 		self.contact = contact
 
 	def add_contact_to_event(self):
+		if not self.contact:
+			return
 		event = frappe.get_doc("Event", self.event)
 		event.add_participant(self.contact)
 		event.save(ignore_permissions=True)
 
 	def remove_contact_from_event(self):
+		if not self.contact:
+			return
 		event = frappe.get_doc("Event", self.event)
 		event.remove_participant(self.contact)
 		event.save(ignore_permissions=True)
@@ -141,6 +201,9 @@ class EventRegistration(Document):
 
 		if self.get_payment_amount() <= 0:
 			self.db_set("payment_status", new_status)
+			frappe.log_error(
+				message=f"A payment for {self!r} was received with status {new_status!r} (ref_no: {reference_no}) but the payment amount is zero (or negative)",
+			)
 			return
 
 		PAID_STATUSES = ("Authorized", "Completed", "Paid")
@@ -170,7 +233,7 @@ class EventRegistration(Document):
 
 	def on_webform_save(self, webform):
 		# The document is created from the Web Form, it means that someone wants to register
-		self.user = frappe.session.user
+		self.user = self.user or frappe.session.user
 		self.set_company_from_cart_settings()
 
 		if not self.flags.in_payment_webform:
@@ -178,10 +241,20 @@ class EventRegistration(Document):
 			self.payment_status = ""
 			self.submit()  # Automatically submit when created from a Web Form.
 		else:
+			self.amount = self.get_payment_amount()
 			self.payment_status = "Unpaid"
 			self.save()
 
 	def get_payment_amount(self) -> float:
+		"""This is a PURE function that returns the amount to be paid (INCLUDING taxes) for the Event Registration.
+		This function should not depend on the value of the `amount` field unless it returns it unchanged.
+
+		In other words, the following code should guarantee `amt1 == amt2`:
+		```python
+		amt1 = self.amount = self.get_payment_amount()
+		amt2 = self.amount = self.get_payment_amount()
+		```
+		"""
 		# TODO: Fetch from item instead
 		return self.amount
 
@@ -464,7 +537,7 @@ def mark_as_refunded(name: str):
 
 
 @frappe.whitelist()
-def get_user_info(user=None):
+def get_user_info():
 	user = frappe.session.user
 
 	if user == "Guest":
@@ -476,20 +549,24 @@ def get_user_info(user=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def register_to_event(event, data, user=None):
-	if frappe.session.user == "Guest":
-		raise frappe.exceptions.PermissionError()
-
+def register_to_event(event, data):
 	event = frappe.get_doc("Event", event)
 	if not event.published:
 		raise frappe.exceptions.PermissionError()
 	if not event.allow_registrations:
 		raise frappe.exceptions.PermissionError()
-	if event.registration_form:  # Uses a custom Web Form
-		raise frappe.exceptions.ValidationError()  # Disable the default registration form
+	if event.registration_form:  # Uses a custom Web Form, possibly paid
+		frappe.throw("The simplified registration form is disabled for this event.")
 
 	data = frappe.parse_json(data)
-	user = frappe.session.user
+
+	user = None
+	if user is None and frappe.session.user != "Guest":
+		user = frappe.session.user
+
+	if frappe.session.user == "Guest":
+		if getattr(event, "disable_guest_registration", False):
+			raise frappe.exceptions.PermissionError()
 
 	try:
 		doc = frappe.get_doc(
@@ -502,7 +579,6 @@ def register_to_event(event, data, user=None):
 		)
 
 		doc.flags.ignore_permissions = True
-		doc.flags.ignore_mandatory = True
 		doc.submit()
 		return doc
 	except DuplicateRegistration:
@@ -517,14 +593,13 @@ def register_to_event(event, data, user=None):
 def cancel_registration(event):
 	user = frappe.session.user
 
-	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
-
 	event = frappe.get_doc("Event", event)
 	if not event.published:
 		raise frappe.exceptions.PermissionError()
 	if not event.allow_cancellations:
 		raise frappe.exceptions.ValidationError()
 
+	docname = frappe.get_value("Event Registration", dict(user=user, event=event, docstatus=1))
 	if docname:
 		doc = frappe.get_doc("Event Registration", docname)
 		doc.flags.ignore_permissions = True
@@ -539,7 +614,7 @@ def cancel_registration_by_name(name):
 
 	doc = frappe.get_doc("Event Registration", name)
 	if doc.user != user:
-		return
+		raise frappe.exceptions.PermissionError()
 
 	event = frappe.get_doc("Event", doc.event)
 	if not event.published:
