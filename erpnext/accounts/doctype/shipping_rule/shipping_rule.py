@@ -4,6 +4,8 @@
 # For license information, please see license.txt
 
 
+from typing import Literal
+
 import frappe
 from frappe import _, msgprint, throw
 from frappe.model.document import Document
@@ -25,10 +27,19 @@ class ManyBlankToValuesError(frappe.ValidationError):
 
 
 class ShippingRule(Document):
+	label: str
+	shipping_rule_type: Literal["Selling", "Buying"]
+	calculate_based_on: Literal["Fixed", "Net Total", "Net Weight", "Custom Formula"]
+	shipping_amount: float
+	conditions: list
+	countries: list
+	custom_formula: str
+
 	def validate(self):
-		self.validate_from_to_values()
-		self.sort_shipping_rule_conditions()
-		self.validate_overlapping_shipping_rule_conditions()
+		if self.calculate_based_on not in ["Fixed", "Custom Formula"]:
+			self.validate_from_to_values()
+			self.sort_shipping_rule_conditions()
+			self.validate_overlapping_shipping_rule_conditions()
 
 	def validate_from_to_values(self):
 		zero_to_values = []
@@ -58,26 +69,28 @@ class ShippingRule(Document):
 		"""Apply shipping rule on given doc. Called from accounts controller"""
 
 		shipping_amount = 0.0
-		by_value = False
 
 		if doc.get_shipping_address():
 			# validate country only if there is address
 			self.validate_countries(doc)
 
 		if self.calculate_based_on == "Net Total":
-			value = doc.base_net_total
-			by_value = True
+			shipping_amount = self.get_shipping_amount_from_rules(doc.base_net_total)
 
 		elif self.calculate_based_on == "Net Weight":
-			value = doc.total_net_weight
-			by_value = True
+			shipping_amount = self.get_shipping_amount_from_rules(doc.total_net_weight)
 
 		elif self.calculate_based_on == "Fixed":
 			shipping_amount = self.shipping_amount
 
-		# shipping amount by value, apply conditions
-		if by_value:
-			shipping_amount = self.get_shipping_amount_from_rules(value)
+		elif self.calculate_based_on == "Custom Formula":
+			shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
+			if not isinstance(shipping_amount, (int, float)):
+				frappe.throw(_("Custom formula must return a number"))
+			# Check that the formula is a pure function of the doc
+			# val2 = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
+			# if shipping_amount != val2:
+			# 	frappe.throw("Custom formula must be a pure function of the document. The formula must not have any side effects.")
 
 		# convert to order currency
 		if doc.currency != doc.company_currency:

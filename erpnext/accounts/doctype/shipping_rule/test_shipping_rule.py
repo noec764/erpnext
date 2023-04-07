@@ -5,6 +5,7 @@
 import unittest
 
 import frappe
+from frappe.tests.utils import FrappeTestCase
 
 from erpnext.accounts.doctype.shipping_rule.shipping_rule import (
 	FromGreaterThanToError,
@@ -15,7 +16,7 @@ from erpnext.accounts.doctype.shipping_rule.shipping_rule import (
 test_records = frappe.get_test_records("Shipping Rule")
 
 
-class TestShippingRule(unittest.TestCase):
+class TestShippingRule(FrappeTestCase):
 	def test_from_greater_than_to(self):
 		shipping_rule = frappe.copy_doc(test_records[0])
 		shipping_rule.name = test_records[0].get("name")
@@ -43,6 +44,77 @@ class TestShippingRule(unittest.TestCase):
 			shipping_rule.get("conditions")[1].from_value = range_b[0]
 			shipping_rule.get("conditions")[1].to_value = range_b[1]
 			self.assertRaises(OverlappingConditionError, shipping_rule.insert)
+
+	def test_custom_formula(self):
+		shipping_rule = frappe.copy_doc(test_records[0])
+		shipping_rule.conditions = []
+		shipping_rule.calculate_based_on = "Custom Formula"
+		shipping_rule.custom_formula = "doc.net_total * 0.1"
+		shipping_rule.label = "Custom Formula 1"
+		shipping_rule.name = None
+		shipping_rule.insert()
+
+		si = frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"company": "_Test Company",
+				"customer": "_Test Customer",
+				"cost_center": "_Test Cost Center - _TC",
+				"currency": "INR",
+				"items": [
+					{
+						"item_code": "_Test Item",
+						"qty": 1,
+						"rate": 100,
+						"warehouse": "_Test Warehouse - _TC",
+						"cost_center": "_Test Cost Center - _TC",
+					},
+				],
+				"shipping_rule": shipping_rule.name,
+			}
+		)
+		si.insert()
+		si.save()
+
+		self.assertEqual(si.total_taxes_and_charges, 10.0)
+		self.assertEqual(si.grand_total, 110.0)
+
+	@unittest.skip(
+		"Not working yet: safe_eval() doesn't support multiline code. Needs a safe_exec()."
+	)
+	def test_complex_custom_formula(self):
+		shipping_rule = frappe.copy_doc(test_records[0])
+		shipping_rule.conditions = []
+		shipping_rule.calculate_based_on = "Custom Formula"
+		shipping_rule.custom_formula = "if doc.doctype == 'Sales Invoice':\n\treturn doc.net_total * 0.1"
+		shipping_rule.label = "Custom Formula 1"
+		shipping_rule.name = None
+		shipping_rule.insert()
+
+		si = frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"company": "_Test Company",
+				"customer": "_Test Customer",
+				"cost_center": "_Test Cost Center - _TC",
+				"currency": "INR",
+				"items": [
+					{
+						"item_code": "_Test Item",
+						"qty": 1,
+						"rate": 100,
+						"warehouse": "_Test Warehouse - _TC",
+						"cost_center": "_Test Cost Center - _TC",
+					},
+				],
+				"shipping_rule": shipping_rule.name,
+			}
+		)
+		si.insert()
+		si.save()
+
+		self.assertEqual(si.total_taxes_and_charges, 10.0)
+		self.assertEqual(si.grand_total, 110.0)
 
 
 def create_shipping_rule(shipping_rule_type, shipping_rule_name):
