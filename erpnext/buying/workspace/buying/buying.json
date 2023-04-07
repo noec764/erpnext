@@ -10,7 +10,7 @@
   }
  ],
  "color": "#e76f51",
- "content": "[{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}},{\"id\":\"_QMB5x8Qpv\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NjBy_YFu3R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Vos Raccourcis</span>\",\"col\":12}},{\"id\":\"0lVGuTNSBt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":4}},{\"id\":\"dUopEvEVUB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":4}},{\"id\":\"i0dFRIwt2S\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"Y1yf6OvgxW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":4}},{\"id\":\"E6PLYCoGkz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":4}},{\"id\":\"m1uctiG4Zr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":4}},{\"id\":\"9QRO1GqtDd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mDoBbwi37_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Donn\u00e9es de base &amp; Rapports</span>\",\"col\":12}},{\"id\":\"2akgHh4EWQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"hAPeJSwRbl\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"44q4hrIpPw\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"96f3-3zpk7\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"GSy_1zfqRp\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"XUNSFsTCer\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"NQI5PItf66\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"m4R_ERYGVe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Orders Indicators</b></span>\",\"col\":6}},{\"id\":\"XCvyDOErQa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Invoices Indicators</b></span>\",\"col\":6}},{\"id\":\"RmZoF6kKS4\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5-qGJEaVKt\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Annual Purchases\",\"col\":6}},{\"id\":\"I0dmANpLlO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Incoming Bills\",\"col\":6}},{\"id\":\"S3wW48kubp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FBCT81OI23\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators &amp; Charts</b></span>\",\"col\":12}},{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}},{\"id\":\"_QMB5x8Qpv\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mDoBbwi37_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Donn\u00e9es de base &amp; Rapports</span>\",\"col\":12}},{\"id\":\"44q4hrIpPw\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"XUNSFsTCer\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"NQI5PItf66\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
  "creation": "2020-01-28 11:50:26.195467",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -21,15 +21,6 @@
  "is_standard": 1,
  "label": "Buying",
  "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Buying",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
   {
    "columns": 0,
    "dependencies": "Item",
@@ -89,15 +80,6 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items & Pricing",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
   },
   {
    "columns": 0,
@@ -179,165 +161,6 @@
    "label": "Pricing Rule",
    "link_count": 0,
    "link_to": "Pricing Rule",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Settings",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Buying Settings",
-   "link_count": 0,
-   "link_to": "Buying Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Taxes and Charges Template",
-   "link_count": 0,
-   "link_to": "Purchase Taxes and Charges Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Terms and Conditions Template",
-   "link_count": 0,
-   "link_to": "Terms and Conditions",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier",
-   "link_count": 0,
-   "link_to": "Supplier",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Group",
-   "link_count": 0,
-   "link_to": "Supplier Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Contact",
-   "link_count": 0,
-   "link_to": "Contact",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Address",
-   "link_count": 0,
-   "link_to": "Address",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Variable",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Variable",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Criteria",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Criteria",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Standing",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Standing",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -552,65 +375,73 @@
    "onboard": 0,
    "only_for": "Italy",
    "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Buying Settings",
+   "link_count": 0,
+   "link_to": "Buying Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Purchase Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Terms and Conditions Template",
+   "link_count": 0,
+   "link_to": "Terms and Conditions",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-04-05 11:32:58.425563",
+ "modified": "2023-04-07 23:29:51.094890",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Annual Purchases",
+   "number_card_name": "Annual Purchase"
+  },
+  {
+   "label": "Total Incoming Bills",
+   "number_card_name": "Total Incoming Bills"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 5.0,
- "shortcuts": [
-  {
-   "color": "Green",
-   "columns": 0,
-   "format": "{} Available",
-   "label": "Item",
-   "link_to": "Item",
-   "stats_filter": "{\n    \"disabled\": 0\n}",
-   "type": "DocType"
-  },
-  {
-   "color": "Yellow",
-   "columns": 0,
-   "format": "{} Pending",
-   "label": "Material Request",
-   "link_to": "Material Request",
-   "stats_filter": "{\n    \"company\": [\"like\", '%' + frappe.defaults.get_global_default(\"company\") + '%'],\n    \"status\": \"Pending\"\n}",
-   "type": "DocType"
-  },
-  {
-   "color": "Yellow",
-   "columns": 0,
-   "format": "{}  To Receive",
-   "label": "Purchase Order",
-   "link_to": "Purchase Order",
-   "stats_filter": "{\n    \"company\": [\"like\", '%' + frappe.defaults.get_global_default(\"company\") + '%'],\n    \"status\":[\"in\", [\"To Receive\", \"To Receive and Bill\"]]\n}",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "label": "Purchase Analytics",
-   "link_to": "Purchase Analytics",
-   "type": "Report"
-  },
-  {
-   "columns": 0,
-   "label": "Purchase Order Analysis",
-   "link_to": "Purchase Order Analysis",
-   "type": "Report"
-  },
-  {
-   "columns": 0,
-   "label": "Dashboard",
-   "link_to": "Buying",
-   "type": "Dashboard"
-  }
- ],
+ "sequence_id": 4.0,
+ "shortcuts": [],
  "title": "Buying"
 }

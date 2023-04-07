@@ -1,0 +1,54 @@
+{
+ "charts": [],
+ "color": "",
+ "content": "[{\"id\":\"TgZ449iezO\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Reports</span>\",\"col\":12}},{\"id\":\"z12zSWVxgD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"id\":\"ua-FHLuVMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"id\":\"qUcaW8UIbd\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchasing Dashboard\",\"col\":3}},{\"id\":\"eoySotfrQJ\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
+ "creation": "2023-04-07 14:34:52.790754",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "table_2",
+ "idx": 0,
+ "is_hidden": 0,
+ "is_standard": 1,
+ "label": "Purchasing Reports",
+ "links": [],
+ "modified": "2023-04-07 23:29:51.381375",
+ "modified_by": "Administrator",
+ "module": "Buying",
+ "name": "Purchasing Reports",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Buying",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 7.0,
+ "shortcuts": [
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Purchase Analytics",
+   "link_to": "Purchase Analytics",
+   "type": "Report"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Purchasing Dashboard",
+   "link_to": "Buying",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Purchase Order Analysis",
+   "link_to": "Purchase Order Analysis",
+   "type": "Report"
+  }
+ ],
+ "title": "Purchasing Reports"
+}
