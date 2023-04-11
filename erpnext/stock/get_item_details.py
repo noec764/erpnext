@@ -644,7 +644,8 @@ def _get_item_tax_template(args, taxes, out=None, for_validate=False):
 
 	if taxes_with_validity:
 		taxes = (
-			sorted(taxes_with_validity, key=lambda i: i.valid_from, reverse=True) + taxes_with_no_validity
+			sorted(taxes_with_validity, key=lambda i: i.valid_from or tax.maximum_net_rate, reverse=True)
+			+ taxes_with_no_validity
 		)
 	else:
 		taxes = taxes_with_no_validity
