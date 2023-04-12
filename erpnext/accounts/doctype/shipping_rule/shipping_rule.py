@@ -65,6 +65,30 @@ class ShippingRule(Document):
 				ManyBlankToValuesError,
 			)
 
+	def _evaluate_custom_formula(self, doc):
+		if self.custom_formula.strip() in ("hook", "#hook", "# hook"):
+			shipping_amount = self.run_method("evaluate_shipping_rule", transaction=doc)
+
+			if not isinstance(shipping_amount, (int, float)):
+				frappe.throw("Shipping Rule: Hook must return a number")
+
+			return shipping_amount
+
+		shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
+
+		# from frappe.utils.safe_block_eval import safe_block_eval
+		# loc = {"doc": doc.as_dict(), "shipping_amount": None}
+		# shipping_amount = safe_block_eval(code, None, loc, output_var="shipping_amount")
+
+		if not isinstance(shipping_amount, (int, float)):
+			frappe.throw("Shipping Rule: Custom formula must return a number")
+
+		return shipping_amount
+
+	def evaluate_shipping_rule(self, transaction: Document):
+		"""Hook to evaluate shipping amount"""
+		return None
+
 	def apply(self, doc):
 		"""Apply shipping rule on given doc. Called from accounts controller"""
 
@@ -84,13 +108,7 @@ class ShippingRule(Document):
 			shipping_amount = self.shipping_amount
 
 		elif self.calculate_based_on == "Custom Formula":
-			shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
-			if not isinstance(shipping_amount, (int, float)):
-				frappe.throw(_("Custom formula must return a number"))
-			# Check that the formula is a pure function of the doc
-			# val2 = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
-			# if shipping_amount != val2:
-			# 	frappe.throw("Custom formula must be a pure function of the document. The formula must not have any side effects.")
+			shipping_amount = self._evaluate_custom_formula(doc)
 
 		# convert to order currency
 		if doc.currency != doc.company_currency:

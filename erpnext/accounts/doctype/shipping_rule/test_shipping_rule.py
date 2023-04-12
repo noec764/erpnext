@@ -79,15 +79,15 @@ class TestShippingRule(FrappeTestCase):
 		self.assertEqual(si.total_taxes_and_charges, 10.0)
 		self.assertEqual(si.grand_total, 110.0)
 
-	@unittest.skip(
-		"Not working yet: safe_eval() doesn't support multiline code. Needs a safe_exec()."
-	)
+	@unittest.skip("Not working yet.")
 	def test_complex_custom_formula(self):
 		shipping_rule = frappe.copy_doc(test_records[0])
 		shipping_rule.conditions = []
 		shipping_rule.calculate_based_on = "Custom Formula"
-		shipping_rule.custom_formula = "if doc.doctype == 'Sales Invoice':\n\treturn doc.net_total * 0.1"
-		shipping_rule.label = "Custom Formula 1"
+		shipping_rule.custom_formula = (
+			"if doc.doctype == 'Sales Invoice':\n\treturn doc.net_total * 0.1\nreturn 1.23"
+		)
+		shipping_rule.label = "Custom Formula 2"
 		shipping_rule.name = None
 		shipping_rule.insert()
 
