@@ -114,7 +114,7 @@
    "label": "Custom Formula"
   },
   {
-   "depends_on": "eval:!['Fixed', 'Custom Formula'].includes(doc.calculate_based_on)",
+   "depends_on": "eval:['Net Total', 'Net Weight'].includes(doc.calculate_based_on)",
    "fieldname": "rule_conditions_section",
    "fieldtype": "Section Break",
    "label": "Shipping Rule Conditions"
