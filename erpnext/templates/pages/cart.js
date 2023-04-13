@@ -81,20 +81,6 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	apply_shipping_rule: function(rule, btn) {
-		return frappe.call({
-			btn: btn,
-			type: "POST",
-			method: "erpnext.e_commerce.shopping_cart.cart.apply_shipping_rule",
-			args: { shipping_rule: rule },
-			callback: function(r) {
-				if(!r.exc) {
-					shopping_cart.render(r.message);
-				}
-			}
-		});
-	},
-
 	bind_coupon_code: function() {
 		$(".cart-container").on("click", ".bt-coupon", function() {
 			shopping_cart.apply_coupon_code(this);

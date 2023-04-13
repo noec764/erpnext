@@ -92,9 +92,7 @@ class ShippingRule(Document):
 		"""Hook to evaluate shipping amount"""
 		return None
 
-	def apply(self, doc):
-		"""Apply shipping rule on given doc. Called from accounts controller"""
-
+	def get_shipping_amount(self, doc: Document):
 		shipping_amount = 0.0
 
 		if doc.get_shipping_address():
@@ -117,6 +115,11 @@ class ShippingRule(Document):
 		if doc.currency != doc.company_currency:
 			shipping_amount = flt(shipping_amount / doc.conversion_rate, 2)
 
+		return shipping_amount
+
+	def apply(self, doc):
+		"""Apply shipping rule on given doc. Called from accounts controller"""
+		shipping_amount = self.get_shipping_amount(doc)
 		self.add_shipping_rule_to_tax_table(doc, shipping_amount)
 
 	def get_shipping_amount_from_rules(self, value):

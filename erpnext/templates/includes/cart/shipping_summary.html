@@ -1,0 +1,112 @@
+{% if shipping_rules %}
+<style>
+.shipping-methods-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+.shipping-methods-list legend {
+	all: unset;
+}
+.shipping-methods-list label {
+	margin: 0 !important;
+}
+.shipping-methods-list input {
+	margin: 0 !important;
+	vertical-align: -2px;
+}
+.shipping-methods-list label .description {
+	font-size: 0.8rem;
+	line-height: 1.3;
+}
+.shipping-methods-list label .description p {
+	line-height: 1.3;
+}
+.shipping-methods-list label .estimated-cost {
+	font-weight: 500;
+}
+</style>
+
+<fieldset class="shipping-methods-list">
+	<legend><h6>{{ _("Choose a shipping method") }}</h6></legend>
+
+	{% set current_shipping_method = doc.shipping_rule or "" %}
+
+	{% for method in shipping_rules %}
+	{% set name = method.name %}
+	{% set input_id = "shipping_method_" ~ name |e %}
+	{% set estimated_cost = "" %}
+	{% set label = method.label or _("None") %}
+
+	<label for="{{ input_id }}">
+		<input
+			type="radio"
+			name="shipping"
+			id="{{ input_id }}"
+			value="{{ name |e }}"
+			{% if name == current_shipping_method %}checked{% endif %}
+		/>
+
+		<span class="estimated-cost">{{ estimated_cost |e }}</span>
+
+		{{ label |e }}
+
+		{% if method.description %}
+			<div class="description">{{ method.description }}</div>
+		{% endif %}
+	</label>
+	{% endfor %}
+</fieldset>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+	frappe.provide("erpnext.e_commerce.shopping_cart");
+	const shopping_cart = erpnext.e_commerce.shopping_cart;
+
+	$(".shipping-methods-list").on("change", "input[name=shipping]", (e) => {
+		const shipping_method = e.target.value;
+		shopping_cart.apply_shipping_rule(shipping_method);
+	});
+
+	estimate_shipping_costs();
+
+	async function estimate_shipping_costs() {
+		const spinner = "";
+		const shipping_rules = [...document.querySelectorAll(".shipping-methods-list input[name=shipping]")];
+
+		shipping_rules.forEach((method) => {
+			const cost_element = method.closest("label").querySelector(".estimated-cost");
+			cost_element.innerHTML = spinner;
+		});
+
+		return frappe.call({
+			type: "GET",
+			method: "erpnext.e_commerce.shopping_cart.cart.get_estimates_for_shipping",
+			args: {
+				names: shipping_rules.map((method) => method.value)
+			},
+			callback(r) {
+				if (r.exc) {
+					frappe.throw(r.exc);
+				} else {
+					shipping_rules.forEach((method) => {
+						const cost = r.message[method.value];
+						const cost_element = method.closest("label").querySelector(".estimated-cost");
+						cost_element.textContent = cost;
+					});
+				}
+			},
+		});
+	}
+
+	// const action_buttons = [
+	// 	$(".btn-checkout").closest("a, button"),
+	// 	$(".btn-place-order").closest("a, button"),
+	// 	$(".btn-request-for-quotation").closest("a, button"),
+	// ];
+	// for (const btn of action_buttons) {
+	// 	btn.prop("disabled", true);
+	// }
+});
+</script>
+{% endif %}

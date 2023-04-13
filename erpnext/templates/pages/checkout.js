@@ -90,15 +90,23 @@ $.extend(shopping_cart, {
 		}[type];
 	},
 
-	apply_shipping_rule: function(rule, btn) {
+	apply_shipping_rule(rule, btn) {
+		frappe.freeze(__("Updating", [], "Freeze message while updating a document"));
 		return frappe.call({
 			btn: btn,
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.apply_shipping_rule",
 			args: { shipping_rule: rule },
-			callback: function(r) {
-				if(!r.exc) {
-					shopping_cart.render(r.message);
+			callback(r) {
+				frappe.unfreeze();
+				if (r.exc) {
+					frappe.throw(r.exc);
+				} else {
+					shopping_cart.shopping_cart_update({
+						item_code: null,
+						qty: null,
+						booking: null,
+					});
 				}
 			}
 		});

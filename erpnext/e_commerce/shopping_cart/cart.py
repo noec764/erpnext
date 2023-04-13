@@ -85,6 +85,8 @@ def place_order():
 
 	quotation.company = cart_settings.company
 
+	validate_shipping_rule(quotation, cart_settings)
+
 	quotation.flags.ignore_permissions = True
 	quotation.submit()
 
@@ -597,8 +599,11 @@ def get_debtors_account(cart_settings):
 		)
 
 		if not parent_account:
-			frappe.throw(frappe._("Missing group for debtors account for company '{0}' and currency '{1}'").format(
-				cart_settings.company, payment_gateway_account_currency))
+			frappe.throw(
+				frappe._("Missing group for debtors account for company '{0}' and currency '{1}'").format(
+					cart_settings.company, payment_gateway_account_currency
+				)
+			)
 
 		debtors_account = frappe.get_doc(
 			{
@@ -662,10 +667,7 @@ def _apply_shipping_rule(party=None, quotation=None, cart_settings=None):
 	if not quotation.shipping_rule:
 		shipping_rules = get_shipping_rules(quotation, cart_settings)
 
-		if not shipping_rules:
-			return
-
-		elif quotation.shipping_rule not in shipping_rules:
+		if shipping_rules and len(shipping_rules) == 1:
 			quotation.shipping_rule = shipping_rules[0]
 
 	if quotation.shipping_rule:
@@ -677,9 +679,15 @@ def get_applicable_shipping_rules(party=None, quotation=None):
 	shipping_rules = get_shipping_rules(quotation)
 
 	if shipping_rules:
-		rule_label_map = {rule.name: rule.label for rule in frappe.db.get_values("Shipping Rule", dict(name=["in", shipping_rules]), ["name", "label"], as_dict=True)}
+		fields = ["name", "label", "description"]
+		rule_map = {
+			rule.name: rule
+			for rule in frappe.db.get_values(
+				"Shipping Rule", dict(name=["in", shipping_rules]), fields, as_dict=True
+			)
+		}
 		# we need this in sorted order as per the position of the rule in the settings page
-		return [[rule, rule_label_map[rule]] for rule in shipping_rules]
+		return [rule_map[rule] for rule in shipping_rules]
 
 
 def get_shipping_rules(quotation=None, cart_settings=None):
@@ -756,3 +764,41 @@ def apply_coupon_code(applied_code, applied_referral_sales_partner):
 			quotation.save()
 
 	return quotation
+
+
+@frappe.whitelist()
+def get_estimates_for_shipping(names: list[str]):
+	names = frappe.parse_json(names)
+	if not names:
+		return {}
+	if not isinstance(names, list):
+		frappe.throw(_("Invalid data"))
+
+	from frappe.utils.data import fmt_money
+
+	"""Returns shipping estimates for given shipping rules"""
+	quotation = _get_cart_quotation()
+	estimates = {}
+
+	for name in names:
+		shipping_rule = frappe.get_doc("Shipping Rule", name)
+		shipping_amount = shipping_rule.get_shipping_amount(quotation)
+		if shipping_amount == 0:
+			shipping_amount = _("Free")
+		elif isinstance(shipping_amount, (int, float)):
+			shipping_amount = fmt_money(flt(shipping_amount), currency=quotation.currency)
+
+		estimates[name] = shipping_amount
+
+	return estimates
+
+
+def validate_shipping_rule(quotation, cart_settings):
+	shipping_rules = get_shipping_rules(quotation, cart_settings)
+	if shipping_rules or quotation.shipping_rule:
+		if not quotation.shipping_rule:
+			frappe.throw(_("Please select a Shipping Rule"))
+		elif not shipping_rules:
+			frappe.throw(_("Shipping Rule is no longer applicable"))
+		elif quotation.shipping_rule not in shipping_rules:
+			frappe.throw(_("Shipping Rule is no longer applicable"))
