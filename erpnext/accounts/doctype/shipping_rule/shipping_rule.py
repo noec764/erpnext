@@ -40,6 +40,9 @@ class ShippingRule(Document):
 			self.validate_from_to_values()
 			self.sort_shipping_rule_conditions()
 			self.validate_overlapping_shipping_rule_conditions()
+		if self.calculate_based_on == "Custom Formula":
+			if not self.custom_formula:
+				raise frappe.MandatoryError(f'{self!r}: {_("Custom Formula")}')
 
 	def validate_from_to_values(self):
 		zero_to_values = []
