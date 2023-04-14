@@ -19,7 +19,6 @@
   "root_type",
   "report_type",
   "account_currency",
-  "inter_company_account",
   "column_break1",
   "parent_account",
   "account_type",
@@ -95,12 +94,6 @@
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency"
-  },
-  {
-   "default": "0",
-   "fieldname": "inter_company_account",
-   "fieldtype": "Check",
-   "label": "Inter Company Account"
   },
   {
    "fieldname": "column_break1",
@@ -208,7 +201,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-02-20 16:33:50.446725",
+ "modified": "2023-04-11 16:08:46.983677",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -274,5 +267,6 @@
  "sort_field": "modified",
  "sort_order": "ASC",
  "title_field": "title",
+ "states": [],
  "track_changes": 1
 }
