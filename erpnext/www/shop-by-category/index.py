@@ -51,9 +51,10 @@ def get_tabs(categories):
 	return tab_values
 
 
-def get_category_records(categories):
-	website_item_meta = frappe.get_meta("Website Item")
+def get_category_records(categories: list):
 	categorical_data = {}
+	website_item_meta = frappe.get_meta("Website Item", cached=True)
+
 	for category in categories:
 		if category == "item_group":
 			categorical_data["item_group"] = frappe.db.get_all(
@@ -69,7 +70,16 @@ def get_category_records(categories):
 			)
 		else:
 			field_meta = website_item_meta.get_field(category)
-			doctype = field_meta.options
+			field_type = field_meta.fieldtype
+			doctype = None
+			if field_type == "Table MultiSelect":
+				child_doc = field_meta.options
+				for field in frappe.get_meta(child_doc, cached=True).fields:
+					if field.fieldtype == "Link" and field.reqd:
+						doctype = field.options
+
+			if not doctype:
+				doctype = field_meta.options
 
 			fields = ["name"]
 			if frappe.get_meta(doctype, cached=True).get_field("image"):

@@ -23,6 +23,7 @@ def get_data(filters):
 		["company", "=", filters.get("company")],
 		["against_voucher_type", "=", "Asset"],
 		["account", "in", depreciation_accounts],
+		["is_cancelled", "=", 0],
 	]
 
 	if filters.get("asset"):

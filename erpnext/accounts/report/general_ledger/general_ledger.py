@@ -618,8 +618,6 @@ def get_columns(filters):
 			{
 				"label": _("Voucher Type"),
 				"fieldname": "voucher_type",
-				"fieldtype": "Link",
-				"options": "DocType",
 				"width": 120,
 			},
 			{
@@ -633,8 +631,6 @@ def get_columns(filters):
 			{
 				"label": _("Party Type"),
 				"fieldname": "party_type",
-				"fieldtype": "Link",
-				"options": "DocType",
 				"width": 100,
 			},
 			{
@@ -680,8 +676,6 @@ def get_columns(filters):
 			{
 				"label": _("Against Voucher Type"),
 				"fieldname": "against_voucher_type",
-				"fieldtype": "Link",
-				"options": "DocType",
 				"width": 100,
 			},
 			{

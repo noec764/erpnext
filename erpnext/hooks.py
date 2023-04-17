@@ -38,6 +38,10 @@ override_doctype_class = {
 	"Event": "erpnext.venue.doctype.event_registration.event.event.DokosEvent",
 }
 
+override_whitelisted_methods = {
+	"frappe.www.contact.send_message": "erpnext.templates.utils.send_message"
+}
+
 welcome_email = "erpnext.setup.utils.welcome_email"
 
 # setup wizard

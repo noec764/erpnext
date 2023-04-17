@@ -69,6 +69,7 @@ class JournalEntry(AccountsController):
 		self.validate_empty_accounts_table()
 		self.set_account_and_party_balance()
 		self.validate_inter_company_accounts()
+		self.validate_accounting_journals()
 
 		if self.docstatus == 0:
 			self.apply_tax_withholding()
@@ -988,6 +989,13 @@ class JournalEntry(AccountsController):
 				)
 
 		self.db_set("unreconciled_amount", abs(amount), update_modified=False)
+
+	def validate_accounting_journals(self):
+		accounting_journals = set(account.accounting_journal for account in self.accounts)
+		if len(accounting_journals) > 1:
+			frappe.msgprint(
+				_("Your entries are linked to different journals. Please make sure it is correct.")
+			)
 
 
 @frappe.whitelist()
