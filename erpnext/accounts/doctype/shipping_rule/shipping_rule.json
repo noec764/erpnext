@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "disabled",
+  "show_on_website",
   "label",
   "shipping_rule_type",
   "column_break_4",
@@ -158,12 +159,19 @@
    "fieldname": "description_section",
    "fieldtype": "Section Break",
    "label": "Description"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.disabled",
+   "fieldname": "show_on_website",
+   "fieldtype": "Check",
+   "label": "Show in Website"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 1,
  "links": [],
- "modified": "2023-04-18 01:40:00.738133",
+ "modified": "2023-04-17 20:09:42.819118",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",

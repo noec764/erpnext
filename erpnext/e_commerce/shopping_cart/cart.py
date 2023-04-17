@@ -713,12 +713,14 @@ def get_shipping_rules(quotation=None, cart_settings=None):
 			sr_country = frappe.qb.DocType("Shipping Rule Country")
 			sr = frappe.qb.DocType("Shipping Rule")
 			query = (
-				frappe.qb.from_(sr_country)
-				.join(sr)
+				frappe.qb.from_(sr)
+				.left_join(sr_country)
 				.on(sr.name == sr_country.parent)
 				.select(sr.name)
 				.distinct()
-				.where((sr_country.country == country) & (sr.disabled != 1))
+				.where((sr_country.country == country) | sr_country.country.isnull())
+				.where(sr.disabled != 1)
+				.where(sr.show_on_website == 1)
 			)
 			result = query.run(as_list=True)
 			shipping_rules = [x[0] for x in result]
