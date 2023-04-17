@@ -25,7 +25,7 @@ frappe.ui.form.on('QuickBooks Migrator', {
  		frappe.realtime.on("quickbooks_progress_update", function (data) {
 			frm.dashboard.show_progress(data.message, (data.count / data.total) * 100, data.message)
 			if (data.count == data.total) {
-				window.setTimeout( function(message) {frm.dashboard.hide_progress(message)}, 1500, data.messsage)
+				window.setTimeout( function(message) {frm.dashboard.hide_progress(message)}, 1500, data.message)
 			}
 		})
 	},
