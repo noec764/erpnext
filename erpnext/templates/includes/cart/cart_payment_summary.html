@@ -56,11 +56,9 @@
 	{% include "templates/includes/cart/cart_items_credits_total.html" %}
 
 	{% if route == "cart" and doc.base_grand_total > 0 %}
-		<div class="card-footer btn-checkout">
-			<a class="btn btn-primary font-md w-100" type="button" href="/checkout">
-				{{ _('Proceed to checkout') }}
-			</a>
-		</div>
+		<a class="btn btn-primary btn-checkout font-md w-100" href="/checkout">
+			{{ _('Proceed to checkout') }}
+		</a>
 	{% elif cart_settings.enable_checkout %}
 		<button class="btn btn-primary btn-place-order font-md w-100" type="button">
 			{% if route == "cart" %}
