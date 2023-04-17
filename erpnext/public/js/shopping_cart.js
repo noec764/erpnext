@@ -53,27 +53,11 @@ frappe.ready(function () {
 	}
 
 	// update login
-	shopping_cart.show_shoppingcart_dropdown();
 	shopping_cart.set_cart_count();
 	shopping_cart.show_cart_navbar();
 });
 
 $.extend(shopping_cart, {
-	show_shoppingcart_dropdown: function () {
-		$(".shopping-cart").on('shown.bs.dropdown', function () {
-			if (!$('.shopping-cart-menu .cart-container').length) {
-				return frappe.call({
-					method: 'erpnext.e_commerce.shopping_cart.cart.get_shopping_cart_menu',
-					callback: function(r) {
-						if (r.message) {
-							$('.shopping-cart-menu').html(r.message);
-						}
-					}
-				});
-			}
-		});
-	},
-
 	update_cart: function (opts) {
 		if (frappe.session.user === "Guest") {
 			if (localStorage) {

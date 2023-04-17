@@ -243,14 +243,6 @@ def render_quotation(context=None):
 
 
 @frappe.whitelist()
-def get_shopping_cart_menu(context=None):
-	if not context:
-		context = get_cart_quotation()
-
-	return frappe.render_template("templates/includes/cart/cart_dropdown.html", context)
-
-
-@frappe.whitelist()
 def add_new_address(doc):
 	doc = frappe.parse_json(doc)
 	doc.update({"doctype": "Address"})
