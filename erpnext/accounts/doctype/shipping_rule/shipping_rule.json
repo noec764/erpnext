@@ -12,14 +12,12 @@
   "label",
   "shipping_rule_type",
   "column_break_4",
-  "description",
   "section_break_10",
   "company",
-  "column_break_12",
   "account",
-  "accounting_dimensions_section",
+  "column_break_12",
   "cost_center",
-  "dimension_col_break",
+  "taxes_and_charges",
   "shipping_amount_section",
   "calculate_based_on",
   "column_break_8",
@@ -27,8 +25,10 @@
   "custom_formula",
   "rule_conditions_section",
   "conditions",
-  "section_break_6",
-  "countries"
+  "countries_section",
+  "countries",
+  "description_section",
+  "description"
  ],
  "fields": [
   {
@@ -130,36 +130,40 @@
    "options": "Shipping Rule Condition"
   },
   {
-   "fieldname": "section_break_6",
-   "fieldtype": "Section Break",
-   "label": "Restrict to Countries"
-  },
-  {
+   "depends_on": "eval:!doc.apply_to_all_countries",
    "fieldname": "countries",
    "fieldtype": "Table",
    "label": "Valid for Countries",
    "options": "Shipping Rule Country"
   },
   {
-   "fieldname": "accounting_dimensions_section",
-   "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
-  },
-  {
-   "fieldname": "dimension_col_break",
-   "fieldtype": "Column Break"
+   "depends_on": "eval:doc.shipping_rule_type==='Selling'",
+   "fieldname": "taxes_and_charges",
+   "fieldtype": "Link",
+   "label": "Sales Taxes and Charges Template",
+   "options": "Sales Taxes and Charges Template"
   },
   {
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "in_preview": 1,
    "label": "Description"
+  },
+  {
+   "fieldname": "countries_section",
+   "fieldtype": "Section Break",
+   "label": "Restrict to Countries"
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Description"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 1,
  "links": [],
- "modified": "2023-04-13 15:55:13.500565",
+ "modified": "2023-04-18 01:40:00.738133",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",

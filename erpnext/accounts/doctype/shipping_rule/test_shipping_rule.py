@@ -45,6 +45,60 @@ class TestShippingRule(FrappeTestCase):
 			shipping_rule.get("conditions")[1].to_value = range_b[1]
 			self.assertRaises(OverlappingConditionError, shipping_rule.insert)
 
+	def test_with_taxes_on_shipping(self):
+		frappe.get_doc(
+			{
+				"doctype": "Sales Taxes and Charges Template",
+				"title": "_Test Tax for Shipping Rule",
+				"company": "_Test Company",
+				"taxes": [
+					{
+						# magically transforms into "On Previous Row Amount"
+						"charge_type": "On Net Total",
+						"account_head": "Sales Expenses - _TC",
+						"cost_center": "Main - _TC",
+						"description": "Shipping Tax",
+						"rate": 20,
+					}
+				],
+			}
+		).insert()
+
+		shipping_rule = frappe.copy_doc(test_records[0])
+		shipping_rule.conditions = []
+		shipping_rule.calculate_based_on = "Fixed"
+		shipping_rule.shipping_amount = 10
+		shipping_rule.label = "Fixed 1"
+		shipping_rule.taxes_and_charges = "_Test Tax for Shipping Rule - _TC"
+		shipping_rule.name = None
+		shipping_rule.insert()
+
+		si = frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"company": "_Test Company",
+				"customer": "_Test Customer",
+				"cost_center": "_Test Cost Center - _TC",
+				"currency": "INR",
+				"items": [
+					{
+						"item_code": "_Test Item",
+						"qty": 1,
+						"rate": 100,
+						"warehouse": "_Test Warehouse - _TC",
+						"cost_center": "_Test Cost Center - _TC",
+					},
+				],
+				"shipping_rule": shipping_rule.name,
+				"taxes_and_charges": "",
+			}
+		)
+		si.insert()
+
+		# 10.0 INR + 20% of 10.0 INR
+		self.assertEqual(si.total_taxes_and_charges, 12.0)
+		self.assertEqual(si.grand_total, 112.0)
+
 	def test_custom_formula(self):
 		shipping_rule = frappe.copy_doc(test_records[0])
 		shipping_rule.conditions = []
@@ -74,7 +128,6 @@ class TestShippingRule(FrappeTestCase):
 			}
 		)
 		si.insert()
-		si.save()
 
 		self.assertEqual(si.total_taxes_and_charges, 10.0)
 		self.assertEqual(si.grand_total, 110.0)
@@ -111,7 +164,6 @@ class TestShippingRule(FrappeTestCase):
 			}
 		)
 		si.insert()
-		si.save()
 
 		self.assertEqual(si.total_taxes_and_charges, 10.0)
 		self.assertEqual(si.grand_total, 110.0)

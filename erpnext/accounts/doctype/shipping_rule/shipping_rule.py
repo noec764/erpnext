@@ -154,7 +154,9 @@ class ShippingRule(Document):
 			# check if not applied on purchase
 			if not doc.meta.get_field("taxes").options == "Sales Taxes and Charges":
 				frappe.throw(_("Shipping rule only applicable for Selling"))
+
 			shipping_charge["doctype"] = "Sales Taxes and Charges"
+
 		else:
 			# check if not applied on sales
 			if not doc.meta.get_field("taxes").options == "Purchase Taxes and Charges":
@@ -164,14 +166,78 @@ class ShippingRule(Document):
 			shipping_charge["category"] = "Valuation and Total"
 			shipping_charge["add_deduct_tax"] = "Add"
 
-		existing_shipping_charge = doc.get("taxes", filters=shipping_charge)
-		if existing_shipping_charge:
+		# Find existing shipping charge row
+		if matches := doc.get("taxes", filters=shipping_charge):
 			# take the last record found
-			existing_shipping_charge[-1].tax_amount = shipping_amount
+			shipping_charge_row = matches[-1]
 		else:
-			shipping_charge["tax_amount"] = shipping_amount
-			shipping_charge["description"] = self.label
-			doc.append("taxes", shipping_charge)
+			shipping_charge_row = doc.append("taxes", shipping_charge)
+
+		# Update the found shipping charge or set the amount of the new one
+		shipping_charge_row.update(
+			{
+				"tax_amount": shipping_amount,
+				"description": self.label,
+			}
+		)
+
+		# Add tax on shipping if applicable
+		if self.shipping_rule_type == "Selling" and self.taxes_and_charges:
+			self.add_tax_on_shipping(
+				doc,
+				shipping_charge_row,
+				tax_template_dt="Sales Taxes and Charges Template",
+				tax_template_name=self.taxes_and_charges,
+			)
+
+	def add_tax_on_shipping(self, doc, shipping_charge_row, tax_template_dt, tax_template_name):
+		# Find existing tax by referenced row id (the not-so-clearly named row_id)
+		tax_on_shipping_row = None
+		if matches := doc.get("taxes", filters={"row_id": shipping_charge_row.idx}):
+			tax_on_shipping_row = matches[-1]
+
+		# If there is no tax on shipping, create it
+		if not tax_on_shipping_row:
+			tax_on_shipping_row = doc.append("taxes", {})
+
+		from erpnext.controllers.accounts_controller import get_taxes_and_charges
+
+		tax_template: list = get_taxes_and_charges(tax_template_dt, tax_template_name)
+
+		if len(tax_template) != 1:
+			frappe.throw(
+				_("{0}: {1}").format(
+					_("Shipping rule has invalid tax template"),
+					_("Must have exactly one row"),
+				)
+			)
+
+		tax_on_shipping_values = tax_template[0]
+		accepted_charge_types = ["Actual", "On Previous Row Amount", "On Net Total"]
+		if tax_on_shipping_values.charge_type not in accepted_charge_types:
+			frappe.throw(
+				_("{0}: {1}").format(
+					_("Shipping rule has invalid tax template"),
+					_("Charge type must be one of {0}").format(", ".join(accepted_charge_types)),
+				)
+			)
+
+		# HACK: Transform "On Net Total" into "On Previous Row Amount"
+		# because here we're only considering the shipping charge
+		if tax_on_shipping_values.charge_type == "On Net Total":
+			tax_on_shipping_values.charge_type = "On Previous Row Amount"
+
+		# Update the tax on shipping row
+		if tax_on_shipping_values.charge_type == "Actual":
+			tax_on_shipping_values.row_id = None
+		else:
+			tax_on_shipping_values.row_id = shipping_charge_row.idx
+
+		tax_on_shipping_values.description = (
+			self.label + " - " + (tax_on_shipping_values.description or tax_template_name)
+		)
+
+		tax_on_shipping_row.update(tax_on_shipping_values)
 
 	def sort_shipping_rule_conditions(self):
 		"""Sort Shipping Rule Conditions based on increasing From Value"""
