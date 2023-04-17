@@ -210,6 +210,9 @@ def get_result_as_list(data, filters):
 
 		credit = "{:.2f}".format(d.get("credit")).replace(".", ",")
 
+		if d.debit == d.credit == 0:
+			continue
+
 		Idevise = d.get("account_currency")
 
 		DateLet = get_date_let(d, party_data) if d.get("against_voucher") else None
