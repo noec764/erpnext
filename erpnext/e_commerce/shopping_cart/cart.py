@@ -810,11 +810,11 @@ def validate_shipping_rule(quotation, cart_settings):
 	shipping_rules = get_shipping_rules(quotation, cart_settings)
 	if shipping_rules or quotation.shipping_rule:
 		if not quotation.shipping_rule:
-			frappe.throw(_("Please select a Shipping Method"))
+			frappe.throw(_("Please select a shipping method"))
 		elif not shipping_rules or quotation.shipping_rule not in shipping_rules:
 			apply_shipping_rule(None)
 			frappe.db.commit()
-			frappe.throw(_("Shipping Method is no longer applicable"))
+			frappe.throw(_("The shipping method is no longer applicable"))
 
 
 @frappe.whitelist()
