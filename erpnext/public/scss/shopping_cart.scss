@@ -1510,3 +1510,30 @@ body.product-page {
 .item-card .card {
 	border: none;
 }
+
+/* Checkout page - Shipping summary */
+.shipping-methods-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+.shipping-methods-list legend {
+	all: unset;
+}
+.shipping-methods-list label {
+	margin: 0 !important;
+}
+.shipping-methods-list input {
+	margin: 0 !important;
+	vertical-align: -2px;
+}
+.shipping-methods-list label .description {
+	font-size: 0.8rem;
+	line-height: 1.3;
+}
+.shipping-methods-list label .description p {
+	line-height: 1.3;
+}
+.shipping-methods-list label .estimated-cost {
+	font-weight: 500;
+}

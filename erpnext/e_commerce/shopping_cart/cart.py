@@ -44,14 +44,29 @@ def get_cart_quotation(doc=None):
 	if not doc.customer_address and addresses:
 		update_cart_address("billing", addresses[0].name)
 
-	return {
+	route = ""
+	if hasattr(frappe, "request"):
+		route = frappe.local.request.path.strip("/ ")
+		if not route:
+			route = frappe.request.environ.get("HTTP_REFERER")
+			route = route.split("/")[-1] if route else None
+
+	context = {
+		"route": route,
 		"doc": decorate_quotation_doc(doc),
 		"shipping_addresses": get_shipping_addresses(party),
 		"billing_addresses": get_billing_addresses(party),
-		"shipping_rules": get_applicable_shipping_rules(party),
 		"cart_settings": get_shopping_cart_settings(),
+		"shipping_rules": get_applicable_shipping_rules(party),
 		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
+		"shipping_estimates": [],
 	}
+
+	if context["shipping_rules"]:
+		names = list(map(lambda rule: rule.name, context["shipping_rules"]))
+		context["shipping_estimates"] = get_estimates_for_shipping(names)
+
+	return context
 
 
 @frappe.whitelist()
@@ -201,16 +216,30 @@ def update_cart(item_code, qty, additional_notes=None, with_items=False, uom=Non
 	set_cart_count(quotation)
 
 	if cint(with_items):
-		context = get_cart_quotation(quotation)
-		return {
-			"items": frappe.render_template("templates/includes/cart/cart_items.html", context),
-			"total": frappe.render_template("templates/includes/cart/cart_items_total.html", context),
-			"taxes_and_totals": frappe.render_template(
-				"templates/includes/cart/cart_payment_summary.html", context
-			),
-		}
+		return render_quotation(get_cart_quotation(quotation))
 	else:
 		return {"name": quotation.name}
+
+
+def render_quotation(context=None):
+	if not context:
+		context = get_cart_quotation()
+
+	out = {
+		"items": frappe.render_template("templates/includes/cart/cart_items.html", context),
+		"total": frappe.render_template("templates/includes/cart/cart_items_total.html", context),
+		"taxes_and_totals": frappe.render_template(
+			"templates/includes/cart/cart_payment_summary.html", context
+		),
+		"shipping": "",
+	}
+
+	if context["shipping_rules"]:
+		out["shipping"] = frappe.render_template(
+			"templates/includes/cart/shipping_summary.html", context
+		)
+
+	return out
 
 
 @frappe.whitelist()
@@ -306,10 +335,7 @@ def update_cart_address(address_type, address_name):
 	context = get_cart_quotation(quotation)
 	context["address"] = address_doc
 
-	return {
-		"taxes": frappe.render_template("templates/includes/order/order_taxes.html", context),
-		"address": frappe.render_template("templates/includes/cart/address_card.html", context),
-	}
+	return render_quotation(context)
 
 
 def guess_territory():
@@ -660,16 +686,10 @@ def apply_shipping_rule(shipping_rule):
 	quotation.flags.ignore_permissions = True
 	quotation.save()
 
-	return get_cart_quotation(quotation)
+	return render_quotation(get_cart_quotation(quotation))
 
 
 def _apply_shipping_rule(party=None, quotation=None, cart_settings=None):
-	if not quotation.shipping_rule:
-		shipping_rules = get_shipping_rules(quotation, cart_settings)
-
-		if shipping_rules and len(shipping_rules) == 1:
-			quotation.shipping_rule = shipping_rules[0]
-
 	if quotation.shipping_rule:
 		quotation.run_method("apply_shipping_rule")
 		quotation.run_method("calculate_taxes_and_totals")
@@ -768,7 +788,8 @@ def apply_coupon_code(applied_code, applied_referral_sales_partner):
 
 @frappe.whitelist()
 def get_estimates_for_shipping(names: list[str]):
-	names = frappe.parse_json(names)
+	if isinstance(names, str):
+		names = frappe.parse_json(names)
 	if not names:
 		return {}
 	if not isinstance(names, list):
@@ -797,8 +818,13 @@ def validate_shipping_rule(quotation, cart_settings):
 	shipping_rules = get_shipping_rules(quotation, cart_settings)
 	if shipping_rules or quotation.shipping_rule:
 		if not quotation.shipping_rule:
-			frappe.throw(_("Please select a Shipping Rule"))
-		elif not shipping_rules:
-			frappe.throw(_("Shipping Rule is no longer applicable"))
-		elif quotation.shipping_rule not in shipping_rules:
-			frappe.throw(_("Shipping Rule is no longer applicable"))
+			frappe.throw(_("Please select a Shipping Method"))
+		elif not shipping_rules or quotation.shipping_rule not in shipping_rules:
+			apply_shipping_rule(None)
+			frappe.db.commit()
+			frappe.throw(_("Shipping Method is no longer applicable"))
+
+
+@frappe.whitelist()
+def rerender_cart():
+	return render_quotation()

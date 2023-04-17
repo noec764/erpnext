@@ -12,6 +12,7 @@ from erpnext.venue.utils import get_customer
 
 
 def get_context(context):
+	context.no_cache = 1
 	context.body_class = "product-page"
 	context.update(get_cart_quotation())
 

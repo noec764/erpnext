@@ -136,21 +136,7 @@ $.extend(shopping_cart, {
 
 		const onError = (response) => {
 			shopping_cart.unfreeze();
-			if (response.exc) {
-				let msg = frappe._("Something went wrong!");
-				if (response._server_messages) {
-					msg = JSON.parse(response._server_messages).map(m => JSON.parse(m))
-					msg = msg.map(m => typeof m === 'object' ? m.message : m)
-					msg = msg.join("<br>");
-				}
-
-				$("#cart-error")
-					.empty()
-					.html(msg)
-					.toggle(true);
-			} else {
-				console.error(response);
-			}
+			shopping_cart._show_error_after_action(response);
 		}
 
 		return frappe.call({
@@ -177,17 +163,9 @@ $.extend(shopping_cart, {
 			method: "erpnext.e_commerce.shopping_cart.cart.request_for_quotation",
 			btn: btn,
 			callback: function(r) {
-				if(r.exc) {
+				if (r.exc) {
 					shopping_cart.unfreeze();
-					var msg = "";
-					if(r._server_messages) {
-						msg = JSON.parse(r._server_messages || []).join("<br>");
-					}
-
-					$("#cart-error")
-						.empty()
-						.html(msg || frappe._("Something went wrong!"))
-						.toggle(true);
+					shopping_cart._show_error_after_action(r);
 				} else {
 					$(btn).hide();
 					window.location.href = '/quotations/' + encodeURIComponent(r.message);
@@ -243,6 +221,55 @@ $.extend(shopping_cart, {
 		}
 	},
 
+	render_form_server_side(values) {
+		$(".cart-items").html(values.items ?? "");
+		$(".cart-tax-items").html(values.total ?? "");
+		$(".payment-summary").html(values.taxes_and_totals ?? "");
+		$(".shipping-summary").html(values.shipping ?? "");
+	},
+
+	_fetch_and_rerender() {
+		return frappe.call({
+			method: "erpnext.e_commerce.shopping_cart.cart.rerender_cart",
+			callback(r) {
+				if (!r.exc) {
+					shopping_cart.render_form_server_side(r.message);
+					shopping_cart.set_cart_count();
+				} else {
+					console.error(r);
+				}
+			}
+		});
+	},
+
+	clear_error() {
+		$("#cart-error").empty().toggle(false);
+	},
+
+	show_error(msg) {
+		$("#cart-error").html(msg).toggle(true);
+	},
+
+	_show_error_after_action(response) {
+		if (response.exc) {
+			let msg = __("Something went wrong!");
+			try {
+				if (response._server_messages) {
+					msg = JSON.parse(response._server_messages).map(m => JSON.parse(m))
+					msg = msg.map(m => typeof m === 'object' ? m.message : m)
+					msg = msg.join("<br>");
+				}
+			} catch (e) {
+				console.error(e);
+			}
+
+			shopping_cart.show_error(msg);
+			shopping_cart._fetch_and_rerender(msg);
+		} else {
+			console.error(response);
+		}
+	},
+
 	shopping_cart_update: function ({ item_code, qty, cart_dropdown, additional_notes, uom, booking }) {
 		frappe.freeze();
 		return shopping_cart.update_cart({
@@ -255,9 +282,8 @@ $.extend(shopping_cart, {
 			booking: booking,
 			callback: function(r) {
 				if(!r.exc) {
-					$(".cart-items").html(r.message.items);
-					$(".cart-tax-items").html(r.message.total);
-					$(".payment-summary").html(r.message.taxes_and_totals);
+					shopping_cart.clear_error();
+					shopping_cart.render_form_server_side(r.message);
 					shopping_cart.set_cart_count();
 
 					if (cart_dropdown != true) {
@@ -355,6 +381,13 @@ $.extend(shopping_cart, {
 									address_name: r.message.name
 								},
 								callback: function (r) {
+									if (r.exc) {
+										console.error(r);
+										return;
+									}
+									shopping_cart.clear_error();
+									shopping_cart.render_form_server_side(r.message);
+
 									resolve();
 									d.hide();
 

@@ -6,11 +6,6 @@ frappe.provide("erpnext.e_commerce.shopping_cart");
 var shopping_cart = erpnext.e_commerce.shopping_cart;
 
 $.extend(shopping_cart, {
-	show_error: function(title, text) {
-		$(".cart-container").html('<div class="msg-box"><h4>' +
-			title + '</h4><p class="text-muted">' + text + '</p></div>');
-	},
-
 	bind_events: function() {
 		shopping_cart.bind_change_qty();
 		shopping_cart.bind_remove_cart_item();

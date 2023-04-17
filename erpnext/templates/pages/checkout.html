@@ -27,10 +27,12 @@
 			</div>
 			{% endif %}
 
-			<div class="cart-payment-addresses">
-				<div class="mb-3 frappe-card p-5 payment-summary">
+			<div class="frappe-card p-5 cart-payment-addresses">
+				<div class="payment-summary">
 					{% include "templates/includes/cart/cart_payment_summary.html" %}
 				</div>
+
+				<div id="cart-error" class="m-0 mt-3 alert alert-danger" style="display: none;"></div>
 			</div>
 		</div>
 	</div>

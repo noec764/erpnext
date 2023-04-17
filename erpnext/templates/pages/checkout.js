@@ -6,11 +6,6 @@ frappe.provide("erpnext.e_commerce.shopping_cart");
 var shopping_cart = erpnext.e_commerce.shopping_cart;
 
 $.extend(shopping_cart, {
-	show_error: function(title, text) {
-		$(".cart-container").html('<div class="msg-box"><h4>' +
-			title + '</h4><p class="text-muted">' + text + '</p></div>');
-	},
-
 	bind_events: function() {
 		shopping_cart.bind_address_picker_dialog();
 		shopping_cart.bind_place_order();
@@ -52,10 +47,8 @@ $.extend(shopping_cart, {
 					callback: function(r) {
 						d.hide();
 						if (!r.exc) {
-							$(".cart-tax-items").html(r.message.total);
-							shopping_cart.parent.find(
-								`.address-container[data-address-type="${address_type}"]`
-							).html(r.message.address);
+							shopping_cart.clear_error();
+							shopping_cart.render_form_server_side(r.message);
 						}
 					}
 				});
@@ -99,14 +92,9 @@ $.extend(shopping_cart, {
 			args: { shipping_rule: rule },
 			callback(r) {
 				frappe.unfreeze();
-				if (r.exc) {
-					frappe.throw(r.exc);
-				} else {
-					shopping_cart.shopping_cart_update({
-						item_code: null,
-						qty: null,
-						booking: null,
-					});
+				if (!r.exc) {
+					shopping_cart.clear_error();
+					shopping_cart.render_form_server_side(r.message);
 				}
 			}
 		});
