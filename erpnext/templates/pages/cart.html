@@ -80,17 +80,16 @@
 		</div>
 
 		<!-- Right section -->
-		<div class="col-md-4">
+		<div class="col-md-4 h-100">
 			<div class="cart-payment-addresses pb-4 h-100">
-				<!-- Apply Coupon Code  -->
+				<!-- Apply Coupon Code -->
 				{% set show_coupon_code = cart_settings.show_apply_coupon_code_in_website and cart_settings.enable_checkout %}
 				{% if show_coupon_code == 1%}
-					<div class="mb-3">
-						<div class="row no-gutters">
-							<input type="text" class="txtcoupon form-control mr-3 w-50 font-md" placeholder="Enter Coupon Code" name="txtcouponcode"  ></input>
-							<button class="btn btn-primary btn-sm bt-coupon font-md">{{ _("Apply Coupon Code") }}</button>
-							<input type="hidden" class="txtreferral_sales_partner font-md" placeholder="Enter Sales Partner" name="txtreferral_sales_partner" type="text"></input>
-							</div>
+					<div class="mb-3 frappe-card p-5 d-flex flex-column" style="gap: 0.5em;">
+						<h6>{{ _("Coupon Code") }}</h6>
+						<input type="text" class="txtcoupon form-control mr-3 font-md" placeholder="{{ _('Enter Coupon Code') }}" name="txtcouponcode" />
+						<button class="btn btn-primary-light btn-sm bt-coupon font-md">{{ _("Apply Coupon Code") }}</button>
+						<input type="hidden" class="txtreferral_sales_partner font-md" placeholder="Enter Sales Partner" name="txtreferral_sales_partner" type="text" />
 					</div>
 				{% endif %}
 
