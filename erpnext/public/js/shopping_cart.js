@@ -420,23 +420,25 @@ $.extend(shopping_cart, {
 	},
 
 	freeze() {
-		if (window.location.pathname !== "/cart") return;
+		if (window.location.pathname !== "/cart" && window.location.pathname !== "/checkout") {
+			return;
+		}
 
 		if (!$('#freeze').length) {
 			let freeze = $('<div id="freeze" class="modal-backdrop fade"></div>')
 				.appendTo("body");
 
 			setTimeout(function() {
-				freeze.addClass("show");
+				freeze.addClass("in");
 			}, 1);
 		} else {
-			$("#freeze").addClass("show");
+			$("#freeze").addClass("in");
 		}
 	},
 
 	unfreeze() {
 		if ($('#freeze').length) {
-			let freeze = $('#freeze').removeClass("show");
+			let freeze = $('#freeze').removeClass("in");
 			setTimeout(function() {
 				freeze.remove();
 			}, 1);
