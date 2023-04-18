@@ -355,36 +355,50 @@ $.extend(shopping_cart, {
 					},
 				],
 				primary_action_label: __('Save'),
-				primary_action: (values) => {
-					frappe.call('erpnext.e_commerce.shopping_cart.cart.add_new_address', { doc: values })
-						.then(r => {
-							frappe.call({
-								method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
-								args: {
-									address_type: r.message.address_type,
-									address_name: r.message.name
-								},
-								callback: function (r) {
-									if (r.exc) {
-										console.error(r);
-										return;
-									}
-									shopping_cart.clear_error();
-									shopping_cart.render_form_server_side(r.message);
+				primary_action: async (values) => {
+					shopping_cart.freeze();
 
-									resolve();
-									d.hide();
+					try {
+						const r = await frappe.call('erpnext.e_commerce.shopping_cart.cart.add_new_address', { doc: values })
+						const r2 = await shopping_cart.update_cart_address(r.message.address_type, r.message.name)
 
-									reload && window.location.reload();
-								}
-							});
-						});
+						resolve();
+						d.hide();
 
+						reload && window.location.reload();
+					} catch (error) {
+						reject(error);
+					} finally {
+						shopping_cart.unfreeze();
+					}
 				}
 			})
 			d.$wrapper.find(".modal-content").addClass("frappe-card");
 			d.on_hide = () => reject(); // reject the promise when closing the modal, if not resolved first
 			d.show();
+		});
+	},
+
+	update_cart_address(address_type, address_name) {
+		return new Promise((resolve, reject) => {
+			shopping_cart.freeze();
+
+			frappe.call({
+				method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
+				args: { address_type, address_name },
+				always(r) {
+					console.log(r);
+					if (r.exc) {
+						shopping_cart._show_error_after_action(r);
+						reject(r);
+					} else {
+						shopping_cart.clear_error();
+						shopping_cart.render_from_server_side(r.message);
+						resolve(r);
+					}
+					shopping_cart.unfreeze();
+				},
+			});
 		});
 	},
 
