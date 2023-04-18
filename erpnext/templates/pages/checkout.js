@@ -44,13 +44,15 @@ $.extend(shopping_cart, {
 				const $card = d.$wrapper.find('.address-card.active');
 				const address_type = $card.closest('[data-address-type]').attr('data-address-type');
 				const address_name = $card.closest('[data-address-name]').attr('data-address-name');
+				const billing_address_is_same_as_shipping_address = $("#input_same_billing").prop("checked") ? '1' : '0';
 				frappe.call({
 					type: "POST",
 					method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
 					freeze: true,
 					args: {
 						address_type,
-						address_name
+						address_name,
+						billing_address_is_same_as_shipping_address,
 					},
 					always(r) {
 						if (r.exc) {

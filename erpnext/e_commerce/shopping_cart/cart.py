@@ -42,7 +42,7 @@ def get_cart_quotation(doc=None):
 	addresses = get_address_docs(party=party)
 
 	if not doc.customer_address and addresses:
-		update_cart_address("billing", addresses[0].name)
+		update_cart_address("billing", addresses[0].name, no_render=True)
 
 	route = ""
 	if hasattr(frappe, "request"):
@@ -231,6 +231,7 @@ def render_quotation(context=None):
 		"taxes_and_totals": frappe.render_template(
 			"templates/includes/cart/cart_payment_summary.html", context
 		),
+		"cart_address": frappe.render_template("templates/includes/cart/cart_address.html", context),
 		"shipping": "",
 	}
 
@@ -302,32 +303,46 @@ def get_terms_and_conditions(terms_name):
 
 
 @frappe.whitelist()
-def update_cart_address(address_type, address_name):
+def update_cart_address(
+	address_type,
+	address_name,
+	billing_address_is_same_as_shipping_address: str = "0",
+	no_render=False,
+):
+	billing_address_is_same_as_shipping_address = cint(billing_address_is_same_as_shipping_address)
+
 	quotation = _get_cart_quotation()
 	address_doc = frappe.get_doc("Address", address_name).as_dict()
 	address_display = get_address_display(address_doc)
+
+	shipping_addresses = get_shipping_addresses()
+	billing_addresses = get_billing_addresses()
 
 	if address_type.lower() == "billing":
 		quotation.customer_address = address_name
 		quotation.address_display = address_display
 		quotation.shipping_address_name = quotation.shipping_address_name or address_name
-		address_doc = next((doc for doc in get_billing_addresses() if doc["name"] == address_name), None)
+		address_doc = next((doc for doc in shipping_addresses if doc["name"] == address_name), None)
 	elif address_type.lower() == "shipping":
 		quotation.shipping_address_name = address_name
 		quotation.shipping_address = address_display
 		quotation.customer_address = quotation.customer_address or address_name
-		address_doc = next(
-			(doc for doc in get_shipping_addresses() if doc["name"] == address_name), None
-		)
+		address_doc = next((doc for doc in billing_addresses if doc["name"] == address_name), None)
+
+	if billing_address_is_same_as_shipping_address:
+		quotation.customer_address = quotation.shipping_address_name = address_name
+		quotation.address_display = quotation.shipping_address = address_display
+
+	if not validate_shipping_rule(quotation, throw_exception=False):
+		quotation.shipping_rule = None
+
 	apply_cart_settings(quotation=quotation)
 
 	quotation.flags.ignore_permissions = True
 	quotation.save()
 
-	context = get_cart_quotation(quotation)
-	context["address"] = address_doc
-
-	return render_quotation(context)
+	if not no_render:
+		return render_quotation(get_cart_quotation(quotation))
 
 
 def guess_territory():
@@ -781,7 +796,6 @@ def apply_coupon_code(applied_code, applied_referral_sales_partner):
 	return quotation
 
 
-@frappe.whitelist()
 def get_estimates_for_shipping(names: list[str]):
 	if isinstance(names, str):
 		names = frappe.parse_json(names)
@@ -809,15 +823,23 @@ def get_estimates_for_shipping(names: list[str]):
 	return estimates
 
 
-def validate_shipping_rule(quotation, cart_settings):
+def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
 	shipping_rules = get_shipping_rules(quotation, cart_settings)
+
 	if shipping_rules or quotation.shipping_rule:
 		if not quotation.shipping_rule:
-			frappe.throw(_("Please select a shipping method"))
-		elif not shipping_rules or quotation.shipping_rule not in shipping_rules:
-			apply_shipping_rule(None)
-			frappe.db.commit()
-			frappe.throw(_("The shipping method is no longer applicable"))
+			if throw_exception:
+				frappe.throw(_("Please select a shipping method"))
+			return False
+
+		if not shipping_rules or quotation.shipping_rule not in shipping_rules:
+			if throw_exception:
+				apply_shipping_rule(None)
+				frappe.db.commit()
+				frappe.throw(_("The shipping method is no longer applicable"))
+			return False
+
+	return True
 
 
 @frappe.whitelist()
