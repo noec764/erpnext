@@ -192,9 +192,12 @@ class ShippingRule(Document):
 
 	def add_tax_on_shipping(self, doc, shipping_charge_row, tax_template_dt, tax_template_name):
 		# Find existing tax by referenced row id (the not-so-clearly named row_id)
+		# NOTE: Do NOT use doc.get with filters, as the row_id is not an 'int' but a 'str'
 		tax_on_shipping_row = None
-		if matches := doc.get("taxes", filters={"row_id": shipping_charge_row.idx}):
-			tax_on_shipping_row = matches[-1]
+		for tax in doc.get("taxes"):
+			if str(tax.row_id) == str(shipping_charge_row.idx):
+				tax_on_shipping_row = tax
+				# keep last -> no break
 
 		# If there is no tax on shipping, create it
 		if not tax_on_shipping_row:
