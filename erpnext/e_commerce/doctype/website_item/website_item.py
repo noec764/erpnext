@@ -324,6 +324,7 @@ class WebsiteItem(WebsiteGenerator):
 			additional_uoms=[u.uom for u in self.enabled_booking_uom],
 		)
 
+	@frappe.whitelist()
 	def copy_specification_from_item_group(self):
 		self.set("website_specifications", [])
 		if self.item_group:
