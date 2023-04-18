@@ -47,7 +47,13 @@
 	<div class="cart-empty-state">
 		<img src="/assets/erpnext/images/ui-states/cart-empty-state.png" alt="Empty State">
 	</div>
-	<div class="cart-empty-message mt-4">{{ _('No checkout available') }}</p>
+	<p class="cart-empty-message mt-4">{{ _('No checkout available') }}</p>
+
+	<div class="continue-shopping-container">
+		<a class="btn btn-primary mr-2 font-md btn-continue-shopping" href="/all-products">
+			{{ _('Continue Shopping') }}
+		</a>
+	</div>
 </div>
 {% endif %}
 

@@ -108,14 +108,18 @@
 	</div>
 	<div class="cart-empty-message mt-4">{{ _('Your cart is Empty') }}</p>
 	{% if cart_settings.enable_checkout %}
-		<a class="btn btn-outline-primary" href="/orders" style="font-size: 16px;">
+		<a class="btn btn-outline-primary" href="/orders">
 			{{ _('See past orders') }}
 		</a>
 		{% else %}
-		<a class="btn btn-outline-primary" href="/quotations" style="font-size: 16px;">
+		<a class="btn btn-outline-primary" href="/quotations">
 			{{ _('See past quotations') }}
 		</a>
 	{% endif %}
+
+	<a class="btn btn-primary ml-2 btn-continue-shopping" href="/all-products">
+		{{ _('Continue Shopping') }}
+	</a>
 </div>
 {% endif %}
 
