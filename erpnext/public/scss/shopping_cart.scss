@@ -888,10 +888,8 @@ body.product-page {
 			}
 		}
 
-		.cart-payment-addresses {
-			hr {
-				border-color: var(--border-color);
-			}
+		.shipping-summary:empty {
+			display: none !important;
 		}
 
 		.payment-summary {

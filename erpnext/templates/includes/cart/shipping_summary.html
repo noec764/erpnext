@@ -1,6 +1,6 @@
 {% if shipping_rules %}
 <fieldset class="shipping-methods-list">
-	<legend><h6>{{ _("Choose a shipping method") }}</h6></legend>
+	<legend><h6>{{ _("Select a shipping method") }}</h6></legend>
 
 	{% set current_shipping_method = doc.shipping_rule or "" %}
 
@@ -29,16 +29,4 @@
 	</label>
 	{% endfor %}
 </fieldset>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-	frappe.provide("erpnext.e_commerce.shopping_cart");
-	const shopping_cart = erpnext.e_commerce.shopping_cart;
-
-	$(".cart-container").on("change", ".shipping-methods-list input[name=shipping]", (e) => {
-		const shipping_method = e.target.value;
-		shopping_cart.apply_shipping_rule(shipping_method);
-	});
-});
-</script>
 {% endif %}

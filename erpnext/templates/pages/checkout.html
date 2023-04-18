@@ -28,11 +28,9 @@
 
 		<!-- Right section -->
 		<div class="col-md-4">
-			{% if shipping_rules %}
 			<div class="mb-3 frappe-card p-5 shipping-summary">
-				{% include "templates/includes/cart/shipping_summary.html" %}
+				{%- include "templates/includes/cart/shipping_summary.html" -%}
 			</div>
-			{% endif %}
 
 			<div class="frappe-card p-5 cart-payment-addresses">
 				<div class="payment-summary">

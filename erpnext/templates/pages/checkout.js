@@ -11,6 +11,7 @@ $.extend(shopping_cart, {
 		shopping_cart.bind_place_order();
 		shopping_cart.bind_request_quotation();
 		shopping_cart.bind_coupon_code();
+		shopping_cart.bind_shipping_method();
 	},
 
 	bind_address_picker_dialog: function() {
@@ -21,6 +22,13 @@ $.extend(shopping_cart, {
 				this.get_address_template(type)
 			);
 			d.show();
+		});
+	},
+
+	bind_shipping_method() {
+		$(".cart-container").on("change", ".shipping-methods-list input[name=shipping]", (e) => {
+			const shipping_method = e.target.value;
+			shopping_cart.apply_shipping_rule(shipping_method);
 		});
 	},
 
