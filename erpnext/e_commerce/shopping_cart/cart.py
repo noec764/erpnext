@@ -521,6 +521,7 @@ def set_taxes(quotation, cart_settings):
 		billing_address=quotation.customer_address,
 		shipping_address=quotation.shipping_address_name,
 		use_for_shopping_cart=1,
+		doctype="Quotation",
 	)
 
 	# clear table
