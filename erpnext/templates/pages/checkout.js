@@ -52,13 +52,15 @@ $.extend(shopping_cart, {
 						address_type,
 						address_name
 					},
-					callback: function(r) {
-						d.hide();
-						if (!r.exc) {
+					always(r) {
+						if (r.exc) {
+							shopping_cart._show_error_after_action(r);
+						} else {
+							d.hide();
 							shopping_cart.clear_error();
-							shopping_cart.render_form_server_side(r.message);
+							shopping_cart.render_from_server_side(r.message);
 						}
-					}
+					},
 				});
 			}
 		});
@@ -102,7 +104,7 @@ $.extend(shopping_cart, {
 				frappe.unfreeze();
 				if (!r.exc) {
 					shopping_cart.clear_error();
-					shopping_cart.render_form_server_side(r.message);
+					shopping_cart.render_from_server_side(r.message);
 				}
 			}
 		});

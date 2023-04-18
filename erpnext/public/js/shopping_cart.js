@@ -118,25 +118,20 @@ $.extend(shopping_cart, {
 	place_order: function(btn) {
 		shopping_cart.freeze();
 
-		const onError = (response) => {
-			shopping_cart.unfreeze();
-			shopping_cart._show_error_after_action(response);
-		}
-
 		return frappe.call({
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.place_order",
 			btn: btn,
-		}).then((r) => {
-			if (r.exc) {
-				onError(r);
-			} else {
-				$(btn).hide();
-				window.location.href = '/orders/' + encodeURIComponent(r.message);
-			}
-		}).catch((r) => {
-			onError(r.responseJSON);
-		})
+			always(r) {
+				if (r.exc) {
+					shopping_cart.unfreeze();
+					shopping_cart._show_error_after_action(r);
+				} else {
+					$(btn).hide();
+					window.location.href = '/orders/' + encodeURIComponent(r.message);
+				}
+			},
+		});
 	},
 
 	request_quotation: function(btn) {
@@ -146,7 +141,7 @@ $.extend(shopping_cart, {
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.request_for_quotation",
 			btn: btn,
-			callback: function(r) {
+			always(r) {
 				if (r.exc) {
 					shopping_cart.unfreeze();
 					shopping_cart._show_error_after_action(r);
@@ -205,22 +200,21 @@ $.extend(shopping_cart, {
 		}
 	},
 
-	render_form_server_side(values) {
+	render_from_server_side(values) {
 		$(".cart-items").html(values.items ?? "");
 		$(".cart-tax-items").html(values.total ?? "");
 		$(".payment-summary").html(values.taxes_and_totals ?? "");
 		$(".shipping-summary").html(values.shipping ?? "");
+		$(".cart-addresses").html(values.cart_address ?? "");
 	},
 
 	_fetch_and_rerender() {
 		return frappe.call({
 			method: "erpnext.e_commerce.shopping_cart.cart.rerender_cart",
-			callback(r) {
+			always(r) {
 				if (!r.exc) {
-					shopping_cart.render_form_server_side(r.message);
-					shopping_cart.set_cart_count();
-				} else {
-					console.error(r);
+					shopping_cart.render_from_server_side(r.message);
+					// shopping_cart.set_cart_count();
 				}
 			}
 		});
@@ -248,7 +242,7 @@ $.extend(shopping_cart, {
 			}
 
 			shopping_cart.show_error(msg);
-			shopping_cart._fetch_and_rerender(msg);
+			shopping_cart._fetch_and_rerender();
 		} else {
 			console.error(response);
 		}
@@ -267,7 +261,7 @@ $.extend(shopping_cart, {
 			callback: function(r) {
 				if(!r.exc) {
 					shopping_cart.clear_error();
-					shopping_cart.render_form_server_side(r.message);
+					shopping_cart.render_from_server_side(r.message);
 					shopping_cart.set_cart_count();
 
 					if (cart_dropdown != true) {
