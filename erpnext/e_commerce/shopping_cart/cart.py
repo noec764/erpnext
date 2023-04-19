@@ -45,10 +45,10 @@ def get_cart_quotation(doc=None):
 		update_cart_address("billing", addresses[0].name, no_render=True)
 
 	route = ""
-	if hasattr(frappe, "request"):
+	if hasattr(frappe.local, "request"):
 		route = frappe.local.request.path.strip("/ ")
 		if not route:
-			route = frappe.request.environ.get("HTTP_REFERER")
+			route = frappe.local.request.environ.get("HTTP_REFERER")
 			route = route.split("/")[-1] if route else None
 
 	context = {
