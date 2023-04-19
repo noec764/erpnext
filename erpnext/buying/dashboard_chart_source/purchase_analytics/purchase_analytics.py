@@ -92,9 +92,7 @@ def sort_and_filter_data(data, limit=None):
 				filtered_data.append(group[0])
 			else:
 				max_value = max(group, key=lambda g: g["indent"])
-				for g in group:
-					if g.get("indent") == max_value:
-						filtered_data.append(g)
+				filtered_data.append(max_value)
 
 	if limit:
 		filtered_data.sort(key=lambda x: x["total"], reverse=True)
