@@ -1,4 +1,5 @@
 {
+ "color": "#39E4A5",
  "creation": "2020-07-20 21:01:02.499689",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -9,7 +10,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Active Suppliers",
- "modified": "2020-07-22 12:48:23.295193",
+ "modified": "2023-04-19 15:54:55.029181",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Active Suppliers",

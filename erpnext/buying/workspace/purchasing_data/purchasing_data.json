@@ -1,6 +1,11 @@
 {
- "charts": [],
- "content": "[{\"id\":\"P63FV1PndG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Data</span>\",\"col\":12}},{\"id\":\"E-o6SKo2Oe\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Active Suppliers\",\"col\":4}},{\"id\":\"zWcJWXfEGk\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"JKQAi5pBVW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":3}},{\"id\":\"d7eY7rOpEx\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XwfMOUbBs6\",\"type\":\"card\",\"data\":{\"card_name\":\"Suppliers\",\"col\":4}},{\"id\":\"RpUzyupCkr\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HwFo8FKDg_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items\",\"col\":4}},{\"id\":\"kWaQh6_K7i\",\"type\":\"card\",\"data\":{\"card_name\":\"Prices\",\"col\":4}},{\"id\":\"kGQ7ryBeN-\",\"type\":\"card\",\"data\":{\"card_name\":\"Bundles\",\"col\":4}},{\"id\":\"_xy_RDJMpG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"uXSpVFjQE0\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecards\",\"col\":4}}]",
+ "charts": [
+  {
+   "chart_name": "Top Suppliers based on Purchase Invoices",
+   "label": "Top Suppliers based on Purchase Invoices"
+  }
+ ],
+ "content": "[{\"id\":\"P63FV1PndG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Data</span>\",\"col\":12}},{\"id\":\"E-o6SKo2Oe\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Active Suppliers\",\"col\":4}},{\"id\":\"9TsTdrMfYH\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Items allowed for Purchasing\",\"col\":4}},{\"id\":\"TvKQmiDzG8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Purchasing Price Lists\",\"col\":4}},{\"id\":\"YtSifRukIB\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Suppliers based on Purchase Invoices\",\"col\":12}},{\"id\":\"HncoxaMpYp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"JKQAi5pBVW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":3}},{\"id\":\"d7eY7rOpEx\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XwfMOUbBs6\",\"type\":\"card\",\"data\":{\"card_name\":\"Suppliers\",\"col\":4}},{\"id\":\"W1DeeYTIqp\",\"type\":\"card\",\"data\":{\"card_name\":\"Contracts\",\"col\":4}},{\"id\":\"eEJRPI4I7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Terms and Conditions\",\"col\":4}},{\"id\":\"RpUzyupCkr\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HwFo8FKDg_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items\",\"col\":4}},{\"id\":\"kWaQh6_K7i\",\"type\":\"card\",\"data\":{\"card_name\":\"Prices\",\"col\":4}},{\"id\":\"UMPexoAD2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Taxes\",\"col\":4}},{\"id\":\"_xy_RDJMpG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"kGQ7ryBeN-\",\"type\":\"card\",\"data\":{\"card_name\":\"Bundles\",\"col\":4}},{\"id\":\"uXSpVFjQE0\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecards\",\"col\":4}}]",
  "creation": "2023-04-07 14:11:39.973696",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -199,9 +204,80 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Terms and Conditions",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Terms and Conditions Templates",
+   "link_count": 0,
+   "link_to": "Terms and Conditions",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contracts",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contract",
+   "link_count": 0,
+   "link_to": "Contract",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contract Template",
+   "link_count": 0,
+   "link_to": "Contract Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Taxes",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Purchase Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-04-07 23:29:51.210268",
+ "modified": "2023-04-19 21:21:12.787268",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchasing Data",
@@ -209,6 +285,14 @@
   {
    "label": "Active Suppliers",
    "number_card_name": "Active Suppliers"
+  },
+  {
+   "label": "Purchasing Price Lists",
+   "number_card_name": "Purchasing Price Lists"
+  },
+  {
+   "label": "Total Items allowed for Purchasing",
+   "number_card_name": "Total Items allowed for Purchasing"
   }
  ],
  "owner": "Administrator",
@@ -216,7 +300,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 5.0,
+ "sequence_id": 6.0,
  "shortcuts": [
   {
    "color": "Gray",

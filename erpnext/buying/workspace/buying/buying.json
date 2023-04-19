@@ -10,7 +10,7 @@
   }
  ],
  "color": "#e76f51",
- "content": "[{\"id\":\"m4R_ERYGVe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Orders Indicators</b></span>\",\"col\":6}},{\"id\":\"XCvyDOErQa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Invoices Indicators</b></span>\",\"col\":6}},{\"id\":\"RmZoF6kKS4\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5-qGJEaVKt\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Annual Purchases\",\"col\":6}},{\"id\":\"I0dmANpLlO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Incoming Bills\",\"col\":6}},{\"id\":\"S3wW48kubp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FBCT81OI23\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators &amp; Charts</b></span>\",\"col\":12}},{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}},{\"id\":\"_QMB5x8Qpv\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mDoBbwi37_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Donn\u00e9es de base &amp; Rapports</span>\",\"col\":12}},{\"id\":\"44q4hrIpPw\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"XUNSFsTCer\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"NQI5PItf66\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"m4R_ERYGVe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Orders Indicators</b></span>\",\"col\":3}},{\"id\":\"XCvyDOErQa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Invoices Indicators</b></span>\",\"col\":9}},{\"id\":\"vdUrzrP4DQ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Orders This Year\",\"col\":3}},{\"id\":\"I0dmANpLlO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Year\",\"col\":3}},{\"id\":\"IIb38cwfrK\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases Last Month\",\"col\":3}},{\"id\":\"GYYKFlHyLA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Month\",\"col\":3}},{\"id\":\"S3wW48kubp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FBCT81OI23\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators &amp; Charts</b></span>\",\"col\":12}},{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}}]",
  "creation": "2020-01-28 11:50:26.195467",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -167,15 +167,6 @@
   },
   {
    "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Key Reports",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
@@ -245,15 +236,6 @@
    "link_type": "Report",
    "onboard": 1,
    "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Other Reports",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
   },
   {
    "columns": 0,
@@ -375,64 +357,27 @@
    "onboard": 0,
    "only_for": "Italy",
    "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Settings",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Buying Settings",
-   "link_count": 0,
-   "link_to": "Buying Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Taxes and Charges Template",
-   "link_count": 0,
-   "link_to": "Purchase Taxes and Charges Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Terms and Conditions Template",
-   "link_count": 0,
-   "link_to": "Terms and Conditions",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2023-04-07 23:29:51.094890",
+ "modified": "2023-04-19 21:21:12.551104",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
  "number_cards": [
   {
-   "label": "Annual Purchases",
+   "label": "Total Purchases Last Month",
+   "number_card_name": "Last Month Incoming Bills"
+  },
+  {
+   "label": "Total Orders This Year",
    "number_card_name": "Annual Purchase"
   },
   {
-   "label": "Total Incoming Bills",
+   "label": "Total Purchases This Month",
+   "number_card_name": "Current Month Incoming Bills"
+  },
+  {
+   "label": "Total Purchases This Year",
    "number_card_name": "Total Incoming Bills"
   }
  ],

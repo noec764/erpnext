@@ -12,7 +12,7 @@
  "is_standard": 1,
  "label": "Purchasing Flow",
  "links": [],
- "modified": "2023-04-07 23:29:51.305698",
+ "modified": "2023-04-19 21:21:12.679476",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchasing Flow",
@@ -38,7 +38,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 6.0,
+ "sequence_id": 5.0,
  "shortcuts": [
   {
    "color": "Gray",
