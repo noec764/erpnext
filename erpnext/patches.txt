@@ -331,6 +331,7 @@ erpnext.patches.v14_0.update_entry_type_for_journal_entry
 erpnext.patches.v14_0.change_autoname_for_tax_withheld_vouchers
 execute:frappe.delete_doc_if_exists("Workspace", "Loans")
 execute:frappe.delete_doc_if_exists("Workspace", "Loan Management")
+execute:frappe.db.set_single_value("Accounts Settings", "merge_similar_account_heads", 0)
 
 erpnext.patches.dokos.v3_0.add_expiration_date_to_booking_legder
 erpnext.patches.dokos.v3_0.setup_item_wise_tax_info_for_france #2023-03-09

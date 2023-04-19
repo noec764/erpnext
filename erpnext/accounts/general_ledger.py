@@ -172,11 +172,6 @@ def get_cost_center_allocation_data(company, posting_date):
 
 
 def merge_similar_entries(gl_map, precision=None):
-	if cint(
-		frappe.get_cached_value("Accounts Settings", "Accounts Settings", "do_not_merge_similar_entries")
-	):
-		return gl_map
-
 	merged_gl_map = []
 	accounting_dimensions = get_accounting_dimensions()
 

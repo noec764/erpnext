@@ -11,7 +11,6 @@
   "mandatory_accounting_journal",
   "validate_posting_date_chronology_in_sales_invoices",
   "column_break_3",
-  "do_not_merge_similar_entries",
   "enable_features_section",
   "unlink_payment_on_cancellation_of_invoice",
   "unlink_advance_payment_on_cancelation_of_order",
@@ -23,6 +22,8 @@
   "column_break_17",
   "enable_common_party_accounting",
   "allow_multi_currency_invoices_against_single_party_account",
+  "journals_section",
+  "merge_similar_account_heads",
   "report_setting_section",
   "use_custom_cash_flow",
   "deferred_accounting_settings_section",
@@ -369,12 +370,6 @@
   },
   {
    "default": "0",
-   "fieldname": "do_not_merge_similar_entries",
-   "fieldtype": "Check",
-   "label": "Do not merge similar accounting entries"
-  },
-  {
-   "default": "0",
    "fieldname": "validate_posting_date_chronology_in_sales_invoices",
    "fieldtype": "Check",
    "label": "Validate posting date chronology in sales invoices"
@@ -396,6 +391,18 @@
  "fieldname": "book_tax_discount_loss",
  "fieldtype": "Check",
  "label": "Book Tax Loss on Early Payment Discount"
+},
+{
+ "fieldname": "journals_section",
+ "fieldtype": "Section Break",
+ "label": "Journals"
+},
+{
+ "default": "0",
+ "description": "Rows with Same Account heads will be merged on Ledger",
+ "fieldname": "merge_similar_account_heads",
+ "fieldtype": "Check",
+ "label": "Merge Similar Account Heads"
   }
  ],
  "icon": "uil uil-setting",
@@ -403,7 +410,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-14 17:22:03.680886",
+ "modified": "2023-04-17 11:45:42.049247",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",
