@@ -202,7 +202,7 @@ def get_result_as_list(data, filters):
 		else:
 			EcritureLib = d.get("voucher_type")
 
-		EcritureLib = EcritureLib.replace("\n", " ")
+		EcritureLib = (EcritureLib or "").replace("\n", " ")
 
 		PieceDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
