@@ -307,8 +307,7 @@
    "no_copy": 1,
    "oldfieldname": "remark",
    "oldfieldtype": "Small Text",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "paid_loan",
@@ -561,7 +560,7 @@
  "idx": 176,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-04-19 10:27:02.198248",
+ "modified": "2023-04-19 13:27:02.198248",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",
