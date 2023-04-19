@@ -91,8 +91,10 @@ def sort_and_filter_data(data, limit=None):
 			if len(group) == 1:
 				filtered_data.append(group[0])
 			else:
-				max_value = max(group, key=lambda g: g["indent"])
-				filtered_data.append(max_value)
+				max_value = max(group, key=lambda g: g["indent"]).get("indent")
+				for g in group:
+					if g.get("indent") == max_value:
+						filtered_data.append(g)
 
 	if limit:
 		filtered_data.sort(key=lambda x: x["total"], reverse=True)
