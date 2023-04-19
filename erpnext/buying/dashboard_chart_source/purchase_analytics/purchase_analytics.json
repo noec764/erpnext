@@ -1,0 +1,13 @@
+{
+ "creation": "2023-04-05 08:59:44.659508",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2023-04-05 08:59:44.659508",
+ "modified_by": "Administrator",
+ "module": "Buying",
+ "name": "Purchase Analytics",
+ "owner": "Administrator",
+ "source_name": "Purchase Analytics",
+ "timeseries": 0
+}

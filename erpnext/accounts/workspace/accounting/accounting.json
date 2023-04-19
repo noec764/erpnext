@@ -14,10 +14,10 @@
  "creation": "2020-03-02 15:41:59.515192",
  "docstatus": 0,
  "doctype": "Workspace",
- "hidden": 0,
  "hide_custom": 0,
  "icon": "accounting",
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Accounting",
  "links": [
@@ -1236,16 +1236,17 @@
    "type": "Link"
   }
  ],
- "modified": "2022-12-15 09:32:21.019379",
+ "modified": "2023-04-19 21:21:12.097892",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounting",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 3.0,
+ "sequence_id": 2.0,
  "shortcuts": [
   {
    "columns": 0,

@@ -5,14 +5,15 @@
  "creation": "2020-03-02 15:49:28.632014",
  "docstatus": 0,
  "doctype": "Workspace",
- "hidden": 0,
  "hide_custom": 0,
  "icon": "quality",
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Quality",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Goal and Procedure",
@@ -21,6 +22,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -32,6 +34,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -43,6 +46,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -54,6 +58,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Feedback",
@@ -62,6 +67,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -73,6 +79,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -84,6 +91,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Meeting",
@@ -92,6 +100,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -103,6 +112,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Review and Action",
@@ -111,6 +121,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -122,6 +133,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -133,6 +145,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -144,25 +157,28 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-20 10:42:10.523439",
+ "modified": "2023-04-19 21:21:14.200710",
  "modified_by": "Administrator",
  "module": "Quality Management",
  "name": "Quality",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 12.0,
+ "sequence_id": 19.0,
  "shortcuts": [
   {
    "color": "Grey",
+   "columns": 0,
    "label": "Quality Goal",
    "link_to": "Quality Goal",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "columns": 0,
    "doc_view": "Tree",
    "label": "Quality Procedure",
    "link_to": "Quality Procedure",
@@ -170,12 +186,14 @@
   },
   {
    "color": "Grey",
+   "columns": 0,
    "label": "Quality Inspection",
    "link_to": "Quality Inspection",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "columns": 0,
    "doc_view": "",
    "format": "{} Open",
    "label": "Quality Review",
@@ -185,6 +203,7 @@
   },
   {
    "color": "Grey",
+   "columns": 0,
    "doc_view": "",
    "format": "{} Open",
    "label": "Quality Action",
@@ -194,6 +213,7 @@
   },
   {
    "color": "Grey",
+   "columns": 0,
    "doc_view": "",
    "format": "{} Open",
    "label": "Non Conformance",

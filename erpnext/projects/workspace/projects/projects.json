@@ -10,14 +10,15 @@
  "creation": "2020-03-02 15:46:04.874669",
  "docstatus": 0,
  "doctype": "Workspace",
- "hidden": 0,
  "hide_custom": 0,
  "icon": "project",
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Projects",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Projects",
@@ -26,6 +27,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -37,6 +39,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -48,6 +51,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -59,6 +63,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -70,6 +75,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Project",
    "hidden": 0,
    "is_query_report": 0,
@@ -81,6 +87,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Time Tracking",
@@ -89,6 +96,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -100,6 +108,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -111,6 +120,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Activity Type",
    "hidden": 0,
    "is_query_report": 0,
@@ -122,6 +132,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
@@ -130,6 +141,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "Timesheet",
    "hidden": 0,
    "is_query_report": 1,
@@ -141,6 +153,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Project",
    "hidden": 0,
    "is_query_report": 1,
@@ -152,6 +165,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Project",
    "hidden": 0,
    "is_query_report": 1,
@@ -163,6 +177,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "Task",
    "hidden": 0,
    "is_query_report": 1,
@@ -172,39 +187,43 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
-},
-{
- "hidden": 0,
- "is_query_report": 0,
- "label": "Settings",
- "link_count": 1,
- "onboard": 0,
- "type": "Card Break"
-},
-{
- "hidden": 0,
- "is_query_report": 0,
- "label": "Projects Settings",
- "link_count": 0,
- "link_to": "Projects Settings",
- "link_type": "DocType",
- "onboard": 0,
- "type": "Link"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "columns": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Projects Settings",
+   "link_count": 0,
+   "link_to": "Projects Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2022-10-11 22:39:10.436311",
+ "modified": "2023-04-19 21:21:14.109687",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Projects",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 11.0,
+ "sequence_id": 18.0,
  "shortcuts": [
   {
    "color": "Blue",
+   "columns": 0,
    "format": "{} Assigned",
    "label": "Task",
    "link_to": "Task",
@@ -213,6 +232,7 @@
   },
   {
    "color": "Blue",
+   "columns": 0,
    "format": "{} Open",
    "label": "Project",
    "link_to": "Project",
@@ -220,16 +240,19 @@
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Timesheet",
    "link_to": "Timesheet",
    "type": "DocType"
   },
   {
+   "columns": 0,
    "label": "Project Billing Summary",
    "link_to": "Project Billing Summary",
    "type": "Report"
   },
   {
+   "columns": 0,
    "label": "Dashboard",
    "link_to": "Project",
    "type": "Dashboard"
