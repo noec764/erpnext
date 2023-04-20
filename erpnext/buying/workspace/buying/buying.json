@@ -359,7 +359,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-20 09:09:05.808495",
+ "modified": "2023-04-19 21:21:12.551104",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
@@ -388,5 +388,5 @@
  "roles": [],
  "sequence_id": 4.0,
  "shortcuts": [],
- "title": "Purchases"
+ "title": "Buying"
 }
