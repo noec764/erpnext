@@ -6,7 +6,7 @@ from collections import Counter
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cint, format_time, get_datetime, global_date_format
+from frappe.utils import cint, format_datetime, get_datetime
 
 
 class EventSlot(Document):
@@ -15,23 +15,23 @@ class EventSlot(Document):
 		self.update_dates_in_bookings()
 
 	def validate_dates(self):
-		start, end = frappe.db.get_value("Event", self.event, ["starts_on", "ends_on"])
-		if get_datetime(self.starts_on) < get_datetime(start):
-			frappe.throw(
-				_("The start time cannot be before {0}").format(
-					global_date_format(get_datetime(start)) + " " + format_time(get_datetime(start))
-				)
-			)
-
-		if get_datetime(self.ends_on) > get_datetime(end):
-			frappe.throw(
-				_("The end time cannot be after {0}").format(
-					global_date_format(get_datetime(end)) + " " + format_time(get_datetime(end))
-				)
-			)
-
 		if get_datetime(self.starts_on) > get_datetime(self.ends_on):
 			frappe.throw(_("The end time must be greater than the start time"))
+
+	@frappe.whitelist()
+	def is_slot_outside_event(self):
+		if not self.event:
+			return ""
+
+		start, end = frappe.db.get_value("Event", self.event, ["starts_on", "ends_on"])
+		is_slot_in_event = get_datetime(self.starts_on) >= get_datetime(start) and get_datetime(
+			self.ends_on
+		) <= get_datetime(end)
+		if not is_slot_in_event:
+			return "This slot is outside the event's hours ({0} - {1})".format(
+				format_datetime(start), format_datetime(end)
+			)
+		return ""
 
 	def update_dates_in_bookings(self):
 		doc_before_save = self.get_doc_before_save()
