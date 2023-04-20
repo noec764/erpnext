@@ -1,0 +1,34 @@
+{
+ "chart_name": "Last Purchase Rate",
+ "chart_type": "Report",
+ "creation": "2023-04-19 16:38:39.989049",
+ "custom_options": "",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "dynamic_filters_json": "{}",
+ "filters_json": "{\"items\":\"Enabled Items only\"}",
+ "group_by_type": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "modified": "2023-04-20 09:02:26.588424",
+ "modified_by": "Administrator",
+ "module": "Buying",
+ "name": "Last Purchase Rate",
+ "number_of_groups": 0,
+ "owner": "Administrator",
+ "report_name": "Item Prices",
+ "roles": [],
+ "time_interval": "Yearly",
+ "timeseries": 0,
+ "timespan": "Last Year",
+ "type": "Bar",
+ "use_report_chart": 1,
+ "x_field": "item_name",
+ "y_axis": [
+  {
+   "color": "#29CD42",
+   "y_field": "last_purchase_rate"
+  }
+ ]
+}
