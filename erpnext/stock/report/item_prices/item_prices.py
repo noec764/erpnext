@@ -244,4 +244,5 @@ def get_chart_data(data, last_purchase_rate, val_rate_map, price_list, precision
 			],
 		},
 		"type": "bar",
+		"fieldtype": "Currency",
 	}

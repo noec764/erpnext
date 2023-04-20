@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+import frappe
 from frappe import _
 
 from erpnext.controllers.trends import get_columns, get_data
@@ -33,8 +34,15 @@ def get_chart_data(data, filters):
 		# get top 10 if data too long
 		data = data[:10]
 
+	meta = frappe.get_meta(filters.based_on)
+	title_field = meta.get_title_field()
+	labels_map = {
+		x.name: x.get(title_field)
+		for x in frappe.get_all(filters.based_on, fields=["name", title_field])
+	}
+
 	for row in data:
-		labels.append(row[0])
+		labels.append(labels_map.get(row[0]))
 		datapoints.append(row[-1])
 
 	return {
@@ -44,4 +52,5 @@ def get_chart_data(data, filters):
 		},
 		"type": "bar",
 		"colors": ["#5e64ff"],
+		"fieldtype": "Currency",
 	}
