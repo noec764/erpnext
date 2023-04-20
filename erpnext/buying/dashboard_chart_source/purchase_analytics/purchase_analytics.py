@@ -71,7 +71,7 @@ def sort_and_filter_data(data, limit=None):
 
 	filtered_data = []
 
-	if not data_with_total[0].get("indent"):
+	if data_with_total and not data_with_total[0].get("indent"):
 		filtered_data = data_with_total
 
 	else:
