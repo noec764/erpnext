@@ -54,8 +54,8 @@ def get_cart_quotation(doc=None):
 	context = {
 		"route": route,
 		"doc": decorate_quotation_doc(doc),
-		"shipping_addresses": get_shipping_addresses(party),
-		"billing_addresses": get_billing_addresses(party),
+		"shipping_addresses": get_shipping_addresses(party, doc),
+		"billing_addresses": get_billing_addresses(party, doc),
 		"cart_settings": get_shopping_cart_settings(),
 		"shipping_rules": get_applicable_shipping_rules(party),
 		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
@@ -70,26 +70,26 @@ def get_cart_quotation(doc=None):
 
 
 @frappe.whitelist()
-def get_shipping_addresses(party=None):
+def get_shipping_addresses(party=None, doc=None):
 	if not party:
 		party = get_party()
 	addresses = get_address_docs(party=party)
 	return [
 		{"name": address.name, "title": address.address_title, "display": address.display}
 		for address in addresses
-		if address.address_type == "Shipping"
+		if address.address_type == "Shipping" or (doc and address.name == doc.shipping_address_name)
 	]
 
 
 @frappe.whitelist()
-def get_billing_addresses(party=None):
+def get_billing_addresses(party=None, doc=None):
 	if not party:
 		party = get_party()
 	addresses = get_address_docs(party=party)
 	return [
 		{"name": address.name, "title": address.address_title, "display": address.display}
 		for address in addresses
-		if address.address_type == "Billing"
+		if address.address_type == "Billing" or (doc and address.name == doc.customer_address)
 	]
 
 
