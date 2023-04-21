@@ -11,36 +11,22 @@ from frappe.utils import cstr, format_date, format_datetime, get_datetime, sbool
 
 
 def execute(filters=None):
-	account_details = {}
-	for acc in frappe.db.sql("""select name, is_group from tabAccount""", as_dict=1):
-		account_details.setdefault(acc.name, acc)
-
-	validate_filters(filters, account_details)
-
-	filters = set_account_currency(filters)
-
+	validate_filters(filters)
 	columns = get_columns(filters)
+	data = get_result(
+		company=filters["company"],
+		fiscal_year=filters["fiscal_year"],
+	)
 
-	res = get_result(filters)
-
-	return columns, res
+	return columns, data
 
 
-def validate_filters(filters, account_details):
+def validate_filters(filters):
 	if not filters.get("company"):
 		frappe.throw(_("{0} is mandatory").format(_("Company")))
 
 	if not filters.get("fiscal_year"):
 		frappe.throw(_("{0} is mandatory").format(_("Fiscal Year")))
-
-
-def set_account_currency(filters):
-
-	filters["company_currency"] = frappe.get_cached_value(
-		"Company", filters.company, "default_currency"
-	)
-
-	return filters
 
 
 def get_columns(filters):
@@ -75,66 +61,97 @@ def get_columns(filters):
 	return columns
 
 
-def get_result(filters):
-	gl_entries = get_gl_entries(filters)
+def get_gl_entries(company, fiscal_year):
+	gle = frappe.qb.DocType("GL Entry")
+	sales_invoice = frappe.qb.DocType("Sales Invoice")
+	purchase_invoice = frappe.qb.DocType("Purchase Invoice")
+	journal_entry = frappe.qb.DocType("Journal Entry")
+	payment_entry = frappe.qb.DocType("Payment Entry")
+	customer = frappe.qb.DocType("Customer")
+	supplier = frappe.qb.DocType("Supplier")
+	employee = frappe.qb.DocType("Employee")
 
-	result = get_result_as_list(gl_entries, filters)
-
-	return result
-
-
-def get_gl_entries(filters):
-
-	group_by_condition = (
-		"group by voucher_type, voucher_no, account"
-		if filters.get("group_by_voucher")
-		else "group by gl.name"
+	debit = frappe.query_builder.functions.Sum(gle.debit).as_("debit")
+	credit = frappe.query_builder.functions.Sum(gle.credit).as_("credit")
+	debit_currency = frappe.query_builder.functions.Sum(gle.debit_in_account_currency).as_(
+		"debitCurr"
+	)
+	credit_currency = frappe.query_builder.functions.Sum(gle.credit_in_account_currency).as_(
+		"creditCurr"
 	)
 
-	gl_entries = frappe.db.sql(
-		"""
-		select
-			gl.posting_date as GlPostDate, gl.name as GlName, gl.account, gl.transaction_date,
-			sum(gl.debit) as debit, sum(gl.credit) as credit, gl.accounting_entry_number,
-			sum(gl.debit_in_account_currency) as debitCurr, sum(gl.credit_in_account_currency) as creditCurr,
-			gl.voucher_type, gl.voucher_no, gl.against_voucher_type,
-			gl.against_voucher, gl.account_currency, gl.against,
-			gl.party_type, gl.party, gl.accounting_journal, gl.remarks,
-			inv.name as InvName, inv.title as InvTitle, inv.posting_date as InvPostDate,
-			pur.name as PurName, pur.title as PurTitle, pur.posting_date as PurPostDate,
-			jnl.cheque_no as JnlRef, jnl.posting_date as JnlPostDate, jnl.title as JnlTitle,
-			pay.name as PayName, pay.posting_date as PayPostDate, pay.title as PayTitle,
-			cus.customer_name, cus.name as cusName,
-			sup.supplier_name, sup.name as supName,
-			emp.employee_name, emp.name as empName
-
-		from `tabGL Entry` gl
-			left join `tabSales Invoice` inv on gl.voucher_no = inv.name
-			left join `tabPurchase Invoice` pur on gl.voucher_no = pur.name
-			left join `tabJournal Entry` jnl on gl.voucher_no = jnl.name
-			left join `tabPayment Entry` pay on gl.voucher_no = pay.name
-			left join `tabCustomer` cus on gl.party = cus.name
-			left join `tabSupplier` sup on gl.party = sup.name
-			left join `tabEmployee` emp on gl.party = emp.name
-		where gl.company=%(company)s and gl.fiscal_year=%(fiscal_year)s
-		{group_by_condition}
-		order by GlPostDate, voucher_no""".format(
-			group_by_condition=group_by_condition
-		),
-		filters,
-		as_dict=1,
+	query = (
+		frappe.qb.from_(gle)
+		.left_join(sales_invoice)
+		.on(gle.voucher_no == sales_invoice.name)
+		.left_join(purchase_invoice)
+		.on(gle.voucher_no == purchase_invoice.name)
+		.left_join(journal_entry)
+		.on(gle.voucher_no == journal_entry.name)
+		.left_join(payment_entry)
+		.on(gle.voucher_no == payment_entry.name)
+		.left_join(customer)
+		.on(gle.party == customer.name)
+		.left_join(supplier)
+		.on(gle.party == supplier.name)
+		.left_join(employee)
+		.on(gle.party == employee.name)
+		.select(
+			gle.posting_date.as_("GlPostDate"),
+			gle.name.as_("GlName"),
+			gle.account,
+			gle.transaction_date,
+			debit,
+			credit,
+			debit_currency,
+			credit_currency,
+			gle.accounting_entry_number,
+			gle.voucher_type,
+			gle.voucher_no,
+			gle.against_voucher_type,
+			gle.against_voucher,
+			gle.account_currency,
+			gle.against,
+			gle.party_type,
+			gle.party,
+			gle.accounting_journal,
+			gle.remarks,
+			sales_invoice.name.as_("InvName"),
+			sales_invoice.title.as_("InvTitle"),
+			sales_invoice.posting_date.as_("InvPostDate"),
+			purchase_invoice.name.as_("PurName"),
+			purchase_invoice.title.as_("PurTitle"),
+			purchase_invoice.posting_date.as_("PurPostDate"),
+			journal_entry.cheque_no.as_("JnlRef"),
+			journal_entry.posting_date.as_("JnlPostDate"),
+			journal_entry.title.as_("JnlTitle"),
+			payment_entry.name.as_("PayName"),
+			payment_entry.posting_date.as_("PayPostDate"),
+			payment_entry.title.as_("PayTitle"),
+			customer.customer_name,
+			customer.name.as_("cusName"),
+			supplier.supplier_name,
+			supplier.name.as_("supName"),
+			employee.employee_name,
+			employee.name.as_("empName"),
+		)
+		.where((gle.company == company) & (gle.fiscal_year == fiscal_year))
+		.groupby(gle.voucher_type, gle.voucher_no, gle.account)
+		.orderby(gle.posting_date, gle.voucher_no)
 	)
 
-	return gl_entries
+	return query.run(as_dict=True)
 
 
-def get_result_as_list(data, filters):
+def get_result(company, fiscal_year):
+	data = get_gl_entries(company, fiscal_year)
+
 	result = []
 
-	company_currency = frappe.get_cached_value("Company", filters.company, "default_currency")
+	company_currency = frappe.get_cached_value("Company", company, "default_currency")
 	accounts = frappe.get_all(
 		"Account",
-		filters={"Company": filters.company},
+		filters={"Company": company},
 		fields=["name", "account_number", "account_name"],
 	)
 	journals = {
@@ -183,7 +200,7 @@ def get_result_as_list(data, filters):
 
 		ValidDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
-		PieceRef = d.get("voucher_no") if d.get("voucher_no") else "Sans Reference"
+		PieceRef = d.get("voucher_no") or "Sans Reference"
 		PieceRefType = d.get("voucher_type") or "Sans Reference"
 
 		# EcritureLib is the reference title unless it is an opening entry
