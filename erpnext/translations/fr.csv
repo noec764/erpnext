@@ -13184,7 +13184,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0} entered twice {1} in Item Taxes,{0} a été entré en double {1} dans les taxes de l'article,
 {0} entries are duplicates and have not been created,{0} entrées sont en double et n'ont pas été créées,
 {0} for {1},{0} pour {1},
-{0} has been submitted successfully,{0} a été envoyé avec succès,
+{0} has been submitted successfully,{0} a été validé avec succès,
 {0} has been use {1} times. Allowed quantity has been exceeded.,{0} a été utilisé {1} fois. La quantité autorisée est dépassée.,
 {0} hours,{0} heures,
 {0} in row {1},{0} dans la ligne {1},
