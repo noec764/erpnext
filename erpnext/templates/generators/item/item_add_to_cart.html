@@ -138,9 +138,9 @@
 			<div class="mb-4 d-flex">
 				<!-- Add to Cart -->
 				{% if product_info.price and (cart_settings.allow_items_not_in_stock or product_info.in_stock) %}
-					<a href="/cart" class="btn btn-light btn-view-in-cart mr-2 font-md {% if doc.enable_item_booking %}btn-primary{% else %} hidden{% endif %}"
+					<a href="/cart" class="btn btn-view-in-cart mr-2 font-md btn-primary {% if not doc.enable_item_booking %}hidden{% endif %}"
 						role="button">
-						{{  _("View in Cart") if cart_settings.enable_checkout else _("View in Quote") }}
+						{{ _("View in Cart") if cart_settings.enable_checkout else _("View in Quote") }}
 					</a>
 					{% if not doc.enable_item_booking and not doc.no_add_to_cart %}
 					<button
