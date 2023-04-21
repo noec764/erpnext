@@ -402,7 +402,10 @@ def get_account_autoname(account_number, account_name, company, root_type):
 	if (
 		account_number
 		and root_type
-		and frappe.db.exists("Account", {"account_number": account_number, "company": company.name})
+		and frappe.db.exists(
+			"Account",
+			{"account_number": account_number, "company": company.name, "root_type": ("!=", root_type)},
+		)
 	):
 		suffix = _(root_type)
 
