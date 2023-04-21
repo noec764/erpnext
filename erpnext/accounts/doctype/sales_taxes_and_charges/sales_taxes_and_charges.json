@@ -35,7 +35,7 @@
    "fieldname": "charge_type",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Type",
+   "label": "Based On",
    "oldfieldname": "charge_type",
    "oldfieldtype": "Select",
    "options": "\nActual\nOn Net Total\nOn Previous Row Amount\nOn Previous Row Total\nOn Item Quantity",
