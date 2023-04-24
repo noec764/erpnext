@@ -24,21 +24,21 @@ class TestAccount(FrappeTestCase):
 		self.assertEqual(account_number, "1210")
 		self.assertEqual(account_name, "Debtors")
 
-		new_account_number = "1211-11-4 - 6 - "
-		new_account_name = "Debtors 1 - Test - "
+		new_account_number = "1211-11-4 - 6"
+		new_account_name = "Debtors 1 - Test"
 
 		update_account_number("1210 - Debtors - _TC", new_account_name, new_account_number)
 		new_acc = frappe.db.get_value(
 			"Account",
-			"1211-11-4 - 6 - - Debtors 1 - Test - - Asset - _TC",
+			"1211-11-4 - 6 - Debtors 1 - Test - _TC",
 			["account_name", "account_number"],
 			as_dict=1,
 		)
 
-		self.assertEqual(new_acc.account_name, "Debtors 1 - Test -")
-		self.assertEqual(new_acc.account_number, "1211-11-4 - 6 -")
+		self.assertEqual(new_acc.account_name, "Debtors 1 - Test")
+		self.assertEqual(new_acc.account_number, "1211-11-4 - 6")
 
-		frappe.delete_doc("Account", "1211-11-4 - 6 - Debtors 1 - Test - - _TC")
+		frappe.delete_doc("Account", "1211-11-4 - 6 - Debtors 1 - Test - _TC")
 
 	def test_merge_account(self):
 		if not frappe.db.exists("Account", "Current Assets - _TC"):
