@@ -55,7 +55,11 @@ def get_item_reviews(web_item, start=0, end=10, data=None):
 
 
 def scale_and_round_star_rating(rating):
-	return flt(rating * 5, 0)
+	"""
+	Scale a rating from 0-1 to 0-5 and round it to the nearest integer.
+	Round 0.5 stars to 1 star.
+	"""
+	return round(rating * 5) or 1
 
 
 def get_queried_reviews(web_item, start=0, end=10, data=None):
@@ -90,11 +94,14 @@ def get_queried_reviews(web_item, start=0, end=10, data=None):
 	# First, for each rating (in the range 0-1),
 	# count the number of times it appears in the reviews of the item.
 	from pypika import functions as fn
+
 	ItemReview = frappe.qb.DocType("Item Review")
-	reviews_per_rating_query = frappe.qb.from_(ItemReview)\
-		.select(ItemReview.rating, fn.Count(1))\
-		.where(ItemReview.website_item == web_item)\
+	reviews_per_rating_query = (
+		frappe.qb.from_(ItemReview)
+		.select(ItemReview.rating, fn.Count(1))
+		.where(ItemReview.website_item == web_item)
 		.groupby(ItemReview.rating)
+	)
 	reviews_per_rating_raw = reviews_per_rating_query.run()
 
 	# Then, aggregate the counts of ratings by groups

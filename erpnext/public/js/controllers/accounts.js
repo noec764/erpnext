@@ -13,6 +13,24 @@ frappe.ui.form.on(cur_frm.doctype, {
 				erpnext.taxes.set_conditional_mandatory_rate_or_amount(grid_row);
 			}
 		});
+
+		frm.get_docfield("taxes", "charge_type").formatter = (value, df, options, row) => {
+			if (row.charge_type?.includes("Previous Row")) {
+				const prev_id = row.idx - 1;
+				const referenced_id = +(row.row_id ?? prev_id);
+				if (referenced_id !== prev_id) {
+					// Text is incorrect because the reference row is not the *previous* one
+					switch (row.charge_type) {
+						case "On Previous Row Amount":
+							return __("On Row #{0}'s Amount", [referenced_id]);
+						case "On Previous Row Total":
+							return __("On Row #{0}'s Total", [referenced_id]);
+					}
+				}
+			}
+
+			return frappe.form.get_formatter(df.fieldtype)(value, df, options, row);
+		};
 	},
 	onload: function(frm) {
 		if(frm.get_field("taxes")) {

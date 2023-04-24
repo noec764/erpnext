@@ -12,6 +12,8 @@ def test_method():
 
 class TestInit(unittest.TestCase):
 	def test_regional_overrides(self):
+		frappe.flags.company = ""
+
 		frappe.flags.country = "Maldives"
 		self.assertEqual(test_method(), "original")
 

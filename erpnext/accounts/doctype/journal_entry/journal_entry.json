@@ -518,36 +518,36 @@
    "options": "Journal Entry Template",
    "print_hide": 1,
    "report_hide": 1
-},
-{
- "depends_on": "eval:doc.apply_tds",
- "fieldname": "tax_withholding_category",
- "fieldtype": "Link",
- "label": "Tax Withholding Category",
- "mandatory_depends_on": "eval:doc.apply_tds",
- "options": "Tax Withholding Category"
-},
-{
- "default": "0",
- "depends_on": "eval:['Credit Note', 'Debit Note'].includes(doc.voucher_type)",
- "fieldname": "apply_tds",
- "fieldtype": "Check",
- "label": "Apply Tax Withholding Amount"
-},
-{
- "depends_on": "eval:doc.docstatus",
- "fieldname": "reversal_of",
- "fieldtype": "Link",
- "label": "Reversal Of",
- "options": "Journal Entry",
- "read_only": 1
-},
-{
- "fieldname": "process_deferred_accounting",
- "fieldtype": "Link",
- "label": "Process Deferred Accounting",
- "options": "Process Deferred Accounting",
- "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.apply_tds",
+   "fieldname": "tax_withholding_category",
+   "fieldtype": "Link",
+   "label": "Tax Withholding Category",
+   "mandatory_depends_on": "eval:doc.apply_tds",
+   "options": "Tax Withholding Category"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:['Credit Note', 'Debit Note'].includes(doc.voucher_type)",
+   "fieldname": "apply_tds",
+   "fieldtype": "Check",
+   "label": "Apply Tax Withholding Amount"
+  },
+  {
+   "depends_on": "eval:doc.docstatus",
+   "fieldname": "reversal_of",
+   "fieldtype": "Link",
+   "label": "Reversal Of",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "process_deferred_accounting",
+   "fieldtype": "Link",
+   "label": "Process Deferred Accounting",
+   "options": "Process Deferred Accounting",
+   "read_only": 1
   },
   {
    "fieldname": "accounting_journal",
@@ -560,7 +560,7 @@
  "idx": 176,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-01 14:58:59.286591",
+ "modified": "2023-04-19 13:27:02.198248",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",

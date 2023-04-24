@@ -213,9 +213,9 @@
 	<p class="mr-4 {{ rating_header_class }}">
 		<span>{{ title }}</span>
 	</p>
-	<div class="rating {{ 'ratings-pill' if for_summary else ''}}">
+	<div class="rating {{ 'ratings-pill' if for_summary else ''}}" aria-label="{{ frappe.utils.cstr(avg_rating) + ' ' + _('out of 5') }}">
 		{% for i in range(1,6) %}
-			{% set fill_class = 'star-click' if i < avg_rating else '' %}
+			{% set fill_class = 'star-click' if i <= avg_rating + 0.5 else '' %}
 			<svg class="icon icon-{{ size }} {{ fill_class }}">
 				<use href="#icon-star"></use>
 			</svg>
@@ -274,7 +274,7 @@
 <div class="user-reviews">
 	{% for review in reviews %}
 		<div class="mb-3 review">
-			{{ ratings_with_title(review.rating * 5, _(review.review_title), "sm", "user-review-title") }}
+			{{ ratings_with_title(review.rating * 5, review.review_title, "sm", "user-review-title") }}
 
 			<div class="product-description mb-4">
 				<p>

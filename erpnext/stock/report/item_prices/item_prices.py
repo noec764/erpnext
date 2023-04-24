@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+from collections import defaultdict
 
 import frappe
 from frappe import _
@@ -40,7 +41,12 @@ def execute(filters=None):
 			]
 		)
 
-	return columns, data
+	return (
+		columns,
+		data,
+		None,
+		get_chart_data(item_map, last_purchase_rate, val_rate_map, pl, precision),
+	)
 
 
 def get_columns(filters):
@@ -89,7 +95,7 @@ def get_item_details(filters):
 def get_price_list():
 	"""Get selling & buying price list of every item"""
 
-	rate = {}
+	rate = defaultdict(lambda: defaultdict(list))
 
 	ip = frappe.qb.DocType("Item Price")
 	pl = frappe.qb.DocType("Price List")
@@ -114,22 +120,19 @@ def get_price_list():
 		d.update(
 			{"price": "{0} {1} - {2}".format(d.currency, round(d.price_list_rate, 2), d.price_list)}
 		)
-		d.pop("currency")
-		d.pop("price_list_rate")
-		d.pop("price_list")
 
 		if d.price:
-			rate.setdefault(d.item_code, {}).setdefault("Buying" if d.buying else "Selling", []).append(
-				d.price
-			)
+			rate[d.item_code]["Buying" if d.buying else "Selling"].append(d.price)
+			rate[d.item_code]["Buying_rate" if d.buying else "Selling_rate"] = round(d.price_list_rate, 2)
 
-	item_rate_map = {}
+	item_rate_map = defaultdict(lambda: defaultdict(dict))
 
 	for item in rate:
-		for buying_or_selling in rate[item]:
-			item_rate_map.setdefault(item, {}).setdefault(
-				buying_or_selling, ", ".join(rate[item].get(buying_or_selling, []))
-			)
+		for key in rate[item]:
+			if key in ("Buying", "Selling"):
+				item_rate_map[item][key] = ", ".join(rate[item].get(key, []))
+			else:
+				item_rate_map[item][key] = rate[item].get(key, 0)
 
 	return item_rate_map
 
@@ -212,3 +215,34 @@ def get_valuation_rate():
 		item_val_rate_map.setdefault(d.item_code, d.val_rate)
 
 	return item_val_rate_map
+
+
+def get_chart_data(data, last_purchase_rate, val_rate_map, price_list, precision):
+	labels = []
+	last_purchase_rates = []
+	valuation_rates = []
+	purchase_price_list_rates = []
+
+	for d in sorted(data):
+		lpr = flt(last_purchase_rate.get(d, 0), precision)
+		if lpr:
+			dict_data = data[d]
+			labels.append(dict_data.get("item_name"))
+			last_purchase_rates.append(lpr)
+			purchase_price_list_rates.append(price_list.get(d, {}).get("Buying_rate"))
+			valuation_rates.append(
+				flt(val_rate_map.get(d, 0), precision),
+			)
+
+	return {
+		"data": {
+			"labels": labels,
+			"datasets": [
+				{"name": _("Last Purchase Rate"), "values": last_purchase_rates},
+				{"name": _("Valuation Rate"), "values": valuation_rates},
+				{"name": _("Price List Rate"), "values": purchase_price_list_rates},
+			],
+		},
+		"type": "bar",
+		"fieldtype": "Currency",
+	}

@@ -44,20 +44,6 @@ def boot_session(bootinfo):
 			"name",
 		)
 
-		# if no company, show a dialog box to create a new company
-		bootinfo.customer_count = frappe.db.sql("""SELECT count(*) FROM `tabCustomer`""")[0][0]
-
-		if not bootinfo.customer_count:
-			bootinfo.setup_complete = (
-				frappe.db.sql(
-					"""SELECT `name`
-				FROM `tabCompany`
-				LIMIT 1"""
-				)
-				and "Yes"
-				or "No"
-			)
-
 		bootinfo.docs += frappe.db.sql(
 			"""select name, default_currency, cost_center, default_selling_terms, default_buying_terms,
 			default_letter_head, default_bank_account, enable_perpetual_inventory, country from `tabCompany`""",

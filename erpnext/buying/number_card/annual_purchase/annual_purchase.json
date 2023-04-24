@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "base_net_total",
+ "color": "#B4CD29",
  "creation": "2020-07-20 21:01:02.367127",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -10,8 +11,8 @@
  "idx": 0,
  "is_public": 1,
  "is_standard": 1,
- "label": "Annual Purchase",
- "modified": "2020-07-22 21:21:58.755188",
+ "label": "Annual Purchases",
+ "modified": "2023-04-19 14:12:44.611603",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Annual Purchase",

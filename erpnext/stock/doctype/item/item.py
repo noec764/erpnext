@@ -363,7 +363,7 @@ class Item(Document):
 					frappe.throw(
 						_("{0} entered twice {1} in Item Taxes").format(
 							frappe.bold(d.item_tax_template),
-							"for tax category {0}".format(frappe.bold(d.tax_category)) if d.tax_category else "",
+							_("for tax category {0}").format(frappe.bold(d.tax_category)) if d.tax_category else "",
 						)
 					)
 				else:

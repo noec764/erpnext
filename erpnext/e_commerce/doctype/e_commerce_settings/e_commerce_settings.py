@@ -36,6 +36,7 @@ class ECommerceSettings(Document):
 			self.validate_price_list_exchange_rate()
 
 		frappe.clear_document_cache("E Commerce Settings", "E Commerce Settings")
+		frappe.clear_cache()
 
 		self.is_redisearch_enabled_pre_save = frappe.db.get_single_value(
 			"E Commerce Settings", "is_redisearch_enabled"

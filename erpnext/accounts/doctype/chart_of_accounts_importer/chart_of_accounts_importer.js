@@ -3,6 +3,21 @@ frappe.ui.form.on('Chart of Accounts Importer', {
 		frm.set_value("company", "");
 		frm.set_value("import_file", "");
 	},
+
+	setup: function (frm) {
+		frm.set_df_property("import_file", "options", {
+			restrictions: {
+				// Allow csv, xlsx, xls
+				allowed_file_types: [
+					"text/csv",
+					"application/x-excel",
+					"application/vnd.ms-excel",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+				]
+			}
+		})
+	},
+
 	refresh: function (frm) {
 		// disable default save
 		frm.disable_save();

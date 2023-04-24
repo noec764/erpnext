@@ -6,13 +6,14 @@
  "docstatus": 0,
  "doctype": "Workspace",
  "extends_page": "Integrations",
- "hidden": 0,
  "hide_custom": 0,
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Dokos Integrations",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Payments",
@@ -22,6 +23,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "GoCardless Settings",
@@ -32,6 +34,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings",
@@ -41,6 +44,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Plaid Settings",
@@ -51,6 +55,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Exotel Settings",
@@ -61,16 +66,17 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-20 11:12:54.632814",
+ "modified": "2023-04-07 23:29:54.235332",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Dokos Integrations",
+ "number_cards": [],
  "owner": "Administrator",
- "parent_page": "",
+ "parent_page": "Administration",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 23.0,
+ "sequence_id": 38.0,
  "shortcuts": [],
  "title": "Integrations"
 }

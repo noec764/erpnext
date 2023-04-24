@@ -5,14 +5,15 @@
  "creation": "2020-03-02 17:18:32.505616",
  "docstatus": 0,
  "doctype": "Workspace",
- "hidden": 0,
  "hide_custom": 0,
  "icon": "retail",
  "idx": 0,
+ "is_hidden": 0,
  "is_standard": 1,
  "label": "Retail",
  "links": [
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Settings & Configurations",
@@ -21,6 +22,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -32,6 +34,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -43,6 +46,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Loyalty Program",
@@ -51,6 +55,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -62,6 +67,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -73,6 +79,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Opening & Closing",
@@ -81,6 +88,7 @@
    "type": "Card Break"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -92,6 +100,7 @@
    "type": "Link"
   },
   {
+   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -103,18 +112,20 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-20 10:42:09.959905",
+ "modified": "2023-04-19 21:21:14.970068",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Retail",
+ "number_cards": [],
  "owner": "Administrator",
- "parent_page": "",
+ "parent_page": "Selling",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 15.0,
+ "sequence_id": 27.0,
  "shortcuts": [
   {
+   "columns": 0,
    "doc_view": "",
    "label": "Point Of Sale",
    "link_to": "point-of-sale",

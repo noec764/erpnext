@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "base_net_total",
+ "color": "#B4CD29",
  "creation": "2020-07-17 11:25:34.748329",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -10,7 +11,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Total Incoming Bills",
- "modified": "2020-07-22 13:06:46.045344",
+ "modified": "2023-04-19 14:10:36.619016",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Total Incoming Bills",

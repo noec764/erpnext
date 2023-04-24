@@ -53,8 +53,8 @@
   "mobile_no",
   "email_id",
   "column_break_26",
-  "customer_primary_address",
   "primary_address",
+  "customer_primary_address",
   "tax_tab",
   "taxation_section",
   "tax_id",
@@ -583,7 +583,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2023-02-24 16:57:54.944812",
+ "modified": "2023-04-20 22:37:32.225433",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
