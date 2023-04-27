@@ -1881,8 +1881,6 @@ class TestSalesOrder(FrappeTestCase):
 
 	def test_delivered_item_material_request(self):
 		"SO -> MR (Manufacture) -> WO. Test if WO Qty is updated in SO."
-		from erpnext.manufacturing.doctype.work_order.work_order import make_stock_entry
-
 		so = make_sales_order(
 			item_list=[
 				{"item_code": "_Test FG Item", "qty": 10, "rate": 100, "warehouse": "Work In Progress - _TC"}
