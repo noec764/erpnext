@@ -45,6 +45,7 @@ def update_itemised_tax_data(doc):
 		if item_tax_rate:
 			for tax in item_tax_rate:
 				tax_rate += tax.get("rate")
+
 		elif row.item_code and valid_itemised_tax.get(row.item_code):
 			item_specific_rates = [
 				tax
@@ -54,7 +55,7 @@ def update_itemised_tax_data(doc):
 
 			tax_rate = sum(
 				[
-					tax.get("tax_rate", 0)
+					tax.get("tax_rate", 0) * (-1 if tax.get("add_deduct_tax") == "Deduct" else 1)
 					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
 				]
 			)
