@@ -174,18 +174,21 @@ build_docker:
 
     # Push latest tag if the commit is tagged
     - if [ -n "$CI_COMMIT_TAG" ]; then
-        N="$CI_REGISTRY_IMAGE:latest"
-        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+        N="$CI_REGISTRY_IMAGE:latest";
+        echo "Pushing image $N";
+        docker tag $IMAGE_NAME $N; docker push $N;
       fi
 
     # Push hotfix tag if the commit is on the hotfix branch
     - if [ "$CI_COMMIT_REF_NAME" = "v3.x.x-hotfix" ]; then
-        N="$CI_REGISTRY_IMAGE:hotfix"
-        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+        N="$CI_REGISTRY_IMAGE:hotfix";
+        echo "Pushing image $N";
+        docker tag $IMAGE_NAME $N; docker push $N;
       fi
 
     # Push develop tag if the commit is on the develop branch
     - if [ "$CI_COMMIT_REF_NAME" = "develop" ]; then
-        N="$CI_REGISTRY_IMAGE:develop"
-        echo "Pushing image $N"; docker tag $IMAGE_NAME $N; docker push $N;
+        N="$CI_REGISTRY_IMAGE:develop";
+        echo "Pushing image $N";
+        docker tag $IMAGE_NAME $N; docker push $N;
       fi
