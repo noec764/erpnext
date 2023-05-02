@@ -84,8 +84,10 @@ class FranceTaxDeclarationPreparation(Document):
 				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
 					gl_entry_line = gl_entry.copy()
 					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
-					gl_entry_line["taxable_amount"] = flt(
-						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					gl_entry_line["taxable_amount"] = (
+						flt(gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2)
+						if gl_entry_line["tax_rate"]
+						else 0.0
 					)
 					voucher_gls.append(gl_entry_line)
 
@@ -209,8 +211,10 @@ class FranceTaxDeclarationPreparation(Document):
 				if flt(gl_entry["tax_amount"], 2) != flt(tax_amount, 2):
 					gl_entry_line = gl_entry.copy()
 					gl_entry_line["tax_amount"] = flt(flt(gl_entry["tax_amount"], 2) - flt(tax_amount, 2), 2)
-					gl_entry_line["taxable_amount"] = flt(
-						gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2
+					gl_entry_line["taxable_amount"] = (
+						flt(gl_entry_line["tax_amount"] / (gl_entry_line["tax_rate"] / 100.0), 2)
+						if gl_entry_line["tax_rate"]
+						else 0.0
 					)
 					voucher_gls.append(gl_entry_line)
 
