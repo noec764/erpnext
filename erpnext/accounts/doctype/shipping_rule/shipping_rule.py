@@ -69,14 +69,6 @@ class ShippingRule(Document):
 			)
 
 	def _evaluate_custom_formula(self, doc):
-		if self.custom_formula.strip() in ("hook", "#hook", "# hook"):
-			shipping_amount = self.run_method("evaluate_shipping_rule", transaction=doc)
-
-			if not isinstance(shipping_amount, (int, float)):
-				frappe.throw("Shipping Rule: Hook must return a number")
-
-			return shipping_amount
-
 		shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
 
 		# from frappe.utils.safe_block_eval import safe_block_eval
@@ -91,6 +83,14 @@ class ShippingRule(Document):
 	def evaluate_shipping_rule(self, transaction: Document):
 		"""Hook to evaluate shipping amount"""
 		return None
+
+	def _evaluate_from_hook(self, transaction: Document):
+		shipping_amount = self.run_method("evaluate_shipping_rule", transaction=transaction)
+
+		if not isinstance(shipping_amount, (int, float)):
+			frappe.throw("Shipping Rule: Hook must return a number")
+
+		return shipping_amount
 
 	def get_shipping_amount(self, doc: Document):
 		shipping_amount = 0.0
@@ -110,6 +110,9 @@ class ShippingRule(Document):
 
 		elif self.calculate_based_on == "Custom Formula":
 			shipping_amount = self._evaluate_custom_formula(doc)
+
+		elif self.calculate_based_on == "Hook":
+			shipping_amount = self._evaluate_from_hook(doc)
 
 		# convert to order currency
 		if doc.currency != doc.company_currency:

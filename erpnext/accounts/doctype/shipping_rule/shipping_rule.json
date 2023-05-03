@@ -99,7 +99,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Calculate Based On",
-   "options": "Fixed\nNet Total\nNet Weight\nCustom Formula"
+   "options": "Fixed\nNet Total\nNet Weight\nCustom Formula\nHook"
   },
   {
    "fieldname": "column_break_8",
