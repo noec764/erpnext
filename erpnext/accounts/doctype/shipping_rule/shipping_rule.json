@@ -133,7 +133,6 @@
    "options": "Shipping Rule Condition"
   },
   {
-   "depends_on": "eval:!doc.apply_to_all_countries",
    "fieldname": "countries",
    "fieldtype": "Table",
    "label": "Valid for Countries",
