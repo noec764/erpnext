@@ -71,6 +71,7 @@ def update_itemised_tax_data(doc):
 
 		# First check if tax rate is present
 		# If not then look up in item_wise_tax_detail
+
 		if item_tax_rate:
 			for tax in item_tax_rate:
 				tax_rate += tax.get("rate")
@@ -80,9 +81,10 @@ def update_itemised_tax_data(doc):
 				for tax in valid_itemised_tax.get(row.item_code).items()
 				if flt(tax[1].get("form_rate", 0)) != 0.0
 			]
+
 			tax_rate = sum(
 				[
-					tax.get("tax_rate", 0)
+					tax.get("tax_rate", 0) * (-1 if tax.get("add_deduct_tax") == "Deduct" else 1)
 					for d, tax in (item_specific_rates or valid_itemised_tax.get(row.item_code).items())
 				]
 			)
@@ -102,7 +104,7 @@ def update_itemised_tax_data(doc):
 				{
 					"account": tax.get("tax_account"),
 					"account_number": account_numbers.get(tax.get("tax_account")),
-					"rate": tax.get("tax_rate", 0),
+					"rate": tax.get("tax_rate", 0) * (-1 if tax.get("add_deduct_tax") == "Deduct" else 1),
 					"taxable_amount": row.get("base_net_amount"),
 					"tax_amount": row.get("tax_amount"),
 				}
