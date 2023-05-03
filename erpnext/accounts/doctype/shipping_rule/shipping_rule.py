@@ -36,6 +36,9 @@ class ShippingRule(Document):
 	custom_formula: str
 
 	def validate(self):
+		if self.shipping_rule_type != "Selling":
+			self.taxes_and_charges = None
+
 		if self.calculate_based_on not in ["Fixed", "Custom Formula"]:
 			self.validate_from_to_values()
 			self.sort_shipping_rule_conditions()

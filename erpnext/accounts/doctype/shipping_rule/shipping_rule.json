@@ -8,11 +8,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "label",
   "disabled",
   "show_on_website",
-  "label",
-  "shipping_rule_type",
   "column_break_4",
+  "shipping_rule_type",
   "section_break_10",
   "company",
   "account",
@@ -23,8 +23,8 @@
   "calculate_based_on",
   "column_break_8",
   "shipping_amount",
-  "custom_formula",
   "rule_conditions_section",
+  "custom_formula",
   "conditions",
   "countries_section",
   "countries",
@@ -57,7 +57,7 @@
    "options": "Selling\nBuying"
   },
   {
-   "depends_on": "eval:!doc.disabled",
+   "depends_on": "",
    "fieldname": "section_break_10",
    "fieldtype": "Section Break",
    "label": "Accounting"
@@ -90,7 +90,8 @@
   },
   {
    "fieldname": "shipping_amount_section",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Shipping Amount"
   },
   {
    "default": "Fixed",
@@ -112,6 +113,12 @@
    "label": "Shipping Amount"
   },
   {
+   "depends_on": "eval:['Net Total', 'Net Weight', 'Custom Formula'].includes(doc.calculate_based_on)",
+   "fieldname": "rule_conditions_section",
+   "fieldtype": "Section Break",
+   "label": ""
+  },
+  {
    "depends_on": "eval:doc.calculate_based_on==='Custom Formula'",
    "description": "Example: 0.05 * doc.base_net_total",
    "fieldname": "custom_formula",
@@ -120,11 +127,6 @@
   },
   {
    "depends_on": "eval:['Net Total', 'Net Weight'].includes(doc.calculate_based_on)",
-   "fieldname": "rule_conditions_section",
-   "fieldtype": "Section Break",
-   "label": "Shipping Rule Conditions"
-  },
-  {
    "fieldname": "conditions",
    "fieldtype": "Table",
    "label": "Shipping Rule Conditions",
@@ -171,7 +173,7 @@
  "icon": "fa fa-truck",
  "idx": 1,
  "links": [],
- "modified": "2023-04-17 20:09:42.819118",
+ "modified": "2023-05-03 17:52:00.765005",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",
