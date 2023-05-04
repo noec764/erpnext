@@ -82,9 +82,7 @@ def get_available_slots(start, end):
 			booked_slots=cint(booking_count.get(x.name)),
 			booked_by_user=is_booked_by_user(x, booked_slots),
 			textColor="#fff",
-			backgroundColor="#3788d8"
-			if cint(booking_count.get(x.name)) >= cint(x.available_bookings)
-			else get_color(x, booked_slots, booking_count),
+			backgroundColor=get_color(x, booked_slots, booking_count),
 		)
 		for x in slots
 	]
@@ -112,10 +110,10 @@ def get_formatted_description(slot, booked_slots, booked_number):
 
 def get_color(slot, booked_slots, booking_count):
 	booked_by_user = is_booked_by_user(slot, booked_slots)
-	if cint(slot.available_bookings) <= cint(booking_count.get(slot.name)):
-		return "gray"
-	elif booked_by_user:
+	if booked_by_user:
 		return "#3788d8"
+	elif cint(slot.available_bookings) <= cint(booking_count.get(slot.name)):
+		return "gray"
 	else:
 		return "green"
 
