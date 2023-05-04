@@ -148,10 +148,11 @@ class GoCardlessSettings(PaymentGatewayController):
 		gc_payout = getattr(gc_payment_links, "payout")
 		payout_items = GoCardlessPayoutItems(self).get_list(gc_payout)
 
+		tax_amount = self.get_tax_amount(payout_items.records, gc_payments.id)
 		fees = frappe._dict(
 			base_amount=self.get_base_amount(payout_items.records, gc_payments.id),
-			fee_amount=self.get_fee_amount(payout_items.records, gc_payments.id),
-			tax_amount=self.get_tax_amount(payout_items.records, gc_payments.id),
+			fee_amount=self.get_fee_amount(payout_items.records, gc_payments.id) - tax_amount,
+			tax_amount=tax_amount,
 			exchange_rate=self.get_exchange_rate(GoCardlessPayouts(self).get(gc_payout)),
 		)
 
