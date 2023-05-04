@@ -171,6 +171,6 @@ class EventsCalendar {
 	}
 
 	getValidRange() {
-		return { start: moment().add(1,'d').format("YYYY-MM-DD") }
+		return { start: moment().format("YYYY-MM-DD") }
 	}
 }
