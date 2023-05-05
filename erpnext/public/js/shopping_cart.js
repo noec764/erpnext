@@ -201,11 +201,16 @@ $.extend(shopping_cart, {
 	},
 
 	render_from_server_side(values) {
-		$(".cart-items").html(values.items ?? "");
-		$(".cart-tax-items").html(values.total ?? "");
-		$(".payment-summary").html(values.taxes_and_totals ?? "");
-		$(".shipping-summary").html(values.shipping ?? "");
-		$(".cart-addresses").html(values.cart_address ?? "");
+		const elements = [
+			[$(".cart-items"), values.items],
+			[$(".cart-tax-items"), values.total],
+			[$(".payment-summary"), values.taxes_and_totals],
+			[$(".shipping-summary"), values.shipping],
+			[$(".cart-addresses"), values.cart_address],
+		];
+		for (const [$element, value] of elements) {
+			$element.html(value ?? "");
+		}
 	},
 
 	_fetch_and_rerender() {

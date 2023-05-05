@@ -675,8 +675,8 @@ def set_taxes(
 	# 1. Check if a tax rule exists
 	tax_template = get_tax_template(posting_date, args)
 
-	doctype = doctype or frappe.form_dict.get("doctype")
 	# 2. Retrieve default taxes and charges for this party
+	doctype = doctype or frappe.form_dict.get("doctype")
 	if not tax_template and doctype:
 		taxes_and_charges_field = frappe.get_meta(doctype).get_field("taxes_and_charges")
 		if taxes_and_charges_field:

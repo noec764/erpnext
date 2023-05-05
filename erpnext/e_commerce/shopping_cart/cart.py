@@ -100,7 +100,7 @@ def place_order():
 
 	quotation.company = cart_settings.company
 
-	validate_shipping_rule(quotation, cart_settings)
+	validate_shipping_rule(quotation, cart_settings, throw_exception=True)
 
 	quotation.flags.ignore_permissions = True
 	quotation.submit()
