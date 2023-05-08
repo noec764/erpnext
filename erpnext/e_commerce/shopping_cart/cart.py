@@ -62,9 +62,16 @@ def get_cart_quotation(doc=None):
 		"shipping_estimates": [],
 	}
 
-	if context["shipping_rules"]:
-		names = list(map(lambda rule: rule.name, context["shipping_rules"]))
-		context["shipping_estimates"] = get_estimates_for_shipping(names)
+	if route == "checkout":
+		if shipping_rules := context["shipping_rules"]:
+			context["shipping_estimates"] = get_estimates_for_shipping(doc, shipping_rules)
+
+	if route == "cart":
+		if any(item.is_free_item and item.item_booking for item in doc.items):
+			from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
+			from erpnext.venue.utils import get_customer
+
+			context["credits_balance"] = get_balance(get_customer())
 
 	return context
 
@@ -228,17 +235,9 @@ def render_quotation(context=None):
 	out = {
 		"items": frappe.render_template("templates/includes/cart/cart_items.html", context),
 		"total": frappe.render_template("templates/includes/cart/cart_items_total.html", context),
-		"taxes_and_totals": frappe.render_template(
-			"templates/includes/cart/cart_payment_summary.html", context
-		),
 		"cart_address": frappe.render_template("templates/includes/cart/cart_address.html", context),
-		"shipping": "",
+		"summary": frappe.render_template("templates/includes/cart/cart_summary.html", context),
 	}
-
-	if context["shipping_rules"]:
-		out["shipping"] = frappe.render_template(
-			"templates/includes/cart/shipping_summary.html", context
-		)
 
 	return out
 

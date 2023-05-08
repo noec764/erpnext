@@ -1,0 +1,15 @@
+{% if cart_settings.show_apply_coupon_code_in_website and cart_settings.enable_checkout %}
+<div class="frappe-card mb-3 p-5">
+	<h6>
+		{{ _("Coupon Code")|e }}
+	</h6>
+
+	<input type="text" class="txtcoupon form-control mb-3" placeholder="{{ _(" Enter Coupon Code")|e }}" name="txtcouponcode" />
+
+	<button class="btn btn-primary-light btn-sm bt-coupon">
+		{{ _(" Apply Coupon Code")|e }}
+	</button>
+
+	<input type="hidden" class="txtreferral_sales_partner" placeholder="Enter Sales Partner" name="txtreferral_sales_partner" />
+</div>
+{% endif %}

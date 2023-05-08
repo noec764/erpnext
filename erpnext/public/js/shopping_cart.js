@@ -172,7 +172,7 @@ $.extend(shopping_cart, {
 			$cart.css("display", "none");
 			$(".cart-tax-items").hide();
 			$(".btn-place-order").hide();
-			$(".cart-payment-addresses").hide();
+			$(".cart-sticky-sidebar").hide();
 
 			let intermediate_empty_cart_msg = `
 				<div class="text-center w-100 intermediate-empty-cart mt-4 mb-4 text-muted">
@@ -204,8 +204,7 @@ $.extend(shopping_cart, {
 		const elements = [
 			[$(".cart-items"), values.items],
 			[$(".cart-tax-items"), values.total],
-			[$(".payment-summary"), values.taxes_and_totals],
-			[$(".shipping-summary"), values.shipping],
+			[$(".cart-summary"), values.summary],
 			[$(".cart-addresses"), values.cart_address],
 		];
 		for (const [$element, value] of elements) {

@@ -1,6 +1,6 @@
 {% if shipping_rules %}
-<fieldset class="shipping-methods-list">
-	<legend><h6>{{ _("Select a shipping method") }}</h6></legend>
+<div class="shipping-methods-list frappe-card mb-3 p-5">
+	<h6>{{ _("Select a shipping method") }}</h6>
 
 	{% set current_shipping_method = doc.shipping_rule or "" %}
 
@@ -8,7 +8,7 @@
 	{% set name = method.name %}
 	{% set input_id = "shipping_method_" ~ name |e %}
 	{% set estimated_cost = shipping_estimates.get(name) if shipping_estimates else "" %}
-	{% set label = method.label or _("None") %}
+	{% set label = method.label or method.name or _("None") %}
 
 	<label for="{{ input_id }}">
 		<input
@@ -17,6 +17,7 @@
 			id="{{ input_id }}"
 			value="{{ name |e }}"
 			{% if name == current_shipping_method %}checked{% endif %}
+			{% if estimated_cost == "not applicable" %}disabled{% endif %}
 		/>
 
 		<span class="estimated-cost">{{ estimated_cost |e }}</span>
@@ -28,5 +29,5 @@
 		{% endif %}
 	</label>
 	{% endfor %}
-</fieldset>
+</div>
 {% endif %}

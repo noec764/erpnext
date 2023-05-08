@@ -18,7 +18,7 @@
 				{% include "templates/includes/cart/cart_address.html" %}
 			</div>
 
-			<a class="btn btn-default shadow-none btn-xs" href="/cart">
+			<a class="btn btn-default shadow-none btn-xs back-to-cart" href="/cart">
 				<svg class="icon icon-xs">
 					<use class="" href="#icon-arrow-left"></use>
 				</svg>
@@ -27,18 +27,8 @@
 		</div>
 
 		<!-- Right section -->
-		<div class="col-md-4">
-			<div class="mb-3 frappe-card p-5 shipping-summary">
-				{%- include "templates/includes/cart/shipping_summary.html" -%}
-			</div>
-
-			<div class="frappe-card p-5 cart-payment-addresses">
-				<div class="payment-summary">
-					{% include "templates/includes/cart/cart_payment_summary.html" %}
-				</div>
-
-				<div id="cart-error" class="m-0 mt-3 alert alert-danger" style="display: none;"></div>
-			</div>
+		<div class="col-md-4 cart-sticky-sidebar cart-summary">
+			{% include "templates/includes/cart/cart_summary.html" %}
 		</div>
 	</div>
 </div>
