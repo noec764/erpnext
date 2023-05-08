@@ -108,6 +108,7 @@ $.extend(shopping_cart, {
 	},
 
 	apply_shipping_rule(rule, btn) {
+		if (frappe.freeze_count) return; // prevent timestamp mismatch
 		frappe.freeze(__("Updating", [], "Freeze message while updating a document"));
 		return frappe.call({
 			btn: btn,

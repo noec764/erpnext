@@ -253,6 +253,7 @@ $.extend(shopping_cart, {
 	},
 
 	shopping_cart_update: function ({ item_code, qty, cart_dropdown, additional_notes, uom, booking }) {
+		if (frappe.freeze_count) return;
 		frappe.freeze();
 		return shopping_cart.update_cart({
 			item_code,
@@ -264,6 +265,7 @@ $.extend(shopping_cart, {
 			booking: booking,
 			callback: function(r) {
 				if(!r.exc) {
+					frappe.unfreeze();
 					shopping_cart.clear_error();
 					shopping_cart.render_from_server_side(r.message);
 					shopping_cart.set_cart_count();
