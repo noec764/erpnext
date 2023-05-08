@@ -8,7 +8,7 @@
 	<div class="d-flex">
 		<div class="col-6 address-header"><h6>{{ _("Shipping Address") }}</h6></div>
 		<div class="col-6" style="padding: 0;">
-			<a class="ml-4 btn-new-address" role="button">{{ _("Add a new address") }}</a>
+			<button class="btn btn-link btn-new-address ml-4 p-0">{{ _("Add a new address") }}</button>
 		</div>
 	</div>
 
@@ -54,7 +54,7 @@
 		<div class="d-flex">
 			<div class="col-6 address-header"><h6>{{ _("Billing Address") }}</h6></div>
 			<div class="col-6" style="padding: 0;">
-				<a class="ml-4 btn-new-address" role="button">{{ _("Add a new address") }}</a>
+				<button class="btn btn-link btn-new-address ml-4 p-0">{{ _("Add a new address") }}</button>
 			</div>
 		</div>
 
@@ -102,7 +102,14 @@ frappe.ready(() => {
 	});
 
 	$(document.body).on('click', '.cart-container .btn-new-address', () => {
-		shopping_cart.new_cart_address(true).catch(() => {})
+		let addressType = $(event.target).closest("[data-section]").attr("data-section")?.replace("-address", "");
+		if (addressType) {
+			addressType = addressType == "shipping" ? "Shipping" : "Billing";
+		} else {
+			addressType = null;
+		}
+
+		shopping_cart.new_cart_address(true, addressType).catch(() => {})
 	});
 
 	function toggle_billing_address_section(is_shipping_different_billing) {

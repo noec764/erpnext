@@ -285,7 +285,7 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	new_cart_address: function (reload) {
+	new_cart_address: function (reload, addressType) {
 		return new Promise((resolve, reject) => {
 			const d = new frappe.ui.Dialog({
 				title: __('New Address'),
@@ -339,6 +339,7 @@ $.extend(shopping_cart, {
 							{ label: __('Billing'), value: 'Billing' },
 							{ label: __('Shipping'), value: 'Shipping' }
 						],
+						default: addressType || 'Shipping',
 						reqd: 1
 					},
 					{
@@ -349,7 +350,7 @@ $.extend(shopping_cart, {
 					{
 						fieldname: "phone",
 						fieldtype: "Data",
-						label: "Phone"
+						label: __("Phone")
 					},
 				],
 				primary_action_label: __('Save'),
