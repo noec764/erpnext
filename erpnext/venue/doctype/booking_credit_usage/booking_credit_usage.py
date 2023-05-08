@@ -32,10 +32,20 @@ class BookingCreditUsage(Document):
 		)
 
 	def before_cancel(self):
-		if frappe.db.exists("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1)):
-			doc = frappe.get_doc("Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1))
+		if docname := frappe.db.exists(
+			"Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=1)
+		):
+			doc = frappe.get_doc("Booking Credit Ledger", docname)
 			doc.flags.ignore_permissions = True
 			doc.cancel()
+
+	def on_trash(self):
+		if docname := frappe.db.exists(
+			"Booking Credit Ledger", dict(booking_credit_usage=self.name, docstatus=2)
+		):
+			doc = frappe.get_doc("Booking Credit Ledger", docname)
+			doc.flags.ignore_permissions = True
+			doc.delete()
 
 
 def add_booking_credit_usage(doc, method):
