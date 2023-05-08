@@ -201,6 +201,8 @@ $.extend(shopping_cart, {
 	},
 
 	render_from_server_side(values) {
+		const restoreFocusTo = this._dompath(document.activeElement);
+
 		const elements = [
 			[$(".cart-items"), values.items],
 			[$(".cart-tax-items"), values.total],
@@ -210,6 +212,37 @@ $.extend(shopping_cart, {
 		for (const [$element, value] of elements) {
 			$element.html(value ?? "");
 		}
+
+		if (restoreFocusTo) {
+			document.querySelector(restoreFocusTo)?.focus();
+		}
+	},
+
+	/** @param {HTMLElement?} element */
+	_dompath(element) {
+		// inspired by https://stackoverflow.com/a/22072325
+		let path = "";
+		while (element) {
+			const tag = element.tagName.toLowerCase();
+			const classes = element.className.trim().split(/\s+/).join(".").replace(/^(.)/, ".$1");
+
+			if (tag === "html" || tag === "body") break;
+
+			path = path ? " > " + path : "";
+			if (element.id) {
+				return "#" + element.id + path;
+			} else {
+				let selector = tag + classes;
+				// const idx = Array.from(element.parentElement?.children ?? [])?.indexOf(element) ?? -1;
+				// if (idx >= 0) {
+				// 	selector = selector + ":nth-child(" + (idx + 1) + ")";
+				// }
+				path = selector + path;
+			}
+
+			element = element.parentElement;
+		}
+		return path;
 	},
 
 	_fetch_and_rerender() {
