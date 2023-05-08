@@ -349,10 +349,9 @@ def get_ecommerce_shipping_rules(transaction: Document, address=None) -> list[Sh
 	)  # type: ignore
 
 	# Filter out shipping rules that don't apply to the transaction
-	# shipping_rules = list(filter(
-	# 	lambda sr: sr.get_shipping_amount(transaction) != "not applicable",
-	# 	shipping_rules
-	# ))
+	shipping_rules = list(
+		filter(lambda sr: sr.get_shipping_amount(transaction) != "not applicable", shipping_rules)
+	)
 
 	if not shipping_rules:
 		# No shipping rules for this country

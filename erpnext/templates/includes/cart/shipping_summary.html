@@ -20,7 +20,13 @@
 			{% if estimated_cost == "not applicable" %}disabled{% endif %}
 		/>
 
-		<span class="estimated-cost">{{ estimated_cost |e }}</span>
+		<span class="estimated-cost">
+			{% if estimated_cost == "not applicable" %}
+				{{ _("Not Applicable") |e }}
+			{% else %}
+				{{ estimated_cost |e }}
+			{% endif %}
+		</span>
 
 		{{ label |e }}
 
