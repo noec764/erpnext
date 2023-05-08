@@ -307,3 +307,55 @@ class ShippingRule(Document):
 				)
 
 			msgprint("\n".join(messages), raise_exception=OverlappingConditionError)
+
+
+def get_ecommerce_shipping_rules(transaction: Document, address=None) -> list[ShippingRule]:
+	address = address or transaction.get_shipping_address()  # type: ignore
+
+	if not address:
+		# Cannot filter by country if no address
+		return []
+
+	if isinstance(address, str):
+		country = frappe.db.get_value("Address", address, "country")
+	else:
+		country = address.get("country")
+
+	if not country:
+		# The address has no country
+		return []
+
+	# First, get all shipping rules that apply to the country, and retrieve basic fields
+	sr_country = frappe.qb.DocType("Shipping Rule Country")
+	sr = frappe.qb.DocType("Shipping Rule")
+
+	from pypika import Order
+
+	query = (
+		frappe.qb.from_(sr)
+		.left_join(sr_country)
+		.on(sr.name == sr_country.parent)
+		.select(sr.name)
+		.distinct()
+		.where((sr_country.country == country) | sr_country.country.isnull())
+		.where(sr.disabled != 1)
+		.where(sr.show_on_website == 1)
+		.orderby(sr.name, order=Order.asc)
+	)
+	shipping_rule_names = [x[0] for x in query.run(as_list=True)]
+
+	shipping_rules: list[ShippingRule] = list(
+		map(lambda name: frappe.get_doc("Shipping Rule", name), shipping_rule_names)
+	)  # type: ignore
+
+	# Filter out shipping rules that don't apply to the transaction
+	# shipping_rules = list(filter(
+	# 	lambda sr: sr.get_shipping_amount(transaction) != "not applicable",
+	# 	shipping_rules
+	# ))
+
+	if not shipping_rules:
+		# No shipping rules for this country
+		return []
+
+	return shipping_rules  # type: ignore

@@ -57,7 +57,7 @@ def get_cart_quotation(doc=None):
 		"shipping_addresses": get_shipping_addresses(party, doc),
 		"billing_addresses": get_billing_addresses(party, doc),
 		"cart_settings": get_shopping_cart_settings(),
-		"shipping_rules": get_applicable_shipping_rules(party),
+		"shipping_rules": get_shipping_rules(doc),
 		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
 		"shipping_estimates": [],
 	}
@@ -702,45 +702,13 @@ def _apply_shipping_rule(party=None, quotation=None, cart_settings=None):
 		quotation.run_method("calculate_taxes_and_totals")
 
 
-def get_applicable_shipping_rules(party=None, quotation=None):
-	shipping_rules = get_shipping_rules(quotation)
-
-	if shipping_rules:
-		fields = ["name", "label", "description"]
-		rule_map = {
-			rule.name: rule
-			for rule in frappe.db.get_values(
-				"Shipping Rule", dict(name=["in", shipping_rules]), fields, as_dict=True
-			)
-		}
-		# we need this in sorted order as per the position of the rule in the settings page
-		return [rule_map[rule] for rule in shipping_rules]
-
-
-def get_shipping_rules(quotation=None, cart_settings=None):
+def get_shipping_rules(quotation=None):
 	if not quotation:
 		quotation = _get_cart_quotation()
 
-	shipping_rules = []
-	if quotation.shipping_address_name:
-		country = frappe.db.get_value("Address", quotation.shipping_address_name, "country")
-		if country:
-			sr_country = frappe.qb.DocType("Shipping Rule Country")
-			sr = frappe.qb.DocType("Shipping Rule")
-			query = (
-				frappe.qb.from_(sr)
-				.left_join(sr_country)
-				.on(sr.name == sr_country.parent)
-				.select(sr.name)
-				.distinct()
-				.where((sr_country.country == country) | sr_country.country.isnull())
-				.where(sr.disabled != 1)
-				.where(sr.show_on_website == 1)
-			)
-			result = query.run(as_list=True)
-			shipping_rules = [x[0] for x in result]
+	from erpnext.accounts.doctype.shipping_rule.shipping_rule import get_ecommerce_shipping_rules
 
-	return shipping_rules
+	return get_ecommerce_shipping_rules(quotation)
 
 
 def get_address_territory(address_name):
@@ -795,35 +763,32 @@ def apply_coupon_code(applied_code, applied_referral_sales_partner):
 	return quotation
 
 
-def get_estimates_for_shipping(names: list[str]):
-	if isinstance(names, str):
-		names = frappe.parse_json(names)
-	if not names:
-		return {}
-	if not isinstance(names, list):
-		frappe.throw(_("Invalid data"))
+def get_estimates_for_shipping(quotation, shipping_rules: list[str]):
+	"""Returns shipping estimates for given shipping rules"""
 
 	from frappe.utils.data import fmt_money
 
-	"""Returns shipping estimates for given shipping rules"""
-	quotation = _get_cart_quotation()
 	estimates = {}
 
-	for name in names:
-		shipping_rule = frappe.get_doc("Shipping Rule", name)
+	for shipping_rule in shipping_rules:
 		shipping_amount = shipping_rule.get_shipping_amount(quotation)
-		if shipping_amount == 0:
+
+		if shipping_amount == "not applicable":
+			shipping_amount = "not applicable"
+		elif shipping_amount == 0:
 			shipping_amount = _("Free")
 		elif isinstance(shipping_amount, (int, float)):
 			shipping_amount = fmt_money(flt(shipping_amount), currency=quotation.currency)
+		else:
+			shipping_amount = None
 
-		estimates[name] = shipping_amount
+		estimates[shipping_rule.name] = shipping_amount
 
 	return estimates
 
 
 def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
-	shipping_rules = get_shipping_rules(quotation, cart_settings)
+	shipping_rules = get_shipping_rules(quotation)
 
 	if shipping_rules or quotation.shipping_rule:
 		if not quotation.shipping_rule:
@@ -831,7 +796,8 @@ def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
 				frappe.throw(_("Please select a shipping method"))
 			return False
 
-		if not shipping_rules or quotation.shipping_rule not in shipping_rules:
+		shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
+		if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
 			if throw_exception:
 				apply_shipping_rule(None)
 				frappe.db.commit()
