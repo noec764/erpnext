@@ -87,4 +87,6 @@ def cancel_booking_credit_usage(doc, method):
 	):
 		bcu_doc = frappe.get_doc("Booking Credit Usage", bcu)
 		bcu_doc.flags.ignore_permissions = True
-		bcu_doc.cancel()
+		if bcu_doc.docstatus != 2:
+			bcu_doc.cancel()
+		bcu_doc.delete()
