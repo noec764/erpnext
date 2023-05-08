@@ -26,6 +26,9 @@ class ManyBlankToValuesError(frappe.ValidationError):
 	pass
 
 
+NOT_APPLICABLE = "not applicable"
+
+
 class ShippingRule(Document):
 	label: str
 	shipping_rule_type: Literal["Selling", "Buying"]
@@ -78,29 +81,33 @@ class ShippingRule(Document):
 		# loc = {"doc": doc.as_dict(), "shipping_amount": None}
 		# shipping_amount = safe_block_eval(code, None, loc, output_var="shipping_amount")
 
+		if shipping_amount == NOT_APPLICABLE:
+			return NOT_APPLICABLE
+
 		if not isinstance(shipping_amount, (int, float)):
 			frappe.throw("Shipping Rule: Custom formula must return a number")
 
 		return shipping_amount
 
-	def evaluate_shipping_rule(self, transaction: Document):
-		"""Hook to evaluate shipping amount"""
-		return None
-
 	def _evaluate_from_hook(self, transaction: Document):
 		shipping_amount = self.run_method("evaluate_shipping_rule", transaction=transaction)
+
+		if shipping_amount == NOT_APPLICABLE:
+			return NOT_APPLICABLE
 
 		if not isinstance(shipping_amount, (int, float)):
 			frappe.throw("Shipping Rule: Hook must return a number")
 
-		return shipping_amount
+		return float(shipping_amount)
 
-	def get_shipping_amount(self, doc: Document):
+	def evaluate_shipping_rule(
+		self, transaction: Document
+	) -> None | float | Literal["not applicable"]:
+		"""Hook to evaluate shipping amount"""
+		return None
+
+	def get_shipping_amount(self, doc: Document) -> float | Literal["not applicable"]:
 		shipping_amount = 0.0
-
-		if doc.get_shipping_address():
-			# validate country only if there is address
-			self.validate_countries(doc)
 
 		if self.calculate_based_on == "Net Total":
 			shipping_amount = self.get_shipping_amount_from_rules(doc.base_net_total)
@@ -125,7 +132,15 @@ class ShippingRule(Document):
 
 	def apply(self, doc):
 		"""Apply shipping rule on given doc. Called from accounts controller"""
+		if doc.get_shipping_address():
+			# validate country only if there is address
+			self.validate_countries(doc)
+
 		shipping_amount = self.get_shipping_amount(doc)
+
+		if shipping_amount == "not applicable":
+			frappe.throw(_("Shipping Rule is not applicable"))
+
 		self.add_shipping_rule_to_tax_table(doc, shipping_amount)
 
 	def get_shipping_amount_from_rules(self, value):
@@ -133,9 +148,9 @@ class ShippingRule(Document):
 			if not condition.to_value or (
 				flt(condition.from_value) <= flt(value) <= flt(condition.to_value)
 			):
-				return condition.shipping_amount
+				return flt(condition.shipping_amount)
 
-		return 0.0
+		return 0.0  # NOTE: Should this be 0.0 or "not applicable"?
 
 	def validate_countries(self, doc):
 		# validate applicable countries
