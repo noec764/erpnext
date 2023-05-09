@@ -299,6 +299,7 @@
    "description": "Sets 'Source Warehouse' in each row of the Items table.",
    "fieldname": "set_from_warehouse",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Set Source Warehouse",
    "options": "Warehouse"
   },
@@ -323,7 +324,7 @@
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-24 16:58:01.383798",
+ "modified": "2023-05-07 20:17:29.108095",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",
