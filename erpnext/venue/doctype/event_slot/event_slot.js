@@ -31,6 +31,8 @@ frappe.ui.form.on('Event Slot', {
 				}
 			})
 		}
+
+		frm.trigger("show_warning_if_needed");
 	},
 	event: function(frm) {
 		if (frm.doc.event && !frm.doc.starts_on) {
@@ -39,5 +41,23 @@ frappe.ui.form.on('Event Slot', {
 				frm.set_value("ends_on", r.ends_on);
 			})
 		}
-	}
+		frm.trigger("show_warning_if_needed");
+	},
+	starts_on(frm) {
+		frm.trigger("show_warning_if_needed");
+	},
+	ends_on(frm) {
+		frm.trigger("show_warning_if_needed");
+	},
+	async show_warning_if_needed(frm) {
+		if (!frm.doc.starts_on || !frm.doc.ends_on || !frm.doc.event) {
+			return frm.set_intro(null);
+		}
+
+		const msg = (await frm.call("is_slot_outside_event"))?.message ?? "";
+		frm.set_intro(null);
+		if (msg) {
+			frm.set_intro(msg, "orange");
+		}
+	},
 });

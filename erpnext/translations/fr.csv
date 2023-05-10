@@ -11606,6 +11606,7 @@ This request has already been completed within the last 24 hours.<br> Please con
 This role is allowed to submit transactions that exceed credit limits,Ce rôle est autorisé à valider des transaction qui dépassent la limite de crédit,
 "This section allows the user to set the Body and Closing text of the Dunning Letter for the Dunning Type based on language, which can be used in Print.",Cette section permet à l'utilisateur de définir le corps du texte et la conclusion de la lettre de relance.,
 This slot is no longer bookable.,Ce créneau n'est plus disponible.,
+This slot is outside the event's hours ({0} - {1}),Ce créneau est en dehors des horaires de l'événement associé ({0} - {1}),
 This subscription has been cancelled on {0},Cet abonnement a été annulé le {0},
 This subscription invoicing period ends on {0}.,La période de facturation de cet abonnement termine le {0},
 This subscription invoicing period starts on {0}.,La période de facturation de cet abonnement démarre le {0},
