@@ -61,6 +61,7 @@ class Quotation(SellingController):
 						kept_items.append(item)
 					else:
 						if item.item_booking:
+							item.delete(ignore_permissions=True)  # delete the row first to avoid a foreign key error
 							frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True)
 						deleted_items.append(item)
 
