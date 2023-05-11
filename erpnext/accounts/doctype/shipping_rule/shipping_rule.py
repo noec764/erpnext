@@ -9,7 +9,7 @@ from typing import Literal
 import frappe
 from frappe import _, msgprint, throw
 from frappe.model.document import Document
-from frappe.utils import flt, fmt_money
+from frappe.utils import cstr, flt, fmt_money, getdate
 
 import erpnext
 
@@ -28,6 +28,8 @@ class ManyBlankToValuesError(frappe.ValidationError):
 
 NOT_APPLICABLE = "not applicable"
 
+SALES_DOCTYPES = ["Quotation", "Sales Order", "Delivery Note", "Sales Invoice", "POS Invoice"]
+
 
 class ShippingRule(Document):
 	label: str
@@ -40,7 +42,8 @@ class ShippingRule(Document):
 
 	def validate(self):
 		if self.shipping_rule_type != "Selling":
-			self.taxes_and_charges = None
+			# Taxes are not yet implemented for purchasing documents
+			self.shipping_taxes = []
 
 		if self.calculate_based_on not in ["Fixed", "Custom Formula"]:
 			self.validate_from_to_values()
@@ -203,13 +206,14 @@ class ShippingRule(Document):
 		)
 
 		# Add tax on shipping if applicable
-		if self.shipping_rule_type == "Selling" and self.taxes_and_charges:
-			self.add_tax_on_shipping(
-				doc,
-				shipping_charge_row,
-				tax_template_dt="Sales Taxes and Charges Template",
-				tax_template_name=self.taxes_and_charges,
-			)
+		if self.shipping_rule_type == "Selling" and self.shipping_taxes:
+			if tax_template := get_shipping_tax_template(doc, self.shipping_taxes):
+				self.add_tax_on_shipping(
+					doc,
+					shipping_charge_row,
+					tax_template_dt="Sales Taxes and Charges Template",
+					tax_template_name=tax_template,
+				)
 
 	def add_tax_on_shipping(self, doc, shipping_charge_row, tax_template_dt, tax_template_name):
 		# Find existing tax by referenced row id (the not-so-clearly named row_id)
@@ -358,3 +362,37 @@ def get_ecommerce_shipping_rules(transaction: Document, address=None) -> list[Sh
 		return []
 
 	return shipping_rules  # type: ignore
+
+
+def get_shipping_tax_template(doc, taxes):
+	taxes_with_validity = []
+	taxes_with_no_validity = []
+
+	for tax in taxes:
+		tax_company = frappe.get_value("Sales Taxes and Charges Template", tax.tax_template, "company")
+
+		if tax_company == doc.company:
+			if tax.valid_from:
+				validation_date = doc.get("transaction_date") or doc.get("posting_date")
+
+				if getdate(tax.valid_from) <= getdate(validation_date):
+					taxes_with_validity.append(tax)
+			else:
+				taxes_with_no_validity.append(tax)
+
+	if taxes_with_validity:
+		taxes = (
+			sorted(taxes_with_validity, key=lambda i: i.valid_from, reverse=True) + taxes_with_no_validity
+		)
+	else:
+		taxes = taxes_with_no_validity
+
+	# all templates have validity and no template is valid
+	if not taxes_with_validity and (not taxes_with_no_validity):
+		return None
+
+	for tax in taxes:
+		if cstr(tax.tax_category) == cstr(doc.get("tax_category")):
+			return tax.tax_template
+
+	return None
