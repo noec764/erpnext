@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "base_net_total",
+ "color": "#b4cd29",
  "creation": "2020-07-20 20:17:16.568132",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -11,7 +12,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Annual Sales",
- "modified": "2021-10-12 08:38:23.896653",
+ "modified": "2023-05-12 10:30:34.790390",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Annual Sales",

@@ -10,7 +10,7 @@
   }
  ],
  "color": "#e76f51",
- "content": "[{\"id\":\"m4R_ERYGVe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Orders Indicators</b></span>\",\"col\":3}},{\"id\":\"XCvyDOErQa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Invoices Indicators</b></span>\",\"col\":9}},{\"id\":\"vdUrzrP4DQ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Orders This Year\",\"col\":3}},{\"id\":\"I0dmANpLlO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Year\",\"col\":3}},{\"id\":\"IIb38cwfrK\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases Last Month\",\"col\":3}},{\"id\":\"GYYKFlHyLA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Month\",\"col\":3}},{\"id\":\"S3wW48kubp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FBCT81OI23\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators &amp; Charts</b></span>\",\"col\":12}},{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}}]",
+ "content": "[{\"id\":\"m4R_ERYGVe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Orders Indicators</b></span>\",\"col\":3}},{\"id\":\"XCvyDOErQa\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Invoices Indicators</b></span>\",\"col\":9}},{\"id\":\"vdUrzrP4DQ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Orders This Year\",\"col\":3}},{\"id\":\"I0dmANpLlO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Year\",\"col\":3}},{\"id\":\"IIb38cwfrK\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases Last Month\",\"col\":3}},{\"id\":\"GYYKFlHyLA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchases This Month\",\"col\":3}},{\"id\":\"S3wW48kubp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FBCT81OI23\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators</b></span>\",\"col\":12}},{\"id\":\"HKbuRo9v80\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchased Items\",\"col\":6}},{\"id\":\"kgc77D1enl\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Purchasing Groups\",\"col\":6}}]",
  "creation": "2020-01-28 11:50:26.195467",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -359,7 +359,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-20 09:16:31.839142",
+ "modified": "2023-05-12 10:30:58.679030",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",

@@ -3,6 +3,7 @@
 
 
 import frappe
+from frappe import _
 
 from erpnext.controllers.trends import get_columns, get_data
 
@@ -13,5 +14,44 @@ def execute(filters=None):
 	data = []
 	conditions = get_columns(filters, "Sales Invoice")
 	data = get_data(filters, conditions)
+	chart_data = get_chart_data(data, filters)
 
-	return conditions["columns"], data
+	return conditions["columns"], data, None, chart_data
+
+
+def get_chart_data(data, filters):
+	if not data:
+		return []
+
+	labels, datapoints = [], []
+
+	if filters.get("group_by"):
+		# consider only consolidated row
+		data = [row for row in data if row[0]]
+
+	data = sorted(data, key=lambda i: i[-1], reverse=True)
+
+	if len(data) > 10:
+		# get top 10 if data too long
+		data = data[:10]
+
+	meta = frappe.get_meta(filters.based_on)
+	title_field = meta.get_title_field()
+	labels_map = {
+		x.name: x.get(title_field)
+		for x in frappe.get_all(filters.based_on, fields=["name", title_field])
+	}
+
+	for row in data:
+		labels.append(labels_map.get(row[0]) or row[0])
+		datapoints.append(row[-1])
+
+	return {
+		"data": {
+			"labels": labels,
+			"datasets": [{"name": _("Total Invoiced Amount"), "values": datapoints}],
+		},
+		"type": "bar",
+		"colors": ["#5e64ff"],
+		"fieldtype": "Currency",
+	}
