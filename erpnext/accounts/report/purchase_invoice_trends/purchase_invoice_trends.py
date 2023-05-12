@@ -42,13 +42,13 @@ def get_chart_data(data, filters):
 	}
 
 	for row in data:
-		labels.append(labels_map.get(row[0]))
+		labels.append(labels_map.get(row[0]) or row[0])
 		datapoints.append(row[-1])
 
 	return {
 		"data": {
 			"labels": labels,
-			"datasets": [{"name": _("Total Received Amount"), "values": datapoints}],
+			"datasets": [{"name": _("Total Invoiced Amount"), "values": datapoints}],
 		},
 		"type": "bar",
 		"colors": ["#5e64ff"],

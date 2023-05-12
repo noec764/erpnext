@@ -1,12 +1,16 @@
 {
  "charts": [
   {
-   "chart_name": "Sales Order Trends",
-   "label": "Sales Order Trends"
+   "chart_name": "Top Selling Groups",
+   "label": "Top Selling Groups"
+  },
+  {
+   "chart_name": "Top Selling Items",
+   "label": "Top Selling Items"
   }
  ],
  "color": "#2a9d8f",
- "content": "[{\"type\":\"onboarding\",\"data\":{\"onboarding_name\":\"Selling\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Sales Order Trends\",\"col\":12}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Quick Access</b></span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Analytics\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Order Analysis\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Selling\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Items and Pricing\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"ZWMEw0O8bS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Sales Orders Indicators</b></span>\",\"col\":3}},{\"id\":\"9xOMQrNF_h\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Sales Invoices Indicators</b></span>\",\"col\":9}},{\"id\":\"u_2QqRUKhY\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Orders This Year\",\"col\":3}},{\"id\":\"vxf3hSs_mi\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sales This Year\",\"col\":3}},{\"id\":\"aQf5R6aeT0\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sales Last Month\",\"col\":3}},{\"id\":\"T80c6-hJpU\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sales This Month\",\"col\":3}},{\"id\":\"JWnrzMQ6t_\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"AFUhDA5tlE\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Key Indicators</b></span>\",\"col\":12}},{\"id\":\"Bc5-Cu5VVn\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Selling Items\",\"col\":6}},{\"id\":\"UMBsesc_ED\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Selling Groups\",\"col\":6}}]",
  "creation": "2020-01-28 11:49:12.092882",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -18,15 +22,6 @@
  "is_standard": 1,
  "label": "Selling",
  "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Selling",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
   {
    "columns": 0,
    "dependencies": "",
@@ -110,15 +105,6 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items and Pricing",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
   },
   {
    "columns": 0,
@@ -230,15 +216,6 @@
   },
   {
    "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Settings",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
@@ -344,484 +321,36 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Other Reports",
-   "link_count": 12,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Lead",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Lead Details",
-   "link_count": 0,
-   "link_to": "Lead Details",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Address",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Addresses And Contacts",
-   "link_count": 0,
-   "link_to": "Address And Contacts",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Available Stock for Packing Items",
-   "link_count": 0,
-   "link_to": "Available Stock for Packing Items",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Pending SO Items For Purchase Request",
-   "link_count": 0,
-   "link_to": "Pending SO Items For Purchase Request",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Delivery Note",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Delivery Note Trends",
-   "link_count": 0,
-   "link_to": "Delivery Note Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Invoice",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Invoice Trends",
-   "link_count": 0,
-   "link_to": "Sales Invoice Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Credit Balance",
-   "link_count": 0,
-   "link_to": "Customer Credit Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customers Without Any Sales Transactions",
-   "link_count": 0,
-   "link_to": "Customers Without Any Sales Transactions",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partners Commission",
-   "link_count": 0,
-   "link_to": "Sales Partners Commission",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Territory Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Territory Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Sales Person Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partner Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Sales Partner Target Variance based on Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Key Reports",
-   "link_count": 22,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Analytics",
-   "link_count": 0,
-   "link_to": "Sales Analytics",
-   "link_type": "Report",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Order Analysis",
-   "link_count": 0,
-   "link_to": "Sales Order Analysis",
-   "link_type": "Report",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Sales Funnel",
-   "link_count": 0,
-   "link_to": "sales-funnel",
-   "link_type": "Page",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Order Trends",
-   "link_count": 0,
-   "link_to": "Sales Order Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Quotation",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Quotation Trends",
-   "link_count": 0,
-   "link_to": "Quotation Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Acquisition and Loyalty",
-   "link_count": 0,
-   "link_to": "Customer Acquisition and Loyalty",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Inactive Customers",
-   "link_count": 0,
-   "link_to": "Inactive Customers",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person-wise Transaction Summary",
-   "link_count": 0,
-   "link_to": "Sales Person-wise Transaction Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item-wise Sales History",
-   "link_count": 0,
-   "link_to": "Item-wise Sales History",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Lead",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Lead Details",
-   "link_count": 0,
-   "link_to": "Lead Details",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Address",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Addresses And Contacts",
-   "link_count": 0,
-   "link_to": "Address And Contacts",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Item",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Available Stock for Packing Items",
-   "link_count": 0,
-   "link_to": "Available Stock for Packing Items",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Pending SO Items For Purchase Request",
-   "link_count": 0,
-   "link_to": "Pending SO Items For Purchase Request",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Delivery Note",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Delivery Note Trends",
-   "link_count": 0,
-   "link_to": "Delivery Note Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Invoice",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Invoice Trends",
-   "link_count": 0,
-   "link_to": "Sales Invoice Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Credit Balance",
-   "link_count": 0,
-   "link_to": "Customer Credit Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customers Without Any Sales Transactions",
-   "link_count": 0,
-   "link_to": "Customers Without Any Sales Transactions",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Customer",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partners Commission",
-   "link_count": 0,
-   "link_to": "Sales Partners Commission",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Territory Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Territory Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Sales Person Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "dependencies": "Sales Order",
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partner Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Sales Partner Target Variance based on Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Payment Terms Status for Sales Order",
-   "link_count": 0,
-   "link_to": "Payment Terms Status for Sales Order",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2023-04-19 21:21:14.820641",
+ "modified": "2023-05-12 10:42:25.376073",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Total Orders This Year",
+   "number_card_name": "Annual Sales"
+  },
+  {
+   "label": "Total Sales This Year",
+   "number_card_name": "Total Outgoing Bills"
+  },
+  {
+   "label": "Total Sales Last Month",
+   "number_card_name": "Last Month Outgoing Bills"
+  },
+  {
+   "label": "Total Sales This Month",
+   "number_card_name": "Current Month Outgoing Bills"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [],
  "sequence_id": 26.0,
- "shortcuts": [
-  {
-   "color": "Grey",
-   "columns": 0,
-   "format": "{} Available",
-   "label": "Item",
-   "link_to": "Item",
-   "stats_filter": "{\n    \"disabled\":0\n}",
-   "type": "DocType"
-  },
-  {
-   "color": "Yellow",
-   "columns": 0,
-   "format": "{}  To Deliver",
-   "label": "Sales Order",
-   "link_to": "Sales Order",
-   "stats_filter": "{\n    \"company\": [\"like\", '%' + frappe.defaults.get_global_default(\"company\") + '%'],\n    \"status\":[\"in\", [\"To Deliver\", \"To Deliver and Bill\"]]\n}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "columns": 0,
-   "format": "{} Open",
-   "label": "Sales Analytics",
-   "link_to": "Sales Analytics",
-   "stats_filter": "{ \"Status\": \"Open\" }",
-   "type": "Report"
-  },
-  {
-   "columns": 0,
-   "label": "Sales Order Analysis",
-   "link_to": "Sales Order Analysis",
-   "type": "Report"
-  },
-  {
-   "columns": 0,
-   "label": "Dashboard",
-   "link_to": "Selling",
-   "type": "Dashboard"
-  }
- ],
+ "shortcuts": [],
  "title": "Selling"
 }
