@@ -1,9 +1,12 @@
 {
+ "actions": [],
  "allow_import": 1,
+ "allow_rename": 1,
  "autoname": "field:label",
  "creation": "2013-06-25 11:48:03",
  "description": "Specify conditions to calculate shipping amount",
  "doctype": "DocType",
+ "engine": "InnoDB",
  "field_order": [
   "label",
   "disabled",
@@ -11,19 +14,23 @@
   "shipping_rule_type",
   "section_break_10",
   "company",
-  "column_break_12",
   "account",
-  "accounting_dimensions_section",
+  "column_break_12",
   "cost_center",
-  "dimension_col_break",
   "shipping_amount_section",
   "calculate_based_on",
   "column_break_8",
   "shipping_amount",
   "rule_conditions_section",
+  "custom_formula",
   "conditions",
-  "section_break_6",
-  "countries"
+  "countries_section",
+  "countries",
+  "taxes_tab",
+  "shipping_taxes",
+  "website_tab",
+  "show_on_website",
+  "description"
  ],
  "fields": [
   {
@@ -51,7 +58,6 @@
    "options": "Selling\nBuying"
   },
   {
-   "depends_on": "eval:!doc.disabled",
    "fieldname": "section_break_10",
    "fieldtype": "Section Break",
    "label": "Accounting"
@@ -84,7 +90,8 @@
   },
   {
    "fieldname": "shipping_amount_section",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Shipping Amount"
   },
   {
    "default": "Fixed",
@@ -93,7 +100,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Calculate Based On",
-   "options": "Fixed\nNet Total\nNet Weight"
+   "options": "Fixed\nNet Total\nNet Weight\nCustom Formula\nHook"
   },
   {
    "fieldname": "column_break_8",
@@ -106,21 +113,23 @@
    "label": "Shipping Amount"
   },
   {
-   "depends_on": "eval:doc.calculate_based_on!=='Fixed'",
+   "depends_on": "eval:['Net Total', 'Net Weight', 'Custom Formula'].includes(doc.calculate_based_on)",
    "fieldname": "rule_conditions_section",
-   "fieldtype": "Section Break",
-   "label": "Shipping Rule Conditions"
+   "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.calculate_based_on==='Custom Formula'",
+   "description": "Example: 0.05 * doc.base_net_total",
+   "fieldname": "custom_formula",
+   "fieldtype": "Code",
+   "label": "Custom Formula"
+  },
+  {
+   "depends_on": "eval:['Net Total', 'Net Weight'].includes(doc.calculate_based_on)",
    "fieldname": "conditions",
    "fieldtype": "Table",
    "label": "Shipping Rule Conditions",
    "options": "Shipping Rule Condition"
-  },
-  {
-   "fieldname": "section_break_6",
-   "fieldtype": "Section Break",
-   "label": "Restrict to Countries"
   },
   {
    "fieldname": "countries",
@@ -129,21 +138,49 @@
    "options": "Shipping Rule Country"
   },
   {
-   "fieldname": "accounting_dimensions_section",
-   "fieldtype": "Section Break",
-   "label": "Accounting Dimensions"
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "in_preview": 1,
+   "label": "Description"
   },
   {
-   "fieldname": "dimension_col_break",
-   "fieldtype": "Column Break"
+   "fieldname": "countries_section",
+   "fieldtype": "Tab Break",
+   "label": "Restrict to Countries"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:!doc.disabled",
+   "fieldname": "show_on_website",
+   "fieldtype": "Check",
+   "label": "Show in Website"
+  },
+  {
+   "depends_on": "eval:doc.shipping_rule_type == \"Selling\"",
+   "fieldname": "taxes_tab",
+   "fieldtype": "Tab Break",
+   "label": "Taxes"
+  },
+  {
+   "fieldname": "shipping_taxes",
+   "fieldtype": "Table",
+   "label": "Shipping Taxes",
+   "options": "Shipping Tax"
+  },
+  {
+   "fieldname": "website_tab",
+   "fieldtype": "Tab Break",
+   "label": "Website"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 1,
- "modified": "2019-05-25 23:12:26.156405",
+ "links": [],
+ "modified": "2023-05-11 13:50:06.295209",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -189,5 +226,7 @@
    "write": 1
   }
  ],
- "sort_order": "ASC"
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "states": []
 }

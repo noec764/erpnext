@@ -1,9 +1,16 @@
 <!-- Total at the end of the cart items -->
 {% if credits_balance %}
-<div class="row my-4">
-	<div class="h6 col-12">{{ _("Booking credit balance") }}</div>
-	{% for cb in credits_balance %}
-	<div class="col-12 small">{{ cb }}: {{ credits_balance[cb] }}</div>
-	{% endfor %}
+<div class="frappe-card mb-3 p-5">
+	<h6>
+		{{ _("Booking credit balance") }}
+		<svg style="--icon-stroke: var(--primary); float: right;" height="18px" width="18px">
+			<use href="#credit-chip"></use>
+		</svg>
+	</h6>
+	<ul class="list-unstyled m-0 p-0">
+		{% for cb in credits_balance %}
+		<li class="m-0 small">{{ _("{0}: {1}").format(cb, credits_balance[cb]) }}</li>
+		{% endfor %}
+	</ul>
 </div>
 {% endif %}

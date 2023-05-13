@@ -139,15 +139,6 @@ class ECommerceSettings(Document):
 		if not frappe.db.get_value("Tax Rule", {"use_for_shopping_cart": 1}, "name"):
 			frappe.throw(frappe._("Set Tax Rule for shopping cart"), ShoppingCartSetupError)
 
-	def get_tax_master(self, billing_territory):
-		tax_master = self.get_name_from_territory(
-			billing_territory, "sales_taxes_and_charges_masters", "sales_taxes_and_charges_master"
-		)
-		return tax_master and tax_master[0] or None
-
-	def get_shipping_rules(self, shipping_territory):
-		return self.get_name_from_territory(shipping_territory, "shipping_rules", "shipping_rule")
-
 	def on_change(self):
 		old_doc = self.get_doc_before_save()
 

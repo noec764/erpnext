@@ -800,8 +800,7 @@ class AccountsController(TransactionBase):
 	@frappe.whitelist()
 	def apply_shipping_rule(self):
 		if self.shipping_rule:
-			shipping_rule = frappe.get_doc("Shipping Rule", self.shipping_rule)
-			shipping_rule.apply(self)
+			# Shipping rule is applied in calculate_shipping_charges
 			self.calculate_taxes_and_totals()
 
 	def get_shipping_address(self):

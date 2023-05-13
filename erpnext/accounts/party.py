@@ -636,6 +636,7 @@ def set_taxes(
 	billing_address=None,
 	shipping_address=None,
 	use_for_shopping_cart=None,
+	doctype=None,
 ):
 	from erpnext.accounts.doctype.tax_rule.tax_rule import get_party_details, get_tax_template
 	from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
@@ -675,10 +676,9 @@ def set_taxes(
 	tax_template = get_tax_template(posting_date, args)
 
 	# 2. Retrieve default taxes and charges for this party
-	if not tax_template and frappe.form_dict.get("doctype"):
-		taxes_and_charges_field = frappe.get_meta(frappe.form_dict.get("doctype")).get_field(
-			"taxes_and_charges"
-		)
+	doctype = doctype or frappe.form_dict.get("doctype")
+	if not tax_template and doctype:
+		taxes_and_charges_field = frappe.get_meta(doctype).get_field("taxes_and_charges")
 		if taxes_and_charges_field:
 			tax_template_details = get_default_taxes_and_charges(
 				master_doctype=taxes_and_charges_field.options, company=company, tax_category=tax_category
