@@ -69,7 +69,7 @@ class TestShippingRule(FrappeTestCase):
 		shipping_rule.calculate_based_on = "Fixed"
 		shipping_rule.shipping_amount = 10
 		shipping_rule.label = "Fixed 1"
-		shipping_rule.taxes_and_charges = "_Test Tax for Shipping Rule - _TC"
+		shipping_rule.append("shipping_taxes", {"tax_template": "_Test Tax for Shipping Rule - _TC"})
 		shipping_rule.name = None
 		shipping_rule.insert()
 
