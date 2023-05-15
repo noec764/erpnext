@@ -37,7 +37,6 @@ class Quotation(SellingController):
 
 		make_packing_list(self)
 
-
 	def before_submit(self):
 		self.set_has_alternative_item()
 
@@ -62,6 +61,7 @@ class Quotation(SellingController):
 						kept_items.append(item)
 					else:
 						if item.item_booking:
+							item.delete(ignore_permissions=True)  # delete the row first to avoid a foreign key error
 							frappe.delete_doc("Item Booking", item.item_booking, ignore_permissions=True)
 						deleted_items.append(item)
 
@@ -181,7 +181,6 @@ class Quotation(SellingController):
 					item.is_free_item = True
 					item.rate = 0.0
 					item.discount_percentage = 100.0
-
 
 	def set_customer_name(self):
 		if self.party_name and self.quotation_to == "Customer":
@@ -377,6 +376,18 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 			target.commission_rate = frappe.get_value(
 				"Sales Partner", source.referral_sales_partner, "commission_rate"
 			)
+
+		# sales team
+		for d in customer.get("sales_team"):
+			target.append(
+				"sales_team",
+				{
+					"sales_person": d.sales_person,
+					"allocated_percentage": d.allocated_percentage or None,
+					"commission_rate": d.commission_rate,
+				},
+			)
+
 		target.flags.ignore_permissions = ignore_permissions
 		target.run_method("set_missing_values")
 		target.run_method("calculate_taxes_and_totals")

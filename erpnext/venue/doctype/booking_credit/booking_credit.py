@@ -222,7 +222,12 @@ def get_balance(customer, booking_credit_type=None, user=None, date=None):
 def process_expired_booking_credits():
 	expired_entries = frappe.get_all(
 		"Booking Credit",
-		filters={"is_expired": 0, "expiration_date": ("<", getdate()), "docstatus": 1},
+		filters=[
+			["is_expired", "=", 0],
+			["expiration_date", "is", "set"],
+			["expiration_date", "<", getdate()],
+			["docstatus", "=", 1],
+		],
 	)
 	for expired_entry in expired_entries:
 		doc = frappe.get_doc("Booking Credit", expired_entry.name)

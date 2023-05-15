@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "base_net_total",
+ "color": "#b4cd29",
  "creation": "2020-07-17 11:25:34.725416",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -10,7 +11,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Total Outgoing Bills",
- "modified": "2020-07-22 13:07:19.633101",
+ "modified": "2023-05-12 10:30:08.382576",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Total Outgoing Bills",

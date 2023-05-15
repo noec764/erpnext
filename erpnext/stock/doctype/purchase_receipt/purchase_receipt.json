@@ -1116,6 +1116,7 @@
    "description": "Sets 'From Warehouse' in each row of the items table.",
    "fieldname": "set_from_warehouse",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Set From Warehouse",
    "options": "Warehouse"
   },
@@ -1169,7 +1170,7 @@
  "idx": 261,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-24 16:58:03.571501",
+ "modified": "2023-05-07 20:18:25.458185",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt",

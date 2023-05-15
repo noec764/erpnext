@@ -65,6 +65,7 @@ def set_single_defaults():
 	frappe.db.set_default("date_format", "dd-mm-yyyy")
 
 	setup_currency_exchange()
+	set_venue_settings_defaults()
 
 
 def setup_currency_exchange():
@@ -203,3 +204,12 @@ def setup_log_settings():
 	log_settings.append("logs_to_clear", {"ref_doctype": "Repost Item Valuation", "days": 60})
 
 	log_settings.save(ignore_permissions=True)
+
+
+def set_venue_settings_defaults():
+	try:
+		venue_settings = frappe.get_single("Venue Settings")
+		if not venue_settings.get("minute_uom") and frappe.db.exists("UOM", "Minute"):
+			venue_settings.db_set("minute_uom", "Minute")
+	except Exception:
+		frappe.log_error()

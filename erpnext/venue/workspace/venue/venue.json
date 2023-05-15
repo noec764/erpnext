@@ -329,7 +329,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-19 21:21:14.289805",
+ "modified": "2023-05-12 10:13:59.165116",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue",
@@ -339,7 +339,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 20.0,
+ "sequence_id": 23.0,
  "shortcuts": [
   {
    "columns": 0,

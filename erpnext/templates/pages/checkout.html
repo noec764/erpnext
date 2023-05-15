@@ -14,18 +14,21 @@
 	<div class="row m-0">
 		<!-- Left section -->
 		<div class="col-md-8">
-			<div class="frappe-card p-5 mb-4">
+			<div class="cart-addresses frappe-card p-5 mb-4">
 				{% include "templates/includes/cart/cart_address.html" %}
 			</div>
+
+			<a class="btn btn-default shadow-none btn-xs back-to-cart" href="/cart">
+				<svg class="icon icon-xs">
+					<use class="" href="#icon-arrow-left"></use>
+				</svg>
+				<span>{{ _("Edit Cart") }}</span>
+			</a>
 		</div>
 
 		<!-- Right section -->
-		<div class="col-md-4">
-			<div class="cart-payment-addresses">
-				<div class="mb-3 frappe-card p-5 payment-summary">
-					{% include "templates/includes/cart/cart_payment_summary.html" %}
-				</div>
-			</div>
+		<div class="col-md-4 cart-sticky-sidebar cart-summary">
+			{% include "templates/includes/cart/cart_summary.html" %}
 		</div>
 	</div>
 </div>
@@ -34,7 +37,13 @@
 	<div class="cart-empty-state">
 		<img src="/assets/erpnext/images/ui-states/cart-empty-state.png" alt="Empty State">
 	</div>
-	<div class="cart-empty-message mt-4">{{ _('No checkout available') }}</p>
+	<p class="cart-empty-message mt-4">{{ _('No checkout available') }}</p>
+
+	<div class="continue-shopping-container">
+		<a class="btn btn-primary mr-2 font-md btn-continue-shopping" href="/all-products">
+			{{ _('Continue Shopping') }}
+		</a>
+	</div>
 </div>
 {% endif %}
 

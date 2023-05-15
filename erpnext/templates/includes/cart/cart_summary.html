@@ -1,0 +1,21 @@
+{% if route == "cart" %}
+<div class="coupon-code">
+	{% include "templates/includes/cart/cart_coupon_code.html" %}
+</div>
+
+<div class="cart-remaining-booking-credits">
+	{% include "templates/includes/cart/cart_items_credits_total.html" %}
+</div>
+{% endif %}
+
+{% if route == "checkout" %}
+<div class="shipping-summary">
+	{%- include "templates/includes/cart/shipping_summary.html" -%}
+</div>
+{% endif %}
+
+<div class="payment-summary">
+	{% include "templates/includes/cart/cart_payment_summary.html" %}
+</div>
+
+<div id="cart-error" class="m-0 mt-3 alert alert-danger" style="display: none;"></div>
