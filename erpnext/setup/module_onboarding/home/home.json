@@ -26,15 +26,12 @@
  "idx": 0,
  "is_complete": 0,
  "language": "en",
- "modified": "2023-05-16 13:13:24.043792",
+ "modified": "2023-05-20 19:45:03.936741",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Home",
  "owner": "Administrator",
  "steps": [
-  {
-   "step": "Navigation Help"
-  },
   {
    "step": "Create an Item"
   },
@@ -48,7 +45,7 @@
    "step": "Create a Quotation"
   }
  ],
- "subtitle": "Item, Customer, Supplier, Navigation Help and Quotation",
+ "subtitle": "Item, Customer, Supplier and Quotation",
  "success_message": "Masters are all set up!",
  "title": "Let's Set Up Some Masters"
 }
