@@ -128,7 +128,7 @@ $.extend(shopping_cart, {
 					shopping_cart._show_error_after_action(r);
 				} else {
 					$(btn).hide();
-					window.location.href = '/orders/' + encodeURIComponent(r.message);
+					window.location.href = r.message;
 				}
 			},
 		});

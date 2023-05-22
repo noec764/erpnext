@@ -628,7 +628,7 @@ def make_payment_request(*args, **kwargs):
 			pr.insert(ignore_permissions=True)
 			pr.submit()
 
-	if args.order_type == "Shopping Cart":
+	if args.order_type == "Shopping Cart" and not args.return_doc:
 		frappe.db.commit()
 		frappe.local.response["type"] = "redirect"
 		frappe.local.response["location"] = pr.get_payment_url(pr.payment_gateway)

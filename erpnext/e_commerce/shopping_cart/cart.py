@@ -1,6 +1,8 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
+from urllib.parse import quote
+
 import frappe
 import frappe.defaults
 from frappe import _, throw
@@ -145,7 +147,21 @@ def place_order():
 	if hasattr(frappe.local, "cookie_manager"):
 		frappe.local.cookie_manager.delete_cookie("cart_count")
 
-	return sales_order.name
+	redirect_url = f"/orders/{quote(sales_order.name)}"
+	if cart_settings.payment_gateway_account:
+		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
+
+		pr = make_payment_request(
+			dn=sales_order.name,
+			dt=sales_order.doctype,
+			submit_doc=1,
+			order_type="Shopping Cart",
+			return_doc=1,
+		)
+
+		redirect_url = pr.get_payment_url(pr.payment_gateway)
+
+	return redirect_url
 
 
 @frappe.whitelist()
