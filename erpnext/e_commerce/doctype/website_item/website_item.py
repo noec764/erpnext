@@ -321,7 +321,7 @@ class WebsiteItem(WebsiteGenerator):
 		context.shopping_cart = get_product_info_for_website(
 			self.item_code,
 			skip_quotation_creation=True,
-			additional_uoms=[u.uom for u in self.enabled_booking_uom],
+			enabled_uoms=[u.uom for u in self.enabled_booking_uom],
 		)
 
 	@frappe.whitelist()
