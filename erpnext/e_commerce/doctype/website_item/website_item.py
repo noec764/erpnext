@@ -57,7 +57,9 @@ class WebsiteItem(WebsiteGenerator):
 		self.validate_website_image()
 		self.make_thumbnail()
 		self.publish_unpublish_desk_item(publish=True)
-		self.validate_enabled_booking_uom()
+
+		if self.enable_item_booking:
+			self.validate_enabled_booking_uom()
 
 		if not self.get("__islocal"):
 			wig = frappe.qb.DocType("Website Item Group")
@@ -96,7 +98,7 @@ class WebsiteItem(WebsiteGenerator):
 
 	def validate_enabled_booking_uom(self):
 		sales_uom = frappe.db.get_value("Item", self.item_code, "sales_uom")
-		if sales_uom not in [u.uom for u in self.enabled_booking_uom]:
+		if sales_uom and sales_uom not in [u.uom for u in self.enabled_booking_uom]:
 			self.append("enabled_booking_uom", {"uom": sales_uom})
 
 	def make_route(self):
