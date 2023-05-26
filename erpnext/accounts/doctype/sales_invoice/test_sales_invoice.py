@@ -3483,6 +3483,9 @@ def create_internal_parties():
 
 def create_internal_supplier(supplier_name, represents_company, allowed_to_interact_with):
 	if not frappe.db.exists("Supplier", supplier_name):
+		if existing_internal_supplier := frappe.db.exists("Supplier", dict(is_internal_supplier=1)):
+			frappe.db.set_value("Supplier", existing_internal_supplier, "is_internal_supplier", 0)
+
 		supplier = frappe.get_doc(
 			{
 				"supplier_group": "_Test Supplier Group",
