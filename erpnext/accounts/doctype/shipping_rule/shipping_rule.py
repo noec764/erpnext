@@ -78,11 +78,10 @@ class ShippingRule(Document):
 			)
 
 	def _evaluate_custom_formula(self, doc):
-		shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
+		from frappe.utils.safe_block_eval import safe_block_eval
 
-		# from frappe.utils.safe_block_eval import safe_block_eval
-		# loc = {"doc": doc.as_dict(), "shipping_amount": None}
-		# shipping_amount = safe_block_eval(code, None, loc, output_var="shipping_amount")
+		loc = {"doc": doc.as_dict(), "shipping_amount": None}
+		shipping_amount = safe_block_eval(self.custom_formula, None, loc, output_var="shipping_amount")
 
 		if shipping_amount == NOT_APPLICABLE:
 			return NOT_APPLICABLE
