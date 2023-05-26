@@ -26,6 +26,7 @@
      "actual_qty",
      "projected_qty",
      "ordered_qty",
+     "packed_qty",
      "column_break_16",
      "incoming_rate",
      "picked_qty",
@@ -241,11 +242,21 @@
        "label": "Picked Qty",
        "no_copy": 1,
        "read_only": 1
+      },
+      {
+       "default": "0",
+       "depends_on": "eval: doc.packed_qty",
+       "fieldname": "packed_qty",
+       "fieldtype": "Float",
+       "label": "Packed Qty",
+       "no_copy": 1,
+       "non_negative": 1,
+       "read_only": 1
      }
     ],
     "idx": 1,
     "istable": 1,
-    "modified": "2022-04-27 05:23:08.683245",
+    "modified": "2023-04-28 13:16:38.460806",
     "modified_by": "Administrator",
     "module": "Stock",
     "name": "Packed Item",
