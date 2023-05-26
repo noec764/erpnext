@@ -213,6 +213,11 @@ $.extend(shopping_cart, {
 			$element.html(value ?? "");
 		}
 
+		for (const [key, value] of Object.entries(values)) {
+			if (key === "items" || key === "total" || key === "summary" || key === "cart_address") continue;
+			shopping_cart[key] = value;
+		}
+
 		if (restoreFocusTo) {
 			document.querySelector(restoreFocusTo)?.focus();
 		}

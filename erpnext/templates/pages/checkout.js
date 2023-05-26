@@ -12,6 +12,7 @@ $.extend(shopping_cart, {
 		shopping_cart.bind_request_quotation();
 		shopping_cart.bind_coupon_code();
 		shopping_cart.bind_shipping_method();
+		shopping_cart.bind_select_pickup_location();
 	},
 
 	bind_address_picker_dialog: function() {
@@ -146,6 +147,76 @@ $.extend(shopping_cart, {
 				}
 			}
 		});
+	},
+
+	bind_select_pickup_location() {
+		console.log("bind_select_pickup_location");
+
+		const render_pickup_locations = async (options) => {
+			const parent = document.getElementById("select_pickup_location");
+			if (!parent) return;
+			if (!options?.length) {
+				parent.innerHTML = `<div class="text-muted">${__("No pickup locations found")}</div>`;
+				return;
+			}
+
+			let ready = false;
+			const control = frappe.ui.form.make_control({
+				df: {
+					fieldtype: "Autocomplete",
+					options: options,
+					placeholder: __("Search..."),
+					change() {
+						if (!ready) return;
+						if (!this.get_value()) return;
+						if (this.get_value() === this.last_value) return;
+
+						frappe.call({
+							type: "POST",
+							method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
+							freeze: true,
+							args: {
+								address_type: "Shipping",
+								address_name: this.get_value(),
+								billing_address_is_same_as_shipping_address: 0,
+							},
+							always(r) {
+								if (r.exc) {
+									shopping_cart._show_error_after_action(r);
+								} else {
+									shopping_cart.clear_error();
+									shopping_cart.render_from_server_side(r.message);
+								}
+							},
+						});
+					},
+				},
+				parent: parent,
+				render_input: true,
+				only_input: true,
+			});
+			await control.set_value(options.find(o => o.selected)?.value);
+			ready = true;
+		};
+
+		// First, add a reactive property to the cart object
+		if (this.hasOwnProperty("available_pickup_locations") === true) {
+			this._available_pickup_locations = this.available_pickup_locations;
+			delete this.available_pickup_locations;
+		}
+		Object.defineProperty(this, "available_pickup_locations", {
+			get: () => {
+				console.log("get available_pickup_locations");
+				return this._available_pickup_locations;
+			},
+			set: (value) => {
+				console.log("set available_pickup_locations", value);
+				this._available_pickup_locations = value;
+				render_pickup_locations(this._available_pickup_locations);
+			},
+		});
+
+		this.available_pickup_locations = this._available_pickup_locations;
 	}
 });
 

@@ -134,6 +134,8 @@ class ShippingRule(Document):
 
 	def apply(self, doc):
 		"""Apply shipping rule on given doc. Called from accounts controller"""
+		self.validate_pickup_location(doc)
+
 		if doc.get_shipping_address():
 			# validate country only if there is address
 			self.validate_countries(doc)
@@ -166,6 +168,21 @@ class ShippingRule(Document):
 				frappe.throw(
 					_("Shipping rule not applicable for country {0} in Shipping Address").format(shipping_country)
 				)
+
+	def validate_pickup_location(self, doc):
+		"""validate that shipping address is in list of pickup locations"""
+
+		if not self.pickup_locations or not self.show_on_website or self.shipping_rule_type != "Selling":
+			return  # only validate for e-commerce shipping rules
+
+		if doc.docstatus != 1:
+			return  # only validate on submit
+
+		if not doc.get_shipping_address():
+			frappe.throw(_("Shipping Address is required for this Shipping Method"))
+
+		if doc.get_shipping_address().get("name") not in [d.address_name for d in self.pickup_locations]:
+			frappe.throw(_("Please select an address from the list of Pickup Locations"))
 
 	def add_shipping_rule_to_tax_table(self, doc, shipping_amount):
 		shipping_charge = {

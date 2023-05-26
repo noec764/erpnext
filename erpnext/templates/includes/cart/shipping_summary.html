@@ -36,4 +36,18 @@
 	</label>
 	{% endfor %}
 </div>
+
+{% if current_shipping_method and available_pickup_locations %}
+<div class="shipping-methods-list frappe-card mb-3 p-5">
+	<h6>{{ _("Select a pick-up location") }}</h6>
+	<div id="select_pickup_location"></div>
+</div>
+
+<script>
+	frappe.ready(() => {
+		shopping_cart.available_pickup_locations = {{ available_pickup_locations | json }};
+	})
+</script>
+{% endif %}
+
 {% endif %}
