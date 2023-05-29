@@ -7,7 +7,7 @@ frappe.listview_settings['Purchase Invoice'] = {
 		"currency", "is_return", "release_date", "on_hold", "represents_company", "is_internal_supplier"],
 	get_indicator(doc) {
 		if (doc.status == "Debit Note Issued") {
-			return [__(doc.status), "darkgrey", "status,=," + doc.status];
+			return [__(doc.status), "gray", "status,=," + doc.status];
 		}
 
 		if (
