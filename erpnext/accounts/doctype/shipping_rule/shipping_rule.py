@@ -182,7 +182,7 @@ class ShippingRule(Document):
 			frappe.throw(_("Shipping Address is required for this Shipping Method"))
 
 		if doc.get_shipping_address().get("name") not in [d.address_name for d in self.pickup_locations]:
-			frappe.throw(_("Please select an address from the list of Pickup Locations"))
+			frappe.throw(_("Please select an address from the list of Pick-up Locations"))
 
 	def add_shipping_rule_to_tax_table(self, doc, shipping_amount):
 		shipping_charge = {

@@ -8117,6 +8117,7 @@ Please select a value for {0} quotation_to {1},Veuillez sélectionner une valeur
 Please select a warehouse to get available quantities,Veuillez sélectionner un entrepôt pour obtenir les quantités disponibles,
 Please select a warehouse,Veuillez sélectionner un entrepôt,
 Please select a {0},Veuillez sélectionne un·e {0},
+Please select an address from the list of Pick-up Locations,Veuillez sélectionner une adresse dans la liste des points de retrait,
 Please select an item in the cart,Veuillez sélectionner un article dans le panier,
 Please select another payment method. GoCardless does not support transactions in currency '{0}',Veuillez sélectionner une autre méthode de paiement. GoCardless ne supporte pas les transactions en devise '{0}',
 Please select another payment method. Stripe does not support transactions in currency '{0}',Veuillez sélectionner une autre méthode de paiement. Stripe ne supporte pas les transaction en devise '{0}',

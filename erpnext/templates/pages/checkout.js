@@ -150,9 +150,17 @@ $.extend(shopping_cart, {
 	},
 
 	bind_select_pickup_location() {
-		console.log("bind_select_pickup_location");
+		let control;
+
+		$(".cart-container").on("click", ".btn-clear-pickup-location", function() {
+			if (control) {
+				control.set_value("");
+			}
+		});
 
 		const render_pickup_locations = async (options) => {
+			control = null;
+
 			const parent = document.getElementById("select_pickup_location");
 			if (!parent) return;
 			if (!options?.length) {
@@ -161,7 +169,7 @@ $.extend(shopping_cart, {
 			}
 
 			let ready = false;
-			const control = frappe.ui.form.make_control({
+			control = frappe.ui.form.make_control({
 				df: {
 					fieldtype: "Autocomplete",
 					options: options,
@@ -206,11 +214,9 @@ $.extend(shopping_cart, {
 		}
 		Object.defineProperty(this, "available_pickup_locations", {
 			get: () => {
-				console.log("get available_pickup_locations");
 				return this._available_pickup_locations;
 			},
 			set: (value) => {
-				console.log("set available_pickup_locations", value);
 				this._available_pickup_locations = value;
 				render_pickup_locations(this._available_pickup_locations);
 			},
