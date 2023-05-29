@@ -6,7 +6,7 @@ from urllib.parse import quote
 import frappe
 import frappe.defaults
 from frappe import _, throw
-from frappe.contacts.doctype.address.address import get_address_display
+from frappe.contacts.doctype.address.address import get_address_display, get_condensed_address
 from frappe.contacts.doctype.contact.contact import get_contact_name
 from frappe.utils import cint, cstr, flt, get_fullname
 from frappe.utils.nestedset import get_root_of
@@ -68,6 +68,24 @@ def get_cart_quotation(doc=None):
 		if shipping_rules := context["shipping_rules"]:
 			context["shipping_estimates"] = get_estimates_for_shipping(doc, shipping_rules)
 
+		if doc.shipping_rule:
+			context["available_pickup_locations"] = [
+				{
+					"value": address_name,
+					"label": get_condensed_address(frappe.get_doc("Address", address_name)),
+					**({"selected": True} if address_name == doc.shipping_address_name else {}),
+				}
+				for address_name in frappe.get_all(
+					"Pick-up Location",
+					pluck="address_name",
+					filters={
+						"enabled": 1,
+						"parent": doc.shipping_rule,
+						"parenttype": "Shipping Rule",
+					},
+				)
+			]
+
 	if route == "cart":
 		if any(item.is_free_item and item.item_booking for item in doc.items):
 			from erpnext.venue.doctype.booking_credit.booking_credit import get_balance
@@ -83,6 +101,13 @@ def get_shipping_addresses(party=None, doc=None):
 	if not party:
 		party = get_party()
 	addresses = get_address_docs(party=party)
+
+	if doc and doc.shipping_address_name:
+		if not next((x for x in addresses if x.name == doc.shipping_address_name), None):
+			a = frappe.get_doc("Address", doc.shipping_address_name)
+			a.display = get_address_display(a.as_dict())
+			addresses.append(a)
+
 	return [
 		{"name": address.name, "title": address.address_title, "display": address.display}
 		for address in addresses
@@ -95,6 +120,13 @@ def get_billing_addresses(party=None, doc=None):
 	if not party:
 		party = get_party()
 	addresses = get_address_docs(party=party)
+
+	if doc and doc.customer_address:
+		if not next((x for x in addresses if x.name == doc.customer_address), None):
+			a = frappe.get_doc("Address", doc.customer_address)
+			a.display = get_address_display(a.as_dict())
+			addresses.append(a)
+
 	return [
 		{"name": address.name, "title": address.address_title, "display": address.display}
 		for address in addresses
@@ -249,11 +281,21 @@ def render_quotation(context=None):
 		context = get_cart_quotation()
 
 	out = {
-		"items": frappe.render_template("templates/includes/cart/cart_items.html", context),
-		"total": frappe.render_template("templates/includes/cart/cart_items_total.html", context),
-		"cart_address": frappe.render_template("templates/includes/cart/cart_address.html", context),
 		"summary": frappe.render_template("templates/includes/cart/cart_summary.html", context),
+		"available_pickup_locations": context.get("available_pickup_locations"),
+		"_render": True,
 	}
+
+	route = context.get("route")
+
+	if route == "cart":
+		out["items"] = frappe.render_template("templates/includes/cart/cart_items.html", context)
+		out["total"] = frappe.render_template("templates/includes/cart/cart_items_total.html", context)
+
+	if route == "checkout":
+		out["cart_address"] = frappe.render_template(
+			"templates/includes/cart/cart_address.html", context
+		)
 
 	return out
 
@@ -703,7 +745,7 @@ def apply_shipping_rule(shipping_rule):
 	quotation = _get_cart_quotation()
 
 	quotation.shipping_rule = shipping_rule
-
+	ensure_addresses_are_valid(quotation)
 	apply_cart_settings(quotation=quotation)
 
 	quotation.flags.ignore_permissions = True
@@ -716,6 +758,24 @@ def _apply_shipping_rule(party=None, quotation=None, cart_settings=None):
 	if quotation.shipping_rule:
 		quotation.run_method("apply_shipping_rule")
 		quotation.run_method("calculate_taxes_and_totals")
+
+
+def ensure_addresses_are_valid(quotation):
+	"""Ensure that addresses are in the list of addresses for the customer"""
+	shipping_addresses = [x["name"] for x in get_shipping_addresses()]
+	if (
+		shipping_addresses
+		and quotation.shipping_address_name
+		and quotation.shipping_address_name not in shipping_addresses
+	):
+		quotation.shipping_address_name = shipping_addresses[0]
+	billing_addresses = [x["name"] for x in get_billing_addresses()]
+	if (
+		billing_addresses
+		and quotation.customer_address
+		and quotation.customer_address not in billing_addresses
+	):
+		quotation.customer_address = billing_addresses[0]
 
 
 def get_shipping_rules(quotation=None):
@@ -806,21 +866,22 @@ def get_estimates_for_shipping(quotation, shipping_rules: list[str]):
 def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
 	shipping_rules = get_shipping_rules(quotation)
 
-	if shipping_rules or quotation.shipping_rule:
-		if not quotation.shipping_rule:
-			if throw_exception:
-				frappe.throw(_("Please select a shipping method"))
-			return False
+	if not (shipping_rules or quotation.shipping_rule):
+		# Guard clause for when there are no shipping rules involved
+		return True
 
-		shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
-		if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
-			if throw_exception:
-				apply_shipping_rule(None)
-				frappe.db.commit()
-				frappe.throw(_("The shipping method is no longer applicable"))
-			return False
+	if not quotation.shipping_rule:
+		if throw_exception:
+			frappe.throw(_("Please select a shipping method"))
+		return False
 
-	return True
+	shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
+	if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
+		if throw_exception:
+			apply_shipping_rule(None)
+			frappe.db.commit()
+			frappe.throw(_("The shipping method is no longer applicable"))
+		return False
 
 
 @frappe.whitelist()

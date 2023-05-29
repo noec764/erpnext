@@ -1064,12 +1064,6 @@ body.product-page {
 
 .btn-new-address {
 	float: right;
-	font-size: 15px !important;
-	color: var(--primary-color) !important;
-}
-
-.btn-new-address:hover, .btn-change-address:hover {
-	color: var(--primary-color) !important;
 }
 
 .modal .address-card {
@@ -1556,4 +1550,8 @@ body.product-page {
 	@include media-breakpoint-down(sm) {
 		display: none !important;
 	}
+}
+
+#select_pickup_location .form-group {
+	margin-bottom: 0;
 }

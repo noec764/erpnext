@@ -8,7 +8,9 @@
 	<div class="d-flex">
 		<div class="col-6 address-header"><h6>{{ _("Shipping Address") }}</h6></div>
 		<div class="col-6" style="padding: 0;">
-			<button class="btn btn-link btn-new-address ml-4 p-0">{{ _("Add a new address") }}</button>
+			<button class="btn btn-link btn-new-address btn-xs ml-4 {{ 'btn-primary' if not shipping_addresses else '' }}">
+				{{ _("Add a new address") }}
+			</button>
 		</div>
 	</div>
 
@@ -54,7 +56,9 @@
 		<div class="d-flex">
 			<div class="col-6 address-header"><h6>{{ _("Billing Address") }}</h6></div>
 			<div class="col-6" style="padding: 0;">
-				<button class="btn btn-link btn-new-address ml-4 p-0">{{ _("Add a new address") }}</button>
+				<button class="btn btn-link btn-new-address btn-xs ml-4" {{ 'btn-primary' if not billing_addresses else '' }}>
+					{{ _("Add a new address") }}
+				</button>
 			</div>
 		</div>
 

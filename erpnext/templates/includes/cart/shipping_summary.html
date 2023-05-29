@@ -1,12 +1,12 @@
 {% if shipping_rules %}
+{% set current_shipping_method = doc.shipping_rule or "" %}
+
 <div class="shipping-methods-list frappe-card mb-3 p-5">
 	<h6>{{ _("Select a shipping method") }}</h6>
 
-	{% set current_shipping_method = doc.shipping_rule or "" %}
-
 	{% for method in shipping_rules %}
 	{% set name = method.name %}
-	{% set input_id = "shipping_method_" ~ name |e %}
+	{% set input_id = "shipping_method_" ~ name | replace(" ", "_") |e %}
 	{% set estimated_cost = shipping_estimates.get(name) if shipping_estimates else "" %}
 	{% set label = method.label or method.name or _("None") %}
 
@@ -36,4 +36,28 @@
 	</label>
 	{% endfor %}
 </div>
+
+{% if current_shipping_method and available_pickup_locations %}
+<div class="shipping-methods-list frappe-card mb-3 p-5">
+	<h6>{{ _("Select a pick-up location") }}</h6>
+
+	<div style="position: relative;">
+		<div id="select_pickup_location"></div>
+		<div class="d-flex align-items-center" style="position: absolute; right: 0; top: 0; bottom: 0;">
+			<button class="btn btn-link btn-clear-pickup-location p-1 m-1" style="background: var(--control-bg);">
+				<svg class="icon icon-xs">
+					<use href="#icon-close-alt"></use>
+				</svg>
+			</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	frappe.ready(() => {
+		shopping_cart.available_pickup_locations = {{ available_pickup_locations | json }};
+	})
+</script>
+{% endif %}
+
 {% endif %}

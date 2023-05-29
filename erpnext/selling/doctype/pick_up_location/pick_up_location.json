@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PICKUP-{########}",
+ "creation": "2023-05-26 12:11:23.752055",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "address_name",
+  "address_html",
+  "enabled"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Enabled",
+   "print_hide": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "address_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Address",
+   "options": "Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address_html",
+   "fieldtype": "HTML",
+   "label": "Address HTML",
+   "read_only": 1
+  }
+ ],
+ "icon": "uil uil-box",
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-26 14:26:12.123186",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Pick-up Location",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

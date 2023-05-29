@@ -80,11 +80,14 @@ $.extend(shopping_cart, {
 					uom: opts.uom,
 				},
 				btn: opts.btn,
-				callback: function(r) {
+				always: function(r) {
 					shopping_cart.unfreeze();
 					shopping_cart.set_cart_count(true);
-					if(opts.callback)
+
+					shopping_cart._request_callback(r);
+					if (opts.callback) {
 						opts.callback(r);
+					}
 				}
 			});
 		}
@@ -201,6 +204,10 @@ $.extend(shopping_cart, {
 	},
 
 	render_from_server_side(values) {
+		if (!values || !values._render) {
+			return;
+		}
+
 		const restoreFocusTo = this._dompath(document.activeElement);
 
 		const elements = [
@@ -211,6 +218,11 @@ $.extend(shopping_cart, {
 		];
 		for (const [$element, value] of elements) {
 			$element.html(value ?? "");
+		}
+
+		for (const [key, value] of Object.entries(values)) {
+			if (key === "items" || key === "total" || key === "summary" || key === "cart_address") continue;
+			shopping_cart[key] = value;
 		}
 
 		if (restoreFocusTo) {
@@ -257,6 +269,15 @@ $.extend(shopping_cart, {
 		});
 	},
 
+	_request_callback(r) {
+		if (r.exc) {
+			shopping_cart._show_error_after_action(r);
+		} else {
+			shopping_cart.clear_error();
+			shopping_cart.render_from_server_side(r.message);
+		}
+	},
+
 	clear_error() {
 		$("#cart-error").empty().toggle(false);
 	},
@@ -297,10 +318,9 @@ $.extend(shopping_cart, {
 			uom: uom,
 			booking: booking,
 			callback: function(r) {
-				if(!r.exc) {
-					frappe.unfreeze();
-					shopping_cart.clear_error();
-					shopping_cart.render_from_server_side(r.message);
+				frappe.unfreeze();
+				shopping_cart._request_callback(r);
+				if (!r.exc) {
 					shopping_cart.set_cart_count();
 
 					if (cart_dropdown != true) {
@@ -421,16 +441,13 @@ $.extend(shopping_cart, {
 				method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
 				args: { address_type, address_name },
 				always(r) {
-					console.log(r);
+					shopping_cart.unfreeze();
+					shopping_cart._request_callback(r);
 					if (r.exc) {
-						shopping_cart._show_error_after_action(r);
 						reject(r);
 					} else {
-						shopping_cart.clear_error();
-						shopping_cart.render_from_server_side(r.message);
 						resolve(r);
 					}
-					shopping_cart.unfreeze();
 				},
 			});
 		});

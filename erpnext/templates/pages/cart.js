@@ -17,19 +17,19 @@ $.extend(shopping_cart, {
 
 	bind_change_qty: function() {
 		// bind update button
-		$(".cart-items").on("change", ".cart-qty", function() {
+		$(".cart-container").on("change", ".cart-items .cart-qty", function() {
 			var item_code = $(this).attr("data-item-code");
 			var newVal = $(this).val();
 			shopping_cart.shopping_cart_update({item_code, qty: newVal});
 		});
 
-		$(".cart-items").on('click', '.number-spinner button', function () {
+		$(".cart-container").on("click", ".cart-items .number-spinner button", function () {
 			var btn = $(this),
-				input = btn.closest('.number-spinner').find('input'),
+				input = btn.closest(".number-spinner").find("input"),
 				oldValue = input.val().trim(),
 				newVal = 0;
 
-			if (btn.attr('data-dir') == 'up') {
+			if (btn.attr("data-dir") == "up") {
 				newVal = parseInt(oldValue) + 1;
 			} else {
 				if (oldValue > 1) {
@@ -49,10 +49,10 @@ $.extend(shopping_cart, {
 	},
 
 	bind_change_notes: function() {
-		$('.cart-items').on('change', 'textarea', function() {
+		$(".cart-container").on("change", ".cart-items textarea", function() {
 			const $textarea = $(this);
-			const item_code = $textarea.attr('data-item-code');
-			const qty = $textarea.closest('tr').find('.cart-qty').val() || 1;
+			const item_code = $textarea.attr("data-item-code");
+			const qty = $textarea.closest("tr").find(".cart-qty").val() || 1;
 			const notes = $textarea.val();
 			shopping_cart.shopping_cart_update({
 				item_code,
@@ -63,7 +63,7 @@ $.extend(shopping_cart, {
 	},
 
 	bind_remove_cart_item: function() {
-		$(".cart-items").on("click", ".remove-cart-item", (e) => {
+		$(".cart-container").on("click", ".cart-items .remove-cart-item", (e) => {
 			const $remove_cart_item_btn = $(e.currentTarget);
 			const item_code = $remove_cart_item_btn.data("item-code");
 			const item_booking = $remove_cart_item_btn.data("item-booking");
