@@ -534,11 +534,16 @@ def prepare_data_for_internal_transfer():
 		company,
 	)
 
-	supplier = create_internal_supplier(
-		"_Test Internal Supplier 3",
-		company,
-		company,
-	)
+	if not (
+		supplier := frappe.db.exists(
+			"Supplier", dict(is_internal_supplier=1, represents_company=company)
+		)
+	):
+		supplier = create_internal_supplier(
+			"_Test Internal Supplier 3",
+			company,
+			company,
+		)
 
 	for store in ["Inter Transfer Store 1", "Inter Transfer Store 2", "Inter Transfer Store 3"]:
 		if not frappe.db.exists("Store", store):
