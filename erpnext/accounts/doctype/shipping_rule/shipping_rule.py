@@ -360,6 +360,7 @@ def get_ecommerce_shipping_rules(transaction: Document, address=None) -> list[Sh
 		.where((sr_country.country == country) | sr_country.country.isnull())
 		.where(sr.disabled != 1)
 		.where(sr.show_on_website == 1)
+		.where(sr.shipping_rule_type == "Selling")
 		.orderby(sr.name, order=Order.asc)
 	)
 	shipping_rule_names = [x[0] for x in query.run(as_list=True)]
