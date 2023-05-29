@@ -1,12 +1,12 @@
 {% if shipping_rules %}
+{% set current_shipping_method = doc.shipping_rule or "" %}
+
 <div class="shipping-methods-list frappe-card mb-3 p-5">
 	<h6>{{ _("Select a shipping method") }}</h6>
 
-	{% set current_shipping_method = doc.shipping_rule or "" %}
-
 	{% for method in shipping_rules %}
 	{% set name = method.name %}
-	{% set input_id = "shipping_method_" ~ name |e %}
+	{% set input_id = "shipping_method_" ~ name | replace(" ", "_") |e %}
 	{% set estimated_cost = shipping_estimates.get(name) if shipping_estimates else "" %}
 	{% set label = method.label or method.name or _("None") %}
 
