@@ -1,8 +1,8 @@
 {% extends "templates/web.html" %}
 
-{% block title %} {{ _("Checkout") }} {% endblock %}
+{% block title %} {{ _("Checkout", context="Cart") }} {% endblock %}
 
-{% block header %}<h3 class="checkout-cart-header mt-2 mb-6">{{ _("Checkout") }}</h3>{% endblock %}
+{% block header %}<h3 class="checkout-cart-header mt-2 mb-6">{{ _("Checkout", context="Cart") }}</h3>{% endblock %}
 
 {% block header_actions %}
 {% endblock %}
