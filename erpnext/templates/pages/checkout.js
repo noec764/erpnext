@@ -69,12 +69,9 @@ $.extend(shopping_cart, {
 						billing_address_is_same_as_shipping_address,
 					},
 					always(r) {
-						if (r.exc) {
-							shopping_cart._show_error_after_action(r);
-						} else {
+						shopping_cart._request_callback(r);
+						if (!r.exc) {
 							d.hide();
-							shopping_cart.clear_error();
-							shopping_cart.render_from_server_side(r.message);
 						}
 					},
 				});
@@ -110,18 +107,15 @@ $.extend(shopping_cart, {
 
 	apply_shipping_rule(rule, btn) {
 		if (frappe.freeze_count) return; // prevent timestamp mismatch
-		frappe.freeze(__("Updating", [], "Freeze message while updating a document"));
+		frappe.freeze();
 		return frappe.call({
 			btn: btn,
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.apply_shipping_rule",
 			args: { shipping_rule: rule },
-			callback(r) {
+			always(r) {
 				frappe.unfreeze();
-				if (!r.exc) {
-					shopping_cart.clear_error();
-					shopping_cart.render_from_server_side(r.message);
-				}
+				shopping_cart._request_callback(r);
 			}
 		});
 	},
@@ -189,12 +183,7 @@ $.extend(shopping_cart, {
 								billing_address_is_same_as_shipping_address: 0,
 							},
 							always(r) {
-								if (r.exc) {
-									shopping_cart._show_error_after_action(r);
-								} else {
-									shopping_cart.clear_error();
-									shopping_cart.render_from_server_side(r.message);
-								}
+								shopping_cart._request_callback(r);
 							},
 						});
 					},

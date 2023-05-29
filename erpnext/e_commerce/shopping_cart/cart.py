@@ -281,12 +281,21 @@ def render_quotation(context=None):
 		context = get_cart_quotation()
 
 	out = {
-		"items": frappe.render_template("templates/includes/cart/cart_items.html", context),
-		"total": frappe.render_template("templates/includes/cart/cart_items_total.html", context),
-		"cart_address": frappe.render_template("templates/includes/cart/cart_address.html", context),
 		"summary": frappe.render_template("templates/includes/cart/cart_summary.html", context),
 		"available_pickup_locations": context.get("available_pickup_locations"),
+		"_render": True,
 	}
+
+	route = context.get("route")
+
+	if route == "cart":
+		out["items"] = frappe.render_template("templates/includes/cart/cart_items.html", context)
+		out["total"] = frappe.render_template("templates/includes/cart/cart_items_total.html", context)
+
+	if route == "checkout":
+		out["cart_address"] = frappe.render_template(
+			"templates/includes/cart/cart_address.html", context
+		)
 
 	return out
 
@@ -857,21 +866,22 @@ def get_estimates_for_shipping(quotation, shipping_rules: list[str]):
 def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
 	shipping_rules = get_shipping_rules(quotation)
 
-	if shipping_rules or quotation.shipping_rule:
-		if not quotation.shipping_rule:
-			if throw_exception:
-				frappe.throw(_("Please select a shipping method"))
-			return False
+	if not (shipping_rules or quotation.shipping_rule):
+		# Guard clause for when there are no shipping rules involved
+		return True
 
-		shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
-		if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
-			if throw_exception:
-				apply_shipping_rule(None)
-				frappe.db.commit()
-				frappe.throw(_("The shipping method is no longer applicable"))
-			return False
+	if not quotation.shipping_rule:
+		if throw_exception:
+			frappe.throw(_("Please select a shipping method"))
+		return False
 
-	return True
+	shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
+	if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
+		if throw_exception:
+			apply_shipping_rule(None)
+			frappe.db.commit()
+			frappe.throw(_("The shipping method is no longer applicable"))
+		return False
 
 
 @frappe.whitelist()

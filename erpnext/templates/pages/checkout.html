@@ -27,8 +27,11 @@
 		</div>
 
 		<!-- Right section -->
-		<div class="col-md-4 cart-sticky-sidebar cart-summary">
-			{% include "templates/includes/cart/cart_summary.html" %}
+		<div class="col-md-4 cart-sticky-sidebar">
+			<div class="cart-summary">
+				{% include "templates/includes/cart/cart_summary.html" %}
+			</div>
+			<div id="cart-error" class="m-0 mt-3 alert alert-danger" style="display: none;"></div>
 		</div>
 	</div>
 </div>
