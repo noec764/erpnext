@@ -148,7 +148,7 @@ def place_order():
 		frappe.local.cookie_manager.delete_cookie("cart_count")
 
 	redirect_url = f"/orders/{quote(sales_order.name)}"
-	if cart_settings.payment_gateway_account:
+	if cart_settings.payment_gateway_account and not cart_settings.no_payment_gateway:
 		from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 		pr = make_payment_request(
