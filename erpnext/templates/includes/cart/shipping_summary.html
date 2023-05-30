@@ -8,7 +8,7 @@
 	{% set name = method.name %}
 	{% set input_id = "shipping_method_" ~ name | replace(" ", "_") |e %}
 	{% set estimated_cost = shipping_estimates.get(name) if shipping_estimates else "" %}
-	{% set label = method.label or method.name or _("None") %}
+	{% set label = _(method.label) or _(method.name) or _("None") %}
 
 	<label for="{{ input_id }}">
 		<input
