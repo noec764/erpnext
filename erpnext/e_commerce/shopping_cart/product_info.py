@@ -20,11 +20,11 @@ from erpnext.utilities.product import (
 
 
 @frappe.whitelist(allow_guest=True)
-def get_product_info_for_website(item_code, skip_quotation_creation=False, additional_uoms=None):
+def get_product_info_for_website(item_code, skip_quotation_creation=False, enabled_uoms=None):
 	"""get product price / stock info for website"""
 
-	if not additional_uoms:
-		additional_uoms = []
+	if not enabled_uoms:
+		enabled_uoms = []
 
 	cart_settings = get_shopping_cart_settings()
 	if not cart_settings.enabled:
@@ -65,7 +65,7 @@ def get_product_info_for_website(item_code, skip_quotation_creation=False, addit
 			if item_info.enable_item_booking:
 				credits_per_uom[base_uom] = get_credits_per_item_and_uom(item_code, base_uom)
 
-			for uom in additional_uoms:
+			for uom in enabled_uoms:
 				price_per_uom[uom] = (
 					get_price(
 						item_code,

@@ -78,11 +78,10 @@ class ShippingRule(Document):
 			)
 
 	def _evaluate_custom_formula(self, doc):
-		shipping_amount = frappe.safe_eval(self.custom_formula, None, {"doc": doc.as_dict()})
+		from frappe.utils.safe_block_eval import safe_block_eval
 
-		# from frappe.utils.safe_block_eval import safe_block_eval
-		# loc = {"doc": doc.as_dict(), "shipping_amount": None}
-		# shipping_amount = safe_block_eval(code, None, loc, output_var="shipping_amount")
+		loc = {"doc": doc.as_dict(), "shipping_amount": None}
+		shipping_amount = safe_block_eval(self.custom_formula, None, loc, output_var="shipping_amount")
 
 		if shipping_amount == NOT_APPLICABLE:
 			return NOT_APPLICABLE
@@ -135,6 +134,8 @@ class ShippingRule(Document):
 
 	def apply(self, doc):
 		"""Apply shipping rule on given doc. Called from accounts controller"""
+		self.validate_pickup_location(doc)
+
 		if doc.get_shipping_address():
 			# validate country only if there is address
 			self.validate_countries(doc)
@@ -167,6 +168,21 @@ class ShippingRule(Document):
 				frappe.throw(
 					_("Shipping rule not applicable for country {0} in Shipping Address").format(shipping_country)
 				)
+
+	def validate_pickup_location(self, doc):
+		"""validate that shipping address is in list of pickup locations"""
+
+		if not self.pickup_locations or not self.show_on_website or self.shipping_rule_type != "Selling":
+			return  # only validate for e-commerce shipping rules
+
+		if doc.docstatus != 1:
+			return  # only validate on submit
+
+		if not doc.get_shipping_address():
+			frappe.throw(_("Shipping Address is required for this Shipping Method"))
+
+		if doc.get_shipping_address().get("name") not in [d.address_name for d in self.pickup_locations]:
+			frappe.throw(_("Please select an address from the list of Pick-up Locations"))
 
 	def add_shipping_rule_to_tax_table(self, doc, shipping_amount):
 		shipping_charge = {
@@ -344,6 +360,7 @@ def get_ecommerce_shipping_rules(transaction: Document, address=None) -> list[Sh
 		.where((sr_country.country == country) | sr_country.country.isnull())
 		.where(sr.disabled != 1)
 		.where(sr.show_on_website == 1)
+		.where(sr.shipping_rule_type == "Selling")
 		.orderby(sr.name, order=Order.asc)
 	)
 	shipping_rule_names = [x[0] for x in query.run(as_list=True)]

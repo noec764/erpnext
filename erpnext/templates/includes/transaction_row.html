@@ -3,8 +3,8 @@
 		<div class="col-sm-4">
 			<span class="list-item-name font-weight-bold">{{ doc.name }}</span>
 			<div class="small text-muted transaction-time"
-				title="{{ frappe.utils.format_datetime(doc.modified, "medium") }}">
-				{{ frappe.utils.global_date_format(doc.modified) }}
+				title="{{ frappe.utils.format_datetime(doc.transaction_date or doc.posting_date, "medium") }}">
+				{{ frappe.utils.global_date_format(doc.transaction_date or doc.posting_date) }}
 			</div>
 		</div>
 		<div class="col-sm-3">

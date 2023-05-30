@@ -12,6 +12,7 @@ $.extend(shopping_cart, {
 		shopping_cart.bind_request_quotation();
 		shopping_cart.bind_coupon_code();
 		shopping_cart.bind_shipping_method();
+		shopping_cart.bind_select_pickup_location();
 	},
 
 	bind_address_picker_dialog: function() {
@@ -68,12 +69,9 @@ $.extend(shopping_cart, {
 						billing_address_is_same_as_shipping_address,
 					},
 					always(r) {
-						if (r.exc) {
-							shopping_cart._show_error_after_action(r);
-						} else {
+						shopping_cart._request_callback(r);
+						if (!r.exc) {
 							d.hide();
-							shopping_cart.clear_error();
-							shopping_cart.render_from_server_side(r.message);
 						}
 					},
 				});
@@ -109,18 +107,15 @@ $.extend(shopping_cart, {
 
 	apply_shipping_rule(rule, btn) {
 		if (frappe.freeze_count) return; // prevent timestamp mismatch
-		frappe.freeze(__("Updating", [], "Freeze message while updating a document"));
+		frappe.freeze();
 		return frappe.call({
 			btn: btn,
 			type: "POST",
 			method: "erpnext.e_commerce.shopping_cart.cart.apply_shipping_rule",
 			args: { shipping_rule: rule },
-			callback(r) {
+			always(r) {
 				frappe.unfreeze();
-				if (!r.exc) {
-					shopping_cart.clear_error();
-					shopping_cart.render_from_server_side(r.message);
-				}
+				shopping_cart._request_callback(r);
 			}
 		});
 	},
@@ -146,6 +141,77 @@ $.extend(shopping_cart, {
 				}
 			}
 		});
+	},
+
+	bind_select_pickup_location() {
+		let control;
+
+		$(".cart-container").on("click", ".btn-clear-pickup-location", function() {
+			if (control) {
+				control.set_value("");
+			}
+		});
+
+		const render_pickup_locations = async (options) => {
+			control = null;
+
+			const parent = document.getElementById("select_pickup_location");
+			if (!parent) return;
+			if (!options?.length) {
+				parent.innerHTML = `<div class="text-muted">${__("No pickup locations found")}</div>`;
+				return;
+			}
+
+			let ready = false;
+			control = frappe.ui.form.make_control({
+				df: {
+					fieldtype: "Autocomplete",
+					options: options,
+					placeholder: __("Search..."),
+					change() {
+						if (!ready) return;
+						if (!this.get_value()) return;
+						if (this.get_value() === this.last_value) return;
+
+						frappe.call({
+							type: "POST",
+							method: "erpnext.e_commerce.shopping_cart.cart.update_cart_address",
+							freeze: true,
+							args: {
+								address_type: "Shipping",
+								address_name: this.get_value(),
+								billing_address_is_same_as_shipping_address: 0,
+							},
+							always(r) {
+								shopping_cart._request_callback(r);
+							},
+						});
+					},
+				},
+				parent: parent,
+				render_input: true,
+				only_input: true,
+			});
+			await control.set_value(options.find(o => o.selected)?.value);
+			ready = true;
+		};
+
+		// First, add a reactive property to the cart object
+		if (this.hasOwnProperty("available_pickup_locations") === true) {
+			this._available_pickup_locations = this.available_pickup_locations;
+			delete this.available_pickup_locations;
+		}
+		Object.defineProperty(this, "available_pickup_locations", {
+			get: () => {
+				return this._available_pickup_locations;
+			},
+			set: (value) => {
+				this._available_pickup_locations = value;
+				render_pickup_locations(this._available_pickup_locations);
+			},
+		});
+
+		this.available_pickup_locations = this._available_pickup_locations;
 	}
 });
 

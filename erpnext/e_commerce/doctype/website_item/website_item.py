@@ -58,6 +58,9 @@ class WebsiteItem(WebsiteGenerator):
 		self.make_thumbnail()
 		self.publish_unpublish_desk_item(publish=True)
 
+		if self.enable_item_booking:
+			self.validate_enabled_booking_uom()
+
 		if not self.get("__islocal"):
 			wig = frappe.qb.DocType("Website Item Group")
 			query = (
@@ -92,6 +95,11 @@ class WebsiteItem(WebsiteGenerator):
 		if frappe.db.get_value("Item", self.item_code, "published_in_website") and publish:
 			return  # if already published don't publish again
 		frappe.db.set_value("Item", self.item_code, "published_in_website", publish)
+
+	def validate_enabled_booking_uom(self):
+		sales_uom = frappe.db.get_value("Item", self.item_code, "sales_uom")
+		if sales_uom and sales_uom not in [u.uom for u in self.enabled_booking_uom]:
+			self.append("enabled_booking_uom", {"uom": sales_uom})
 
 	def make_route(self):
 		"""Called from set_route in WebsiteGenerator."""
@@ -321,7 +329,7 @@ class WebsiteItem(WebsiteGenerator):
 		context.shopping_cart = get_product_info_for_website(
 			self.item_code,
 			skip_quotation_creation=True,
-			additional_uoms=[u.uom for u in self.enabled_booking_uom],
+			enabled_uoms=[u.uom for u in self.enabled_booking_uom],
 		)
 
 	@frappe.whitelist()

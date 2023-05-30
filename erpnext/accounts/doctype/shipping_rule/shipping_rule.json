@@ -30,7 +30,8 @@
   "shipping_taxes",
   "website_tab",
   "show_on_website",
-  "description"
+  "description",
+  "pickup_locations"
  ],
  "fields": [
   {
@@ -138,6 +139,7 @@
    "options": "Shipping Rule Country"
   },
   {
+   "depends_on": "eval:doc.show_on_website",
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "in_preview": 1,
@@ -150,7 +152,6 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:!doc.disabled",
    "fieldname": "show_on_website",
    "fieldtype": "Check",
    "label": "Show in Website"
@@ -168,15 +169,24 @@
    "options": "Shipping Tax"
   },
   {
+   "depends_on": "eval:!doc.disabled && doc.shipping_rule_type == \"Selling\"",
    "fieldname": "website_tab",
    "fieldtype": "Tab Break",
    "label": "Website"
+  },
+  {
+   "depends_on": "eval:doc.show_on_website",
+   "fieldname": "pickup_locations",
+   "fieldtype": "Table",
+   "label": "Pick-up Locations",
+   "options": "Pick-up Location",
+   "description": "If specified, placing an order will only be possible if the shipping address is one of the pick-up locations."
   }
  ],
  "icon": "fa fa-truck",
  "idx": 1,
  "links": [],
- "modified": "2023-05-11 13:50:06.295209",
+ "modified": "2023-05-26 14:10:36.669437",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",
@@ -188,14 +198,16 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Accounts User"
+   "role": "Accounts User",
+   "select": 1
   },
   {
    "email": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User"
+   "role": "Sales User",
+   "select": 1
   },
   {
    "create": 1,
@@ -207,6 +219,7 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager",
+   "select": 1,
    "set_user_permissions": 1,
    "share": 1,
    "write": 1
@@ -221,7 +234,21 @@
    "read": 1,
    "report": 1,
    "role": "Sales Master Manager",
+   "select": 1,
    "set_user_permissions": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   }

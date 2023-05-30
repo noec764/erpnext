@@ -95,6 +95,7 @@ calendars = [
 	"Item Booking",
 	"Event Slot",
 	"Event Slot Booking",
+	"ToDo",
 ]
 
 fullcalendar_scheduler_licence_key = "GPL-My-Project-Is-Open-Source"

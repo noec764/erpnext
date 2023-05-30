@@ -54,7 +54,7 @@
 	<div>
 		<div class="row transaction-subheading  mt-1">
 			<div class="col-6 text-muted small mt-1">
-				{{ frappe.utils.format_date(doc.transaction_date, 'medium') }}
+				{{ frappe.utils.format_date(doc.transaction_date or doc.posting_date, 'medium') }}
 				{% if doc.valid_till %}
 					<p>
 						{{ _("Valid Till") }}: {{ frappe.utils.format_date(doc.valid_till, 'medium') }}
@@ -98,7 +98,7 @@
 					<span class="d-s-n col-3">
 						{{ _("Quantity") }}
 					</span>
-					<span class="col-2 pl-10">
+					<span class="col-2">
 						{{ _("Rate") }}
 					</span>
 					<span class="col-2 text-right">
@@ -111,10 +111,10 @@
 						{{ item_name_and_description(d) }}
 					</span>
 
-					<span class="d-s-n col-3 pl-10">
+					<span class="d-s-n col-3">
 						{{ d.get_formatted("qty") }}
 					</span>
-					<span class="order-rate pl-4 col-2">
+					<span class="order-rate col-2">
 						{{ d.get_formatted("rate") }}
 					</span>
 					<span class="col-2 text-right">

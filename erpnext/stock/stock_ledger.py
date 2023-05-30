@@ -445,11 +445,10 @@ class update_entries_after(object):
 				i += 1
 
 				self.process_sle(sle)
+				self.update_bin_data(sle)
 
 				if sle.dependant_sle_voucher_detail_no:
 					entries_to_fix = self.get_dependent_entries_to_fix(entries_to_fix, sle)
-
-			self.update_bin()
 
 		if self.exceptions:
 			self.raise_exceptions()
@@ -783,12 +782,20 @@ class update_entries_after(object):
 				d.db_update()
 
 	def update_rate_on_subcontracting_receipt(self, sle, outgoing_rate):
-		if frappe.db.exists(sle.voucher_type + " Item", sle.voucher_detail_no):
-			frappe.db.set_value(sle.voucher_type + " Item", sle.voucher_detail_no, "rate", outgoing_rate)
+		if frappe.db.exists("Subcontracting Receipt Item", sle.voucher_detail_no):
+			frappe.db.set_value("Subcontracting Receipt Item", sle.voucher_detail_no, "rate", outgoing_rate)
 		else:
 			frappe.db.set_value(
-				"Subcontracting Receipt Supplied Item", sle.voucher_detail_no, "rate", outgoing_rate
+				"Subcontracting Receipt Supplied Item",
+				sle.voucher_detail_no,
+				{"rate": outgoing_rate, "amount": abs(sle.actual_qty) * outgoing_rate},
 			)
+
+		scr = frappe.get_doc("Subcontracting Receipt", sle.voucher_no, for_update=True)
+		scr.calculate_items_qty_and_amount()
+		scr.db_update()
+		for d in scr.items:
+			d.db_update()
 
 	def get_serialized_values(self, sle):
 		incoming_rate = flt(sle.incoming_rate)
@@ -1058,6 +1065,18 @@ class update_entries_after(object):
 				frappe.throw(message, NegativeStockError, title=_("Insufficient Stock"))
 			else:
 				raise NegativeStockError(message)
+
+	def update_bin_data(self, sle):
+		bin_name = get_or_make_bin(sle.item_code, sle.warehouse)
+		values_to_update = {
+			"actual_qty": sle.qty_after_transaction,
+			"stock_value": sle.stock_value,
+		}
+
+		if sle.valuation_rate is not None:
+			values_to_update["valuation_rate"] = sle.valuation_rate
+
+		frappe.db.set_value("Bin", bin_name, values_to_update)
 
 	def update_bin(self):
 		# update bin for each warehouse

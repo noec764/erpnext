@@ -1,8 +1,8 @@
 {% extends "templates/web.html" %}
 
-{% block title %} {{ _("Checkout") }} {% endblock %}
+{% block title %} {{ _("Checkout", context="Cart") }} {% endblock %}
 
-{% block header %}<h3 class="checkout-cart-header mt-2 mb-6">{{ _("Checkout") }}</h3>{% endblock %}
+{% block header %}<h3 class="checkout-cart-header mt-2 mb-6">{{ _("Checkout", context="Cart") }}</h3>{% endblock %}
 
 {% block header_actions %}
 {% endblock %}
@@ -27,8 +27,11 @@
 		</div>
 
 		<!-- Right section -->
-		<div class="col-md-4 cart-sticky-sidebar cart-summary">
-			{% include "templates/includes/cart/cart_summary.html" %}
+		<div class="col-md-4 cart-sticky-sidebar">
+			<div class="cart-summary">
+				{% include "templates/includes/cart/cart_summary.html" %}
+			</div>
+			<div id="cart-error" class="m-0 mt-3 alert alert-danger" style="display: none;"></div>
 		</div>
 	</div>
 </div>

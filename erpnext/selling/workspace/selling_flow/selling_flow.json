@@ -1,0 +1,85 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"tKfk7XRn0m\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Selling Flow</span>\",\"col\":12}},{\"id\":\"XuBOkDwxyT\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Quotations\",\"col\":4}},{\"id\":\"XHyn78-OHi\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Sales Orders\",\"col\":4}},{\"id\":\"Clswa-iyNg\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Unpaid Sales Invoices\",\"col\":4}},{\"id\":\"b9VRSo1d4u\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"UP727grQ0m\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Ordering and Invoicing</b></span>\",\"col\":12}},{\"id\":\"XOU1xi9HGG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotations\",\"col\":3}},{\"id\":\"5QEIxZFt52\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Orders\",\"col\":3}},{\"id\":\"yaISna50iT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":3}},{\"id\":\"GaC-K5TLje\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Blanket Orders\",\"col\":3}},{\"id\":\"8voJfma4Jn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Delivering</b></span>\",\"col\":12}},{\"id\":\"rei9YFKAlP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}}]",
+ "creation": "2023-05-11 20:58:28.310964",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "milestone",
+ "idx": 0,
+ "is_hidden": 0,
+ "is_standard": 1,
+ "label": "Selling Flow",
+ "links": [],
+ "modified": "2023-05-16 14:47:03.884174",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Selling Flow",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Selling",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Quotation",
+   "label": "Pending Quotations",
+   "quick_list_filter": "{\"status\":[\"in\",[\"Draft\",\"Open\",\"Replied\",\"Partially Ordered\"]]}"
+  },
+  {
+   "document_type": "Sales Order",
+   "label": "Pending Sales Orders",
+   "quick_list_filter": "{\"status\":[\"in\",[\"To Deliver and Bill\",\"To Bill\",\"To Deliver\"]]}"
+  },
+  {
+   "document_type": "Sales Invoice",
+   "label": "Unpaid Sales Invoices",
+   "quick_list_filter": "{\"status\":[\"in\",[\"Partly Paid\",\"Unpaid\",\"Unpaid and Discounted\",\"Partly Paid and Discounted\",\"Overdue and Discounted\",\"Overdue\"]]}"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 27.0,
+ "shortcuts": [
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Quotations",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Blanket Orders",
+   "link_to": "Blanket Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Sales Orders",
+   "link_to": "Sales Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Sales Invoices",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Gray",
+   "columns": 3,
+   "doc_view": "List",
+   "label": "Delivery Note",
+   "link_to": "Delivery Note",
+   "type": "DocType"
+  }
+ ],
+ "title": "Selling Flow"
+}
