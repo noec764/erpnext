@@ -863,25 +863,24 @@ def get_estimates_for_shipping(quotation, shipping_rules: list[str]):
 	return estimates
 
 
-def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
+def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True) -> bool:
 	shipping_rules = get_shipping_rules(quotation)
 
-	if not (shipping_rules or quotation.shipping_rule):
-		# Guard clause for when there are no shipping rules involved
-		return True
+	if shipping_rules or quotation.shipping_rule:
+		if not quotation.shipping_rule:
+			if throw_exception:
+				frappe.throw(_("Please select a shipping method"))
+			return False
 
-	if not quotation.shipping_rule:
-		if throw_exception:
-			frappe.throw(_("Please select a shipping method"))
-		return False
+		shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
+		if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
+			if throw_exception:
+				apply_shipping_rule(None)
+				frappe.db.commit()
+				frappe.throw(_("The shipping method is no longer applicable"))
+			return False
 
-	shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
-	if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
-		if throw_exception:
-			apply_shipping_rule(None)
-			frappe.db.commit()
-			frappe.throw(_("The shipping method is no longer applicable"))
-		return False
+	return True
 
 
 @frappe.whitelist()
