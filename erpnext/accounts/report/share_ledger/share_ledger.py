@@ -13,7 +13,7 @@ def execute(filters=None):
 	if not filters.get("date"):
 		frappe.throw(_("Please select date"))
 
-	columns = get_columns(filters)
+	columns = get_columns()
 
 	date = filters.get("date")
 
