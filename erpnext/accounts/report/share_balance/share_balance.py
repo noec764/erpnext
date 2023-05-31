@@ -55,7 +55,7 @@ def get_columns():
 	columns = [
 		_("Shareholder") + ":Link/Shareholder:180",
 		_("Share Type") + "::150",
-		_("No of Shares") + "::150",
+		_("No of Shares") + ":Float:150",
 		_("Average Rate") + ":Currency:150",
 		_("Amount") + ":Currency:150",
 	]

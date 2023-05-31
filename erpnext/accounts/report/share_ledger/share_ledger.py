@@ -49,7 +49,7 @@ def get_columns():
 		_("Date") + ":Date:100",
 		_("Transfer Type") + "::140",
 		_("Share Type") + "::150",
-		_("No of Shares") + "::120",
+		_("No of Shares") + ":Float:120",
 		_("Rate") + ":Currency:100",
 		_("Amount") + ":Currency:150",
 		_("Company") + "::150",
@@ -62,7 +62,12 @@ def get_all_transfers(date, shareholder=None):
 
 	share_transfer = frappe.qb.DocType("Share Transfer")
 
-	query = frappe.qb.from_(share_transfer).select("*").where(share_transfer.date <= date)
+	query = (
+		frappe.qb.from_(share_transfer)
+		.select("*")
+		.where(share_transfer.date <= date)
+		.where(share_transfer.docstatus == 1)
+	)
 
 	if shareholder:
 		query.where(
