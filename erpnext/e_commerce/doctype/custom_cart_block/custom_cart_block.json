@@ -1,0 +1,82 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "autoname": "hash",
+  "creation": "2023-05-30 17:53:13.474220",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "web_template",
+    "edit_values",
+    "web_template_values",
+    "column_break_4",
+    "css_class",
+    "show_on_cart",
+    "show_on_checkout",
+    "position"
+  ],
+  "fields": [
+    {
+      "fieldname": "web_template",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Web Template",
+      "options": "Web Template"
+    },
+    {
+      "fieldname": "edit_values",
+      "fieldtype": "Button",
+      "in_list_view": 1,
+      "label": "Edit Values"
+    },
+    {
+      "fieldname": "web_template_values",
+      "fieldtype": "Code",
+      "hidden": 1,
+      "label": "Web Template Values",
+      "options": "JSON"
+    },
+    {
+      "fieldname": "column_break_4",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "css_class",
+      "fieldtype": "Small Text",
+      "label": "CSS Class"
+    },
+    {
+      "default": "1",
+      "fieldname": "show_on_cart",
+      "fieldtype": "Check",
+      "label": "Show on Cart"
+    },
+    {
+      "default": "1",
+      "fieldname": "show_on_checkout",
+      "fieldtype": "Check",
+      "label": "Show on Checkout"
+    },
+    {
+      "fieldname": "position",
+      "fieldtype": "Select",
+      "label": "Position",
+      "options": "First\nBefore Summary\nLast"
+    }
+  ],
+  "istable": 1,
+  "links": [],
+  "modified": "2023-05-30 18:38:38.456136",
+  "modified_by": "Administrator",
+  "module": "E-commerce",
+  "name": "Custom Cart Block",
+  "naming_rule": "Random",
+  "owner": "Administrator",
+  "permissions": [],
+  "quick_entry": 1,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
+}

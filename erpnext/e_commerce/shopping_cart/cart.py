@@ -93,6 +93,39 @@ def get_cart_quotation(doc=None):
 
 			context["credits_balance"] = get_balance(get_customer())
 
+	custom_blocks = context["cart_settings"].get("custom_cart_blocks") or []
+	custom_blocks_by_position: dict[str, list] = {}
+
+	for block in custom_blocks:
+		if route == "cart" and not block.get("show_on_cart"):
+			continue
+		if route == "checkout" and not block.get("show_on_checkout"):
+			continue
+
+		template = block.get("web_template")
+		values = block.get("web_template_values") or {}
+		values = frappe.parse_json(values)
+		values["doc"] = doc
+
+		instanced_block = {
+			"position": block.get("position") or "Last",
+			"show_on_cart": block.get("show_on_cart") or False,
+			"show_on_checkout": block.get("show_on_checkout") or False,
+			"css_class": block.get("css_class") or "",
+			"template": template,
+			"values": values,
+			"add_top_padding": 0,
+			"add_bottom_padding": 0,
+			"add_container": 0,
+		}
+
+		block_position = str(instanced_block.get("position"))
+		if block_position not in custom_blocks_by_position:
+			custom_blocks_by_position[block_position] = []
+		custom_blocks_by_position[block_position].append(instanced_block)
+
+	context["custom_cart_blocks"] = custom_blocks_by_position
+
 	return context
 
 
