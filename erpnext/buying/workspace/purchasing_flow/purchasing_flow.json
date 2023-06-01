@@ -1,85 +1,85 @@
 {
- "charts": [],
- "content": "[{\"id\":\"IEQm0YWEGL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Flow</span>\",\"col\":12}},{\"id\":\"AKFGnQW2CM\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Material Requests\",\"col\":4}},{\"id\":\"5WF3kbvolp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Purchase Orders\",\"col\":4}},{\"id\":\"KBaZv9ncJc\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Unpaid Purchase Invoices\",\"col\":4}},{\"id\":\"S_M2ESmXyw\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qxaNIvKFfx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Ordering and Invoicing</b></span>\",\"col\":12}},{\"id\":\"DqLQpvyrtZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Orders\",\"col\":3}},{\"id\":\"5GV1REu4Rr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoices\",\"col\":3}},{\"id\":\"x01taZAANZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipts\",\"col\":3}},{\"id\":\"y3bESnU__n\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Material Purchases</b></span>\",\"col\":12}},{\"id\":\"TgCFg_0s6Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Requests\",\"col\":3}},{\"id\":\"VEXKDFl3i2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Requests for Quotations</b></span>\",\"col\":12}},{\"id\":\"vxGfVyLecb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Requests for Quotations\",\"col\":3}}]",
- "creation": "2023-04-07 11:59:48.707688",
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "milestone",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Purchasing Flow",
- "links": [],
- "modified": "2023-05-12 10:13:57.808716",
- "modified_by": "Administrator",
- "module": "Buying",
- "name": "Purchasing Flow",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Buying",
- "public": 1,
- "quick_lists": [
-  {
-   "document_type": "Material Request",
-   "label": "Pending Material Requests",
-   "quick_list_filter": "{\"status\":[\"in\",[\"Pending\",\"Partially Ordered\",\"Partially Received\"]]}"
-  },
-  {
-   "document_type": "Purchase Order",
-   "label": "Pending Purchase Orders",
-   "quick_list_filter": "{\"status\":[\"in\",[\"To Receive and Bill\",\"To Bill\",\"To Receive\",\"On Hold\",null]]}"
-  },
-  {
-   "document_type": "Purchase Invoice",
-   "label": "Unpaid Purchase Invoices",
-   "quick_list_filter": "{\"status\":[\"in\",[\"Partly Paid\",\"Unpaid\",\"Overdue\",null]]}"
-  }
- ],
- "roles": [],
- "sequence_id": 5.0,
- "shortcuts": [
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Requests for Quotations",
-   "link_to": "Request for Quotation",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchase Orders",
-   "link_to": "Purchase Order",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchase Invoices",
-   "link_to": "Purchase Invoice",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchase Receipts",
-   "link_to": "Purchase Receipt",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Material Requests",
-   "link_to": "Material Request",
-   "type": "DocType"
-  }
- ],
- "title": "Purchasing Flow"
+  "charts": [],
+  "content": "[{\"id\":\"IEQm0YWEGL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Flow</span>\",\"col\":12}},{\"id\":\"AKFGnQW2CM\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Material Requests\",\"col\":4}},{\"id\":\"5WF3kbvolp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Pending Purchase Orders\",\"col\":4}},{\"id\":\"KBaZv9ncJc\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Unpaid Purchase Invoices\",\"col\":4}},{\"id\":\"S_M2ESmXyw\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qxaNIvKFfx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Ordering and Invoicing</b></span>\",\"col\":12}},{\"id\":\"DqLQpvyrtZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Orders\",\"col\":3}},{\"id\":\"5GV1REu4Rr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoices\",\"col\":3}},{\"id\":\"x01taZAANZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipts\",\"col\":3}},{\"id\":\"y3bESnU__n\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Material Purchases</b></span>\",\"col\":12}},{\"id\":\"TgCFg_0s6Q\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Requests\",\"col\":3}},{\"id\":\"VEXKDFl3i2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Requests for Quotations</b></span>\",\"col\":12}},{\"id\":\"vxGfVyLecb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Requests for Quotations\",\"col\":3}}]",
+  "creation": "2023-04-07 11:59:48.707688",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "milestone",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Purchasing Flow",
+  "links": [],
+  "modified": "2023-05-31 09:04:05.098561",
+  "modified_by": "Administrator",
+  "module": "Buying",
+  "name": "Purchasing Flow",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Buying",
+  "public": 1,
+  "quick_lists": [
+    {
+      "document_type": "Material Request",
+      "label": "Pending Material Requests",
+      "quick_list_filter": "{\"status\":[\"in\",[\"Pending\",\"Partially Ordered\",\"Partially Received\"]]}"
+    },
+    {
+      "document_type": "Purchase Order",
+      "label": "Pending Purchase Orders",
+      "quick_list_filter": "{\"status\":[\"in\",[\"To Receive and Bill\",\"To Bill\",\"To Receive\",\"On Hold\",null]]}"
+    },
+    {
+      "document_type": "Purchase Invoice",
+      "label": "Unpaid Purchase Invoices",
+      "quick_list_filter": "{\"status\":[\"in\",[\"Partly Paid\",\"Unpaid\",\"Overdue\",null]]}"
+    }
+  ],
+  "roles": [],
+  "sequence_id": 9.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Requests for Quotations",
+      "link_to": "Request for Quotation",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchase Orders",
+      "link_to": "Purchase Order",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchase Invoices",
+      "link_to": "Purchase Invoice",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchase Receipts",
+      "link_to": "Purchase Receipt",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Material Requests",
+      "link_to": "Material Request",
+      "type": "DocType"
+    }
+  ],
+  "title": "Purchasing Flow"
 }

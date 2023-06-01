@@ -1,0 +1,143 @@
+{
+  "charts": [],
+  "content": "[{\"id\":\"wfa6ftf10e\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tax Templates</b></span>\",\"col\":12}},{\"id\":\"T4qmhzvP-A\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Taxes And Charges Templates\",\"col\":4}},{\"id\":\"m7bMxUq0pg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Taxes And Charges Templates\",\"col\":4}},{\"id\":\"0iaEWDtvwe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item Tax Templates\",\"col\":3}},{\"id\":\"WBuIn7ceUY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"s-NRebJ5x6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tax Determination</b></span>\",\"col\":12}},{\"id\":\"mOxczT9aVp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tax Categories\",\"col\":3}},{\"id\":\"QvxuVpJMNg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tax Rules\",\"col\":3}},{\"id\":\"l_6wbfAlZG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7_twbWVqMR\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Additional Functionalities</b></span>\",\"col\":12}},{\"id\":\"C0OuJS4JHG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tax Withholding\",\"col\":4}},{\"id\":\"K9c82XXQU7\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mzAoMKmKXQ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"6n4HfetrgT\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+  "creation": "2023-05-31 09:02:44.407412",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "liabilities",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Taxes",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Tax Withholding",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Tax Withholding Categories",
+      "link_count": 0,
+      "link_to": "Tax Withholding Category",
+      "link_type": "DocType",
+      "onboard": 0,
+      "only_for": "",
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Reports",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Transactions Tax Summary",
+      "link_count": 0,
+      "link_to": "Transactions Tax Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Tax Detail",
+      "link_count": 0,
+      "link_to": "Tax Detail",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "France Tax Declaration Preparation",
+      "link_count": 0,
+      "link_to": "France Tax Declaration Preparation",
+      "link_type": "DocType",
+      "onboard": 0,
+      "only_for": "France",
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-06-01 05:29:56.227937",
+  "modified_by": "Administrator",
+  "module": "Accounts",
+  "name": "Taxes",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Finance",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 6.0,
+  "shortcuts": [
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Sales Taxes And Charges Templates",
+      "link_to": "Sales Taxes and Charges Template",
+      "stats_filter": "{\"disabled\":[\"=\",0]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Yellow",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Tax Categories",
+      "link_to": "Tax Category",
+      "stats_filter": "{\"disabled\":[\"=\",0]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} rules",
+      "label": "Tax Rules",
+      "link_to": "Tax Rule",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Purchase Taxes And Charges Templates",
+      "link_to": "Purchase Taxes and Charges Template",
+      "stats_filter": "{\"disabled\":[\"=\",0]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Item Tax Templates",
+      "link_to": "Item Tax Template",
+      "stats_filter": "{\"disabled\":[\"=\",0]}",
+      "type": "DocType"
+    }
+  ],
+  "title": "Taxes"
+}
