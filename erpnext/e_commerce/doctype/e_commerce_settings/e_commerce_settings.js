@@ -1,6 +1,8 @@
 // Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
 
+{% include "frappe/public/js/frappe/utils/web_template.js" %}
+
 frappe.ui.form.on("E Commerce Settings", {
 	onload: function(frm) {
 		if(frm.doc.__onload && frm.doc.__onload.quotation_series) {
@@ -46,4 +48,14 @@ frappe.ui.form.on("E Commerce Settings", {
 			frm.set_value('quotation_series', '');
 		}
 	}
+});
+
+frappe.ui.form.on("Custom Cart Block", {
+	edit_values(frm, cdt, cdn) {
+		let row = frm.selected_doc;
+		let values = JSON.parse(row.web_template_values || "{}");
+		open_web_template_values_editor(row.web_template, values).then((new_values) => {
+			frappe.model.set_value(cdt, cdn, "web_template_values", JSON.stringify(new_values));
+		});
+	},
 });
