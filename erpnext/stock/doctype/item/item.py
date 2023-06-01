@@ -1333,7 +1333,7 @@ def validate_item_default_company_links(item_defaults: List[ItemDefault]) -> Non
 					frappe.throw(
 						_("Row #{}: {} {} doesn't belong to Company {}. Please select valid {}.").format(
 							item_default.idx,
-							doctype,
+							_(doctype),
 							frappe.bold(item_default.get(field)),
 							frappe.bold(item_default.company),
 							frappe.bold(frappe.unscrub(field)),

@@ -13318,7 +13318,7 @@ you must select Capital Work in Progress Account in accounts table,Vous devez s�
 {0} {1}: Cost Center is mandatory for Item {2},{0} {1}: Centre de coûts est obligatoire pour l'Article {2},
 {0} {1}: Cost Center is required for 'Profit and Loss' account {2}. Please set up a default Cost Center for the Company.,"{0} {1} : Un Centre de coûts est requis pour le compte ""Compte de résultat"" {2}.Veuillez mettre en place un Centre de coûts par défaut pour la Société.",
 {0} {1}: Cost Center is required for 'Profit and Loss' account {2}.,{0} {1} : Le centre de coût est nécessaire pour le compte de pertes et profits {2}.,
-{0} {1}: Cost Center {2} does not belong to Company {3},{0} {1} : Le Centre de coûts {2} ne fait pas partie de la Société {3},
+{0} {1}: Cost Center {2} does not belong to Company {3},{0} {1} : Le Centre de Coûts {2} ne fait pas partie de la Société {3},
 {0} {1}: Cost Center {2} is a group cost center and group cost centers cannot be used in transactions,{0} {1}: Le centre de coût {2} est un groupe de centres de coûts et les groupes de centres de coûts ne peuvent pas être utilisés dans les transactions,
 {0} {1}: Customer is required against Receivable account {2},{0} {1} : Un Client est requis pour le Compte Débiteur {2},
 {0} {1}: Either debit or credit amount is required for {2},{0} {1} : Un montant est requis au débit ou au crédit pour {2},

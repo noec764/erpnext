@@ -120,7 +120,7 @@ def check_on_hold_or_closed_status(doctype, docname) -> None:
 
 	if status in ("Closed", "On Hold"):
 		frappe.throw(
-			_("{0} {1} status is {2}").format(doctype, docname, status), frappe.InvalidStatusError
+			_("{0} {1} status is {2}").format(_(doctype), docname, _(status)), frappe.InvalidStatusError
 		)
 
 

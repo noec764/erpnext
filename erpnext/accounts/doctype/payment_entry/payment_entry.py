@@ -1798,7 +1798,7 @@ def get_payment_entry(
 	if dt in ("Sales Order", "Purchase Order") and flt(doc.per_billed, 2) >= (
 		100.0 + over_billing_allowance
 	):
-		frappe.throw(_("Can only make payment against unbilled {0}").format(dt))
+		frappe.throw(_("Can only make payment against unbilled {0}").format(_(dt)))
 
 	if not party_type:
 		party_type = set_party_type(dt)
