@@ -1,0 +1,13 @@
+{
+  "creation": "2023-05-31 11:10:49.692972",
+  "docstatus": 0,
+  "doctype": "Dashboard Chart Source",
+  "idx": 0,
+  "modified": "2023-05-31 11:10:49.692972",
+  "modified_by": "Administrator",
+  "module": "Accounts",
+  "name": "Bank Statement Balance",
+  "owner": "Administrator",
+  "source_name": "Bank Statement Balance",
+  "timeseries": 1
+}
