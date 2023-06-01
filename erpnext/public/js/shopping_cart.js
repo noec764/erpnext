@@ -228,6 +228,8 @@ $.extend(shopping_cart, {
 		if (restoreFocusTo) {
 			document.querySelector(restoreFocusTo)?.focus();
 		}
+
+		$(document).trigger("cart-update");
 	},
 
 	/** @param {HTMLElement?} element */
