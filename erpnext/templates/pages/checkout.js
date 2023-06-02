@@ -212,7 +212,11 @@ $.extend(shopping_cart, {
 		});
 
 		this.available_pickup_locations = this._available_pickup_locations;
-	}
+	},
+
+	{% if cart_address_fields %}
+	cart_address_fields: {{ cart_address_fields | json | safe }},
+	{% endif %}
 });
 
 frappe.ready(function() {
