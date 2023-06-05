@@ -23,16 +23,18 @@
   "show_apply_coupon_code_in_website",
   "show_contact_us_button",
   "show_attachments",
+  "cart_tab",
   "section_break_18",
+  "enabled",
   "company",
   "price_list",
-  "enabled",
   "store_page_docs",
   "column_break_21",
   "default_customer_group",
   "quotation_series",
-  "custom_cart_blocks_section",
+  "custom_cart",
   "custom_cart_blocks",
+  "custom_address_form",
   "checkout_settings_section",
   "enable_checkout",
   "show_price_in_quotation",
@@ -41,6 +43,7 @@
   "save_quotations_as_draft",
   "payment_gateway_account",
   "payment_success_url",
+  "advanced_settings_tab",
   "add_ons_section",
   "enable_wishlist",
   "column_break_22",
@@ -112,7 +115,7 @@
    "label": "Enable Shopping Cart"
   },
   {
-   "depends_on": "doc.enabled",
+   "depends_on": "eval:doc.enabled",
    "fieldname": "store_page_docs",
    "fieldtype": "HTML"
   },
@@ -180,48 +183,49 @@
    "label": "Shopping Cart"
   },
   {
-   "depends_on": "enabled",
+   "depends_on": "eval:doc.enabled",
    "fieldname": "company",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Company",
-   "mandatory_depends_on": "eval: doc.enabled === 1",
+   "mandatory_depends_on": "eval:doc.enabled",
    "options": "Company",
    "remember_last_selected_value": 1
   },
   {
-   "depends_on": "enabled",
+   "depends_on": "eval:doc.enabled",
    "description": "Prices will not be shown if Price List is not set",
    "fieldname": "price_list",
    "fieldtype": "Link",
    "label": "Price List",
-   "mandatory_depends_on": "eval: doc.enabled === 1",
+   "mandatory_depends_on": "eval:doc.enabled",
    "options": "Price List"
   },
   {
+   "depends_on": "eval:doc.enabled",
    "fieldname": "column_break_21",
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "enabled",
+   "depends_on": "eval:doc.enabled",
    "fieldname": "default_customer_group",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "Default Customer Group",
-   "mandatory_depends_on": "eval: doc.enabled === 1",
+   "mandatory_depends_on": "eval:doc.enabled",
    "options": "Customer Group"
   },
   {
-   "depends_on": "enabled",
+   "depends_on": "eval:doc.enabled",
    "fieldname": "quotation_series",
    "fieldtype": "Select",
    "label": "Quotation Series",
-   "mandatory_depends_on": "eval: doc.enabled === 1"
+   "mandatory_depends_on": "eval:doc.enabled"
   },
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval:doc.enable_checkout",
-   "depends_on": "enabled",
+   "depends_on": "eval:doc.enabled",
    "fieldname": "checkout_settings_section",
    "fieldtype": "Section Break",
    "label": "Checkout Settings"
@@ -317,7 +321,7 @@
    "fieldname": "redisearch_warning",
    "fieldtype": "HTML",
    "label": "Redisearch Warning",
-   "options": "<p class=\"alert alert-warning\">Redisearch is not loaded. If you want to use the advanced product search feature, refer <a class=\"alert-link\" href=\"https://docs.erpnext.com/docs/v14/user/manual/en/e_commerce/articles/installing_redisearch_to_enable_super_fast_e_commerce_search\" target=\"_blank\">here</a>.</p>"
+   "options": "<p class=\"alert alert-warning\">Redisearch is not loaded. If you want to use the advanced product search feature, refer <a class=\"alert-link\" href=\"https://docs.erpnext.com/docs/v13/user/manual/en/setting-up/articles/installing-redisearch\" target=\"_blank\">here</a>.</p>"
   },
   {
    "default": "0",
@@ -378,20 +382,39 @@
    "label": "Do not use a payment gateway"
   },
   {
-   "fieldname": "custom_cart_blocks_section",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "custom_cart_blocks",
    "fieldtype": "Table",
    "label": "Custom Cart Blocks",
    "options": "Custom Cart Block"
+  },
+  {
+   "fieldname": "cart_tab",
+   "fieldtype": "Tab Break",
+   "label": "Shopping Cart"
+  },
+  {
+   "fieldname": "advanced_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Advanced Settings"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.enabled",
+   "fieldname": "custom_cart",
+   "fieldtype": "Section Break",
+   "label": "Customization"
+  },
+  {
+   "fieldname": "custom_address_form",
+   "fieldtype": "Table",
+   "label": "Address Form",
+   "options": "Web Form Field"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-05-30 17:53:45.142558",
+ "modified": "2023-06-01 21:47:19.747968",
  "modified_by": "Administrator",
  "module": "E-commerce",
  "name": "E Commerce Settings",

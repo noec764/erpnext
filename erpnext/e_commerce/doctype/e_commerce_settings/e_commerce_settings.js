@@ -36,6 +36,8 @@ frappe.ui.form.on("E Commerce Settings", {
 				'fieldname', 'options', valid_fields
 			);
 		});
+
+		custom_address_form_handler.init(frm);
 	},
 	enabled: function(frm) {
 		if (frm.doc.enabled === 1) {
@@ -47,7 +49,7 @@ frappe.ui.form.on("E Commerce Settings", {
 			frm.set_value('default_customer_group', '');
 			frm.set_value('quotation_series', '');
 		}
-	}
+	},
 });
 
 frappe.ui.form.on("Custom Cart Block", {
@@ -59,3 +61,86 @@ frappe.ui.form.on("Custom Cart Block", {
 		});
 	},
 });
+
+frappe.ui.form.on("Web Form Field", {
+	fieldname(frm, cdt, cdn) {
+		const row = frappe.get_doc(cdt, cdn);
+		const fieldname = row.fieldname;
+		const df = frappe.get_meta("Address").fields.find(df => df.fieldname === fieldname);
+		if (df) {
+			const keys = ["label", "fieldtype", "options", "reqd", "description"];
+			keys.forEach(key => {
+				frappe.model.set_value(cdt, cdn, key, df[key]);
+			});
+		}
+	},
+
+	custom_address_form_add(frm) {
+		custom_address_form_handler.addMissingFields(frm);
+	},
+
+	reqd(frm, cdt, cdn) {
+		const row = frappe.get_doc(cdt, cdn);
+		if (!row.reqd && custom_address_form_handler.isRequired(row.fieldname)) {
+			frappe.msgprint(__("Mandatory field: {0}", [row.fieldname]));
+			frappe.model.set_value(cdt, cdn, "reqd", 1);
+		}
+	},
+
+	before_custom_address_form_remove(frm, cdt, cdn) {
+		const row = frappe.get_doc(cdt, cdn);
+		if (custom_address_form_handler.isRequired(row.fieldname)) {
+			frappe.throw(__("Mandatory field: {0}", [row.fieldname]));
+		}
+	},
+});
+
+const custom_address_form_handler = {
+	init(frm) {
+		frappe.model.with_doctype("Address", () => {
+			const address_meta = frappe.get_meta("Address");
+
+			const address_fields = address_meta.fields.filter(df =>
+				!df.hidden && df.label && !frappe.model.no_value_type.includes(df.fieldtype)
+			).map(df => ({ label: df.label, value: df.fieldname }));
+
+			const table = frm.get_field("custom_address_form");
+			table.grid.update_docfield_property("fieldname", "options", address_fields);
+
+			if (custom_address_form_handler.getMissingFields(frm).length > 0) {
+				this.btn = table.grid.add_custom_button("Add Required Fields", () => {
+					custom_address_form_handler.addMissingFields(frm);
+				});
+				this.btn.removeClass("btn-secondary").addClass("btn-primary");
+			}
+
+			this.ready = true;
+		});
+	},
+	isRequired(fieldname) {
+		if (!this.ready) return false;
+		if (!fieldname) return false;
+		return this.getRequiredFields().includes(fieldname);
+	},
+	getRequiredFields() {
+		if (!this.ready) return [];
+		return frappe.get_meta("Address").fields.filter(df => df.reqd).map(df => df.fieldname);
+	},
+	getMissingFields(frm) {
+		if (!this.ready) return [];
+		const reqd_address_fields = this.getRequiredFields();
+		const table = frm.get_field("custom_address_form").grid;
+		const existing_fields = table.grid_rows.map(row => row.doc.fieldname);
+		const missing_fields = reqd_address_fields.filter(fieldname => !existing_fields.includes(fieldname));
+		return missing_fields;
+	},
+	addMissingFields(frm) {
+		if (!this.ready) return;
+		const table = frm.get_field("custom_address_form").grid;
+		let n = table.grid_rows.length;
+		for (const fieldname of this.getMissingFields(frm)) {
+			table.add_new_row(++n, null, null, { fieldname });
+		}
+		this.btn?.hide();
+	},
+};

@@ -342,74 +342,80 @@ $.extend(shopping_cart, {
 		});
 	},
 
+	cart_address_fields: [
+		{
+			label: __('Address Title'),
+			fieldname: 'address_title',
+			fieldtype: 'Data',
+			reqd: 1
+		},
+		{
+			label: __('Address Line 1'),
+			fieldname: 'address_line1',
+			fieldtype: 'Data',
+			reqd: 1
+		},
+		{
+			label: __('Address Line 2'),
+			fieldname: 'address_line2',
+			fieldtype: 'Data'
+		},
+		{
+			label: __('City/Town'),
+			fieldname: 'city',
+			fieldtype: 'Data',
+			reqd: 1
+		},
+		{
+			label: __('State'),
+			fieldname: 'state',
+			fieldtype: 'Data'
+		},
+		{
+			label: __('Country'),
+			fieldname: 'country',
+			fieldtype: 'Link',
+			options: 'Country',
+			reqd: 1,
+			only_select: 1
+		},
+		{
+			fieldname: "column_break0",
+			fieldtype: "Column Break",
+			width: "50%"
+		},
+		{
+			label: __('Address Type'),
+			fieldname: 'address_type',
+			fieldtype: 'Select',
+			options: [
+				{ label: __('Billing'), value: 'Billing' },
+				{ label: __('Shipping'), value: 'Shipping' }
+			],
+			reqd: 1
+		},
+		{
+			label: __('Postal Code'),
+			fieldname: 'pincode',
+			fieldtype: 'Data'
+		},
+		{
+			fieldname: "phone",
+			fieldtype: "Data",
+			label: __("Phone")
+		},
+	],
+
 	new_cart_address: function (reload, addressType) {
+		for (const field of this.cart_address_fields) {
+			if (field.fieldname === "address_type") {
+				field.default = addressType;
+			}
+		}
 		return new Promise((resolve, reject) => {
 			const d = new frappe.ui.Dialog({
 				title: __('New Address'),
-				fields: [
-					{
-						label: __('Address Title'),
-						fieldname: 'address_title',
-						fieldtype: 'Data',
-						reqd: 1
-					},
-					{
-						label: __('Address Line 1'),
-						fieldname: 'address_line1',
-						fieldtype: 'Data',
-						reqd: 1
-					},
-					{
-						label: __('Address Line 2'),
-						fieldname: 'address_line2',
-						fieldtype: 'Data'
-					},
-					{
-						label: __('City/Town'),
-						fieldname: 'city',
-						fieldtype: 'Data',
-						reqd: 1
-					},
-					{
-						label: __('State'),
-						fieldname: 'state',
-						fieldtype: 'Data'
-					},
-					{
-						label: __('Country'),
-						fieldname: 'country',
-						fieldtype: 'Link',
-						options: 'Country',
-						reqd: 1,
-						only_select: 1
-					},
-					{
-						fieldname: "column_break0",
-						fieldtype: "Column Break",
-						width: "50%"
-					},
-					{
-						label: __('Address Type'),
-						fieldname: 'address_type',
-						fieldtype: 'Select',
-						options: [
-							{ label: __('Billing'), value: 'Billing' },
-							{ label: __('Shipping'), value: 'Shipping' }
-						],
-						default: addressType || 'Shipping',
-						reqd: 1
-					},
-					{
-						label: __('Postal Code'),
-						fieldname: 'pincode',
-						fieldtype: 'Data'
-					},
-					{
-						fieldname: "phone",
-						fieldtype: "Data",
-						label: __("Phone")
-					},
-				],
+				fields: this.cart_address_fields,
 				primary_action_label: __('Save'),
 				primary_action: async (values) => {
 					shopping_cart.freeze();
