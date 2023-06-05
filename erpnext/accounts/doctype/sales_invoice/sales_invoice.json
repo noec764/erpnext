@@ -179,6 +179,7 @@
   "external_reference",
   "more_info",
   "debit_to",
+  "accounting_journal",
   "party_account_currency",
   "is_opening",
   "column_break8",
@@ -1709,18 +1710,25 @@
    "fieldname": "is_cash_or_non_trade_discount",
    "fieldtype": "Check",
    "label": "Is Cash or Non Trade Discount"
-},
-{
- "fieldname": "incoterm",
- "fieldtype": "Link",
- "label": "Incoterm",
- "options": "Incoterm"
-},
-{
- "depends_on": "incoterm",
- "fieldname": "named_place",
- "fieldtype": "Data",
- "label": "Named Place"
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "depends_on": "incoterm",
+   "fieldname": "named_place",
+   "fieldtype": "Data",
+   "label": "Named Place"
+  },
+  {
+   "fieldname": "accounting_journal",
+   "fieldtype": "Link",
+   "label": "Accounting Journal",
+   "options": "Accounting Journal",
+   "read_only": 1
   }
  ],
  "icon": "uil uil-file-alt",
@@ -1735,7 +1743,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-02-20 16:33:50.446725",
+ "modified": "2023-06-02 11:54:37.711894",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

@@ -87,6 +87,7 @@
   "cost_center",
   "section_break_12",
   "status",
+  "accounting_journal",
   "custom_remarks",
   "remarks",
   "column_break_16",
@@ -351,7 +352,7 @@
    "reqd": 1
   },
   {
-    "depends_on": "doc.received_amount",
+   "depends_on": "doc.received_amount",
    "fieldname": "base_received_amount",
    "fieldtype": "Currency",
    "label": "Received Amount (Company Currency)",
@@ -663,10 +664,10 @@
    "options": "Payment Request"
   },
   {
-    "default": "0",
-    "fieldname": "custom_remarks",
-    "fieldtype": "Check",
-    "label": "Custom Remarks"
+   "default": "0",
+   "fieldname": "custom_remarks",
+   "fieldtype": "Check",
+   "label": "Custom Remarks"
   },
   {
    "depends_on": "eval:doc.apply_tax_withholding_amount",
@@ -788,6 +789,13 @@
    "label": "Received Amount After Tax (Company Currency)",
    "options": "Company:company:default_currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "accounting_journal",
+   "fieldtype": "Link",
+   "label": "Accounting Journal",
+   "options": "Accounting Journal",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -800,12 +808,12 @@
    "link_fieldname": "reference_docname"
   }
  ],
- "modified": "2022-12-08 16:25:43.824051",
+ "modified": "2023-06-05 10:40:56.134181",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
- "naming_rule": "By \"Naming Series\" field",
  "name_after_submit": 1,
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

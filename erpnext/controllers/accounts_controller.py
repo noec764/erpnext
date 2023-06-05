@@ -1001,6 +1001,7 @@ class AccountsController(TransactionBase):
 								dr_or_cr: abs(d.exchange_gain_loss),
 								"cost_center": self.cost_center or erpnext.get_default_cost_center(self.company),
 								"project": self.project,
+								"accounting_journal": self.accounting_journal,
 							},
 							item=d,
 						)
@@ -1019,6 +1020,7 @@ class AccountsController(TransactionBase):
 								dr_or_cr: abs(d.exchange_gain_loss),
 								"cost_center": self.cost_center,
 								"project": self.project,
+								"accounting_journal": self.accounting_journal,
 							},
 							self.party_account_currency,
 							item=self,
@@ -1220,6 +1222,7 @@ class AccountsController(TransactionBase):
 								dr_or_cr + "_in_account_currency": flt(discount_amount, item.precision("discount_amount")),
 								"cost_center": item.cost_center,
 								"project": item.project,
+								"accounting_journal": self.accounting_journal,
 							},
 							account_currency,
 							item=item,

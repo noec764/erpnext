@@ -871,7 +871,7 @@ class PaymentEntry(AccountsController):
 					"against": against_account,
 					"account_currency": self.party_account_currency,
 					"cost_center": self.cost_center,
-					"accounting_journal": self.get_cash_flow_journal(against_account),
+					"accounting_journal": self.accounting_journal,
 				},
 				item=self,
 			)
@@ -930,7 +930,7 @@ class PaymentEntry(AccountsController):
 						"credit_in_account_currency": self.paid_amount,
 						"credit": self.base_paid_amount,
 						"cost_center": self.cost_center,
-						"accounting_journal": self.get_cash_flow_journal(self.paid_from),
+						"accounting_journal": self.accounting_journal,
 						"post_net_value": True,
 					},
 					item=self,
@@ -947,7 +947,7 @@ class PaymentEntry(AccountsController):
 						"debit_in_account_currency": self.received_amount,
 						"debit": self.base_received_amount,
 						"cost_center": self.cost_center,
-						"accounting_journal": self.get_cash_flow_journal(self.paid_to),
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)
@@ -967,7 +967,7 @@ class PaymentEntry(AccountsController):
 							"debit_in_account_currency": self.paid_amount,
 							"debit": self.base_paid_amount,
 							"cost_center": self.cost_center,
-							"accounting_journal": self.get_cash_flow_journal(self.paid_from),
+							"accounting_journal": self.accounting_journal,
 						},
 						item=self,
 					)
@@ -982,7 +982,7 @@ class PaymentEntry(AccountsController):
 							"credit_in_account_currency": self.paid_amount,
 							"credit": self.base_paid_amount,
 							"cost_center": self.cost_center,
-							"accounting_journal": self.get_cash_flow_journal(self.paid_to),
+							"accounting_journal": self.accounting_journal,
 						},
 						item=self,
 					)
@@ -1018,6 +1018,7 @@ class PaymentEntry(AccountsController):
 						else d.tax_amount,
 						"cost_center": d.cost_center,
 						"post_net_value": True,
+						"accounting_journal": self.accounting_journal,
 					},
 					account_currency,
 					item=d,
@@ -1043,6 +1044,7 @@ class PaymentEntry(AccountsController):
 							else d.tax_amount,
 							"cost_center": self.cost_center,
 							"post_net_value": True,
+							"accounting_journal": self.accounting_journal,
 						},
 						account_currency,
 						item=d,
@@ -1065,9 +1067,7 @@ class PaymentEntry(AccountsController):
 							"debit_in_account_currency": d.amount,
 							"debit": d.amount,
 							"cost_center": d.cost_center,
-							"accounting_journal": self.get_cash_flow_journal(
-								self.paid_to if self.payment_type == "Receive" else self.paid_from
-							),
+							"accounting_journal": self.accounting_journal,
 						},
 						item=d,
 					)

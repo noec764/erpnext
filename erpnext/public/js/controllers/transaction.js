@@ -263,6 +263,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				() => {
 					if(this.frm.doc.company && !this.frm.doc.amended_from) {
 						this.frm.trigger("company");
+						erpnext.set_accounting_journal(this.frm);
 					}
 				}
 			]);
@@ -359,6 +360,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		this.setup_sms();
 		this.setup_quality_inspection();
 		this.validate_has_items();
+		erpnext.set_accounting_journal(this.frm);
 	}
 
 	scan_barcode() {
@@ -810,6 +812,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 
 		if(this.frm.doc.company) {
 			erpnext.last_selected_company = this.frm.doc.company;
+			erpnext.set_accounting_journal(me.frm);
 		}
 	}
 
@@ -2358,3 +2361,15 @@ erpnext.apply_putaway_rule = (frm, purpose=null) => {
 		}
 	});
 };
+
+
+erpnext.set_accounting_journal = (frm) => {
+	frappe.call({
+		method: "erpnext.accounts.doctype.accounting_journal.accounting_journal.get_accounting_journal",
+		args: {
+			doc: frm.doc
+		}
+	}).then((r) => {
+		frm.set_value("accounting_journal", r.message)
+	})
+}

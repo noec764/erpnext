@@ -60,3 +60,45 @@ def accounting_journal_adjustment(doctype, docnames, accounting_journal):
 			gl_entry["name"] = None
 			gl_entry["accounting_journal"] = accounting_journal
 			make_entry(gl_entry, False, "Yes")
+
+
+@frappe.whitelist()
+def get_accounting_journal(doc):
+	doc = frappe.parse_json(doc)
+
+	applicable_rules = []
+	query_filters = {
+		"company": doc.get("company"),
+		"disabled": 0,
+		"document_type": doc.get("doctype"),
+	}
+
+	if doc.get("doctype") == "Payment Entry":
+		query_filters["account"] = (
+			doc.get("paid_to") if doc.get("payment_type") == "Receive" else doc.get("paid_from")
+		)
+
+	applicable_rules = frappe.get_all(
+		"Accounting Journal",
+		filters=query_filters,
+		fields=[
+			"name",
+			"type",
+			"account",
+			"`tabAccounting Journal Rule`.document_type",
+			"`tabAccounting Journal Rule`.condition",
+		],
+	)
+
+	for condition in [rule for rule in applicable_rules if rule.condition]:
+		if frappe.safe_eval(
+			condition.condition,
+			None,
+			{"doc": doc},
+		):
+			return condition.name
+
+	if [rule for rule in applicable_rules if not rule.condition]:
+		return [rule for rule in applicable_rules if not rule.condition][0].name
+
+	return None
