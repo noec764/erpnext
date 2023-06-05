@@ -1983,7 +1983,7 @@ Can not close Work Order. Since {0} Job Cards are in Work In Progress state.,Imp
 "Can not filter based on Customer, if grouped by Customer","Impossible de filtrer par client, si groupé par client",
 "Can not filter based on POS Profile, if grouped by POS Profile","Impossible de filtrer par profil de point de vente, si groupé par profil de point de vente",
 "Can not filter based on Payment Method, if grouped by Payment Method","Impossible de filtrer par méthode de paiement, si groupé par méthode de paiement",
-"Can not filter based on Voucher No, if grouped by Voucher","Impossible de filtrer sur la base du N° de Coupon, si les lignes sont regroupées par Coupon",
+"Can not filter based on Voucher No, if grouped by Voucher","Impossible de filtrer sur la base du n° de référence, si les lignes sont regroupées par référence",
 Can only make payment against unbilled {0},Le paiement n'est possible qu'avec les {0} non facturés,
 Can refer row only if the charge type is 'On Previous Row Amount' or 'Previous Row Total',Peut se référer à ligne seulement si le type de charge est 'Montant de la ligne précedente' ou 'Total des lignes précedente',
 "Can't change the valuation method, as there are transactions against some items which do not have its own valuation method","La méthode de valorisation ne peut plus être modifiée, car certains articles n'ayant pas de méthode de valorisation propre sont liés à des transactions.",
