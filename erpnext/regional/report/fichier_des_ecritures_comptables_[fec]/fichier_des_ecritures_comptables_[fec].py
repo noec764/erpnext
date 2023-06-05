@@ -328,7 +328,9 @@ def export_report(filters, with_files=False):
 		prepared_line.pop("PieceRefType")
 		prepared_values.append(prepared_line.values())
 
-	fec_csv_file = cstr(to_csv(prepared_values, quoting="QUOTE_MINIMAL", delimiter="\t"))
+	fec_csv_file = cstr(
+		to_csv(prepared_values, quoting="QUOTE_MINIMAL", delimiter="\t", escapechar="\\")
+	)
 
 	if not with_files:
 		frappe.response["result"] = fec_csv_file
