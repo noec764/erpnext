@@ -59,7 +59,7 @@ def accounting_journal_adjustment(doctype, docnames, accounting_journal):
 		for gl_entry in original_entries:
 			gl_entry["name"] = None
 			gl_entry["accounting_journal"] = accounting_journal
-			make_entry(gl_entry, False, "Yes")
+			make_entry(gl_entry, False, "No")
 
 
 @frappe.whitelist()
