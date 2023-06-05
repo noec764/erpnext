@@ -318,7 +318,7 @@ class DeliveryNote(SellingController):
 				):
 					frappe.throw(
 						_("Row {0}: Packed Qty must be equal to {1} Qty.").format(
-							item.idx, frappe.bold(item.doctype)
+							item.idx, frappe.bold(_(item.doctype))
 						)
 					)
 
