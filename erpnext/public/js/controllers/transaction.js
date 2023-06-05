@@ -2364,12 +2364,14 @@ erpnext.apply_putaway_rule = (frm, purpose=null) => {
 
 
 erpnext.set_accounting_journal = (frm) => {
-	frappe.call({
-		method: "erpnext.accounts.doctype.accounting_journal.accounting_journal.get_accounting_journal",
-		args: {
-			doc: frm.doc
-		}
-	}).then((r) => {
-		frm.set_value("accounting_journal", r.message)
-	})
+	if (frm.doc.docstatus == 0) {
+		frappe.call({
+			method: "erpnext.accounts.doctype.accounting_journal.accounting_journal.get_accounting_journal",
+			args: {
+				doc: frm.doc
+			}
+		}).then((r) => {
+			frm.set_value("accounting_journal", r.message)
+		})
+	}
 }
