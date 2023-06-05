@@ -32,23 +32,23 @@ def validate_filters(filters):
 def get_columns(filters):
 	columns = [
 		{"label": "JournalCode", "fieldname": "JournalCode", "width": 90},
-		{"label": "JournalLib", "fieldname": "JournalLib", "width": 90},
-		{"label": "EcritureNum", "fieldname": "EcritureNum", "width": 90},
+		{"label": "JournalLib", "fieldname": "JournalLib", "width": 150},
+		{"label": "EcritureNum", "fieldname": "EcritureNum", "width": 160},
 		{"label": "EcritureDate", "fieldname": "EcritureDate", "width": 90},
 		{"label": "CompteNum", "fieldname": "CompteNum", "width": 90},
-		{"label": "CompteLib", "fieldname": "CompteLib", "width": 90},
-		{"label": "CompAuxNum", "fieldname": "CompAuxNum", "width": 100},
-		{"label": "CompAuxLib", "fieldname": "CompAuxLib", "width": 200},
+		{"label": "CompteLib", "fieldname": "CompteLib", "width": 180},
+		{"label": "CompAuxNum", "fieldname": "CompAuxNum", "width": 120},
+		{"label": "CompAuxLib", "fieldname": "CompAuxLib", "width": 180},
 		{"label": "PieceRefType", "fieldname": "PieceRefType", "width": 90, "hidden": 1},
 		{
 			"label": "PieceRef",
 			"fieldname": "PieceRef",
-			"width": 90,
+			"width": 140,
 			"fieldtype": "Dynamic Link",
 			"options": "PieceRefType",
 		},
 		{"label": "PieceDate", "fieldname": "PieceDate", "width": 90},
-		{"label": "EcritureLib", "fieldname": "EcritureLib", "width": 90},
+		{"label": "EcritureLib", "fieldname": "EcritureLib", "width": 180},
 		{"label": "Debit", "fieldname": "Debit", "width": 90},
 		{"label": "Credit", "fieldname": "Credit", "width": 90},
 		{"label": "EcritureLet", "fieldname": "EcritureLet", "width": 90},
@@ -136,8 +136,8 @@ def get_gl_entries(company, fiscal_year):
 			employee.name.as_("empName"),
 		)
 		.where((gle.company == company) & (gle.fiscal_year == fiscal_year))
-		.groupby(gle.voucher_type, gle.voucher_no, gle.account)
-		.orderby(gle.posting_date, gle.voucher_no)
+		.groupby(gle.voucher_type, gle.voucher_no, gle.account, gle.accounting_entry_number)
+		.orderby(gle.posting_date, gle.voucher_no, gle.accounting_entry_number)
 	)
 
 	return query.run(as_dict=True)
