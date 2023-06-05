@@ -1,0 +1,185 @@
+{
+  "charts": [
+    {
+      "chart_name": "Bank Transaction Revenues by Category",
+      "label": "Bank Transaction Revenues by Category"
+    },
+    {
+      "chart_name": "Bank Statement Balance",
+      "label": "Bank Statement Balance"
+    },
+    {
+      "chart_name": "Bank Transaction Expenses by Category",
+      "label": "Bank Transaction Expenses by Category"
+    }
+  ],
+  "content": "[{\"id\":\"aDgrs0cu3Z\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Transaction Revenues by Category\",\"col\":6}},{\"id\":\"Dx-OxDrHAi\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Transaction Expenses by Category\",\"col\":6}},{\"id\":\"4WyRMz7Tcc\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Statement Balance\",\"col\":12}},{\"id\":\"Z-em84R7Dt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xPzJWI3Ze2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\",\"col\":12}},{\"id\":\"9SLB80Ra4Y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Reconciliation\",\"col\":3}},{\"id\":\"CwCcYB4UcN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Transactions\",\"col\":3}},{\"id\":\"55dpFBTrjf\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HRknXc83Kh\",\"type\":\"card\",\"data\":{\"card_name\":\"Banks & Accounts\",\"col\":4}},{\"id\":\"atMu3OvBLf\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"id\":\"oVt2cYPiE0\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"WAJ2VQnzBp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"StkogjRdTL\",\"type\":\"card\",\"data\":{\"card_name\":\"SEPA\",\"col\":4}}]",
+  "creation": "2023-05-31 09:03:55.528816",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "income",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Cash Flow",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Banks & Accounts",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Bank Accounts",
+      "link_count": 0,
+      "link_to": "Bank Account",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Banks",
+      "link_count": 0,
+      "link_to": "Bank",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Tools",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Payment Reconciliation",
+      "link_count": 0,
+      "link_to": "Payment Reconciliation",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Bank Clearance",
+      "link_count": 0,
+      "link_to": "Bank Clearance",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Reports",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Bank Reconciliation Statement",
+      "link_count": 0,
+      "link_to": "Bank Reconciliation Statement",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "SEPA",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Sepa Mandates",
+      "link_count": 0,
+      "link_to": "Sepa Mandate",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Sepa Direct Debit",
+      "link_count": 0,
+      "link_to": "Sepa Direct Debit",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Sepa Direct Debit Settings",
+      "link_count": 0,
+      "link_to": "Sepa Direct Debit Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-06-01 05:31:02.417764",
+  "modified_by": "Administrator",
+  "module": "Accounts",
+  "name": "Cash Flow",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Finance",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 4.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Bank Reconciliation",
+      "link_to": "bank-reconciliation",
+      "type": "Page"
+    },
+    {
+      "color": "Orange",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} unreconciled",
+      "label": "Bank Transactions",
+      "link_to": "Bank Transaction",
+      "stats_filter": "{\"status\":[\"=\",\"Unreconciled\"]}",
+      "type": "DocType"
+    }
+  ],
+  "title": "Cash Flow"
+}

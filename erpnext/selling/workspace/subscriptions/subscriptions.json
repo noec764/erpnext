@@ -1,71 +1,71 @@
 {
- "charts": [
-  {
-   "chart_name": "Monthly Recurring Revenue",
-   "label": "Monthly Recurring Revenue"
-  }
- ],
- "content": "[{\"id\":\"x6WYvhZrA0\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Subscriptions</span>\",\"col\":12}},{\"id\":\"E0YYAE3PY2\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Recurring Revenue\",\"col\":12}},{\"id\":\"GSxgSG2Kpi\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mKRPpeO-3d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscriptions\",\"col\":3}},{\"id\":\"FmcwSVooLY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"9ukw6KBaMF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Unpaid Subscriptions\",\"col\":4}},{\"id\":\"g_PzudVzvW\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Failed Billing\",\"col\":4}},{\"id\":\"66_-kDaHYx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Setup</b></span>\",\"col\":12}},{\"id\":\"SyNyx2voNo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription Templates\",\"col\":3}},{\"id\":\"VcNgNCkJVQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription Plans\",\"col\":3}}]",
- "creation": "2023-05-11 21:30:16.048693",
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "refresh",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Subscriptions",
- "links": [],
- "modified": "2023-05-16 14:46:27.355113",
- "modified_by": "Administrator",
- "module": "Selling",
- "name": "Subscriptions",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Selling",
- "public": 1,
- "quick_lists": [
-  {
-   "document_type": "Subscription",
-   "label": "Unpaid Subscriptions",
-   "quick_list_filter": "{\"status\":[\"in\",[\"Unpaid\",\"Payable\"]]}"
-  },
-  {
-   "document_type": "Subscription",
-   "label": "Failed Billing",
-   "quick_list_filter": "{\"status\":[\"=\",\"Billing failed\"]}"
-  }
- ],
- "roles": [],
- "sequence_id": 30.0,
- "shortcuts": [
-  {
-   "color": "Green",
-   "columns": 3,
-   "doc_view": "List",
-   "format": "{} active",
-   "label": "Subscriptions",
-   "link_to": "Subscription",
-   "stats_filter": "{\"status\":[\"!=\",\"Cancelled\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Subscription Templates",
-   "link_to": "Subscription Template",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Subscription Plans",
-   "link_to": "Subscription Plan",
-   "type": "DocType"
-  }
- ],
- "title": "Subscriptions"
+  "charts": [
+    {
+      "chart_name": "Monthly Recurring Revenue",
+      "label": "Monthly Recurring Revenue"
+    }
+  ],
+  "content": "[{\"id\":\"x6WYvhZrA0\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Subscriptions</span>\",\"col\":12}},{\"id\":\"E0YYAE3PY2\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Recurring Revenue\",\"col\":12}},{\"id\":\"GSxgSG2Kpi\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mKRPpeO-3d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscriptions\",\"col\":3}},{\"id\":\"FmcwSVooLY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"9ukw6KBaMF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Unpaid Subscriptions\",\"col\":4}},{\"id\":\"g_PzudVzvW\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Failed Billing\",\"col\":4}},{\"id\":\"66_-kDaHYx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Setup</b></span>\",\"col\":12}},{\"id\":\"SyNyx2voNo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription Templates\",\"col\":3}},{\"id\":\"VcNgNCkJVQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription Plans\",\"col\":3}}]",
+  "creation": "2023-05-11 21:30:16.048693",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "refresh",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Subscriptions",
+  "links": [],
+  "modified": "2023-05-31 09:04:06.995449",
+  "modified_by": "Administrator",
+  "module": "Selling",
+  "name": "Subscriptions",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Selling",
+  "public": 1,
+  "quick_lists": [
+    {
+      "document_type": "Subscription",
+      "label": "Unpaid Subscriptions",
+      "quick_list_filter": "{\"status\":[\"in\",[\"Unpaid\",\"Payable\"]]}"
+    },
+    {
+      "document_type": "Subscription",
+      "label": "Failed Billing",
+      "quick_list_filter": "{\"status\":[\"=\",\"Billing failed\"]}"
+    }
+  ],
+  "roles": [],
+  "sequence_id": 34.0,
+  "shortcuts": [
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Subscriptions",
+      "link_to": "Subscription",
+      "stats_filter": "{\"status\":[\"!=\",\"Cancelled\"]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Subscription Templates",
+      "link_to": "Subscription Template",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Subscription Plans",
+      "link_to": "Subscription Plan",
+      "type": "DocType"
+    }
+  ],
+  "title": "Subscriptions"
 }

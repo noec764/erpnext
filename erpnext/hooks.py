@@ -694,3 +694,9 @@ additional_timeline_content = {
 override_e_commerce_settings = [
 	"erpnext.venue.doctype.venue_settings.venue_settings.override_e_commerce_settings"
 ]
+
+jinja = {
+	"filters": [
+		"frappe.contacts.doctype.address.address.get_condensed_address",
+	],
+}

@@ -77,6 +77,7 @@ class TestPurchaseOrder(FrappeTestCase):
 		pi.update_stock = 1
 		pi.items[0].qty = 12
 		pi.insert()
+		pi.reload()
 		pi.submit()
 
 		self.assertEqual(get_ordered_qty(), existing_ordered_qty)

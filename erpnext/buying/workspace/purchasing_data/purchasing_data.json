@@ -1,315 +1,315 @@
 {
- "charts": [
-  {
-   "chart_name": "Top Suppliers based on Purchase Invoices",
-   "label": "Top Suppliers based on Purchase Invoices"
-  }
- ],
- "content": "[{\"id\":\"P63FV1PndG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Data</span>\",\"col\":12}},{\"id\":\"E-o6SKo2Oe\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Active Suppliers\",\"col\":4}},{\"id\":\"9TsTdrMfYH\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Items allowed for Purchasing\",\"col\":4}},{\"id\":\"TvKQmiDzG8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Purchasing Price Lists\",\"col\":4}},{\"id\":\"YtSifRukIB\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Suppliers based on Purchase Invoices\",\"col\":12}},{\"id\":\"HncoxaMpYp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"JKQAi5pBVW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":3}},{\"id\":\"d7eY7rOpEx\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XwfMOUbBs6\",\"type\":\"card\",\"data\":{\"card_name\":\"Suppliers\",\"col\":4}},{\"id\":\"W1DeeYTIqp\",\"type\":\"card\",\"data\":{\"card_name\":\"Contracts\",\"col\":4}},{\"id\":\"eEJRPI4I7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Terms and Conditions\",\"col\":4}},{\"id\":\"RpUzyupCkr\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HwFo8FKDg_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items\",\"col\":4}},{\"id\":\"kWaQh6_K7i\",\"type\":\"card\",\"data\":{\"card_name\":\"Prices\",\"col\":4}},{\"id\":\"UMPexoAD2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Taxes\",\"col\":4}},{\"id\":\"_xy_RDJMpG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"kGQ7ryBeN-\",\"type\":\"card\",\"data\":{\"card_name\":\"Bundles\",\"col\":4}},{\"id\":\"uXSpVFjQE0\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecards\",\"col\":4}}]",
- "creation": "2023-04-07 14:11:39.973696",
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "stock",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Purchasing Data",
- "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Suppliers",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier",
-   "link_count": 0,
-   "link_to": "Supplier",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Group",
-   "link_count": 0,
-   "link_to": "Supplier Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item",
-   "link_count": 0,
-   "link_to": "Item",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item Group",
-   "link_count": 0,
-   "link_to": "Item Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecards",
-   "link_count": 4,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Scoring Variable",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Scoring Variable",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Scoring Criteria",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Scoring Criteria",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Scorecard Scoring Standing",
-   "link_count": 0,
-   "link_to": "Supplier Scorecard Scoring Standing",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Prices",
-   "link_count": 4,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item Price",
-   "link_count": 0,
-   "link_to": "Item Price",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Price List",
-   "link_count": 0,
-   "link_to": "Price List",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Pricing Rule",
-   "link_count": 0,
-   "link_to": "Pricing Rule",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Promotional Scheme",
-   "link_count": 0,
-   "link_to": "Promotional Scheme",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bundles",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Product Bundle",
-   "link_count": 0,
-   "link_to": "Product Bundle",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Terms and Conditions",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Terms and Conditions Templates",
-   "link_count": 0,
-   "link_to": "Terms and Conditions",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Contracts",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Contract",
-   "link_count": 0,
-   "link_to": "Contract",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Contract Template",
-   "link_count": 0,
-   "link_to": "Contract Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Taxes",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Taxes and Charges Template",
-   "link_count": 0,
-   "link_to": "Purchase Taxes and Charges Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2023-05-12 10:13:57.865183",
- "modified_by": "Administrator",
- "module": "Buying",
- "name": "Purchasing Data",
- "number_cards": [
-  {
-   "label": "Active Suppliers",
-   "number_card_name": "Active Suppliers"
-  },
-  {
-   "label": "Purchasing Price Lists",
-   "number_card_name": "Purchasing Price Lists"
-  },
-  {
-   "label": "Total Items allowed for Purchasing",
-   "number_card_name": "Total Items allowed for Purchasing"
-  }
- ],
- "owner": "Administrator",
- "parent_page": "Buying",
- "public": 1,
- "quick_lists": [],
- "roles": [],
- "sequence_id": 6.0,
- "shortcuts": [
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Buying Settings",
-   "link_to": "Buying Settings",
-   "type": "DocType"
-  }
- ],
- "title": "Purchasing Data"
+  "charts": [
+    {
+      "chart_name": "Top Suppliers based on Purchase Invoices",
+      "label": "Top Suppliers based on Purchase Invoices"
+    }
+  ],
+  "content": "[{\"id\":\"P63FV1PndG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Data</span>\",\"col\":12}},{\"id\":\"E-o6SKo2Oe\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Active Suppliers\",\"col\":4}},{\"id\":\"9TsTdrMfYH\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Items allowed for Purchasing\",\"col\":4}},{\"id\":\"TvKQmiDzG8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Purchasing Price Lists\",\"col\":4}},{\"id\":\"YtSifRukIB\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Top Suppliers based on Purchase Invoices\",\"col\":12}},{\"id\":\"HncoxaMpYp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"JKQAi5pBVW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":3}},{\"id\":\"d7eY7rOpEx\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XwfMOUbBs6\",\"type\":\"card\",\"data\":{\"card_name\":\"Suppliers\",\"col\":4}},{\"id\":\"W1DeeYTIqp\",\"type\":\"card\",\"data\":{\"card_name\":\"Contracts\",\"col\":4}},{\"id\":\"eEJRPI4I7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Terms and Conditions\",\"col\":4}},{\"id\":\"RpUzyupCkr\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HwFo8FKDg_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items\",\"col\":4}},{\"id\":\"kWaQh6_K7i\",\"type\":\"card\",\"data\":{\"card_name\":\"Prices\",\"col\":4}},{\"id\":\"UMPexoAD2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Taxes\",\"col\":4}},{\"id\":\"_xy_RDJMpG\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"kGQ7ryBeN-\",\"type\":\"card\",\"data\":{\"card_name\":\"Bundles\",\"col\":4}},{\"id\":\"uXSpVFjQE0\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecards\",\"col\":4}}]",
+  "creation": "2023-04-07 14:11:39.973696",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "stock",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Purchasing Data",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Suppliers",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier",
+      "link_count": 0,
+      "link_to": "Supplier",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Group",
+      "link_count": 0,
+      "link_to": "Supplier Group",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Items",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Item",
+      "link_count": 0,
+      "link_to": "Item",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Item Group",
+      "link_count": 0,
+      "link_to": "Item Group",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Scorecards",
+      "link_count": 4,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Scorecard",
+      "link_count": 0,
+      "link_to": "Supplier Scorecard",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Scorecard Scoring Variable",
+      "link_count": 0,
+      "link_to": "Supplier Scorecard Scoring Variable",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Scorecard Scoring Criteria",
+      "link_count": 0,
+      "link_to": "Supplier Scorecard Scoring Criteria",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Scorecard Scoring Standing",
+      "link_count": 0,
+      "link_to": "Supplier Scorecard Scoring Standing",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Prices",
+      "link_count": 4,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Item Price",
+      "link_count": 0,
+      "link_to": "Item Price",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Price List",
+      "link_count": 0,
+      "link_to": "Price List",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Pricing Rule",
+      "link_count": 0,
+      "link_to": "Pricing Rule",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Promotional Scheme",
+      "link_count": 0,
+      "link_to": "Promotional Scheme",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Bundles",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Product Bundle",
+      "link_count": 0,
+      "link_to": "Product Bundle",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Terms and Conditions",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Terms and Conditions Templates",
+      "link_count": 0,
+      "link_to": "Terms and Conditions",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Contracts",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Contract",
+      "link_count": 0,
+      "link_to": "Contract",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Contract Template",
+      "link_count": 0,
+      "link_to": "Contract Template",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Taxes",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Purchase Taxes and Charges Template",
+      "link_count": 0,
+      "link_to": "Purchase Taxes and Charges Template",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-05-31 09:04:05.152442",
+  "modified_by": "Administrator",
+  "module": "Buying",
+  "name": "Purchasing Data",
+  "number_cards": [
+    {
+      "label": "Active Suppliers",
+      "number_card_name": "Active Suppliers"
+    },
+    {
+      "label": "Purchasing Price Lists",
+      "number_card_name": "Purchasing Price Lists"
+    },
+    {
+      "label": "Total Items allowed for Purchasing",
+      "number_card_name": "Total Items allowed for Purchasing"
+    }
+  ],
+  "owner": "Administrator",
+  "parent_page": "Buying",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 10.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Buying Settings",
+      "link_to": "Buying Settings",
+      "type": "DocType"
+    }
+  ],
+  "title": "Purchasing Data"
 }

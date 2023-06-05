@@ -1,417 +1,417 @@
 {
- "charts": [
-  {
-   "chart_name": "Sales Order Trends",
-   "label": "Sales Order Trends"
-  }
- ],
- "content": "[{\"id\":\"7oTSn6NOd7\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sales Order Trends\",\"col\":12}},{\"id\":\"q1G80eyoER\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"PYdyJyzD0f\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Selling Reports</span>\",\"col\":12}},{\"id\":\"LXDYqbiQ5Z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Analytics\",\"col\":3}},{\"id\":\"PIKwJve5V1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Order Analysis\",\"col\":3}},{\"id\":\"M958dyrXfm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Dashboard\",\"col\":3}},{\"id\":\"pDfr1V6BJI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XdnD-9J6ou\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions Analytics\",\"col\":4}},{\"id\":\"ir8NYBAwzs\",\"type\":\"card\",\"data\":{\"card_name\":\"Trends\",\"col\":4}},{\"id\":\"dJRgYVUQIW\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer Analytics\",\"col\":4}},{\"id\":\"OqZMV_Wuzg\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"P1V-3WBCov\",\"type\":\"card\",\"data\":{\"card_name\":\"Payment Terms\",\"col\":4}},{\"id\":\"k8jJ7bzOyS\",\"type\":\"card\",\"data\":{\"card_name\":\"Items in Transactions\",\"col\":4}},{\"id\":\"AzUVhmDWJ3\",\"type\":\"card\",\"data\":{\"card_name\":\"Items Analytics\",\"col\":4}},{\"id\":\"HbOKHx7JMi\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_afP6xtFSO\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Team\",\"col\":4}},{\"id\":\"v1kc6Vujz0\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Partners\",\"col\":4}}]",
- "creation": "2023-05-11 20:59:23.648192",
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "table_2",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Selling Reports",
- "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Trends",
-   "link_count": 4,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Quotation Trends",
-   "link_count": 0,
-   "link_to": "Quotation Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Order Trends",
-   "link_count": 0,
-   "link_to": "Purchase Order Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Invoice Trends",
-   "link_count": 0,
-   "link_to": "Sales Invoice Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Delivery Note Trends",
-   "link_count": 0,
-   "link_to": "Delivery Note Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Transactions Analytics",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Analytics",
-   "link_count": 0,
-   "link_to": "Sales Analytics",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Order Analysis",
-   "link_count": 0,
-   "link_to": "Sales Order Analysis",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items in Transactions",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Pending SO Items For Purchase Request",
-   "link_count": 0,
-   "link_to": "Pending SO Items For Purchase Request",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Delivered Items To Be Billed",
-   "link_count": 0,
-   "link_to": "Delivered Items To Be Billed",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Sales Team",
-   "link_count": 5,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person Commission Summary",
-   "link_count": 0,
-   "link_to": "Sales Person Commission Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partners Commission",
-   "link_count": 0,
-   "link_to": "Sales Partners Commission",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person-wise Transaction Summary",
-   "link_count": 0,
-   "link_to": "Sales Person-wise Transaction Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Person Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Sales Person Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Territory Target Variance Based On Item Group",
-   "link_count": 0,
-   "link_to": "Territory Target Variance Based On Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Sales Partners",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partner Commission Summary",
-   "link_count": 0,
-   "link_to": "Sales Partner Commission Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partners Commission",
-   "link_count": 0,
-   "link_to": "Sales Partners Commission",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sales Partner Target Variance based on Item Group",
-   "link_count": 0,
-   "link_to": "Sales Partner Target Variance based on Item Group",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Customer Analytics",
-   "link_count": 7,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Acquisition and Loyalty",
-   "link_count": 0,
-   "link_to": "Customer Acquisition and Loyalty",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Ledger Summary",
-   "link_count": 0,
-   "link_to": "Customer Ledger Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer-wise Item Price",
-   "link_count": 0,
-   "link_to": "Customer-wise Item Price",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customer Credit Balance",
-   "link_count": 0,
-   "link_to": "Customer Credit Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customers Without Any Sales Transactions",
-   "link_count": 0,
-   "link_to": "Customers Without Any Sales Transactions",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Inactive Customers",
-   "link_count": 0,
-   "link_to": "Inactive Customers",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Customers Addresses And Contacts",
-   "link_count": 0,
-   "link_to": "Address And Contacts",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Payment Terms",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Payment Terms Status for Sales Order",
-   "link_count": 0,
-   "link_to": "Payment Terms Status for Sales Order",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items Analytics",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item-wise Sales Register",
-   "link_count": 0,
-   "link_to": "Item-wise Sales Register",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item-wise Sales History",
-   "link_count": 0,
-   "link_to": "Item-wise Sales History",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2023-05-16 14:46:03.132375",
- "modified_by": "Administrator",
- "module": "Selling",
- "name": "Selling Reports",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Selling",
- "public": 1,
- "quick_lists": [],
- "roles": [],
- "sequence_id": 29.0,
- "shortcuts": [
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Sales Analytics",
-   "link_to": "Sales Analytics",
-   "type": "Report"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Sales Order Analysis",
-   "link_to": "Sales Order Analysis",
-   "type": "Report"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Selling Dashboard",
-   "link_to": "Selling",
-   "type": "Dashboard"
-  }
- ],
- "title": "Selling Reports"
+  "charts": [
+    {
+      "chart_name": "Sales Order Trends",
+      "label": "Sales Order Trends"
+    }
+  ],
+  "content": "[{\"id\":\"7oTSn6NOd7\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sales Order Trends\",\"col\":12}},{\"id\":\"q1G80eyoER\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"PYdyJyzD0f\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Selling Reports</span>\",\"col\":12}},{\"id\":\"LXDYqbiQ5Z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Analytics\",\"col\":3}},{\"id\":\"PIKwJve5V1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Order Analysis\",\"col\":3}},{\"id\":\"M958dyrXfm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Dashboard\",\"col\":3}},{\"id\":\"pDfr1V6BJI\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XdnD-9J6ou\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions Analytics\",\"col\":4}},{\"id\":\"ir8NYBAwzs\",\"type\":\"card\",\"data\":{\"card_name\":\"Trends\",\"col\":4}},{\"id\":\"dJRgYVUQIW\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer Analytics\",\"col\":4}},{\"id\":\"OqZMV_Wuzg\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"P1V-3WBCov\",\"type\":\"card\",\"data\":{\"card_name\":\"Payment Terms\",\"col\":4}},{\"id\":\"k8jJ7bzOyS\",\"type\":\"card\",\"data\":{\"card_name\":\"Items in Transactions\",\"col\":4}},{\"id\":\"AzUVhmDWJ3\",\"type\":\"card\",\"data\":{\"card_name\":\"Items Analytics\",\"col\":4}},{\"id\":\"HbOKHx7JMi\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_afP6xtFSO\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Team\",\"col\":4}},{\"id\":\"v1kc6Vujz0\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Partners\",\"col\":4}}]",
+  "creation": "2023-05-11 20:59:23.648192",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "table_2",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Selling Reports",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Trends",
+      "link_count": 4,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Quotation Trends",
+      "link_count": 0,
+      "link_to": "Quotation Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Order Trends",
+      "link_count": 0,
+      "link_to": "Purchase Order Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Invoice Trends",
+      "link_count": 0,
+      "link_to": "Sales Invoice Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Delivery Note Trends",
+      "link_count": 0,
+      "link_to": "Delivery Note Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Transactions Analytics",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Analytics",
+      "link_count": 0,
+      "link_to": "Sales Analytics",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Order Analysis",
+      "link_count": 0,
+      "link_to": "Sales Order Analysis",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Items in Transactions",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Pending SO Items For Purchase Request",
+      "link_count": 0,
+      "link_to": "Pending SO Items For Purchase Request",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Delivered Items To Be Billed",
+      "link_count": 0,
+      "link_to": "Delivered Items To Be Billed",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Sales Team",
+      "link_count": 5,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Person Commission Summary",
+      "link_count": 0,
+      "link_to": "Sales Person Commission Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Partners Commission",
+      "link_count": 0,
+      "link_to": "Sales Partners Commission",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Person-wise Transaction Summary",
+      "link_count": 0,
+      "link_to": "Sales Person-wise Transaction Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Person Target Variance Based On Item Group",
+      "link_count": 0,
+      "link_to": "Sales Person Target Variance Based On Item Group",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Territory Target Variance Based On Item Group",
+      "link_count": 0,
+      "link_to": "Territory Target Variance Based On Item Group",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Sales Partners",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Partner Commission Summary",
+      "link_count": 0,
+      "link_to": "Sales Partner Commission Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Partners Commission",
+      "link_count": 0,
+      "link_to": "Sales Partners Commission",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Partner Target Variance based on Item Group",
+      "link_count": 0,
+      "link_to": "Sales Partner Target Variance based on Item Group",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Customer Analytics",
+      "link_count": 7,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customer Acquisition and Loyalty",
+      "link_count": 0,
+      "link_to": "Customer Acquisition and Loyalty",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customer Ledger Summary",
+      "link_count": 0,
+      "link_to": "Customer Ledger Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customer-wise Item Price",
+      "link_count": 0,
+      "link_to": "Customer-wise Item Price",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customer Credit Balance",
+      "link_count": 0,
+      "link_to": "Customer Credit Balance",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customers Without Any Sales Transactions",
+      "link_count": 0,
+      "link_to": "Customers Without Any Sales Transactions",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Inactive Customers",
+      "link_count": 0,
+      "link_to": "Inactive Customers",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Customers Addresses And Contacts",
+      "link_count": 0,
+      "link_to": "Address And Contacts",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Payment Terms",
+      "link_count": 1,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Payment Terms Status for Sales Order",
+      "link_count": 0,
+      "link_to": "Payment Terms Status for Sales Order",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Items Analytics",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item-wise Sales Register",
+      "link_count": 0,
+      "link_to": "Item-wise Sales Register",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item-wise Sales History",
+      "link_count": 0,
+      "link_to": "Item-wise Sales History",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-05-31 09:04:06.926264",
+  "modified_by": "Administrator",
+  "module": "Selling",
+  "name": "Selling Reports",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Selling",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 33.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Sales Analytics",
+      "link_to": "Sales Analytics",
+      "type": "Report"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Sales Order Analysis",
+      "link_to": "Sales Order Analysis",
+      "type": "Report"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Selling Dashboard",
+      "link_to": "Selling",
+      "type": "Dashboard"
+    }
+  ],
+  "title": "Selling Reports"
 }

@@ -101,7 +101,7 @@ $.extend(shopping_cart, {
 });
 
 frappe.ready(function() {
-	if (window.location.pathname === "/cart") {
+	if (window.location.pathname === "/cart" || window.location.pathname === "/checkout") {
 		$(".cart-icon").hide();
 	}
 	shopping_cart.parent = $(".cart-container");

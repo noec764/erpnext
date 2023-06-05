@@ -1060,6 +1060,7 @@ class SalesInvoice(SellingController):
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
 						"project": self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					self.party_account_currency,
 					item=self,
@@ -1113,6 +1114,7 @@ class SalesInvoice(SellingController):
 									"against": down_payment_entry["account"],
 									"party_type": "Customer",
 									"party": self.customer,
+									"accounting_journal": self.accounting_journal,
 								},
 								self.currency,
 							)
@@ -1159,6 +1161,7 @@ class SalesInvoice(SellingController):
 							),
 							"cost_center": tax.cost_center,
 							"remarks": tax.get("remarks") or f'{tax.description} / {_("Customer")}: {self.customer}',
+							"accounting_journal": self.accounting_journal,
 						},
 						account_currency,
 						item=tax,
@@ -1176,6 +1179,7 @@ class SalesInvoice(SellingController):
 						"debit": flt(self.total_taxes_and_charges),
 						"debit_in_account_currency": flt(self.base_total_taxes_and_charges),
 						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					account_currency,
 					item=self,
@@ -1216,6 +1220,7 @@ class SalesInvoice(SellingController):
 
 					for gle in fixed_asset_gl_entries:
 						gle["against"] = self.customer
+						gle["accounting_journal"] = self.accounting_journal
 						gl_entries.append(self.get_gl_dict(gle, item=item))
 
 					self.set_asset_status(asset)
@@ -1244,6 +1249,7 @@ class SalesInvoice(SellingController):
 								"project": item.project or self.project,
 								"remarks": item.get("remarks")
 								or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Customer")}: {self.customer}',
+								"accounting_journal": self.accounting_journal,
 							},
 							account_currency,
 							item=item,
@@ -1301,6 +1307,7 @@ class SalesInvoice(SellingController):
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
 						"project": self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)
@@ -1313,6 +1320,7 @@ class SalesInvoice(SellingController):
 						"against": self.customer,
 						"debit": self.loyalty_amount,
 						"remark": "Loyalty Points redeemed by the customer",
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)
@@ -1345,6 +1353,7 @@ class SalesInvoice(SellingController):
 								else self.name,
 								"against_voucher_type": self.doctype,
 								"cost_center": self.cost_center,
+								"accounting_journal": self.accounting_journal,
 							},
 							self.party_account_currency,
 							item=self,
@@ -1362,6 +1371,7 @@ class SalesInvoice(SellingController):
 								if payment_mode_account_currency == self.company_currency
 								else payment_mode.amount,
 								"cost_center": self.cost_center,
+								"accounting_journal": self.accounting_journal,
 							},
 							payment_mode_account_currency,
 							item=self,
@@ -1391,6 +1401,7 @@ class SalesInvoice(SellingController):
 							"against_voucher_type": self.doctype,
 							"cost_center": self.cost_center,
 							"project": self.project,
+							"accounting_journal": self.accounting_journal,
 						},
 						self.party_account_currency,
 						item=self,
@@ -1404,6 +1415,7 @@ class SalesInvoice(SellingController):
 							"against": self.customer,
 							"credit": self.base_change_amount,
 							"cost_center": self.cost_center,
+							"accounting_journal": self.accounting_journal,
 						},
 						item=self,
 					)
@@ -1437,6 +1449,7 @@ class SalesInvoice(SellingController):
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					self.party_account_currency,
 					item=self,
@@ -1454,6 +1467,7 @@ class SalesInvoice(SellingController):
 							else flt(self.write_off_amount, self.precision("write_off_amount"))
 						),
 						"cost_center": self.cost_center or self.write_off_cost_center or default_cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					write_off_account_currency,
 					item=self,
@@ -1480,6 +1494,7 @@ class SalesInvoice(SellingController):
 						),
 						"credit": flt(self.base_rounding_adjustment, self.precision("base_rounding_adjustment")),
 						"cost_center": self.cost_center or round_off_cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)

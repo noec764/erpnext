@@ -1,367 +1,367 @@
 {
- "charts": [
-  {
-   "chart_name": "Item Booking Rate",
-   "label": "Item Booking Rate"
-  }
- ],
- "color": "#eeb867",
- "content": "[{\"id\":\"q7tZVseqiW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Item Booking Rate\",\"col\":12}},{\"id\":\"-o4Q7XqDIY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jfNc7b275D\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"-KuGbODpbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription\",\"col\":4}},{\"id\":\"_ef_aRfubi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Event\",\"col\":4}},{\"id\":\"4ipGXlhskZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item Booking\",\"col\":4}},{\"id\":\"rH2qY8VqwD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_vvYEOukig\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports &amp; Masters</span>\",\"col\":12}},{\"id\":\"Hel9VfYoT-\",\"type\":\"card\",\"data\":{\"card_name\":\"Subscription\",\"col\":4}},{\"id\":\"XJWKRVCViy\",\"type\":\"card\",\"data\":{\"card_name\":\"Bookings and events\",\"col\":4}},{\"id\":\"-hy0yIunfH\",\"type\":\"card\",\"data\":{\"card_name\":\"Booking Credits\",\"col\":4}},{\"id\":\"1usAgmr9Y3\",\"type\":\"card\",\"data\":{\"card_name\":\"Website and Portal\",\"col\":4}},{\"id\":\"3PaUGbdwcl\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"id\":\"02X_BknbLC\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
- "creation": "2021-02-02 11:00:01.290986",
- "docstatus": 0,
- "doctype": "Workspace",
- "hide_custom": 0,
- "icon": "map",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Venue",
- "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bookings and events",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Event",
-   "link_count": 0,
-   "link_to": "Event",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item Booking",
-   "link_count": 0,
-   "link_to": "Item Booking",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Event Slot",
-   "link_count": 0,
-   "link_to": "Event Slot",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Event Slot Booking",
-   "link_count": 0,
-   "link_to": "Event Slot Booking",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Event Registration",
-   "link_count": 0,
-   "link_to": "Event Registration",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Item Booking Calendar",
-   "link_count": 0,
-   "link_to": "Item Booking Calendar",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Venue Settings",
-   "link_count": 0,
-   "link_to": "Venue Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Website and Portal",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Website Settings",
-   "link_count": 0,
-   "link_to": "Website Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Portal Settings",
-   "link_count": 0,
-   "link_to": "Portal Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "E Commerce Settings",
-   "link_count": 0,
-   "link_to": "E Commerce Settings",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Help Category",
-   "link_count": 0,
-   "link_to": "Help Category",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Help Article",
-   "link_count": 0,
-   "link_to": "Help Article",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Tools",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Newsletter",
-   "link_count": 0,
-   "link_to": "Newsletter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Email Campaign",
-   "link_count": 0,
-   "link_to": "Email Campaign",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Reports",
-   "link_count": 0,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item Booking Rate",
-   "link_count": 0,
-   "link_to": "Item Booking Rate",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription",
-   "link_count": 4,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Venue Registration Form",
-   "link_count": 0,
-   "link_to": "Venue Registration Form",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription",
-   "link_count": 0,
-   "link_to": "Subscription",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription Plan",
-   "link_count": 0,
-   "link_to": "Subscription Plan",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subscription Template",
-   "link_count": 0,
-   "link_to": "Subscription Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Booking Credits",
-   "link_count": 6,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Booking Credit",
-   "link_count": 0,
-   "link_to": "Booking Credit",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Booking Credit Usage",
-   "link_count": 0,
-   "link_to": "Booking Credit Usage",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Booking Credits Balance",
-   "link_count": 0,
-   "link_to": "Booking Credits Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Booking Credit Type",
-   "link_count": 0,
-   "link_to": "Booking Credit Type",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2023-05-12 10:13:59.165116",
- "modified_by": "Administrator",
- "module": "Venue",
- "name": "Venue",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "",
- "public": 1,
- "quick_lists": [],
- "roles": [],
- "sequence_id": 23.0,
- "shortcuts": [
-  {
-   "columns": 0,
-   "doc_view": "List",
-   "label": "Subscription",
-   "link_to": "Subscription",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "doc_view": "List",
-   "label": "Event",
-   "link_to": "Event",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "doc_view": "List",
-   "label": "Item Booking",
-   "link_to": "Item Booking",
-   "type": "DocType"
-  }
- ],
- "title": "Venue"
+  "charts": [
+    {
+      "chart_name": "Item Booking Rate",
+      "label": "Item Booking Rate"
+    }
+  ],
+  "color": "#eeb867",
+  "content": "[{\"id\":\"q7tZVseqiW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Item Booking Rate\",\"col\":12}},{\"id\":\"-o4Q7XqDIY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jfNc7b275D\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"-KuGbODpbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Subscription\",\"col\":4}},{\"id\":\"_ef_aRfubi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Event\",\"col\":4}},{\"id\":\"4ipGXlhskZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item Booking\",\"col\":4}},{\"id\":\"rH2qY8VqwD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"_vvYEOukig\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports &amp; Masters</span>\",\"col\":12}},{\"id\":\"Hel9VfYoT-\",\"type\":\"card\",\"data\":{\"card_name\":\"Subscription\",\"col\":4}},{\"id\":\"XJWKRVCViy\",\"type\":\"card\",\"data\":{\"card_name\":\"Bookings and events\",\"col\":4}},{\"id\":\"-hy0yIunfH\",\"type\":\"card\",\"data\":{\"card_name\":\"Booking Credits\",\"col\":4}},{\"id\":\"1usAgmr9Y3\",\"type\":\"card\",\"data\":{\"card_name\":\"Website and Portal\",\"col\":4}},{\"id\":\"3PaUGbdwcl\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}},{\"id\":\"02X_BknbLC\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+  "creation": "2021-02-02 11:00:01.290986",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "hide_custom": 0,
+  "icon": "map",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Venue",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Bookings and events",
+      "link_count": 0,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Event",
+      "link_count": 0,
+      "link_to": "Event",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Item Booking",
+      "link_count": 0,
+      "link_to": "Item Booking",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Event Slot",
+      "link_count": 0,
+      "link_to": "Event Slot",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Event Slot Booking",
+      "link_count": 0,
+      "link_to": "Event Slot Booking",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Event Registration",
+      "link_count": 0,
+      "link_to": "Event Registration",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Item Booking Calendar",
+      "link_count": 0,
+      "link_to": "Item Booking Calendar",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Venue Settings",
+      "link_count": 0,
+      "link_to": "Venue Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Website and Portal",
+      "link_count": 0,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Website Settings",
+      "link_count": 0,
+      "link_to": "Website Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Portal Settings",
+      "link_count": 0,
+      "link_to": "Portal Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "E Commerce Settings",
+      "link_count": 0,
+      "link_to": "E Commerce Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Help Category",
+      "link_count": 0,
+      "link_to": "Help Category",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Help Article",
+      "link_count": 0,
+      "link_to": "Help Article",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Tools",
+      "link_count": 0,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Newsletter",
+      "link_count": 0,
+      "link_to": "Newsletter",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Email Campaign",
+      "link_count": 0,
+      "link_to": "Email Campaign",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Reports",
+      "link_count": 0,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item Booking Rate",
+      "link_count": 0,
+      "link_to": "Item Booking Rate",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Subscription",
+      "link_count": 4,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Venue Registration Form",
+      "link_count": 0,
+      "link_to": "Venue Registration Form",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Subscription",
+      "link_count": 0,
+      "link_to": "Subscription",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Subscription Plan",
+      "link_count": 0,
+      "link_to": "Subscription Plan",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Subscription Template",
+      "link_count": 0,
+      "link_to": "Subscription Template",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Booking Credits",
+      "link_count": 6,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Booking Credit",
+      "link_count": 0,
+      "link_to": "Booking Credit",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Booking Credit Usage",
+      "link_count": 0,
+      "link_to": "Booking Credit Usage",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Booking Credits Balance",
+      "link_count": 0,
+      "link_to": "Booking Credits Balance",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Booking Credit Type",
+      "link_count": 0,
+      "link_to": "Booking Credit Type",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-05-31 09:04:06.476482",
+  "modified_by": "Administrator",
+  "module": "Venue",
+  "name": "Venue",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 27.0,
+  "shortcuts": [
+    {
+      "columns": 0,
+      "doc_view": "List",
+      "label": "Subscription",
+      "link_to": "Subscription",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "doc_view": "List",
+      "label": "Event",
+      "link_to": "Event",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "doc_view": "List",
+      "label": "Item Booking",
+      "link_to": "Item Booking",
+      "type": "DocType"
+    }
+  ],
+  "title": "Venue"
 }

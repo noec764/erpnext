@@ -1,0 +1,56 @@
+{
+  "creation": "2023-06-01 15:07:12.219289",
+  "docstatus": 0,
+  "doctype": "Web Template",
+  "fields": [
+    {
+      "fieldname": "gb_label",
+      "fieldtype": "Data",
+      "label": "Label",
+      "reqd": 1
+    },
+    {
+      "fieldname": "gb_shipping_rule",
+      "fieldtype": "Link",
+      "label": "Shipping Rule",
+      "options": "Shipping Rule",
+      "reqd": 1
+    },
+    {
+      "default": "",
+      "fieldname": "gb_size",
+      "fieldtype": "Int",
+      "label": "Quantity",
+      "reqd": 1
+    },
+    {
+      "fieldname": "gb_based_on",
+      "fieldtype": "Select",
+      "label": "Count Based On",
+      "options": "Sales Order\nSales Order Item",
+      "reqd": 1
+    },
+    {
+      "fieldname": "gb_filters",
+      "fieldtype": "Table Break",
+      "label": "Filters",
+      "reqd": 0
+    },
+    {
+      "fieldname": "gb_item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 0
+    }
+  ],
+  "idx": 0,
+  "modified": "2023-06-01 15:08:02.150129",
+  "modified_by": "Administrator",
+  "module": "E-commerce",
+  "name": "Group Buy (Cart)",
+  "owner": "Administrator",
+  "standard": 1,
+  "template": "",
+  "type": "Component"
+}

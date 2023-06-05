@@ -1078,22 +1078,24 @@ def _get_subscriptions_as_events(start, end, item=None, user=None, fields=None, 
 		)
 
 		events.append(
-			{
-				**sub,
-				"starts_on": sub["start"],
-				"ends_on": sub["end"],
-				"item_name": booked_item,
-				"title": title,
-				"name": sub["name"],
-				"doctype": "Subscription",
-				# "repeat_this_event": 1,
-				# "rrule": "RRULE:FREQ=HOURLY",
-				# "user": sub["_customers"][0] if sub["_customers"] and len(sub["_customers"]) > 0,
-				# "status": "Active",
-				"all_day": 1,
-				"startEditable": False,
-				"durationEditable": False,
-			}
+			frappe._dict(
+				{
+					**sub,
+					"starts_on": get_datetime(sub["start"]),
+					"ends_on": get_datetime(sub["end"]),
+					"item_name": booked_item,
+					"title": title,
+					"name": sub["name"],
+					"doctype": "Subscription",
+					# "repeat_this_event": 1,
+					# "rrule": "RRULE:FREQ=HOURLY",
+					# "user": sub["_customers"][0] if sub["_customers"] and len(sub["_customers"]) > 0,
+					# "status": "Active",
+					"all_day": 1,
+					"startEditable": False,
+					"durationEditable": False,
+				}
+			)
 		)
 	return events
 

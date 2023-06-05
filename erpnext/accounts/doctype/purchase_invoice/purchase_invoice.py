@@ -195,7 +195,7 @@ class PurchaseInvoice(BuyingController):
 			frappe.throw(
 				_(
 					"Please ensure {} account {} is a Payable account. Change the account type to Payable or select a different account."
-				).format(frappe.bold("Credit To"), frappe.bold(self.credit_to)),
+				).format(frappe.bold(_("Credit To")), frappe.bold(self.credit_to)),
 				title=_("Invalid Account"),
 			)
 
@@ -647,6 +647,7 @@ class PurchaseInvoice(BuyingController):
 						"against_voucher_type": self.doctype,
 						"project": self.project,
 						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					self.party_account_currency,
 					item=self,
@@ -713,6 +714,7 @@ class PurchaseInvoice(BuyingController):
 									"remarks": item.get("remarks")
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": warehouse_debit_amount,
+									"accounting_journal": self.accounting_journal,
 								},
 								warehouse_account[item.warehouse]["account_currency"],
 								item=item,
@@ -734,6 +736,7 @@ class PurchaseInvoice(BuyingController):
 									"remarks": item.get("remarks")
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": -1 * flt(credit_amount, item.precision("base_net_amount")),
+									"accounting_journal": self.accounting_journal,
 								},
 								warehouse_account[item.from_warehouse]["account_currency"],
 								item=item,
@@ -752,6 +755,7 @@ class PurchaseInvoice(BuyingController):
 										or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										"cost_center": item.cost_center,
 										"project": item.project,
+										"accounting_journal": self.accounting_journal,
 									},
 									account_currency,
 									item=item,
@@ -770,6 +774,7 @@ class PurchaseInvoice(BuyingController):
 										or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 										"cost_center": item.cost_center,
 										"project": item.project or self.project,
+										"accounting_journal": self.accounting_journal,
 									},
 									account_currency,
 									item=item,
@@ -790,6 +795,7 @@ class PurchaseInvoice(BuyingController):
 										"credit": flt(amount["base_amount"]),
 										"credit_in_account_currency": flt(amount["amount"]),
 										"project": item.project or self.project,
+										"accounting_journal": self.accounting_journal,
 									},
 									item=item,
 								)
@@ -810,6 +816,7 @@ class PurchaseInvoice(BuyingController):
 									"remarks": item.get("remarks")
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"credit": flt(item.rm_supp_cost),
+									"accounting_journal": self.accounting_journal,
 								},
 								warehouse_account[self.supplier_warehouse]["account_currency"],
 								item=item,
@@ -868,6 +875,7 @@ class PurchaseInvoice(BuyingController):
 									"project": item.project or self.project,
 									"remarks": item.get("remarks")
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
+									"accounting_journal": self.accounting_journal,
 								},
 								account_currency,
 								item=item,
@@ -896,6 +904,7 @@ class PurchaseInvoice(BuyingController):
 											"project": item.project or self.project,
 											"remarks": item.get("remarks")
 											or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
+											"accounting_journal": self.accounting_journal,
 										},
 										account_currency,
 										item=item,
@@ -911,6 +920,7 @@ class PurchaseInvoice(BuyingController):
 											"project": item.project or self.project,
 											"remarks": item.get("remarks")
 											or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
+											"accounting_journal": self.accounting_journal,
 										},
 										account_currency,
 										item=item,
@@ -933,6 +943,7 @@ class PurchaseInvoice(BuyingController):
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"credit": flt(item.landed_cost_voucher_amount),
 									"project": item.project or self.project,
+									"accounting_journal": self.accounting_journal,
 								},
 								item=item,
 							)
@@ -948,6 +959,7 @@ class PurchaseInvoice(BuyingController):
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"debit": flt(item.landed_cost_voucher_amount),
 									"project": item.project or self.project,
+									"accounting_journal": self.accounting_journal,
 								},
 								item=item,
 							)
@@ -988,6 +1000,7 @@ class PurchaseInvoice(BuyingController):
 									or f'{_("Item")}: {item.qty} {item.item_code} - {_(item.uom)} / {_("Supplier")}: {self.supplier}',
 									"cost_center": self.cost_center,
 									"project": item.project or self.project,
+									"accounting_journal": self.accounting_journal,
 								},
 								item=item,
 							)
@@ -1015,6 +1028,7 @@ class PurchaseInvoice(BuyingController):
 						"credit": precision_loss,
 						"cost_center": self.cost_center or round_off_cost_center,
 						"remarks": _("Net total calculation precision loss"),
+						"accounting_journal": self.accounting_journal,
 					}
 				)
 			)
@@ -1049,6 +1063,7 @@ class PurchaseInvoice(BuyingController):
 								),
 								"cost_center": item.cost_center,
 								"project": item.project or self.project,
+								"accounting_journal": self.accounting_journal,
 							},
 							item=item,
 						)
@@ -1070,6 +1085,7 @@ class PurchaseInvoice(BuyingController):
 										if asset_eiiav_currency == self.company_currency
 										else item.item_tax_amount / self.conversion_rate
 									),
+									"accounting_journal": self.accounting_journal,
 								},
 								item=item,
 							)
@@ -1092,6 +1108,7 @@ class PurchaseInvoice(BuyingController):
 								),
 								"cost_center": self.cost_center,
 								"project": item.project or self.project,
+								"accounting_journal": self.accounting_journal,
 							},
 							item=item,
 						)
@@ -1113,6 +1130,7 @@ class PurchaseInvoice(BuyingController):
 										if asset_eiiav_currency == self.company_currency
 										else item.item_tax_amount / self.conversion_rate
 									),
+									"accounting_journal": self.accounting_journal,
 								},
 								item=item,
 							)
@@ -1131,6 +1149,7 @@ class PurchaseInvoice(BuyingController):
 										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 										"credit": flt(item.landed_cost_voucher_amount),
 										"project": item.project or self.project,
+										"accounting_journal": self.accounting_journal,
 									},
 									item=item,
 								)
@@ -1145,6 +1164,7 @@ class PurchaseInvoice(BuyingController):
 										"remarks": self.get("remarks") or _("Accounting Entry for Stock"),
 										"debit": flt(item.landed_cost_voucher_amount),
 										"project": item.project or self.project,
+										"accounting_journal": self.accounting_journal,
 									},
 									item=item,
 								)
@@ -1194,6 +1214,7 @@ class PurchaseInvoice(BuyingController):
 						"remarks": self.get("remarks") or _("Stock Adjustment"),
 						"cost_center": item.cost_center,
 						"project": item.project or self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					account_currency,
 					item=item,
@@ -1226,6 +1247,7 @@ class PurchaseInvoice(BuyingController):
 							else amount,
 							"cost_center": tax.cost_center,
 							"remarks": tax.get("remarks") or f'{tax.description} / {_("Supplier")}: {self.supplier}',
+							"accounting_journal": self.accounting_journal,
 						},
 						account_currency,
 						item=tax,
@@ -1272,6 +1294,7 @@ class PurchaseInvoice(BuyingController):
 								"against": self.supplier,
 								"credit": applicable_amount,
 								"remarks": self.remarks or _("Accounting Entry for Stock"),
+								"accounting_journal": self.accounting_journal,
 							},
 							item=tax,
 						)
@@ -1290,6 +1313,7 @@ class PurchaseInvoice(BuyingController):
 								"against": self.supplier,
 								"credit": valuation_tax[tax.name],
 								"remarks": self.remarks or _("Accounting Entry for Stock"),
+								"accounting_journal": self.accounting_journal,
 							},
 							item=tax,
 						)
@@ -1315,6 +1339,7 @@ class PurchaseInvoice(BuyingController):
 						"credit": flt(self.total_taxes_and_charges),
 						"credit_in_account_currency": flt(self.base_total_taxes_and_charges),
 						"cost_center": self.cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					account_currency,
 					item=self,
@@ -1343,6 +1368,7 @@ class PurchaseInvoice(BuyingController):
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
 						"project": self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					self.party_account_currency,
 					item=self,
@@ -1360,6 +1386,7 @@ class PurchaseInvoice(BuyingController):
 						else self.paid_amount,
 						"cost_center": self.cost_center,
 						"project": self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					bank_account_currency,
 					item=self,
@@ -1389,6 +1416,7 @@ class PurchaseInvoice(BuyingController):
 						"against_voucher_type": self.doctype,
 						"cost_center": self.cost_center,
 						"project": self.project,
+						"accounting_journal": self.accounting_journal,
 					},
 					self.party_account_currency,
 					item=self,
@@ -1404,6 +1432,7 @@ class PurchaseInvoice(BuyingController):
 						if write_off_account_currency == self.company_currency
 						else self.write_off_amount,
 						"cost_center": self.cost_center or self.write_off_cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)
@@ -1429,6 +1458,7 @@ class PurchaseInvoice(BuyingController):
 						"debit_in_account_currency": self.rounding_adjustment,
 						"debit": self.base_rounding_adjustment,
 						"cost_center": self.cost_center or round_off_cost_center,
+						"accounting_journal": self.accounting_journal,
 					},
 					item=self,
 				)

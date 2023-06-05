@@ -9,6 +9,10 @@ frappe.ui.form.on("Journal Entry", {
 	setup: function(frm) {
 		frm.add_fetch("bank_account", "account", "account");
 		frm.ignore_doctypes_on_cancel_all = ['Sales Invoice', 'Purchase Invoice', 'Journal Entry'];
+
+		if (frm.doc.company && !frm.doc.journal_entry) {
+			erpnext.set_accounting_journal(frm);
+		}
 	},
 
 	refresh: function(frm) {
@@ -144,6 +148,10 @@ frappe.ui.form.on("Journal Entry", {
 		});
 
 		erpnext.accounts.dimensions.update_dimension(frm, frm.doctype);
+
+		if (frm.doc.company) {
+			erpnext.set_accounting_journal(frm);
+		}
 	},
 
 	voucher_type: function(frm){

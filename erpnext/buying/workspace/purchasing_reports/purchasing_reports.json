@@ -1,343 +1,343 @@
 {
- "charts": [
-  {
-   "chart_name": "Last Purchase Rate",
-   "label": "Last Purchase Rate"
-  }
- ],
- "color": "",
- "content": "[{\"id\":\"ZruNT4ahXZ\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Last Purchase Rate\",\"col\":12}},{\"id\":\"MB1BOGCXti\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TgZ449iezO\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Reports</span>\",\"col\":12}},{\"id\":\"z12zSWVxgD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"id\":\"ua-FHLuVMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"id\":\"qUcaW8UIbd\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchasing Dashboard\",\"col\":3}},{\"id\":\"eoySotfrQJ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"AB8xSkewQ7\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions Analytics\",\"col\":4}},{\"id\":\"QrmkvW4xM4\",\"type\":\"card\",\"data\":{\"card_name\":\"Trends\",\"col\":4}},{\"id\":\"BDg50NS4RD\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Quotation\",\"col\":4}},{\"id\":\"suF-XFO3SB\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"pBtBgsj601\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Analytics\",\"col\":4}},{\"id\":\"-BI5tmYbEC\",\"type\":\"card\",\"data\":{\"card_name\":\"Items in Transactions\",\"col\":4}},{\"id\":\"l5MvjYdMgg\",\"type\":\"card\",\"data\":{\"card_name\":\"Items Analytics\",\"col\":4}},{\"id\":\"MnRvh2NenS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"DuZNLLxCEv\",\"type\":\"card\",\"data\":{\"card_name\":\"Subcontracting\",\"col\":4}}]",
- "creation": "2023-04-07 14:34:52.790754",
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "table_2",
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Purchasing Reports",
- "links": [
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Trends",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Order Trends",
-   "link_count": 0,
-   "link_to": "Purchase Order Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Receipt Trends",
-   "link_count": 0,
-   "link_to": "Purchase Receipt Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Invoice Trends",
-   "link_count": 0,
-   "link_to": "Purchase Invoice Trends",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Subcontracting",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Subcontract Order Summary",
-   "link_count": 0,
-   "link_to": "Subcontract Order Summary",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Subcontracted Item To Be Received",
-   "link_count": 0,
-   "link_to": "Subcontracted Item To Be Received",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Subcontracted Raw Materials To Be Transferred",
-   "link_count": 0,
-   "link_to": "Subcontracted Raw Materials To Be Transferred",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Analytics",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier-Wise Sales Analytics",
-   "link_count": 0,
-   "link_to": "Supplier-Wise Sales Analytics",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Addresses And Contacts",
-   "link_count": 0,
-   "link_to": "Address And Contacts",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Supplier Quotation",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Supplier Quotation Comparison",
-   "link_count": 0,
-   "link_to": "Supplier Quotation Comparison",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Material Requests for which Supplier Quotations are not created",
-   "link_count": 0,
-   "link_to": "Material Requests for which Supplier Quotations are not created",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items Analytics",
-   "link_count": 4,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item-wise Purchase Register",
-   "link_count": 0,
-   "link_to": "Item-wise Purchase Register",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item-wise Purchase History",
-   "link_count": 0,
-   "link_to": "Item-wise Purchase History",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item Prices",
-   "link_count": 0,
-   "link_to": "Item Prices",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Item Price Stock",
-   "link_count": 0,
-   "link_to": "Item Price Stock",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Transactions Analytics",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Analytics",
-   "link_count": 0,
-   "link_to": "Purchase Analytics",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Purchase Order Analysis",
-   "link_count": 0,
-   "link_to": "Purchase Order Analysis",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Procurement Tracker",
-   "link_count": 0,
-   "link_to": "Procurement Tracker",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Items in Transactions",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Items To Be Requested",
-   "link_count": 0,
-   "link_to": "Items To Be Requested",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Requested Items to Order and Receive",
-   "link_count": 0,
-   "link_to": "Requested Items to Order and Receive",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "columns": 0,
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Received Items To Be Billed",
-   "link_count": 0,
-   "link_to": "Received Items To Be Billed",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2023-05-12 10:13:57.933957",
- "modified_by": "Administrator",
- "module": "Buying",
- "name": "Purchasing Reports",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Buying",
- "public": 1,
- "quick_lists": [],
- "roles": [],
- "sequence_id": 7.0,
- "shortcuts": [
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchase Analytics",
-   "link_to": "Purchase Analytics",
-   "type": "Report"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchasing Dashboard",
-   "link_to": "Buying",
-   "type": "Dashboard"
-  },
-  {
-   "color": "Gray",
-   "columns": 3,
-   "doc_view": "List",
-   "label": "Purchase Order Analysis",
-   "link_to": "Purchase Order Analysis",
-   "type": "Report"
-  }
- ],
- "title": "Purchasing Reports"
+  "charts": [
+    {
+      "chart_name": "Last Purchase Rate",
+      "label": "Last Purchase Rate"
+    }
+  ],
+  "color": "",
+  "content": "[{\"id\":\"ZruNT4ahXZ\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Last Purchase Rate\",\"col\":12}},{\"id\":\"MB1BOGCXti\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TgZ449iezO\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Purchasing Reports</span>\",\"col\":12}},{\"id\":\"z12zSWVxgD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"id\":\"ua-FHLuVMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"id\":\"qUcaW8UIbd\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchasing Dashboard\",\"col\":3}},{\"id\":\"eoySotfrQJ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"AB8xSkewQ7\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions Analytics\",\"col\":4}},{\"id\":\"QrmkvW4xM4\",\"type\":\"card\",\"data\":{\"card_name\":\"Trends\",\"col\":4}},{\"id\":\"BDg50NS4RD\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Quotation\",\"col\":4}},{\"id\":\"suF-XFO3SB\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"pBtBgsj601\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Analytics\",\"col\":4}},{\"id\":\"-BI5tmYbEC\",\"type\":\"card\",\"data\":{\"card_name\":\"Items in Transactions\",\"col\":4}},{\"id\":\"l5MvjYdMgg\",\"type\":\"card\",\"data\":{\"card_name\":\"Items Analytics\",\"col\":4}},{\"id\":\"MnRvh2NenS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"DuZNLLxCEv\",\"type\":\"card\",\"data\":{\"card_name\":\"Subcontracting\",\"col\":4}}]",
+  "creation": "2023-04-07 14:34:52.790754",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "table_2",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Purchasing Reports",
+  "links": [
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Trends",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Order Trends",
+      "link_count": 0,
+      "link_to": "Purchase Order Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Receipt Trends",
+      "link_count": 0,
+      "link_to": "Purchase Receipt Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Invoice Trends",
+      "link_count": 0,
+      "link_to": "Purchase Invoice Trends",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Subcontracting",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Subcontract Order Summary",
+      "link_count": 0,
+      "link_to": "Subcontract Order Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Subcontracted Item To Be Received",
+      "link_count": 0,
+      "link_to": "Subcontracted Item To Be Received",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Subcontracted Raw Materials To Be Transferred",
+      "link_count": 0,
+      "link_to": "Subcontracted Raw Materials To Be Transferred",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Analytics",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier-Wise Sales Analytics",
+      "link_count": 0,
+      "link_to": "Supplier-Wise Sales Analytics",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Addresses And Contacts",
+      "link_count": 0,
+      "link_to": "Address And Contacts",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Supplier Quotation",
+      "link_count": 2,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Supplier Quotation Comparison",
+      "link_count": 0,
+      "link_to": "Supplier Quotation Comparison",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Material Requests for which Supplier Quotations are not created",
+      "link_count": 0,
+      "link_to": "Material Requests for which Supplier Quotations are not created",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Items Analytics",
+      "link_count": 4,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item-wise Purchase Register",
+      "link_count": 0,
+      "link_to": "Item-wise Purchase Register",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item-wise Purchase History",
+      "link_count": 0,
+      "link_to": "Item-wise Purchase History",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item Prices",
+      "link_count": 0,
+      "link_to": "Item Prices",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Item Price Stock",
+      "link_count": 0,
+      "link_to": "Item Price Stock",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Transactions Analytics",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Analytics",
+      "link_count": 0,
+      "link_to": "Purchase Analytics",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Purchase Order Analysis",
+      "link_count": 0,
+      "link_to": "Purchase Order Analysis",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Procurement Tracker",
+      "link_count": 0,
+      "link_to": "Procurement Tracker",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Items in Transactions",
+      "link_count": 3,
+      "onboard": 0,
+      "type": "Card Break"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Items To Be Requested",
+      "link_count": 0,
+      "link_to": "Items To Be Requested",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Requested Items to Order and Receive",
+      "link_count": 0,
+      "link_to": "Requested Items to Order and Receive",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "columns": 0,
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Received Items To Be Billed",
+      "link_count": 0,
+      "link_to": "Received Items To Be Billed",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2023-05-31 09:04:05.228188",
+  "modified_by": "Administrator",
+  "module": "Buying",
+  "name": "Purchasing Reports",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Buying",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 11.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchase Analytics",
+      "link_to": "Purchase Analytics",
+      "type": "Report"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchasing Dashboard",
+      "link_to": "Buying",
+      "type": "Dashboard"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Purchase Order Analysis",
+      "link_to": "Purchase Order Analysis",
+      "type": "Report"
+    }
+  ],
+  "title": "Purchasing Reports"
 }

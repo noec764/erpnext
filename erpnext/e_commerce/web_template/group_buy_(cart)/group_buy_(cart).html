@@ -1,0 +1,63 @@
+{% if doc
+    and doc.shipping_address_name
+    and doc.shipping_rule == gb_shipping_rule
+    and gb_based_on
+    and frappe.db.exists("Pick-up Location", {"parent": gb_shipping_rule, "parenttype": "Shipping Rule", "address_name": doc.shipping_address_name, "enabled": 1})
+%}
+    {% set item_filter = gb_filters | map(attribute="gb_item") | list %}
+    {% set item_filter =
+        ("Sales Order Item", "item_code", "in", item_filter)
+        if item_filter
+        else ("Sales Order Item", "qty", ">=", 0)
+    %}
+
+    {% if gb_based_on == "Sales Order" %}
+        {% set value_sql = "count(*)" %}
+    {% elif gb_based_on == "Sales Order Item" %}
+        {% set value_sql = "sum(`tabSales Order Item`.qty)" %}
+    {% endif %}
+
+    {% set gb_total = frappe.get_all("Sales Order", fields=value_sql, filters=[
+        ("shipping_address_name", "=", doc.shipping_address_name),
+        ("shipping_rule", "=", gb_shipping_rule),
+        ("delivery_status", "=", "Not Delivered"),
+        ("status", "like", "%To Deliver%"),
+        ("docstatus", "=", 1),
+        item_filter,
+    ], as_list=True)[0][0] or 0 %}
+    {% set gb_total = gb_total | int %}
+
+    {# set gb_size = frappe.db.get_value("Pick-up Location", {
+        "address": doc.shipping_address,
+        "parent": SR,
+        "parenttype": "Shipping Rule",
+    }, "gb_size") #}
+    {# set gb_size = 10 #}
+
+    {% set gb_current = (gb_total % gb_size) if gb_size else gb_total %}
+    {% set gb_count = (gb_total // gb_size) if gb_size else 0 %}
+
+    {% set gb = {
+        "label": gb_label or _("Group Buy"),
+        "total": gb_total or 0,
+        "size": gb_size or 0,
+        "_count": gb_count or 0,
+        "current": gb_current or 0,
+    } %}
+
+    {% set address = frappe.get_doc("Address", doc.shipping_address_name) %}
+
+    <div class="frappe-card mb-3 p-5">
+        <h6>{{ gb.label }}</h6>
+        <small>{{ address | get_condensed_address }}</small>
+
+        <div class="mt-3">
+            <center>{{ _("{0} places remaining").format(gb.size - gb.current) }} / {{ gb.size }}</center>
+            <meter style="width:100%" value="{{ gb.current }}" min="0" max="{{ gb.size }}"></meter>
+        </div>
+
+        <div class="alert alert-warning mt-3 m-0">
+            Le paiement des frais de livraison se fera une fois la commande groupée terminée.
+        </div>
+    </div>
+{% endif %}

@@ -56,7 +56,7 @@ class PaymentLedgerEntry(Document):
 		if ret.company != self.company:
 			frappe.throw(
 				_("{0} {1}: Account {2} does not belong to Company {3}").format(
-					self.voucher_type, self.voucher_no, self.account, self.company
+					_(self.voucher_type), self.voucher_no, self.account, self.company
 				)
 			)
 

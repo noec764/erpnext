@@ -1,0 +1,6 @@
+{%- macro put_custom_cart_blocks(custom_cart_blocks, this_position) -%}
+	{%- set filtered_blocks = (custom_cart_blocks[this_position] or []) if custom_cart_blocks else [] -%}
+	{%- if filtered_blocks -%}
+		{{ web_blocks(filtered_blocks) }}
+	{%- endif -%}
+{%- endmacro -%}

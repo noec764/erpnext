@@ -78,8 +78,8 @@ def validate_filters(filters, account_details):
 			if account_details[account].is_group == 0:
 				frappe.throw(_("Can not filter based on Child Account, if grouped by Account"))
 
-	if filters.get("voucher_no") and filters.get("group_by") in ["Group by Voucher"]:
-		frappe.throw(_("Can not filter based on Voucher No, if grouped by Voucher"))
+	# if filters.get("voucher_no") and filters.get("group_by") in ["Group by Voucher"]:
+	# 	frappe.throw(_("Can not filter based on Voucher No, if grouped by Voucher"))
 
 	if getdate(filters.from_date) > getdate(filters.to_date):
 		frappe.throw(_("From Date must be before To Date"))

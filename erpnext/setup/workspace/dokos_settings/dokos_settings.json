@@ -1,122 +1,122 @@
 {
- "charts": [],
- "color": "#6195ff",
- "content": "[{\"id\":\"IEfLzX5vx5\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"EsdnflVH4g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects Settings\",\"col\":4}},{\"id\":\"pnDt7CBRxx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Settings\",\"col\":4}},{\"id\":\"-gHjJ5HgJg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Settings\",\"col\":4}},{\"id\":\"__ZG3Wx4Dn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Settings\",\"col\":4}},{\"id\":\"g67jg8Dt4d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Settings\",\"col\":4}},{\"id\":\"N93xnVpbLD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":4}},{\"id\":\"YEQ9DaIl2r\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Support Settings\",\"col\":4}},{\"id\":\"lGpRvgj03t\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"E Commerce Settings\",\"col\":4}},{\"id\":\"ujGbmNMXXS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":4}},{\"id\":\"ZTSlIDN_WY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Domain Settings\",\"col\":4}},{\"id\":\"B06hFCDJVF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"CRM Settings\",\"col\":4}},{\"id\":\"CC7h4Loe9n\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Manufacturing Settings\",\"col\":4}},{\"id\":\"lGqWmM5Z5M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Global Defaults\",\"col\":4}}]",
- "creation": "2020-03-12 14:47:51.166455",
- "docstatus": 0,
- "doctype": "Workspace",
- "extends_page": "Settings",
- "hide_custom": 0,
- "idx": 0,
- "is_hidden": 0,
- "is_standard": 1,
- "label": "Dokos Settings",
- "links": [],
- "modified": "2023-05-11 21:30:34.880447",
- "modified_by": "Administrator",
- "module": "Setup",
- "name": "Dokos Settings",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Administration",
- "public": 1,
- "quick_lists": [],
- "roles": [],
- "sequence_id": 43.0,
- "shortcuts": [
-  {
-   "columns": 0,
-   "icon": "project",
-   "label": "Projects Settings",
-   "link_to": "Projects Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "accounting",
-   "label": "Accounts Settings",
-   "link_to": "Accounts Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "stock",
-   "label": "Stock Settings",
-   "link_to": "Stock Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "hr",
-   "label": "HR Settings",
-   "link_to": "HR Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "sell",
-   "label": "Selling Settings",
-   "link_to": "Selling Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "buying",
-   "label": "Buying Settings",
-   "link_to": "Buying Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "support",
-   "label": "Support Settings",
-   "link_to": "Support Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "retail",
-   "label": "E Commerce Settings",
-   "link_to": "E Commerce Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "website",
-   "label": "Portal Settings",
-   "link_to": "Portal Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "organization",
-   "label": "Manufacturing Settings",
-   "link_to": "Manufacturing Settings",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "icon": "setting",
-   "label": "Domain Settings",
-   "link_to": "Domain Settings",
-   "type": "DocType"
-  },
-  {
-   "color": "Gray",
-   "columns": 0,
-   "icon": "setting",
-   "label": "Global Defaults",
-   "link_to": "Global Defaults",
-   "type": "DocType"
-  },
-  {
-   "columns": 0,
-   "doc_view": "",
-   "icon": "crm",
-   "label": "CRM Settings",
-   "link_to": "CRM Settings",
-   "type": "DocType"
-  }
- ],
- "title": "Settings"
+  "charts": [],
+  "color": "#6195ff",
+  "content": "[{\"id\":\"IEfLzX5vx5\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcuts</span>\",\"col\":12}},{\"id\":\"EsdnflVH4g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects Settings\",\"col\":4}},{\"id\":\"pnDt7CBRxx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounts Settings\",\"col\":4}},{\"id\":\"-gHjJ5HgJg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Settings\",\"col\":4}},{\"id\":\"__ZG3Wx4Dn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Settings\",\"col\":4}},{\"id\":\"g67jg8Dt4d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Selling Settings\",\"col\":4}},{\"id\":\"N93xnVpbLD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Buying Settings\",\"col\":4}},{\"id\":\"YEQ9DaIl2r\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Support Settings\",\"col\":4}},{\"id\":\"lGpRvgj03t\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"E Commerce Settings\",\"col\":4}},{\"id\":\"ujGbmNMXXS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Portal Settings\",\"col\":4}},{\"id\":\"ZTSlIDN_WY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Domain Settings\",\"col\":4}},{\"id\":\"B06hFCDJVF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"CRM Settings\",\"col\":4}},{\"id\":\"CC7h4Loe9n\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Manufacturing Settings\",\"col\":4}},{\"id\":\"lGqWmM5Z5M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Global Defaults\",\"col\":4}}]",
+  "creation": "2020-03-12 14:47:51.166455",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "extends_page": "Settings",
+  "hide_custom": 0,
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Dokos Settings",
+  "links": [],
+  "modified": "2023-05-31 09:02:56.948922",
+  "modified_by": "Administrator",
+  "module": "Setup",
+  "name": "Dokos Settings",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Administration",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 44.0,
+  "shortcuts": [
+    {
+      "columns": 0,
+      "icon": "project",
+      "label": "Projects Settings",
+      "link_to": "Projects Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "accounting",
+      "label": "Accounts Settings",
+      "link_to": "Accounts Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "stock",
+      "label": "Stock Settings",
+      "link_to": "Stock Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "hr",
+      "label": "HR Settings",
+      "link_to": "HR Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "sell",
+      "label": "Selling Settings",
+      "link_to": "Selling Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "buying",
+      "label": "Buying Settings",
+      "link_to": "Buying Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "support",
+      "label": "Support Settings",
+      "link_to": "Support Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "retail",
+      "label": "E Commerce Settings",
+      "link_to": "E Commerce Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "website",
+      "label": "Portal Settings",
+      "link_to": "Portal Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "organization",
+      "label": "Manufacturing Settings",
+      "link_to": "Manufacturing Settings",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "icon": "setting",
+      "label": "Domain Settings",
+      "link_to": "Domain Settings",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 0,
+      "icon": "setting",
+      "label": "Global Defaults",
+      "link_to": "Global Defaults",
+      "type": "DocType"
+    },
+    {
+      "columns": 0,
+      "doc_view": "",
+      "icon": "crm",
+      "label": "CRM Settings",
+      "link_to": "CRM Settings",
+      "type": "DocType"
+    }
+  ],
+  "title": "Settings"
 }

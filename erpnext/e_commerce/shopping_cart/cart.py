@@ -46,12 +46,7 @@ def get_cart_quotation(doc=None):
 	if not doc.customer_address and addresses:
 		update_cart_address("billing", addresses[0].name, no_render=True)
 
-	route = ""
-	if hasattr(frappe.local, "request"):
-		route = frappe.local.request.path.strip("/ ")
-		if not route:
-			route = frappe.local.request.environ.get("HTTP_REFERER")
-			route = route.split("/")[-1] if route else None
+	route = get_current_route()
 
 	context = {
 		"route": route,
@@ -62,29 +57,11 @@ def get_cart_quotation(doc=None):
 		"shipping_rules": get_shipping_rules(doc),
 		"link_title_doctypes": frappe.boot.get_link_title_doctypes(),
 		"shipping_estimates": [],
+		"cart_address_fields": [],
 	}
 
 	if route == "checkout":
-		if shipping_rules := context["shipping_rules"]:
-			context["shipping_estimates"] = get_estimates_for_shipping(doc, shipping_rules)
-
-		if doc.shipping_rule:
-			context["available_pickup_locations"] = [
-				{
-					"value": address_name,
-					"label": get_condensed_address(frappe.get_doc("Address", address_name)),
-					**({"selected": True} if address_name == doc.shipping_address_name else {}),
-				}
-				for address_name in frappe.get_all(
-					"Pick-up Location",
-					pluck="address_name",
-					filters={
-						"enabled": 1,
-						"parent": doc.shipping_rule,
-						"parenttype": "Shipping Rule",
-					},
-				)
-			]
+		add_context_for_checkout(doc, context)
 
 	if route == "cart":
 		if any(item.is_free_item and item.item_booking for item in doc.items):
@@ -93,7 +70,79 @@ def get_cart_quotation(doc=None):
 
 			context["credits_balance"] = get_balance(get_customer())
 
+	add_context_for_custom_blocks(doc, route, context)
+
 	return context
+
+
+def add_context_for_custom_blocks(doc, route, context):
+	custom_blocks = context["cart_settings"].get("custom_cart_blocks") or []
+	custom_blocks_by_position: dict[str, list] = {}
+
+	for block in custom_blocks:
+		if route == "cart" and not block.get("show_on_cart"):
+			continue
+		if route == "checkout" and not block.get("show_on_checkout"):
+			continue
+
+		template = block.get("web_template")
+		values = block.get("web_template_values") or {}
+		values = frappe.parse_json(values)
+		values["doc"] = doc
+
+		instanced_block = {
+			"position": block.get("position") or "Last",
+			"show_on_cart": block.get("show_on_cart") or False,
+			"show_on_checkout": block.get("show_on_checkout") or False,
+			"css_class": block.get("css_class") or "",
+			"template": template,
+			"values": values,
+			"add_top_padding": 0,
+			"add_bottom_padding": 0,
+			"add_container": 0,
+		}
+
+		block_position = str(instanced_block.get("position"))
+		if block_position not in custom_blocks_by_position:
+			custom_blocks_by_position[block_position] = []
+		custom_blocks_by_position[block_position].append(instanced_block)
+
+	context["custom_cart_blocks"] = custom_blocks_by_position
+
+
+def add_context_for_checkout(doc, context):
+	context["cart_address_fields"] = get_custom_address_fields(context["cart_settings"])
+
+	if shipping_rules := context["shipping_rules"]:
+		context["shipping_estimates"] = get_estimates_for_shipping(doc, shipping_rules)
+
+	if doc.shipping_rule:
+		context["available_pickup_locations"] = [
+			{
+				"value": address_name,
+				"label": get_condensed_address(frappe.get_doc("Address", address_name)),
+				**({"selected": True} if address_name == doc.shipping_address_name else {}),
+			}
+			for address_name in frappe.get_all(
+				"Pick-up Location",
+				pluck="address_name",
+				filters={
+					"enabled": 1,
+					"parent": doc.shipping_rule,
+					"parenttype": "Shipping Rule",
+				},
+			)
+		]
+
+
+def get_current_route():
+	route = ""
+	if hasattr(frappe.local, "request"):
+		route = frappe.local.request.path.strip("/ ")
+		if not route:
+			route = frappe.local.request.environ.get("HTTP_REFERER")
+			route = route.split("/")[-1] if route else None
+	return route
 
 
 @frappe.whitelist()
@@ -863,27 +912,53 @@ def get_estimates_for_shipping(quotation, shipping_rules: list[str]):
 	return estimates
 
 
-def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True):
+def validate_shipping_rule(quotation, cart_settings=None, throw_exception=True) -> bool:
 	shipping_rules = get_shipping_rules(quotation)
 
-	if not (shipping_rules or quotation.shipping_rule):
-		# Guard clause for when there are no shipping rules involved
-		return True
+	if shipping_rules or quotation.shipping_rule:
+		if not quotation.shipping_rule:
+			if throw_exception:
+				frappe.throw(_("Please select a shipping method"))
+			return False
 
-	if not quotation.shipping_rule:
-		if throw_exception:
-			frappe.throw(_("Please select a shipping method"))
-		return False
+		shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
+		if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
+			if throw_exception:
+				apply_shipping_rule(None)
+				frappe.db.commit()
+				frappe.throw(_("The shipping method is no longer applicable"))
+			return False
 
-	shipping_rules_names = {shipping_rule.name for shipping_rule in shipping_rules}
-	if not shipping_rules or quotation.shipping_rule not in shipping_rules_names:
-		if throw_exception:
-			apply_shipping_rule(None)
-			frappe.db.commit()
-			frappe.throw(_("The shipping method is no longer applicable"))
-		return False
+	return True
 
 
 @frappe.whitelist()
 def rerender_cart():
 	return render_quotation()
+
+
+@frappe.whitelist()
+def get_custom_address_fields(cart_settings):
+	"""Returns custom fields for the address form"""
+
+	if not cart_settings.custom_address_form:
+		return []
+
+	fields = []
+	for field in cart_settings.custom_address_form:
+		if field.fieldtype == "Link":
+			field.fieldtype = "Autocomplete"
+			title_field = frappe.db.get_value("DocType", "Country", "title_field", cache=True)
+			search = ["name as value", f"{title_field} as label"] if title_field else ["name as value"]
+			field.options = []
+			for d in frappe.get_list("Country", fields=search):
+				if title_field:
+					field.options.append({"value": d.value, "label": d.label})
+				else:
+					field.options.append(d.value)
+
+			field.options = frappe.as_json(field.options)
+
+		fields.append(field)
+
+	return fields

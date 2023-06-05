@@ -1,0 +1,86 @@
+{
+  "charts": [
+    {
+      "chart_name": "Budget Variance",
+      "label": "Budget Variance"
+    }
+  ],
+  "content": "[{\"id\":\"GE5WjP3qWo\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Budget Variance\",\"col\":12}},{\"id\":\"YadqWdqtHf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Budgets</span>\",\"col\":12}},{\"id\":\"Fa87w-ufhB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget\",\"col\":3}},{\"id\":\"CvPN_CX01L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Monthly Distribution\",\"col\":3}},{\"id\":\"TSmSau_p39\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget Variance Report\",\"col\":3}},{\"id\":\"AVmmSFCMIz\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Rr98jkKDdU\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Accounting Dimensions</b></span>\",\"col\":12}},{\"id\":\"dNsSNxxXCO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cost Centers\",\"col\":3}},{\"id\":\"Iwm_0MIFOk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cost Center Allocation\",\"col\":3}},{\"id\":\"2RzvrYl2pm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Accounting Dimensions\",\"col\":3}}]",
+  "creation": "2023-05-31 09:01:28.994484",
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "loan",
+  "idx": 0,
+  "is_hidden": 0,
+  "is_standard": 1,
+  "label": "Budget and Analytics",
+  "links": [],
+  "modified": "2023-06-01 05:29:39.665188",
+  "modified_by": "Administrator",
+  "module": "Accounts",
+  "name": "Budget and Analytics",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "Finance",
+  "public": 1,
+  "quick_lists": [],
+  "roles": [],
+  "sequence_id": 5.0,
+  "shortcuts": [
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Monthly Distribution",
+      "link_to": "Monthly Distribution",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} active",
+      "label": "Cost Centers",
+      "link_to": "Cost Center",
+      "stats_filter": "{\"parent_cost_center\":[\"is\",\"set\"],\"disabled\":[\"=\",0]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Green",
+      "columns": 3,
+      "doc_view": "List",
+      "format": "{} submitted",
+      "label": "Budget",
+      "link_to": "Budget",
+      "stats_filter": "{\"docstatus\":[\"=\",\"1\"]}",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Budget Variance Report",
+      "link_to": "Budget Variance Report",
+      "type": "Report"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Accounting Dimensions",
+      "link_to": "Accounting Dimension",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "columns": 3,
+      "doc_view": "List",
+      "label": "Cost Center Allocation",
+      "link_to": "Cost Center Allocation",
+      "type": "DocType"
+    }
+  ],
+  "title": "Budget and Analytics"
+}

@@ -260,7 +260,7 @@
   {
    "fieldname": "actual_end_date",
    "fieldtype": "Date",
-   "label": "Actual End Date (via Time heet)",
+   "label": "Actual End Date (via Timesheet)",
    "oldfieldname": "act_completion_date",
    "oldfieldtype": "Date",
    "read_only": 1

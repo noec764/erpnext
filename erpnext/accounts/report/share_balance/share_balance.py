@@ -3,7 +3,7 @@
 
 
 import frappe
-from frappe import _, msgprint
+from frappe import _
 
 
 def execute(filters=None):
@@ -13,18 +13,17 @@ def execute(filters=None):
 	if not filters.get("date"):
 		frappe.throw(_("Please select date"))
 
-	columns = get_columns(filters)
+	columns = get_columns()
 
-	date = filters.get("date")
+	query_filters = {"is_company": 0}
+	if filters.get("shareholder"):
+		query_filters = {"name": filters.get("shareholder")}
 
 	data = []
 
-	if not filters.get("shareholder"):
-		pass
-	else:
+	for shareholder in frappe.get_all("Shareholder", filters=query_filters, pluck="name"):
 		share_type, no_of_shares, rate, amount = 1, 2, 3, 4
-
-		all_shares = get_all_shares(filters.get("shareholder"))
+		all_shares = get_all_shares(shareholder)
 		for share_entry in all_shares:
 			row = False
 			for datum in data:
@@ -40,7 +39,7 @@ def execute(filters=None):
 			# new entry
 			if not row:
 				row = [
-					filters.get("shareholder"),
+					shareholder,
 					share_entry.share_type,
 					share_entry.no_of_shares,
 					share_entry.rate,
@@ -52,13 +51,13 @@ def execute(filters=None):
 	return columns, data
 
 
-def get_columns(filters):
+def get_columns():
 	columns = [
-		_("Shareholder") + ":Link/Shareholder:150",
-		_("Share Type") + "::90",
-		_("No of Shares") + "::90",
-		_("Average Rate") + ":Currency:90",
-		_("Amount") + ":Currency:90",
+		_("Shareholder") + ":Link/Shareholder:180",
+		_("Share Type") + "::150",
+		_("No of Shares") + ":Float:150",
+		_("Average Rate") + ":Currency:150",
+		_("Amount") + ":Currency:150",
 	]
 	return columns
 

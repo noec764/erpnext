@@ -174,6 +174,8 @@ frappe.ui.form.on('Payment Entry', {
 				}, __('Make'), true);
 			}
 		}
+
+		erpnext.set_accounting_journal(frm)
 	},
 
 	validate_company: (frm) => {
@@ -416,6 +418,10 @@ frappe.ui.form.on('Payment Entry', {
 				}
 			}
 		);
+
+		if (frm.doc.paid_from) {
+			erpnext.set_accounting_journal(frm);
+		}
 	},
 
 	paid_to: function(frm) {
@@ -436,6 +442,10 @@ frappe.ui.form.on('Payment Entry', {
 				}
 			}
 		);
+
+		if (frm.doc.paid_to) {
+			erpnext.set_accounting_journal(frm);
+		}
 	},
 
 	set_account_currency_and_balance: function(frm, account, currency_field,
