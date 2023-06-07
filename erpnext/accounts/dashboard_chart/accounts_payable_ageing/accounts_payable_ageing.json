@@ -9,15 +9,16 @@
  "idx": 0,
  "is_public": 1,
  "is_standard": 1,
- "modified": "2020-07-22 12:29:33.584419",
+ "modified": "2023-06-07 19:01:54.813520",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Payable Ageing",
  "number_of_groups": 0,
  "owner": "Administrator",
  "report_name": "Accounts Payable",
+ "roles": [],
  "timeseries": 0,
- "type": "Donut",
+ "type": "Percentage",
  "use_report_chart": 1,
  "y_axis": []
 }

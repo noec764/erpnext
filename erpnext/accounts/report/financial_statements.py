@@ -583,3 +583,32 @@ def get_filtered_list_for_consolidated_report(filters, period_list):
 			filtered_summary_list.append(period)
 
 	return filtered_summary_list
+
+
+@frappe.whitelist()
+def get_profit_and_loss_summary(filters=None):
+	from frappe.desk.query_report import run
+
+	value = 0.0
+	if filters:
+		filters = frappe.parse_json(filters)
+
+		report_filters = {
+			"company": filters.get("company"),
+			"filter_based_on": "Fiscal Year",
+			"from_fiscal_year": filters.get("fiscal_year") or frappe.db.get_default("Fiscal Year"),
+			"to_fiscal_year": filters.get("fiscal_year") or frappe.db.get_default("Fiscal Year"),
+			"periodicity": "Yearly",
+		}
+
+		result = run(report_name="Profit and Loss Statement", filters=report_filters)
+		summary = result.get("report_summary")
+
+		indicator = filters.get("indicator")
+		index = 0 if indicator == "Income" else (2 if indicator == "Expense" else 4)
+		value = summary[index].get("value")
+
+	return {
+		"value": value,
+		"fieldtype": "Currency",
+	}
