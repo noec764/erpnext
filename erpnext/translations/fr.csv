@@ -4186,7 +4186,7 @@ Expense Taxes and Charges,Frais et charges de la note de frais,
 Expense Type,Type de dépense,
 Expense account is mandatory for item {0},Compte de charge est obligatoire pour l'article {0},
 Expense or Difference account is mandatory for Item {0} as it impacts overall stock value,Compte de Charge et d'Écarts est obligatoire pour objet {0} car il impacte la valeur globale des actions,
-Expense,Charge,Account Validation
+Expense,charges,Account Validation
 Expense,Charges,
 Expenses Included In Asset Valuation,Dépenses incluses dans la valorisation de l'actif,
 Expenses Included In Valuation,Dépenses incluses dans la valorisation,
@@ -5218,7 +5218,7 @@ Income Tax Slab: {0} is disabled,Tranche de taux d'imposition: {0} est désactiv
 Income Tax Slab,Tranche d'impôt sur le revenu,
 Income Tax,Impôt sur le revenu,Salary Component
 Income Tax,Impôt sur le Revenu,
-Income,Revenu,Account Validation
+Income,produits,Account Validation
 Income,Revenus,
 Incoming Bills (Purchase Invoice),Factures entrantes (Facture d'achat),
 Incoming Call Handling Schedule,Calendrier de gestion des appels entrants,
@@ -9698,7 +9698,7 @@ Row {0}: {1} must be greater than 0,Ligne {0}: {1} doit être supérieure à 0,
 Row {0}: {1} {2} cannot be same as {3} (Party Account) {4},Ligne {0}: {1} {2} ne peut pas ête identique à {3} (Compte tiers),
 Row {0}: {1} {2} does not match with {3},Ligne {0} : {1} {2} ne correspond pas à {3},
 Row {0}: {1} {2} of {3} is pledged against Loan {4}.,Ligne {0}: {1} {2} de {3} est engagé pour le prêt {4},
-Row {0}: {3} Account {1} does not belong to Company {2},Ligne {0} : {3} Le compte {1} n'appartient pas à l'entreprise {2}.,
+Row {0}: {3} Account {1} does not belong to Company {2},Ligne {0} : Le compte de {3} {1} n'appartient pas à l'entreprise {2}.,
 Row {0}:Start Date must be before End Date,Ligne {0} : La Date de Début doit être avant la Date de Fin,
 Row {1}: Asset Naming Series is mandatory for the auto creation for item {0},Ligne {1}: Un nom de série est nécessaire pour la création automatique pour l'article {0},
 "Row {1}: Quantity ({0}) cannot be a fraction. To allow this, disable '{2}' in UOM {3}.","Ligne #{1}: La quantité ({0}) ne peut pas être une fraction. Pour l'autoriser, désactivez '{2}' dans l'unité de mesure {3}",
