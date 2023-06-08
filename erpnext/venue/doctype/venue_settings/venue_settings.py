@@ -6,7 +6,9 @@ import datetime
 from urllib.parse import unquote
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
+from frappe.utils import cint
 
 from erpnext.venue.doctype.venue_settings.setup_custom_fields import (
 	multicompany_create_custom_fields,
@@ -49,6 +51,8 @@ class VenueSettings(Document):
 				multicompany_create_custom_fields(self)
 			else:
 				multicompany_delete_custom_fields(self)
+
+		self.configure_uom_conversions()
 
 	## Type hints for fields
 	enable_multi_companies: bool
@@ -101,6 +105,41 @@ class VenueSettings(Document):
 				return ["Venue Selected Company", "company", "=", for_company]
 			return NOT_ALLOWED
 		return None
+
+	def configure_uom_conversions(self):
+		if not self.minute_uom:
+			pass
+
+		for row in self.venue_units_of_measure:
+			duration = cint(row.duration) / 60
+			if value := frappe.db.get_value(
+				"UOM Conversion Factor", dict(from_uom=row.unit_of_measure, to_uom=self.minute_uom), "value"
+			):
+				if value != duration:
+					frappe.db.set_value(
+						"UOM Conversion Factor",
+						dict(from_uom=row.unit_of_measure, to_uom=self.minute_uom),
+						"value",
+						duration,
+					)
+
+			else:
+				category = frappe.db.exists("UOM Category", "Time")
+				if not category:
+					category = frappe.db.exists("UOM Category", _("Time"))
+
+				if not category:
+					category_doc = frappe.new_doc("UOM Category", _("Time"))
+					category_doc.category_name = _("Time")
+					category_doc.insert(ignore_permissions=True)
+					category = category_doc.name
+
+				conversion = frappe.new_doc("UOM Conversion Factor")
+				conversion.category = category
+				conversion.from_uom = row.unit_of_measure
+				conversion.to_uom = self.minute_uom
+				conversion.value = duration
+				conversion.insert(ignore_permissions=True)
 
 
 MULTICOMPANY_COOKIE_NAME = "company"
@@ -318,3 +357,10 @@ def create_role_profile_fields():
 		custom_fields[dt] = [df]
 
 	create_custom_fields(custom_fields)
+
+
+@frappe.whitelist()
+def get_duration_for_uom(uom, minute_uom):
+	return (
+		frappe.db.get_value("UOM Conversion Factor", dict(from_uom=uom, to_uom=minute_uom), "value") * 60
+	)

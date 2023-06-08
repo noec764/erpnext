@@ -55,6 +55,23 @@ frappe.ui.form.on('Venue Cart Settings', {
 	},
 })
 
+frappe.ui.form.on('Venue Units of Measure', {
+	unit_of_measure(frm, cdt, cdn) {
+		const row = locals[cdt][cdn]
+		if (row.unit_of_measure && frm.doc.minute_uom) {
+			frappe.call({
+				method: "erpnext.venue.doctype.venue_settings.venue_settings.get_duration_for_uom",
+				args: {
+					uom: row.unit_of_measure,
+					minute_uom: frm.doc.minute_uom
+				}
+			}).then(r => {
+				frappe.model.set_value(cdt, cdn, "duration", r.message);
+			})
+		}
+	}
+})
+
 frappe.tour['Venue Settings'] = [
 	{
 		fieldname: "minute_uom",
