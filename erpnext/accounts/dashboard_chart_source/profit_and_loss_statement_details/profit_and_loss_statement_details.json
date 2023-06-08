@@ -1,0 +1,13 @@
+{
+ "creation": "2023-06-08 13:46:30.343688",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2023-06-08 13:46:30.343688",
+ "modified_by": "Administrator",
+ "module": "Accounts",
+ "name": "Profit And Loss Statement Details",
+ "owner": "Administrator",
+ "source_name": "Profit And Loss Statement Details",
+ "timeseries": 0
+}

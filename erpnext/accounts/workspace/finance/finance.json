@@ -1,6 +1,10 @@
 {
  "charts": [
   {
+   "chart_name": "Income Details",
+   "label": "Main Income Types"
+  },
+  {
    "chart_name": "Bank Balance",
    "label": "Bank Balance"
   },
@@ -11,10 +15,14 @@
   {
    "chart_name": "Accounts Payable Ageing",
    "label": "Accounts Payable Ageing"
+  },
+  {
+   "chart_name": "Expense Details",
+   "label": "Main Expense Types"
   }
  ],
  "color": "#39E4A5",
- "content": "[{\"id\":\"QT5RyoWHua\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Finance</span>\",\"col\":12}},{\"id\":\"FCjUI03Xsk\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Income This Year\",\"col\":4}},{\"id\":\"DW-BHqSoE7\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Expense This Year\",\"col\":4}},{\"id\":\"OHCipCAftg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Profit This Year\",\"col\":4}},{\"id\":\"EhYD8k6aSq\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d6k2e4YWCG\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Accounts Receivable Ageing\",\"col\":6}},{\"id\":\"mwjDD5uhaQ\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Accounts Payable Ageing\",\"col\":6}},{\"id\":\"-W4zk21f9v\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"nYoYhrJS8w\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Balance\",\"col\":12}}]",
+ "content": "[{\"id\":\"QT5RyoWHua\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Finance</span>\",\"col\":12}},{\"id\":\"FCjUI03Xsk\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Income This Year\",\"col\":4}},{\"id\":\"DW-BHqSoE7\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Expense This Year\",\"col\":4}},{\"id\":\"OHCipCAftg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Profit This Year\",\"col\":4}},{\"id\":\"EhYD8k6aSq\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d6k2e4YWCG\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Accounts Receivable Ageing\",\"col\":6}},{\"id\":\"mwjDD5uhaQ\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Accounts Payable Ageing\",\"col\":6}},{\"id\":\"5XJKnjTi49\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mrbmiiqh-n\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Main Income Types\",\"col\":6}},{\"id\":\"GCtE9v1M5Y\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Main Expense Types\",\"col\":6}},{\"id\":\"-W4zk21f9v\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"nYoYhrJS8w\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bank Balance\",\"col\":12}}]",
  "creation": "2023-05-31 08:58:55.737501",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -26,7 +34,7 @@
  "is_standard": 1,
  "label": "Finance",
  "links": [],
- "modified": "2023-06-08 10:54:38.942789",
+ "modified": "2023-06-08 14:47:52.468422",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Finance",
