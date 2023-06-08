@@ -26,6 +26,7 @@ def after_install():
 		frappe.db.set_value("Role", role, "desk_access", 0)
 	create_default_cash_flow_mapper_templates()
 	create_incoterms()
+	create_default_role_profiles()
 	add_company_to_session_defaults()
 	add_standard_navbar_items()
 	add_app_name()
@@ -213,3 +214,16 @@ def set_venue_settings_defaults():
 			venue_settings.db_set("minute_uom", "Minute")
 	except Exception:
 		frappe.log_error()
+
+
+def create_default_role_profiles():
+	for module in ["Accounts", "Stock", "Manufacturing"]:
+		create_role_profile(module)
+
+
+def create_role_profile(module):
+	role_profile = frappe.new_doc("Role Profile")
+	role_profile.role_profile = _("{0} User").format(module)
+	role_profile.append("roles", {"role": module + " User"})
+	role_profile.append("roles", {"role": module + " Manager"})
+	role_profile.insert()
