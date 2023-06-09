@@ -594,7 +594,7 @@ def get_profit_and_loss_summary(filters=None):
 		filters = frappe.parse_json(filters)
 
 		report_filters = {
-			"company": filters.get("company"),
+			"company": filters.get("company") or frappe.db.get_default("Company"),
 			"filter_based_on": "Fiscal Year",
 			"from_fiscal_year": filters.get("fiscal_year") or frappe.db.get_default("Fiscal Year"),
 			"to_fiscal_year": filters.get("fiscal_year") or frappe.db.get_default("Fiscal Year"),
