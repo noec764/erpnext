@@ -2364,7 +2364,7 @@ erpnext.apply_putaway_rule = (frm, purpose=null) => {
 
 
 erpnext.set_accounting_journal = (frm) => {
-	if (frm.doc.docstatus == 0 && frappe.meta.has_field(doc.doctype, "accounting_journal")) {
+	if (frm.doc.docstatus == 0 && frappe.meta.has_field(frm.doc.doctype, "accounting_journal")) {
 		frappe.call({
 			method: "erpnext.accounts.doctype.accounting_journal.accounting_journal.get_accounting_journal",
 			args: {
