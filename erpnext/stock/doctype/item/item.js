@@ -848,12 +848,6 @@ $.extend(erpnext.item, {
 						$(modal).removeClass("modal-dialog-scrollable");
 					}
 				})
-				.on("awesomplete-close", () => {
-					let modal = field.$input.parents('.modal-dialog')[0];
-					if (modal) {
-						$(modal).addClass("modal-dialog-scrollable");
-					}
-				});
 		});
 	},
 

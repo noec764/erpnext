@@ -343,6 +343,7 @@ erpnext.patches.dokos.v3_0.gocardless_payments_corrections
 erpnext.patches.dokos.v3_0.migrate_to_new_booking_credit_system
 erpnext.patches.dokos.v3_0.fix_french_success_action_message_for_quotation_and_others
 erpnext.patches.dokos.v3_0.set_venue_settings_defaults
+erpnext.patches.dokos.v3_0.set_units_of_measure_in_venue_settings
 
 # below migration patch should always run last
 erpnext.patches.v14_0.migrate_gl_to_payment_ledger

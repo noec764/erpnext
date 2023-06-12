@@ -107,7 +107,7 @@ function get_filters() {
 			"label": __("Filter Based On"),
 			"fieldtype": "Select",
 			"options": ["Fiscal Year", "Date Range"],
-			"default": ["Fiscal Year"],
+			"default": "Fiscal Year",
 			"reqd": 1,
 			on_change: function() {
 				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');

@@ -146,6 +146,10 @@ class GoCardlessSettings(PaymentGatewayController):
 		gc_payments = GoCardlessPayments(self).get(payments)
 		gc_payment_links = getattr(gc_payments, "links", {})
 		gc_payout = getattr(gc_payment_links, "payout")
+
+		if not gc_payout:
+			frappe.throw(_("This payment has not been paid out yet"))
+
 		payout_items = GoCardlessPayoutItems(self).get_list(gc_payout)
 
 		tax_amount = self.get_tax_amount(payout_items.records, gc_payments.id)

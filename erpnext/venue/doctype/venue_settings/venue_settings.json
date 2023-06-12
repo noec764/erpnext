@@ -15,15 +15,17 @@
   "allow_event_cancellation",
   "cancellation_delay",
   "role_allowed_to_skip_cart",
-  "units_of_measure_section",
-  "minute_uom",
-  "column_break_8",
-  "month_uom",
   "event_registration_section",
   "registration_item_code",
   "multi_venue_section",
   "enable_multi_companies",
-  "cart_settings_overrides"
+  "cart_settings_overrides",
+  "unit_of_measure_tab",
+  "minute_uom",
+  "column_break_8",
+  "month_uom",
+  "section_break_20",
+  "venue_units_of_measure"
  ],
  "fields": [
   {
@@ -61,11 +63,6 @@
    "fieldname": "sync_with_google_calendar",
    "fieldtype": "Check",
    "label": "Automatically synchronize with Google Calendar"
-  },
-  {
-   "fieldname": "units_of_measure_section",
-   "fieldtype": "Section Break",
-   "label": "Units of Measure"
   },
   {
    "fieldname": "month_uom",
@@ -131,7 +128,7 @@
   },
   {
    "fieldname": "multi_venue_section",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Multi-venue mode"
   },
   {
@@ -140,11 +137,26 @@
    "fieldtype": "Link",
    "label": "Role allowed to skip shopping cart",
    "options": "Role"
+  },
+  {
+   "fieldname": "unit_of_measure_tab",
+   "fieldtype": "Tab Break",
+   "label": "Units of Measure"
+  },
+  {
+   "fieldname": "venue_units_of_measure",
+   "fieldtype": "Table",
+   "label": "Venue Units of Measure",
+   "options": "Venue Units of Measure"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2023-02-21 20:29:40.522849",
+ "modified": "2023-06-08 15:08:57.220809",
  "modified_by": "Administrator",
  "module": "Venue",
  "name": "Venue Settings",

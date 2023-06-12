@@ -136,7 +136,7 @@ def get_gl_entries(company, fiscal_year):
 			employee.name.as_("empName"),
 		)
 		.where((gle.company == company) & (gle.fiscal_year == fiscal_year))
-		.groupby(gle.voucher_type, gle.voucher_no, gle.account, gle.accounting_entry_number)
+		.groupby(gle.voucher_type, gle.voucher_no, gle.account, gle.name, gle.accounting_entry_number)
 		.orderby(gle.posting_date, gle.voucher_no, gle.accounting_entry_number)
 	)
 
