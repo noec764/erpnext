@@ -75,7 +75,7 @@ def get(
 		initial_balance = get_bank_transaction_balance_on(bank_account, dates[0])
 		balance = initial_balance.get("balance")
 		for label in dates:
-			balance += data[bank_account].get(label)
+			balance += flt(data[bank_account].get(label, 0.0))
 			dataset["values"].append(balance)
 
 		datasets.append(dataset)
