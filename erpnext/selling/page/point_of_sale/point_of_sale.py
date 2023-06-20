@@ -67,7 +67,7 @@ def search_by_term(search_term, warehouse, price_list):
 			"ifnull(valid_upto, '2999-12-31')": (">=", nowdate()),
 			"batch_no": batch_no,
 		},
-		fields=["uom", "stock_uom", "currency", "price_list_rate", "batch_no"],
+		fields=["uom", "currency", "price_list_rate", "batch_no"],
 	)
 
 	def __sort(p):
