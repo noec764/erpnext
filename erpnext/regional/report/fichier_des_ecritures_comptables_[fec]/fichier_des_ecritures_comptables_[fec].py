@@ -219,7 +219,7 @@ def get_result(company, fiscal_year):
 		else:
 			EcritureLib = d.get("voucher_type")
 
-		EcritureLib = (EcritureLib or "").replace("\n", " ")
+		EcritureLib = " ".join(EcritureLib.splitlines())
 
 		PieceDate = format_datetime(d.get("GlPostDate"), "yyyyMMdd")
 
@@ -249,9 +249,9 @@ def get_result(company, fiscal_year):
 			"EcritureNum": EcritureNum,
 			"EcritureDate": EcritureDate,
 			"CompteNum": CompteNum,
-			"CompteLib": CompteLib,
+			"CompteLib": CompteLib.strip(),
 			"CompAuxNum": CompAuxNum,
-			"CompAuxLib": CompAuxLib,
+			"CompAuxLib": CompAuxLib.strip(),
 			"PieceRefType": PieceRefType,
 			"PieceRef": PieceRef,
 			"PieceDate": PieceDate,
