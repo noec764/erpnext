@@ -174,7 +174,6 @@ def get_batch_qty(
 	:param batch_no: Optional - give qty for this batch no
 	:param warehouse: Optional - give qty for this warehouse
 	:param item_code: Optional - give qty for this item"""
-
 	sle = frappe.qb.DocType("Stock Ledger Entry")
 
 	out = 0
@@ -184,6 +183,9 @@ def get_batch_qty(
 			.select(Sum(sle.actual_qty))
 			.where((sle.is_cancelled == 0) & (sle.warehouse == warehouse) & (sle.batch_no == batch_no))
 		)
+
+		if item_code:
+			query = query.where(sle.item_code == item_code)
 
 		if posting_date:
 			if posting_time is None:
