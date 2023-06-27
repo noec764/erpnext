@@ -53,7 +53,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_single_threshold_tds(self):
@@ -90,7 +89,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_category_checks(self):
@@ -117,7 +115,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		self.assertEqual(pi1.taxes, [])
 
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_cumulative_threshold_tcs(self):
@@ -153,6 +150,59 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
+			d.cancel()
+
+	def test_tcs_on_unallocated_advance_payments(self):
+		frappe.db.set_value(
+			"Customer", "Test TCS Customer", "tax_withholding_category", "Cumulative Threshold TCS"
+		)
+
+		vouchers = []
+
+		# create advance payment
+		pe = create_payment_entry(
+			payment_type="Receive", party_type="Customer", party="Test TCS Customer", paid_amount=20000
+		)
+		pe.paid_from = "Debtors - _TC"
+		pe.paid_to = "Cash - _TC"
+		pe.submit()
+		vouchers.append(pe)
+
+		# create invoice
+		si1 = create_sales_invoice(customer="Test TCS Customer", rate=5000)
+		si1.submit()
+		vouchers.append(si1)
+
+		# reconcile
+		pr = frappe.get_doc("Payment Reconciliation")
+		pr.company = "_Test Company"
+		pr.party_type = "Customer"
+		pr.party = "Test TCS Customer"
+		pr.receivable_payable_account = "Debtors - _TC"
+		pr.get_unreconciled_entries()
+		invoices = [x.as_dict() for x in pr.get("invoices")]
+		payments = [x.as_dict() for x in pr.get("payments")]
+		pr.allocate_entries(frappe._dict({"invoices": invoices, "payments": payments}))
+		pr.reconcile()
+
+		# make another invoice
+		# sum of unallocated amount from payment entry and this sales invoice will breach cumulative threashold
+		# TDS should be calculated
+		si2 = create_sales_invoice(customer="Test TCS Customer", rate=15000)
+		si2.submit()
+		vouchers.append(si2)
+
+		si3 = create_sales_invoice(customer="Test TCS Customer", rate=10000)
+		si3.submit()
+		vouchers.append(si3)
+
+		# assert tax collection on total invoice amount created until now
+		tcs_charged = sum([d.base_tax_amount for d in si2.taxes if d.account_head == "TCS - _TC"])
+		tcs_charged += sum([d.base_tax_amount for d in si3.taxes if d.account_head == "TCS - _TC"])
+		self.assertEqual(tcs_charged, 1500)
+
+		# cancel invoice and payments to avoid clashing
+		for d in reversed(vouchers):
 			d.reload()
 			d.cancel()
 
@@ -188,7 +238,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tds_calculation_on_net_total_partial_tds(self):
@@ -229,7 +278,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 		orders = []
@@ -291,7 +339,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_category_voucher_display(self):
@@ -334,7 +381,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
-			d.reload()
 			d.cancel()
 
 	def test_tax_withholding_via_payment_entry_for_advances(self):
