@@ -37,6 +37,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# surpasses cumulative threshhold
 		pi = create_purchase_invoice(supplier="Test TDS Supplier")
 		pi.submit()
+		pi.reload()
 
 		# assert equal tax deduction on total invoice amount until now
 		self.assertEqual(pi.taxes_and_charges_deducted, 3000)
@@ -46,6 +47,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# TDS is already deducted, so from onward system will deduct the TDS on every invoice
 		pi = create_purchase_invoice(supplier="Test TDS Supplier", rate=5000)
 		pi.submit()
+		pi.reload()
 
 		# assert equal tax deduction on total invoice amount until now
 		self.assertEqual(pi.taxes_and_charges_deducted, 500)
@@ -62,6 +64,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		)
 		pi = create_purchase_invoice(supplier="Test TDS Supplier1", rate=20000)
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		self.assertEqual(pi.taxes_and_charges_deducted, 2000)
@@ -82,6 +85,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		pi = create_purchase_invoice(supplier="Test TDS Supplier1")
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		# TDS amount is 1000 because in previous invoices it's already deducted
@@ -102,11 +106,13 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi.apply_tds = 0
 		pi.save()
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		# Second Invoice will apply TDS checked
 		pi1 = create_purchase_invoice(supplier="Test TDS Supplier3", rate=20000)
 		pi1.submit()
+		pi1.reload()
 		invoices.append(pi1)
 
 		# Cumulative threshold is 30000
@@ -127,12 +133,14 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		for _ in range(2):
 			si = create_sales_invoice(customer="Test TCS Customer")
 			si.submit()
+			si.reload()
 			invoices.append(si)
 
 		# create another invoice whose total when added to previously created invoice,
 		# surpasses cumulative threshold
 		si = create_sales_invoice(customer="Test TCS Customer", rate=12000)
 		si.submit()
+		si.reload()
 
 		# assert tax collection on total invoice amount created until now
 		tcs_charged = sum([d.base_tax_amount for d in si.taxes if d.account_head == "TCS - _TC"])
@@ -143,6 +151,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# TCS is already collected once, so going forward system will collect TCS on every invoice
 		si = create_sales_invoice(customer="Test TCS Customer", rate=5000)
 		si.submit()
+		si.reload()
 
 		tcs_charged = sum(d.base_tax_amount for d in si.taxes if d.account_head == "TCS - _TC")
 		self.assertEqual(tcs_charged, 500)
@@ -166,11 +175,13 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pe.paid_from = "Debtors - _TC"
 		pe.paid_to = "Cash - _TC"
 		pe.submit()
+		pe.reload()
 		vouchers.append(pe)
 
 		# create invoice
 		si1 = create_sales_invoice(customer="Test TCS Customer", rate=5000)
 		si1.submit()
+		si1.reload()
 		vouchers.append(si1)
 
 		# reconcile
@@ -190,10 +201,12 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# TDS should be calculated
 		si2 = create_sales_invoice(customer="Test TCS Customer", rate=15000)
 		si2.submit()
+		si2.reload()
 		vouchers.append(si2)
 
 		si3 = create_sales_invoice(customer="Test TCS Customer", rate=10000)
 		si3.submit()
+		si3.reload()
 		vouchers.append(si3)
 
 		# assert tax collection on total invoice amount created until now
@@ -272,6 +285,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		)
 		pi.save()
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		self.assertEqual(pi.taxes[0].tax_amount, 5500)
@@ -326,6 +340,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi.tax_withholding_category = "Test Service Category"
 		pi.save()
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		# Second Invoice will apply TDS checked
@@ -333,6 +348,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi1.tax_withholding_category = "Test Goods Category"
 		pi1.save()
 		pi1.submit()
+		pi1.reload()
 		invoices.append(pi1)
 
 		self.assertEqual(pi1.taxes[0].tax_amount, 250)
@@ -352,6 +368,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi.tax_withholding_category = "Test Multi Invoice Category"
 		pi.save()
 		pi.submit()
+		pi.reload()
 		invoices.append(pi)
 
 		pi1 = create_purchase_invoice(supplier="Test TDS Supplier6", rate=2000, do_not_save=True)
@@ -361,6 +378,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi1.tax_withholding_category = "Test Multi Invoice Category"
 		pi1.save()
 		pi1.submit()
+		pi1.reload()
 		invoices.append(pi1)
 
 		pi2 = create_purchase_invoice(supplier="Test TDS Supplier6", rate=9000, do_not_save=True)
@@ -368,6 +386,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pi2.tax_withholding_category = "Test Multi Invoice Category"
 		pi2.save()
 		pi2.submit()
+		pi2.reload()
 		invoices.append(pi2)
 
 		pi2.load_from_db()
