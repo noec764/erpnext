@@ -1100,12 +1100,14 @@ class TestStockEntry(FrappeTestCase):
 		retention_entry.submit()
 
 		qty_in_usable_warehouse = get_batch_qty(
-			receipt_entry.get("items")[0].batch_no, "_Test Warehouse - _TC", "_Test Item"
+			batch_no=receipt_entry.get("items")[0].batch_no,
+			warehouse="_Test Warehouse - _TC",
+			item_code=None,
 		)
 		qty_in_retention_warehouse = get_batch_qty(
-			receipt_entry.get("items")[0].batch_no,
-			"Test Warehouse for Sample Retention - _TC",
-			"_Test Item",
+			batch_no=receipt_entry.get("items")[0].batch_no,
+			warehouse="Test Warehouse for Sample Retention - _TC",
+			item_code=None,
 		)
 
 		self.assertEqual(qty_in_usable_warehouse, 36)
