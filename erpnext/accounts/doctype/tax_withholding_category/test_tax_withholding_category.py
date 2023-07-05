@@ -55,6 +55,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# delete invoices to avoid clashing
 		for d in reversed(invoices):
+			d.reload()
 			d.cancel()
 
 	def test_single_threshold_tds(self):
