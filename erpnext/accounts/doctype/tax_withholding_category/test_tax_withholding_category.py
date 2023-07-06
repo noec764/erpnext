@@ -252,6 +252,7 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		# cancel invoices to avoid clashing
 		for d in reversed(invoices):
+			d.reload()
 			d.cancel()
 
 	def test_tds_calculation_on_net_total_partial_tds(self):
