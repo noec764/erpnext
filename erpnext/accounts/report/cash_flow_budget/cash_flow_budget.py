@@ -230,13 +230,13 @@ class CashFlowBudget:
 					next_invoicing_date,
 					self.get_average_payment_age(subscription.customer, self.receivables_report),
 				)
-				if getdate(period.to_date) >= invoicing_date_with_delay >= getdate(period.from_date):
+				if getdate(period.to_date) >= getdate(invoicing_date_with_delay) >= getdate(period.from_date):
 					self.subscriptions[period.key] += flt(subscription.total)
 					self.add_details(
 						details, subscription.customer, subscription.name, flt(subscription.total), period.key
 					)
 
-				if getdate(period.to_date) >= next_invoicing_date >= getdate(period.from_date):
+				if getdate(period.to_date) >= getdate(next_invoicing_date) >= getdate(period.from_date):
 					next_invoicing_date = add_to_date(
 						next_invoicing_date,
 						**self.get_billing_cycle_data(

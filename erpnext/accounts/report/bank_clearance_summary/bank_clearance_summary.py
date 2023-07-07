@@ -1,7 +1,3 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
 import frappe
 from frappe import _
 from frappe.query_builder.custom import ConstantColumn
@@ -152,5 +148,5 @@ def get_entries(filters):
 
 	return sorted(
 		journal_entries + payment_entries + loan_disbursements + loan_repayments,
-		key=lambda k: k[2] or getdate(nowdate()),
+		key=lambda k: k[2].strftime("%H%M%S") or getdate(nowdate()),
 	)
