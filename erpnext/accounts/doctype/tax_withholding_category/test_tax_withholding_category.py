@@ -13,13 +13,20 @@ test_dependencies = ["Supplier Group", "Customer Group"]
 
 class TestTaxWithholdingCategory(unittest.TestCase):
 	@classmethod
-	def setUpClass(self):
+	def setUpClass(cls):
 		# create relevant supplier, etc
 		create_records()
 		create_tax_withholding_category_records()
 
+	def setUp(self) -> None:
+		frappe.db.savepoint("savepoint")
+		super().setUp()
+
 	def tearDown(self):
+		# cancel invoice and payments to avoid clashing
+		frappe.db.rollback(save_point="savepoint")
 		cancel_invoices()
+		super().tearDown()
 
 	def test_cumulative_threshold_tds(self):
 		frappe.db.set_value(
@@ -52,11 +59,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# assert equal tax deduction on total invoice amount until now
 		self.assertEqual(pi.taxes_and_charges_deducted, 500)
 		invoices.append(pi)
-
-		# delete invoices to avoid clashing
-		for d in reversed(invoices):
-			d.reload()
-			d.cancel()
 
 	def test_single_threshold_tds(self):
 		invoices = []
@@ -92,10 +94,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# TDS amount is 1000 because in previous invoices it's already deducted
 		self.assertEqual(pi.taxes_and_charges_deducted, 1000)
 
-		# delete invoices to avoid clashing
-		for d in reversed(invoices):
-			d.cancel()
-
 	def test_tax_withholding_category_checks(self):
 		invoices = []
 		frappe.db.set_value(
@@ -120,9 +118,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# Threshold calculation should be only on the Second invoice
 		# Second didn't breach, no TDS should be applied
 		self.assertEqual(pi1.taxes, [])
-
-		for d in reversed(invoices):
-			d.cancel()
 
 	def test_cumulative_threshold_tcs(self):
 		frappe.db.set_value(
@@ -158,10 +153,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		self.assertEqual(tcs_charged, 500)
 		invoices.append(si)
 
-		# cancel invoices to avoid clashing
-		for d in reversed(invoices):
-			d.cancel()
-
 	def test_tcs_on_unallocated_advance_payments(self):
 		frappe.db.set_value(
 			"Customer", "Test TCS Customer", "tax_withholding_category", "Cumulative Threshold TCS"
@@ -176,13 +167,11 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		pe.paid_from = "Debtors - _TC"
 		pe.paid_to = "Cash - _TC"
 		pe.submit()
-		pe.reload()
 		vouchers.append(pe)
 
 		# create invoice
 		si1 = create_sales_invoice(customer="Test TCS Customer", rate=5000)
 		si1.submit()
-		si1.reload()
 		vouchers.append(si1)
 
 		# reconcile
@@ -202,23 +191,16 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		# TDS should be calculated
 		si2 = create_sales_invoice(customer="Test TCS Customer", rate=15000)
 		si2.submit()
-		si2.reload()
 		vouchers.append(si2)
 
 		si3 = create_sales_invoice(customer="Test TCS Customer", rate=10000)
 		si3.submit()
-		si3.reload()
 		vouchers.append(si3)
 
 		# assert tax collection on total invoice amount created until now
 		tcs_charged = sum([d.base_tax_amount for d in si2.taxes if d.account_head == "TCS - _TC"])
 		tcs_charged += sum([d.base_tax_amount for d in si3.taxes if d.account_head == "TCS - _TC"])
 		self.assertEqual(tcs_charged, 1500)
-
-		# cancel invoice and payments to avoid clashing
-		for d in reversed(vouchers):
-			d.reload()
-			d.cancel()
 
 	def test_tds_calculation_on_net_total(self):
 		frappe.db.set_value(
@@ -249,11 +231,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		invoices.append(pi1)
 
 		self.assertEqual(pi1.taxes[0].tax_amount, 4000)
-
-		# cancel invoices to avoid clashing
-		for d in reversed(invoices):
-			d.reload()
-			d.cancel()
 
 	def test_tds_calculation_on_net_total_partial_tds(self):
 		frappe.db.set_value(
@@ -328,10 +305,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 
 		self.assertEqual(po.taxes[0].tax_amount, 5500)
 
-		# cancel orders to avoid clashing
-		for d in reversed(orders):
-			d.cancel()
-
 	def test_multi_category_single_supplier(self):
 		frappe.db.set_value(
 			"Supplier", "Test TDS Supplier5", "tax_withholding_category", "Test Service Category"
@@ -354,10 +327,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		invoices.append(pi1)
 
 		self.assertEqual(pi1.taxes[0].tax_amount, 250)
-
-		# cancel invoices to avoid clashing
-		for d in reversed(invoices):
-			d.cancel()
 
 	def test_tax_withholding_category_voucher_display(self):
 		frappe.db.set_value(
@@ -399,10 +368,6 @@ class TestTaxWithholdingCategory(unittest.TestCase):
 		self.assertTrue(pi2.tax_withheld_vouchers[0].taxable_amount == pi1.net_total)
 		self.assertTrue(pi2.tax_withheld_vouchers[1].voucher_name == pi.name)
 		self.assertTrue(pi2.tax_withheld_vouchers[1].taxable_amount == pi.net_total)
-
-		# cancel invoices to avoid clashing
-		for d in reversed(invoices):
-			d.cancel()
 
 	def test_tax_withholding_via_payment_entry_for_advances(self):
 		frappe.db.set_value(
