@@ -38,6 +38,12 @@ frappe.ready(() => {
 				label: __('Message'),
 				fieldname: 'message',
 				reqd: 1
+			},
+			{
+				fieldtype: 'Data',
+				label: __('Item'),
+				fieldname: 'item_code',
+				hidden: 1
 			}
 		],
 		primary_action: send_inquiry,
@@ -49,13 +55,15 @@ frappe.ready(() => {
 		const doc = Object.assign({}, values);
 		delete doc.subject;
 		delete doc.message;
+		delete doc.item_code;
 
 		d.hide();
 
 		frappe.call('erpnext.e_commerce.shopping_cart.cart.create_lead_for_item_inquiry', {
 			lead: doc,
 			subject: values.subject,
-			message: values.message
+			message: values.message,
+			item: values.item_code,
 		}).then(r => {
 			if (r.message) {
 				d.clear();
@@ -66,6 +74,7 @@ frappe.ready(() => {
 	$('.btn-inquiry').click((e) => {
 		const $btn = $(e.target);
 		const item_code = $btn.data('item-code');
+		d.set_value('item', item_code);
 		d.set_value('subject', __('Inquiry about') + " " + item_code);
 		if (!['Administrator', 'Guest'].includes(frappe.session.user)) {
 			d.set_value('email_id', frappe.session.user);

@@ -372,7 +372,7 @@ def get_customer_address():
 
 
 @frappe.whitelist(allow_guest=True)
-def create_lead_for_item_inquiry(lead, subject, message):
+def create_lead_for_item_inquiry(lead, subject, message, item=None):
 	lead = frappe.parse_json(lead)
 	lead_doc = frappe.new_doc("Lead")
 	for fieldname in ("lead_name", "company_name", "email_id", "phone"):
@@ -395,14 +395,13 @@ def create_lead_for_item_inquiry(lead, subject, message):
 
 	lead_doc.add_comment(
 		"Comment",
-		text="""
+		text=f"""
 		<div>
 			<h5>{subject}</h5>
+			<h6>{_("Item")}: {item or ""}</h6>
 			<p>{message}</p>
 		</div>
-	""".format(
-			subject=subject, message=message
-		),
+	""",
 	)
 
 	return lead_doc
