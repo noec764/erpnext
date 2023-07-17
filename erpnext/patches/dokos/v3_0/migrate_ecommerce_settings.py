@@ -6,6 +6,7 @@ def execute():
 		return
 
 	frappe.reload_doc("e-commerce", "doctype", "e commerce settings")
+	frappe.reload_doc("e-commerce", "doctype", "Custom Cart Block")
 
 	shopping_cart = frappe._dict(
 		{
