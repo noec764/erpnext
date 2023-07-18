@@ -701,11 +701,24 @@ def get_party(user=None):
 		customer.flags.ignore_mandatory = True
 		customer.insert(ignore_permissions=True)
 
-		contact = frappe.new_doc("Contact")
-		contact.update({"first_name": fullname, "email_ids": [{"email_id": user, "is_primary": 1}]})
+		first_name = frappe.db.get_value("User", user, "first_name")
+		last_name = frappe.db.get_value("User", user, "last_name")
+		if first_name and last_name:
+			contact = frappe.get_doc(
+				"Contact",
+				{
+					"first_name": first_name,
+					"last_name": last_name,
+				}
+			)
+		else:
+			contact = frappe.new_doc("Contact")
+			contact.update({"first_name": fullname})
+			contact.insert(ignore_permissions=True)
+		contact.update({"email_ids": [{"email_id": user, "is_primary": 1}]})
 		contact.append("links", dict(link_doctype="Customer", link_name=customer.name))
 		contact.flags.ignore_mandatory = True
-		contact.insert(ignore_permissions=True)
+		contact.save(ignore_permissions=True)
 
 		return customer
 
