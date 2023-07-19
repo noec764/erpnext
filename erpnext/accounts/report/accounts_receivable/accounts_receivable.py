@@ -892,7 +892,7 @@ class ReceivablePayableReport(object):
 
 	def get_columns(self):
 		self.columns = []
-		self.add_column("Posting Date", fieldtype="Date")
+		self.add_column(_("Posting Date"), fieldname="posting_date", fieldtype="Date")
 		self.add_column(
 			label=_(self.party_type),
 			fieldname="party",
@@ -901,7 +901,7 @@ class ReceivablePayableReport(object):
 			width=180,
 		)
 		self.add_column(
-			label="Receivable Account" if self.party_type == "Customer" else "Payable Account",
+			label=_("Receivable Account") if self.party_type == "Customer" else _("Payable Account"),
 			fieldname="party_account",
 			fieldtype="Link",
 			options="Account",

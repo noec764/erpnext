@@ -50,5 +50,10 @@ frappe.query_reports["Cash Flow Budget"] = {
 		}
 
 		return value;
+	},
+	get_datatable_options(options) {
+		return Object.assign(options, {
+			collapse_all_rows: true
+		})
 	}
 };
