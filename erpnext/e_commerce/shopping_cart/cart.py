@@ -393,12 +393,17 @@ def create_lead_for_item_inquiry(lead, subject, message, item=None):
 		frappe.clear_messages()
 		lead_doc = frappe.get_doc("Lead", {"email_id": lead["email_id"]})
 
+	item_code_and_name = ""
+	if item:
+		item_name = frappe.db.get_value("Item", item, "item_name")
+		item_code_and_name = f'<h6>{_("Item")}: {item_name or ""} ({item})</h6>'
+
 	lead_doc.add_comment(
 		"Comment",
 		text=f"""
 		<div>
 			<h5>{subject}</h5>
-			<h6>{_("Item")}: {item or ""}</h6>
+			{item_code_and_name}
 			<p>{message}</p>
 		</div>
 	""",
