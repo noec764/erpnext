@@ -17,13 +17,16 @@ class DeliveryTrip(Document):
 
 		# Google Maps returns distances in meters by default
 		self.default_distance_uom = (
-			frappe.db.get_single_value("Global Defaults", "default_distance_unit") or "Meter"
+			frappe.db.get_single_value("Global Defaults", "default_distance_unit") or frappe._("Meter")
 		)
 		self.uom_conversion_factor = frappe.db.get_value(
-			"UOM Conversion Factor", {"from_uom": "Meter", "to_uom": self.default_distance_uom}, "value"
+			"UOM Conversion Factor", {"from_uom": frappe._("Meter"), "to_uom": self.default_distance_uom}, "value"
 		)
 
 	def validate(self):
+		if self._action == "submit" and not self.driver:
+			frappe.throw(_("A driver must be set to submit."))
+
 		self.validate_stop_addresses()
 
 	def on_submit(self):

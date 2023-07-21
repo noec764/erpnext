@@ -16,7 +16,7 @@ erpnext.utils.CRMActivities = class CRMActivities {
 			// remove frappe-control class to avoid absolute position for action-btn
 			$(this.all_activities_wrapper).removeClass('frappe-control');
 			// hide new event button
-			$('.timeline-actions').find('.btn-secondary-dark').hide();
+			$('.timeline-actions').find('.btn-default').hide();
 			// hide new comment box
 			$(".comment-box").hide();
 			// show only communications by default

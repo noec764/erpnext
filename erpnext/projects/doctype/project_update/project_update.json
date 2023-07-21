@@ -19,7 +19,7 @@
  "fields": [
   {
    "fieldname": "naming_series",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "hidden": 1,
    "label": "Series",
    "options": "PROJ-UPD-.YYYY.-"
@@ -47,7 +47,8 @@
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "time",
@@ -77,10 +78,11 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2022-08-03 15:50:58.187200",
+ "modified": "2023-06-28 18:59:50.678917",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project Update",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

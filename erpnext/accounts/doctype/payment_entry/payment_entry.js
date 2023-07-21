@@ -153,6 +153,7 @@ frappe.ui.form.on('Payment Entry', {
 		frm.events.hide_unhide_fields(frm);
 		frm.events.set_dynamic_labels(frm);
 		frm.events.show_general_ledger(frm);
+		erpnext.accounts.ledger_preview.show_accounting_ledger_preview(frm);
 
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(__('Accounting Journal Adjustment'), () => {

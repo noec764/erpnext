@@ -237,7 +237,7 @@
    "depends_on": "eval:doc.docstatus !== 1\n",
    "fieldname": "add_template",
    "fieldtype": "Button",
-   "label": "Add Template"
+   "label": "Add Parcel from Template"
   },
   {
    "fieldname": "column_break_28",
@@ -411,10 +411,10 @@
    "fieldtype": "Column Break"
   },
   {
-    "fieldname": "incoterm",
-    "fieldtype": "Link",
-    "label": "Incoterm",
-    "options": "Incoterm"
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
   },
   {
    "fieldname": "shipment_delivery_note",
@@ -433,7 +433,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-17 17:23:27.025802",
+ "modified": "2023-06-20 13:23:59.918118",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Shipment",
