@@ -47,6 +47,7 @@ class JournalEntry(AccountsController):
 		self.clearance_date = None
 
 		self.validate_party()
+		self.set_advance_for_down_payment_entries()
 		self.validate_entries_for_advance()
 		self.validate_multi_currency()
 		self.set_amounts_in_company_currency()
@@ -1005,6 +1006,12 @@ class JournalEntry(AccountsController):
 			frappe.msgprint(
 				_("Your entries are linked to different journals. Please make sure it is correct.")
 			)
+
+	def set_advance_for_down_payment_entries(self):
+		for account in self.accounts:
+			if account.reference_type == "Sales Invoice":
+				if frappe.db.get_value("Sales Invoice", account.reference_name, "is_down_payment_invoice"):
+					self.is_advance = "Yes"
 
 
 @frappe.whitelist()

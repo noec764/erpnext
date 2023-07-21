@@ -904,7 +904,13 @@ class AccountsController(TransactionBase):
 			)
 
 			down_payments_je = get_advance_journal_entries(
-				party_type, party, party_account, amount_field, order_doctype, order_list, include_unallocated
+				party_type,
+				party,
+				party_account,
+				amount_field,
+				order_doctype,
+				invoice_list,
+				include_unallocated,
 			)
 
 			down_payments_pe = get_advance_payment_entries(
