@@ -1011,7 +1011,7 @@ class JournalEntry(AccountsController):
 		for account in self.accounts:
 			if account.reference_type == "Sales Invoice":
 				if frappe.db.get_value("Sales Invoice", account.reference_name, "is_down_payment_invoice"):
-					self.is_advance = "Yes"
+					account.is_advance = "Yes"
 
 
 @frappe.whitelist()
