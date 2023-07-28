@@ -360,16 +360,6 @@ def add_new_address(doc):
 	doc.update({"doctype": "Address"})
 	address = frappe.get_doc(doc)
 	address.save(ignore_permissions=True)
-	# Add phone number to party contact
-	if address.phone:
-		user = frappe.session.user
-		contact_name = get_contact_name(user)
-		if frappe.db.exists("Contact", contact_name):
-			contact = frappe.get_doc("Contact", contact_name)
-			if contact.mobile_no:
-				contact.add_phone(address.phone, is_primary_mobile_no=0, autosave=True)
-			else:
-				contact.add_phone(address.phone, is_primary_mobile_no=1, autosave=True)
 
 	return address
 
