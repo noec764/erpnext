@@ -96,12 +96,23 @@ def create_customer_or_supplier():
 
 
 def create_party_contact(doctype, fullname, user, party_name):
-	contact = frappe.new_doc("Contact")
-	contact.update({"first_name": fullname, "email_id": user})
-	contact.append("links", dict(link_doctype=doctype, link_name=party_name))
-	contact.append("email_ids", dict(email_id=user, is_primary=True))
-	contact.flags.ignore_mandatory = True
-	contact.insert(ignore_permissions=True)
+	if frappe.db.exists("Contact", {"email_id": user}):
+		contact_name = frappe.db.get_value("Contact", {"email_id": user})
+		contact = frappe.get_doc("Contact", contact_name)
+		contact.append("links", dict(link_doctype=doctype, link_name=party_name))
+		contact.save(ignore_permissions=True)
+		return
+	else:
+		contact = frappe.new_doc("Contact")
+		contact.update({
+			"first_name": frappe.db.get_value('User', user, "first_name"),
+			"last_name": frappe.db.get_value('User', user, "last_name"),
+			"email_id": user,
+		})
+		contact.append("links", dict(link_doctype=doctype, link_name=party_name))
+		contact.append("email_ids", dict(email_id=user, is_primary=True))
+		contact.flags.ignore_mandatory = True
+		contact.insert(ignore_permissions=True)
 
 
 def party_exists(doctype, user):
