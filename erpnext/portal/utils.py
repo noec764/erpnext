@@ -104,9 +104,10 @@ def create_party_contact(doctype, fullname, user, party_name):
 		return
 	else:
 		contact = frappe.new_doc("Contact")
+		first_name, last_name = frappe.db.get_value("User", user, ["first_name", "last_name"])
 		contact.update({
-			"first_name": frappe.db.get_value('User', user, "first_name"),
-			"last_name": frappe.db.get_value('User', user, "last_name"),
+			"first_name": first_name,
+			"last_name": last_name,
 			"email_id": user,
 		})
 		contact.append("links", dict(link_doctype=doctype, link_name=party_name))

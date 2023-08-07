@@ -671,8 +671,11 @@ def get_party(user=None):
 			party = contact.links[0].link_name
 	else:
 		contact = frappe.new_doc("Contact")
-		contact.update({"first_name": frappe.db.get_value('User', user,"first_name"),
-						"last_name": frappe.db.get_value('User', user,"last_name")})
+		first_name, last_name = frappe.db.get_value("User", user, ["first_name", "last_name"])
+		contact.update({
+			"first_name": first_name,
+			"last_name": last_name
+		})
 		contact.insert(ignore_permissions=True)
 	cart_settings = get_shopping_cart_settings()
 
