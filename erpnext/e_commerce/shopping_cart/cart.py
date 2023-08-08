@@ -556,8 +556,8 @@ def update_party(fullname, company_name=None, mobile_no=None, phone=None):
 
 	contact_name = frappe.db.get_value("Contact", {"email_id": frappe.session.user})
 	contact = frappe.get_doc("Contact", contact_name)
-	contact.first_name = fullname
-	contact.last_name = None
+	contact.first_name = fullname if party.customer_type == "Company" else contact.first_name
+	contact.last_name = None if party.customer_type == "Company" else contact.last_name
 	contact.customer_name = party.customer_name
 	contact.mobile_no = mobile_no
 	contact.phone = phone
@@ -673,7 +673,14 @@ def get_party(user=None):
 		if contact.links:
 			party_doctype = contact.links[0].link_doctype
 			party = contact.links[0].link_name
-
+	else:
+		contact = frappe.new_doc("Contact")
+		first_name, last_name = frappe.db.get_value("User", user, ["first_name", "last_name"])
+		contact.update({
+			"first_name": first_name,
+			"last_name": last_name
+		})
+		contact.insert(ignore_permissions=True)
 	cart_settings = get_shopping_cart_settings()
 
 	debtors_account = ""
@@ -704,12 +711,11 @@ def get_party(user=None):
 
 		customer.flags.ignore_mandatory = True
 		customer.insert(ignore_permissions=True)
-
-		contact = frappe.new_doc("Contact")
-		contact.update({"first_name": fullname, "email_ids": [{"email_id": user, "is_primary": 1}]})
-		contact.append("links", dict(link_doctype="Customer", link_name=customer.name))
-		contact.flags.ignore_mandatory = True
-		contact.insert(ignore_permissions=True)
+		if contact:
+			contact.update({"email_ids": [{"email_id": user, "is_primary": 1}]})
+			contact.append("links", dict(link_doctype="Customer", link_name=customer.name))
+			contact.flags.ignore_mandatory = True
+			contact.save(ignore_permissions=True)
 
 		return customer
 
