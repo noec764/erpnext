@@ -28,7 +28,7 @@ class EventSlot(Document):
 			self.ends_on
 		) <= get_datetime(end)
 		if not is_slot_in_event:
-			return "This slot is outside the event's hours ({0} - {1})".format(
+			return _("This slot is outside the event's hours ({0} - {1})").format(
 				format_datetime(start), format_datetime(end)
 			)
 		return ""

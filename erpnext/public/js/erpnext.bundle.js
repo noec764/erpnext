@@ -16,6 +16,7 @@ import "./utils/item_quick_entry";
 import "./utils/contact_address_quick_entry";
 import "./utils/customer_quick_entry";
 import "./utils/supplier_quick_entry";
+import "./utils/event_slot_booking_quick_entry";
 import "./call_popup/call_popup";
 import "./utils/dimension_tree_filter";
 import "./utils/ledger_preview.js"
