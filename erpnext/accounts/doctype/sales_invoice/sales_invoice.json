@@ -150,6 +150,7 @@
   "section_break_84",
   "base_paid_amount",
   "unreconciled_amount",
+  "clearance_date",
   "column_break_86",
   "paid_amount",
   "section_break_88",
@@ -1729,6 +1730,14 @@
    "label": "Accounting Journal",
    "options": "Accounting Journal",
    "read_only": 1
+  },
+  {
+   "fieldname": "clearance_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Clearance Date",
+   "no_copy": 1,
+   "print_hide": 1
   }
  ],
  "icon": "uil uil-file-alt",
@@ -1743,7 +1752,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-06-21 16:02:18.988799",
+ "modified": "2023-09-01 14:27:47.681160",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

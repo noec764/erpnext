@@ -3,6 +3,7 @@ from frappe.utils import cint
 
 
 def execute():
+	frappe.reload_doc("e_commerce", "doctype", "custom_cart_block")
 	frappe.reload_doc("e_commerce", "doctype", "e_commerce_settings")
 	frappe.reload_doc("portal", "doctype", "website_filter_field")
 	frappe.reload_doc("portal", "doctype", "website_attribute")

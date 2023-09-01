@@ -161,7 +161,7 @@ build_docker:
         --build-arg=FRAPPE_PATH=https://gitlab.com/dokos/dodock \
         --build-arg=FRAPPE_BRANCH=$DODOCK_BRANCH \
         --build-arg=PYTHON_VERSION=3.10 \
-        --build-arg=NODE_VERSION=16.19 \
+        --build-arg=NODE_VERSION=18.16.1 \
         --build-arg=APPS_JSON_BASE64="$APPS_JSON_BASE64" \
         --tag=$IMAGE_NAME \
         --file=images/custom/Containerfile .
