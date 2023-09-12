@@ -46,7 +46,10 @@ def get(
 	if not filters.get("company"):
 		filters["company"] = get_default_company()
 
-	query_filters = {"date": ("between", [filters.get("from_date"), filters.get("to_date")])}
+	query_filters = {
+		"date": ("between", [filters.get("from_date"), filters.get("to_date")]),
+		"docstatus": 1,
+	}
 	if filters.get("bank_account"):
 		query_filters["bank_account"] = filters.get("bank_account")
 
