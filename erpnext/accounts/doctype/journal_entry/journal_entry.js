@@ -13,6 +13,22 @@ frappe.ui.form.on("Journal Entry", {
 		if (frm.doc.company && !frm.doc.journal_entry) {
 			erpnext.set_accounting_journal(frm);
 		}
+
+		frm.set_query("accounting_journal", () => {
+			return {
+				filters: {
+					company: frm.doc.company,
+				},
+			};
+		});
+
+		frm.set_query("accounting_journal", "accounts", () => {
+			return {
+				filters: {
+					company: frm.doc.company,
+				},
+			};
+		});
 	},
 
 	refresh: function(frm) {
