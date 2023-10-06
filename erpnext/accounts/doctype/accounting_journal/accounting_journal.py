@@ -45,6 +45,7 @@ def get_entries(doctype, docnames):
 	)
 
 
+# @dokos
 @frappe.whitelist()
 def accounting_journal_adjustment(doctype, docnames, accounting_journal):
 	for docname in frappe.parse_json(docnames):
@@ -54,7 +55,9 @@ def accounting_journal_adjustment(doctype, docnames, accounting_journal):
 			filters={"voucher_type": doctype, "voucher_no": docname, "is_cancelled": 0},
 		)
 
-		make_reverse_gl_entries(voucher_type=doctype, voucher_no=docname)
+		make_reverse_gl_entries(
+			voucher_type=doctype, voucher_no=docname, cancel_payment_ledger_entries=False
+		)
 
 		for gl_entry in original_entries:
 			gl_entry["name"] = None

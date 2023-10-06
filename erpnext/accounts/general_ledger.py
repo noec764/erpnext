@@ -559,7 +559,12 @@ def get_round_off_account_and_cost_center(company, voucher_type, voucher_no):
 
 
 def make_reverse_gl_entries(
-	gl_entries=None, voucher_type=None, voucher_no=None, adv_adj=False, update_outstanding="Yes"
+	gl_entries=None,
+	voucher_type=None,
+	voucher_no=None,
+	adv_adj=False,
+	update_outstanding="Yes",
+	cancel_payment_ledger_entries=True,  # @dokos
 ):
 	"""
 	Get original gl entries of the voucher
@@ -578,9 +583,10 @@ def make_reverse_gl_entries(
 		).run(as_dict=1)
 
 	if gl_entries:
-		create_payment_ledger_entry(
-			gl_entries, cancel=1, adv_adj=adv_adj, update_outstanding=update_outstanding
-		)
+		if cancel_payment_ledger_entries:  # @dokos
+			create_payment_ledger_entry(
+				gl_entries, cancel=1, adv_adj=adv_adj, update_outstanding=update_outstanding
+			)
 		validate_accounting_period(gl_entries)
 		check_freezing_date(gl_entries[0]["posting_date"], adv_adj)
 		set_as_cancel(gl_entries[0]["voucher_type"], gl_entries[0]["voucher_no"])
