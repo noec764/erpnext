@@ -17,7 +17,7 @@ from erpnext.accounts.doctype.accounting_period.accounting_period import ClosedA
 from erpnext.accounts.doctype.budget.budget import validate_expense_against_budget
 from erpnext.accounts.utils import create_payment_ledger_entry
 
-
+@erpnext.allow_regional
 def make_gl_entries(
 	gl_map,
 	cancel=False,
@@ -554,7 +554,7 @@ def get_round_off_account_and_cost_center(
 
 	return round_off_account, round_off_cost_center
 
-
+@erpnext.allow_regional
 def make_reverse_gl_entries(
 	gl_entries=None, voucher_type=None, voucher_no=None, adv_adj=False, update_outstanding="Yes"
 ):
