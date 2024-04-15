@@ -37,9 +37,7 @@ def validate_filters(filters):
 		frappe.throw(_("From Date must be before To Date"))
 
 
-def get_result(
-	filters, tds_docs, tds_accounts, tax_category_map, journal_entry_party_map, net_total_map
-):
+def get_result(filters, tds_docs, tds_accounts, tax_category_map, journal_entry_party_map, net_total_map):
 	party_map = get_party_pan_map(filters.get("party_type"))
 	tax_rate_map = get_tax_rate_map(filters)
 	gle_map = get_gle_map(tds_docs)
@@ -63,16 +61,14 @@ def get_result(
 				tax_amount += entry.credit - entry.debit
 				# infer tax withholding category from the account if it's the single account for this category
 				tax_withholding_category = tds_accounts.get(entry.account)
-				rate = tax_rate_map.get(tax_withholding_category)
 				# or else the consolidated value from the voucher document
 				if not tax_withholding_category:
-					# or else from the party default
 					tax_withholding_category = tax_category_map.get(name)
-					rate = tax_rate_map.get(tax_withholding_category)
+				# or else from the party default
 				if not tax_withholding_category:
 					tax_withholding_category = party_map.get(party, {}).get("tax_withholding_category")
-					rate = tax_rate_map.get(tax_withholding_category)
 
+				rate = tax_rate_map.get(tax_withholding_category)
 			if net_total_map.get(name):
 				if voucher_type == "Journal Entry" and tax_amount and rate:
 					# back calcalute total amount from rate and tax_amount
@@ -94,9 +90,9 @@ def get_result(
 					party_type = "customer_type"
 
 				row = {
-					"pan"
-					if frappe.db.has_column(filters.party_type, "pan")
-					else "tax_id": party_map.get(party, {}).get("pan"),
+					"pan" if frappe.db.has_column(filters.party_type, "pan") else "tax_id": party_map.get(
+						party, {}
+					).get("pan"),
 					"party": party_map.get(party, {}).get("name"),
 				}
 
@@ -244,7 +240,7 @@ def get_columns(filters):
 				"width": 120,
 			},
 			{
-				"label": _("Tax Amount"),
+				"label": _("TDS Amount") if filters.get("party_type") == "Supplier" else _("TCS Amount"),
 				"fieldname": "tax_amount",
 				"fieldtype": "Float",
 				"width": 120,
@@ -283,7 +279,7 @@ def get_tds_docs(filters):
 	journal_entries = []
 	tax_category_map = frappe._dict()
 	net_total_map = frappe._dict()
-	or_filters = frappe._dict()
+	frappe._dict()
 	journal_entry_party_map = frappe._dict()
 	bank_accounts = frappe.get_all("Account", {"is_group": 0, "account_type": "Bank"}, pluck="name")
 
@@ -295,7 +291,7 @@ def get_tds_docs(filters):
 	tds_accounts = {}
 	for tds_acc in _tds_accounts:
 		# if it turns out not to be the only tax withholding category, then don't include in the map
-		if tds_accounts.get(tds_acc["account"]):
+		if tds_acc["account"] in tds_accounts:
 			tds_accounts[tds_acc["account"]] = None
 		else:
 			tds_accounts[tds_acc["account"]] = tds_acc["parent"]
@@ -346,16 +342,13 @@ def get_tds_docs_query(filters, bank_accounts, tds_accounts):
 	query = (
 		frappe.qb.from_(gle)
 		.select("voucher_no", "voucher_type", "against", "party")
-		.where((gle.is_cancelled == 0))
+		.where(gle.is_cancelled == 0)
 	)
 
 	if filters.get("from_date"):
 		query = query.where(gle.posting_date >= filters.get("from_date"))
 	if filters.get("to_date"):
 		query = query.where(gle.posting_date <= filters.get("to_date"))
-
-	if bank_accounts:
-		query = query.where(gle.against.notin(bank_accounts))
 
 	if filters.get("party"):
 		party = [filters.get("party")]
@@ -368,7 +361,14 @@ def get_tds_docs_query(filters, bank_accounts, tds_accounts):
 			(gle.voucher_type == "Journal Entry")
 			& ((gle.party_type == filters.get("party_type")) | (gle.party_type == ""))
 		)
-	query = query.where((gle.account.isin(tds_accounts) & jv_condition) | gle.party.isin(party))
+
+	query.where((gle.account.isin(tds_accounts) & jv_condition) | gle.party.isin(party))
+	if bank_accounts:
+		query = query.where(
+			gle.against.notin(bank_accounts) & (gle.account.isin(tds_accounts) & jv_condition)
+			| gle.party.isin(party)
+		)
+
 	return query
 
 
@@ -408,7 +408,7 @@ def get_doc_info(vouchers, doctype, tax_category_map, net_total_map=None):
 			"paid_amount_after_tax",
 			"base_paid_amount",
 		],
-		"Journal Entry": ["tax_withholding_category", "total_amount"],
+		"Journal Entry": ["total_amount"],
 	}
 
 	entries = frappe.get_all(
